@@ -85,3 +85,11 @@
 - Moved the generated reader into the dedicated `output/pdf/BA-M01/` module folder.
 - Updated the controlled manifest to record the new publication path.
 - Recorded user approval of the publication layout while keeping the independent theory-review and release gates pending.
+
+## 0.3.8 - BA-M02 controlled scope start
+
+- Approved the existing `BA-M02 - Stakeholders and Elicitation` contract scope as `OUTLINED` without changing its chapters or topic IDs.
+- Added a proposed Phase 1 word budget covering five chapters and all 33 controlled topic IDs.
+- Added the resumable BA-M02 scope checkpoint with `BA-02-C01 - Stakeholder Analysis` as the next exact chapter.
+- Kept theory prose, assessments, assignments, practical work, labs, projects, case studies, capstone, and release work out of Phase 0.
+- Recorded `ISS-004` because BA-M01, the required prerequisite, has not yet passed its independent theory review; BA-M02 Phase 1 remains blocked at that gate.
