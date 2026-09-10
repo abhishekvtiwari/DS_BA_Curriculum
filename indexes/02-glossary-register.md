@@ -21,3 +21,9 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Power-interest map | TERM-POWER-INTEREST | BA-M02 | DRAFTED | OPEN |
 | Persona | TERM-PERSONA | BA-M02 | DRAFTED | OPEN |
 | Decision right | TERM-DECISION-RIGHT | BA-M02 | DRAFTED | OPEN |
+| Interview | TERM-INTERVIEW | BA-M02 | DRAFTED | OPEN |
+| Probe | TERM-PROBE | BA-M02 | DRAFTED | OPEN |
+| Active listening | TERM-ACTIVE-LISTENING | BA-M02 | DRAFTED | OPEN |
+| Interview bias | TERM-INTERVIEW-BIAS | BA-M02 | DRAFTED | OPEN |
+| Evidence synthesis | TERM-EVIDENCE-SYNTHESIS | BA-M02 | DRAFTED | OPEN |
+| Elicitation validation | TERM-ELICITATION-VALIDATION | BA-M02 | DRAFTED | OPEN |

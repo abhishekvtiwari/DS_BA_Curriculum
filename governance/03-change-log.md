@@ -115,3 +115,11 @@
 - Added conceptual models, examples, quality checks, failure modes, ethical and privacy boundaries, advanced synthesis, a completeness self-audit, and eight authoritative references.
 - Updated the BA-M02 word budget, module contract, glossary, cross-reference register, and checkpoint.
 - Kept interviews, workshops, observation and research, conflict and negotiation, MCQs, assignments, labs, projects, case studies, capstone, and release work out of the chapter session.
+
+## 0.4.2 - BA-M02 interview theory
+
+- Recorded user review approval of `BA-02-C01 - Stakeholder Analysis`.
+- Added the controlled 7,862-word Phase 1 theory draft for `BA-02-C02 - Interviews`.
+- Covered planning, question types, probing, listening, bias, synthesis, and validation under all seven approved topic IDs.
+- Added ethical and privacy controls, conceptual examples, quality checks, failure modes, advanced synthesis, a completeness self-audit, and seven authoritative references.
+- Updated the BA-M02 word budget, glossary, and checkpoint while keeping workshops, later chapters, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.
