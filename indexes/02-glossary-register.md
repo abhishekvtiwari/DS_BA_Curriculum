@@ -27,3 +27,10 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Interview bias | TERM-INTERVIEW-BIAS | BA-M02 | DRAFTED | OPEN |
 | Evidence synthesis | TERM-EVIDENCE-SYNTHESIS | BA-M02 | DRAFTED | OPEN |
 | Elicitation validation | TERM-ELICITATION-VALIDATION | BA-M02 | DRAFTED | OPEN |
+| Workshop | TERM-WORKSHOP | BA-M02 | DRAFTED | OPEN |
+| Facilitator | TERM-FACILITATOR | BA-M02 | DRAFTED | OPEN |
+| Working agreement | TERM-WORKING-AGREEMENT | BA-M02 | DRAFTED | OPEN |
+| Brainstorming | TERM-BRAINSTORMING | BA-M02 | DRAFTED | OPEN |
+| Affinity mapping | TERM-AFFINITY-MAPPING | BA-M02 | DRAFTED | OPEN |
+| Prioritization | TERM-PRIORITIZATION | BA-M02 | DRAFTED | OPEN |
+| Decision record | TERM-DECISION-RECORD | BA-M02 | DRAFTED | OPEN |

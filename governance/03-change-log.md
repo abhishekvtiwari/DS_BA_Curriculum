@@ -123,3 +123,11 @@
 - Covered planning, question types, probing, listening, bias, synthesis, and validation under all seven approved topic IDs.
 - Added ethical and privacy controls, conceptual examples, quality checks, failure modes, advanced synthesis, a completeness self-audit, and seven authoritative references.
 - Updated the BA-M02 word budget, glossary, and checkpoint while keeping workshops, later chapters, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.
+
+## 0.4.3 - BA-M02 workshop theory
+
+- Recorded user review approval of `BA-02-C02 - Interviews`.
+- Added the controlled 7,110-word Phase 1 theory draft for `BA-02-C03 - Workshops`.
+- Covered agenda, facilitation, working agreements, brainstorming, affinity mapping, prioritization, and decisions under all seven approved topic IDs.
+- Added inclusion, power, privacy, accessibility, traceability, conceptual examples, failure modes, advanced synthesis, a completeness self-audit, and eight authoritative references.
+- Updated the BA-M02 word budget, glossary, and checkpoint while keeping observation and research, conflict and negotiation, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.
