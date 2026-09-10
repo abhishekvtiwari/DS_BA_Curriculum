@@ -18,6 +18,6 @@
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Perform an independent theory review of BA-M16-C01; resolve any critical conceptual gaps before approving Phase 2 MCQs or beginning BA-16-C02.",
+  "next_action": "Perform an independent theory review of BA-M16-C01 using the uniform coded chapter PDF at output/pdf/BA-M16/chapters/BA-M16-C01-Requirements-Documentation-Foundations.pdf; resolve critical conceptual gaps before approving Phase 2 MCQs or beginning BA-16-C02.",
   "updated_at": "2026-09-10"
 }

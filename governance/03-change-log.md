@@ -155,3 +155,12 @@
 - Limited code hiding to the final compiled learner-facing module publication only.
 - Identified the C05 individual PDF for immediate correction and the existing compiled BA-M01 reader for a separate publication-layout correction.
 - Preserved all authoritative curriculum content and stable IDs.
+
+## 0.4.7 - Uniform chapter and publication formatting
+
+- Standardized the controlled Markdown heading separators and metadata presentation across authored BA-M01, BA-M02, and BA-M16 chapters.
+- Corrected BA-M01 chapter status metadata to match its approved pre-assessment audit state.
+- Rebuilt all eleven individual working PDFs through one consistent layout with coded covers, concise contents, uniform typography, tables, lists, headers, footers, and bookmarks.
+- Rebuilt the compiled BA-M01 learner reader in the same visual system with zero visible internal curriculum codes.
+- Standardized PDF storage under module folders with individual chapters in `chapters/` subfolders and removed superseded mixed-format exports.
+- Passed structural, code-visibility, text-extraction, dash-character, bookmark, page-count, and representative visual-render checks.
