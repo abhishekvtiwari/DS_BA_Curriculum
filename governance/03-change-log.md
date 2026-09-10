@@ -47,3 +47,11 @@
 - Added the single controlled theory draft for all six `BA-01-C01` topic IDs.
 - Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
 - Added a resumable BA-M01 checkpoint; the next gate is independent theory review.
+
+## 0.3.3 — BA-M01 organizational literacy theory
+
+- Added the controlled theory draft for all seven `BA-01-C02` topic IDs.
+- Covered business models, customers, products, services, functions, operating models, and value creation.
+- Added an explicit system view, boundary analysis, conceptual hospital example, and theory completeness audit.
+- Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
+- Updated the BA-M01 word budget and checkpoint; the next planned chapter is `BA-01-C03`.

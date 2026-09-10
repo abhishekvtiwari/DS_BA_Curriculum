@@ -7,7 +7,7 @@
 | Artifact | Target words | Status |
 |---|---:|---|
 | BA-01-C01 theory | Approximately 6,000 | APPROVED — DRAFTED AT 5,052 |
-| BA-01-C02 theory | OPEN | PLANNED |
+| BA-01-C02 theory | Approximately 6,000 | APPROVED - DRAFTED AT 4,790 |
 | BA-01-C03 theory | OPEN | PLANNED |
 | BA-01-C04 theory | OPEN | PLANNED |
 | BA-01-C05 theory | OPEN | PLANNED |

@@ -9,11 +9,12 @@
     "governance/03-change-log.md",
     "governance/04-version.json",
     "production/drafts/BA-M01/BA-M01-word-budget.md",
-    "production/drafts/BA-M01/BA-M01-C01.md"
+    "production/drafts/BA-M01/BA-M01-C01.md",
+    "production/drafts/BA-M01/BA-M01-C02.md"
   ],
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Perform an independent theory review of BA-M01-C01; resolve critical conceptual gaps before approving Phase 2 or beginning BA-01-C02.",
+  "next_action": "Perform an independent theory review of BA-M01-C01 and BA-M01-C02; resolve critical conceptual gaps before approving Phase 2 or beginning BA-01-C03.",
   "updated_at": "2026-09-10"
 }
