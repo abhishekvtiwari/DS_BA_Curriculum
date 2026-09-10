@@ -1,4 +1,8 @@
-# Controlled Data Science and Business Analyst Pathway Blueprint
+# DS_BA_Curriculum
+
+**Controlled Data Science and Business Analyst encyclopedia blueprints with AI-authoring prompts, module contracts, practical projects, assessments, audits, governance, and GitHub-ready production workflows.**
+
+## Controlled Data Science and Business Analyst Pathway Blueprint
 
 This repository is a controlled AI-authoring specification and operational production layer. It defines what an AI authoring system is allowed to write and how work is resumed, audited, and released. It intentionally keeps the pathway outlines separate from later chapter prose.
 
