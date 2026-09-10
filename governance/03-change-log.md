@@ -164,3 +164,11 @@
 - Rebuilt the compiled BA-M01 learner reader in the same visual system with zero visible internal curriculum codes.
 - Standardized PDF storage under module folders with individual chapters in `chapters/` subfolders and removed superseded mixed-format exports.
 - Passed structural, code-visibility, text-extraction, dash-character, bookmark, page-count, and representative visual-render checks.
+
+## 0.4.8 - BA-M02 Phase 1 review-reader collation
+
+- Collated all five drafted BA-M02 theory chapters into one 95-page learner-facing review reader.
+- Added the controlled BA-M02 reader manifest and updated the checkpoint without advancing the module beyond `DRAFTED`.
+- Preserved module, chapter, and topic codes in authoritative and individual working files while displaying zero internal codes in the compiled review reader.
+- Passed source coverage, code-visibility, page-text, bookmark, ASCII-hyphen, checksum, and representative visual-render checks.
+- Retained C05 approval and the BA-M02 pre-assessment theory audit as required next gates before Phase 2.

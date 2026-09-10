@@ -12,12 +12,13 @@
     "production/drafts/BA-M02/BA-M02-C03.md",
     "production/drafts/BA-M02/BA-M02-C04.md",
     "production/drafts/BA-M02/BA-M02-C05.md",
+    "production/drafts/BA-M02/BA-M02-phase1-reader-manifest.json",
     "governance/03-change-log.md",
     "governance/04-version.json"
   ],
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Review production/drafts/BA-M02/BA-M02-C05.md and the uniform coded chapter PDF at output/pdf/BA-M02/chapters/BA-M02-C05-Conflict-and-Negotiation.pdf; after approval, run the BA-M02 Phase 1 pre-assessment theory audit and create the code-free compiled BA-M02 learner publication.",
+  "next_action": "Review the code-free compiled reader at output/pdf/BA-M02/BA-M02-Stakeholders-and-Elicitation-Phase-1-Reader.pdf and approve or correct BA-M02-C05; after C05 approval, run the BA-M02 Phase 1 pre-assessment theory audit before Phase 2.",
   "updated_at": "2026-09-10"
 }

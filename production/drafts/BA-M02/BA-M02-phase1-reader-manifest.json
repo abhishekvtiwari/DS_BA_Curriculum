@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_id": "BA-M02-PHASE1-READER",
+  "module_id": "BA-M02",
+  "phase": "PHASE_1_THEORY",
+  "status": "REVIEW_READER",
+  "publication_path": "output/pdf/BA-M02/BA-M02-Stakeholders-and-Elicitation-Phase-1-Reader.pdf",
+  "source_files": [
+    "production/drafts/BA-M02/BA-M02-C01.md",
+    "production/drafts/BA-M02/BA-M02-C02.md",
+    "production/drafts/BA-M02/BA-M02-C03.md",
+    "production/drafts/BA-M02/BA-M02-C04.md",
+    "production/drafts/BA-M02/BA-M02-C05.md"
+  ],
+  "chapter_ids": [
+    "BA-02-C01",
+    "BA-02-C02",
+    "BA-02-C03",
+    "BA-02-C04",
+    "BA-02-C05"
+  ],
+  "topic_count": 33,
+  "page_count": 95,
+  "sha256": "F47BA9DD52D3AC04B1443302811EFA3E3737DF7AF41BCBC7B42DD3B8B6237F8B",
+  "visual_qa": "PASSED",
+  "publication_layout_approval": "PENDING_USER_REVIEW",
+  "theory_review_gate": "PENDING_C05_APPROVAL_AND_PRE_ASSESSMENT_AUDIT",
+  "theory_approval": "PENDING_C05_APPROVAL",
+  "release_gate": "NOT_EVALUATED",
+  "authoritative": false,
+  "next_action": "Review the compiled code-free learner publication and approve or correct C05; then run the Phase 1 pre-assessment theory audit.",
+  "generated_on": "2026-09-10"
+}
