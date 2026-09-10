@@ -14,6 +14,6 @@
     "ISS-001",
     "ISS-004"
   ],
-  "next_action": "Complete the independent BA-M01 theory review in production/audits/BA-M01/BA-M01-PRE_ASSESSMENT_AUDIT.md, resolve critical findings, and approve the BA-M02 word budget before beginning production/drafts/BA-M02/BA-M02-C01.md.",
+  "next_action": "Complete the independent BA-M01 theory review in production/audits/BA-M01/BA-M01-PRE_ASSESSMENT_AUDIT.md and resolve critical findings, then begin the approved 10,000-word BA-02-C01 theory chapter in production/drafts/BA-M02/BA-M02-C01.md.",
   "updated_at": "2026-09-10"
 }

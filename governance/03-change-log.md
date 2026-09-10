@@ -93,3 +93,9 @@
 - Added the resumable BA-M02 scope checkpoint with `BA-02-C01 - Stakeholder Analysis` as the next exact chapter.
 - Kept theory prose, assessments, assignments, practical work, labs, projects, case studies, capstone, and release work out of Phase 0.
 - Recorded `ISS-004` because BA-M01, the required prerequisite, has not yet passed its independent theory review; BA-M02 Phase 1 remains blocked at that gate.
+
+## 0.3.9 - BA-M02 theory budget approval
+
+- Approved an approximately 50,000-word Phase 1 theory budget for `BA-M02 - Stakeholders and Elicitation`.
+- Allocated approximately 10,000 words to each of the five controlled chapters without changing any chapter or topic IDs.
+- Updated the BA-M02 checkpoint so the BA-M01 independent theory review remains the only prerequisite gate before `BA-02-C01` begins.
