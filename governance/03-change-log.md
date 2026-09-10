@@ -31,3 +31,11 @@
 - Added the controlled `BA-M16` module contract with prerequisites, labs, assignments, assessment plan, risks, and required artifacts.
 - Added BRD, PRD, FRD, and RTM terminology controls and cross-references to requirements engineering and UAT.
 - Updated repository totals to 34 modules, 171 chapters, and 1,190 topic/subtopic control points.
+
+## 0.3.1 — BA-M16 Phase 1 theory start
+
+- Recorded the approved approximately 7,000-word budget for `BA-16-C01`.
+- Added the single controlled theory draft for all eight `BA-16-C01` topic IDs.
+- Added a theory completeness self-audit and authoritative references.
+- Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
+- Updated the existing BA-M16 checkpoint; the next gate is independent theory review.
