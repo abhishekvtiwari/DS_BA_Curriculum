@@ -131,3 +131,11 @@
 - Covered agenda, facilitation, working agreements, brainstorming, affinity mapping, prioritization, and decisions under all seven approved topic IDs.
 - Added inclusion, power, privacy, accessibility, traceability, conceptual examples, failure modes, advanced synthesis, a completeness self-audit, and eight authoritative references.
 - Updated the BA-M02 word budget, glossary, and checkpoint while keeping observation and research, conflict and negotiation, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.
+
+## 0.4.4 - BA-M02 observation and research theory
+
+- Recorded user review approval of `BA-02-C03 - Workshops`.
+- Added the controlled 7,223-word Phase 1 theory draft for `BA-02-C04 - Observation and Research`.
+- Covered observation, job shadowing, document analysis, surveys, contextual inquiry, and evidence under all six approved topic IDs.
+- Added method-selection, sampling, provenance, triangulation, privacy, accessibility, ethical boundaries, examples, failure modes, advanced synthesis, a completeness self-audit, and eight authoritative references.
+- Updated the BA-M02 word budget, glossary, and checkpoint while keeping conflict and negotiation, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.

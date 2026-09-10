@@ -34,3 +34,10 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Affinity mapping | TERM-AFFINITY-MAPPING | BA-M02 | DRAFTED | OPEN |
 | Prioritization | TERM-PRIORITIZATION | BA-M02 | DRAFTED | OPEN |
 | Decision record | TERM-DECISION-RECORD | BA-M02 | DRAFTED | OPEN |
+| Observation | TERM-OBSERVATION | BA-M02 | DRAFTED | OPEN |
+| Job shadowing | TERM-JOB-SHADOWING | BA-M02 | DRAFTED | OPEN |
+| Document analysis | TERM-DOCUMENT-ANALYSIS | BA-M02 | DRAFTED | OPEN |
+| Survey | TERM-SURVEY | BA-M02 | DRAFTED | OPEN |
+| Contextual inquiry | TERM-CONTEXTUAL-INQUIRY | BA-M02 | DRAFTED | OPEN |
+| Evidence provenance | TERM-EVIDENCE-PROVENANCE | BA-M02 | DRAFTED | OPEN |
+| Triangulation | TERM-TRIANGULATION | BA-M02 | DRAFTED | OPEN |
