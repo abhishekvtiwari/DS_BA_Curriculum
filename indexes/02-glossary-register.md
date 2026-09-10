@@ -41,3 +41,8 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Contextual inquiry | TERM-CONTEXTUAL-INQUIRY | BA-M02 | DRAFTED | OPEN |
 | Evidence provenance | TERM-EVIDENCE-PROVENANCE | BA-M02 | DRAFTED | OPEN |
 | Triangulation | TERM-TRIANGULATION | BA-M02 | DRAFTED | OPEN |
+| Disagreement | TERM-DISAGREEMENT | BA-M02 | DRAFTED | OPEN |
+| Trade-off | TERM-TRADE-OFF | BA-M02 | DRAFTED | OPEN |
+| Escalation | TERM-ESCALATION | BA-M02 | DRAFTED | OPEN |
+| Negotiation | TERM-NEGOTIATION | BA-M02 | DRAFTED | OPEN |
+| Difficult conversation | TERM-DIFFICULT-CONVERSATION | BA-M02 | DRAFTED | OPEN |

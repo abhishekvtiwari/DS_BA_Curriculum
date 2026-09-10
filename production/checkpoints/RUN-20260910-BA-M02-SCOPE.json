@@ -11,12 +11,13 @@
     "production/drafts/BA-M02/BA-M02-C02.md",
     "production/drafts/BA-M02/BA-M02-C03.md",
     "production/drafts/BA-M02/BA-M02-C04.md",
+    "production/drafts/BA-M02/BA-M02-C05.md",
     "governance/03-change-log.md",
     "governance/04-version.json"
   ],
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Review production/drafts/BA-M02/BA-M02-C04.md and its review PDF; resolve critical conceptual gaps before beginning BA-02-C05 or any later phase.",
+  "next_action": "Review production/drafts/BA-M02/BA-M02-C05.md and its code-free learner review PDF; after approval, run the BA-M02 Phase 1 pre-assessment theory audit before any later phase.",
   "updated_at": "2026-09-10"
 }

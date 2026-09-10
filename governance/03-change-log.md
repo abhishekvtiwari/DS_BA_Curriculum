@@ -139,3 +139,12 @@
 - Covered observation, job shadowing, document analysis, surveys, contextual inquiry, and evidence under all six approved topic IDs.
 - Added method-selection, sampling, provenance, triangulation, privacy, accessibility, ethical boundaries, examples, failure modes, advanced synthesis, a completeness self-audit, and eight authoritative references.
 - Updated the BA-M02 word budget, glossary, and checkpoint while keeping conflict and negotiation, assessments, assignments, labs, projects, case studies, capstone, and release work out of scope.
+
+## 0.4.5 - BA-M02 conflict and negotiation theory
+
+- Recorded user review approval of `BA-02-C04 - Observation and Research`.
+- Added the controlled 4,055-word Phase 1 theory draft for `BA-02-C05 - Conflict and Negotiation`.
+- Covered disagreement, interests, trade-offs, escalation, negotiation, and difficult conversations under all six approved topic IDs.
+- Added power, safety, protected-route, ethics, traceability, examples, failure modes, and completeness controls.
+- Completed first-draft theory coverage for all five BA-M02 chapters and all 33 controlled topic IDs; independent review and the pre-assessment audit remain pending.
+- Established that learner-facing PDFs omit curriculum codes while authoritative source and audit records retain them.
