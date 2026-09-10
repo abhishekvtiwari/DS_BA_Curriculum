@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M13",
   "module_title": "Change Management and Transformation",
-  "objective": "Build controlled competence in Change Management and Transformation, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Plan and measure organizational change through impact analysis, sponsorship, communication, training, governance, adoption, feedback, and sustained behavior change.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M12"
@@ -192,10 +192,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M13/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M13/",
     "production/assignments/BA-M13/",
     "production/assessments/BA-M13/",
     "production/audits/BA-M13/",
     "production/release/BA-M13/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

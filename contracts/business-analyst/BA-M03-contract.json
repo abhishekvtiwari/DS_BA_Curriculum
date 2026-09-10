@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M03",
   "module_title": "Requirements Engineering",
-  "objective": "Build controlled competence in Requirements Engineering, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Discover, analyze, specify, prioritize, validate, trace, and control requirements for business, digital, data, AI, security, privacy, and accessibility needs.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M02"
@@ -268,10 +268,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M03/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M03/",
     "production/assignments/BA-M03/",
     "production/assessments/BA-M03/",
     "production/audits/BA-M03/",
     "production/release/BA-M03/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

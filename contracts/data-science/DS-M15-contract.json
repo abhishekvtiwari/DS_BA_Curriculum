@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M15",
   "module_title": "Deployment, Cloud, and MLOps",
-  "objective": "Build controlled competence in Deployment, Cloud, and MLOps, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Package, serve, deploy, monitor, secure, update, and retire models and data services across APIs, queues, containers, CI/CD, AWS, and Google Cloud environments.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M14"
@@ -273,10 +273,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M15/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M15/",
     "production/assignments/DS-M15/",
     "production/assessments/DS-M15/",
     "production/audits/DS-M15/",
     "production/release/DS-M15/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

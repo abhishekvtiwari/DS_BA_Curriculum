@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M07",
   "module_title": "Data Cleaning, EDA, and Visualization",
-  "objective": "Build controlled competence in Data Cleaning, EDA, and Visualization, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Profile imperfect data, conduct exploratory analysis, create honest visualizations, and communicate findings with limitations and quality evidence.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M06"
@@ -246,10 +246,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M07/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M07/",
     "production/assignments/DS-M07/",
     "production/assessments/DS-M07/",
     "production/audits/DS-M07/",
     "production/release/DS-M07/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

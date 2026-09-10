@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M06",
   "module_title": "Statistics, Probability, and Mathematics",
-  "objective": "Build controlled competence in Statistics, Probability, and Mathematics, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Apply mathematical, probability, and statistical foundations to describe uncertainty, estimate quantities, test claims, and understand optimization used in Data Science.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M05"
@@ -280,10 +280,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M06/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M06/",
     "production/assignments/DS-M06/",
     "production/assessments/DS-M06/",
     "production/audits/DS-M06/",
     "production/release/DS-M06/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

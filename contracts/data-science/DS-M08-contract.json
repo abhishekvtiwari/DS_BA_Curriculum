@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M08",
   "module_title": "Machine Learning Foundations",
-  "objective": "Build controlled competence in Machine Learning Foundations, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Frame machine-learning problems correctly, construct leakage-resistant datasets, build baselines and pipelines, evaluate models, and interpret errors and trade-offs.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M07"
@@ -229,10 +229,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M08/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M08/",
     "production/assignments/DS-M08/",
     "production/assessments/DS-M08/",
     "production/audits/DS-M08/",
     "production/release/DS-M08/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

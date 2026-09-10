@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M07",
   "module_title": "Agile, Scrum, Kanban, and Waterfall",
-  "objective": "Build controlled competence in Agile, Scrum, Kanban, and Waterfall, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Select and apply Agile, Scrum, Kanban, Waterfall, and hybrid methods according to uncertainty, feedback needs, governance, regulation, and delivery context.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M06"
@@ -236,10 +236,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M07/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M07/",
     "production/assignments/BA-M07/",
     "production/assessments/BA-M07/",
     "production/audits/BA-M07/",
     "production/release/BA-M07/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

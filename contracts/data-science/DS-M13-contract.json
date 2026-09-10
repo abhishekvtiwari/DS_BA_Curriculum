@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M13",
   "module_title": "Deep Learning and Generative AI",
-  "objective": "Build controlled competence in Deep Learning and Generative AI, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Understand neural-network training and modern deep-learning architectures, then build, evaluate, and operate generative and multimodal systems responsibly.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M12"
@@ -225,10 +225,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M13/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M13/",
     "production/assignments/DS-M13/",
     "production/assessments/DS-M13/",
     "production/audits/DS-M13/",
     "production/release/DS-M13/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

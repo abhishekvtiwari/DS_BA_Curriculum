@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M04",
   "module_title": "NumPy, pandas, and Data Wrangling",
-  "objective": "Build controlled competence in NumPy, pandas, and Data Wrangling, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Use NumPy and pandas to inspect, transform, combine, validate, and reproduce analysis-ready datasets while preserving grain and data meaning.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M03"
@@ -287,10 +287,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M04/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M04/",
     "production/assignments/DS-M04/",
     "production/assessments/DS-M04/",
     "production/audits/DS-M04/",
     "production/release/DS-M04/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

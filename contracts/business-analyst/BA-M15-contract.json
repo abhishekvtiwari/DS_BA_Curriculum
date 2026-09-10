@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M15",
   "module_title": "Risk, Governance, and Industry Playbooks",
-  "objective": "Build controlled competence in Risk, Governance, and Industry Playbooks, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Manage risk, controls, compliance, privacy, resilience, industry-specific constraints, and transformation capstones while producing evidence suitable for senior decision-makers.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M14"
@@ -230,10 +230,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M15/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M15/",
     "production/assignments/BA-M15/",
     "production/assessments/BA-M15/",
     "production/audits/BA-M15/",
     "production/release/BA-M15/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

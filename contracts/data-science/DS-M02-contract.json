@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M02",
   "module_title": "Excel and Spreadsheet Analytics",
-  "objective": "Build controlled competence in Excel and Spreadsheet Analytics, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Use Excel, Power Query, Power Pivot, and DAX to structure, clean, model, analyze, validate, and communicate business data.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M01"
@@ -267,10 +267,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M02/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M02/",
     "production/assignments/DS-M02/",
     "production/assessments/DS-M02/",
     "production/audits/DS-M02/",
     "production/release/DS-M02/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

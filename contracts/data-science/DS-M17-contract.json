@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M17",
   "module_title": "Responsible AI and Security",
-  "objective": "Build controlled competence in Responsible AI and Security, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Assess privacy, fairness, explainability, security, governance, and operational risks across data, models, LLMs, and deployed AI systems.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M16"
@@ -192,10 +192,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M17/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M17/",
     "production/assignments/DS-M17/",
     "production/assessments/DS-M17/",
     "production/audits/DS-M17/",
     "production/release/DS-M17/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

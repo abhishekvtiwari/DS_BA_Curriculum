@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M12",
   "module_title": "Testing, UAT, and Implementation",
-  "objective": "Build controlled competence in Testing, UAT, and Implementation, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Plan and execute testing, UAT, defect triage, release readiness, migration, cutover, rollback, training, hypercare, and post-launch stabilization.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M11"
@@ -201,10 +201,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M12/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M12/",
     "production/assignments/BA-M12/",
     "production/assessments/BA-M12/",
     "production/audits/BA-M12/",
     "production/release/BA-M12/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

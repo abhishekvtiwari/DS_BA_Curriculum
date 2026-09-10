@@ -1,0 +1,9 @@
+# Generated local archives and verification output
+*.zip
+*.log
+/tmp/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/

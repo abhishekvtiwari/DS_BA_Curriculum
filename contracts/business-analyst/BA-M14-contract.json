@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M14",
   "module_title": "Strategy, Enterprise Analysis, and Leadership",
-  "objective": "Build controlled competence in Strategy, Enterprise Analysis, and Leadership, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Perform strategic, enterprise, capability, operating-model, portfolio, investment, and executive analyses that connect initiatives to organizational value and leadership decisions.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M13"
@@ -192,10 +192,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M14/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M14/",
     "production/assignments/BA-M14/",
     "production/assessments/BA-M14/",
     "production/audits/BA-M14/",
     "production/release/BA-M14/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

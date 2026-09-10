@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M05",
   "module_title": "SQL and Database Systems",
-  "objective": "Build controlled competence in SQL and Database Systems, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Query and design relational data with SQL, MySQL, and Microsoft SQL Server, then connect SQL workflows to Python with validated joins, aggregations, windows, and transactions.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M04"
@@ -329,10 +329,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M05/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M05/",
     "production/assignments/DS-M05/",
     "production/assessments/DS-M05/",
     "production/audits/DS-M05/",
     "production/release/DS-M05/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

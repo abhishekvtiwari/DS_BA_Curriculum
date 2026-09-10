@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M06",
   "module_title": "Statistics, Metrics, and Decision Analysis",
-  "objective": "Build controlled competence in Statistics, Metrics, and Decision Analysis, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Use statistics, KPI design, root-cause methods, decision analysis, experiments, and causal reasoning to support defensible business decisions under uncertainty.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M05"
@@ -234,10 +234,15 @@
   ],
   "required_artifacts": [
     "production/drafts/BA-M06/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/BA-M06/",
     "production/assignments/BA-M06/",
     "production/assessments/BA-M06/",
     "production/audits/BA-M06/",
     "production/release/BA-M06/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

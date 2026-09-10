@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M18",
   "module_title": "Projects, Portfolio, and Leadership",
-  "objective": "Build controlled competence in Projects, Portfolio, and Leadership, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Integrate Data Science skills through guided, error-based, and capstone projects while developing portfolio evidence, technical leadership, roadmaps, and executive communication.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M17"
@@ -204,10 +204,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M18/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M18/",
     "production/assignments/DS-M18/",
     "production/assessments/DS-M18/",
     "production/audits/DS-M18/",
     "production/release/DS-M18/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

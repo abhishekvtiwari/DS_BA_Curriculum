@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M11",
   "module_title": "NLP, Text, and LLM Foundations",
-  "objective": "Build controlled competence in NLP, Text, and LLM Foundations, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Process text, build classical NLP systems, use embeddings and retrieval, understand transformer and LLM concepts, and apply provider APIs with controlled prompts and evaluation.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M10"
@@ -264,10 +264,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M11/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M11/",
     "production/assignments/DS-M11/",
     "production/assessments/DS-M11/",
     "production/audits/DS-M11/",
     "production/release/DS-M11/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

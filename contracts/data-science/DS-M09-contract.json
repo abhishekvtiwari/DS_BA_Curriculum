@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M09",
   "module_title": "Supervised and Unsupervised Learning",
-  "objective": "Build controlled competence in Supervised and Unsupervised Learning, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Implement and compare regression, classification, KNN, tree ensembles, boosting, clustering, dimensionality reduction, anomaly detection, and model-selection methods.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M08"
@@ -224,10 +224,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M09/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M09/",
     "production/assignments/DS-M09/",
     "production/assessments/DS-M09/",
     "production/audits/DS-M09/",
     "production/release/DS-M09/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

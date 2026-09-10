@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M10",
   "module_title": "Time Series and Forecasting",
-  "objective": "Build controlled competence in Time Series and Forecasting, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Analyze temporal data and build, validate, monitor, and communicate forecasts using statistical baselines, forecasting models, and machine-learning features.",
   "entry_criteria": {
     "required_prerequisites": [
       "DS-M09"
@@ -221,10 +221,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M10/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M10/",
     "production/assignments/DS-M10/",
     "production/assessments/DS-M10/",
     "production/audits/DS-M10/",
     "production/release/DS-M10/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }

@@ -5,7 +5,7 @@
   "track": "Data Science",
   "module_id": "DS-M01",
   "module_title": "Data Foundations",
-  "objective": "Build controlled competence in Data Foundations, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "objective": "Explain what data represents, how it is structured and measured, and how quality, constraints, lifecycle, lineage, and governance determine whether data is fit for use.",
   "entry_criteria": {
     "required_prerequisites": [],
     "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
@@ -258,10 +258,15 @@
   ],
   "required_artifacts": [
     "production/drafts/DS-M01/",
-    "production/labs/{mod[\"id\"]}/",
+    "production/labs/DS-M01/",
     "production/assignments/DS-M01/",
     "production/assessments/DS-M01/",
     "production/audits/DS-M01/",
     "production/release/DS-M01/"
-  ]
+  ],
+  "objective_quality": {
+    "status": "DEFINED",
+    "specificity": "module-specific",
+    "review_note": "Objective names the competencies and scope unique to this module."
+  }
 }
