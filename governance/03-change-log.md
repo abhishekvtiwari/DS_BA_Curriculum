@@ -39,3 +39,11 @@
 - Added a theory completeness self-audit and authoritative references.
 - Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
 - Updated the existing BA-M16 checkpoint; the next gate is independent theory review.
+
+## 0.3.2 — BA-M01 Phase 1 foundation start
+
+- Confirmed `BA-M01 — Business Analysis Foundations` as the first Business Analyst module.
+- Recorded the approximately 6,000-word planning budget for `BA-01-C01`.
+- Added the single controlled theory draft for all six `BA-01-C01` topic IDs.
+- Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
+- Added a resumable BA-M01 checkpoint; the next gate is independent theory review.
