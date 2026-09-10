@@ -8,7 +8,7 @@
 
 | Artifact | Controlled topics | Target words | Status |
 |---|---:|---:|---|
-| BA-02-C01 - Stakeholder Analysis | 7 | Approximately 10,000 | APPROVED |
+| BA-02-C01 - Stakeholder Analysis | 7 | Approximately 10,000 | APPROVED - DRAFTED AT 10,263 |
 | BA-02-C02 - Interviews | 7 | Approximately 10,000 | APPROVED |
 | BA-02-C03 - Workshops | 7 | Approximately 10,000 | APPROVED |
 | BA-02-C04 - Observation and Research | 6 | Approximately 10,000 | APPROVED |

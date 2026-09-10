@@ -107,3 +107,11 @@
 - Advanced the BA-M01 contract and checkpoint to `PRE_ASSESSMENT_AUDITED` without marking later phases or the full module released.
 - Marked the reader theory-review gate as passed while retaining its non-authoritative draft-reader status.
 - Resolved `ISS-004` and returned BA-M02 to `OUTLINED`; its next exact action is Phase 1 theory for `BA-02-C01`.
+
+## 0.4.1 - BA-M02 stakeholder-analysis theory
+
+- Added the controlled 10,263-word Phase 1 theory draft for `BA-02-C01 - Stakeholder Analysis`.
+- Covered identification, interest, influence, impact, power-interest mapping, personas, and decision rights under all seven approved topic IDs.
+- Added conceptual models, examples, quality checks, failure modes, ethical and privacy boundaries, advanced synthesis, a completeness self-audit, and eight authoritative references.
+- Updated the BA-M02 word budget, module contract, glossary, cross-reference register, and checkpoint.
+- Kept interviews, workshops, observation and research, conflict and negotiation, MCQs, assignments, labs, projects, case studies, capstone, and release work out of the chapter session.

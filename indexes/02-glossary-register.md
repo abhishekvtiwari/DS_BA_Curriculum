@@ -14,3 +14,10 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Product Requirements Document (PRD) | TERM-PRD | BA-M16 | PLANNED | OPEN |
 | Functional Requirements Document (FRD) | TERM-FRD | BA-M16 | PLANNED | OPEN |
 | Requirements Traceability Matrix (RTM) | TERM-RTM | BA-M16 | PLANNED | OPEN |
+| Stakeholder | TERM-STAKEHOLDER | BA-M02 | DRAFTED | OPEN |
+| Stakeholder interest | TERM-STAKEHOLDER-INTEREST | BA-M02 | DRAFTED | OPEN |
+| Stakeholder influence | TERM-STAKEHOLDER-INFLUENCE | BA-M02 | DRAFTED | OPEN |
+| Stakeholder impact | TERM-STAKEHOLDER-IMPACT | BA-M02 | DRAFTED | OPEN |
+| Power-interest map | TERM-POWER-INTEREST | BA-M02 | DRAFTED | OPEN |
+| Persona | TERM-PERSONA | BA-M02 | DRAFTED | OPEN |
+| Decision right | TERM-DECISION-RIGHT | BA-M02 | DRAFTED | OPEN |
