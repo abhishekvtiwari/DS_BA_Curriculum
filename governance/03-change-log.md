@@ -55,3 +55,11 @@
 - Added an explicit system view, boundary analysis, conceptual hospital example, and theory completeness audit.
 - Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
 - Updated the BA-M01 word budget and checkpoint; the next planned chapter is `BA-01-C03`.
+
+## 0.3.4 — BA-M01 problem framing theory
+
+- Added the controlled theory draft for all nine `BA-01-C03` topic IDs.
+- Distinguished situation, symptom, problem, cause, solution, outcome, scope, assumptions, and constraints.
+- Added evidence controls, an integrated staffing example, framing quality criteria, and a theory completeness audit.
+- Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
+- Updated the BA-M01 word budget and checkpoint; the next planned chapter is `BA-01-C04`.
