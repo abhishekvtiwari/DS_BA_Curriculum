@@ -147,4 +147,11 @@
 - Covered disagreement, interests, trade-offs, escalation, negotiation, and difficult conversations under all six approved topic IDs.
 - Added power, safety, protected-route, ethics, traceability, examples, failure modes, and completeness controls.
 - Completed first-draft theory coverage for all five BA-M02 chapters and all 33 controlled topic IDs; independent review and the pre-assessment audit remain pending.
-- Established that learner-facing PDFs omit curriculum codes while authoritative source and audit records retain them.
+- Recorded an interim learner-PDF code rule that was superseded by the more precise working-file and compiled-publication distinction in version 0.4.6.
+
+## 0.4.6 - Publication code-visibility correction
+
+- Clarified that all authoritative and individual working files retain and display controlled module, chapter, and topic codes.
+- Limited code hiding to the final compiled learner-facing module publication only.
+- Identified the C05 individual PDF for immediate correction and the existing compiled BA-M01 reader for a separate publication-layout correction.
+- Preserved all authoritative curriculum content and stable IDs.

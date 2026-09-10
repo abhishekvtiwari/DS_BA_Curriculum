@@ -25,6 +25,14 @@
 9. Maintain indexes, glossary, cross-reference map, open-issues list, change log, and checkpoints.
 10. Use the output directories and naming convention defined in the README.
 
+## Publication code-visibility rule
+
+1. Authoritative module, chapter, topic, audit, contract, checkpoint, and other working files must retain every controlled module, chapter, topic, and subtopic code.
+2. Individual module-wise and chapter-wise review PDFs are working publications and must display the applicable module code, chapter code, and topic codes so reviewers can identify corrections precisely.
+3. Only the final compiled learner-facing module publication hides internal module, chapter, topic, and subtopic codes from visible titles, headings, headers, contents, and coverage displays.
+4. Hiding codes in a compiled learner publication must not remove or alter codes in its authoritative sources, audit records, bookmarks used only internally, or traceability data.
+5. Before delivery, machine-check individual working PDFs for all expected codes and final compiled learner publications for zero visible internal codes.
+
 ## Required production sequence
 
 ```text
