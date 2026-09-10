@@ -79,3 +79,9 @@
 - Added publication controls, coded running headers, contents, bookmarks, chapter audits, references, and a consolidated coverage register.
 - Recorded visual QA, page count, source files, and SHA-256 in a non-authoritative draft manifest.
 - Kept the Markdown source files authoritative and retained independent theory review as the next gate; this reader is not a final module release.
+
+## 0.3.7 - BA-M01 reader organization and layout approval
+
+- Moved the generated reader into the dedicated `output/pdf/BA-M01/` module folder.
+- Updated the controlled manifest to record the new publication path.
+- Recorded user approval of the publication layout while keeping the independent theory-review and release gates pending.

@@ -4,7 +4,7 @@
   "module_id": "BA-M01",
   "phase": "PHASE_1_THEORY",
   "status": "DRAFT_READER",
-  "publication_path": "output/pdf/BA-M01-Business-Analysis-Foundations-Phase-1-Reader.pdf",
+  "publication_path": "output/pdf/BA-M01/BA-M01-Business-Analysis-Foundations-Phase-1-Reader.pdf",
   "source_files": [
     "production/drafts/BA-M01/BA-M01-C01.md",
     "production/drafts/BA-M01/BA-M01-C02.md",
@@ -23,6 +23,9 @@
   "page_count": 54,
   "sha256": "EFD2368A1BDEAD32E7286BBB39ED804C7E61EAD937CA0EABA870268A4EE1C1B6",
   "visual_qa": "PASSED",
+  "publication_layout_approval": "APPROVED_BY_USER",
+  "publication_layout_approved_on": "2026-09-10",
+  "theory_review_gate": "PENDING",
   "release_gate": "NOT_EVALUATED",
   "authoritative": false,
   "next_action": "Perform an independent theory review of all five BA-M01 chapters before Phase 2 or release work.",
