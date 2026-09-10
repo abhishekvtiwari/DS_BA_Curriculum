@@ -1,0 +1,272 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M14-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M14",
+  "module_title": "Agents and Agentic Systems",
+  "objective": "Build controlled competence in Agents and Agentic Systems, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "DS-M13"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "DS-M13"
+  ],
+  "recommended_next_module": "DS-M15",
+  "chapters": [
+    {
+      "id": "DS-14-C01",
+      "title": "Agent Concepts",
+      "subtopics": [
+        {
+          "id": "DS-14-C01-T01",
+          "title": "agent definition"
+        },
+        {
+          "id": "DS-14-C01-T02",
+          "title": "model versus agent"
+        },
+        {
+          "id": "DS-14-C01-T03",
+          "title": "goal"
+        },
+        {
+          "id": "DS-14-C01-T04",
+          "title": "state"
+        },
+        {
+          "id": "DS-14-C01-T05",
+          "title": "action"
+        },
+        {
+          "id": "DS-14-C01-T06",
+          "title": "observation"
+        },
+        {
+          "id": "DS-14-C01-T07",
+          "title": "stopping"
+        }
+      ]
+    },
+    {
+      "id": "DS-14-C02",
+      "title": "Agent Loops",
+      "subtopics": [
+        {
+          "id": "DS-14-C02-T01",
+          "title": "single tool loop"
+        },
+        {
+          "id": "DS-14-C02-T02",
+          "title": "planner executor"
+        },
+        {
+          "id": "DS-14-C02-T03",
+          "title": "routing"
+        },
+        {
+          "id": "DS-14-C02-T04",
+          "title": "state machines"
+        },
+        {
+          "id": "DS-14-C02-T05",
+          "title": "multi-step tasks"
+        },
+        {
+          "id": "DS-14-C02-T06",
+          "title": "parallel work"
+        }
+      ]
+    },
+    {
+      "id": "DS-14-C03",
+      "title": "Tools and Permissions",
+      "subtopics": [
+        {
+          "id": "DS-14-C03-T01",
+          "title": "schemas"
+        },
+        {
+          "id": "DS-14-C03-T02",
+          "title": "validation"
+        },
+        {
+          "id": "DS-14-C03-T03",
+          "title": "allowlists"
+        },
+        {
+          "id": "DS-14-C03-T04",
+          "title": "authentication"
+        },
+        {
+          "id": "DS-14-C03-T05",
+          "title": "authorization"
+        },
+        {
+          "id": "DS-14-C03-T06",
+          "title": "least privilege"
+        },
+        {
+          "id": "DS-14-C03-T07",
+          "title": "idempotency"
+        }
+      ]
+    },
+    {
+      "id": "DS-14-C04",
+      "title": "Memory and Retrieval",
+      "subtopics": [
+        {
+          "id": "DS-14-C04-T01",
+          "title": "conversation state"
+        },
+        {
+          "id": "DS-14-C04-T02",
+          "title": "durable state"
+        },
+        {
+          "id": "DS-14-C04-T03",
+          "title": "retrieval memory"
+        },
+        {
+          "id": "DS-14-C04-T04",
+          "title": "RAG"
+        },
+        {
+          "id": "DS-14-C04-T05",
+          "title": "citations"
+        },
+        {
+          "id": "DS-14-C04-T06",
+          "title": "access control"
+        }
+      ]
+    },
+    {
+      "id": "DS-14-C05",
+      "title": "Agent Safety",
+      "subtopics": [
+        {
+          "id": "DS-14-C05-T01",
+          "title": "prompt injection"
+        },
+        {
+          "id": "DS-14-C05-T02",
+          "title": "data leakage"
+        },
+        {
+          "id": "DS-14-C05-T03",
+          "title": "unsafe side effects"
+        },
+        {
+          "id": "DS-14-C05-T04",
+          "title": "loops"
+        },
+        {
+          "id": "DS-14-C05-T05",
+          "title": "cost limits"
+        },
+        {
+          "id": "DS-14-C05-T06",
+          "title": "human approval"
+        }
+      ]
+    },
+    {
+      "id": "DS-14-C06",
+      "title": "Agent Evaluation",
+      "subtopics": [
+        {
+          "id": "DS-14-C06-T01",
+          "title": "task success"
+        },
+        {
+          "id": "DS-14-C06-T02",
+          "title": "tool accuracy"
+        },
+        {
+          "id": "DS-14-C06-T03",
+          "title": "grounding"
+        },
+        {
+          "id": "DS-14-C06-T04",
+          "title": "safety"
+        },
+        {
+          "id": "DS-14-C06-T05",
+          "title": "latency"
+        },
+        {
+          "id": "DS-14-C06-T06",
+          "title": "cost"
+        },
+        {
+          "id": "DS-14-C06-T07",
+          "title": "regression tests"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+",
+    "Python or TypeScript",
+    "Approved model API",
+    "Database or mock tools"
+  ],
+  "required_labs": [
+    "DS-M14-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M14-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M14-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M14-ASSIGN-01 Foundations",
+    "DS-M14-ASSIGN-02 Logic-building",
+    "DS-M14-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M14-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M14/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M14/",
+    "production/assessments/DS-M14/",
+    "production/audits/DS-M14/",
+    "production/release/DS-M14/"
+  ]
+}

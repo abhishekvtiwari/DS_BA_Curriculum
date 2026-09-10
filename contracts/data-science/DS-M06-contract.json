@@ -1,0 +1,289 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M06-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M06",
+  "module_title": "Statistics, Probability, and Mathematics",
+  "objective": "Build controlled competence in Statistics, Probability, and Mathematics, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "DS-M05"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "DS-M05"
+  ],
+  "recommended_next_module": "DS-M07",
+  "chapters": [
+    {
+      "id": "DS-06-C01",
+      "title": "Mathematics Foundations",
+      "subtopics": [
+        {
+          "id": "DS-06-C01-T01",
+          "title": "arithmetic"
+        },
+        {
+          "id": "DS-06-C01-T02",
+          "title": "algebra"
+        },
+        {
+          "id": "DS-06-C01-T03",
+          "title": "functions"
+        },
+        {
+          "id": "DS-06-C01-T04",
+          "title": "logarithms"
+        },
+        {
+          "id": "DS-06-C01-T05",
+          "title": "exponents"
+        },
+        {
+          "id": "DS-06-C01-T06",
+          "title": "sets"
+        },
+        {
+          "id": "DS-06-C01-T07",
+          "title": "notation"
+        }
+      ]
+    },
+    {
+      "id": "DS-06-C02",
+      "title": "Linear Algebra",
+      "subtopics": [
+        {
+          "id": "DS-06-C02-T01",
+          "title": "vectors"
+        },
+        {
+          "id": "DS-06-C02-T02",
+          "title": "matrices"
+        },
+        {
+          "id": "DS-06-C02-T03",
+          "title": "dot products"
+        },
+        {
+          "id": "DS-06-C02-T04",
+          "title": "matrix multiplication"
+        },
+        {
+          "id": "DS-06-C02-T05",
+          "title": "rank"
+        },
+        {
+          "id": "DS-06-C02-T06",
+          "title": "eigen concepts"
+        },
+        {
+          "id": "DS-06-C02-T07",
+          "title": "distance measures"
+        }
+      ]
+    },
+    {
+      "id": "DS-06-C03",
+      "title": "Calculus and Optimization",
+      "subtopics": [
+        {
+          "id": "DS-06-C03-T01",
+          "title": "derivatives"
+        },
+        {
+          "id": "DS-06-C03-T02",
+          "title": "partial derivatives"
+        },
+        {
+          "id": "DS-06-C03-T03",
+          "title": "gradients"
+        },
+        {
+          "id": "DS-06-C03-T04",
+          "title": "loss functions"
+        },
+        {
+          "id": "DS-06-C03-T05",
+          "title": "convexity"
+        },
+        {
+          "id": "DS-06-C03-T06",
+          "title": "gradient descent"
+        },
+        {
+          "id": "DS-06-C03-T07",
+          "title": "numerical stability"
+        }
+      ]
+    },
+    {
+      "id": "DS-06-C04",
+      "title": "Probability",
+      "subtopics": [
+        {
+          "id": "DS-06-C04-T01",
+          "title": "events"
+        },
+        {
+          "id": "DS-06-C04-T02",
+          "title": "conditional probability"
+        },
+        {
+          "id": "DS-06-C04-T03",
+          "title": "independence"
+        },
+        {
+          "id": "DS-06-C04-T04",
+          "title": "Bayes theorem"
+        },
+        {
+          "id": "DS-06-C04-T05",
+          "title": "random variables"
+        },
+        {
+          "id": "DS-06-C04-T06",
+          "title": "expectation"
+        },
+        {
+          "id": "DS-06-C04-T07",
+          "title": "variance"
+        }
+      ]
+    },
+    {
+      "id": "DS-06-C05",
+      "title": "Distributions and Sampling",
+      "subtopics": [
+        {
+          "id": "DS-06-C05-T01",
+          "title": "Bernoulli"
+        },
+        {
+          "id": "DS-06-C05-T02",
+          "title": "binomial"
+        },
+        {
+          "id": "DS-06-C05-T03",
+          "title": "Poisson"
+        },
+        {
+          "id": "DS-06-C05-T04",
+          "title": "normal"
+        },
+        {
+          "id": "DS-06-C05-T05",
+          "title": "exponential"
+        },
+        {
+          "id": "DS-06-C05-T06",
+          "title": "sampling frames"
+        },
+        {
+          "id": "DS-06-C05-T07",
+          "title": "sampling bias"
+        },
+        {
+          "id": "DS-06-C05-T08",
+          "title": "central limit theorem"
+        }
+      ]
+    },
+    {
+      "id": "DS-06-C06",
+      "title": "Inference",
+      "subtopics": [
+        {
+          "id": "DS-06-C06-T01",
+          "title": "estimators"
+        },
+        {
+          "id": "DS-06-C06-T02",
+          "title": "confidence intervals"
+        },
+        {
+          "id": "DS-06-C06-T03",
+          "title": "bootstrap"
+        },
+        {
+          "id": "DS-06-C06-T04",
+          "title": "hypothesis tests"
+        },
+        {
+          "id": "DS-06-C06-T05",
+          "title": "p-values"
+        },
+        {
+          "id": "DS-06-C06-T06",
+          "title": "effect size"
+        },
+        {
+          "id": "DS-06-C06-T07",
+          "title": "power"
+        },
+        {
+          "id": "DS-06-C06-T08",
+          "title": "multiple testing"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+"
+  ],
+  "required_labs": [
+    "DS-M06-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M06-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M06-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M06-ASSIGN-01 Foundations",
+    "DS-M06-ASSIGN-02 Logic-building",
+    "DS-M06-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M06-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M06/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M06/",
+    "production/assessments/DS-M06/",
+    "production/audits/DS-M06/",
+    "production/release/DS-M06/"
+  ]
+}

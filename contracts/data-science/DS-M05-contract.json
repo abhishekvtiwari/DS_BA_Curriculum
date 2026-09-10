@@ -1,0 +1,338 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M05-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M05",
+  "module_title": "SQL and Database Systems",
+  "objective": "Build controlled competence in SQL and Database Systems, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "DS-M04"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "DS-M04"
+  ],
+  "recommended_next_module": "DS-M06",
+  "chapters": [
+    {
+      "id": "DS-05-C01",
+      "title": "Relational Concepts",
+      "subtopics": [
+        {
+          "id": "DS-05-C01-T01",
+          "title": "tables"
+        },
+        {
+          "id": "DS-05-C01-T02",
+          "title": "rows"
+        },
+        {
+          "id": "DS-05-C01-T03",
+          "title": "columns"
+        },
+        {
+          "id": "DS-05-C01-T04",
+          "title": "keys"
+        },
+        {
+          "id": "DS-05-C01-T05",
+          "title": "relationships"
+        },
+        {
+          "id": "DS-05-C01-T06",
+          "title": "normalization"
+        },
+        {
+          "id": "DS-05-C01-T07",
+          "title": "constraints"
+        },
+        {
+          "id": "DS-05-C01-T08",
+          "title": "transactions"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C02",
+      "title": "SQL Retrieval",
+      "subtopics": [
+        {
+          "id": "DS-05-C02-T01",
+          "title": "SELECT"
+        },
+        {
+          "id": "DS-05-C02-T02",
+          "title": "aliases"
+        },
+        {
+          "id": "DS-05-C02-T03",
+          "title": "WHERE"
+        },
+        {
+          "id": "DS-05-C02-T04",
+          "title": "NULL"
+        },
+        {
+          "id": "DS-05-C02-T05",
+          "title": "CASE"
+        },
+        {
+          "id": "DS-05-C02-T06",
+          "title": "ORDER BY"
+        },
+        {
+          "id": "DS-05-C02-T07",
+          "title": "LIMIT"
+        },
+        {
+          "id": "DS-05-C02-T08",
+          "title": "date filters"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C03",
+      "title": "Aggregation",
+      "subtopics": [
+        {
+          "id": "DS-05-C03-T01",
+          "title": "COUNT"
+        },
+        {
+          "id": "DS-05-C03-T02",
+          "title": "SUM"
+        },
+        {
+          "id": "DS-05-C03-T03",
+          "title": "AVG"
+        },
+        {
+          "id": "DS-05-C03-T04",
+          "title": "MIN and MAX"
+        },
+        {
+          "id": "DS-05-C03-T05",
+          "title": "GROUP BY"
+        },
+        {
+          "id": "DS-05-C03-T06",
+          "title": "HAVING"
+        },
+        {
+          "id": "DS-05-C03-T07",
+          "title": "denominators"
+        },
+        {
+          "id": "DS-05-C03-T08",
+          "title": "conditional aggregation"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C04",
+      "title": "Joins",
+      "subtopics": [
+        {
+          "id": "DS-05-C04-T01",
+          "title": "inner joins"
+        },
+        {
+          "id": "DS-05-C04-T02",
+          "title": "left joins"
+        },
+        {
+          "id": "DS-05-C04-T03",
+          "title": "right and full joins"
+        },
+        {
+          "id": "DS-05-C04-T04",
+          "title": "self joins"
+        },
+        {
+          "id": "DS-05-C04-T05",
+          "title": "anti-joins"
+        },
+        {
+          "id": "DS-05-C04-T06",
+          "title": "many-to-many joins"
+        },
+        {
+          "id": "DS-05-C04-T07",
+          "title": "cardinality validation"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C05",
+      "title": "Advanced SQL",
+      "subtopics": [
+        {
+          "id": "DS-05-C05-T01",
+          "title": "subqueries"
+        },
+        {
+          "id": "DS-05-C05-T02",
+          "title": "CTEs"
+        },
+        {
+          "id": "DS-05-C05-T03",
+          "title": "multiple CTEs"
+        },
+        {
+          "id": "DS-05-C05-T04",
+          "title": "recursive CTEs"
+        },
+        {
+          "id": "DS-05-C05-T05",
+          "title": "window functions"
+        },
+        {
+          "id": "DS-05-C05-T06",
+          "title": "ranking"
+        },
+        {
+          "id": "DS-05-C05-T07",
+          "title": "running totals"
+        },
+        {
+          "id": "DS-05-C05-T08",
+          "title": "gaps and islands"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C06",
+      "title": "MySQL and Microsoft SQL Server",
+      "subtopics": [
+        {
+          "id": "DS-05-C06-T01",
+          "title": "dialect differences"
+        },
+        {
+          "id": "DS-05-C06-T02",
+          "title": "data types"
+        },
+        {
+          "id": "DS-05-C06-T03",
+          "title": "date functions"
+        },
+        {
+          "id": "DS-05-C06-T04",
+          "title": "procedures"
+        },
+        {
+          "id": "DS-05-C06-T05",
+          "title": "views"
+        },
+        {
+          "id": "DS-05-C06-T06",
+          "title": "indexes"
+        },
+        {
+          "id": "DS-05-C06-T07",
+          "title": "execution plans"
+        },
+        {
+          "id": "DS-05-C06-T08",
+          "title": "permissions"
+        }
+      ]
+    },
+    {
+      "id": "DS-05-C07",
+      "title": "Python and SQL Together",
+      "subtopics": [
+        {
+          "id": "DS-05-C07-T01",
+          "title": "database connections"
+        },
+        {
+          "id": "DS-05-C07-T02",
+          "title": "parameterized queries"
+        },
+        {
+          "id": "DS-05-C07-T03",
+          "title": "pandas read_sql"
+        },
+        {
+          "id": "DS-05-C07-T04",
+          "title": "transaction handling"
+        },
+        {
+          "id": "DS-05-C07-T05",
+          "title": "batch extraction"
+        },
+        {
+          "id": "DS-05-C07-T06",
+          "title": "SQL testing"
+        },
+        {
+          "id": "DS-05-C07-T07",
+          "title": "credential safety"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+",
+    "MySQL",
+    "Microsoft SQL Server",
+    "Python database driver"
+  ],
+  "required_labs": [
+    "DS-M05-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M05-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M05-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M05-ASSIGN-01 Foundations",
+    "DS-M05-ASSIGN-02 Logic-building",
+    "DS-M05-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M05-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M05/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M05/",
+    "production/assessments/DS-M05/",
+    "production/audits/DS-M05/",
+    "production/release/DS-M05/"
+  ]
+}

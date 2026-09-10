@@ -1,0 +1,277 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "BA-M03-CONTRACT",
+  "status": "PLANNED",
+  "track": "Business Analyst",
+  "module_id": "BA-M03",
+  "module_title": "Requirements Engineering",
+  "objective": "Build controlled competence in Requirements Engineering, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "BA-M02"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "BA-M02"
+  ],
+  "recommended_next_module": "BA-M04",
+  "chapters": [
+    {
+      "id": "BA-03-C01",
+      "title": "Requirements Concepts",
+      "subtopics": [
+        {
+          "id": "BA-03-C01-T01",
+          "title": "need"
+        },
+        {
+          "id": "BA-03-C01-T02",
+          "title": "requirement"
+        },
+        {
+          "id": "BA-03-C01-T03",
+          "title": "business"
+        },
+        {
+          "id": "BA-03-C01-T04",
+          "title": "stakeholder"
+        },
+        {
+          "id": "BA-03-C01-T05",
+          "title": "functional"
+        },
+        {
+          "id": "BA-03-C01-T06",
+          "title": "non-functional"
+        },
+        {
+          "id": "BA-03-C01-T07",
+          "title": "data"
+        },
+        {
+          "id": "BA-03-C01-T08",
+          "title": "transition"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C02",
+      "title": "Requirements Elicitation",
+      "subtopics": [
+        {
+          "id": "BA-03-C02-T01",
+          "title": "discovery"
+        },
+        {
+          "id": "BA-03-C02-T02",
+          "title": "decomposition"
+        },
+        {
+          "id": "BA-03-C02-T03",
+          "title": "scenarios"
+        },
+        {
+          "id": "BA-03-C02-T04",
+          "title": "use cases"
+        },
+        {
+          "id": "BA-03-C02-T05",
+          "title": "user stories"
+        },
+        {
+          "id": "BA-03-C02-T06",
+          "title": "business rules"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C03",
+      "title": "Acceptance and Quality",
+      "subtopics": [
+        {
+          "id": "BA-03-C03-T01",
+          "title": "acceptance criteria"
+        },
+        {
+          "id": "BA-03-C03-T02",
+          "title": "Given When Then"
+        },
+        {
+          "id": "BA-03-C03-T03",
+          "title": "testability"
+        },
+        {
+          "id": "BA-03-C03-T04",
+          "title": "ambiguity"
+        },
+        {
+          "id": "BA-03-C03-T05",
+          "title": "completeness"
+        },
+        {
+          "id": "BA-03-C03-T06",
+          "title": "consistency"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C04",
+      "title": "Prioritization",
+      "subtopics": [
+        {
+          "id": "BA-03-C04-T01",
+          "title": "MoSCoW"
+        },
+        {
+          "id": "BA-03-C04-T02",
+          "title": "value effort"
+        },
+        {
+          "id": "BA-03-C04-T03",
+          "title": "risk"
+        },
+        {
+          "id": "BA-03-C04-T04",
+          "title": "cost of delay"
+        },
+        {
+          "id": "BA-03-C04-T05",
+          "title": "WSJF"
+        },
+        {
+          "id": "BA-03-C04-T06",
+          "title": "dependencies"
+        },
+        {
+          "id": "BA-03-C04-T07",
+          "title": "trade-offs"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C05",
+      "title": "Traceability and Change",
+      "subtopics": [
+        {
+          "id": "BA-03-C05-T01",
+          "title": "baselines"
+        },
+        {
+          "id": "BA-03-C05-T02",
+          "title": "versions"
+        },
+        {
+          "id": "BA-03-C05-T03",
+          "title": "traceability"
+        },
+        {
+          "id": "BA-03-C05-T04",
+          "title": "impact analysis"
+        },
+        {
+          "id": "BA-03-C05-T05",
+          "title": "change requests"
+        },
+        {
+          "id": "BA-03-C05-T06",
+          "title": "scope control"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C06",
+      "title": "Requirements for Digital Systems",
+      "subtopics": [
+        {
+          "id": "BA-03-C06-T01",
+          "title": "APIs"
+        },
+        {
+          "id": "BA-03-C06-T02",
+          "title": "reports"
+        },
+        {
+          "id": "BA-03-C06-T03",
+          "title": "dashboards"
+        },
+        {
+          "id": "BA-03-C06-T04",
+          "title": "automation"
+        },
+        {
+          "id": "BA-03-C06-T05",
+          "title": "AI"
+        },
+        {
+          "id": "BA-03-C06-T06",
+          "title": "security"
+        },
+        {
+          "id": "BA-03-C06-T07",
+          "title": "privacy"
+        },
+        {
+          "id": "BA-03-C06-T08",
+          "title": "accessibility"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+"
+  ],
+  "required_labs": [
+    "BA-M03-LAB-01 Guided implementation lab tied to every chapter",
+    "BA-M03-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "BA-M03-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "BA-M03-ASSIGN-01 Foundations",
+    "BA-M03-ASSIGN-02 Logic-building",
+    "BA-M03-ASSIGN-03 Realistic dataset or business artifact",
+    "BA-M03-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Unvalidated stakeholder assumptions",
+    "Requirements or process recommendations that are not traceable to evidence"
+  ],
+  "required_artifacts": [
+    "production/drafts/BA-M03/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/BA-M03/",
+    "production/assessments/BA-M03/",
+    "production/audits/BA-M03/",
+    "production/release/BA-M03/"
+  ]
+}

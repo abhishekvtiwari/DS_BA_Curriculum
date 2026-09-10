@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.2.0",
+  "repository_name": "controlled-curriculum-blueprints",
+  "encoding": "UTF-8",
+  "generated_on": "2026-09-10",
+  "status": "OPERATIONAL-BLUEPRINT",
+  "tracks": [
+    "DS",
+    "BA"
+  ],
+  "module_count": 33,
+  "chapter_count": 165,
+  "topic_count": 1136
+}

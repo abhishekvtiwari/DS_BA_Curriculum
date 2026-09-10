@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment-item.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "item_id",
+    "module_id",
+    "mapped_topic_id",
+    "type",
+    "difficulty",
+    "question",
+    "answer",
+    "explanation"
+  ],
+  "properties": {
+    "item_id": {
+      "type": "string"
+    },
+    "module_id": {
+      "type": "string"
+    },
+    "mapped_topic_id": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "mcq",
+        "short_answer",
+        "debugging",
+        "sql",
+        "python",
+        "spreadsheet",
+        "case",
+        "practical"
+      ]
+    },
+    "difficulty": {
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "question": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "answer": {},
+    "explanation": {
+      "type": "string"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M03-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M03",
+  "module_title": "Python from Beginner to Advanced",
+  "objective": "Build controlled competence in Python from Beginner to Advanced, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "DS-M02"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "DS-M02"
+  ],
+  "recommended_next_module": "DS-M04",
+  "chapters": [
+    {
+      "id": "DS-03-C01",
+      "title": "Programming Orientation",
+      "subtopics": [
+        {
+          "id": "DS-03-C01-T01",
+          "title": "runtime and interpreter"
+        },
+        {
+          "id": "DS-03-C01-T02",
+          "title": "variables"
+        },
+        {
+          "id": "DS-03-C01-T03",
+          "title": "types"
+        },
+        {
+          "id": "DS-03-C01-T04",
+          "title": "expressions"
+        },
+        {
+          "id": "DS-03-C01-T05",
+          "title": "input and output"
+        },
+        {
+          "id": "DS-03-C01-T06",
+          "title": "comments and documentation"
+        }
+      ]
+    },
+    {
+      "id": "DS-03-C02",
+      "title": "Control Flow and Logic",
+      "subtopics": [
+        {
+          "id": "DS-03-C02-T01",
+          "title": "conditions"
+        },
+        {
+          "id": "DS-03-C02-T02",
+          "title": "loops"
+        },
+        {
+          "id": "DS-03-C02-T03",
+          "title": "comprehensions"
+        },
+        {
+          "id": "DS-03-C02-T04",
+          "title": "truth values"
+        },
+        {
+          "id": "DS-03-C02-T05",
+          "title": "branch testing"
+        },
+        {
+          "id": "DS-03-C02-T06",
+          "title": "logic errors"
+        }
+      ]
+    },
+    {
+      "id": "DS-03-C03",
+      "title": "Functions and Modules",
+      "subtopics": [
+        {
+          "id": "DS-03-C03-T01",
+          "title": "parameters"
+        },
+        {
+          "id": "DS-03-C03-T02",
+          "title": "return values"
+        },
+        {
+          "id": "DS-03-C03-T03",
+          "title": "scope"
+        },
+        {
+          "id": "DS-03-C03-T04",
+          "title": "docstrings"
+        },
+        {
+          "id": "DS-03-C03-T05",
+          "title": "type hints"
+        },
+        {
+          "id": "DS-03-C03-T06",
+          "title": "modules"
+        },
+        {
+          "id": "DS-03-C03-T07",
+          "title": "packages"
+        },
+        {
+          "id": "DS-03-C03-T08",
+          "title": "imports"
+        }
+      ]
+    },
+    {
+      "id": "DS-03-C04",
+      "title": "Collections and Data Structures",
+      "subtopics": [
+        {
+          "id": "DS-03-C04-T01",
+          "title": "lists"
+        },
+        {
+          "id": "DS-03-C04-T02",
+          "title": "tuples"
+        },
+        {
+          "id": "DS-03-C04-T03",
+          "title": "sets"
+        },
+        {
+          "id": "DS-03-C04-T04",
+          "title": "dictionaries"
+        },
+        {
+          "id": "DS-03-C04-T05",
+          "title": "stacks and queues"
+        },
+        {
+          "id": "DS-03-C04-T06",
+          "title": "nested structures"
+        },
+        {
+          "id": "DS-03-C04-T07",
+          "title": "complexity awareness"
+        }
+      ]
+    },
+    {
+      "id": "DS-03-C05",
+      "title": "Files, APIs, and Errors",
+      "subtopics": [
+        {
+          "id": "DS-03-C05-T01",
+          "title": "paths"
+        },
+        {
+          "id": "DS-03-C05-T02",
+          "title": "CSV"
+        },
+        {
+          "id": "DS-03-C05-T03",
+          "title": "JSON"
+        },
+        {
+          "id": "DS-03-C05-T04",
+          "title": "HTTP requests"
+        },
+        {
+          "id": "DS-03-C05-T05",
+          "title": "pagination"
+        },
+        {
+          "id": "DS-03-C05-T06",
+          "title": "exceptions"
+        },
+        {
+          "id": "DS-03-C05-T07",
+          "title": "logging"
+        },
+        {
+          "id": "DS-03-C05-T08",
+          "title": "configuration"
+        },
+        {
+          "id": "DS-03-C05-T09",
+          "title": "secrets"
+        }
+      ]
+    },
+    {
+      "id": "DS-03-C06",
+      "title": "Professional Python",
+      "subtopics": [
+        {
+          "id": "DS-03-C06-T01",
+          "title": "object-oriented programming"
+        },
+        {
+          "id": "DS-03-C06-T02",
+          "title": "dataclasses"
+        },
+        {
+          "id": "DS-03-C06-T03",
+          "title": "iterators"
+        },
+        {
+          "id": "DS-03-C06-T04",
+          "title": "generators"
+        },
+        {
+          "id": "DS-03-C06-T05",
+          "title": "testing"
+        },
+        {
+          "id": "DS-03-C06-T06",
+          "title": "packaging"
+        },
+        {
+          "id": "DS-03-C06-T07",
+          "title": "profiling"
+        },
+        {
+          "id": "DS-03-C06-T08",
+          "title": "performance"
+        },
+        {
+          "id": "DS-03-C06-T09",
+          "title": "concurrency"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+",
+    "JupyterLab",
+    "pytest"
+  ],
+  "required_labs": [
+    "DS-M03-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M03-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M03-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M03-ASSIGN-01 Foundations",
+    "DS-M03-ASSIGN-02 Logic-building",
+    "DS-M03-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M03-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M03/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M03/",
+    "production/assessments/DS-M03/",
+    "production/audits/DS-M03/",
+    "production/release/DS-M03/"
+  ]
+}

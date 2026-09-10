@@ -1,0 +1,276 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M02-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M02",
+  "module_title": "Excel and Spreadsheet Analytics",
+  "objective": "Build controlled competence in Excel and Spreadsheet Analytics, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "DS-M01"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "DS-M01"
+  ],
+  "recommended_next_module": "DS-M03",
+  "chapters": [
+    {
+      "id": "DS-02-C01",
+      "title": "Spreadsheet Foundations",
+      "subtopics": [
+        {
+          "id": "DS-02-C01-T01",
+          "title": "workbooks and worksheets"
+        },
+        {
+          "id": "DS-02-C01-T02",
+          "title": "cells and ranges"
+        },
+        {
+          "id": "DS-02-C01-T03",
+          "title": "relative and absolute references"
+        },
+        {
+          "id": "DS-02-C01-T04",
+          "title": "data entry standards"
+        },
+        {
+          "id": "DS-02-C01-T05",
+          "title": "tables and named ranges"
+        },
+        {
+          "id": "DS-02-C01-T06",
+          "title": "formula auditing"
+        }
+      ]
+    },
+    {
+      "id": "DS-02-C02",
+      "title": "Formulas and Functions",
+      "subtopics": [
+        {
+          "id": "DS-02-C02-T01",
+          "title": "arithmetic formulas"
+        },
+        {
+          "id": "DS-02-C02-T02",
+          "title": "logical functions"
+        },
+        {
+          "id": "DS-02-C02-T03",
+          "title": "text functions"
+        },
+        {
+          "id": "DS-02-C02-T04",
+          "title": "date functions"
+        },
+        {
+          "id": "DS-02-C02-T05",
+          "title": "lookup functions"
+        },
+        {
+          "id": "DS-02-C02-T06",
+          "title": "conditional aggregation"
+        },
+        {
+          "id": "DS-02-C02-T07",
+          "title": "error handling"
+        }
+      ]
+    },
+    {
+      "id": "DS-02-C03",
+      "title": "Cleaning and Preparation",
+      "subtopics": [
+        {
+          "id": "DS-02-C03-T01",
+          "title": "duplicates"
+        },
+        {
+          "id": "DS-02-C03-T02",
+          "title": "missing values"
+        },
+        {
+          "id": "DS-02-C03-T03",
+          "title": "text normalization"
+        },
+        {
+          "id": "DS-02-C03-T04",
+          "title": "date normalization"
+        },
+        {
+          "id": "DS-02-C03-T05",
+          "title": "data validation"
+        },
+        {
+          "id": "DS-02-C03-T06",
+          "title": "split and merge operations"
+        }
+      ]
+    },
+    {
+      "id": "DS-02-C04",
+      "title": "Analysis and Reporting",
+      "subtopics": [
+        {
+          "id": "DS-02-C04-T01",
+          "title": "sorting and filtering"
+        },
+        {
+          "id": "DS-02-C04-T02",
+          "title": "pivot tables"
+        },
+        {
+          "id": "DS-02-C04-T03",
+          "title": "charts"
+        },
+        {
+          "id": "DS-02-C04-T04",
+          "title": "variance analysis"
+        },
+        {
+          "id": "DS-02-C04-T05",
+          "title": "what-if analysis"
+        },
+        {
+          "id": "DS-02-C04-T06",
+          "title": "scenario tables"
+        },
+        {
+          "id": "DS-02-C04-T07",
+          "title": "quality checks"
+        }
+      ]
+    },
+    {
+      "id": "DS-02-C05",
+      "title": "Power Query and Power Pivot",
+      "subtopics": [
+        {
+          "id": "DS-02-C05-T01",
+          "title": "query ingestion"
+        },
+        {
+          "id": "DS-02-C05-T02",
+          "title": "transformation steps"
+        },
+        {
+          "id": "DS-02-C05-T03",
+          "title": "merge and append"
+        },
+        {
+          "id": "DS-02-C05-T04",
+          "title": "data model relationships"
+        },
+        {
+          "id": "DS-02-C05-T05",
+          "title": "calculated columns"
+        },
+        {
+          "id": "DS-02-C05-T06",
+          "title": "measures"
+        },
+        {
+          "id": "DS-02-C05-T07",
+          "title": "refresh management"
+        }
+      ]
+    },
+    {
+      "id": "DS-02-C06",
+      "title": "DAX Foundations",
+      "subtopics": [
+        {
+          "id": "DS-02-C06-T01",
+          "title": "evaluation context"
+        },
+        {
+          "id": "DS-02-C06-T02",
+          "title": "row context"
+        },
+        {
+          "id": "DS-02-C06-T03",
+          "title": "filter context"
+        },
+        {
+          "id": "DS-02-C06-T04",
+          "title": "measures"
+        },
+        {
+          "id": "DS-02-C06-T05",
+          "title": "time intelligence"
+        },
+        {
+          "id": "DS-02-C06-T06",
+          "title": "calculation patterns"
+        },
+        {
+          "id": "DS-02-C06-T07",
+          "title": "DAX debugging"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+",
+    "Microsoft Excel",
+    "Power Query",
+    "Power Pivot"
+  ],
+  "required_labs": [
+    "DS-M02-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M02-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M02-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M02-ASSIGN-01 Foundations",
+    "DS-M02-ASSIGN-02 Logic-building",
+    "DS-M02-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M02-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M02/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M02/",
+    "production/assessments/DS-M02/",
+    "production/audits/DS-M02/",
+    "production/release/DS-M02/"
+  ]
+}

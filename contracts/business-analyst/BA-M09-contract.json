@@ -1,0 +1,222 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "BA-M09-CONTRACT",
+  "status": "PLANNED",
+  "track": "Business Analyst",
+  "module_id": "BA-M09",
+  "module_title": "Finance and Business Cases",
+  "objective": "Build controlled competence in Finance and Business Cases, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "BA-M08"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "BA-M08"
+  ],
+  "recommended_next_module": "BA-M10",
+  "chapters": [
+    {
+      "id": "BA-09-C01",
+      "title": "Finance Foundations",
+      "subtopics": [
+        {
+          "id": "BA-09-C01-T01",
+          "title": "revenue"
+        },
+        {
+          "id": "BA-09-C01-T02",
+          "title": "cost"
+        },
+        {
+          "id": "BA-09-C01-T03",
+          "title": "margin"
+        },
+        {
+          "id": "BA-09-C01-T04",
+          "title": "profit"
+        },
+        {
+          "id": "BA-09-C01-T05",
+          "title": "cash flow"
+        },
+        {
+          "id": "BA-09-C01-T06",
+          "title": "fixed and variable cost"
+        },
+        {
+          "id": "BA-09-C01-T07",
+          "title": "capex"
+        },
+        {
+          "id": "BA-09-C01-T08",
+          "title": "opex"
+        }
+      ]
+    },
+    {
+      "id": "BA-09-C02",
+      "title": "Business Case",
+      "subtopics": [
+        {
+          "id": "BA-09-C02-T01",
+          "title": "problem"
+        },
+        {
+          "id": "BA-09-C02-T02",
+          "title": "options"
+        },
+        {
+          "id": "BA-09-C02-T03",
+          "title": "benefits"
+        },
+        {
+          "id": "BA-09-C02-T04",
+          "title": "costs"
+        },
+        {
+          "id": "BA-09-C02-T05",
+          "title": "risks"
+        },
+        {
+          "id": "BA-09-C02-T06",
+          "title": "assumptions"
+        },
+        {
+          "id": "BA-09-C02-T07",
+          "title": "financial model"
+        },
+        {
+          "id": "BA-09-C02-T08",
+          "title": "recommendation"
+        }
+      ]
+    },
+    {
+      "id": "BA-09-C03",
+      "title": "Investment Analysis",
+      "subtopics": [
+        {
+          "id": "BA-09-C03-T01",
+          "title": "ROI"
+        },
+        {
+          "id": "BA-09-C03-T02",
+          "title": "payback"
+        },
+        {
+          "id": "BA-09-C03-T03",
+          "title": "NPV concepts"
+        },
+        {
+          "id": "BA-09-C03-T04",
+          "title": "TCO"
+        },
+        {
+          "id": "BA-09-C03-T05",
+          "title": "sensitivity"
+        },
+        {
+          "id": "BA-09-C03-T06",
+          "title": "scenarios"
+        },
+        {
+          "id": "BA-09-C03-T07",
+          "title": "portfolio funding"
+        }
+      ]
+    },
+    {
+      "id": "BA-09-C04",
+      "title": "Benefits Realization",
+      "subtopics": [
+        {
+          "id": "BA-09-C04-T01",
+          "title": "baseline"
+        },
+        {
+          "id": "BA-09-C04-T02",
+          "title": "target"
+        },
+        {
+          "id": "BA-09-C04-T03",
+          "title": "owner"
+        },
+        {
+          "id": "BA-09-C04-T04",
+          "title": "measurement"
+        },
+        {
+          "id": "BA-09-C04-T05",
+          "title": "adoption"
+        },
+        {
+          "id": "BA-09-C04-T06",
+          "title": "value tracking"
+        },
+        {
+          "id": "BA-09-C04-T07",
+          "title": "post-implementation review"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+",
+    "Spreadsheet tool"
+  ],
+  "required_labs": [
+    "BA-M09-LAB-01 Guided implementation lab tied to every chapter",
+    "BA-M09-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "BA-M09-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "BA-M09-ASSIGN-01 Foundations",
+    "BA-M09-ASSIGN-02 Logic-building",
+    "BA-M09-ASSIGN-03 Realistic dataset or business artifact",
+    "BA-M09-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Unvalidated stakeholder assumptions",
+    "Requirements or process recommendations that are not traceable to evidence"
+  ],
+  "required_artifacts": [
+    "production/drafts/BA-M09/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/BA-M09/",
+    "production/assessments/BA-M09/",
+    "production/audits/BA-M09/",
+    "production/release/BA-M09/"
+  ]
+}

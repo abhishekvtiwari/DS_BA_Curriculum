@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.2.0",
+  "generated": "2026-09-10",
+  "tracks": [
+    {
+      "id": "DS",
+      "title": "Data Science",
+      "modules": 18,
+      "chapters": 96,
+      "topics": 661,
+      "blueprint": "data-science/00-data-science-blueprint.md",
+      "contracts": "contracts/data-science/"
+    },
+    {
+      "id": "BA",
+      "title": "Business Analyst",
+      "modules": 15,
+      "chapters": 69,
+      "topics": 475,
+      "blueprint": "business-analyst/00-business-analyst-blueprint.md",
+      "contracts": "contracts/business-analyst/"
+    }
+  ],
+  "production_root": "production/",
+  "prompts_root": "prompts/",
+  "governance_root": "governance/",
+  "schemas_root": "schemas/"
+}

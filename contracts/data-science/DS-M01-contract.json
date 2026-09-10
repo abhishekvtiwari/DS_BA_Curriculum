@@ -1,0 +1,267 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "DS-M01-CONTRACT",
+  "status": "PLANNED",
+  "track": "Data Science",
+  "module_id": "DS-M01",
+  "module_title": "Data Foundations",
+  "objective": "Build controlled competence in Data Foundations, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [],
+  "recommended_next_module": "DS-M02",
+  "chapters": [
+    {
+      "id": "DS-01-C01",
+      "title": "What Is Data",
+      "subtopics": [
+        {
+          "id": "DS-01-C01-T01",
+          "title": "definitions and boundaries"
+        },
+        {
+          "id": "DS-01-C01-T02",
+          "title": "data versus information"
+        },
+        {
+          "id": "DS-01-C01-T03",
+          "title": "observations and measurements"
+        },
+        {
+          "id": "DS-01-C01-T04",
+          "title": "events and records"
+        },
+        {
+          "id": "DS-01-C01-T05",
+          "title": "data-generating processes"
+        },
+        {
+          "id": "DS-01-C01-T06",
+          "title": "data in decision systems"
+        }
+      ]
+    },
+    {
+      "id": "DS-01-C02",
+      "title": "Data Structures",
+      "subtopics": [
+        {
+          "id": "DS-01-C02-T01",
+          "title": "records and fields"
+        },
+        {
+          "id": "DS-01-C02-T02",
+          "title": "tables and files"
+        },
+        {
+          "id": "DS-01-C02-T03",
+          "title": "structured data"
+        },
+        {
+          "id": "DS-01-C02-T04",
+          "title": "semi-structured data"
+        },
+        {
+          "id": "DS-01-C02-T05",
+          "title": "unstructured data"
+        },
+        {
+          "id": "DS-01-C02-T06",
+          "title": "nested and repeated data"
+        }
+      ]
+    },
+    {
+      "id": "DS-01-C03",
+      "title": "Data Types and Measurement",
+      "subtopics": [
+        {
+          "id": "DS-01-C03-T01",
+          "title": "qualitative and quantitative data"
+        },
+        {
+          "id": "DS-01-C03-T02",
+          "title": "discrete and continuous data"
+        },
+        {
+          "id": "DS-01-C03-T03",
+          "title": "nominal scale"
+        },
+        {
+          "id": "DS-01-C03-T04",
+          "title": "ordinal scale"
+        },
+        {
+          "id": "DS-01-C03-T05",
+          "title": "interval scale"
+        },
+        {
+          "id": "DS-01-C03-T06",
+          "title": "ratio scale"
+        },
+        {
+          "id": "DS-01-C03-T07",
+          "title": "operational definitions"
+        }
+      ]
+    },
+    {
+      "id": "DS-01-C04",
+      "title": "Data Quality and Constraints",
+      "subtopics": [
+        {
+          "id": "DS-01-C04-T01",
+          "title": "completeness"
+        },
+        {
+          "id": "DS-01-C04-T02",
+          "title": "validity"
+        },
+        {
+          "id": "DS-01-C04-T03",
+          "title": "accuracy"
+        },
+        {
+          "id": "DS-01-C04-T04",
+          "title": "consistency"
+        },
+        {
+          "id": "DS-01-C04-T05",
+          "title": "timeliness"
+        },
+        {
+          "id": "DS-01-C04-T06",
+          "title": "uniqueness"
+        },
+        {
+          "id": "DS-01-C04-T07",
+          "title": "integrity"
+        },
+        {
+          "id": "DS-01-C04-T08",
+          "title": "range constraints"
+        },
+        {
+          "id": "DS-01-C04-T09",
+          "title": "domain constraints"
+        },
+        {
+          "id": "DS-01-C04-T10",
+          "title": "referential constraints"
+        }
+      ]
+    },
+    {
+      "id": "DS-01-C05",
+      "title": "Data Lifecycle and Governance",
+      "subtopics": [
+        {
+          "id": "DS-01-C05-T01",
+          "title": "creation"
+        },
+        {
+          "id": "DS-01-C05-T02",
+          "title": "collection"
+        },
+        {
+          "id": "DS-01-C05-T03",
+          "title": "storage"
+        },
+        {
+          "id": "DS-01-C05-T04",
+          "title": "transformation"
+        },
+        {
+          "id": "DS-01-C05-T05",
+          "title": "analysis"
+        },
+        {
+          "id": "DS-01-C05-T06",
+          "title": "sharing"
+        },
+        {
+          "id": "DS-01-C05-T07",
+          "title": "retention"
+        },
+        {
+          "id": "DS-01-C05-T08",
+          "title": "archiving"
+        },
+        {
+          "id": "DS-01-C05-T09",
+          "title": "deletion"
+        },
+        {
+          "id": "DS-01-C05-T10",
+          "title": "ownership"
+        },
+        {
+          "id": "DS-01-C05-T11",
+          "title": "stewardship"
+        },
+        {
+          "id": "DS-01-C05-T12",
+          "title": "lineage"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+"
+  ],
+  "required_labs": [
+    "DS-M01-LAB-01 Guided implementation lab tied to every chapter",
+    "DS-M01-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "DS-M01-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "DS-M01-ASSIGN-01 Foundations",
+    "DS-M01-ASSIGN-02 Logic-building",
+    "DS-M01-ASSIGN-03 Realistic dataset or business artifact",
+    "DS-M01-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Data leakage or incorrect data grain",
+    "Model or pipeline behavior that is not evaluated on representative data"
+  ],
+  "required_artifacts": [
+    "production/drafts/DS-M01/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/DS-M01/",
+    "production/assessments/DS-M01/",
+    "production/audits/DS-M01/",
+    "production/release/DS-M01/"
+  ]
+}

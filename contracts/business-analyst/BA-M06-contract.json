@@ -1,0 +1,243 @@
+{
+  "schema_version": "0.2.0",
+  "contract_id": "BA-M06-CONTRACT",
+  "status": "PLANNED",
+  "track": "Business Analyst",
+  "module_id": "BA-M06",
+  "module_title": "Statistics, Metrics, and Decision Analysis",
+  "objective": "Build controlled competence in Statistics, Metrics, and Decision Analysis, from the listed beginner concepts through the listed practical and professional applications, without expanding scope beyond this blueprint module.",
+  "entry_criteria": {
+    "required_prerequisites": [
+      "BA-M05"
+    ],
+    "knowledge_assumption": "Zero assumed beyond the prerequisite module; terminology must be defined."
+  },
+  "exit_criteria": [
+    "Every listed chapter, topic, and subtopic has a coverage status.",
+    "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
+    "Assignments have answer criteria.",
+    "Assessment bank passes validation.",
+    "Technical and completeness audits have no unresolved critical blockers."
+  ],
+  "prerequisite_modules": [
+    "BA-M05"
+  ],
+  "recommended_next_module": "BA-M07",
+  "chapters": [
+    {
+      "id": "BA-06-C01",
+      "title": "Basic Statistics",
+      "subtopics": [
+        {
+          "id": "BA-06-C01-T01",
+          "title": "counts"
+        },
+        {
+          "id": "BA-06-C01-T02",
+          "title": "rates"
+        },
+        {
+          "id": "BA-06-C01-T03",
+          "title": "ratios"
+        },
+        {
+          "id": "BA-06-C01-T04",
+          "title": "mean"
+        },
+        {
+          "id": "BA-06-C01-T05",
+          "title": "median"
+        },
+        {
+          "id": "BA-06-C01-T06",
+          "title": "variance"
+        },
+        {
+          "id": "BA-06-C01-T07",
+          "title": "percentiles"
+        },
+        {
+          "id": "BA-06-C01-T08",
+          "title": "distributions"
+        }
+      ]
+    },
+    {
+      "id": "BA-06-C02",
+      "title": "KPI Design",
+      "subtopics": [
+        {
+          "id": "BA-06-C02-T01",
+          "title": "objective trees"
+        },
+        {
+          "id": "BA-06-C02-T02",
+          "title": "metric definitions"
+        },
+        {
+          "id": "BA-06-C02-T03",
+          "title": "numerator"
+        },
+        {
+          "id": "BA-06-C02-T04",
+          "title": "denominator"
+        },
+        {
+          "id": "BA-06-C02-T05",
+          "title": "grain"
+        },
+        {
+          "id": "BA-06-C02-T06",
+          "title": "owner"
+        },
+        {
+          "id": "BA-06-C02-T07",
+          "title": "target"
+        }
+      ]
+    },
+    {
+      "id": "BA-06-C03",
+      "title": "Root-Cause Analysis",
+      "subtopics": [
+        {
+          "id": "BA-06-C03-T01",
+          "title": "Five Whys"
+        },
+        {
+          "id": "BA-06-C03-T02",
+          "title": "fishbone"
+        },
+        {
+          "id": "BA-06-C03-T03",
+          "title": "Pareto"
+        },
+        {
+          "id": "BA-06-C03-T04",
+          "title": "fault trees"
+        },
+        {
+          "id": "BA-06-C03-T05",
+          "title": "hypotheses"
+        },
+        {
+          "id": "BA-06-C03-T06",
+          "title": "evidence plans"
+        }
+      ]
+    },
+    {
+      "id": "BA-06-C04",
+      "title": "Decision Analysis",
+      "subtopics": [
+        {
+          "id": "BA-06-C04-T01",
+          "title": "options"
+        },
+        {
+          "id": "BA-06-C04-T02",
+          "title": "criteria"
+        },
+        {
+          "id": "BA-06-C04-T03",
+          "title": "scoring"
+        },
+        {
+          "id": "BA-06-C04-T04",
+          "title": "risk"
+        },
+        {
+          "id": "BA-06-C04-T05",
+          "title": "uncertainty"
+        },
+        {
+          "id": "BA-06-C04-T06",
+          "title": "sensitivity"
+        },
+        {
+          "id": "BA-06-C04-T07",
+          "title": "scenario analysis"
+        }
+      ]
+    },
+    {
+      "id": "BA-06-C05",
+      "title": "Experiments and Causality",
+      "subtopics": [
+        {
+          "id": "BA-06-C05-T01",
+          "title": "A/B tests"
+        },
+        {
+          "id": "BA-06-C05-T02",
+          "title": "observational data"
+        },
+        {
+          "id": "BA-06-C05-T03",
+          "title": "correlation"
+        },
+        {
+          "id": "BA-06-C05-T04",
+          "title": "causation"
+        },
+        {
+          "id": "BA-06-C05-T05",
+          "title": "effect size"
+        },
+        {
+          "id": "BA-06-C05-T06",
+          "title": "limitations"
+        }
+      ]
+    }
+  ],
+  "tools_and_environment": [
+    "Markdown editor",
+    "Git",
+    "Python 3.11+"
+  ],
+  "required_labs": [
+    "BA-M06-LAB-01 Guided implementation lab tied to every chapter",
+    "BA-M06-LAB-02 Deliberately flawed artifact and root-cause repair lab",
+    "BA-M06-LAB-03 Integrated module project using approved subtopics only"
+  ],
+  "required_assignments": [
+    "BA-M06-ASSIGN-01 Foundations",
+    "BA-M06-ASSIGN-02 Logic-building",
+    "BA-M06-ASSIGN-03 Realistic dataset or business artifact",
+    "BA-M06-ASSIGN-04 Troubleshooting and explanation"
+  ],
+  "assessment_plan": {
+    "target_questions": 200,
+    "question_categories": [
+      "definitions",
+      "concepts",
+      "interpretation",
+      "implementation",
+      "troubleshooting",
+      "scenario judgment",
+      "practical tasks"
+    ],
+    "validation_required": true
+  },
+  "page_budget": {
+    "planning_only": true,
+    "target_pages": "Set after chapter word budgets are approved; do not use page count as completion evidence."
+  },
+  "risks": [
+    "Scope drift outside the approved chapter and subtopic IDs",
+    "Examples that are not reproducible or lack expected outputs",
+    "Unvalidated claims, definitions, or provider-specific details",
+    "Insufficient coverage of edge cases, security, privacy, and failure handling",
+    "Unvalidated stakeholder assumptions",
+    "Requirements or process recommendations that are not traceable to evidence"
+  ],
+  "required_artifacts": [
+    "production/drafts/BA-M06/",
+    "production/labs/{mod[\"id\"]}/",
+    "production/assignments/BA-M06/",
+    "production/assessments/BA-M06/",
+    "production/audits/BA-M06/",
+    "production/release/BA-M06/"
+  ]
+}
