@@ -14,9 +14,9 @@
     {
       "id": "BA",
       "title": "Business Analyst",
-      "modules": 15,
-      "chapters": 69,
-      "topics": 475,
+      "modules": 16,
+      "chapters": 75,
+      "topics": 529,
       "blueprint": "business-analyst/00-business-analyst-blueprint.md",
       "contracts": "contracts/business-analyst/"
     }

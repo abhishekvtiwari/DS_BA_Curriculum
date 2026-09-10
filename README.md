@@ -9,8 +9,8 @@ This repository is a controlled AI-authoring specification and operational produ
 ## Repository contents
 
 - `data-science/`: 18-module Data Science outline with 96 chapters and 661 topic/subtopic control points.
-- `business-analyst/`: 15-module Business Analyst outline with 69 chapters and 475 topic/subtopic control points.
-- `contracts/`: one explicit JSON contract for every module.
+- `business-analyst/`: 16-module Business Analyst outline with 75 chapters and 529 topic/subtopic control points.
+- `contracts/`: one explicit JSON contract for every module across 34 controlled modules.
 - `production/`: fixed output directories for drafts, labs, assignments, assessments, audits, checkpoints, and releases.
 - `prompts/`: controlled prompts for orchestration, chapter writing, labs, assessments, audits, and checkpoints.
 - `schemas/`: JSON schemas and examples for checkpoints and assessment items.

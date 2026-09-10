@@ -23,3 +23,11 @@
 - Classified candidate gaps by priority and separated core gaps from optional tool choices.
 - Recorded `ISS-003` to prevent candidate topics from becoming curriculum scope without approval.
 - Preserved all existing module, chapter, and topic IDs; no curriculum scope changed.
+
+## 0.3.0 — Requirements documentation module
+
+- Added approved Business Analyst module `BA-M16 — Requirements Documentation: BRD, PRD, and FRD`.
+- Added 6 chapters and 54 stable topic IDs progressing from documentation foundations to integrated professional projects.
+- Added the controlled `BA-M16` module contract with prerequisites, labs, assignments, assessment plan, risks, and required artifacts.
+- Added BRD, PRD, FRD, and RTM terminology controls and cross-references to requirements engineering and UAT.
+- Updated repository totals to 34 modules, 171 chapters, and 1,190 topic/subtopic control points.

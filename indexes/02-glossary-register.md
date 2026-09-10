@@ -10,3 +10,7 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Feature | TERM-FEATURE | DS-M08 | PLANNED | OPEN |
 | Agent | TERM-AGENT | DS-M14 | PLANNED | OPEN |
 | KPI | TERM-KPI | BA-M06 | PLANNED | OPEN |
+| Business Requirements Document (BRD) | TERM-BRD | BA-M16 | PLANNED | OPEN |
+| Product Requirements Document (PRD) | TERM-PRD | BA-M16 | PLANNED | OPEN |
+| Functional Requirements Document (FRD) | TERM-FRD | BA-M16 | PLANNED | OPEN |
+| Requirements Traceability Matrix (RTM) | TERM-RTM | BA-M16 | PLANNED | OPEN |
