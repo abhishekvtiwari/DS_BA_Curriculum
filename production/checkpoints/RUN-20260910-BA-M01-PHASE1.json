@@ -11,11 +11,13 @@
     "production/drafts/BA-M01/BA-M01-word-budget.md",
     "production/drafts/BA-M01/BA-M01-C01.md",
     "production/drafts/BA-M01/BA-M01-C02.md",
-    "production/drafts/BA-M01/BA-M01-C03.md"
+    "production/drafts/BA-M01/BA-M01-C03.md",
+    "production/drafts/BA-M01/BA-M01-C04.md",
+    "production/drafts/BA-M01/BA-M01-C05.md"
   ],
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Perform an independent theory review of BA-M01-C01 through BA-M01-C03; resolve critical conceptual gaps before approving Phase 2 or beginning BA-01-C04.",
+  "next_action": "Perform an independent theory review of all five BA-M01 chapters; resolve critical conceptual gaps before approving Phase 2 MCQs, assignments, labs, or release work.",
   "updated_at": "2026-09-10"
 }

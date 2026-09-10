@@ -9,8 +9,8 @@
 | BA-01-C01 theory | Approximately 6,000 | APPROVED — DRAFTED AT 5,052 |
 | BA-01-C02 theory | Approximately 6,000 | APPROVED - DRAFTED AT 4,790 |
 | BA-01-C03 theory | Approximately 6,000 | APPROVED - DRAFTED AT 4,238 |
-| BA-01-C04 theory | OPEN | PLANNED |
-| BA-01-C05 theory | OPEN | PLANNED |
+| BA-01-C04 theory | Approximately 3,000 | APPROVED - DRAFTED AT 2,781 |
+| BA-01-C05 theory | Approximately 3,000 | APPROVED - DRAFTED AT 2,481 |
 | MCQs and theory assessment | OPEN | NOT STARTED |
 | Exercises and assignments | OPEN | NOT STARTED |
 | Practical implementation | OPEN | NOT STARTED |

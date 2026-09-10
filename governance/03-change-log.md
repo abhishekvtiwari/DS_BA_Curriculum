@@ -63,3 +63,11 @@
 - Added evidence controls, an integrated staffing example, framing quality criteria, and a theory completeness audit.
 - Kept MCQs, assignments, practical procedures, labs, case studies, capstones, and later chapters out of scope.
 - Updated the BA-M01 word budget and checkpoint; the next planned chapter is `BA-01-C04`.
+
+## 0.3.5 — BA-M01 Phase 1 theory completion
+
+- Added the controlled theory drafts for all nine `BA-01-C04` and all six `BA-01-C05` topic IDs.
+- Established consistent vocabulary for objectives, KPIs, benefits, risks, dependencies, capabilities, processes, requirements, and decisions.
+- Covered ethics, confidentiality, quality, documentation, portfolio evidence, and career progression as one professional-practice system.
+- Completed theory drafts for all five BA-M01 chapters while keeping Phase 2 assessments, assignments, labs, and release artifacts out of scope.
+- Updated the BA-M01 word budget and checkpoint; the next gate is independent theory review across the complete module.
