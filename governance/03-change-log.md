@@ -99,3 +99,11 @@
 - Approved an approximately 50,000-word Phase 1 theory budget for `BA-M02 - Stakeholders and Elicitation`.
 - Allocated approximately 10,000 words to each of the five controlled chapters without changing any chapter or topic IDs.
 - Updated the BA-M02 checkpoint so the BA-M01 independent theory review remains the only prerequisite gate before `BA-02-C01` begins.
+
+## 0.4.0 - BA-M01 theory approval and pre-assessment audit
+
+- Recorded user approval of all five BA-M01 Phase 1 theory chapters.
+- Added the controlled `BA-M01-PRE_ASSESSMENT_AUDIT.md` with validated coverage for all 37 topic IDs and no critical theory blockers.
+- Advanced the BA-M01 contract and checkpoint to `PRE_ASSESSMENT_AUDITED` without marking later phases or the full module released.
+- Marked the reader theory-review gate as passed while retaining its non-authoritative draft-reader status.
+- Resolved `ISS-004` and returned BA-M02 to `OUTLINED`; its next exact action is Phase 1 theory for `BA-02-C01`.

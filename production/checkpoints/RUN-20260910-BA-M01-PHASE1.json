@@ -3,7 +3,7 @@
   "run_id": "RUN-20260910-BA-M01-PHASE1",
   "track": "BA",
   "module_id": "BA-M01",
-  "status": "DRAFTED",
+  "status": "PRE_ASSESSMENT_AUDITED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M01-contract.json",
     "governance/03-change-log.md",
@@ -14,11 +14,12 @@
     "production/drafts/BA-M01/BA-M01-C03.md",
     "production/drafts/BA-M01/BA-M01-C04.md",
     "production/drafts/BA-M01/BA-M01-C05.md",
-    "production/drafts/BA-M01/BA-M01-phase1-reader-manifest.json"
+    "production/drafts/BA-M01/BA-M01-phase1-reader-manifest.json",
+    "production/audits/BA-M01/BA-M01-PRE_ASSESSMENT_AUDIT.md"
   ],
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Perform an independent theory review of all five BA-M01 chapters; resolve critical conceptual gaps before approving Phase 2 MCQs, assignments, labs, or release work.",
+  "next_action": "BA-M01 may begin Phase 2 theory assessment when explicitly requested; for the active Business Analyst sequence, begin BA-M02 Phase 1 theory in production/drafts/BA-M02/BA-M02-C01.md.",
   "updated_at": "2026-09-10"
 }
