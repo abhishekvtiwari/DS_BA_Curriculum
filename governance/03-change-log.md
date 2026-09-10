@@ -71,3 +71,11 @@
 - Covered ethics, confidentiality, quality, documentation, portfolio evidence, and career progression as one professional-practice system.
 - Completed theory drafts for all five BA-M01 chapters while keeping Phase 2 assessments, assignments, labs, and release artifacts out of scope.
 - Updated the BA-M01 word budget and checkpoint; the next gate is independent theory review across the complete module.
+
+## 0.3.6 - BA-M01 Phase 1 reader publication
+
+- Published one controlled draft reader combining all five `BA-M01` Phase 1 theory chapters.
+- Preserved the module code, all five chapter codes, and all 37 controlled topic IDs in the publication structure and coverage register.
+- Added publication controls, coded running headers, contents, bookmarks, chapter audits, references, and a consolidated coverage register.
+- Recorded visual QA, page count, source files, and SHA-256 in a non-authoritative draft manifest.
+- Kept the Markdown source files authoritative and retained independent theory review as the next gate; this reader is not a final module release.
