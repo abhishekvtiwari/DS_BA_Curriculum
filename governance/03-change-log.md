@@ -172,3 +172,18 @@
 - Preserved module, chapter, and topic codes in authoritative and individual working files while displaying zero internal codes in the compiled review reader.
 - Passed source coverage, code-visibility, page-text, bookmark, ASCII-hyphen, checksum, and representative visual-render checks.
 - Retained C05 approval and the BA-M02 pre-assessment theory audit as required next gates before Phase 2.
+
+## 0.4.9 - BA-M02 Phase 1 approval and prerequisite closure
+
+- Recorded user approval of BA-M02 and its compiled learner review publication on 2026-09-11.
+- Advanced all five BA-M02 theory chapters and the module contract to `PRE_ASSESSMENT_AUDITED`.
+- Added the BA-M02 pre-assessment theory audit covering all five chapters and 33 controlled topic IDs.
+- Closed the BA-M02 theory prerequisite required to begin BA-M03 Phase 1.
+
+## 0.5.0 - BA-M03 complete Phase 1 theory draft
+
+- Activated BA-M03 after the approved BA-M02 prerequisite closure.
+- Added six coded individual working chapters covering all 41 controlled BA-M03 topic IDs.
+- Added the controlled Phase 1 word budget and checkpoint while retaining `ISS-001` for definitive architecture-level budget approval.
+- Kept assessment, exercise, assignment, lab, project, case-study, capstone, release, and code-free compiled publication work outside this phase.
+- Recorded all chapters as author self-audited and left independent theory review and the pre-assessment audit as the next gates.

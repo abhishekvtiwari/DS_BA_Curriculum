@@ -23,11 +23,13 @@
   "page_count": 95,
   "sha256": "F47BA9DD52D3AC04B1443302811EFA3E3737DF7AF41BCBC7B42DD3B8B6237F8B",
   "visual_qa": "PASSED",
-  "publication_layout_approval": "PENDING_USER_REVIEW",
-  "theory_review_gate": "PENDING_C05_APPROVAL_AND_PRE_ASSESSMENT_AUDIT",
-  "theory_approval": "PENDING_C05_APPROVAL",
+  "publication_layout_approval": "APPROVED_BY_USER",
+  "publication_layout_approved_on": "2026-09-11",
+  "theory_review_gate": "PASSED",
+  "theory_approval": "APPROVED_BY_USER",
+  "theory_approved_on": "2026-09-11",
   "release_gate": "NOT_EVALUATED",
   "authoritative": false,
-  "next_action": "Review the compiled code-free learner publication and approve or correct C05; then run the Phase 1 pre-assessment theory audit.",
+  "next_action": "BA-M02 may proceed to Phase 2 only when explicitly requested; BA-M03 Phase 1 may begin because its prerequisite is satisfied.",
   "generated_on": "2026-09-10"
 }

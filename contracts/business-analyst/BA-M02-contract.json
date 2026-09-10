@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "contract_id": "BA-M02-CONTRACT",
-  "status": "DRAFTED",
+  "status": "PRE_ASSESSMENT_AUDITED",
   "track": "Business Analyst",
   "module_id": "BA-M02",
   "module_title": "Stakeholders and Elicitation",
