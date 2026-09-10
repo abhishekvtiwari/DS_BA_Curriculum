@@ -16,3 +16,10 @@
 - Added an objective-quality marker to every contract.
 - Added repository-root `.gitignore` rules for generated archives and temporary files.
 - Verified that the organized repository root contains no unintended duplicate artifacts.
+
+## 0.2.2 — External roadmap coverage audit
+
+- Added controlled coverage-gap report `REF-AUDIT-20260910-01` for the supplied roadmap.sh references.
+- Classified candidate gaps by priority and separated core gaps from optional tool choices.
+- Recorded `ISS-003` to prevent candidate topics from becoming curriculum scope without approval.
+- Preserved all existing module, chapter, and topic IDs; no curriculum scope changed.

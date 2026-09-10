@@ -22,7 +22,11 @@
     }
   ],
   "production_root": "production/",
+  "checkpoints_root": "production/checkpoints/",
   "prompts_root": "prompts/",
   "governance_root": "governance/",
-  "schemas_root": "schemas/"
+  "schemas_root": "schemas/",
+  "coverage_reports": [
+    "indexes/03-roadmap-sh-coverage-gap-report.md"
+  ]
 }

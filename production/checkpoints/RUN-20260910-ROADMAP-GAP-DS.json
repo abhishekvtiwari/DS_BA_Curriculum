@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.2.0",
+  "run_id": "RUN-20260910-ROADMAP-GAP-DS",
+  "track": "DS",
+  "module_id": "DS-M06",
+  "status": "PLANNED",
+  "completed_artifacts": [
+    "indexes/03-roadmap-sh-coverage-gap-report.md"
+  ],
+  "open_issues": [
+    "ISS-003"
+  ],
+  "next_action": "Architecture owner reviews and approves or rejects the Data Science Priority 1 and Priority 2 candidates in REF-AUDIT-20260910-01 before any blueprint or contract change.",
+  "updated_at": "2026-09-10"
+}

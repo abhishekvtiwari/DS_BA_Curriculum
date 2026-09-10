@@ -11,7 +11,7 @@ This repository is a controlled AI-authoring specification and operational produ
 - `data-science/`: 18-module Data Science outline with 96 chapters and 661 topic/subtopic control points.
 - `business-analyst/`: 15-module Business Analyst outline with 69 chapters and 475 topic/subtopic control points.
 - `contracts/`: one explicit JSON contract for every module.
-- `production/`: fixed output directories for drafts, labs, assignments, assessments, audits, and releases.
+- `production/`: fixed output directories for drafts, labs, assignments, assessments, audits, checkpoints, and releases.
 - `prompts/`: controlled prompts for orchestration, chapter writing, labs, assessments, audits, and checkpoints.
 - `schemas/`: JSON schemas and examples for checkpoints and assessment items.
 - `indexes/`: master index, glossary register, and cross-reference register.
@@ -45,6 +45,7 @@ Assessments are deliberately generated **after** the pre-assessment content audi
 - Audit: `production/audits/DS-M01/DS-M01-PRE_ASSESSMENT_AUDIT.md`
 - Release audit: `production/audits/DS-M01/DS-M01-FINAL_RELEASE_AUDIT.md`
 - Release record: `production/release/DS-M01/DS-M01-release.md`
+- Checkpoint: `production/checkpoints/RUN-YYYYMMDD-TASK-TRACK.json`
 
 ## Resumability
 
