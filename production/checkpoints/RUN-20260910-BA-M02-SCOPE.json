@@ -3,7 +3,7 @@
   "run_id": "RUN-20260910-BA-M02-SCOPE",
   "track": "BA",
   "module_id": "BA-M02",
-  "status": "RECREATION_AUTHORIZED",
+  "status": "READY_FOR_INDEPENDENT_THEORY_REVIEW",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M02-contract.json",
     "production/drafts/BA-M02/BA-M02-word-budget.md",
@@ -21,10 +21,10 @@
     "ISS-001",
     "ISS-014"
   ],
-  "next_action": "After BA-M01 strict validation, recreate BA-M02 Phase 1 sources in place and build its code-hidden learner review PDF.",
+  "next_action": "Begin authorized BA-M03 Phase 1 retain-and-deepen work at BA-M03-C01; BA-M02 publication remains pending independent review and owner acceptance.",
   "updated_at": "2026-09-11",
   "current_phase": "Phase 1 - Theory only",
-  "review_state": "OWNER_AUTHORIZED_RECREATION - STRICT_REVIEW_REQUIRED",
+  "review_state": "ALL_FIVE_CHAPTERS_STRICT_GATES_PASSED - OWNER_ACCEPTANCE_REQUIRED",
   "owner_waiver": {
     "approved_on": "2026-09-11",
     "scope": "BA-M01, BA-M02, and complete BA-M03 Phase 1 theory recreation in place, including BA-M03-C08-C12",
