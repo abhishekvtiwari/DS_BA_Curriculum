@@ -3,9 +3,9 @@
   "run_id": "RUN-20260911-BA-M05-PHASE1",
   "track": "BA",
   "module_id": "BA-M05",
-  "status": "REBUILD_IN_PROGRESS",
+  "status": "REJECTED_BY_OWNER - REVISION_REQUIRED",
   "current_phase": "Phase 1 - Theory only",
-  "review_state": "BA-M05-C03_READY_FOR_FINAL_REVIEW - OWNER_ACCEPTANCE_REQUIRED",
+  "review_state": "BA-M05-C03_REJECTED_BY_OWNER - REJECTION_FINDINGS_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M05-contract.json",
     "production/drafts/BA-M05/BA-M05-word-budget.md",
@@ -24,7 +24,7 @@
     "ISS-009",
     "ISS-011"
   ],
-  "next_action": "Owner acceptance and independent review of BA-M05-C03. Do not begin BA-M03-C01 or another rebuild chapter until acceptance is recorded.",
+  "next_action": "Obtain the owner's rejection findings for BA-M05-C03, revise only the identified defects, rerun SQL verification and strict gates, then resubmit. Do not begin BA-M03-C01 or another rebuild chapter.",
   "updated_at": "2026-09-11",
   "prerequisite_waiver": {
     "module_id": "BA-M04",
@@ -34,5 +34,11 @@
     "does_not_approve": "BA-M04, BA-M05, or any later phase"
   },
   "rejected_on": "2026-09-11",
-  "rejection_audit": "production/audits/BA-BATCH-20260911/BA-M04-M15-THEORY_BATCH_AUDIT.md"
+  "rejection_audit": "production/audits/BA-BATCH-20260911/BA-M04-M15-THEORY_BATCH_AUDIT.md",
+  "owner_decision": {
+    "chapter_id": "BA-05-C03",
+    "decision": "REJECTED",
+    "recorded_on": "2026-09-11",
+    "findings": "Not yet supplied"
+  }
 }

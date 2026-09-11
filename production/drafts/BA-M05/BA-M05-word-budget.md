@@ -11,7 +11,7 @@
 |---|---:|---:|---|
 | BA-05-C01 - Data Literacy | 8 | 1,000 words/topic target; 600 floor | DRAFTED - 1,563 words - SELF_AUDIT_VOIDED (ISS-009) |
 | BA-05-C02 - Spreadsheet Analysis | 7 | 1,000 words/topic target; 600 floor | DRAFTED - 1,439 words - SELF_AUDIT_VOIDED (ISS-009) |
-| BA-05-C03 - SQL for Analysts | 8 | 1,000 words/topic target; 600 floor | READY_FOR_FINAL_REVIEW - 8,321 source words - OWNER_ACCEPTANCE_REQUIRED |
+| BA-05-C03 - SQL for Analysts | 8 | 1,000 words/topic target; 600 floor | REJECTED_BY_OWNER - REVISION_REQUIRED - 8,321 source words |
 | BA-05-C04 - Python for Analysts | 8 | 1,000 words/topic target; 600 floor | DRAFTED - 1,535 words - SELF_AUDIT_VOIDED (ISS-009) |
 | BA-05-C05 - Visualization | 7 | 1,000 words/topic target; 600 floor | DRAFTED - 1,389 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
