@@ -329,3 +329,13 @@
 - Passed every strict content gate and the paragraph-similarity screen with zero paragraph pairs at or above the 0.55 review threshold.
 - Generated and inspected every page of the 12-page coded working PDF using the approved 32/24/16 hierarchy; owner acceptance remains pending.
 - Advanced C01, C02, and C07 to independent-review status while leaving C03-C06 and C08-C12 unchanged.
+
+## 0.16.0 - 2026-09-11 - BA-M03 Phase 1 completion and collation
+
+- Deepened retained BA-M03-C03 through C06 in place and brought C07 through every strict advisory gate without removing its genuine source prose.
+- Authored controlled BA-M03-C08 through C12 for BRD, PRD, FRD, documentation governance, and progressive documentation projects.
+- Completed all 95 controlled topics across twelve chapters at 61,166 gate-counted words; every chapter passes all blocking and advisory gates under strict mode.
+- Compared 907 substantive body paragraphs across the full module and found zero pairs at or above the 0.55 semantic-repetition threshold.
+- Regenerated twelve coded working PDFs and created a 147-page learner publication with all internal codes and audit sections removed.
+- Verified the 64/32/24/16 publication hierarchy, chapter titles, code policy, text bounds, page density, hashes, and every rendered learner page.
+- Resolved ISS-013 while leaving independent review and owner acceptance open under ISS-014; no Phase 2 authoring, push, or merge was performed.

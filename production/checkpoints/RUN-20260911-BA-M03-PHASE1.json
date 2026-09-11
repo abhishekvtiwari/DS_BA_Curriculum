@@ -1,10 +1,10 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "run_id": "RUN-20260911-BA-M03-PHASE1",
   "track": "BA",
   "module_id": "BA-M03",
-  "status": "C01_C02_READY_FOR_INDEPENDENT_REVIEW",
-  "review_state": "C01_C02_STRICT_AND_SEMANTIC_GATES_PASSED - OWNER_ACCEPTANCE_REQUIRED",
+  "status": "PHASE1_AUTHORING_COMPLETE",
+  "review_state": "C01-C12_STRICT_AND_CORPUS_SEMANTIC_GATES_PASSED - INDEPENDENT_REVIEW_AND_OWNER_ACCEPTANCE_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M03-contract.json",
     "production/drafts/BA-M03/BA-M03-word-budget.md",
@@ -14,22 +14,33 @@
     "production/drafts/BA-M03/BA-M03-C04.md",
     "production/drafts/BA-M03/BA-M03-C05.md",
     "production/drafts/BA-M03/BA-M03-C06.md",
-    "production/drafts/BA-M03/BA-M03-C07.md"
+    "production/drafts/BA-M03/BA-M03-C07.md",
+    "production/drafts/BA-M03/BA-M03-C08.md",
+    "production/drafts/BA-M03/BA-M03-C09.md",
+    "production/drafts/BA-M03/BA-M03-C10.md",
+    "production/drafts/BA-M03/BA-M03-C11.md",
+    "production/drafts/BA-M03/BA-M03-C12.md"
   ],
   "open_issues": [
     "ISS-001",
-    "ISS-013",
     "ISS-014"
   ],
-  "next_action": "Review the coded BA-M03-C01 and C02 PDFs and continue retained-prose deepening with BA-M03-C03; C08-C12 remain to be authored before module collation.",
+  "next_action": "Independent semantic review and owner review of the code-free collated BA-M03 publication; Phase 2 remains unauthorized until acceptance.",
   "updated_at": "2026-09-11",
   "current_phase": "Phase 1 - Theory only",
+  "authoring_evidence": {
+    "controlled_topics": 95,
+    "gate_counted_words": 61166,
+    "strict_gate_result": "PASS - 12 OF 12",
+    "semantic_body_paragraphs": 907,
+    "semantic_pairs_at_or_above_0_55": 0
+  },
   "chapter_review_artifacts": [
     {
       "chapter_id": "BA-03-C01",
       "path": "output/pdf/BA-M03/chapters/BA-M03-C01-Requirements-Concepts.pdf",
       "pages": 16,
-      "sha256": "242478EE57FDD19BCCF0079A914F9363223A687DAADA0FC45108BC1A1CB79E20",
+      "sha256": "E04688D65FE35E17987D4DC30D9A300FE1548E564EFB334A0F75EA3AC5E9834A",
       "visual_qa": "PASSED",
       "approval": "PENDING_USER_REVIEW"
     },
@@ -37,11 +48,30 @@
       "chapter_id": "BA-03-C02",
       "path": "output/pdf/BA-M03/chapters/BA-M03-C02-Requirements-Elicitation.pdf",
       "pages": 12,
-      "sha256": "B5A49FE20095CF123797B4A878D8B2B417EB2C91E3D767EC4293710822383AF2",
+      "sha256": "07B91EB25CC8F4BB62BF5CA0032C52BE3B083D0A9DAA783BA66BC51363F2FC54",
       "visual_qa": "PASSED",
       "approval": "PENDING_USER_REVIEW"
-    }
+    },
+    {"chapter_id":"BA-03-C03","path":"output/pdf/BA-M03/chapters/BA-M03-C03-Acceptance-and-Quality.pdf","pages":11,"sha256":"8E59D2FCCB34BD1639C4E76DFA378F92BE24BD5AA6CFE7A4CA011CEC94A2FDD3","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C04","path":"output/pdf/BA-M03/chapters/BA-M03-C04-Prioritization.pdf","pages":12,"sha256":"613D84DA887C9A14561569357776E0742AEA1DDF10C2C01594DB9513CA37336D","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C05","path":"output/pdf/BA-M03/chapters/BA-M03-C05-Traceability-and-Change.pdf","pages":11,"sha256":"F11DFE1EFFEB6B45CC2F406BB3F808CCA53E8D1E14C56E9E982ED02BF2CFDD9F","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C06","path":"output/pdf/BA-M03/chapters/BA-M03-C06-Requirements-for-Digital-Systems.pdf","pages":14,"sha256":"79DA32698F5F9335F0771622EC581D5557937C215A99ECB31F148E0CCD106E9A","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C07","path":"output/pdf/BA-M03/chapters/BA-M03-C07-Requirements-Documentation-Foundations.pdf","pages":20,"sha256":"0C2B40A31E77C6A135E08D3AB5A99758A00BA4A02F5F6C87C176E7D97805C565","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C08","path":"output/pdf/BA-M03/chapters/BA-M03-C08-Business-Requirements-Document.pdf","pages":17,"sha256":"EDA6088F330936CEBD1B5FC0D235D7BE0CA6D8385170B7302DD25856037CE627","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C09","path":"output/pdf/BA-M03/chapters/BA-M03-C09-Product-Requirements-Document.pdf","pages":17,"sha256":"2C211AE9036B7EBDD62DE9323CD1C510F9F0FD9013F711760146AB2223C34404","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C10","path":"output/pdf/BA-M03/chapters/BA-M03-C10-Functional-Requirements-Document.pdf","pages":21,"sha256":"DB23A2335181E079EB52860E1023B20E03F902F4327213D1C22D9EE2D32A0929","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C11","path":"output/pdf/BA-M03/chapters/BA-M03-C11-Documentation-Quality-Traceability-and-Governance.pdf","pages":15,"sha256":"F2F6A058135FEC48FB8C3B14EDA710256394D0878E1505B02F51F356481E089B","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"},
+    {"chapter_id":"BA-03-C12","path":"output/pdf/BA-M03/chapters/BA-M03-C12-Requirements-Documentation-Projects.pdf","pages":12,"sha256":"A0657D25B97CCDC9747443B1B61B62EBD3FEE4C6F207D6B125C7DDEF5FDE04F0","visual_qa":"PASSED","approval":"PENDING_USER_REVIEW"}
   ],
+  "collated_review_artifact": {
+    "path": "output/pdf/BA-M03/BA-M03-Requirements-Engineering.pdf",
+    "pages": 147,
+    "sha256": "DFA7B294E97C20CE09A7D2B806EDD3517FE636F98F82BD750D8685B0F592C0B1",
+    "internal_codes_visible": false,
+    "typography_points": {"module":64,"chapter":32,"topic":24,"subtopic":16},
+    "visual_qa": "PASSED - ALL 147 PAGES",
+    "approval": "PENDING_USER_REVIEW"
+  },
   "owner_waiver": {
     "approved_on": "2026-09-11",
     "scope": "BA-M01, BA-M02, and complete BA-M03 Phase 1 theory recreation in place, including BA-M03-C08-C12",

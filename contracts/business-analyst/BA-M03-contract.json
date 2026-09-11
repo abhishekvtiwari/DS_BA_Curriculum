@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "contract_id": "BA-M03-CONTRACT",
-  "status": "PARTIAL_DRAFT - UNPARKED",
+  "status": "PHASE1_COMPLETE - INDEPENDENT_REVIEW_PENDING",
   "track": "Business Analyst",
   "module_id": "BA-M03",
   "module_title": "Requirements Engineering",
@@ -556,7 +556,7 @@
   },
   "authoring_state": {
     "phase": "Phase 1 - Theory",
-    "review_state": "C01_C02_AND_C07_READY_FOR_INDEPENDENT_REVIEW; C03-C06_DEPTH_TOP_UP_REQUIRED; C08-C12_NOT_DRAFTED",
+    "review_state": "C01-C12_STRICT_AND_SEMANTIC_GATES_PASSED; INDEPENDENT_REVIEW_AND_OWNER_ACCEPTANCE_PENDING",
     "issue": "ISS-013",
     "sequence_constraint": "Owner waived the BA-M05-C03 sequence restriction for the authorized BA-M01-M03 recreation on 2026-09-11."
   }
