@@ -3,7 +3,7 @@
   "run_id": "RUN-20260910-BA-M02-SCOPE",
   "track": "BA",
   "module_id": "BA-M02",
-  "status": "PRE_ASSESSMENT_AUDITED",
+  "status": "RECREATION_AUTHORIZED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M02-contract.json",
     "production/drafts/BA-M02/BA-M02-word-budget.md",
@@ -18,8 +18,17 @@
     "governance/04-version.json"
   ],
   "open_issues": [
-    "ISS-001"
+    "ISS-001",
+    "ISS-014"
   ],
-  "next_action": "BA-M02 may proceed to Phase 2 only when explicitly requested; BA-M03 Phase 1 theory may begin at production/drafts/BA-M03/BA-M03-C01.md.",
-  "updated_at": "2026-09-11"
+  "next_action": "After BA-M01 strict validation, recreate BA-M02 Phase 1 sources in place and build its code-hidden learner review PDF.",
+  "updated_at": "2026-09-11",
+  "current_phase": "Phase 1 - Theory only",
+  "review_state": "OWNER_AUTHORIZED_RECREATION - STRICT_REVIEW_REQUIRED",
+  "owner_waiver": {
+    "approved_on": "2026-09-11",
+    "scope": "BA-M01, BA-M02, and complete BA-M03 Phase 1 theory recreation in place, including BA-M03-C08-C12",
+    "waives": "BA-M05-C03 sequence restriction for this BA-M01-M03 recreation only",
+    "does_not_authorize": "Phase 2 assessments, Phase 3+ artifacts, later modules, release, push, or merge"
+  }
 }

@@ -3,8 +3,8 @@
   "run_id": "RUN-20260911-BA-M03-PHASE1",
   "track": "BA",
   "module_id": "BA-M03",
-  "status": "PARTIAL_DRAFT - UNPARKED",
-  "review_state": "C01-C06_DEPTH_TOP_UP_REQUIRED; C07_READY_FOR_INDEPENDENT_REVIEW; C08-C12_NOT_DRAFTED",
+  "status": "RECREATION_AUTHORIZED",
+  "review_state": "OWNER_AUTHORIZED_RECREATION - STRICT_REVIEW_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M03-contract.json",
     "production/drafts/BA-M03/BA-M03-word-budget.md",
@@ -18,8 +18,16 @@
   ],
   "open_issues": [
     "ISS-001",
-    "ISS-013"
+    "ISS-013",
+    "ISS-014"
   ],
-  "next_action": "After owner acceptance of BA-M05-C03, deepen BA-M03-C01 in place to the 600 words/topic floor and strict rebuilt-chapter standard. Preserve existing prose.",
-  "updated_at": "2026-09-11"
+  "next_action": "After BA-M02 strict validation, retain and deepen BA-M03-C01-C07, author BA-M03-C08-C12, strictly validate all chapters, and build the code-hidden learner review PDF.",
+  "updated_at": "2026-09-11",
+  "current_phase": "Phase 1 - Theory only",
+  "owner_waiver": {
+    "approved_on": "2026-09-11",
+    "scope": "BA-M01, BA-M02, and complete BA-M03 Phase 1 theory recreation in place, including BA-M03-C08-C12",
+    "waives": "BA-M05-C03 sequence restriction for this BA-M01-M03 recreation only",
+    "does_not_authorize": "Phase 2 assessments, Phase 3+ artifacts, later modules, release, push, or merge"
+  }
 }
