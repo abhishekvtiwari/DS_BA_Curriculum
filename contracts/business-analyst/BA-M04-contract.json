@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "contract_id": "BA-M04-CONTRACT",
-  "status": "PLANNED",
+  "status": "DRAFTED",
   "track": "Business Analyst",
   "module_id": "BA-M04",
   "module_title": "Process Analysis and BPMN",

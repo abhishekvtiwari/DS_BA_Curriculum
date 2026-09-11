@@ -46,3 +46,11 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Escalation | TERM-ESCALATION | BA-M02 | DRAFTED | OPEN |
 | Negotiation | TERM-NEGOTIATION | BA-M02 | DRAFTED | OPEN |
 | Difficult conversation | TERM-DIFFICULT-CONVERSATION | BA-M02 | DRAFTED | OPEN |
+| Process | TERM-PROCESS | BA-M04 | DRAFTED | OPEN |
+| Process boundary | TERM-PROCESS-BOUNDARY | BA-M04 | DRAFTED | OPEN |
+| BPMN | TERM-BPMN | BA-M04 | DRAFTED | OPEN |
+| SIPOC | TERM-SIPOC | BA-M04 | DRAFTED | OPEN |
+| Cycle time | TERM-CYCLE-TIME | BA-M04 | DRAFTED | OPEN |
+| Lead time | TERM-LEAD-TIME | BA-M04 | DRAFTED | OPEN |
+| Work in progress (WIP) | TERM-WIP | BA-M04 | DRAFTED | OPEN |
+| Process mining | TERM-PROCESS-MINING | BA-M04 | DRAFTED | OPEN |

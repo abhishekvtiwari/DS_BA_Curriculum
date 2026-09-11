@@ -203,3 +203,12 @@
 - Opened `ISS-005` to protect the explicit BA-M03 prerequisite required by BA-M04.
 - Added the BA-M04 Phase 0 checkpoint with status `BLOCKED` pending BA-M03 approval or an explicit prerequisite waiver.
 - Kept BA-M04 theory, PDFs, assessments, exercises, labs, projects, case studies, capstone, and release work unstarted.
+
+
+## 0.6.0 - BA-M04 Phase 1 theory draft
+
+- Recorded the user's BA-M03 prerequisite waiver for BA-M04 Phase 1 authoring only.
+- Approved the existing BA-M04 five-chapter, 36-topic scope and added all five coded theory working chapters.
+- Added the controlled BA-M04 word budget and advanced its checkpoint from `BLOCKED` to `DRAFTED`.
+- Verified BPMN 2.0.2 as the current formal OMG specification and used official IIBA and APQC references.
+- Kept assessments, exercises, labs, projects, case studies, capstone, collation, audit, release, and all BA-M03 changes outside scope.
