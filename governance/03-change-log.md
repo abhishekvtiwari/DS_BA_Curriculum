@@ -212,3 +212,10 @@
 - Added the controlled BA-M04 word budget and advanced its checkpoint from `BLOCKED` to `DRAFTED`.
 - Verified BPMN 2.0.2 as the current formal OMG specification and used official IIBA and APQC references.
 - Kept assessments, exercises, labs, projects, case studies, capstone, collation, audit, release, and all BA-M03 changes outside scope.
+
+## 0.7.0 - 2026-09-11
+
+- Drafted Phase 1 theory for BA-M05, BA-M06, and BA-M07 under a user-authorized grouped authoring-only prerequisite waiver.
+- Added 15 coded working chapters covering 106 controlled topics and three controlled word budgets.
+- Added module checkpoints and updated contracts, glossary, cross-references, and open-issue governance.
+- Kept all three modules unapproved and pending grouped independent theory review; later phases remain excluded.
