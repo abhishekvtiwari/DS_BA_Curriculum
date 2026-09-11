@@ -9,7 +9,7 @@
 
 | Artifact | Controlled topics | Density standard | Status |
 |---|---:|---:|---|
-| BA-03-C01 - Requirements Concepts | 8 | 1,000 words/topic target; 600 floor | RETAINED - DEPTH TOP-UP REQUIRED (ISS-013) |
+| BA-03-C01 - Requirements Concepts | 8 | 1,000 words/topic target; 600 floor | AUTHORING GATES PASSED - INDEPENDENT REVIEW PENDING |
 | BA-03-C02 - Requirements Elicitation | 6 | 1,000 words/topic target; 600 floor | RETAINED - DEPTH TOP-UP REQUIRED (ISS-013) |
 | BA-03-C03 - Acceptance and Quality | 6 | 1,000 words/topic target; 600 floor | RETAINED - DEPTH TOP-UP REQUIRED (ISS-013) |
 | BA-03-C04 - Prioritization | 7 | 1,000 words/topic target; 600 floor | RETAINED - DEPTH TOP-UP REQUIRED (ISS-013) |
@@ -28,9 +28,9 @@
 | Guided projects and case studies | - | OPEN | NOT STARTED |
 | Capstone and release artifacts | - | OPEN | NOT STARTED |
 
-BA-M03 depth is governed by the repository density standard. C01-C06 require in-place top-up, C07 is ready for independent review, and C08-C12 are not drafted. `ISS-001` remains open for page budgets and `ISS-013` controls the remaining theory work.
+BA-M03 depth is governed by the repository density standard. C01 and C07 are ready for independent review; C02-C06 require in-place top-up, and C08-C12 are not drafted. `ISS-001` remains open for page budgets and `ISS-013` controls the remaining theory work.
 
-The drafted C01-C07 theory contains approximately 17,012 words. All 49 currently drafted controlled topics are present. C01-C06 are retained for in-place depth top-up, C07 is ready for independent review, and C08-C12 remain not drafted. The former heading-presence self-audits are not acceptance evidence.
+The drafted C01-C07 theory contains 21,440 source words. All 49 currently drafted controlled topics are present. C01 passes the strict authoring gates at 6,133 gate-counted words and a separate paragraph-similarity screen; C07 remains ready for independent review; C02-C06 require retained-prose depth top-up; and C08-C12 remain not drafted. Authoring checks do not constitute independent review or owner acceptance.
 
 ## Phase boundary
 

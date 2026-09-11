@@ -311,3 +311,12 @@
 - Opening `roadmap-template.html` directly now reports that it is an unbuilt template and prints the
   build command, instead of rendering a header over an empty page.
 - No curriculum ID, contract, blueprint, count or authoring status was changed.
+
+## 0.14.0 - 2026-09-11 - BA-M03-C01 retained-prose rebuild
+
+- Rebuilt BA-M03-C01 in place from 2,307 to 6,133 gate-counted words while preserving all eight controlled topic codes.
+- Replaced the ambiguous introductory `Purpose` label with `Chapter overview` and kept the actual requirement concepts distinct.
+- Added nine worked examples, six inline citations, thirteen non-audit table rows, boundary analysis, measurement logic, failure analysis, and an end-to-end classification example.
+- Passed all strict content gates and a separate paragraph-similarity screen with zero paragraph pairs at or above the 0.55 review threshold.
+- Generated and visually inspected the 16-page coded working PDF using the approved 32/24/16 chapter hierarchy; owner acceptance remains pending.
+- Updated BA-M03 contract, budget, checkpoint, and ISS-013 state without authoring Phase 2 material or changing C02-C12 content.

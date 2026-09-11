@@ -3,8 +3,8 @@
   "run_id": "RUN-20260911-BA-M03-PHASE1",
   "track": "BA",
   "module_id": "BA-M03",
-  "status": "RECREATION_AUTHORIZED",
-  "review_state": "OWNER_AUTHORIZED_RECREATION - STRICT_REVIEW_REQUIRED",
+  "status": "C01_READY_FOR_INDEPENDENT_REVIEW",
+  "review_state": "C01_STRICT_AND_SEMANTIC_GATES_PASSED - OWNER_ACCEPTANCE_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M03-contract.json",
     "production/drafts/BA-M03/BA-M03-word-budget.md",
@@ -21,9 +21,17 @@
     "ISS-013",
     "ISS-014"
   ],
-  "next_action": "After BA-M02 strict validation, retain and deepen BA-M03-C01-C07, author BA-M03-C08-C12, strictly validate all chapters, and build the code-hidden learner review PDF.",
+  "next_action": "Review the coded BA-M03-C01 PDF and continue retained-prose deepening with BA-M03-C02; C08-C12 remain to be authored before module collation.",
   "updated_at": "2026-09-11",
   "current_phase": "Phase 1 - Theory only",
+  "latest_chapter_review_artifact": {
+    "chapter_id": "BA-03-C01",
+    "path": "output/pdf/BA-M03/chapters/BA-M03-C01-Requirements-Concepts.pdf",
+    "pages": 16,
+    "sha256": "242478EE57FDD19BCCF0079A914F9363223A687DAADA0FC45108BC1A1CB79E20",
+    "visual_qa": "PASSED",
+    "approval": "PENDING_USER_REVIEW"
+  },
   "owner_waiver": {
     "approved_on": "2026-09-11",
     "scope": "BA-M01, BA-M02, and complete BA-M03 Phase 1 theory recreation in place, including BA-M03-C08-C12",
