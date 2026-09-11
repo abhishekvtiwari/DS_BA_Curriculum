@@ -1,0 +1,425 @@
+<title>DS and BA Curriculum Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EFF1F4; --panel:#FFFFFF; --panel-2:#F4F6F9; --sunk:#E4E8ED;
+  --ink:#0F1720; --muted:#4F5C68; --faint:#7D8B97;
+  --rule:#D8DEE5; --rule-strong:#BDC6CF;
+  --sat:68%; --sat-ink:72%;
+  --sat-soft:70%; --lum-soft:94%;
+  --shadow:0 1px 2px rgba(15,23,32,.06),0 10px 28px rgba(15,23,32,.08);
+  --shadow-lift:0 2px 6px rgba(15,23,32,.10),0 18px 44px rgba(15,23,32,.14);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#080D13; --panel:#111A22; --panel-2:#17222C; --sunk:#0D141B;
+    --ink:#E9EFF4; --muted:#93A3AF; --faint:#6B7A87;
+    --rule:#223039; --rule-strong:#33444F;
+    --sat:74%; --sat-ink:70%;
+    --sat-soft:38%; --lum-soft:17%;
+    --shadow:0 1px 2px rgba(0,0,0,.6),0 10px 28px rgba(0,0,0,.45);
+    --shadow-lift:0 2px 6px rgba(0,0,0,.7),0 18px 44px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#080D13; --panel:#111A22; --panel-2:#17222C; --sunk:#0D141B;
+  --ink:#E9EFF4; --muted:#93A3AF; --faint:#6B7A87;
+  --rule:#223039; --rule-strong:#33444F;
+  --sat:74%; --sat-ink:70%;
+  --sat-soft:38%; --lum-soft:17%;
+  --shadow:0 1px 2px rgba(0,0,0,.6),0 10px 28px rgba(0,0,0,.45);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.7),0 18px 44px rgba(0,0,0,.6);
+}
+.hue{--lum:var(--ll);--lum-ink:var(--il);
+  --c:hsl(var(--h) var(--sat) var(--lum));
+  --c-ink:hsl(var(--h) var(--sat-ink) var(--lum-ink));
+  --c-soft:hsl(var(--h) var(--sat-soft) var(--lum-soft))}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .hue{--lum:var(--dl);--lum-ink:var(--id)}}
+:root[data-theme="dark"] .hue{--lum:var(--dl);--lum-ink:var(--id)}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:Archivo,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.55; margin:0;
+  padding-block:0 72px; padding-left:20px; padding-right:20px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2{margin:0;text-wrap:balance}
+h1{font-family:"Bricolage Grotesque",Archivo,sans-serif;font-weight:800;
+  font-size:clamp(2.1rem,5.4vw,3.6rem);line-height:.98;letter-spacing:-.035em}
+p{margin:0}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+
+header{padding-block:44px 16px;display:flex;flex-direction:column;gap:13px}
+.standfirst{font-size:1.05rem;line-height:1.5;color:var(--muted);max-width:62ch}
+.standfirst b{color:var(--ink);font-weight:600}
+
+.choose{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:12px;margin-top:4px}
+.pw{text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);
+  background:var(--panel);border:1px solid var(--rule);border-radius:8px;
+  padding:0 0 13px;display:flex;flex-direction:column;gap:3px;overflow:hidden;box-shadow:var(--shadow)}
+.pw .ramp{display:flex;height:10px;width:100%}
+.pw .ramp i{flex:1;display:block}
+.pw .code{font-family:"IBM Plex Mono",monospace;font-size:.66rem;font-weight:600;
+  letter-spacing:.15em;color:var(--faint);padding:12px 16px 0}
+.pw .nm{font-family:"Bricolage Grotesque",Archivo,sans-serif;font-weight:800;
+  font-size:1.32rem;letter-spacing:-.025em;padding:0 16px;line-height:1.1}
+.pw .fig{font-family:"IBM Plex Mono",monospace;font-size:.71rem;color:var(--muted);
+  font-variant-numeric:tabular-nums;padding:3px 16px 0}
+.pw[aria-pressed="false"]{opacity:.72;box-shadow:none;background:transparent}
+.pw:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+.spectrum{display:flex;gap:3px;margin-top:14px}
+.sw{flex:1;height:30px;border:0;border-radius:3px;cursor:pointer;padding:0;
+  background:var(--c);opacity:.9;transition:opacity .12s ease,transform .12s ease}
+.sw:hover,.sw.on{opacity:1}
+.sw.on{transform:scaleY(1.38)}
+.sw:focus-visible{outline:2px solid var(--ink);outline-offset:2px;opacity:1}
+
+.stage{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:22px;
+  align-items:start;margin-top:22px}
+
+/* --- the route: cards laid out serpentine, path drawn behind them --- */
+.route{position:relative}
+.route svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  overflow:visible}
+.grid{display:grid;gap:20px 22px;position:relative;z-index:1}
+.stop{
+  position:relative;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;
+  background:var(--panel);border:1px solid var(--rule);border-radius:11px;
+  padding:14px 15px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:var(--shadow);transition:transform .14s ease,box-shadow .14s ease;
+}
+.stop::before{content:"";position:absolute;inset:0;border-radius:11px;
+  border:2px solid transparent;pointer-events:none;transition:border-color .14s ease}
+.stop:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+.stop:focus-visible{outline:none}
+.stop:focus-visible::before,.stop.sel::before{border-color:var(--c)}
+.stop.sel{box-shadow:var(--shadow-lift)}
+.s-top{display:flex;align-items:center;gap:10px}
+.s-num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--c);
+  display:flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;font-size:.74rem;font-weight:600;
+  color:var(--panel);font-variant-numeric:tabular-nums}
+:root[data-theme="dark"] .s-num,
+:root:not([data-theme="light"]) .s-num{color:var(--ground)}
+.s-id{font-family:"IBM Plex Mono",monospace;font-size:.66rem;font-weight:600;
+  letter-spacing:.1em;color:var(--c-ink)}
+.s-count{font-family:"IBM Plex Mono",monospace;font-size:.64rem;color:var(--faint);
+  margin-left:auto;font-variant-numeric:tabular-nums;text-align:right;line-height:1.3}
+.s-title{font-family:"Bricolage Grotesque",Archivo,sans-serif;font-weight:800;
+  font-size:1.05rem;line-height:1.16;letter-spacing:-.022em}
+.ticks{display:flex;gap:3px;margin-top:auto;padding-top:2px}
+.tick{flex:1;height:7px;border-radius:2px;background:var(--c);opacity:.42;border:0;padding:0;
+  cursor:pointer;transition:opacity .1s ease,transform .1s ease;min-width:0}
+.tick:hover,.tick.on{opacity:1;transform:scaleY(1.9)}
+.tick:focus-visible{outline:2px solid var(--ink);outline-offset:2px;opacity:1}
+.seg{fill:none;stroke:var(--c);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;
+  box-shadow:var(--shadow);position:sticky;top:16px;overflow:hidden}
+.p-bar{height:7px;background:var(--c)}
+.p-head{padding:0 0 15px;display:flex;flex-direction:column;gap:8px;background:var(--c-soft)}
+.p-code{font-family:"IBM Plex Mono",monospace;font-size:.69rem;font-weight:600;
+  letter-spacing:.13em;color:var(--c-ink);padding:13px 18px 0}
+.p-title{font-family:"Bricolage Grotesque",Archivo,sans-serif;font-weight:800;
+  font-size:1.42rem;line-height:1.12;letter-spacing:-.028em;padding:0 18px}
+.p-obj{font-size:.86rem;color:var(--muted);line-height:1.45;padding:0 18px}
+.p-stats{display:flex;flex-wrap:wrap;gap:6px;padding:2px 18px 0}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.05em;
+  padding:3px 9px;border-radius:99px;background:var(--panel);color:var(--muted);
+  border:1px solid var(--rule)}
+.pill.now{background:transparent;color:var(--c-ink);border-color:var(--c);font-weight:600}
+.p-body{max-height:min(58vh,560px);overflow-y:auto}
+.chap{border-bottom:1px solid var(--rule)}
+.chap:last-child{border-bottom:0}
+.chap summary{padding:9px 18px;cursor:pointer;list-style:none;display:flex;gap:9px;
+  align-items:baseline;font-size:.88rem}
+.chap summary::-webkit-details-marker{display:none}
+.chap summary::before{content:"";width:7px;height:7px;border-radius:2px;flex:none;
+  background:var(--c);opacity:.45;align-self:center}
+.chap[open] summary::before{opacity:1}
+.chap summary:hover,.chap[open] summary{background:var(--panel-2)}
+.chap summary:focus-visible{outline:2px solid var(--c);outline-offset:-2px}
+.chap.hi summary{background:var(--c-soft)}
+.c-code{font-family:"IBM Plex Mono",monospace;font-size:.65rem;color:var(--faint);flex:none}
+.c-name{font-weight:600;flex:1}
+.c-n{font-family:"IBM Plex Mono",monospace;font-size:.65rem;color:var(--faint);flex:none}
+.tops{padding:2px 18px 12px 34px;display:flex;flex-wrap:wrap;gap:4px;background:var(--panel-2)}
+.top{font-family:"IBM Plex Mono",monospace;font-size:.69rem;padding:2px 8px;border-radius:3px;
+  background:var(--panel);border:1px solid var(--rule);color:var(--muted)}
+
+.legend{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(208px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.lg{background:var(--panel);padding:13px 16px;display:flex;flex-direction:column;gap:3px}
+.lg .k{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint)}
+.lg .v{font-size:.85rem;color:var(--muted);line-height:1.4}
+
+footer{margin-top:38px;border-top:1px solid var(--rule-strong);padding-top:16px;
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--faint);
+  display:flex;flex-direction:column;gap:5px}
+
+@media (max-width:1000px){
+  .stage{grid-template-columns:1fr}
+  .panel{position:static}
+  .p-body{max-height:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Controlled curriculum &mdash; pathway roadmap</div>
+  <h1>DS and BA Curriculum Roadmap</h1>
+  <p class="standfirst">Two independent pathways. Each one is a route you walk end to end, and
+  <b>every stop carries its own colour</b> &mdash; so where a module sits in the spectrum tells you where it
+  sits in the journey. Follow the line; tap any stop, or any chapter tick beneath it.</p>
+
+  <div class="choose">
+    <button class="pw" id="pw-ds" type="button" aria-pressed="true">
+      <span class="ramp" id="ramp-ds"></span>
+      <span class="code">DS &middot; COOL SPECTRUM</span>
+      <span class="nm">Data Science</span>
+      <span class="fig">18 stops &nbsp;/&nbsp; 96 chapters &nbsp;/&nbsp; 661 topics</span>
+    </button>
+    <button class="pw" id="pw-ba" type="button" aria-pressed="false">
+      <span class="ramp" id="ramp-ba"></span>
+      <span class="code">BA &middot; WARM SPECTRUM</span>
+      <span class="nm">Business Analyst</span>
+      <span class="fig">15 stops &nbsp;/&nbsp; 75 chapters &nbsp;/&nbsp; 529 topics</span>
+    </button>
+  </div>
+
+  <div class="spectrum" id="spectrum" role="tablist" aria-label="Jump to a stop"></div>
+</header>
+
+<div class="stage">
+  <div class="route" id="route"><svg id="path" aria-hidden="true"></svg><div class="grid" id="grid"></div></div>
+  <div class="panel hue" id="panel"></div>
+</div>
+
+<div class="legend">
+  <div class="lg"><span class="k">The line</span><span class="v">It runs stop 01 to the end in prerequisite order, turning back on itself at each row.</span></div>
+  <div class="lg"><span class="k">Colour</span><span class="v">Hue is the stop&rsquo;s position in its pathway. The strip above is the whole route as one scale.</span></div>
+  <div class="lg"><span class="k">Ticks</span><span class="v">One tick per chapter on that stop. Select a tick to open its controlled topics.</span></div>
+  <div class="lg"><span class="k">Not shown</span><span class="v">Contract status and authoring state. This is scope, not progress.</span></div>
+</div>
+
+<footer>
+  <span>Source &mdash; 33 module contracts under contracts/data-science and contracts/business-analyst</span>
+  <span>Structure &mdash; module / chapter / controlled topic, read directly from the contract files</span>
+  <span>Scope &mdash; the two pathways are independent and are never combined or compared here</span>
+</footer>
+</div>
+
+<script>
+const D = /*__DATA__*/{"DS":[],"BA":[]}/*__END__*/;
+const RAMP = { DS: [184, 292], BA: [336, 40] };
+let current = 'DS', selMod = null, hiChapter = null;
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function topics(m){return m.ch.reduce((a,c)=>a+c.t.length,0);}
+function hue(track,i){
+  const [a,b]=RAMP[track], n=D[track].length, d=((b-a)%360+360)%360;
+  return Math.round((a+d*(n<2?0:i/(n-1)))%360);
+}
+function hsl2rgb(h,s,l){
+  const k=n=>(n+h/30)%12, a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  return [f(0),f(8),f(4)];
+}
+function relLum(r,g,b){
+  const f=c=>c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);
+  return .2126*f(r)+.7152*f(g)+.0722*f(b);
+}
+/* Vividness leads; contrast only clamps. Solving for the minimum qualifying
+   lightness produces muddy browns across the warm hues. */
+function clampL(h,s,want,cap,floor){
+  let l=want;
+  for(let i=0;i<60;i++){
+    const L=relLum(...hsl2rgb(h,s,l));
+    if(cap!=null&&L>cap) l-=.004;
+    else if(floor!=null&&L<floor) l+=.004;
+    else break;
+  }
+  return Math.max(.05,Math.min(.95,l));
+}
+function solveInk(h,s,t,below){
+  let lo=.05,hi=.95;
+  for(let i=0;i<26;i++){
+    const m=(lo+hi)/2,L=relLum(...hsl2rgb(h,s,m));
+    if(below?L<=t:L>=t){ if(below) lo=m; else hi=m; } else { if(below) hi=m; else lo=m; }
+  }
+  return below?lo:hi;
+}
+const HV={};
+function hueVars(track,i){
+  const key=track+i;
+  if(HV[key]) return HV[key];
+  const h=hue(track,i);
+  return HV[key]='--h:'+h+
+    ';--ll:'+(clampL(h,.68,.455,.253,null)*100).toFixed(1)+'%'+
+    ';--dl:'+(clampL(h,.74,.635,null,.115)*100).toFixed(1)+'%'+
+    ';--il:'+(solveInk(h,.72,.183,true)*100).toFixed(1)+'%'+
+    ';--id:'+(solveInk(h,.70,.223,false)*100).toFixed(1)+'%';
+}
+
+function paintRamps(){
+  ['DS','BA'].forEach(k=>{
+    document.getElementById('ramp-'+k.toLowerCase()).innerHTML =
+      D[k].map((_,i)=>'<i class="hue" style="'+hueVars(k,i)+';background:var(--c)"></i>').join('');
+  });
+}
+function paintSpectrum(){
+  const s=document.getElementById('spectrum');
+  s.innerHTML = D[current].map((m,i)=>
+    '<button class="sw hue" style="'+hueVars(current,i)+'" data-mod="'+m.id+'" role="tab" '+
+    'aria-selected="false" title="'+esc(String(i+1).padStart(2,'0')+'  '+m.id+'  '+m.title)+'"></button>'
+  ).join('');
+  s.querySelectorAll('.sw').forEach(b=>b.addEventListener('click',()=>select(b.dataset.mod,null,true)));
+}
+
+function cols(){
+  const w = document.getElementById('route').clientWidth || 700;
+  return w >= 760 ? 3 : w >= 470 ? 2 : 1;
+}
+
+function buildRoute(){
+  const grid=document.getElementById('grid'), mods=D[current], C=cols();
+  grid.style.gridTemplateColumns='repeat('+C+',minmax(0,1fr))';
+  grid.innerHTML = mods.map((m,i)=>{
+    const row=Math.floor(i/C), inRow=i%C;
+    // serpentine: even rows run left to right, odd rows run back the other way
+    const col = (row%2===0) ? inRow : (C-1-inRow);
+    const n=topics(m);
+    return '<button class="stop hue" style="'+hueVars(current,i)+
+      ';grid-column:'+(col+1)+';grid-row:'+(row+1)+'" data-mod="'+m.id+'" type="button" '+
+      'aria-label="Stop '+(i+1)+', '+esc(m.id)+' '+esc(m.title)+', '+m.ch.length+' chapters, '+n+' topics">'+
+      '<span class="s-top"><span class="s-num">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="s-id">'+esc(m.id)+'</span>'+
+        '<span class="s-count">'+m.ch.length+' ch<br>'+n+' topics</span></span>'+
+      '<span class="s-title">'+esc(m.title)+'</span>'+
+      '<span class="ticks">'+m.ch.map(c=>
+        '<span class="tick" role="button" tabindex="0" data-mod="'+m.id+'" data-ch="'+c.id+'" '+
+        'title="'+esc(c.id+'  '+c.title+'  ('+c.t.length+' topics)')+'"></span>').join('')+
+      '</span></button>';
+  }).join('');
+
+  grid.querySelectorAll('.stop').forEach(b=>
+    b.addEventListener('click',e=>{ if(!e.target.classList.contains('tick')) select(b.dataset.mod,null); }));
+  grid.querySelectorAll('.tick').forEach(t=>{
+    t.addEventListener('click',e=>{ e.stopPropagation(); select(t.dataset.mod,t.dataset.ch); });
+    t.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); select(t.dataset.mod,t.dataset.ch); }});
+  });
+  drawPath();
+}
+
+/* The line is drawn after layout from the real card positions, so it keeps
+   following the route when the column count changes. */
+function drawPath(){
+  const route=document.getElementById('route'), svg=document.getElementById('path');
+  const stops=[...route.querySelectorAll('.stop')];
+  svg.innerHTML='';
+  if(stops.length<2) return;
+  const R=route.getBoundingClientRect();
+  svg.setAttribute('viewBox','0 0 '+R.width+' '+R.height);
+  const box=stops.map(s=>{ const b=s.getBoundingClientRect();
+    return {l:b.left-R.left, r:b.right-R.left, t:b.top-R.top, b:b.bottom-R.top,
+            cx:b.left-R.left+b.width/2, cy:b.top-R.top+b.height/2}; });
+
+  /* The route runs in the gutters between cards, never underneath them, so the
+     whole line stays visible and each card reads as a station sitting on it.
+     Serpentine places the last card of a row directly above the first card of
+     the next, so a row change is a straight drop in the same column. */
+  for(let i=0;i<box.length-1;i++){
+    const a=box[i], b=box[i+1];
+    const sameRow = Math.abs(a.cy-b.cy) < 4;
+    let d;
+    if(sameRow){
+      const dir = b.cx > a.cx ? 1 : -1;
+      d = 'M '+(dir>0?a.r:a.l)+' '+a.cy+' L '+(dir>0?b.l:b.r)+' '+b.cy;
+    } else {
+      d = 'M '+a.cx+' '+a.b+' L '+b.cx+' '+b.t;
+    }
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',d);
+    p.setAttribute('class','seg hue');
+    p.setAttribute('style',hueVars(current,i));
+    svg.appendChild(p);
+  }
+}
+
+function select(modId, chId, scroll){
+  const i=D[current].findIndex(x=>x.id===modId);
+  if(i<0) return;
+  const m=D[current][i];
+  selMod=modId; hiChapter=chId;
+
+  document.querySelectorAll('.stop').forEach(s=>s.classList.toggle('sel',s.dataset.mod===modId));
+  document.querySelectorAll('.tick').forEach(t=>t.classList.toggle('on',!!chId&&t.dataset.ch===chId));
+  document.querySelectorAll('.sw').forEach(b=>{
+    const on=b.dataset.mod===modId; b.classList.toggle('on',on); b.setAttribute('aria-selected',on);
+  });
+  if(scroll){
+    const el=document.querySelector('.stop[data-mod="'+modId+'"]');
+    if(el) el.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+
+  const n=topics(m), flow=[];
+  (m.pre||[]).forEach(p=>flow.push('<span class="pill">after '+esc(p)+'</span>'));
+  if(m.next) flow.push('<span class="pill">then '+esc(m.next)+'</span>');
+
+  const panel=document.getElementById('panel');
+  hueVars(current,i).split(';').forEach(kv=>{
+    const j=kv.indexOf(':'); panel.style.setProperty(kv.slice(0,j),kv.slice(j+1));
+  });
+  panel.innerHTML =
+    '<div class="p-bar"></div><div class="p-head">'+
+      '<div class="p-code">'+esc(m.id)+'</div>'+
+      '<h2 class="p-title">'+esc(m.title)+'</h2>'+
+      (m.obj?'<p class="p-obj">'+esc(m.obj)+'</p>':'')+
+      '<div class="p-stats"><span class="pill now">stop '+String(i+1).padStart(2,'0')+
+        ' of '+D[current].length+'</span>'+
+        '<span class="pill">'+m.ch.length+' chapters</span>'+
+        '<span class="pill">'+n+' topics</span>'+flow.join('')+'</div>'+
+    '</div><div class="p-body">'+
+      m.ch.map(c=>
+        '<details class="chap'+(c.id===chId?' hi':'')+'"'+(c.id===chId?' open':'')+'><summary>'+
+          '<span class="c-code">'+esc(c.id)+'</span>'+
+          '<span class="c-name">'+esc(c.title)+'</span>'+
+          '<span class="c-n">'+c.t.length+'</span></summary>'+
+        '<div class="tops">'+c.t.map(t=>'<span class="top">'+esc(t)+'</span>').join('')+
+        '</div></details>').join('')+
+    '</div>';
+}
+
+function setTrack(k){
+  current=k; selMod=null; hiChapter=null;
+  document.getElementById('pw-ds').setAttribute('aria-pressed',k==='DS');
+  document.getElementById('pw-ba').setAttribute('aria-pressed',k==='BA');
+  paintSpectrum(); buildRoute(); select(D[k][0].id,null);
+}
+
+document.getElementById('pw-ds').addEventListener('click',()=>setTrack('DS'));
+document.getElementById('pw-ba').addEventListener('click',()=>setTrack('BA'));
+paintRamps(); setTrack('DS');
+
+let lastCols=cols(), rt;
+addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    if(cols()!==lastCols){ lastCols=cols(); const km=selMod,kc=hiChapter;
+      buildRoute(); if(km) select(km,kc); }
+    else drawPath();
+  },150);
+});
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(drawPath);
+</script>

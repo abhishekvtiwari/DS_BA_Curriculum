@@ -293,3 +293,17 @@
   contracts including Change Management and Strategy, where it is implausible.
 - No issue-register entries opened; the register is the curriculum lead's write-active area under the owner
   command of 2026-09-11. No curriculum ID, contract, blueprint or count changed.
+
+## 0.13.0 - 2026-09-11 - Pathway roadmap generator
+
+- Added `tools/roadmap/` — `build_roadmap.py`, `roadmap-template.html` and a README — which builds an
+  interactive roadmap of both pathways directly from the 33 module contracts.
+- The generated page is a view, not authoritative material under authoring policy 1.9, so it is written
+  to `output/roadmap/` and is not tracked. The contracts remain the source of truth.
+- Each pathway is drawn as a serpentine route in prerequisite order with one stop per module, one tick
+  per chapter, and every controlled topic reachable. The two pathways are independent and the page
+  never combines or compares them.
+- Colour encodes position in the pathway: DS runs a cool spectrum, BA a warm one. Lightness is solved
+  per hue so each module yields a vivid graphic colour at 3:1 or better against the ground and an ink
+  colour at 4.5:1 or better against the panel, in both light and dark themes.
+- No curriculum ID, contract, blueprint, count or authoring status was changed.
