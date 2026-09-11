@@ -196,3 +196,10 @@
 - Migrated the completed documentation-foundations draft to BA-03-C07 without losing its controlled theory content or review state.
 - Updated the Business Analyst blueprint, module contract, master index, glossary ownership, cross-references, word budget, checkpoint, and downstream navigation.
 - Retired the obsolete BA-M16 contract, checkpoint, draft directory, and generated PDF location under the single-current-version policy.
+
+## 0.5.2 - Park BA-M03 for special review and prepare BA-M04 handoff
+
+- Recorded `SPECIAL_REVIEW_PENDING` on the active BA-M03 checkpoint without changing its drafted content or approval state.
+- Opened `ISS-005` to protect the explicit BA-M03 prerequisite required by BA-M04.
+- Added the BA-M04 Phase 0 checkpoint with status `BLOCKED` pending BA-M03 approval or an explicit prerequisite waiver.
+- Kept BA-M04 theory, PDFs, assessments, exercises, labs, projects, case studies, capstone, and release work unstarted.

@@ -4,6 +4,7 @@
   "track": "BA",
   "module_id": "BA-M03",
   "status": "DRAFTED",
+  "review_state": "SPECIAL_REVIEW_PENDING",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M03-contract.json",
     "production/drafts/BA-M03/BA-M03-word-budget.md",
@@ -18,6 +19,6 @@
   "open_issues": [
     "ISS-001"
   ],
-  "next_action": "Review the renumbered continuation chapter production/drafts/BA-M03/BA-M03-C07.md using its coded PDF; after approval, begin Phase 1 theory for production/drafts/BA-M03/BA-M03-C08.md, Business Requirements Document (BRD).",
+  "next_action": "Await the user's separate special review of BA-M03. Do not revise, collate, audit, approve, or advance BA-M03 until that review supplies explicit direction.",
   "updated_at": "2026-09-11"
 }

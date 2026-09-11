@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.2.0",
+  "run_id": "RUN-20260911-BA-M04-PHASE0",
+  "track": "BA",
+  "module_id": "BA-M04",
+  "status": "BLOCKED",
+  "current_phase": "Phase 0 - Scope and module contract",
+  "completed_artifacts": [
+    "contracts/business-analyst/BA-M04-contract.json",
+    "business-analyst/00-business-analyst-blueprint.md"
+  ],
+  "open_issues": [
+    "ISS-001",
+    "ISS-005"
+  ],
+  "blocked_by_prerequisite": {
+    "module_id": "BA-M03",
+    "required_state": "User approval or an explicit recorded prerequisite waiver",
+    "current_state": "DRAFTED - SPECIAL_REVIEW_PENDING"
+  },
+  "next_action": "After BA-M03 approval or an explicit prerequisite waiver, approve the BA-M04 contract scope, create production/drafts/BA-M04/BA-M04-word-budget.md, and begin Phase 1 theory with production/drafts/BA-M04/BA-M04-C01.md.",
+  "updated_at": "2026-09-11"
+}
