@@ -556,7 +556,7 @@
   },
   "authoring_state": {
     "phase": "Phase 1 - Theory",
-    "review_state": "C01_AND_C07_READY_FOR_INDEPENDENT_REVIEW; C02-C06_DEPTH_TOP_UP_REQUIRED; C08-C12_NOT_DRAFTED",
+    "review_state": "C01_C02_AND_C07_READY_FOR_INDEPENDENT_REVIEW; C03-C06_DEPTH_TOP_UP_REQUIRED; C08-C12_NOT_DRAFTED",
     "issue": "ISS-013",
     "sequence_constraint": "Owner waived the BA-M05-C03 sequence restriction for the authorized BA-M01-M03 recreation on 2026-09-11."
   }

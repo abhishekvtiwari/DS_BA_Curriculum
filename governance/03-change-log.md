@@ -320,3 +320,12 @@
 - Passed all strict content gates and a separate paragraph-similarity screen with zero paragraph pairs at or above the 0.55 review threshold.
 - Generated and visually inspected the 16-page coded working PDF using the approved 32/24/16 chapter hierarchy; owner acceptance remains pending.
 - Updated BA-M03 contract, budget, checkpoint, and ISS-013 state without authoring Phase 2 material or changing C02-C12 content.
+
+## 0.15.0 - 2026-09-11 - BA-M03-C02 retained-prose rebuild
+
+- Rebuilt BA-M03-C02 in place from 1,799 to 4,388 gate-counted words while preserving all six controlled topic codes.
+- Defined a strict boundary from BA-M02: the prerequisite module teaches elicitation methods, while this chapter teaches transformation of evidence into controlled requirements knowledge.
+- Added eight worked examples, four inline citations, thirteen non-audit table rows, discovery controls, typed decomposition, scenario variation, use-case boundary discipline, story repair, and governed decision logic.
+- Passed every strict content gate and the paragraph-similarity screen with zero paragraph pairs at or above the 0.55 review threshold.
+- Generated and inspected every page of the 12-page coded working PDF using the approved 32/24/16 hierarchy; owner acceptance remains pending.
+- Advanced C01, C02, and C07 to independent-review status while leaving C03-C06 and C08-C12 unchanged.
