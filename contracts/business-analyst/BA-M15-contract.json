@@ -22,7 +22,7 @@
   "prerequisite_modules": [
     "BA-M14"
   ],
-  "recommended_next_module": "BA-M16",
+  "recommended_next_module": null,
   "chapters": [
     {
       "id": "BA-15-C01",

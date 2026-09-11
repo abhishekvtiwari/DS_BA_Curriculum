@@ -14,6 +14,12 @@
 | BA-03-C04 - Prioritization | 7 | Approximately 10,000 words | DRAFTED - 1,703 words - SELF_AUDIT_PASSED |
 | BA-03-C05 - Traceability and Change | 6 | Approximately 10,000 words | DRAFTED - 1,563 words - SELF_AUDIT_PASSED |
 | BA-03-C06 - Requirements for Digital Systems | 8 | Approximately 10,000 words | DRAFTED - 1,967 words - SELF_AUDIT_PASSED |
+| BA-03-C07 - Requirements Documentation Foundations | 8 | Approximately 7,000 words | DRAFTED - 6,289 words - INDEPENDENT_REVIEW_PENDING |
+| BA-03-C08 - Business Requirements Document (BRD) | 10 | OPEN | PLANNED |
+| BA-03-C09 - Product Requirements Document (PRD) | 10 | OPEN | PLANNED |
+| BA-03-C10 - Functional Requirements Document (FRD) | 12 | OPEN | PLANNED |
+| BA-03-C11 - Documentation Quality, Traceability, and Governance | 8 | OPEN | PLANNED |
+| BA-03-C12 - Requirements Documentation Projects | 6 | OPEN | PLANNED |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation | - | OPEN | NOT STARTED |
@@ -21,9 +27,9 @@
 | Guided projects and case studies | - | OPEN | NOT STARTED |
 | Capstone and release artifacts | - | OPEN | NOT STARTED |
 
-The provisional Phase 1 planning allocation is approximately 60,000 words across six chapters and 41 controlled topics. It is a maximum planning envelope, not a minimum completion target. Coverage quality, conceptual completeness, and audit evidence determine completion. `ISS-001` remains open until the architecture owner approves the definitive module page and word budgets.
+The original requirements-engineering segment has a provisional Phase 1 planning allocation of approximately 60,000 words across six chapters. The integrated module now contains 12 chapters and 95 controlled topics; C07 retains its approved approximately 7,000-word allocation, while C08-C12 remain OPEN pending controlled planning approval. It is a maximum planning envelope, not a minimum completion target. Coverage quality, conceptual completeness, and audit evidence determine completion. `ISS-001` remains open until the architecture owner approves the definitive module page and word budgets.
 
-The first complete Phase 1 draft contains approximately 10,723 words. All 41 controlled topics are present and pass the author self-audit; independent theory review remains required before the pre-assessment audit.
+The drafted C01-C07 theory contains approximately 17,012 words. All 49 currently drafted controlled topics are present and pass their author self-audits; C08-C12 remain planned, and independent theory review remains required before the pre-assessment audit.
 
 ## Phase boundary
 

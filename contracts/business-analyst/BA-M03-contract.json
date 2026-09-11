@@ -5,7 +5,7 @@
   "track": "Business Analyst",
   "module_id": "BA-M03",
   "module_title": "Requirements Engineering",
-  "objective": "Discover, analyze, specify, prioritize, validate, trace, and control requirements for business, digital, data, AI, security, privacy, and accessibility needs.",
+  "objective": "Discover, analyze, specify, prioritize, validate, trace, and control requirements for business, digital, data, AI, security, privacy, and accessibility needs, then create, review, govern, and defend aligned BRD, PRD, and FRD artifacts.",
   "entry_criteria": {
     "required_prerequisites": [
       "BA-M02"
@@ -17,7 +17,9 @@
     "At least one guided lab and one error lab are completed or explicitly marked pseudocode.",
     "Assignments have answer criteria.",
     "Assessment bank passes validation.",
-    "Technical and completeness audits have no unresolved critical blockers."
+    "Technical and completeness audits have no unresolved critical blockers.",
+    "Learner can select the correct document type and explain its audience, purpose, scope, and boundaries.",
+    "Learner produces a reviewed BRD, PRD, FRD, and integrated traceability matrix."
   ],
   "prerequisite_modules": [
     "BA-M02"
@@ -223,26 +225,290 @@
           "title": "accessibility"
         }
       ]
+    },
+    {
+      "id": "BA-03-C07",
+      "title": "Requirements Documentation Foundations",
+      "subtopics": [
+        {
+          "id": "BA-03-C07-T01",
+          "title": "purpose and value of requirements documentation"
+        },
+        {
+          "id": "BA-03-C07-T02",
+          "title": "BRD, PRD, FRD, and supporting-document boundaries"
+        },
+        {
+          "id": "BA-03-C07-T03",
+          "title": "audiences, owners, reviewers, and decision rights"
+        },
+        {
+          "id": "BA-03-C07-T04",
+          "title": "source evidence and elicitation inputs"
+        },
+        {
+          "id": "BA-03-C07-T05",
+          "title": "scope, boundaries, assumptions, and constraints"
+        },
+        {
+          "id": "BA-03-C07-T06",
+          "title": "templates, writing standards, and document navigation"
+        },
+        {
+          "id": "BA-03-C07-T07",
+          "title": "identifiers, versions, and revision history"
+        },
+        {
+          "id": "BA-03-C07-T08",
+          "title": "review, approval, baseline, and controlled change"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C08",
+      "title": "Business Requirements Document (BRD)",
+      "subtopics": [
+        {
+          "id": "BA-03-C08-T01",
+          "title": "business context and executive summary"
+        },
+        {
+          "id": "BA-03-C08-T02",
+          "title": "problem statement and opportunity statement"
+        },
+        {
+          "id": "BA-03-C08-T03",
+          "title": "objectives, outcomes, and strategic alignment"
+        },
+        {
+          "id": "BA-03-C08-T04",
+          "title": "in-scope and out-of-scope boundaries"
+        },
+        {
+          "id": "BA-03-C08-T05",
+          "title": "stakeholder needs and decision ownership"
+        },
+        {
+          "id": "BA-03-C08-T06",
+          "title": "current state, pain points, and future state"
+        },
+        {
+          "id": "BA-03-C08-T07",
+          "title": "business requirements and business rules"
+        },
+        {
+          "id": "BA-03-C08-T08",
+          "title": "assumptions, constraints, dependencies, and risks"
+        },
+        {
+          "id": "BA-03-C08-T09",
+          "title": "benefits, KPIs, and measurable success criteria"
+        },
+        {
+          "id": "BA-03-C08-T10",
+          "title": "review, approval, and BRD baseline"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C09",
+      "title": "Product Requirements Document (PRD)",
+      "subtopics": [
+        {
+          "id": "BA-03-C09-T01",
+          "title": "product vision, strategy, and value proposition"
+        },
+        {
+          "id": "BA-03-C09-T02",
+          "title": "users, personas, and jobs to be done"
+        },
+        {
+          "id": "BA-03-C09-T03",
+          "title": "user problems, needs, and use cases"
+        },
+        {
+          "id": "BA-03-C09-T04",
+          "title": "product scope, capabilities, and feature boundaries"
+        },
+        {
+          "id": "BA-03-C09-T05",
+          "title": "prioritization, roadmap context, and trade-offs"
+        },
+        {
+          "id": "BA-03-C09-T06",
+          "title": "epics, user stories, and requirement decomposition"
+        },
+        {
+          "id": "BA-03-C09-T07",
+          "title": "acceptance criteria and definition of done"
+        },
+        {
+          "id": "BA-03-C09-T08",
+          "title": "user experience, accessibility, and content requirements"
+        },
+        {
+          "id": "BA-03-C09-T09",
+          "title": "product metrics, analytics, and experiment requirements"
+        },
+        {
+          "id": "BA-03-C09-T10",
+          "title": "releases, dependencies, risks, and approvals"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C10",
+      "title": "Functional Requirements Document (FRD)",
+      "subtopics": [
+        {
+          "id": "BA-03-C10-T01",
+          "title": "system context, boundaries, and external actors"
+        },
+        {
+          "id": "BA-03-C10-T02",
+          "title": "functional decomposition and requirement hierarchy"
+        },
+        {
+          "id": "BA-03-C10-T03",
+          "title": "stable identifiers and precise requirement statements"
+        },
+        {
+          "id": "BA-03-C10-T04",
+          "title": "actors, roles, permissions, and authorization behavior"
+        },
+        {
+          "id": "BA-03-C10-T05",
+          "title": "inputs, processing, outputs, and validations"
+        },
+        {
+          "id": "BA-03-C10-T06",
+          "title": "data requirements, field rules, and data quality"
+        },
+        {
+          "id": "BA-03-C10-T07",
+          "title": "interfaces, APIs, integrations, and dependencies"
+        },
+        {
+          "id": "BA-03-C10-T08",
+          "title": "business rules, calculations, and decision logic"
+        },
+        {
+          "id": "BA-03-C10-T09",
+          "title": "workflows, states, events, and transitions"
+        },
+        {
+          "id": "BA-03-C10-T10",
+          "title": "exceptions, errors, alternate flows, and recovery"
+        },
+        {
+          "id": "BA-03-C10-T11",
+          "title": "links to non-functional, security, privacy, and compliance requirements"
+        },
+        {
+          "id": "BA-03-C10-T12",
+          "title": "test cases, UAT criteria, and implementation traceability"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C11",
+      "title": "Documentation Quality, Traceability, and Governance",
+      "subtopics": [
+        {
+          "id": "BA-03-C11-T01",
+          "title": "completeness and coverage review"
+        },
+        {
+          "id": "BA-03-C11-T02",
+          "title": "consistency and contradiction detection"
+        },
+        {
+          "id": "BA-03-C11-T03",
+          "title": "clarity, ambiguity, and atomicity"
+        },
+        {
+          "id": "BA-03-C11-T04",
+          "title": "feasibility, testability, and acceptance readiness"
+        },
+        {
+          "id": "BA-03-C11-T05",
+          "title": "requirements traceability matrix"
+        },
+        {
+          "id": "BA-03-C11-T06",
+          "title": "BRD-to-PRD-to-FRD cross-document alignment"
+        },
+        {
+          "id": "BA-03-C11-T07",
+          "title": "review comments, conflict resolution, and sign-off"
+        },
+        {
+          "id": "BA-03-C11-T08",
+          "title": "change impact, baselines, audit trail, and document retirement"
+        }
+      ]
+    },
+    {
+      "id": "BA-03-C12",
+      "title": "Requirements Documentation Projects",
+      "subtopics": [
+        {
+          "id": "BA-03-C12-T01",
+          "title": "beginner BRD project"
+        },
+        {
+          "id": "BA-03-C12-T02",
+          "title": "intermediate PRD project"
+        },
+        {
+          "id": "BA-03-C12-T03",
+          "title": "advanced FRD project"
+        },
+        {
+          "id": "BA-03-C12-T04",
+          "title": "integrated BRD-PRD-FRD documentation pack"
+        },
+        {
+          "id": "BA-03-C12-T05",
+          "title": "repair and rationalize a poor documentation set"
+        },
+        {
+          "id": "BA-03-C12-T06",
+          "title": "present, defend, approve, and hand over requirements"
+        }
+      ]
     }
   ],
   "tools_and_environment": [
     "Markdown editor",
     "Git",
-    "Python 3.11+"
+    "Python 3.11+",
+    "Diagramming tool",
+    "Requirements or work-management tool",
+    "Spreadsheet tool for traceability matrices"
   ],
   "required_labs": [
     "BA-M03-LAB-01 Guided implementation lab tied to every chapter",
     "BA-M03-LAB-02 Deliberately flawed artifact and root-cause repair lab",
-    "BA-M03-LAB-03 Integrated module project using approved subtopics only"
+    "BA-M03-LAB-03 Integrated module project using approved subtopics only",
+    "BA-M03-LAB-04 Guided BRD creation from controlled evidence",
+    "BA-M03-LAB-05 Guided PRD and FRD derivation with trace links",
+    "BA-M03-LAB-06 Deliberately inconsistent documentation pack and root-cause repair lab",
+    "BA-M03-LAB-07 Integrated BRD-PRD-FRD professional project"
   ],
   "required_assignments": [
     "BA-M03-ASSIGN-01 Foundations",
     "BA-M03-ASSIGN-02 Logic-building",
     "BA-M03-ASSIGN-03 Realistic dataset or business artifact",
-    "BA-M03-ASSIGN-04 Troubleshooting and explanation"
+    "BA-M03-ASSIGN-04 Troubleshooting and explanation",
+    "BA-M03-ASSIGN-05 Document selection and foundations",
+    "BA-M03-ASSIGN-06 BRD creation and review",
+    "BA-M03-ASSIGN-07 PRD creation and prioritization",
+    "BA-M03-ASSIGN-08 FRD specification and traceability",
+    "BA-M03-ASSIGN-09 Integrated documentation quality audit"
   ],
   "assessment_plan": {
-    "target_questions": 200,
+    "target_questions": 400,
     "question_categories": [
       "definitions",
       "concepts",
@@ -250,7 +516,10 @@
       "implementation",
       "troubleshooting",
       "scenario judgment",
-      "practical tasks"
+      "practical tasks",
+      "document drafting",
+      "traceability",
+      "practical review"
     ],
     "validation_required": true
   },
@@ -264,7 +533,13 @@
     "Unvalidated claims, definitions, or provider-specific details",
     "Insufficient coverage of edge cases, security, privacy, and failure handling",
     "Unvalidated stakeholder assumptions",
-    "Requirements or process recommendations that are not traceable to evidence"
+    "Requirements or process recommendations that are not traceable to evidence",
+    "Confusing a PRD with the transposed abbreviation PDR or with formal design-review terminology",
+    "Duplicating requirements across documents instead of using traceable ownership boundaries",
+    "Writing solution-biased business requirements or untestable functional requirements",
+    "Treating templates as substitutes for elicitation, evidence, analysis, and stakeholder decisions",
+    "Publishing confidential, personal, security-sensitive, or proprietary information",
+    "Losing approval history, traceability, or baseline integrity during change"
   ],
   "required_artifacts": [
     "production/drafts/BA-M03/",
@@ -277,6 +552,6 @@
   "objective_quality": {
     "status": "DEFINED",
     "specificity": "module-specific",
-    "review_note": "Objective names the competencies and scope unique to this module."
+    "review_note": "Objective covers requirements engineering plus the continuing BRD, PRD, FRD, traceability, governance, and professional-defense sequence."
   }
 }

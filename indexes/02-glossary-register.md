@@ -10,10 +10,10 @@ Terms must be defined once where possible, then cross-referenced. Terms with dif
 | Feature | TERM-FEATURE | DS-M08 | PLANNED | OPEN |
 | Agent | TERM-AGENT | DS-M14 | PLANNED | OPEN |
 | KPI | TERM-KPI | BA-M06 | PLANNED | OPEN |
-| Business Requirements Document (BRD) | TERM-BRD | BA-M16 | PLANNED | OPEN |
-| Product Requirements Document (PRD) | TERM-PRD | BA-M16 | PLANNED | OPEN |
-| Functional Requirements Document (FRD) | TERM-FRD | BA-M16 | PLANNED | OPEN |
-| Requirements Traceability Matrix (RTM) | TERM-RTM | BA-M16 | PLANNED | OPEN |
+| Business Requirements Document (BRD) | TERM-BRD | BA-M03 | DRAFTED | OPEN |
+| Product Requirements Document (PRD) | TERM-PRD | BA-M03 | DRAFTED | OPEN |
+| Functional Requirements Document (FRD) | TERM-FRD | BA-M03 | DRAFTED | OPEN |
+| Requirements Traceability Matrix (RTM) | TERM-RTM | BA-M03 | DRAFTED | OPEN |
 | Stakeholder | TERM-STAKEHOLDER | BA-M02 | DRAFTED | OPEN |
 | Stakeholder interest | TERM-STAKEHOLDER-INTEREST | BA-M02 | DRAFTED | OPEN |
 | Stakeholder influence | TERM-STAKEHOLDER-INFLUENCE | BA-M02 | DRAFTED | OPEN |

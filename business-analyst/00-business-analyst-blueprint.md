@@ -175,7 +175,7 @@ Topics and subtopics to be authored under this chapter:
 
 ### BA-M03 — Requirements Engineering
 
-**Module deliverables:** module overview, prerequisite map, chapter map, practical environment, guided projects, error projects, assignment bank, MCQ bank, answer key, glossary, cross-reference map, technical audit, completeness audit, and release record.
+**Module deliverables:** module overview, prerequisite map, chapter map, practical environment, guided requirements and BRD/PRD/FRD projects, error projects, assignment bank, MCQ bank, answer key, glossary, cross-reference map, technical audit, completeness audit, integrated documentation pack, and release record.
 
 #### BA-03-C01 — Requirements Concepts
 
@@ -259,6 +259,102 @@ Topics and subtopics to be authored under this chapter:
 - Required chapter lab: define in the chapter plan before prose generation.
 - Required error lab: define a deliberately flawed artifact and its correction criteria.
 - Required assessment: theory, implementation, troubleshooting, and interpretation.
+
+#### BA-03-C07 — Requirements Documentation Foundations
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C07-T01: purpose and value of requirements documentation
+- BA-03-C07-T02: BRD, PRD, FRD, and supporting-document boundaries
+- BA-03-C07-T03: audiences, owners, reviewers, and decision rights
+- BA-03-C07-T04: source evidence and elicitation inputs
+- BA-03-C07-T05: scope, boundaries, assumptions, and constraints
+- BA-03-C07-T06: templates, writing standards, and document navigation
+- BA-03-C07-T07: identifiers, versions, and revision history
+- BA-03-C07-T08: review, approval, baseline, and controlled change
+- Required chapter lab: classify requirements artifacts and design a controlled document set.
+- Required error lab: identify duplicate, conflicting, unowned, and unapproved requirements documents.
+- Required assessment: theory, interpretation, document selection, traceability, and governance.
+
+#### BA-03-C08 — Business Requirements Document (BRD)
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C08-T01: business context and executive summary
+- BA-03-C08-T02: problem statement and opportunity statement
+- BA-03-C08-T03: objectives, outcomes, and strategic alignment
+- BA-03-C08-T04: in-scope and out-of-scope boundaries
+- BA-03-C08-T05: stakeholder needs and decision ownership
+- BA-03-C08-T06: current state, pain points, and future state
+- BA-03-C08-T07: business requirements and business rules
+- BA-03-C08-T08: assumptions, constraints, dependencies, and risks
+- BA-03-C08-T09: benefits, KPIs, and measurable success criteria
+- BA-03-C08-T10: review, approval, and BRD baseline
+- Required chapter lab: create a BRD from controlled interview and process evidence.
+- Required error lab: repair a BRD containing solution bias, vague objectives, missing scope, and unmeasurable outcomes.
+- Required assessment: theory, drafting, review, troubleshooting, and stakeholder judgment.
+
+#### BA-03-C09 — Product Requirements Document (PRD)
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C09-T01: product vision, strategy, and value proposition
+- BA-03-C09-T02: users, personas, and jobs to be done
+- BA-03-C09-T03: user problems, needs, and use cases
+- BA-03-C09-T04: product scope, capabilities, and feature boundaries
+- BA-03-C09-T05: prioritization, roadmap context, and trade-offs
+- BA-03-C09-T06: epics, user stories, and requirement decomposition
+- BA-03-C09-T07: acceptance criteria and definition of done
+- BA-03-C09-T08: user experience, accessibility, and content requirements
+- BA-03-C09-T09: product metrics, analytics, and experiment requirements
+- BA-03-C09-T10: releases, dependencies, risks, and approvals
+- Required chapter lab: create a PRD for a controlled product scenario and map it to approved business outcomes.
+- Required error lab: repair a feature-led PRD with unsupported users, conflicting priorities, and missing success measures.
+- Required assessment: theory, product judgment, prioritization, traceability, and review.
+
+#### BA-03-C10 — Functional Requirements Document (FRD)
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C10-T01: system context, boundaries, and external actors
+- BA-03-C10-T02: functional decomposition and requirement hierarchy
+- BA-03-C10-T03: stable identifiers and precise requirement statements
+- BA-03-C10-T04: actors, roles, permissions, and authorization behavior
+- BA-03-C10-T05: inputs, processing, outputs, and validations
+- BA-03-C10-T06: data requirements, field rules, and data quality
+- BA-03-C10-T07: interfaces, APIs, integrations, and dependencies
+- BA-03-C10-T08: business rules, calculations, and decision logic
+- BA-03-C10-T09: workflows, states, events, and transitions
+- BA-03-C10-T10: exceptions, errors, alternate flows, and recovery
+- BA-03-C10-T11: links to non-functional, security, privacy, and compliance requirements
+- BA-03-C10-T12: test cases, UAT criteria, and implementation traceability
+- Required chapter lab: derive an FRD from an approved BRD and PRD using stable trace links.
+- Required error lab: diagnose contradictory rules, missing alternate flows, invalid data assumptions, and untestable functional requirements.
+- Required assessment: theory, specification, implementation interpretation, debugging, and traceability.
+
+#### BA-03-C11 — Documentation Quality, Traceability, and Governance
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C11-T01: completeness and coverage review
+- BA-03-C11-T02: consistency and contradiction detection
+- BA-03-C11-T03: clarity, ambiguity, and atomicity
+- BA-03-C11-T04: feasibility, testability, and acceptance readiness
+- BA-03-C11-T05: requirements traceability matrix
+- BA-03-C11-T06: BRD-to-PRD-to-FRD cross-document alignment
+- BA-03-C11-T07: review comments, conflict resolution, and sign-off
+- BA-03-C11-T08: change impact, baselines, audit trail, and document retirement
+- Required chapter lab: conduct a structured quality review and build a bidirectional traceability matrix.
+- Required error lab: reconcile conflicting BRD, PRD, FRD, design, and test artifacts without silently changing approved scope.
+- Required assessment: quality diagnosis, governance, impact analysis, and review judgment.
+
+#### BA-03-C12 — Requirements Documentation Projects
+
+Topics and subtopics to be authored under this chapter:
+- BA-03-C12-T01: beginner BRD project
+- BA-03-C12-T02: intermediate PRD project
+- BA-03-C12-T03: advanced FRD project
+- BA-03-C12-T04: integrated BRD-PRD-FRD documentation pack
+- BA-03-C12-T05: repair and rationalize a poor documentation set
+- BA-03-C12-T06: present, defend, approve, and hand over requirements
+- Required chapter lab: complete an integrated documentation project using synthetic or public information.
+- Required error lab: repair a deliberately inconsistent document pack and prove the correction through traceability and regression checks.
+- Required assessment: practical creation, peer review, stakeholder defense, audit evidence, and professional judgment.
 
 ### BA-M04 — Process Analysis and BPMN
 
@@ -1042,103 +1138,3 @@ Topics and subtopics to be authored under this chapter:
 - Required chapter lab: define in the chapter plan before prose generation.
 - Required error lab: define a deliberately flawed artifact and its correction criteria.
 - Required assessment: theory, implementation, troubleshooting, and interpretation.
-
-### BA-M16 — Requirements Documentation: BRD, PRD, and FRD
-
-**Module deliverables:** module overview, prerequisite map, chapter map, practical environment, guided BRD/PRD/FRD projects, error projects, assignment bank, MCQ bank, answer key, glossary, cross-reference map, technical audit, completeness audit, integrated documentation pack, and release record.
-
-#### BA-16-C01 — Requirements Documentation Foundations
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C01-T01: purpose and value of requirements documentation
-- BA-16-C01-T02: BRD, PRD, FRD, and supporting-document boundaries
-- BA-16-C01-T03: audiences, owners, reviewers, and decision rights
-- BA-16-C01-T04: source evidence and elicitation inputs
-- BA-16-C01-T05: scope, boundaries, assumptions, and constraints
-- BA-16-C01-T06: templates, writing standards, and document navigation
-- BA-16-C01-T07: identifiers, versions, and revision history
-- BA-16-C01-T08: review, approval, baseline, and controlled change
-- Required chapter lab: classify requirements artifacts and design a controlled document set.
-- Required error lab: identify duplicate, conflicting, unowned, and unapproved requirements documents.
-- Required assessment: theory, interpretation, document selection, traceability, and governance.
-
-#### BA-16-C02 — Business Requirements Document (BRD)
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C02-T01: business context and executive summary
-- BA-16-C02-T02: problem statement and opportunity statement
-- BA-16-C02-T03: objectives, outcomes, and strategic alignment
-- BA-16-C02-T04: in-scope and out-of-scope boundaries
-- BA-16-C02-T05: stakeholder needs and decision ownership
-- BA-16-C02-T06: current state, pain points, and future state
-- BA-16-C02-T07: business requirements and business rules
-- BA-16-C02-T08: assumptions, constraints, dependencies, and risks
-- BA-16-C02-T09: benefits, KPIs, and measurable success criteria
-- BA-16-C02-T10: review, approval, and BRD baseline
-- Required chapter lab: create a BRD from controlled interview and process evidence.
-- Required error lab: repair a BRD containing solution bias, vague objectives, missing scope, and unmeasurable outcomes.
-- Required assessment: theory, drafting, review, troubleshooting, and stakeholder judgment.
-
-#### BA-16-C03 — Product Requirements Document (PRD)
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C03-T01: product vision, strategy, and value proposition
-- BA-16-C03-T02: users, personas, and jobs to be done
-- BA-16-C03-T03: user problems, needs, and use cases
-- BA-16-C03-T04: product scope, capabilities, and feature boundaries
-- BA-16-C03-T05: prioritization, roadmap context, and trade-offs
-- BA-16-C03-T06: epics, user stories, and requirement decomposition
-- BA-16-C03-T07: acceptance criteria and definition of done
-- BA-16-C03-T08: user experience, accessibility, and content requirements
-- BA-16-C03-T09: product metrics, analytics, and experiment requirements
-- BA-16-C03-T10: releases, dependencies, risks, and approvals
-- Required chapter lab: create a PRD for a controlled product scenario and map it to approved business outcomes.
-- Required error lab: repair a feature-led PRD with unsupported users, conflicting priorities, and missing success measures.
-- Required assessment: theory, product judgment, prioritization, traceability, and review.
-
-#### BA-16-C04 — Functional Requirements Document (FRD)
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C04-T01: system context, boundaries, and external actors
-- BA-16-C04-T02: functional decomposition and requirement hierarchy
-- BA-16-C04-T03: stable identifiers and precise requirement statements
-- BA-16-C04-T04: actors, roles, permissions, and authorization behavior
-- BA-16-C04-T05: inputs, processing, outputs, and validations
-- BA-16-C04-T06: data requirements, field rules, and data quality
-- BA-16-C04-T07: interfaces, APIs, integrations, and dependencies
-- BA-16-C04-T08: business rules, calculations, and decision logic
-- BA-16-C04-T09: workflows, states, events, and transitions
-- BA-16-C04-T10: exceptions, errors, alternate flows, and recovery
-- BA-16-C04-T11: links to non-functional, security, privacy, and compliance requirements
-- BA-16-C04-T12: test cases, UAT criteria, and implementation traceability
-- Required chapter lab: derive an FRD from an approved BRD and PRD using stable trace links.
-- Required error lab: diagnose contradictory rules, missing alternate flows, invalid data assumptions, and untestable functional requirements.
-- Required assessment: theory, specification, implementation interpretation, debugging, and traceability.
-
-#### BA-16-C05 — Documentation Quality, Traceability, and Governance
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C05-T01: completeness and coverage review
-- BA-16-C05-T02: consistency and contradiction detection
-- BA-16-C05-T03: clarity, ambiguity, and atomicity
-- BA-16-C05-T04: feasibility, testability, and acceptance readiness
-- BA-16-C05-T05: requirements traceability matrix
-- BA-16-C05-T06: BRD-to-PRD-to-FRD cross-document alignment
-- BA-16-C05-T07: review comments, conflict resolution, and sign-off
-- BA-16-C05-T08: change impact, baselines, audit trail, and document retirement
-- Required chapter lab: conduct a structured quality review and build a bidirectional traceability matrix.
-- Required error lab: reconcile conflicting BRD, PRD, FRD, design, and test artifacts without silently changing approved scope.
-- Required assessment: quality diagnosis, governance, impact analysis, and review judgment.
-
-#### BA-16-C06 — Requirements Documentation Projects
-
-Topics and subtopics to be authored under this chapter:
-- BA-16-C06-T01: beginner BRD project
-- BA-16-C06-T02: intermediate PRD project
-- BA-16-C06-T03: advanced FRD project
-- BA-16-C06-T04: integrated BRD-PRD-FRD documentation pack
-- BA-16-C06-T05: repair and rationalize a poor documentation set
-- BA-16-C06-T06: present, defend, approve, and hand over requirements
-- Required chapter lab: complete an integrated documentation project using synthetic or public information.
-- Required error lab: repair a deliberately inconsistent document pack and prove the correction through traceability and regression checks.
-- Required assessment: practical creation, peer review, stakeholder defense, audit evidence, and professional judgment.

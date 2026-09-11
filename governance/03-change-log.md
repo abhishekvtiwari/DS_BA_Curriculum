@@ -187,3 +187,12 @@
 - Added the controlled Phase 1 word budget and checkpoint while retaining `ISS-001` for definitive architecture-level budget approval.
 - Kept assessment, exercise, assignment, lab, project, case-study, capstone, release, and code-free compiled publication work outside this phase.
 - Recorded all chapters as author self-audited and left independent theory review and the pre-assessment audit as the next gates.
+
+
+## 0.5.1 - Integrate requirements documentation into BA-M03
+
+- Removed BA-M16 as a separate module and made its full BRD, PRD, FRD, documentation-governance, and project sequence the continuation of BA-M03.
+- Renumbered the former BA-16-C01 through BA-16-C06 chapters as BA-03-C07 through BA-03-C12 and their topic IDs accordingly.
+- Migrated the completed documentation-foundations draft to BA-03-C07 without losing its controlled theory content or review state.
+- Updated the Business Analyst blueprint, module contract, master index, glossary ownership, cross-references, word budget, checkpoint, and downstream navigation.
+- Retired the obsolete BA-M16 contract, checkpoint, draft directory, and generated PDF location under the single-current-version policy.
