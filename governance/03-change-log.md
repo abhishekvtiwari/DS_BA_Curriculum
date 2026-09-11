@@ -306,4 +306,8 @@
 - Colour encodes position in the pathway: DS runs a cool spectrum, BA a warm one. Lightness is solved
   per hue so each module yields a vivid graphic colour at 3:1 or better against the ground and an ink
   colour at 4.5:1 or better against the panel, in both light and dark themes.
+- Counts on the page are derived from the injected contract data; none are hand-typed, so the figures
+  cannot drift from the contracts.
+- Opening `roadmap-template.html` directly now reports that it is an unbuilt template and prints the
+  build command, instead of rendering a header over an empty page.
 - No curriculum ID, contract, blueprint, count or authoring status was changed.

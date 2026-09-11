@@ -63,3 +63,12 @@ with sync_playwright() as p:
 ```
 
 Expect no errors, 18 stops on DS and 15 on BA, 96 and 75 ticks.
+
+## Opening the template directly
+
+`roadmap-template.html` is not a viewable page — it holds an empty data placeholder until the build
+injects the contracts. Opened raw it now says so and prints the build command, rather than rendering a
+header over an empty space. The page to open is always `output/roadmap/curriculum-roadmap.html`.
+
+All counts on the page are derived from the injected data. Nothing is hand-typed, so the figures cannot
+drift from the contracts.

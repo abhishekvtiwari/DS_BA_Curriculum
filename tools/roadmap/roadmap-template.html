@@ -121,6 +121,13 @@ header{padding-block:44px 16px;display:flex;flex-direction:column;gap:13px}
 .tick:hover,.tick.on{opacity:1;transform:scaleY(1.9)}
 .tick:focus-visible{outline:2px solid var(--ink);outline-offset:2px;opacity:1}
 .seg{fill:none;stroke:var(--c);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.notice{background:var(--panel);border:1px solid var(--rule);border-left:4px solid #C2413C;
+  border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:9px;
+  box-shadow:var(--shadow);font-size:.9rem;color:var(--muted);max-width:62ch}
+.notice b{color:var(--ink);font-size:1rem}
+.notice code{font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink)}
+.notice .cmd{background:var(--sunk);border:1px solid var(--rule);border-radius:5px;
+  padding:9px 12px;display:block}
 
 .panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;
   box-shadow:var(--shadow);position:sticky;top:16px;overflow:hidden}
@@ -187,13 +194,13 @@ footer{margin-top:38px;border-top:1px solid var(--rule-strong);padding-top:16px;
       <span class="ramp" id="ramp-ds"></span>
       <span class="code">DS &middot; COOL SPECTRUM</span>
       <span class="nm">Data Science</span>
-      <span class="fig">18 stops &nbsp;/&nbsp; 96 chapters &nbsp;/&nbsp; 661 topics</span>
+      <span class="fig" id="fig-ds"></span>
     </button>
     <button class="pw" id="pw-ba" type="button" aria-pressed="false">
       <span class="ramp" id="ramp-ba"></span>
       <span class="code">BA &middot; WARM SPECTRUM</span>
       <span class="nm">Business Analyst</span>
-      <span class="fig">15 stops &nbsp;/&nbsp; 75 chapters &nbsp;/&nbsp; 529 topics</span>
+      <span class="fig" id="fig-ba"></span>
     </button>
   </div>
 
@@ -223,6 +230,7 @@ footer{margin-top:38px;border-top:1px solid var(--rule-strong);padding-top:16px;
 const D = /*__DATA__*/{"DS":[],"BA":[]}/*__END__*/;
 const RAMP = { DS: [184, 292], BA: [336, 40] };
 let current = 'DS', selMod = null, hiChapter = null;
+const BUILT = D.DS.length > 0 && D.BA.length > 0;
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function topics(m){return m.ch.reduce((a,c)=>a+c.t.length,0);}
@@ -269,6 +277,33 @@ function hueVars(track,i){
     ';--dl:'+(clampL(h,.74,.635,null,.115)*100).toFixed(1)+'%'+
     ';--il:'+(solveInk(h,.72,.183,true)*100).toFixed(1)+'%'+
     ';--id:'+(solveInk(h,.70,.223,false)*100).toFixed(1)+'%';
+}
+
+/* Opened straight from the repo, the template still holds its empty data
+   placeholder. The static HTML would render and the route would silently not,
+   so say what happened instead of showing a blank page. */
+function unbuilt(){
+  document.getElementById('route').innerHTML =
+    '<div class="notice"><b>This is the template, not the built page.</b>' +
+    '<span>It still holds its empty data placeholder, so there is no curriculum ' +
+    'to draw. Build it from the module contracts:</span>' +
+    '<code class="cmd">python tools/roadmap/build_roadmap.py</code>' +
+    '<span>then open <code>output/roadmap/curriculum-roadmap.html</code>.</span></div>';
+  document.getElementById('panel').style.display='none';
+  document.getElementById('spectrum').style.display='none';
+  ['ds','ba'].forEach(k=>{
+    document.getElementById('fig-'+k).textContent='no data - template not built';
+  });
+}
+
+function paintCounts(){
+  ['DS','BA'].forEach(k=>{
+    const mods=D[k];
+    const ch=mods.reduce((a,m)=>a+m.ch.length,0);
+    const tp=mods.reduce((a,m)=>a+topics(m),0);
+    document.getElementById('fig-'+k.toLowerCase()).innerHTML =
+      mods.length+' stops &nbsp;/&nbsp; '+ch+' chapters &nbsp;/&nbsp; '+tp+' topics';
+  });
 }
 
 function paintRamps(){
@@ -326,6 +361,7 @@ function buildRoute(){
    following the route when the column count changes. */
 function drawPath(){
   const route=document.getElementById('route'), svg=document.getElementById('path');
+  if(!route || !svg) return;   // the unbuilt notice replaces the route contents
   const stops=[...route.querySelectorAll('.stop')];
   svg.innerHTML='';
   if(stops.length<2) return;
@@ -410,10 +446,12 @@ function setTrack(k){
 
 document.getElementById('pw-ds').addEventListener('click',()=>setTrack('DS'));
 document.getElementById('pw-ba').addEventListener('click',()=>setTrack('BA'));
-paintRamps(); setTrack('DS');
+if(!BUILT){ unbuilt(); }
+else { paintCounts(); paintRamps(); setTrack('DS'); }
 
 let lastCols=cols(), rt;
 addEventListener('resize',()=>{
+  if(!BUILT) return;
   clearTimeout(rt);
   rt=setTimeout(()=>{
     if(cols()!==lastCols){ lastCols=cols(); const km=selMod,kc=hiChapter;
@@ -421,5 +459,5 @@ addEventListener('resize',()=>{
     else drawPath();
   },150);
 });
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(drawPath);
+if(BUILT && document.fonts && document.fonts.ready) document.fonts.ready.then(drawPath);
 </script>
