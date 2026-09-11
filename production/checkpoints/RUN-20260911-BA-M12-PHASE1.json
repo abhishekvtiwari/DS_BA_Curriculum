@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.2.0",
+  "run_id": "RUN-20260911-BA-M12-PHASE1",
+  "track": "BA",
+  "module_id": "BA-M12",
+  "status": "DRAFTED",
+  "current_phase": "Phase 1 - Theory only",
+  "review_state": "GROUPED_INDEPENDENT_THEORY_REVIEW_PENDING",
+  "completed_artifacts": [
+    "contracts/business-analyst/BA-M12-contract.json",
+    "production/drafts/BA-M12/BA-M12-word-budget.md",
+    "production/drafts/BA-M12/BA-M12-C01.md",
+    "production/drafts/BA-M12/BA-M12-C02.md",
+    "production/drafts/BA-M12/BA-M12-C03.md",
+    "production/drafts/BA-M12/BA-M12-C04.md"
+  ],
+  "open_issues": [
+    "ISS-001",
+    "ISS-005",
+    "ISS-006",
+    "ISS-007"
+  ],
+  "next_action": "Review BA-M08 through BA-M15 Phase 1 PDFs and record corrections by module, chapter, and topic code.",
+  "updated_at": "2026-09-11",
+  "prerequisite_waiver": {
+    "module_id": "BA-M11",
+    "scope": "BA-M12 Phase 1 theory authoring only within the BA-M08 onward batch",
+    "approved_by": "user",
+    "approved_on": "2026-09-11",
+    "does_not_approve": "BA-M11, BA-M12, or any later phase"
+  }
+}

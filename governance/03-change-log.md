@@ -219,3 +219,10 @@
 - Added 15 coded working chapters covering 106 controlled topics and three controlled word budgets.
 - Added module checkpoints and updated contracts, glossary, cross-references, and open-issue governance.
 - Kept all three modules unapproved and pending grouped independent theory review; later phases remain excluded.
+
+## 0.8.0 - 2026-09-11
+
+- Drafted Phase 1 theory for BA-M08 through BA-M15 under the user's continued authoring-only waiver.
+- Added 33 coded working chapters covering 222 controlled topics, eight word budgets, and eight checkpoints.
+- Updated module contracts, cross-references, glossary, open issues, and version governance.
+- Kept every module unapproved and excluded assessments, labs, projects, capstones, collation, formal audit, and release.
