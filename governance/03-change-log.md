@@ -226,3 +226,9 @@
 - Added 33 coded working chapters covering 222 controlled topics, eight word budgets, and eight checkpoints.
 - Updated module contracts, cross-references, glossary, open issues, and version governance.
 - Kept every module unapproved and excluded assessments, labs, projects, capstones, collation, formal audit, and release.
+
+## 0.9.0 - 2026-09-11
+
+- Drafted BA-M01 and BA-M02 Phase 2 assessments chapter-wise after their theory gates passed.
+- Added 400 coded single-best-answer questions with difficulty, answers, explanations, and theory traceability.
+- Kept BA-M03 and all later modules outside Phase 2 pending approval or explicit waiver.
