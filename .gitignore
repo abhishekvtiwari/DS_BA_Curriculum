@@ -1,4 +1,6 @@
 # Generated local archives and verification output
+# Policy 1.9: generated PDFs/DOCX/ZIP exports are never authoritative source.
+output/
 *.zip
 *.log
 /tmp/
