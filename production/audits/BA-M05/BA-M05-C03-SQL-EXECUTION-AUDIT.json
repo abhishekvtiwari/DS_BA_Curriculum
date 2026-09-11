@@ -1,0 +1,272 @@
+{
+  "chapter": "BA-05-C03",
+  "runtime": "Python sqlite3",
+  "sqlite_version": "3.42.0",
+  "fixture_kind": "synthetic non-personal in-memory data",
+  "query_count": 10,
+  "queries": [
+    {
+      "id": "E01",
+      "purpose": "Projection, aliasing, and deterministic ordering",
+      "sha256": "efce38e41c5f02708811f4e103760540366e1943681b8d96e2d65c36a3becb33",
+      "columns": [
+        "order_id",
+        "order_date",
+        "booked_amount"
+      ],
+      "rows": [
+        [
+          101,
+          "2026-01-03",
+          120
+        ],
+        [
+          102,
+          "2026-01-12",
+          40
+        ],
+        [
+          103,
+          "2026-01-15",
+          200
+        ],
+        [
+          104,
+          "2026-02-02",
+          null
+        ]
+      ]
+    },
+    {
+      "id": "E02",
+      "purpose": "Filter a half-open reporting period with explicit NULL handling",
+      "sha256": "89f35df04e04112abc13eb737e7029e737d36ac76f8095308325f087cb46ffc2",
+      "columns": [
+        "order_id",
+        "status",
+        "total_amount"
+      ],
+      "rows": [
+        [
+          105,
+          "paid",
+          80
+        ],
+        [
+          106,
+          "paid",
+          60
+        ],
+        [
+          107,
+          null,
+          150
+        ]
+      ]
+    },
+    {
+      "id": "E03",
+      "purpose": "Preserve the customer population with a LEFT JOIN",
+      "sha256": "80349679836f37ffc508556344004f6f260a24ad2bd6ec295c02f81a34c942d6",
+      "columns": [
+        "customer_id",
+        "customer_name",
+        "order_count"
+      ],
+      "rows": [
+        [
+          1,
+          "Aster Stores",
+          2
+        ],
+        [
+          2,
+          "Beacon Labs",
+          2
+        ],
+        [
+          3,
+          "Cedar Works",
+          2
+        ],
+        [
+          4,
+          "Delta Retail",
+          1
+        ],
+        [
+          5,
+          "Elm Services",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "E04",
+      "purpose": "Aggregate paid revenue at region grain",
+      "sha256": "d8defa8418da7a8a1de55f75bf4a31d3a882564e85ec8f8500222f5027e3d7d6",
+      "columns": [
+        "region",
+        "paid_orders",
+        "paid_revenue"
+      ],
+      "rows": [
+        [
+          "North",
+          2,
+          200.0
+        ],
+        [
+          "South",
+          1,
+          200.0
+        ],
+        [
+          "Unknown",
+          1,
+          90.0
+        ]
+      ]
+    },
+    {
+      "id": "E05",
+      "purpose": "Decompose customer revenue with CTEs",
+      "sha256": "b99aa34917c4392ba1b1a6eb264e00e3e28399278f3318c7c463ee8dc9d66220",
+      "columns": [
+        "customer_name",
+        "revenue"
+      ],
+      "rows": [
+        [
+          "Beacon Labs",
+          200
+        ],
+        [
+          "Aster Stores",
+          120
+        ],
+        [
+          "Delta Retail",
+          90
+        ],
+        [
+          "Cedar Works",
+          80
+        ]
+      ]
+    },
+    {
+      "id": "E06",
+      "purpose": "Rank orders and calculate a running customer total",
+      "sha256": "22a7280349e950161adef3504b77431d3a1d437b872cc4a0b5aabaf3a73c7a82",
+      "columns": [
+        "customer_id",
+        "order_id",
+        "total_amount",
+        "amount_rank",
+        "running_amount"
+      ],
+      "rows": [
+        [
+          1,
+          101,
+          120,
+          1,
+          120
+        ],
+        [
+          1,
+          102,
+          40,
+          2,
+          160
+        ],
+        [
+          2,
+          103,
+          200,
+          1,
+          200
+        ],
+        [
+          3,
+          105,
+          80,
+          2,
+          80
+        ],
+        [
+          3,
+          107,
+          150,
+          1,
+          230
+        ]
+      ]
+    },
+    {
+      "id": "E07",
+      "purpose": "Find duplicate normalized email keys",
+      "sha256": "4a833f2dad257f24ed822b2814f6aba9261145859a00e9ac50e4a35ef6a3c54e",
+      "columns": [
+        "normalized_email",
+        "row_count"
+      ],
+      "rows": [
+        [
+          "ana@example.test",
+          2
+        ]
+      ]
+    },
+    {
+      "id": "E08",
+      "purpose": "Find orphan foreign keys",
+      "sha256": "2b0ffd678b0cc3e79cad0b8d1964cb03811360643483b4ae575a2de66751efc1",
+      "columns": [
+        "order_id",
+        "customer_id"
+      ],
+      "rows": [
+        [
+          106,
+          99
+        ]
+      ]
+    },
+    {
+      "id": "E09",
+      "purpose": "Profile missing and invalid domain values",
+      "sha256": "5a917f1b50deeba60622ffb6559c99d1ddf5868e9904260dc5e7649619a0b17a",
+      "columns": [
+        "missing_email",
+        "invalid_country",
+        "total_rows"
+      ],
+      "rows": [
+        [
+          1,
+          1,
+          6
+        ]
+      ]
+    },
+    {
+      "id": "E10",
+      "purpose": "Reconcile joined paid revenue to the source population",
+      "sha256": "1c843e59997958fc72b11c0c5e347ae221f88e52774bb470f60d0eaca544faa3",
+      "columns": [
+        "source_paid",
+        "matched_paid",
+        "unmatched_paid"
+      ],
+      "rows": [
+        [
+          550,
+          490,
+          60
+        ]
+      ]
+    }
+  ]
+}

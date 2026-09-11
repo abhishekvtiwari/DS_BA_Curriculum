@@ -5,7 +5,7 @@
   "module_id": "BA-M05",
   "status": "REBUILD_IN_PROGRESS",
   "current_phase": "Phase 1 - Theory only",
-  "review_state": "BA-M05-C03_CALIBRATION_IN_PRODUCTION",
+  "review_state": "BA-M05-C03_READY_FOR_FINAL_REVIEW - OWNER_ACCEPTANCE_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M05-contract.json",
     "production/drafts/BA-M05/BA-M05-word-budget.md",
@@ -13,7 +13,10 @@
     "production/drafts/BA-M05/BA-M05-C02.md",
     "production/drafts/BA-M05/BA-M05-C03.md",
     "production/drafts/BA-M05/BA-M05-C04.md",
-    "production/drafts/BA-M05/BA-M05-C05.md"
+    "production/drafts/BA-M05/BA-M05-C05.md",
+    "production/audits/BA-M05/verify_BA-M05-C03_sql.py",
+    "production/audits/BA-M05/BA-M05-C03-SQL-EXECUTION-AUDIT.json",
+    "production/audits/BA-M05/BA-M05-C03-SQL-EXECUTION-AUDIT.md"
   ],
   "open_issues": [
     "ISS-001",
@@ -21,7 +24,7 @@
     "ISS-009",
     "ISS-011"
   ],
-  "next_action": "Rebuild BA-M05-C03 in place, execute every expected SQL result, pass content_gates.py --strict, and submit for owner acceptance.",
+  "next_action": "Owner acceptance and independent review of BA-M05-C03. Do not begin BA-M03-C01 or another rebuild chapter until acceptance is recorded.",
   "updated_at": "2026-09-11",
   "prerequisite_waiver": {
     "module_id": "BA-M04",

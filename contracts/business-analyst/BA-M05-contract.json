@@ -266,7 +266,9 @@
   },
   "authoring_state": {
     "phase": "Phase 1 - Theory only",
-    "review_state": "GROUPED_INDEPENDENT_THEORY_REVIEW_PENDING",
-    "prerequisite_waiver": "User authorized BA-M05, BA-M06, and BA-M07 theory authoring before prerequisite review; authoring only, 2026-09-11."
+    "review_state": "BA-M05-C03_READY_FOR_FINAL_REVIEW - OWNER_ACCEPTANCE_REQUIRED; OTHER ISS-009 CHAPTERS REMAIN REJECTED",
+    "prerequisite_waiver": "User authorized BA-M05, BA-M06, and BA-M07 theory authoring before prerequisite review; authoring only, 2026-09-11.",
+    "issue": "ISS-009",
+    "sequence_constraint": "Do not start BA-M03-C01 or another rebuild chapter until owner acceptance of BA-M05-C03."
   }
 }
