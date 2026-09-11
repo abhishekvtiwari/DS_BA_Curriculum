@@ -3,7 +3,7 @@
   "run_id": "RUN-20260911-BA-M04-PHASE0",
   "track": "BA",
   "module_id": "BA-M04",
-  "status": "DRAFTED",
+  "status": "REJECTED",
   "current_phase": "Phase 1 - Theory only",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M04-contract.json",
@@ -17,9 +17,12 @@
   ],
   "open_issues": [
     "ISS-001",
-    "ISS-005"
+    "ISS-005",
+    "ISS-009",
+    "ISS-010",
+    "ISS-011"
   ],
-  "next_action": "Conduct independent theory review of production/drafts/BA-M04/BA-M04-C01.md through BA-M04-C05.md, resolve findings, and then run the BA-M04 pre-assessment theory audit.",
+  "next_action": "Do not resume from these drafts. Rebuild BA-M04 one chapter at a time to the BA-M02-C01 standard and gate each chapter with tools/content_gates.py.",
   "updated_at": "2026-09-11",
   "prerequisite_waiver": {
     "module_id": "BA-M03",
@@ -27,5 +30,8 @@
     "approved_by": "user",
     "approved_on": "2026-09-11",
     "does_not_approve": "BA-M03 or any BA-M04 later phase"
-  }
+  },
+  "review_state": "TEMPLATE_ARTIFACT_REBUILD_REQUIRED",
+  "rejected_on": "2026-09-11",
+  "rejection_audit": "production/audits/BA-BATCH-20260911/BA-M04-M15-THEORY_BATCH_AUDIT.md"
 }

@@ -4,14 +4,14 @@
 **Module title:** Change Management and Transformation
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-13-C01 - Change Foundations | 6 | Approximately 10,000 words | DRAFTED - 1,274 words - SELF_AUDIT_PASSED |
-| BA-13-C02 - Communication and Training | 6 | Approximately 10,000 words | DRAFTED - 1,266 words - SELF_AUDIT_PASSED |
-| BA-13-C03 - Transformation Governance | 6 | Approximately 10,000 words | DRAFTED - 1,259 words - SELF_AUDIT_PASSED |
-| BA-13-C04 - Adoption | 7 | Approximately 10,000 words | DRAFTED - 1,396 words - SELF_AUDIT_PASSED |
+| BA-13-C01 - Change Foundations | 6 | Approximately 10,000 words | DRAFTED - 1,274 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-13-C02 - Communication and Training | 6 | Approximately 10,000 words | DRAFTED - 1,266 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-13-C03 - Transformation Governance | 6 | Approximately 10,000 words | DRAFTED - 1,259 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-13-C04 - Adoption | 7 | Approximately 10,000 words | DRAFTED - 1,396 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation and error labs | - | OPEN | NOT STARTED |

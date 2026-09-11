@@ -4,14 +4,14 @@
 **Module title:** Finance and Business Cases
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-09-C01 - Finance Foundations | 8 | Approximately 10,000 words | DRAFTED - 1,576 words - SELF_AUDIT_PASSED |
-| BA-09-C02 - Business Case | 8 | Approximately 10,000 words | DRAFTED - 1,553 words - SELF_AUDIT_PASSED |
-| BA-09-C03 - Investment Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,424 words - SELF_AUDIT_PASSED |
-| BA-09-C04 - Benefits Realization | 7 | Approximately 10,000 words | DRAFTED - 1,423 words - SELF_AUDIT_PASSED |
+| BA-09-C01 - Finance Foundations | 8 | Approximately 10,000 words | DRAFTED - 1,576 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-09-C02 - Business Case | 8 | Approximately 10,000 words | DRAFTED - 1,553 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-09-C03 - Investment Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,424 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-09-C04 - Benefits Realization | 7 | Approximately 10,000 words | DRAFTED - 1,423 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation and error labs | - | OPEN | NOT STARTED |

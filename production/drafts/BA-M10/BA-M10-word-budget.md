@@ -4,14 +4,14 @@
 **Module title:** Product, Customer, and Service Analysis
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-10-C01 - Customer Discovery | 7 | Approximately 10,000 words | DRAFTED - 1,419 words - SELF_AUDIT_PASSED |
-| BA-10-C02 - Journeys and Service Design | 6 | Approximately 10,000 words | DRAFTED - 1,305 words - SELF_AUDIT_PASSED |
-| BA-10-C03 - Product Analysis | 8 | Approximately 10,000 words | DRAFTED - 1,561 words - SELF_AUDIT_PASSED |
-| BA-10-C04 - Service and Operations | 7 | Approximately 10,000 words | DRAFTED - 1,422 words - SELF_AUDIT_PASSED |
+| BA-10-C01 - Customer Discovery | 7 | Approximately 10,000 words | DRAFTED - 1,419 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-10-C02 - Journeys and Service Design | 6 | Approximately 10,000 words | DRAFTED - 1,305 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-10-C03 - Product Analysis | 8 | Approximately 10,000 words | DRAFTED - 1,561 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-10-C04 - Service and Operations | 7 | Approximately 10,000 words | DRAFTED - 1,422 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation and error labs | - | OPEN | NOT STARTED |

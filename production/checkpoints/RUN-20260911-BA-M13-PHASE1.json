@@ -3,9 +3,9 @@
   "run_id": "RUN-20260911-BA-M13-PHASE1",
   "track": "BA",
   "module_id": "BA-M13",
-  "status": "DRAFTED",
+  "status": "REJECTED",
   "current_phase": "Phase 1 - Theory only",
-  "review_state": "GROUPED_INDEPENDENT_THEORY_REVIEW_PENDING",
+  "review_state": "TEMPLATE_ARTIFACT_REBUILD_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M13-contract.json",
     "production/drafts/BA-M13/BA-M13-word-budget.md",
@@ -18,9 +18,12 @@
     "ISS-001",
     "ISS-005",
     "ISS-006",
-    "ISS-007"
+    "ISS-007",
+    "ISS-009",
+    "ISS-010",
+    "ISS-011"
   ],
-  "next_action": "Review BA-M08 through BA-M15 Phase 1 PDFs and record corrections by module, chapter, and topic code.",
+  "next_action": "Do not resume from these drafts. Rebuild BA-M13 one chapter at a time to the BA-M02-C01 standard and gate each chapter with tools/content_gates.py.",
   "updated_at": "2026-09-11",
   "prerequisite_waiver": {
     "module_id": "BA-M12",
@@ -28,5 +31,7 @@
     "approved_by": "user",
     "approved_on": "2026-09-11",
     "does_not_approve": "BA-M12, BA-M13, or any later phase"
-  }
+  },
+  "rejected_on": "2026-09-11",
+  "rejection_audit": "production/audits/BA-BATCH-20260911/BA-M04-M15-THEORY_BATCH_AUDIT.md"
 }

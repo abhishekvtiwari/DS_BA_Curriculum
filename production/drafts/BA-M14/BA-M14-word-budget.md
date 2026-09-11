@@ -4,14 +4,14 @@
 **Module title:** Strategy, Enterprise Analysis, and Leadership
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-14-C01 - Strategic Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,393 words - SELF_AUDIT_PASSED |
-| BA-14-C02 - Capabilities and Operating Models | 6 | Approximately 10,000 words | DRAFTED - 1,286 words - SELF_AUDIT_PASSED |
-| BA-14-C03 - Portfolio and Investment | 6 | Approximately 10,000 words | DRAFTED - 1,281 words - SELF_AUDIT_PASSED |
-| BA-14-C04 - Executive Practice | 6 | Approximately 10,000 words | DRAFTED - 1,268 words - SELF_AUDIT_PASSED |
+| BA-14-C01 - Strategic Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,393 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-14-C02 - Capabilities and Operating Models | 6 | Approximately 10,000 words | DRAFTED - 1,286 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-14-C03 - Portfolio and Investment | 6 | Approximately 10,000 words | DRAFTED - 1,281 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-14-C04 - Executive Practice | 6 | Approximately 10,000 words | DRAFTED - 1,268 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation and error labs | - | OPEN | NOT STARTED |

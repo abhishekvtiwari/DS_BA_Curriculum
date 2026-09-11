@@ -4,15 +4,15 @@
 **Module title:** Statistics, Metrics, and Decision Analysis
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORIZING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORIZING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-06-C01 - Basic Statistics | 8 | Approximately 10,000 words | DRAFTED - 1,498 words - SELF_AUDIT_PASSED |
-| BA-06-C02 - KPI Design | 7 | Approximately 10,000 words | DRAFTED - 1,371 words - SELF_AUDIT_PASSED |
-| BA-06-C03 - Root-Cause Analysis | 6 | Approximately 10,000 words | DRAFTED - 1,241 words - SELF_AUDIT_PASSED |
-| BA-06-C04 - Decision Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,344 words - SELF_AUDIT_PASSED |
-| BA-06-C05 - Experiments and Causality | 6 | Approximately 10,000 words | DRAFTED - 1,234 words - SELF_AUDIT_PASSED |
+| BA-06-C01 - Basic Statistics | 8 | Approximately 10,000 words | DRAFTED - 1,498 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-06-C02 - KPI Design | 7 | Approximately 10,000 words | DRAFTED - 1,371 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-06-C03 - Root-Cause Analysis | 6 | Approximately 10,000 words | DRAFTED - 1,241 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-06-C04 - Decision Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,344 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-06-C05 - Experiments and Causality | 6 | Approximately 10,000 words | DRAFTED - 1,234 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation | - | OPEN | NOT STARTED |

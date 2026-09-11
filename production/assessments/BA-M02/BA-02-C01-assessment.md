@@ -3,12 +3,17 @@
 **Pathway:** Business Analyst
 **Module:** BA-M02 - Stakeholders and Elicitation
 **Phase:** Phase 2 - MCQs and theory assessment
-**Status:** DRAFTED - INDEPENDENT_ASSESSMENT_REVIEW_PENDING
+**Status:** QUARANTINED - ASSESSMENT_INTEGRITY_FAILURE - REBUILD_REQUIRED (ISS-008)
 **Controlled topics:** BA-02-C01-T01 through BA-02-C01-T07
 **Controlled questions:** BA-02-C01-Q001 through BA-02-C01-Q040
 **Question count:** 40
 **Version:** 0.1.0
 **Updated:** 2026-09-11
+
+> **QUARANTINED 2026-09-11 (ISS-008).** This bank is not a usable assessment instrument and must not be
+> published, piloted, or scored. The correct answer follows a fixed `A, B, C, D` cycle keyed to question
+> number in all 400 questions, so a learner scores 100% with no subject knowledge. Distractors and
+> explanations are also heavily templated. Rebuild required; proofreading cannot repair it.
 
 ## Assessment instructions
 

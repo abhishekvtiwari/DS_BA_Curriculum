@@ -3,9 +3,9 @@
   "run_id": "RUN-20260911-BA-M02-PHASE2",
   "track": "BA",
   "module_id": "BA-M02",
-  "status": "ASSESSMENT_DRAFTED",
+  "status": "QUARANTINED",
   "current_phase": "Phase 2 - MCQs and theory assessment",
-  "review_state": "INDEPENDENT_ASSESSMENT_REVIEW_PENDING",
+  "review_state": "ASSESSMENT_INTEGRITY_FAILURE_REBUILD_REQUIRED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M02-contract.json",
     "production/assessments/BA-M02/BA-02-C01-assessment.md",
@@ -19,6 +19,8 @@
     "ISS-001",
     "ISS-008"
   ],
-  "next_action": "Independently review the five chapter-wise BA-M02 assessment files for correctness, ambiguity, topic coverage, and answer quality.",
-  "updated_at": "2026-09-11"
+  "next_action": "Do not publish, pilot or score this bank. Rebuild with randomised keys and misconception-based distractors; the current 400 questions follow a fixed A,B,C,D cycle.",
+  "updated_at": "2026-09-11",
+  "quarantined_on": "2026-09-11",
+  "quarantine_audit": "production/audits/BA-BATCH-20260911/BA-M01-M02-ASSESSMENT_INTEGRITY_AUDIT.md"
 }

@@ -232,3 +232,20 @@
 - Drafted BA-M01 and BA-M02 Phase 2 assessments chapter-wise after their theory gates passed.
 - Added 400 coded single-best-answer questions with difficulty, answers, explanations, and theory traceability.
 - Kept BA-M03 and all later modules outside Phase 2 pending approval or explicit waiver.
+
+## 0.10.0 - 2026-09-11 - Batch rejection and measurable content gates
+
+- Rejected BA-M04 through BA-M15 Phase 1 theory (53 chapters) as template artifacts under `ISS-009`;
+  measured ~9% topic-specific content across 76,282 words and 39.6% exact-duplicate paragraphs.
+- Voided all 364 `SELF_AUDIT_PASSED` stamps and set every topic row from `COVERED` to `UNVERIFIED`;
+  the audit measured heading presence, not teaching depth.
+- Quarantined the BA-M01 and BA-M02 Phase 2 question banks under `ISS-008` and escalated it to CRITICAL:
+  all 400 questions follow a fixed `A, B, C, D` key cycle, so the bank has no discriminatory power.
+- Added `ISS-010` (no-op audit) and `ISS-011` (corpus-wide cross-reference, citation and casing defects,
+  now confirmed to predate the rejected batch).
+- Added `tools/content_gates.py` and `governance/05-content-gates.md` replacing the self-audit with nine
+  measurable gates: five blocking (failed by 0 of 17 benchmark chapters) and four advisory pending owner
+  decision (failed by the benchmark too, so they record an unmet standard rather than a regression).
+- Recorded both audits under `production/audits/BA-BATCH-20260911/`.
+- BA-M01 and BA-M02 theory remain the quality benchmark and were not modified. BA-M03 remains parked.
+- No rebuild authoring was performed. No later phase was started.

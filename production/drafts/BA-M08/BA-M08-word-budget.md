@@ -4,14 +4,14 @@
 **Module title:** Lean, Six Sigma, and Quality
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-08-C01 - Lean | 7 | Approximately 10,000 words | DRAFTED - 1,388 words - SELF_AUDIT_PASSED |
-| BA-08-C02 - DMAIC | 7 | Approximately 10,000 words | DRAFTED - 1,379 words - SELF_AUDIT_PASSED |
-| BA-08-C03 - Quality Tools | 6 | Approximately 10,000 words | DRAFTED - 1,251 words - SELF_AUDIT_PASSED |
-| BA-08-C04 - Improvement Projects | 6 | Approximately 10,000 words | DRAFTED - 1,250 words - SELF_AUDIT_PASSED |
+| BA-08-C01 - Lean | 7 | Approximately 10,000 words | DRAFTED - 1,388 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-08-C02 - DMAIC | 7 | Approximately 10,000 words | DRAFTED - 1,379 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-08-C03 - Quality Tools | 6 | Approximately 10,000 words | DRAFTED - 1,251 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-08-C04 - Improvement Projects | 6 | Approximately 10,000 words | DRAFTED - 1,250 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation and error labs | - | OPEN | NOT STARTED |

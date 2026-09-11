@@ -4,15 +4,15 @@
 **Module title:** Data, SQL, and Analytics for Analysts
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 AUTHORIZING WAIVER RECORDED - GROUPED REVIEW PENDING
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 AUTHORIZING WAIVER RECORDED - GROUPED REVIEW PENDING
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-05-C01 - Data Literacy | 8 | Approximately 10,000 words | DRAFTED - 1,563 words - SELF_AUDIT_PASSED |
-| BA-05-C02 - Spreadsheet Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,439 words - SELF_AUDIT_PASSED |
-| BA-05-C03 - SQL for Analysts | 8 | Approximately 10,000 words | DRAFTED - 1,555 words - SELF_AUDIT_PASSED |
-| BA-05-C04 - Python for Analysts | 8 | Approximately 10,000 words | DRAFTED - 1,535 words - SELF_AUDIT_PASSED |
-| BA-05-C05 - Visualization | 7 | Approximately 10,000 words | DRAFTED - 1,389 words - SELF_AUDIT_PASSED |
+| BA-05-C01 - Data Literacy | 8 | Approximately 10,000 words | DRAFTED - 1,563 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-05-C02 - Spreadsheet Analysis | 7 | Approximately 10,000 words | DRAFTED - 1,439 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-05-C03 - SQL for Analysts | 8 | Approximately 10,000 words | DRAFTED - 1,555 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-05-C04 - Python for Analysts | 8 | Approximately 10,000 words | DRAFTED - 1,535 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-05-C05 - Visualization | 7 | Approximately 10,000 words | DRAFTED - 1,389 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation | - | OPEN | NOT STARTED |

@@ -4,15 +4,15 @@
 **Module title:** Process Analysis and BPMN
 **Version:** 0.1.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
-**Budget status:** PHASE 1 APPROVED WITH RECORDED PREREQUISITE WAIVER
+**Budget status:** REJECTED - TEMPLATE_ARTIFACT (ISS-009) - was: PHASE 1 APPROVED WITH RECORDED PREREQUISITE WAIVER
 
 | Artifact | Controlled topics | Planning allocation | Status |
 |---|---:|---:|---|
-| BA-04-C01 - Process Foundations | 7 | Approximately 10,000 words | DRAFTED - 1,212 words - SELF_AUDIT_PASSED |
-| BA-04-C02 - Process Mapping | 6 | Approximately 10,000 words | DRAFTED - 1,086 words - SELF_AUDIT_PASSED |
-| BA-04-C03 - BPMN | 8 | Approximately 10,000 words | DRAFTED - 1,256 words - SELF_AUDIT_PASSED |
-| BA-04-C04 - Process Measures | 8 | Approximately 10,000 words | DRAFTED - 1,215 words - SELF_AUDIT_PASSED |
-| BA-04-C05 - Process Improvement | 7 | Approximately 10,000 words | DRAFTED - 1,119 words - SELF_AUDIT_PASSED |
+| BA-04-C01 - Process Foundations | 7 | Approximately 10,000 words | DRAFTED - 1,212 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-04-C02 - Process Mapping | 6 | Approximately 10,000 words | DRAFTED - 1,086 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-04-C03 - BPMN | 8 | Approximately 10,000 words | DRAFTED - 1,256 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-04-C04 - Process Measures | 8 | Approximately 10,000 words | DRAFTED - 1,215 words - SELF_AUDIT_VOIDED (ISS-009) |
+| BA-04-C05 - Process Improvement | 7 | Approximately 10,000 words | DRAFTED - 1,119 words - SELF_AUDIT_VOIDED (ISS-009) |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation | - | OPEN | NOT STARTED |
