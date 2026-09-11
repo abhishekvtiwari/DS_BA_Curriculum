@@ -36,7 +36,7 @@
 ## Uniform authoring and publication format
 
 1. Every controlled chapter Markdown file uses `# <chapter code> - <chapter title>` as its first heading and `## <topic code> - <topic title>` for controlled topic headings.
-2. Chapter metadata uses this order and wording: Pathway, Module, Phase, Status, Approved planning budget, Controlled topics, Version, Updated.
+2. Chapter metadata uses this order and wording: Pathway, Module, Phase, Status, Density standard, Controlled topics, Version, Updated.
 3. Use ASCII hyphens as structural separators in headings, metadata, filenames, headers, footers, and generated PDFs.
 4. Every individual chapter PDF uses the same cover, contents, heading hierarchy, typography, colors, margins, tables, lists, headers, footers, and page-number placement.
 5. Generated PDFs are organized under `output/pdf/<module code>/`; individual chapter PDFs are stored in its `chapters/` subfolder and any compiled reader is stored at the module folder root.

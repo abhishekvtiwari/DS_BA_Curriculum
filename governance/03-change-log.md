@@ -249,3 +249,28 @@
 - Recorded both audits under `production/audits/BA-BATCH-20260911/`.
 - BA-M01 and BA-M02 theory remain the quality benchmark and were not modified. BA-M03 remains parked.
 - No rebuild authoring was performed. No later phase was started.
+
+
+## 0.11.0 - 2026-09-11 - Rebuild allocation and sequence
+
+- Replaced flat chapter allocations with a 1,000 words/topic planning target and 600 words/topic blocking floor.
+- Rewrote G9 to use reproducible source words per controlled topic; rebuilt/new chapters must pass all gates with `--strict`.
+- Corrected 19 known cross-reference title defects as the standalone ISS-011 pass.
+- Closed ISS-005, unparked BA-M03, retained C01-C06 for depth top-up, advanced C07 to independent review, and kept C08-C12 not drafted under ISS-013.
+- Opened ISS-012 for deferred BA-M01 depth remediation and selected BA-M05-C03 as the in-production calibration rebuild.
+- Did not push, merge, regenerate PDFs, delete quarantined material, or begin Phase 2/3 work.
+
+## 0.11.0 - 2026-09-11 - Owner command issued to Codex
+
+- Filed `governance/06-owner-command-2026-09-11-BA-rebuild.md` assigning the BA rebuild to Codex as
+  curriculum lead, with Owner acceptance required per chapter and no self-acceptance.
+- Recorded the revised root cause: `prompts/02-chapter-generator.md` already required examples, tool
+  procedures, expected results and failure modes per subtopic, and `prompts/05-quality-audit.md` already
+  required detection of repeated generic prose. Both were correct and were not followed; the specified
+  independent audit was replaced by an in-chapter self-stamp. The prompts are to be applied, not rewritten.
+- Resolved the ISS-009 allocation contradiction: the flat 10,000-word chapter allocation is abolished in
+  favour of 1,000 words per controlled topic as planning target and 600 as blocking floor.
+- Directed BA-M03 unparking as RETAIN AND DEEPEN, not rebuild: C01-C06 pass every structural gate and
+  fail only depth; C07 is ready for independent review; C08-C12 remain unauthored.
+- No curriculum was authored and no issue register entry was created by this change; ISS-012 and ISS-013
+  are opened by Codex on acceptance of the command.

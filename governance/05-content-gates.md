@@ -46,7 +46,7 @@ Verified exit codes, 2026-09-11:
 | G6 content-tables | 14 | 53 |
 | G7 casing | **0** | **8** |
 | G8 cross-ref-titles | 4 | 15 |
-| G9 depth | **6** | **53** |
+| G9 depth | 600 words per controlled topic | 6 | 53 |
 
 ## Calibration, measured 2026-09-11
 
@@ -69,25 +69,31 @@ The principle: a gate the benchmark passes 10 of 10 can block immediately. A gat
 fails records a standard never yet met and cannot block until remediation is funded.
 
 **Blocking now** - G1, G2, G5, G7, G9. Each is failed by **0 of 10** benchmark chapters and by 5 to 53 of
-the 53 rejected chapters, so they separate authored work from template output cleanly. G9 additionally
-fails 6 of 7 BA-M03 chapters, which is correct: BA-M03 is parked at roughly 18% of its stated allocation.
+the 53 rejected chapters, so they separate authored work from template output cleanly. G9 additionally fails 6 of 7 BA-M03 chapters. BA-M03 is genuine writing but C01-C06 remain below the 600 words/topic floor.
 
 G1 and G2 measure paragraphs **after masking the chapter's own topic names**. Exact matching alone is
 not sufficient: BA-M05-C03 scored a perfect 1.00 on exact matching and 0.79 once the substituted token
 was masked. A gate that exact-matches would have passed template output, reproducing the ISS-010 defect.
 
-**Advisory pending owner decision** - G3, G4, G6, G8. These fail the benchmark modules as well. Those failures are real, not false positives:
-BA-M02-C01 carries zero inline citations, and BA-M03-C06 cites BA-M07 as "Data Analysis and SQL" when
-its contract title is "Agile, Scrum, Kanban, and Waterfall". They record a standard the repository has
-never met rather than a regression introduced by the rejected batch.
+**Advisory for existing chapters; blocking under `--strict` for rebuilt and new chapters** - G3, G4, G6, G8. These fail the benchmark modules as well. Those failures are real, not false positives:
+For example, BA-M02-C01 carries zero inline citations. These advisory results record standards the repository has
+never met rather than regressions introduced by the rejected batch.
 
-**Owner decision required:** adopt G3/G4/G6/G8 as blocking for all new and rebuilt chapters and schedule
-a remediation pass over BA-M01-M03, or hold them advisory until that pass is funded. Recommendation:
-adopt them as blocking for **rebuilt and new** chapters only, which sets the rebuild standard above the
-current benchmark without retroactively invalidating BA-M01 and BA-M02.
+**Owner decision recorded 2026-09-11:** G3, G4, G6, and G8 remain advisory for existing chapters and become blocking through `--strict` for every rebuilt or new chapter. Existing failures form a remediation backlog.
 
 ## Rule
 
 No chapter may be marked `READY FOR REVIEW` while a blocking gate fails. Rebuilt and new chapters are
 gated with `--strict`, so advisory gates block them too. The gate output is the evidence; a chapter's
 own self-assessment is not.
+
+
+## Density decision - 2026-09-11
+
+The obsolete flat chapter allocation is abolished. Depth now scales with controlled scope:
+
+- Planning target: 1,000 words per controlled topic.
+- Blocking floor: 600 words per controlled topic.
+- Counting method: Python `len(text.split())` divided by the number of distinct controlled topic IDs in the chapter source.
+
+G9 is a minimum depth gate, not proof of completeness. A chapter must also pass every other gate applicable to its status. Rebuilt and new chapters must pass `--strict`.
