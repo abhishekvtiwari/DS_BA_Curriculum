@@ -4,15 +4,16 @@
 **Module title:** Stakeholders and Elicitation
 **Version:** 0.2.0
 **Planning basis:** Word counts guide depth; controlled-topic coverage and audit evidence determine completion.
+**Density standard:** 1,000 words per controlled topic planning target; 600 words per controlled topic blocking floor
 **Budget status:** APPROVED - 50,000 WORDS
 
-| Artifact | Controlled topics | Target words | Status |
+| Artifact | Controlled topics | Density standard | Status |
 |---|---:|---:|---|
-| BA-02-C01 - Stakeholder Analysis | 7 | Approximately 10,000 | APPROVED - DRAFTED AT 10,263 - USER REVIEW APPROVED |
-| BA-02-C02 - Interviews | 7 | Approximately 10,000 | APPROVED - DRAFTED AT 7,862 - USER REVIEW APPROVED |
-| BA-02-C03 - Workshops | 7 | Approximately 10,000 | APPROVED - DRAFTED AT 7,110 - USER REVIEW APPROVED |
-| BA-02-C04 - Observation and Research | 6 | Approximately 10,000 | APPROVED - DRAFTED AT 7,223 - USER REVIEW APPROVED |
-| BA-02-C05 - Conflict and Negotiation | 6 | Approximately 10,000 | APPROVED - DRAFTED AT 4,055 - USER REVIEW APPROVED |
+| BA-02-C01 - Stakeholder Analysis | 7 | 1,000 words/topic target; 600 floor | APPROVED - DRAFTED AT 10,263 - USER REVIEW APPROVED |
+| BA-02-C02 - Interviews | 7 | 1,000 words/topic target; 600 floor | APPROVED - DRAFTED AT 7,862 - USER REVIEW APPROVED |
+| BA-02-C03 - Workshops | 7 | 1,000 words/topic target; 600 floor | APPROVED - DRAFTED AT 7,110 - USER REVIEW APPROVED |
+| BA-02-C04 - Observation and Research | 6 | 1,000 words/topic target; 600 floor | APPROVED - DRAFTED AT 7,223 - USER REVIEW APPROVED |
+| BA-02-C05 - Conflict and Negotiation | 6 | 1,000 words/topic target; 600 floor | APPROVED - DRAFTED AT 4,055 - USER REVIEW APPROVED |
 | MCQs and theory assessment | - | OPEN | NOT STARTED |
 | Exercises and assignments | - | OPEN | NOT STARTED |
 | Practical implementation | - | OPEN | NOT STARTED |
@@ -20,7 +21,7 @@
 | Guided projects and case studies | - | OPEN | NOT STARTED |
 | Capstone and release artifacts | - | OPEN | NOT STARTED |
 
-The approved Phase 1 theory budget is approximately 50,000 words across five chapters and 33 controlled topic IDs. Each chapter has an approximately 10,000-word planning allocation. Coverage quality and audit evidence, not exact word count, determine completion. Page counts are planning estimates only and must not be used as completion evidence.
+Phase 1 depth is planned by controlled-topic density. Completion requires content coverage and gate evidence; page count is not acceptance evidence.
 
 ## Phase boundary
 

@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "contract_id": "BA-M03-CONTRACT",
-  "status": "DRAFTED",
+  "status": "PARTIAL_DRAFT - UNPARKED",
   "track": "Business Analyst",
   "module_id": "BA-M03",
   "module_title": "Requirements Engineering",
@@ -553,5 +553,11 @@
     "status": "DEFINED",
     "specificity": "module-specific",
     "review_note": "Objective covers requirements engineering plus the continuing BRD, PRD, FRD, traceability, governance, and professional-defense sequence."
+  },
+  "authoring_state": {
+    "phase": "Phase 1 - Theory",
+    "review_state": "C01-C06_DEPTH_TOP_UP_REQUIRED; C07_READY_FOR_INDEPENDENT_REVIEW; C08-C12_NOT_DRAFTED",
+    "issue": "ISS-013",
+    "sequence_constraint": "Resume after owner acceptance of BA-M05-C03 calibration chapter."
   }
 }

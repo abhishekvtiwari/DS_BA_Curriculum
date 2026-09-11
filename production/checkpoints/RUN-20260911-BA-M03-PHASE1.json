@@ -3,8 +3,8 @@
   "run_id": "RUN-20260911-BA-M03-PHASE1",
   "track": "BA",
   "module_id": "BA-M03",
-  "status": "DRAFTED",
-  "review_state": "SPECIAL_REVIEW_PENDING",
+  "status": "PARTIAL_DRAFT - UNPARKED",
+  "review_state": "C01-C06_DEPTH_TOP_UP_REQUIRED; C07_READY_FOR_INDEPENDENT_REVIEW; C08-C12_NOT_DRAFTED",
   "completed_artifacts": [
     "contracts/business-analyst/BA-M03-contract.json",
     "production/drafts/BA-M03/BA-M03-word-budget.md",
@@ -17,8 +17,9 @@
     "production/drafts/BA-M03/BA-M03-C07.md"
   ],
   "open_issues": [
-    "ISS-001"
+    "ISS-001",
+    "ISS-013"
   ],
-  "next_action": "Await the user's separate special review of BA-M03. Do not revise, collate, audit, approve, or advance BA-M03 until that review supplies explicit direction.",
+  "next_action": "After owner acceptance of BA-M05-C03, deepen BA-M03-C01 in place to the 600 words/topic floor and strict rebuilt-chapter standard. Preserve existing prose.",
   "updated_at": "2026-09-11"
 }

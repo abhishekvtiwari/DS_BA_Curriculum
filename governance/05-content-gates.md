@@ -27,59 +27,55 @@ Output marks `x` for a blocking failure, `!` for advisory, `.` for pass. A chapt
 blocking gate but fails an advisory one prints `PASS*`. Files that are not controlled theory chapters
 (word budgets, checkpoints, audits) are skipped rather than graded.
 
-Verified exit codes, 2026-09-11:
+Verified exit codes after the density decision, 2026-09-11:
 
 | Scope | Blocking failures | Exit |
 |---|---:|---:|
-| BA-M01 + BA-M02 (benchmark, 10 ch) | 0 | **0** |
-| BA-M03 (parked, 7 ch) | 6 (G9 depth) | 1 |
-| Whole corpus (70 ch) | 59 | 1 |
+| BA-M01 + BA-M02 (10 ch) | 3 (G9; deferred under ISS-012) | 1 |
+| BA-M03 (7 drafted ch) | 6 (G9; retained under ISS-013) | 1 |
+| BA-M04-M15 rejected batch (53 ch) | 53 | 1 |
+| Whole corpus (70 ch) | 62 | 1 |
 | BA-M02-C01 with `--strict` | 0 blocking, 1 advisory | 1 |
 
-| Gate | Threshold | Defeats |
+## Gate thresholds and severity
+
+| Gate | Severity for existing chapters | Test |
 |---|---|---|
-| G1 distinct-paragraphs | **0** | **48** |
-| G2 no-template-body | **0** | **48** |
-| G3 worked-examples | 15 | 53 |
-| G4 inline-citations | 17 | 53 |
-| G5 notation-present | 0 | 5 |
-| G6 content-tables | 14 | 53 |
-| G7 casing | **0** | **8** |
-| G8 cross-ref-titles | 4 | 15 |
-| G9 depth | 600 words per controlled topic | 6 | 53 |
+| G1 distinct-paragraphs | BLOCKING | At least 0.90 after masking controlled topic names |
+| G2 no-template-body | BLOCKING | No paragraph skeleton exceeds 15% of body paragraphs |
+| G3 worked-examples | ADVISORY | At least one worked-example marker per two topics |
+| G4 inline-citations | ADVISORY | At least one numeric inline citation per two topics |
+| G5 notation-present | BLOCKING | Technical subject notation or a code block is present |
+| G6 content-tables | ADVISORY | At least one non-audit content-table row |
+| G7 casing | BLOCKING | No known lowercase acronym/proper-noun defect |
+| G8 cross-ref-titles | ADVISORY | Referenced module titles match controlled contracts |
+| G9 depth | BLOCKING | At least 600 source words per controlled topic |
+
+Under `--strict`, G3, G4, G6, and G8 also determine the exit code.
 
 ## Calibration, measured 2026-09-11
 
-Failures per gate, run against the whole BA corpus. BA-M03 is shown separately because it is parked and
-incomplete under `ISS-005`, so it is not part of the benchmark:
+The first four columns below are counts of chapters that fail each gate after the density and cross-reference decisions were applied.
 
-| Gate | BA-M01-M02 benchmark (10 ch) | BA-M03 parked (7 ch) | BA-M04-M15 rejected (53 ch) |
+| Gate | BA-M01-M02 (10 ch) | BA-M03 (7 ch) | BA-M04-M15 rejected (53 ch) |
 |---|---:|---:|---:|
-| G1 distinct-paragraphs | **0** | 0 | 48 |
-| G2 no-template-body | **0** | 0 | 48 |
+| G1 distinct-paragraphs | 0 | 0 | 48 |
+| G2 no-template-body | 0 | 0 | 48 |
 | G3 worked-examples | 8 | 7 | 53 |
 | G4 inline-citations | 10 | 7 | 53 |
-| G5 notation-present | **0** | 0 | 5 |
+| G5 notation-present | 0 | 0 | 5 |
 | G6 content-tables | 7 | 7 | 53 |
-| G7 casing | **0** | 0 | 8 |
-| G8 cross-ref-titles | 1 | 3 | 15 |
-| G9 depth | **0** | 6 | 53 |
+| G7 casing | 0 | 0 | 8 |
+| G8 cross-ref-titles | 0 | 0 | 0 |
+| G9 depth | 3 | 6 | 53 |
 
-The principle: a gate the benchmark passes 10 of 10 can block immediately. A gate the benchmark also
-fails records a standard never yet met and cannot block until remediation is funded.
+G1, G2, G5, and G7 remain blocking because the genuine BA-M01-M03 corpus passes them and the rejected batch does not. G9 is blocking by the owner's density decision: 1,000 words/topic is the planning target and 600 words/topic is the minimum. BA-M01-C03-C05 are genuine but below that floor and are explicitly deferred under `ISS-012`; BA-M03-C01-C06 are genuine but incomplete and retained under `ISS-013`.
 
-**Blocking now** - G1, G2, G5, G7, G9. Each is failed by **0 of 10** benchmark chapters and by 5 to 53 of
-the 53 rejected chapters, so they separate authored work from template output cleanly. G9 additionally fails 6 of 7 BA-M03 chapters. BA-M03 is genuine writing but C01-C06 remain below the 600 words/topic floor.
+G1 and G2 measure paragraphs **after masking the chapter's own topic names**. Exact matching alone is not sufficient: BA-M05-C03 scored a perfect 1.00 on exact matching and 0.79 once the substituted token was masked. A gate that exact-matches would have passed template output, reproducing the ISS-010 defect.
 
-G1 and G2 measure paragraphs **after masking the chapter's own topic names**. Exact matching alone is
-not sufficient: BA-M05-C03 scored a perfect 1.00 on exact matching and 0.79 once the substituted token
-was masked. A gate that exact-matches would have passed template output, reproducing the ISS-010 defect.
+**Advisory for existing chapters; blocking under `--strict` for rebuilt and new chapters** - G3, G4, G6, G8. Existing failures are a remediation backlog. For example, BA-M02-C01 carries zero inline citations, so enforcing G4 retroactively would invalidate an accepted benchmark for a standard it was never asked to meet.
 
-**Advisory for existing chapters; blocking under `--strict` for rebuilt and new chapters** - G3, G4, G6, G8. These fail the benchmark modules as well. Those failures are real, not false positives:
-For example, BA-M02-C01 carries zero inline citations. These advisory results record standards the repository has
-never met rather than regressions introduced by the rejected batch.
-
-**Owner decision recorded 2026-09-11:** G3, G4, G6, and G8 remain advisory for existing chapters and become blocking through `--strict` for every rebuilt or new chapter. Existing failures form a remediation backlog.
+**Owner decision recorded 2026-09-11:** G3, G4, G6, and G8 remain advisory for existing chapters and become blocking through `--strict` for every rebuilt or new chapter.
 
 ## Rule
 

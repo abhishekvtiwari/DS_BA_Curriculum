@@ -174,23 +174,30 @@ def gate_cross_reference_titles(text, titles=None, **_):
 
 
 def gate_depth(text, **_):
-    """G9 - reach 40 percent of the allocation the chapter header declares."""
-    m = re.search(r'planning budget:\*\*\s*approximately ([\d,]+) words', text)
-    if not m:
-        return True, 'no stated allocation'
-    target = int(m.group(1).replace(',', ''))
+    """G9 - at least 600 reproducible source tokens per controlled topic.
+
+    The planning target is 1,000 words/topic. The blocking floor is 600.
+    Counting intentionally retains Markdown tokens and uses str.split(), the
+    same reproducible method used to calibrate the 2026-09-11 corpus audit.
+    """
+    topics = topic_ids(text)
+    if not topics:
+        return False, 'no controlled topic IDs'
     actual = len(text.split())
-    return actual >= 0.40 * target, ('%d words vs stated %d (need >= %d)'
-                                     % (actual, target, int(0.40 * target)))
+    density = actual / len(topics)
+    return density >= 600, ('%d words / %d topics = %.0f words/topic '
+                            '(target 1000; blocking floor 600)'
+                            % (actual, len(topics), density))
 
 
 BLOCKING = 'blocking'
 ADVISORY = 'advisory'
 
-# Severity is set by calibration, not by preference (governance/05-content-gates.md).
-# BLOCKING gates are failed by 0 of the 10 BA-M01/BA-M02 benchmark chapters, so a
-# failure is a regression. ADVISORY gates are failed by the benchmark too, so they
-# record a standard the repository has never met and must not block existing work.
+# Severity is governed by governance/05-content-gates.md. G1, G2, G5, and G7
+# distinguish genuine authored chapters from the rejected template batch. G9 is
+# the owner-adopted minimum density rule; known genuine under-floor chapters are
+# tracked as remediation in ISS-012 and ISS-013. Advisory gates become blocking
+# for rebuilt and new work when the runner is invoked with --strict.
 GATES = [
     ('G1 distinct-paragraphs', gate_distinct_paragraphs, BLOCKING),
     ('G2 no-template-body', gate_no_template_body, BLOCKING),
