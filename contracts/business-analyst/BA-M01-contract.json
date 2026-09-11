@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "contract_id": "BA-M01-CONTRACT",
-  "status": "ASSESSMENT_DRAFTED",
+  "status": "PHASE1_RECREATED - INDEPENDENT_REVIEW_PENDING",
   "track": "Business Analyst",
   "module_id": "BA-M01",
   "module_title": "Business Analysis Foundations",
@@ -255,8 +255,13 @@
   },
   "assessment_state": {
     "phase": "Phase 2 - MCQs and theory assessment",
-    "review_state": "INDEPENDENT_ASSESSMENT_REVIEW_PENDING",
+    "review_state": "QUARANTINED_UNDER_ISS-008 - NOT_PART_OF_RECREATION",
     "question_count": 200,
     "format": "chapter-wise working files"
+  },
+  "theory_state": {
+    "phase": "Phase 1 - Theory only",
+    "review_state": "STRICT_GATES_PASSED - OWNER_ACCEPTANCE_REQUIRED",
+    "issue": "ISS-014"
   }
 }
