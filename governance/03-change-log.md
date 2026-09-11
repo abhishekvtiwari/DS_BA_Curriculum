@@ -274,3 +274,22 @@
   fail only depth; C07 is ready for independent review; C08-C12 remain unauthored.
 - No curriculum was authored and no issue register entry was created by this change; ISS-012 and ISS-013
   are opened by Codex on acceptance of the command.
+
+## 0.12.0 - 2026-09-11 - Node-level verification merged into REF-AUDIT-20260910-01
+
+- Re-verified the AI and Data Scientist reference from the roadmap's own node graph (130 nodes, 76 labelled,
+  49 resource links) against module contracts, and merged the result **in place** into
+  `indexes/03-roadmap-sh-coverage-gap-report.md`. No second report was created; the single-current-version
+  rule requires updating the existing controlled file rather than adding a parallel one.
+- Confirmed rather than rediscovered the econometrics, CUPED/CUPAC and ratio-metric findings already recorded
+  on 2026-09-10 and already tracked under `ISS-003`.
+- Added to the Data Science comparison: AI-assisted development (Vibe Coding), stage 10 of that roadmap, with
+  no counterpart in any DS contract; and the A/B testing placement question, `DS-M18` rather than `DS-M06`.
+- Added measured resource weighting (24 of 49 links in the stages 1-3 band), giving the existing
+  scope-control rule an evidence basis.
+- Added a Business Analyst mapping boundary: that roadmap touches only three BA modules and must not be used
+  as a BA frame.
+- Recorded a contract-hygiene defect: `tools_and_environment` declares Python 3.11+ in all fifteen BA
+  contracts including Change Management and Strategy, where it is implausible.
+- No issue-register entries opened; the register is the curriculum lead's write-active area under the owner
+  command of 2026-09-11. No curriculum ID, contract, blueprint or count changed.
