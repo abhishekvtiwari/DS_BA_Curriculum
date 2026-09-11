@@ -9,3 +9,7 @@ output/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Python build artifacts
+__pycache__/
+*.pyc
