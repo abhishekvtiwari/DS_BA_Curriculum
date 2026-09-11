@@ -20,9 +20,15 @@
     "BA-01-C05"
   ],
   "topic_count": 37,
-  "page_count": 61,
-  "sha256": "FB86BA1643E2EEDD61A5AF8DC886F1676EB25106B561E0478827A55F8E75E723",
+  "page_count": 68,
+  "sha256": "1B1DC2B470C8DCE41974D80762F344B1468210740756F6E640DD5B08D5A2A2DC",
   "visual_qa": "PASSED",
+  "publication_typography": {
+    "module_title_pt": 64,
+    "chapter_title_pt": 32,
+    "topic_title_pt": 24,
+    "subtopic_title_pt": 16
+  },
   "publication_layout_approval": "PENDING_USER_REVIEW",
   "publication_layout_approved_on": null,
   "theory_review_gate": "PASSED",

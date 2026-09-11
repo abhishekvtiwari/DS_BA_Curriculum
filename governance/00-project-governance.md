@@ -39,9 +39,10 @@
 2. Chapter metadata uses this order and wording: Pathway, Module, Phase, Status, Density standard, Controlled topics, Version, Updated.
 3. Use ASCII hyphens as structural separators in headings, metadata, filenames, headers, footers, and generated PDFs.
 4. Every individual chapter PDF uses the same cover, contents, heading hierarchy, typography, colors, margins, tables, lists, headers, footers, and page-number placement.
-5. Generated PDFs are organized under `output/pdf/<module code>/`; individual chapter PDFs are stored in its `chapters/` subfolder and any compiled reader is stored at the module folder root.
-6. Individual working PDFs display applicable module, chapter, and topic codes. Final compiled learner publications use the same visual system but omit internal codes.
-7. Before delivery, validate file naming, code visibility, topic coverage, page text, bookmark presence, forbidden dash characters, and representative rendered pages.
+5. Learner-facing publication typography uses an unambiguous hierarchy: module title 64 pt, chapter title 32 pt, controlled topic title 24 pt, and subtopic title 16 pt. Chapter-introduction labels use descriptive names such as `Chapter overview`; they must not duplicate a controlled topic title.
+6. Generated PDFs are organized under `output/pdf/<module code>/`; individual chapter PDFs are stored in its `chapters/` subfolder and any compiled reader is stored at the module folder root.
+7. Individual working PDFs display applicable module, chapter, and topic codes. Final compiled learner publications use the same visual system but omit internal codes.
+8. Before delivery, validate file naming, code visibility, topic coverage, page text, bookmark presence, forbidden dash characters, and representative rendered pages.
 
 ## Required production sequence
 
