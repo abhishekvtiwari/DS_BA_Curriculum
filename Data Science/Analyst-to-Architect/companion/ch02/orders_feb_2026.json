@@ -1,0 +1,38 @@
+[
+  {
+    "order_id": 5006,
+    "customer_name": "Metro Mart",
+    "order_date": "2026-02-06",
+    "status": "Delivered",
+    "sales_rep": "Rahul Mehta",
+    "net_revenue": 14640.0,
+    "delivery_note": null
+  },
+  {
+    "order_id": 5007,
+    "customer_name": "Coastal Foods",
+    "order_date": "2026-02-11",
+    "status": "Delivered",
+    "sales_rep": "Rahul Mehta",
+    "net_revenue": 32625.0,
+    "delivery_note": "Call before delivery"
+  },
+  {
+    "order_id": 5008,
+    "customer_name": "Sunrise Caterers",
+    "order_date": "2026-02-19",
+    "status": "Delivered",
+    "sales_rep": null,
+    "net_revenue": 23325.0,
+    "delivery_note": null
+  },
+  {
+    "order_id": 5009,
+    "customer_name": "Northgate Distributors",
+    "order_date": "2026-02-25",
+    "status": "Shipped",
+    "sales_rep": "Farah Khan",
+    "net_revenue": 76560.0,
+    "delivery_note": "Gate 2, Okhla Phase II"
+  }
+]

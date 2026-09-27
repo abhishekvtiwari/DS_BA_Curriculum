@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10163,2025-12-10,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,15,3828.00,Rahul Mehta
+10164,2025-12-10,19,Western Logistics,Mumbai,Wholesale,101,Storage Box 10L,Storage,10,3870.00,Farah Khan

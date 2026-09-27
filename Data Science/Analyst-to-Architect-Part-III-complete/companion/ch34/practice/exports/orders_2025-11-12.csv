@@ -1,0 +1,5 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10144,2025-11-12,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,15,6127.50,Farah Khan
+10144,2025-11-12,14,Deccan Packaging,Hyderabad,Wholesale,108,Stackable Bin,Storage,25,6380.00,Farah Khan
+10145,2025-11-12,21,Kitchen Kraft,Bengaluru,Retail,107,Lunch Box Set,Kitchen,15,5700.00,Rahul Mehta
+10145,2025-11-12,21,Kitchen Kraft,Bengaluru,Retail,108,Stackable Bin,Storage,55,15950.00,Rahul Mehta

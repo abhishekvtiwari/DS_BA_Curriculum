@@ -1,0 +1,29 @@
+# Runs on every pull request: install, lint, then build and test the whole project against a scratch database.
+name: dbt
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.CI_DATABASE_PASSWORD }}
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      RIVERSTONE_HOST: localhost
+      RIVERSTONE_USER: postgres
+      RIVERSTONE_PASSWORD: ${{ secrets.CI_DATABASE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install dbt-core dbt-postgres sqlfluff sqlfluff-templater-dbt
+      - run: psql -h localhost -U postgres -c "CREATE DATABASE riverstone_2025" && ./load_test_data.sh
+      - run: sqlfluff lint models/
+      - run: dbt deps --profiles-dir .
+      - run: dbt build --profiles-dir . --target ci

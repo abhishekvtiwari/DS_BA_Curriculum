@@ -1,0 +1,23 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10058,2025-06-01,Fresh Bowl Kitchens,Bengaluru,Hospitality,Stackable Bin,25,290,5,Delivered,6887.5
+10058,2025-06-01,Fresh Bowl Kitchens,Bengaluru,Hospitality,Storage Box 10L,30,430,0,Delivered,12900.0
+10059,2025-06-04,Sharma Hardware,Mumbai,Retail,Storage Box 25L,5,750,0,Delivered,3750.0
+10060,2025-06-06,Coastal Foods,Chennai,Wholesale,Stackable Bin,30,290,5,Delivered,8265.0
+10061,2025-06-09,Spice Route Restaurants,Kolkata,Hospitality,Stackable Bin,5,290,5,Delivered,1377.5
+10062,2025-06-10,Patel Kitchenware,Ahmedabad,Retail,Food Container Set,10,620,5,Delivered,5890.0
+10062,2025-06-10,Patel Kitchenware,Ahmedabad,Retail,Stackable Bin,30,290,5,Delivered,8265.0
+10063,2025-06-10,Sunrise Caterers,Nagpur,Hospitality,Storage Box 10L,20,430,0,Delivered,8600.0
+10063,2025-06-10,Sunrise Caterers,Nagpur,Hospitality,Water Bottle 1L,15,115,5,Delivered,1638.75
+10064,2025-06-10,Harbour Traders,Kochi,Wholesale,Industrial Crate,5,1400,12,Delivered,6160.0
+10064,2025-06-10,Harbour Traders,Kochi,Wholesale,Storage Box 10L,15,430,12,Delivered,5676.0
+10064,2025-06-10,Harbour Traders,Kochi,Wholesale,Storage Box 25L,15,750,5,Delivered,10687.5
+10065,2025-06-10,Spice Route Restaurants,Kolkata,Hospitality,Storage Box 10L,5,430,5,Delivered,2042.5
+10066,2025-06-13,Northgate Distributors,Delhi,Wholesale,Industrial Crate,20,1400,5,Delivered,26600.0
+10066,2025-06-13,Northgate Distributors,Delhi,Wholesale,Stackable Bin,15,290,8,Delivered,4002.0
+10067,2025-06-14,Om Sai Provisions,Nashik,Retail,Stackable Bin,25,290,0,Delivered,7250.0
+10067,2025-06-14,Om Sai Provisions,Nashik,Retail,Water Bottle 1L,25,115,5,Delivered,2731.25
+10068,2025-06-18,Metro Mart,Mumbai,Retail,Storage Box 10L,15,430,0,Delivered,6450.0
+10069,2025-06-24,Green Leaf Hotels,Pune,Hospitality,Food Container Set,25,620,5,Delivered,14725.0
+10069,2025-06-24,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,20,430,0,Delivered,8600.0
+10070,2025-06-28,Deccan Packaging,Hyderabad,Wholesale,Industrial Crate,20,1400,5,Delivered,26600.0
+10070,2025-06-28,Deccan Packaging,Hyderabad,Wholesale,Stackable Bin,30,290,10,Delivered,7830.0

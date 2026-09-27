@@ -1,0 +1,5 @@
+order_id,customer_name,order_date,status,sales_rep,net_revenue,delivery_note
+5006,Metro Mart,2026-02-06,Delivered,Rahul Mehta,14640.00,
+5007,Coastal Foods,2026-02-11,Delivered,Rahul Mehta,32625.00,Call before delivery
+5008,Sunrise Caterers,2026-02-19,Delivered,,23325.00,
+5009,Northgate Distributors,2026-02-25,Shipped,Farah Khan,76560.00,"Gate 2, Okhla Phase II"

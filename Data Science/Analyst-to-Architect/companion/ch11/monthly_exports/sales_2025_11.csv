@@ -1,0 +1,36 @@
+order_id,order_date,customer_code,product_id,quantity,unit_price,discount_pct,status,sales_rep
+10137,04-11-2025,0012,108,15,290,5,Delivered,Neha Kulkarni
+10138,05-11-2025,0003,103,15,115,5,Delivered,Farah Khan
+10138,05-11-2025,0003,108,55,290,0,Delivered,Farah Khan
+10139,06-11-2025,0011,101,60,430,8,Delivered,Rahul Mehta
+10139,06-11-2025,0011,105,20,1400,12,Delivered,Rahul Mehta
+10140,09-11-2025,0002,103,65,115,0,Delivered,Neha Kulkarni
+10140,09-11-2025,0002,104,55,620,5,Delivered,Neha Kulkarni
+10141,09-11-2025,0008,104,10,620,0,Delivered,Neha Kulkarni
+10141,09-11-2025,0008,108,65,290,5,Delivered,Neha Kulkarni
+10142,09-11-2025,0015,104,60,620,5,Delivered,Farah Khan
+10142,09-11-2025,0015,108,60,290,5,Delivered,Farah Khan
+10143,11-11-2025,0007,101,55,430,12,Delivered,Farah Khan
+10143,11-11-2025,0007,105,25,1400,8,Delivered,Farah Khan
+10144,12-11-2025,0014,101,15,430,5,Delivered,Farah Khan
+10144,12-11-2025,0014,108,25,290,12,Delivered,Farah Khan
+10145,12-11-2025,0021,107,15,380,0,Delivered,Rahul Mehta
+10145,12-11-2025,0021,108,55,290,0,Delivered,Rahul Mehta
+10146,16-11-2025,0001,102,65,750,0,Delivered,Neha Kulkarni
+10146,16-11-2025,0001,107,50,380,0,Delivered,Neha Kulkarni
+10146,16-11-2025,0001,108,50,290,0,Delivered,Neha Kulkarni
+10147,16-11-2025,0019,101,30,430,5,Delivered,Farah Khan
+10147,16-11-2025,0019,105,30,1400,8,Delivered,Farah Khan
+10148,16-11-2025,0019,102,45,750,12,Delivered,Farah Khan
+10148,16-11-2025,0019,108,50,290,10,Delivered,Farah Khan
+10149,18-11-2025,0004,102,45,750,8,Delivered,Rahul Mehta
+10149,18-11-2025,0004,105,15,1400,12,Delivered,Rahul Mehta
+10150,19-11-2025,0022,103,70,115,0,Delivered,
+10151,22-11-2025,0011,102,35,750,5,Delivered,Rahul Mehta
+10151,22-11-2025,0011,105,40,1400,12,Delivered,Rahul Mehta
+10152,22-11-2025,0014,108,45,290,5,Delivered,Farah Khan
+10153,23-11-2025,0017,103,25,115,5,Delivered,
+10154,25-11-2025,0015,101,25,430,5,Delivered,Farah Khan
+10155,26-11-2025,0003,107,10,380,5,Delivered,Farah Khan
+10156,26-11-2025,0005,101,15,430,0,Delivered,Rahul Mehta
+10157,28-11-2025,0018,101,40,430,0,Delivered,Rahul Mehta

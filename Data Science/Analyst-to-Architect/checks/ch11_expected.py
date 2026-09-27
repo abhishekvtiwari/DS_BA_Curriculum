@@ -1,0 +1,83 @@
+"""Chapter 11 expected results. Every number shown for features that can't run in this sandbox (pivot tables,
+dynamic arrays, XLOOKUP, Power Query, DAX, QUERY, Goal Seek, data tables) is computed here with pandas.
+Run from the book root after companion/ch11/build_ch11_files.py:  python3 checks/ch11_expected.py"""
+import pandas as pd, glob, numpy as np
+S = pd.read_excel("companion/ch11/ch11_practice.xlsx", sheet_name="Sales", dtype={"customer_code": str})
+C = pd.read_excel("companion/ch11/ch11_practice.xlsx", sheet_name="Customers", dtype={"customer_code": str})
+ok = S[S.status != "Cancelled"].copy()
+def show(k, v): print(f"{k}: {v}")
+show("lines / valid lines", (len(S), len(ok)))
+show("valid net revenue", round(ok.net_revenue.sum(), 2))
+show("gross margin", round(ok.gross_margin.sum(), 2)); show("gross margin %", round(ok.gross_margin.sum()/ok.net_revenue.sum()*100, 1))
+# pivot: segment x quarter
+pv = ok.pivot_table(index="segment", columns="quarter", values="net_revenue", aggfunc="sum", margins=True, margins_name="Grand Total").round(2)
+print(pv)
+share = (ok.groupby("segment").net_revenue.sum()/ok.net_revenue.sum()*100).round(1); show("segment share", share.to_dict())
+show("lines by segment (count)", ok.groupby("segment").order_id.count().to_dict())
+show("distinct orders by segment", ok.groupby("segment").order_id.nunique().to_dict())
+show("quarter totals", ok.groupby("quarter").net_revenue.sum().round(2).to_dict())
+prod = ok.groupby("product_name").net_revenue.sum().sort_values(ascending=False).round(2); show("products", prod.to_dict())
+gm_seg = ok.groupby("segment").agg(rev=("net_revenue","sum"), gm=("gross_margin","sum")); gm_seg["pct"]=(gm_seg.gm/gm_seg.rev*100).round(1); print(gm_seg.round(2))
+gm_cat = ok.groupby("category").agg(rev=("net_revenue","sum"), gm=("gross_margin","sum")); gm_cat["pct"]=(gm_cat.gm/gm_cat.rev*100).round(1); print(gm_cat.round(2))
+rep_q = ok.assign(sales_rep=ok.sales_rep.fillna("(blank)")).pivot_table(index="sales_rep", columns="quarter", values="net_revenue", aggfunc="sum", margins=True).round(2); print(rep_q)
+# lookups
+show("105 name", S[S.product_id==105].product_name.iloc[0])
+show("0014 name/city/segment", C[C.customer_code=="0014"][["customer_name","city","segment"]].values.tolist())
+last = S[S.customer_code=="0001"].sort_values(["order_date","order_id"]).iloc[-1]; show("Sharma last order", (int(last.order_id), str(last.order_date.date()), last.status))
+first = S[S.customer_code=="0001"].sort_values(["order_date","order_id"]).iloc[0]; show("Sharma first order", (int(first.order_id), str(first.order_date.date())))
+show("Home Plus (0016) orders", int((S.customer_code=="0016").sum()))
+cust_rev = ok.groupby(["customer_code","customer_name"]).net_revenue.sum().round(2).sort_values(ascending=False)
+bands = pd.cut(cust_rev, [-1, 249999.999, 399999.999, 1e12], labels=["Standard","Silver","Gold"])
+rate = bands.map({"Standard":0,"Silver":1,"Gold":2}).astype(float)
+tab = pd.DataFrame({"rev":cust_rev, "band":bands, "rebate":(cust_rev*rate/100).round(2)}); print(tab)
+show("band counts", tab.band.value_counts().to_dict()); show("total rebate", round(tab.rebate.sum(), 2))
+show("top 5 customers", cust_rev.head(5).to_dict())
+grid = ok.pivot_table(index="month_start", columns="segment", values="net_revenue", aggfunc="sum").round(2)
+show("Wholesale October", grid.loc[pd.Timestamp("2025-10-01"), "Wholesale"])
+print(grid)
+# dynamic arrays
+show("UNIQUE customers (all lines)", S.customer_name.nunique())
+nw = S[(S.month_start==pd.Timestamp("2025-11-01")) & (S.segment=="Wholesale")]
+show("FILTER Nov wholesale rows, sum", (len(nw), round(nw.net_revenue.sum(),2)))
+show("FILTER Nov wholesale first rows", nw[["order_id","order_date","customer_name","product_name","net_revenue"]].head(4).values.tolist())
+show("GROUPBY segment incl cancelled", S.groupby("segment").net_revenue.sum().round(2).to_dict())
+# power query
+files = sorted(glob.glob("companion/ch11/monthly_exports/*.csv"))
+pq = pd.concat([pd.read_csv(f, dtype={"customer_code": str}) for f in files])
+pq["net"] = pq.quantity*pq.unit_price*(1-pq.discount_pct/100)
+show("PQ files, rows, valid rows, valid total", (len(files), len(pq), int((pq.status!="Cancelled").sum()), round(pq[pq.status!="Cancelled"].net.sum(),2)))
+show("rows per file", [len(pd.read_csv(f)) for f in files])
+tw = pd.read_excel("companion/ch11/ch11_practice.xlsx", sheet_name="TargetsWide")
+show("unpivot rows, sum", (tw.shape[1]-1, int(tw.iloc[0,1:].sum())))
+# DAX
+jun = ok[ok.order_date <= "2025-06-30"].net_revenue.sum(); show("YTD at Jun", round(jun,2))
+show("YTD at Sep", round(ok[ok.order_date <= "2025-09-30"].net_revenue.sum(),2))
+# what-if
+gap = 300000 - 186928; per = 1400*0.92; show("June gap, per crate, crates", (gap, per, round(gap/per, 2)))
+base = ok.net_revenue.sum()
+for p in [0,3,5]:
+    print("price", p, [round(base*(1+p/100)*(1+v/100)) for v in [-5,0,5,10]])
+# messy workbook
+true_m = ok.groupby(ok.order_date.dt.month).net_revenue.sum()
+apr_c = S[(S.order_date.dt.month==4)&(S.status=="Cancelled")].net_revenue.sum()
+octl = S[S.order_date.dt.month==10].reset_index(drop=True); oct_missing = octl.iloc[29:]; 
+show("Oct lines, lines missed, value missed (valid)", (len(octl), len(oct_missing), round(oct_missing[oct_missing.status!="Cancelled"].net_revenue.sum(),2)))
+dec = S[S.order_date.dt.month==12]; show("Dec duplicated 5 lines value", round(dec.tail(5).net_revenue.sum(),2))
+show("Apr cancelled", apr_c)
+show("messy total", round(true_m.sum() + apr_c - oct_missing[oct_missing.status!='Cancelled'].net_revenue.sum() + 72 + dec.tail(5).net_revenue.sum(), 2))
+show("Mar cancelled (hidden bug)", S[(S.order_date.dt.month==3)&(S.status=="Cancelled")].net_revenue.sum())
+dec = ok[ok.order_date.dt.month == 12].net_revenue.sum()
+show("refresh test without December: total, Q4", (round(ok.net_revenue.sum()-dec, 2), round(ok[ok.quarter=="Q4"].net_revenue.sum()-dec, 2)))
+show("88 crates June", 186928 + 88*1288)
+show("Western Logistics gap to Silver", 250000 - 248727.5)
+rq4 = ok[ok.quarter=="Q4"].groupby("sales_rep").net_revenue.sum().round(2); show("Q4 by rep", rq4.to_dict())
+show("sorted unique first 5", sorted(S.customer_name.unique())[:5])
+show("Deccan Packaging rev", round(ok[ok.customer_code=="0014"].net_revenue.sum(),2))
+# expanded chapter: pivot show-values-as and bands
+q4 = ok[ok.quarter=="Q4"]; show("Wholesale share of Q4 %", round(q4[q4.segment=="Wholesale"].net_revenue.sum()/q4.net_revenue.sum()*100, 1))
+show("June vs May % difference", round((186928/329358.75-1)*100, 1))
+show("share of revenue from lines under 10k %", round(ok[ok.net_revenue<10000].net_revenue.sum()/ok.net_revenue.sum()*100, 1))
+show("realized price Industrial Crate, % below list", (round(795830/625, 2), round((1-795830/625/1400)*100, 1)))
+show("status profile (all lines)", S.status.value_counts().to_dict())
+g = ok.groupby("customer_name").agg(rev=("net_revenue","sum"), lines=("order_id","count"), orders=("order_id","nunique"), first=("order_date","min"), last=("order_date","max"))
+show("Group By Sharma", g.loc["Sharma Hardware"].tolist())

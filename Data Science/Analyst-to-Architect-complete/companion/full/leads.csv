@@ -1,0 +1,44 @@
+lead_id,created_at,company_name,email,source,owner_id
+1,2025-04-07 15:20:00,Anand Stores,anandstores@example.com,Referral,3
+2,2025-06-12 14:20:00,Bright Kitchens,brightkitchens@example.com,Website,3
+3,2025-06-12 15:05:00,Bright Kitchens,brightkitchens@example.com,Website,3
+4,2025-06-12 17:20:00,BRIGHT KITCHENS,brightkitchens@example.com,Website,3
+5,2025-01-02 16:50:00,Cafe Mocha Lane,cafemochalane@example.com,Website,3
+6,2025-04-25 15:35:00,Delta Hospitality,deltahospitality@example.com,Cold call,3
+7,2025-06-17 17:50:00,Elite Mart,elitemart@example.com,Referral,4
+8,2025-03-10 17:35:00,Fortune Foods,fortunefoods@example.com,Website,3
+9,2025-03-10 17:42:00,Fortune Foods,fortunefoods@example.com,Website,3
+10,2025-03-10 20:35:00,FORTUNE FOODS,fortunefoods@example.com,Website,3
+11,2025-06-16 11:35:00,Garnet Hotels,garnethotels@example.com,IndiaMART listing,4
+12,2025-11-02 09:50:00,Hilltop Resorts,hilltopresorts@example.com,Cold call,5
+13,2025-04-03 11:05:00,Indigo Caterers,indigocaterers@example.com,Referral,4
+14,2025-11-09 11:20:00,Jasmine Retail,jasmineretail@example.com,Website,3
+15,2025-11-09 12:05:00,Jasmine Retail,jasmineretail@example.com,Website,3
+16,2025-09-02 13:20:00,Kaveri Distributors,kaveridistributors@example.com,Website,5
+17,2025-01-05 13:50:00,Lotus Banquets,lotusbanquets@example.com,Trade fair,3
+18,2025-10-16 09:50:00,Mango Tree Cafe,mangotreecafe@example.com,Website,3
+19,2025-01-14 10:20:00,Nova Supermart,novasupermart@example.com,Website,4
+20,2025-01-14 10:27:00,Nova Supermart,novasupermart@example.com,Website,4
+21,2025-01-14 10:27:00,NOVA SUPERMART,novasupermart@example.com,Website,4
+22,2025-11-14 18:50:00,Orchid Hotels,orchidhotels@example.com,IndiaMART listing,5
+23,2025-07-04 09:35:00,Pearl Packaging,pearlpackaging@example.com,Cold call,4
+24,2025-03-23 18:35:00,Quick Bite Foods,quickbitefoods@example.com,Website,3
+25,2025-09-13 12:20:00,Ruby Traders,rubytraders@example.com,Website,3
+26,2025-09-13 15:20:00,Ruby Traders,rubytraders@example.com,Website,3
+27,2025-09-13 13:05:00,RUBY TRADERS,rubytraders@example.com,Website,3
+28,2025-02-22 15:05:00,Saffron Kitchens,saffronkitchens@example.com,Trade fair,4
+29,2025-09-23 16:35:00,Tulip Mart,tulipmart@example.com,Referral,3
+30,2025-08-24 15:05:00,Urban Pantry,urbanpantry@example.com,Website,3
+31,2025-04-02 15:35:00,Vista Resorts,vistaresorts@example.com,Website,4
+32,2025-04-02 15:42:00,Vista Resorts,vistaresorts@example.com,Website,4
+33,2025-01-23 09:50:00,Willow Cafe,willowcafe@example.com,Trade fair,4
+34,2025-03-09 15:50:00,Xpress Wholesale,xpresswholesale@example.com,Trade fair,4
+35,2025-02-26 09:35:00,Yellow Chilli Diner,yellowchillidiner@example.com,Website,4
+36,2025-05-06 17:20:00,Zenith Supplies,zenithsupplies@example.com,Website,3
+37,2025-05-06 17:22:00,Zenith Supplies,zenithsupplies@example.com,Website,3
+38,2025-05-06 18:05:00,ZENITH SUPPLIES,zenithsupplies@example.com,Website,3
+39,2025-10-04 14:50:00,Aroma Bakers,aromabakers@example.com,IndiaMART listing,3
+40,2025-02-23 11:20:00,Bharat Provisions,bharatprovisions@example.com,Trade fair,3
+41,2025-01-06 09:35:00,Crown Hotels,crownhotels@example.com,Referral,5
+42,2025-11-25 10:05:00,Daily Fresh Mart,dailyfreshmart@example.com,Website,5
+43,2025-11-25 10:50:00,Daily Fresh Mart,dailyfreshmart@example.com,Website,5

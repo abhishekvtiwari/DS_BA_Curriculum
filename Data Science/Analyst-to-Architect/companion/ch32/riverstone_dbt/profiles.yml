@@ -1,0 +1,22 @@
+# profiles.yml - how dbt connects. Keep the password out of this file and out of Git.
+riverstone_dbt:
+  target: dev
+  outputs:
+    dev:                                  # the one-year database, for everyday work
+      type: postgres
+      host: "{{ env_var('RIVERSTONE_HOST', 'localhost') }}"
+      port: 5432
+      user: "{{ env_var('RIVERSTONE_USER', 'postgres') }}"
+      password: "{{ env_var('RIVERSTONE_PASSWORD') }}"
+      dbname: riverstone_2025
+      schema: dbt_dev
+      threads: 4
+    large:                                # the three-year database, for the incremental example
+      type: postgres
+      host: "{{ env_var('RIVERSTONE_HOST', 'localhost') }}"
+      port: 5432
+      user: "{{ env_var('RIVERSTONE_USER', 'postgres') }}"
+      password: "{{ env_var('RIVERSTONE_PASSWORD') }}"
+      dbname: riverstone_perf
+      schema: dbt_large
+      threads: 4

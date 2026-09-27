@@ -1,0 +1,327 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10001,2025-01-02,2,Patel Kitchenware,Ahmedabad,Retail,108,Stackable Bin,Storage,10,2900.00,Neha Kulkarni
+10002,2025-01-05,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,55,20900.00,Farah Khan
+10003,2025-01-12,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,25,10750.00,Rahul Mehta
+10003,2025-01-12,5,Metro Mart,Mumbai,Retail,102,Storage Box 25L,Storage,45,32062.50,Rahul Mehta
+10003,2025-01-12,5,Metro Mart,Mumbai,Retail,108,Stackable Bin,Storage,10,2900.00,Rahul Mehta
+10004,2025-01-13,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,40,17200.00,Rahul Mehta
+10004,2025-01-13,5,Metro Mart,Mumbai,Retail,102,Storage Box 25L,Storage,15,10687.50,Rahul Mehta
+10005,2025-01-20,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,15,6127.50,Farah Khan
+10006,2025-01-21,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,25,17812.50,Rahul Mehta
+10007,2025-01-24,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,45,19350.00,Neha Kulkarni
+10007,2025-01-24,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,20,15000.00,Neha Kulkarni
+10007,2025-01-24,1,Sharma Hardware,Mumbai,Retail,108,Stackable Bin,Storage,20,5800.00,Neha Kulkarni
+10008,2025-01-26,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,30,12900.00,Neha Kulkarni
+10008,2025-01-26,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,25,18750.00,Neha Kulkarni
+10008,2025-01-26,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,25,9500.00,Neha Kulkarni
+10009,2025-02-02,10,City Needs Store,Jaipur,Retail,101,Storage Box 10L,Storage,30,12900.00,Rahul Mehta
+10009,2025-02-02,10,City Needs Store,Jaipur,Retail,102,Storage Box 25L,Storage,30,21375.00,Rahul Mehta
+10010,2025-02-05,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,20,8600.00,Neha Kulkarni
+10010,2025-02-05,1,Sharma Hardware,Mumbai,Retail,103,Water Bottle 1L,Kitchen,10,1150.00,Neha Kulkarni
+10010,2025-02-05,1,Sharma Hardware,Mumbai,Retail,104,Food Container Set,Kitchen,35,21700.00,Neha Kulkarni
+10011,2025-02-16,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,25,10750.00,Farah Khan
+10011,2025-02-16,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,30,11400.00,Farah Khan
+10011,2025-02-16,3,Green Leaf Hotels,Pune,Hospitality,108,Stackable Bin,Storage,30,8265.00,Farah Khan
+10012,2025-02-16,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,40,49280.00,Rahul Mehta
+10012,2025-02-16,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,40,11020.00,Rahul Mehta
+10013,2025-02-17,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,30,12255.00,Farah Khan
+10013,2025-02-17,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,30,8004.00,Farah Khan
+10014,2025-02-17,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,25,17250.00,Farah Khan
+10015,2025-02-20,6,Sunrise Caterers,Nagpur,Hospitality,108,Stackable Bin,Storage,20,5800.00,unassigned
+10016,2025-02-20,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,25,10750.00,Neha Kulkarni
+10016,2025-02-20,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,50,5462.50,Neha Kulkarni
+10016,2025-02-20,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,30,8700.00,Neha Kulkarni
+10017,2025-02-25,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,40,14440.00,Rahul Mehta
+10018,2025-02-28,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,25,10212.50,Neha Kulkarni
+10018,2025-02-28,1,Sharma Hardware,Mumbai,Retail,108,Stackable Bin,Storage,15,4350.00,Neha Kulkarni
+10019,2025-03-04,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,40,4600.00,Farah Khan
+10019,2025-03-04,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,35,12635.00,Farah Khan
+10020,2025-03-10,4,Coastal Foods,Chennai,Wholesale,101,Storage Box 10L,Storage,15,6127.50,Rahul Mehta
+10020,2025-03-10,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,15,9900.00,Rahul Mehta
+10020,2025-03-10,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,25,31500.00,Rahul Mehta
+10021,2025-03-18,5,Metro Mart,Mumbai,Retail,104,Food Container Set,Kitchen,15,9300.00,Rahul Mehta
+10022,2025-03-21,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,45,33750.00,Neha Kulkarni
+10022,2025-03-21,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,15,5700.00,Neha Kulkarni
+10023,2025-03-21,8,Blue Bay Cafe,Pune,Hospitality,108,Stackable Bin,Storage,10,2900.00,Neha Kulkarni
+10024,2025-03-22,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,35,13545.00,Farah Khan
+10024,2025-03-22,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,20,14250.00,Farah Khan
+10025,2025-03-22,10,City Needs Store,Jaipur,Retail,102,Storage Box 25L,Storage,30,21375.00,Rahul Mehta
+10026,2025-03-26,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,55,23650.00,Neha Kulkarni
+10026,2025-03-26,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,107,Lunch Box Set,Kitchen,45,17100.00,Neha Kulkarni
+10027,2025-03-27,13,Om Sai Provisions,Nashik,Retail,108,Stackable Bin,Storage,40,11600.00,Neha Kulkarni
+10028,2025-03-28,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,35,24937.50,Neha Kulkarni
+10029,2025-03-28,2,Patel Kitchenware,Ahmedabad,Retail,102,Storage Box 25L,Storage,25,18750.00,Neha Kulkarni
+10029,2025-03-28,2,Patel Kitchenware,Ahmedabad,Retail,106,Garden Chair,Furniture,15,16387.50,Neha Kulkarni
+10030,2025-04-08,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,35,12635.00,Rahul Mehta
+10031,2025-04-09,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,15,5934.00,Rahul Mehta
+10032,2025-04-11,2,Patel Kitchenware,Ahmedabad,Retail,101,Storage Box 10L,Storage,30,12900.00,Neha Kulkarni
+10032,2025-04-11,2,Patel Kitchenware,Ahmedabad,Retail,103,Water Bottle 1L,Kitchen,35,4025.00,Neha Kulkarni
+10032,2025-04-11,2,Patel Kitchenware,Ahmedabad,Retail,108,Stackable Bin,Storage,10,2900.00,Neha Kulkarni
+10033,2025-04-11,3,Green Leaf Hotels,Pune,Hospitality,104,Food Container Set,Kitchen,10,5890.00,Farah Khan
+10033,2025-04-11,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,20,7220.00,Farah Khan
+10035,2025-04-14,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,25,10212.50,Farah Khan
+10036,2025-04-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,35,4025.00,unassigned
+10036,2025-04-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,104,Food Container Set,Kitchen,30,17670.00,unassigned
+10036,2025-04-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,107,Lunch Box Set,Kitchen,35,13300.00,unassigned
+10037,2025-04-20,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,45,19350.00,Rahul Mehta
+10037,2025-04-20,5,Metro Mart,Mumbai,Retail,108,Stackable Bin,Storage,30,8265.00,Rahul Mehta
+10038,2025-04-21,6,Sunrise Caterers,Nagpur,Hospitality,107,Lunch Box Set,Kitchen,50,19000.00,unassigned
+10039,2025-04-22,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,15,10687.50,Neha Kulkarni
+10039,2025-04-22,1,Sharma Hardware,Mumbai,Retail,104,Food Container Set,Kitchen,35,21700.00,Neha Kulkarni
+10040,2025-04-23,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,25,6887.50,Rahul Mehta
+10041,2025-04-23,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,35,4025.00,Neha Kulkarni
+10041,2025-04-23,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,60,16530.00,Neha Kulkarni
+10042,2025-04-25,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,10,7125.00,Farah Khan
+10043,2025-05-04,2,Patel Kitchenware,Ahmedabad,Retail,102,Storage Box 25L,Storage,15,11250.00,Neha Kulkarni
+10043,2025-05-04,2,Patel Kitchenware,Ahmedabad,Retail,104,Food Container Set,Kitchen,20,12400.00,Neha Kulkarni
+10044,2025-05-04,4,Coastal Foods,Chennai,Wholesale,101,Storage Box 10L,Storage,15,5934.00,Rahul Mehta
+10044,2025-05-04,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,35,44100.00,Rahul Mehta
+10044,2025-05-04,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,5,1276.00,Rahul Mehta
+10045,2025-05-04,13,Om Sai Provisions,Nashik,Retail,102,Storage Box 25L,Storage,25,18750.00,Neha Kulkarni
+10045,2025-05-04,13,Om Sai Provisions,Nashik,Retail,103,Water Bottle 1L,Kitchen,35,4025.00,Neha Kulkarni
+10046,2025-05-06,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,15,5805.00,Farah Khan
+10047,2025-05-07,1,Sharma Hardware,Mumbai,Retail,106,Garden Chair,Furniture,15,17250.00,Neha Kulkarni
+10048,2025-05-08,5,Metro Mart,Mumbai,Retail,103,Water Bottle 1L,Kitchen,20,2300.00,Rahul Mehta
+10048,2025-05-08,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,15,5700.00,Rahul Mehta
+10049,2025-05-13,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,20,13200.00,Farah Khan
+10049,2025-05-13,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,35,9135.00,Farah Khan
+10050,2025-05-15,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,40,15480.00,Farah Khan
+10050,2025-05-15,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,15,10687.50,Farah Khan
+10050,2025-05-15,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,40,10440.00,Farah Khan
+10051,2025-05-16,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,55,6325.00,Neha Kulkarni
+10051,2025-05-16,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,104,Food Container Set,Kitchen,25,14725.00,Neha Kulkarni
+10052,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,35,15050.00,Farah Khan
+10052,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,10,1150.00,Farah Khan
+10052,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,104,Food Container Set,Kitchen,20,12400.00,Farah Khan
+10053,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,40,4370.00,Farah Khan
+10053,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,10,3800.00,Farah Khan
+10053,2025-05-20,3,Green Leaf Hotels,Pune,Hospitality,108,Stackable Bin,Storage,50,13775.00,Farah Khan
+10054,2025-05-21,6,Sunrise Caterers,Nagpur,Hospitality,107,Lunch Box Set,Kitchen,35,12635.00,unassigned
+10055,2025-05-21,8,Blue Bay Cafe,Pune,Hospitality,103,Water Bottle 1L,Kitchen,20,2300.00,Neha Kulkarni
+10056,2025-05-22,9,Lakeview Resorts,Udaipur,Hospitality,103,Water Bottle 1L,Kitchen,25,2731.25,Farah Khan
+10056,2025-05-22,9,Lakeview Resorts,Udaipur,Hospitality,108,Stackable Bin,Storage,30,8265.00,Farah Khan
+10057,2025-05-27,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,35,44100.00,Rahul Mehta
+10058,2025-06-01,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,30,12900.00,Neha Kulkarni
+10058,2025-06-01,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,25,6887.50,Neha Kulkarni
+10059,2025-06-04,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,5,3750.00,Neha Kulkarni
+10060,2025-06-06,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,30,8265.00,Rahul Mehta
+10061,2025-06-09,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,5,1377.50,Farah Khan
+10062,2025-06-10,2,Patel Kitchenware,Ahmedabad,Retail,104,Food Container Set,Kitchen,10,5890.00,Neha Kulkarni
+10062,2025-06-10,2,Patel Kitchenware,Ahmedabad,Retail,108,Stackable Bin,Storage,30,8265.00,Neha Kulkarni
+10063,2025-06-10,6,Sunrise Caterers,Nagpur,Hospitality,101,Storage Box 10L,Storage,20,8600.00,unassigned
+10063,2025-06-10,6,Sunrise Caterers,Nagpur,Hospitality,103,Water Bottle 1L,Kitchen,15,1638.75,unassigned
+10064,2025-06-10,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,15,5676.00,Rahul Mehta
+10064,2025-06-10,11,Harbour Traders,Kochi,Wholesale,102,Storage Box 25L,Storage,15,10687.50,Rahul Mehta
+10064,2025-06-10,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,5,6160.00,Rahul Mehta
+10065,2025-06-10,15,Spice Route Restaurants,Kolkata,Hospitality,101,Storage Box 10L,Storage,5,2042.50,Farah Khan
+10066,2025-06-13,7,Northgate Distributors,Delhi,Wholesale,105,Industrial Crate,Industrial,20,26600.00,Farah Khan
+10066,2025-06-13,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,15,4002.00,Farah Khan
+10067,2025-06-14,13,Om Sai Provisions,Nashik,Retail,103,Water Bottle 1L,Kitchen,25,2731.25,Neha Kulkarni
+10067,2025-06-14,13,Om Sai Provisions,Nashik,Retail,108,Stackable Bin,Storage,25,7250.00,Neha Kulkarni
+10068,2025-06-18,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,15,6450.00,Rahul Mehta
+10069,2025-06-24,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,20,8600.00,Farah Khan
+10069,2025-06-24,3,Green Leaf Hotels,Pune,Hospitality,104,Food Container Set,Kitchen,25,14725.00,Farah Khan
+10070,2025-06-28,14,Deccan Packaging,Hyderabad,Wholesale,105,Industrial Crate,Industrial,20,26600.00,Farah Khan
+10070,2025-06-28,14,Deccan Packaging,Hyderabad,Wholesale,108,Stackable Bin,Storage,30,7830.00,Farah Khan
+10071,2025-07-03,15,Spice Route Restaurants,Kolkata,Hospitality,104,Food Container Set,Kitchen,30,18600.00,Farah Khan
+10071,2025-07-03,15,Spice Route Restaurants,Kolkata,Hospitality,107,Lunch Box Set,Kitchen,25,9025.00,Farah Khan
+10071,2025-07-03,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,25,6887.50,Farah Khan
+10072,2025-07-07,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,35,13300.00,Farah Khan
+10073,2025-07-10,5,Metro Mart,Mumbai,Retail,103,Water Bottle 1L,Kitchen,5,575.00,Rahul Mehta
+10073,2025-07-10,5,Metro Mart,Mumbai,Retail,104,Food Container Set,Kitchen,20,11780.00,Rahul Mehta
+10074,2025-07-15,8,Blue Bay Cafe,Pune,Hospitality,104,Food Container Set,Kitchen,15,9300.00,Neha Kulkarni
+10074,2025-07-15,8,Blue Bay Cafe,Pune,Hospitality,107,Lunch Box Set,Kitchen,20,7600.00,Neha Kulkarni
+10075,2025-07-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,20,8600.00,Neha Kulkarni
+10075,2025-07-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,104,Food Container Set,Kitchen,20,12400.00,Neha Kulkarni
+10075,2025-07-15,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,107,Lunch Box Set,Kitchen,5,1805.00,Neha Kulkarni
+10076,2025-07-20,15,Spice Route Restaurants,Kolkata,Hospitality,103,Water Bottle 1L,Kitchen,5,546.25,Farah Khan
+10076,2025-07-20,15,Spice Route Restaurants,Kolkata,Hospitality,104,Food Container Set,Kitchen,10,6200.00,Farah Khan
+10077,2025-07-21,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,15,5415.00,Rahul Mehta
+10077,2025-07-21,5,Metro Mart,Mumbai,Retail,108,Stackable Bin,Storage,10,2755.00,Rahul Mehta
+10078,2025-07-21,18,Evergreen Mart,Indore,Retail,102,Storage Box 25L,Storage,15,10687.50,Rahul Mehta
+10079,2025-07-22,13,Om Sai Provisions,Nashik,Retail,101,Storage Box 10L,Storage,5,2042.50,Neha Kulkarni
+10079,2025-07-22,13,Om Sai Provisions,Nashik,Retail,104,Food Container Set,Kitchen,20,12400.00,Neha Kulkarni
+10079,2025-07-22,13,Om Sai Provisions,Nashik,Retail,107,Lunch Box Set,Kitchen,20,7600.00,Neha Kulkarni
+10080,2025-07-25,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,15,6127.50,Farah Khan
+10080,2025-07-25,14,Deccan Packaging,Hyderabad,Wholesale,108,Stackable Bin,Storage,20,5336.00,Farah Khan
+10081,2025-07-26,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,15,6450.00,Neha Kulkarni
+10081,2025-07-26,1,Sharma Hardware,Mumbai,Retail,104,Food Container Set,Kitchen,15,8835.00,Neha Kulkarni
+10082,2025-07-26,4,Coastal Foods,Chennai,Wholesale,101,Storage Box 10L,Storage,25,9460.00,Rahul Mehta
+10082,2025-07-26,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,5,3562.50,Rahul Mehta
+10082,2025-07-26,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,20,24640.00,Rahul Mehta
+10083,2025-07-26,11,Harbour Traders,Kochi,Wholesale,102,Storage Box 25L,Storage,15,10687.50,Rahul Mehta
+10083,2025-07-26,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,5,6160.00,Rahul Mehta
+10083,2025-07-26,11,Harbour Traders,Kochi,Wholesale,108,Stackable Bin,Storage,15,3915.00,Rahul Mehta
+10084,2025-08-03,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,40,16340.00,Farah Khan
+10084,2025-08-03,3,Green Leaf Hotels,Pune,Hospitality,104,Food Container Set,Kitchen,15,9300.00,Farah Khan
+10085,2025-08-04,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,15,6450.00,Rahul Mehta
+10085,2025-08-04,18,Evergreen Mart,Indore,Retail,102,Storage Box 25L,Storage,20,14250.00,Rahul Mehta
+10085,2025-08-04,18,Evergreen Mart,Indore,Retail,103,Water Bottle 1L,Kitchen,40,4370.00,Rahul Mehta
+10086,2025-08-11,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,40,15200.00,Rahul Mehta
+10086,2025-08-11,5,Metro Mart,Mumbai,Retail,108,Stackable Bin,Storage,25,7250.00,Rahul Mehta
+10087,2025-08-11,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,10,3870.00,Farah Khan
+10087,2025-08-11,14,Deccan Packaging,Hyderabad,Wholesale,102,Storage Box 25L,Storage,15,9900.00,Farah Khan
+10087,2025-08-11,14,Deccan Packaging,Hyderabad,Wholesale,105,Industrial Crate,Industrial,25,30800.00,Farah Khan
+10088,2025-08-12,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,35,14297.50,Neha Kulkarni
+10088,2025-08-12,1,Sharma Hardware,Mumbai,Retail,103,Water Bottle 1L,Kitchen,40,4600.00,Neha Kulkarni
+10089,2025-08-13,18,Evergreen Mart,Indore,Retail,104,Food Container Set,Kitchen,10,6200.00,Rahul Mehta
+10089,2025-08-13,18,Evergreen Mart,Indore,Retail,107,Lunch Box Set,Kitchen,20,7600.00,Rahul Mehta
+10089,2025-08-13,18,Evergreen Mart,Indore,Retail,108,Stackable Bin,Storage,40,11020.00,Rahul Mehta
+10090,2025-08-14,2,Patel Kitchenware,Ahmedabad,Retail,101,Storage Box 10L,Storage,35,15050.00,Neha Kulkarni
+10090,2025-08-14,2,Patel Kitchenware,Ahmedabad,Retail,104,Food Container Set,Kitchen,40,23560.00,Neha Kulkarni
+10091,2025-08-15,15,Spice Route Restaurants,Kolkata,Hospitality,107,Lunch Box Set,Kitchen,50,19000.00,Farah Khan
+10092,2025-08-15,19,Western Logistics,Mumbai,Wholesale,105,Industrial Crate,Industrial,20,26600.00,Farah Khan
+10092,2025-08-15,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,25,6887.50,Farah Khan
+10093,2025-08-19,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,20,7568.00,Farah Khan
+10093,2025-08-19,14,Deccan Packaging,Hyderabad,Wholesale,102,Storage Box 25L,Storage,10,6600.00,Farah Khan
+10094,2025-08-23,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,40,17200.00,Neha Kulkarni
+10095,2025-08-24,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,15,5934.00,Rahul Mehta
+10095,2025-08-24,11,Harbour Traders,Kochi,Wholesale,102,Storage Box 25L,Storage,35,23625.00,Rahul Mehta
+10096,2025-08-26,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,10,6600.00,Rahul Mehta
+10097,2025-08-27,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,10,6600.00,Farah Khan
+10097,2025-08-27,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,10,2610.00,Farah Khan
+10098,2025-09-02,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,40,17200.00,Rahul Mehta
+10098,2025-09-02,18,Evergreen Mart,Indore,Retail,108,Stackable Bin,Storage,10,2900.00,Rahul Mehta
+10099,2025-09-02,19,Western Logistics,Mumbai,Wholesale,102,Storage Box 25L,Storage,15,10687.50,Farah Khan
+10099,2025-09-02,19,Western Logistics,Mumbai,Wholesale,105,Industrial Crate,Industrial,35,44100.00,Farah Khan
+10099,2025-09-02,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,15,4132.50,Farah Khan
+10100,2025-09-03,21,Kitchen Kraft,Bengaluru,Retail,101,Storage Box 10L,Storage,15,6127.50,Rahul Mehta
+10100,2025-09-03,21,Kitchen Kraft,Bengaluru,Retail,104,Food Container Set,Kitchen,35,21700.00,Rahul Mehta
+10100,2025-09-03,21,Kitchen Kraft,Bengaluru,Retail,108,Stackable Bin,Storage,20,5800.00,Rahul Mehta
+10101,2025-09-07,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,10,3784.00,Farah Khan
+10101,2025-09-07,14,Deccan Packaging,Hyderabad,Wholesale,105,Industrial Crate,Industrial,35,46550.00,Farah Khan
+10102,2025-09-09,17,Royal Banquets,Lucknow,Hospitality,101,Storage Box 10L,Storage,10,4085.00,Neha Kulkarni
+10102,2025-09-09,17,Royal Banquets,Lucknow,Hospitality,107,Lunch Box Set,Kitchen,25,9500.00,Neha Kulkarni
+10103,2025-09-11,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,20,13800.00,Rahul Mehta
+10104,2025-09-11,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,55,6008.75,Neha Kulkarni
+10104,2025-09-11,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,107,Lunch Box Set,Kitchen,30,11400.00,Neha Kulkarni
+10104,2025-09-11,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,35,10150.00,Neha Kulkarni
+10105,2025-09-12,20,Tasty Tiffins,Pune,Hospitality,101,Storage Box 10L,Storage,10,4300.00,Neha Kulkarni
+10105,2025-09-12,20,Tasty Tiffins,Pune,Hospitality,103,Water Bottle 1L,Kitchen,60,6900.00,Neha Kulkarni
+10105,2025-09-12,20,Tasty Tiffins,Pune,Hospitality,104,Food Container Set,Kitchen,45,27900.00,Neha Kulkarni
+10106,2025-09-13,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,30,39900.00,Rahul Mehta
+10106,2025-09-13,11,Harbour Traders,Kochi,Wholesale,108,Stackable Bin,Storage,30,8265.00,Rahul Mehta
+10107,2025-09-13,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,10,3870.00,Farah Khan
+10107,2025-09-13,14,Deccan Packaging,Hyderabad,Wholesale,105,Industrial Crate,Industrial,45,56700.00,Farah Khan
+10108,2025-09-15,22,Festive Gifts Co,Delhi,Retail,101,Storage Box 10L,Storage,30,12900.00,unassigned
+10108,2025-09-15,22,Festive Gifts Co,Delhi,Retail,107,Lunch Box Set,Kitchen,35,13300.00,unassigned
+10109,2025-09-18,9,Lakeview Resorts,Udaipur,Hospitality,107,Lunch Box Set,Kitchen,15,5700.00,Farah Khan
+10109,2025-09-18,9,Lakeview Resorts,Udaipur,Hospitality,108,Stackable Bin,Storage,35,10150.00,Farah Khan
+10110,2025-09-21,1,Sharma Hardware,Mumbai,Retail,104,Food Container Set,Kitchen,35,21700.00,Neha Kulkarni
+10110,2025-09-21,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,25,9025.00,Neha Kulkarni
+10111,2025-09-22,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,30,12900.00,Farah Khan
+10112,2025-09-22,3,Green Leaf Hotels,Pune,Hospitality,101,Storage Box 10L,Storage,10,4085.00,Farah Khan
+10112,2025-09-22,3,Green Leaf Hotels,Pune,Hospitality,104,Food Container Set,Kitchen,15,8835.00,Farah Khan
+10112,2025-09-22,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,60,21660.00,Farah Khan
+10113,2025-09-23,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,25,10212.50,Rahul Mehta
+10113,2025-09-23,5,Metro Mart,Mumbai,Retail,102,Storage Box 25L,Storage,10,7500.00,Rahul Mehta
+10113,2025-09-23,5,Metro Mart,Mumbai,Retail,107,Lunch Box Set,Kitchen,20,7220.00,Rahul Mehta
+10114,2025-09-24,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,25,9460.00,Farah Khan
+10114,2025-09-24,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,30,21375.00,Farah Khan
+10114,2025-09-24,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,35,8932.00,Farah Khan
+10115,2025-09-28,15,Spice Route Restaurants,Kolkata,Hospitality,107,Lunch Box Set,Kitchen,20,7600.00,Farah Khan
+10116,2025-10-02,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,20,8600.00,Rahul Mehta
+10116,2025-10-02,5,Metro Mart,Mumbai,Retail,102,Storage Box 25L,Storage,60,45000.00,Rahul Mehta
+10116,2025-10-02,5,Metro Mart,Mumbai,Retail,103,Water Bottle 1L,Kitchen,30,3450.00,Rahul Mehta
+10117,2025-10-02,21,Kitchen Kraft,Bengaluru,Retail,102,Storage Box 25L,Storage,15,11250.00,Rahul Mehta
+10117,2025-10-02,21,Kitchen Kraft,Bengaluru,Retail,107,Lunch Box Set,Kitchen,65,24700.00,Rahul Mehta
+10118,2025-10-03,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,80,9200.00,Farah Khan
+10118,2025-10-03,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,85,32300.00,Farah Khan
+10119,2025-10-03,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,101,Storage Box 10L,Storage,80,32680.00,Neha Kulkarni
+10119,2025-10-03,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,107,Lunch Box Set,Kitchen,65,24700.00,Neha Kulkarni
+10120,2025-10-05,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,40,4600.00,Farah Khan
+10120,2025-10-05,3,Green Leaf Hotels,Pune,Hospitality,108,Stackable Bin,Storage,20,5800.00,Farah Khan
+10121,2025-10-06,23,Sea Breeze Hotel,Goa,Hospitality,107,Lunch Box Set,Kitchen,55,19855.00,Farah Khan
+10121,2025-10-06,23,Sea Breeze Hotel,Goa,Hospitality,108,Stackable Bin,Storage,45,12397.50,Farah Khan
+10122,2025-10-07,19,Western Logistics,Mumbai,Wholesale,102,Storage Box 25L,Storage,40,28500.00,Farah Khan
+10122,2025-10-07,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,65,16965.00,Farah Khan
+10123,2025-10-08,15,Spice Route Restaurants,Kolkata,Hospitality,103,Water Bottle 1L,Kitchen,20,2300.00,Farah Khan
+10123,2025-10-08,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,30,8265.00,Farah Khan
+10124,2025-10-08,18,Evergreen Mart,Indore,Retail,102,Storage Box 25L,Storage,50,37500.00,Rahul Mehta
+10124,2025-10-08,18,Evergreen Mart,Indore,Retail,104,Food Container Set,Kitchen,30,18600.00,Rahul Mehta
+10125,2025-10-12,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,40,15136.00,Farah Khan
+10126,2025-10-13,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,55,21758.00,Rahul Mehta
+10126,2025-10-13,11,Harbour Traders,Kochi,Wholesale,102,Storage Box 25L,Storage,40,27000.00,Rahul Mehta
+10126,2025-10-13,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,40,51520.00,Rahul Mehta
+10127,2025-10-14,5,Metro Mart,Mumbai,Retail,102,Storage Box 25L,Storage,40,28500.00,Rahul Mehta
+10128,2025-10-15,9,Lakeview Resorts,Udaipur,Hospitality,103,Water Bottle 1L,Kitchen,65,7101.25,Farah Khan
+10128,2025-10-15,9,Lakeview Resorts,Udaipur,Hospitality,107,Lunch Box Set,Kitchen,70,25270.00,Farah Khan
+10129,2025-10-15,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,20,8600.00,Rahul Mehta
+10130,2025-10-18,7,Northgate Distributors,Delhi,Wholesale,102,Storage Box 25L,Storage,20,13500.00,Farah Khan
+10132,2025-10-20,1,Sharma Hardware,Mumbai,Retail,101,Storage Box 10L,Storage,65,27950.00,Neha Kulkarni
+10133,2025-10-25,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,70,49875.00,Neha Kulkarni
+10133,2025-10-25,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,50,19000.00,Neha Kulkarni
+10134,2025-10-26,20,Tasty Tiffins,Pune,Hospitality,103,Water Bottle 1L,Kitchen,50,5750.00,Neha Kulkarni
+10135,2025-10-27,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,15,9900.00,Rahul Mehta
+10135,2025-10-27,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,40,10208.00,Rahul Mehta
+10136,2025-10-27,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,50,13340.00,Farah Khan
+10137,2025-11-04,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,15,4132.50,Neha Kulkarni
+10138,2025-11-05,3,Green Leaf Hotels,Pune,Hospitality,103,Water Bottle 1L,Kitchen,15,1638.75,Farah Khan
+10138,2025-11-05,3,Green Leaf Hotels,Pune,Hospitality,108,Stackable Bin,Storage,55,15950.00,Farah Khan
+10139,2025-11-06,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,60,23736.00,Rahul Mehta
+10139,2025-11-06,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,20,24640.00,Rahul Mehta
+10140,2025-11-09,2,Patel Kitchenware,Ahmedabad,Retail,103,Water Bottle 1L,Kitchen,65,7475.00,Neha Kulkarni
+10140,2025-11-09,2,Patel Kitchenware,Ahmedabad,Retail,104,Food Container Set,Kitchen,55,32395.00,Neha Kulkarni
+10141,2025-11-09,8,Blue Bay Cafe,Pune,Hospitality,104,Food Container Set,Kitchen,10,6200.00,Neha Kulkarni
+10141,2025-11-09,8,Blue Bay Cafe,Pune,Hospitality,108,Stackable Bin,Storage,65,17907.50,Neha Kulkarni
+10142,2025-11-09,15,Spice Route Restaurants,Kolkata,Hospitality,104,Food Container Set,Kitchen,60,35340.00,Farah Khan
+10142,2025-11-09,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,60,16530.00,Farah Khan
+10143,2025-11-11,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,55,20812.00,Farah Khan
+10143,2025-11-11,7,Northgate Distributors,Delhi,Wholesale,105,Industrial Crate,Industrial,25,32200.00,Farah Khan
+10144,2025-11-12,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,15,6127.50,Farah Khan
+10144,2025-11-12,14,Deccan Packaging,Hyderabad,Wholesale,108,Stackable Bin,Storage,25,6380.00,Farah Khan
+10145,2025-11-12,21,Kitchen Kraft,Bengaluru,Retail,107,Lunch Box Set,Kitchen,15,5700.00,Rahul Mehta
+10145,2025-11-12,21,Kitchen Kraft,Bengaluru,Retail,108,Stackable Bin,Storage,55,15950.00,Rahul Mehta
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,65,48750.00,Neha Kulkarni
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,50,19000.00,Neha Kulkarni
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,108,Stackable Bin,Storage,50,14500.00,Neha Kulkarni
+10147,2025-11-16,19,Western Logistics,Mumbai,Wholesale,101,Storage Box 10L,Storage,30,12255.00,Farah Khan
+10147,2025-11-16,19,Western Logistics,Mumbai,Wholesale,105,Industrial Crate,Industrial,30,38640.00,Farah Khan
+10148,2025-11-16,19,Western Logistics,Mumbai,Wholesale,102,Storage Box 25L,Storage,45,29700.00,Farah Khan
+10148,2025-11-16,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,50,13050.00,Farah Khan
+10149,2025-11-18,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,45,31050.00,Rahul Mehta
+10149,2025-11-18,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,15,18480.00,Rahul Mehta
+10150,2025-11-19,22,Festive Gifts Co,Delhi,Retail,103,Water Bottle 1L,Kitchen,70,8050.00,unassigned
+10151,2025-11-22,11,Harbour Traders,Kochi,Wholesale,102,Storage Box 25L,Storage,35,24937.50,Rahul Mehta
+10151,2025-11-22,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,40,49280.00,Rahul Mehta
+10152,2025-11-22,14,Deccan Packaging,Hyderabad,Wholesale,108,Stackable Bin,Storage,45,12397.50,Farah Khan
+10153,2025-11-23,17,Royal Banquets,Lucknow,Hospitality,103,Water Bottle 1L,Kitchen,25,2731.25,unassigned
+10154,2025-11-25,15,Spice Route Restaurants,Kolkata,Hospitality,101,Storage Box 10L,Storage,25,10212.50,Farah Khan
+10155,2025-11-26,3,Green Leaf Hotels,Pune,Hospitality,107,Lunch Box Set,Kitchen,10,3610.00,Farah Khan
+10156,2025-11-26,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,15,6450.00,Rahul Mehta
+10157,2025-11-28,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,40,17200.00,Rahul Mehta
+10158,2025-12-01,23,Sea Breeze Hotel,Goa,Hospitality,103,Water Bottle 1L,Kitchen,5,575.00,Farah Khan
+10158,2025-12-01,23,Sea Breeze Hotel,Goa,Hospitality,104,Food Container Set,Kitchen,40,24800.00,Farah Khan
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,101,Storage Box 10L,Storage,35,13545.00,Rahul Mehta
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,102,Storage Box 25L,Storage,35,24937.50,Rahul Mehta
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,108,Stackable Bin,Storage,30,8004.00,Rahul Mehta
+10160,2025-12-04,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,15,5676.00,Farah Khan
+10160,2025-12-04,7,Northgate Distributors,Delhi,Wholesale,108,Stackable Bin,Storage,15,4132.50,Farah Khan
+10161,2025-12-05,1,Sharma Hardware,Mumbai,Retail,103,Water Bottle 1L,Kitchen,25,2875.00,Neha Kulkarni
+10161,2025-12-05,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,30,10830.00,Neha Kulkarni
+10162,2025-12-08,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,35,14297.50,unassigned
+10162,2025-12-08,7,Northgate Distributors,Delhi,Wholesale,105,Industrial Crate,Industrial,40,51520.00,unassigned
+10163,2025-12-10,4,Coastal Foods,Chennai,Wholesale,108,Stackable Bin,Storage,15,3828.00,Rahul Mehta
+10164,2025-12-10,19,Western Logistics,Mumbai,Wholesale,101,Storage Box 10L,Storage,10,3870.00,Farah Khan
+10165,2025-12-12,24,Prime Wholesale,Ahmedabad,Wholesale,102,Storage Box 25L,Storage,15,9900.00,unassigned
+10165,2025-12-12,24,Prime Wholesale,Ahmedabad,Wholesale,108,Stackable Bin,Storage,35,9135.00,unassigned
+10166,2025-12-13,23,Sea Breeze Hotel,Goa,Hospitality,101,Storage Box 10L,Storage,10,4300.00,Farah Khan
+10166,2025-12-13,23,Sea Breeze Hotel,Goa,Hospitality,104,Food Container Set,Kitchen,50,31000.00,Farah Khan
+10167,2025-12-14,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,35,13545.00,Rahul Mehta
+10167,2025-12-14,11,Harbour Traders,Kochi,Wholesale,108,Stackable Bin,Storage,20,5220.00,Rahul Mehta
+10168,2025-12-16,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,35,15050.00,Rahul Mehta
+10168,2025-12-16,5,Metro Mart,Mumbai,Retail,103,Water Bottle 1L,Kitchen,20,2300.00,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,25,10212.50,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,104,Food Container Set,Kitchen,30,18600.00,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,108,Stackable Bin,Storage,25,6887.50,Rahul Mehta
+10170,2025-12-16,21,Kitchen Kraft,Bengaluru,Retail,101,Storage Box 10L,Storage,35,15050.00,Rahul Mehta
+10170,2025-12-16,21,Kitchen Kraft,Bengaluru,Retail,104,Food Container Set,Kitchen,35,21700.00,Rahul Mehta
+10171,2025-12-17,14,Deccan Packaging,Hyderabad,Wholesale,101,Storage Box 10L,Storage,30,11868.00,Farah Khan
+10171,2025-12-17,14,Deccan Packaging,Hyderabad,Wholesale,105,Industrial Crate,Industrial,20,25760.00,Farah Khan
+10172,2025-12-18,15,Spice Route Restaurants,Kolkata,Hospitality,107,Lunch Box Set,Kitchen,50,18050.00,Farah Khan
+10172,2025-12-18,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,20,5800.00,Farah Khan
+10173,2025-12-19,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,103,Water Bottle 1L,Kitchen,50,5750.00,Neha Kulkarni
+10174,2025-12-21,9,Lakeview Resorts,Udaipur,Hospitality,108,Stackable Bin,Storage,10,2755.00,Farah Khan
+10175,2025-12-23,17,Royal Banquets,Lucknow,Hospitality,101,Storage Box 10L,Storage,55,23650.00,Neha Kulkarni
+10175,2025-12-23,17,Royal Banquets,Lucknow,Hospitality,107,Lunch Box Set,Kitchen,15,5700.00,Neha Kulkarni
+10175,2025-12-23,17,Royal Banquets,Lucknow,Hospitality,108,Stackable Bin,Storage,30,8700.00,Neha Kulkarni

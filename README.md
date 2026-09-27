@@ -1,57 +1,90 @@
 # DS_BA_Curriculum
 
-Controlled Data Science and Business Analyst encyclopedia blueprints with AI-authoring prompts, module contracts, practical projects, assessments, audits, governance, and GitHub-ready production workflows.
+This repository holds the **Analyst to Architect** data science book: manuscript, planning
+documents, companion datasets and code, figures, and rendered chapter PDFs.
 
-## Controlled Data Science and Business Analyst Pathway Blueprint
+Everything lives under [`Data Science/`](Data%20Science/).
 
-This repository is a controlled AI-authoring specification and operational production layer. It defines what an AI authoring system is allowed to write and how work is resumed, audited, and released. It intentionally keeps the pathway outlines separate from later chapter prose.
+> **Note on history.** This repository previously held the Business Analyst curriculum
+> (`business-analyst/`, `contracts/`, `governance/`, `production/`, `schemas/`, `templates/`).
+> That content was removed from `main` on 27 September 2026 to make room for the book. It is
+> not lost: it remains in this repository's git history (see commit `75b4657` and earlier) and
+> on the `governance/iss-009-batch-rejection` branch. To recover any of it:
+> `git checkout 75b4657 -- <path>`.
 
-## Repository contents
+## What is in `Data Science/`
 
-- `data-science/`: 18-module Data Science outline with 96 chapters and 661 topic/subtopic control points.
-- `business-analyst/`: 15-module Business Analyst outline with 75 chapters and 529 topic/subtopic control points.
-- `contracts/`: one explicit JSON contract for every module across 33 controlled modules.
-- `production/`: fixed output directories for drafts, labs, assignments, assessments, audits, checkpoints, and releases.
-- `prompts/`: controlled prompts for orchestration, chapter writing, labs, assessments, audits, and checkpoints.
-- `schemas/`: JSON schemas and examples for checkpoints and assessment items.
-- `indexes/`: master index, glossary register, and cross-reference register.
-- `governance/`: rules, issue register, change log, and version metadata.
-- `templates/`: word/page budget and release-record templates.
-- `tools/`: `content_gates.py`, the measurable chapter gates that replace the chapter self-audit.
+### The working tree
 
-## Controlled hierarchy
+| Folder | What it is |
+|---|---|
+| `Analyst-to-Architect/` | **The main tree, and the one to work in.** Full manuscript, planning, companion code and data, figures, SQL, tools, checks. |
+| `Analyst-to-Architect-complete/` | A companion-data-only snapshot: the `companion/` directory with the full generated datasets. |
 
-```text
-Pathway → Module → Chapter → Topic → Subtopic → Lesson → Lab → Assignment → Assessment
+Inside `Analyst-to-Architect/`:
+
+- `manuscript/` — the chapters, one Markdown file each, `ch01` through `ch83` (85 files: the
+  numbering includes `ch72a`, `ch76a` and `ch76b`, which are chapters added after the original
+  plan and are renumbered at assembly).
+- `planning/` — the chapter map (reading order lives here, and it differs from the numeric
+  order in Parts II and III), the Riverstone story bible, part status files, and briefs.
+- `companion/` — per-chapter runnable code and datasets (`ch12/`, `ch29/`, `ch32/riverstone_dbt/`
+  and so on), plus `companion/full/` with the large generated CSVs and Parquet files.
+- `figures/` — SVG figures referenced from the chapters.
+- `sql/`, `tools/`, `checks/` — schema and seed scripts, build and export helpers, and the
+  verification scripts that check chapter output against the companion code.
+
+### Point-in-time snapshots
+
+These are the bundles as they were approved, kept for reference. They overlap with the main
+tree; nothing here is authoritative.
+
+| Folder | Covers |
+|---|---|
+| `Analyst-to-Architect-Part-0-complete/` | Part 0, front matter and orientation |
+| `Analyst-to-Architect-Part-I-complete/` | Part I, The Map |
+| `Analyst-to-Architect-Part-II-complete/` | Part II, The Analyst |
+| `Analyst-to-Architect-Part-III-complete/` | Part III |
+| `Analyst-to-Architect-Part-IV-complete/` | Part IV |
+| `Analyst-to-Architect-Part-V-complete/` | Part V |
+| `Analyst-to-Architect-Part-VI-complete/` | Part VI, Production ML, Generative AI & MLOps |
+| `Analyst-to-Architect-Part-VII-complete/` | Part VII, Architecture, Governance & Leadership |
+| `Analyst-to-Architect-Part-VIII-complete/` | Part VIII, The Interview Playbook |
+| `Analyst-to-Architect-Final-Chapters-25-26-27-83/` | Chapters 25, 26, 27 and 83 |
+
+### Rendered output
+
+| Folder | Contents |
+|---|---|
+| `Analyst-to-Architect-PDFs-Ch01-34/` | Chapter PDFs, 1 to 34 |
+| `Analyst-to-Architect-PDFs-Ch35-83/` | Chapter PDFs, 35 to 83 |
+
+PDFs are build output, not source. Edit the Markdown in `manuscript/` and re-render.
+
+## Working on this
+
+```bash
+git clone https://github.com/abhishekvtiwari/DS_BA_Curriculum.git
+cd DS_BA_Curriculum/"Data Science"/Analyst-to-Architect
 ```
 
-## Production sequence
+The folder name contains a space, so quote it in shell commands.
 
-```text
-Blueprint → module contract → approval → chapter batch → labs → assignments
-→ PRE_ASSESSMENT_AUDIT → revision → assessment bank → ASSESSMENT_VALIDATION
-→ revision → FINAL_RELEASE_AUDIT → release record → module release
+Two things worth knowing before editing a chapter:
+
+- **Reading order is not chapter order.** `planning/chapter-map.md` is the authority. In Part II
+  the reading order runs 10, 11, 19, 12, 13, 17, 18, 14, 15, 16, 20, then 21 to 27; Part III runs
+  28, 34, 29, 32, 33, 30, 31. Cross-references in the chapters still use pre-renumbering numbers
+  in places.
+- **Chapter output is verified, not typed.** Printed results in a chapter come from running the
+  companion code. If you change a number in the prose, change the code and re-run it, and use
+  `checks/` to confirm.
+
+## Repository size
+
+About 236 MB across roughly 2,660 files, mostly companion datasets, SVG figures and PDFs. A
+shallow clone is faster if you only need the manuscript:
+
+```bash
+git clone --depth 1 https://github.com/abhishekvtiwari/DS_BA_Curriculum.git
 ```
-
-Assessments are deliberately generated **after** the pre-assessment content audit and are validated before the final release audit. This resolves the former circular dependency.
-
-## Naming convention
-
-- Blueprint: `data-science/00-data-science-blueprint.md`
-- Contract: `contracts/data-science/DS-M01-contract.json`
-- Chapter draft: `production/drafts/DS-M01/DS-M01-C01.md`
-- Lab: `production/labs/DS-M01/DS-M01-LAB-01.md`
-- Assignment: `production/assignments/DS-M01/DS-M01-ASSIGN-01.md`
-- Assessment bank: `production/assessments/DS-M01/DS-M01-assessment.jsonl`
-- Audit: `production/audits/DS-M01/DS-M01-PRE_ASSESSMENT_AUDIT.md`
-- Release audit: `production/audits/DS-M01/DS-M01-FINAL_RELEASE_AUDIT.md`
-- Release record: `production/release/DS-M01/DS-M01-release.md`
-- Checkpoint: `production/checkpoints/RUN-YYYYMMDD-TASK-TRACK.json`
-
-## Resumability
-
-Every production run must write a checkpoint conforming to `schemas/checkpoint.schema.json`. A new run reads the latest valid checkpoint, verifies the referenced files exist, and continues from `next_action`. Never infer completion from filenames alone.
-
-## Encoding and portability
-
-All files are UTF-8 without a BOM. For older Windows PowerShell environments, use `Get-Content -Encoding UTF8` or a modern editor. Do not alter punctuation or IDs during conversion.

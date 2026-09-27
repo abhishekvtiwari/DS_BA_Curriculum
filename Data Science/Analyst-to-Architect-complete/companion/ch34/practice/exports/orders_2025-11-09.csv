@@ -1,0 +1,7 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10140,2025-11-09,2,Patel Kitchenware,Ahmedabad,Retail,103,Water Bottle 1L,Kitchen,65,7475.00,Neha Kulkarni
+10140,2025-11-09,2,Patel Kitchenware,Ahmedabad,Retail,104,Food Container Set,Kitchen,55,32395.00,Neha Kulkarni
+10141,2025-11-09,8,Blue Bay Cafe,Pune,Hospitality,104,Food Container Set,Kitchen,10,6200.00,Neha Kulkarni
+10141,2025-11-09,8,Blue Bay Cafe,Pune,Hospitality,108,Stackable Bin,Storage,65,17907.50,Neha Kulkarni
+10142,2025-11-09,15,Spice Route Restaurants,Kolkata,Hospitality,104,Food Container Set,Kitchen,60,35340.00,Farah Khan
+10142,2025-11-09,15,Spice Route Restaurants,Kolkata,Hospitality,108,Stackable Bin,Storage,60,16530.00,Farah Khan

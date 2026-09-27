@@ -1,15 +1,20 @@
-# Generated local archives and verification output
-# Policy 1.9: generated PDFs/DOCX/ZIP exports are never authoritative source.
-output/
-*.zip
-*.log
-/tmp/
-
-# Editor and OS files
+# OS and editor files
 .DS_Store
 Thumbs.db
 .vscode/
+.idea/
 
-# Python build artifacts
+# Python artifacts
 __pycache__/
 *.pyc
+*.pyo
+.venv/
+venv/
+
+# Local secrets - never commit
+.env
+*.pem
+
+# Local scratch
+/tmp/
+*.log

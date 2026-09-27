@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10165,2025-12-12,24,Prime Wholesale,Ahmedabad,Wholesale,102,Storage Box 25L,Storage,15,9900.00,unassigned
+10165,2025-12-12,24,Prime Wholesale,Ahmedabad,Wholesale,108,Stackable Bin,Storage,35,9135.00,unassigned

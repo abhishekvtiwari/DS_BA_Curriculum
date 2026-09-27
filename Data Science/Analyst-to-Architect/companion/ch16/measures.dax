@@ -1,0 +1,66 @@
+// Analyst to Architect, Chapter 16 — every DAX measure used in the chapter.
+// Paste into Power BI Desktop (Home > New measure), one at a time. Table names: Sales, Product, Customer, Employee, 'Date', Targets.
+// Riverstone Supplies is fictional; every name and number is invented.
+
+Net Revenue =
+SUMX ( Sales, Sales[quantity] * Sales[unit_price] * ( 1 - Sales[discount_pct] / 100 ) )
+
+Product Cost = SUMX ( Sales, Sales[quantity] * RELATED ( Product[unit_cost] ) )
+
+Gross Margin = [Net Revenue] - [Product Cost]
+
+Gross Margin % = DIVIDE ( [Gross Margin], [Net Revenue] )
+
+Orders = DISTINCTCOUNT ( Sales[order_id] )
+
+Customers = DISTINCTCOUNT ( Sales[customer_id] )
+
+Average Order Value = DIVIDE ( [Net Revenue], [Orders] )
+
+Target = SUM ( Targets[target_revenue] )
+
+% of Target = DIVIDE ( [Net Revenue], [Target] )
+
+Gap to Target = [Net Revenue] - [Target]
+
+Revenue YTD = TOTALYTD ( [Net Revenue], 'Date'[Date] )
+
+Revenue LY = CALCULATE ( [Net Revenue], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+
+Revenue YTD LY = CALCULATE ( [Revenue YTD], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+
+YoY Growth % = DIVIDE ( [Net Revenue] - [Revenue LY], [Revenue LY] )
+
+Revenue 3M Rolling =
+CALCULATE ( [Net Revenue], DATESINPERIOD ( 'Date'[Date], MAX ( 'Date'[Date] ), -3, MONTH ) )
+
+Product Share % =
+VAR ThisProduct = [Net Revenue]
+VAR AllProducts = CALCULATE ( [Net Revenue], REMOVEFILTERS ( Product ) )
+RETURN DIVIDE ( ThisProduct, AllProducts )
+
+Revenue no rep = CALCULATE ( [Net Revenue], ISBLANK ( Sales[sales_rep_id] ) )
+
+Last Refreshed =
+"Data to " & FORMAT ( MAX ( 'Date'[Date] ), "d MMM yyyy" ) &
+" · report refreshed " & FORMAT ( NOW () + TIME ( 5, 30, 0 ), "d MMM yyyy HH:mm" ) & " IST"
+
+Overview Title =
+"Riverstone sales — " & SELECTEDVALUE ( 'Date'[Year], "all years" ) &
+" — " & FORMAT ( [Net Revenue] / 10000000, "0.0" ) & " cr at " & FORMAT ( [% of Target], "0.0%" ) & " of target"
+
+Top Customer =
+IF (
+    HASONEVALUE ( Customer[Customer] ),
+    BLANK (),
+    SELECTEDVALUE ( TOPN ( 1, VALUES ( Customer[Customer] ), [Net Revenue], DESC ), BLANK () )
+)
+
+Revenue FYTD =
+CALCULATE (
+    [Net Revenue],
+    FILTER (
+        ALL ( 'Date' ),
+        'Date'[Financial Year] = MAX ( 'Date'[Financial Year] ) && 'Date'[Date] <= MAX ( 'Date'[Date] )
+    )
+)

@@ -1,0 +1,41 @@
+order_id,order_date,customer_code,product_id,quantity,unit_price,discount_pct,status,sales_rep
+10098,02-09-2025,0018,101,40,430,0,Delivered,Rahul Mehta
+10098,02-09-2025,0018,108,10,290,0,Delivered,Rahul Mehta
+10099,02-09-2025,0019,102,15,750,5,Delivered,Farah Khan
+10099,02-09-2025,0019,105,35,1400,10,Delivered,Farah Khan
+10099,02-09-2025,0019,108,15,290,5,Delivered,Farah Khan
+10100,03-09-2025,0021,101,15,430,5,Delivered,Rahul Mehta
+10100,03-09-2025,0021,104,35,620,0,Delivered,Rahul Mehta
+10100,03-09-2025,0021,108,20,290,0,Delivered,Rahul Mehta
+10101,07-09-2025,0014,101,10,430,12,Delivered,Farah Khan
+10101,07-09-2025,0014,105,35,1400,5,Delivered,Farah Khan
+10102,09-09-2025,0017,101,10,430,5,Delivered,Neha Kulkarni
+10102,09-09-2025,0017,107,25,380,0,Delivered,Neha Kulkarni
+10103,11-09-2025,0004,102,20,750,8,Delivered,Rahul Mehta
+10104,11-09-2025,0012,103,55,115,5,Delivered,Neha Kulkarni
+10104,11-09-2025,0012,107,30,380,0,Delivered,Neha Kulkarni
+10104,11-09-2025,0012,108,35,290,0,Delivered,Neha Kulkarni
+10105,12-09-2025,0020,101,10,430,0,Delivered,Neha Kulkarni
+10105,12-09-2025,0020,103,60,115,0,Delivered,Neha Kulkarni
+10105,12-09-2025,0020,104,45,620,0,Delivered,Neha Kulkarni
+10106,13-09-2025,0011,105,30,1400,5,Delivered,Rahul Mehta
+10106,13-09-2025,0011,108,30,290,5,Delivered,Rahul Mehta
+10107,13-09-2025,0014,101,10,430,10,Delivered,Farah Khan
+10107,13-09-2025,0014,105,45,1400,10,Delivered,Farah Khan
+10108,15-09-2025,0022,101,30,430,0,Delivered,
+10108,15-09-2025,0022,107,35,380,0,Delivered,
+10109,18-09-2025,0009,107,15,380,0,Delivered,Farah Khan
+10109,18-09-2025,0009,108,35,290,0,Delivered,Farah Khan
+10110,21-09-2025,0001,104,35,620,0,Delivered,Neha Kulkarni
+10110,21-09-2025,0001,107,25,380,5,Delivered,Neha Kulkarni
+10111,22-09-2025,0003,101,30,430,0,Delivered,Farah Khan
+10112,22-09-2025,0003,101,10,430,5,Delivered,Farah Khan
+10112,22-09-2025,0003,104,15,620,5,Delivered,Farah Khan
+10112,22-09-2025,0003,107,60,380,5,Delivered,Farah Khan
+10113,23-09-2025,0005,101,25,430,5,Delivered,Rahul Mehta
+10113,23-09-2025,0005,102,10,750,0,Delivered,Rahul Mehta
+10113,23-09-2025,0005,107,20,380,5,Delivered,Rahul Mehta
+10114,24-09-2025,0007,101,25,430,12,Delivered,Farah Khan
+10114,24-09-2025,0007,102,30,750,5,Delivered,Farah Khan
+10114,24-09-2025,0007,108,35,290,12,Delivered,Farah Khan
+10115,28-09-2025,0015,107,20,380,0,Delivered,Farah Khan

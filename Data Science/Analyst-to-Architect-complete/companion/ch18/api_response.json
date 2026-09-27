@@ -1,0 +1,87 @@
+{
+  "page": 1,
+  "pages": 2,
+  "count": 8,
+  "results": [
+    {
+      "order_id": 10158,
+      "order_date": "2025-12-01",
+      "customer_id": 23,
+      "product_id": 103,
+      "quantity": 5,
+      "unit_price": 115.0,
+      "discount_pct": 0.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 10158,
+      "order_date": "2025-12-01",
+      "customer_id": 23,
+      "product_id": 104,
+      "quantity": 40,
+      "unit_price": 620.0,
+      "discount_pct": 0.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 10159,
+      "order_date": "2025-12-01",
+      "customer_id": 24,
+      "product_id": 101,
+      "quantity": 35,
+      "unit_price": 430.0,
+      "discount_pct": 10.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 10159,
+      "order_date": "2025-12-01",
+      "customer_id": 24,
+      "product_id": 102,
+      "quantity": 35,
+      "unit_price": 750.0,
+      "discount_pct": 5.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 10159,
+      "order_date": "2025-12-01",
+      "customer_id": 24,
+      "product_id": 108,
+      "quantity": 30,
+      "unit_price": 290.0,
+      "discount_pct": 8.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 311812,
+      "order_date": "2025-12-01",
+      "customer_id": 41,
+      "product_id": 103,
+      "quantity": 35,
+      "unit_price": 115.0,
+      "discount_pct": 5.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 311813,
+      "order_date": "2025-12-01",
+      "customer_id": 51,
+      "product_id": 102,
+      "quantity": 20,
+      "unit_price": 750.0,
+      "discount_pct": 8.0,
+      "status": "Delivered"
+    },
+    {
+      "order_id": 311813,
+      "order_date": "2025-12-01",
+      "customer_id": 51,
+      "product_id": 105,
+      "quantity": 15,
+      "unit_price": 1400.0,
+      "discount_pct": 10.0,
+      "status": "Delivered"
+    }
+  ]
+}

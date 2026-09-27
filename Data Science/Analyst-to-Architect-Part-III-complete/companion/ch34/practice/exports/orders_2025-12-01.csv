@@ -1,0 +1,6 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10158,2025-12-01,23,Sea Breeze Hotel,Goa,Hospitality,103,Water Bottle 1L,Kitchen,5,575.00,Farah Khan
+10158,2025-12-01,23,Sea Breeze Hotel,Goa,Hospitality,104,Food Container Set,Kitchen,40,24800.00,Farah Khan
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,101,Storage Box 10L,Storage,35,13545.00,Rahul Mehta
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,102,Storage Box 25L,Storage,35,24937.50,Rahul Mehta
+10159,2025-12-01,24,Prime Wholesale,Ahmedabad,Wholesale,108,Stackable Bin,Storage,30,8004.00,Rahul Mehta

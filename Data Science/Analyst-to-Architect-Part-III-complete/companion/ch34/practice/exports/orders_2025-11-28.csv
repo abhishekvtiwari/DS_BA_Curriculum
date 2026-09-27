@@ -1,0 +1,2 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10157,2025-11-28,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,40,17200.00,Rahul Mehta

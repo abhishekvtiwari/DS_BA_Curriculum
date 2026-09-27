@@ -1,0 +1,12 @@
+// Chapter 16, section 16.3 — the date table. Modeling > New table, then Table tools > Mark as date table (on [Date]).
+Date =
+ADDCOLUMNS (
+    CALENDAR ( DATE ( 2023, 1, 1 ), DATE ( 2025, 12, 31 ) ),
+    "Year", YEAR ( [Date] ),
+    "Quarter", "Q" & FORMAT ( [Date], "Q" ),
+    "Month No", MONTH ( [Date] ),
+    "Month", FORMAT ( [Date], "MMM" ),
+    "Year Month", FORMAT ( [Date], "YYYY-MM" ),
+    "Financial Year", "FY" & IF ( MONTH ( [Date] ) >= 4, YEAR ( [Date] ) + 1, YEAR ( [Date] ) )
+)
+// 1,096 rows. Sort the Month column by Month No (Column tools > Sort by column).

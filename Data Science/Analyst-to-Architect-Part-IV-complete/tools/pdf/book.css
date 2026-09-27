@@ -1,0 +1,43 @@
+@page { size: A4; margin: 20mm 18mm 22mm 18mm; }
+:root { --ink:#1d2330; --muted:#5b6475; --accent:#0f5c8c; --accent-soft:#e8f1f8; --warn:#b4531f; --warn-soft:#fbefe6; --rule:#d9dee7; --code-bg:#f5f7fa; }
+html { font-size: 10.4pt; }
+body { font-family: "Lora","DejaVu Serif",serif; color: var(--ink); line-height: 1.55; margin:0; }
+h1,h2,h3,h4 { font-family: "Poppins","DejaVu Sans",sans-serif; color: var(--ink); line-height:1.25; break-after: avoid; }
+h1 { font-size: 22pt; font-weight:600; margin: 0 0 6mm; }
+h2 { font-size: 15pt; font-weight:600; margin: 9mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1.5px solid var(--accent); }
+h3 { font-size: 12pt; font-weight:600; margin: 6mm 0 2mm; color: var(--accent); }
+h4 { font-size: 10.5pt; font-weight:600; margin: 4mm 0 1.5mm; }
+p { margin: 0 0 2.6mm; orphans:3; widows:3; }
+a { color: var(--accent); text-decoration: none; }
+strong { font-weight: 700; }
+ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+li { margin-bottom: 1mm; }
+hr { border: none; border-top: 1px solid var(--rule); margin: 6mm 0; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.6pt; background: var(--code-bg); padding: 0.2mm 1mm; border-radius: 2px; }
+pre { font-family: "DejaVu Sans Mono", monospace; font-size: 7.9pt; line-height: 1.38; background: var(--code-bg); border: 1px solid var(--rule); border-left: 3px solid #9fb3c8; border-radius: 3px; padding: 2.6mm 3.2mm; margin: 0 0 3.5mm; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; }
+pre code { background: none; padding: 0; font-size: inherit; }
+pre.sql, pre:has(code.language-sql) { border-left-color: var(--accent); }
+table { border-collapse: collapse; width: 100%; margin: 1mm 0 4mm; font-family: "DejaVu Sans", sans-serif; font-size: 8.3pt; line-height: 1.4; }
+thead { display: table-header-group; }
+th { background: var(--accent); color: #fff; text-align: left; font-weight: 600; padding: 1.6mm 2mm; }
+td { padding: 1.4mm 2mm; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #f8fafc; }
+td code, th code { font-size: 7.6pt; }
+blockquote { margin: 0 0 4mm; padding: 2.8mm 4mm; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 3px 3px 0; break-inside: avoid; }
+blockquote p:last-child { margin-bottom: 0; }
+blockquote.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+ul.task-list, ul.contains-task-list { list-style: none; padding-left: 1mm; }
+input[type=checkbox] { margin-right: 2mm; transform: translateY(1px); }
+em { font-style: italic; }
+nav#TOC { break-after: page; }
+nav#TOC > ul { padding-left: 0; list-style: none; }
+nav#TOC ul ul { list-style: none; padding-left: 5mm; }
+nav#TOC li { margin: 0.3mm 0; font-family: "DejaVu Sans", sans-serif; font-size: 9pt; }
+nav#TOC > ul > li > a { font-weight: 600; }
+.toc-title { font-family: "Poppins", sans-serif; font-size: 16pt; font-weight: 600; margin-bottom: 4mm; }
+.break-h2 h2 { break-before: page; }
+p > img { display: block; width: 100%; height: auto; margin: 2mm auto 1mm; break-inside: avoid; }
+p:has(> img) { break-inside: avoid; break-after: avoid; margin-bottom: 1mm; }
+p:has(> img) + p > em:only-child { display: block; text-align: center; font-size: 8.8pt; color: #5b6475; margin-bottom: 4mm; }
+.break-h1 h1 { break-before: page; } .break-h1 h1:first-of-type { break-before: auto; }

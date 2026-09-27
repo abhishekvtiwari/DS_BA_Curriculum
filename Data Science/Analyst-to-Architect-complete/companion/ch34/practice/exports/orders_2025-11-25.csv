@@ -1,0 +1,2 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10154,2025-11-25,15,Spice Route Restaurants,Kolkata,Hospitality,101,Storage Box 10L,Storage,25,10212.50,Farah Khan

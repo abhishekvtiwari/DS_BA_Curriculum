@@ -1,0 +1,11 @@
+component,monthly_usd,notes,monthly_inr
+"RDS PostgreSQL (db.m5.large, Single-AZ)",184.69,warehouse primary,16068.0
+RDS storage (gp3),104.8,800 GB provisioned,9118.0
+RDS automated backups,0.0,free up to provisioned size,0.0
+"S3 Standard (sensor archive, hot)",27.6,"recent 90 days, Delta Lake",2401.0
+"S3 Glacier Deep Archive (sensor archive, cold)",19.6,older than 90 days,1705.0
+"Data transfer out (dashboards, API, email)",16.2,180 GB/month egress,1409.0
+Dagster orchestration compute (small EC2 fleet),37.96,"t3.large, ingestion + scheduling",3303.0
+"Defect-model serving (FastAPI, small EC2)",37.96,"t3.large, always-on for line speed",3303.0
+"PO-intake extraction (mid-tier model, e.g. Sonnet-5-class)",6.39,"LLM API, Ch 54 Sep 2026 rates",556.0
+Support RAG assistant (small/flash-tier model),1.74,"LLM API, Ch 54 Sep 2026 rates",151.0

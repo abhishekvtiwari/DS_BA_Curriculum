@@ -1,0 +1,7 @@
+snapshots:
+  - name: customers_snapshot
+    relation: source('crm', 'customers')
+    config:
+      unique_key: customer_id
+      strategy: check
+      check_cols: [city, segment]

@@ -1,0 +1,25 @@
+# Local development stack for the Riverstone pipeline: the pipeline container plus its PostgreSQL source.
+# Riverstone Supplies is fictional; every name and number is invented.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"     # from a .env file, never committed (section 52.6)
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pipeline:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      RIVERSTONE_SOURCE: "dbname=riverstone_source host=postgres user=postgres password=${POSTGRES_PASSWORD}"
+      CRM_API_TOKEN: "${CRM_API_TOKEN}"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,26 @@
+// Analyst to Architect, Chapter 11, section 11.8 — DAX measures for the Riverstone data model.
+// Tables: Sales (one row per order line), Customers, Products, Calendar (one row per date in 2025).
+// Relationships: Sales[customer_code] -> Customers[customer_code]; Sales[product_id] -> Products[product_id];
+//                Sales[order_date] -> Calendar[Date] (Calendar marked as date table).
+// Riverstone Supplies is fictional; every name and number is invented.
+
+Net Revenue :=
+SUMX ( Sales, Sales[quantity] * Sales[unit_price] * ( 1 - Sales[discount_pct] / 100 ) )
+
+Valid Net Revenue :=
+CALCULATE ( [Net Revenue], Sales[status] <> "Cancelled" )
+
+Gross Margin :=
+CALCULATE (
+    SUMX ( Sales,
+        Sales[quantity] * ( Sales[unit_price] * ( 1 - Sales[discount_pct] / 100 ) - RELATED ( Products[unit_cost] ) ) ),
+    Sales[status] <> "Cancelled" )
+
+Gross Margin % :=
+DIVIDE ( [Gross Margin], [Valid Net Revenue] )
+
+Wholesale Revenue :=
+CALCULATE ( [Valid Net Revenue], Customers[segment] = "Wholesale" )
+
+Revenue YTD :=
+TOTALYTD ( [Valid Net Revenue], Calendar[Date] )

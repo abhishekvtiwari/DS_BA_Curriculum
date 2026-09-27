@@ -1,0 +1,36 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10158,2025-12-01,Sea Breeze Hotel,Goa,Hospitality,Food Container Set,40,620,0,Delivered,24800.0
+10158,2025-12-01,Sea Breeze Hotel,Goa,Hospitality,Water Bottle 1L,5,115,0,Delivered,575.0
+10159,2025-12-01,Prime Wholesale,Ahmedabad,Wholesale,Stackable Bin,30,290,8,Delivered,8004.0
+10159,2025-12-01,Prime Wholesale,Ahmedabad,Wholesale,Storage Box 10L,35,430,10,Delivered,13545.0
+10159,2025-12-01,Prime Wholesale,Ahmedabad,Wholesale,Storage Box 25L,35,750,5,Delivered,24937.5
+10160,2025-12-04,Northgate Distributors,Delhi,Wholesale,Stackable Bin,15,290,5,Delivered,4132.5
+10160,2025-12-04,Northgate Distributors,Delhi,Wholesale,Storage Box 10L,15,430,12,Delivered,5676.0
+10161,2025-12-05,Sharma Hardware,Mumbai,Retail,Lunch Box Set,30,380,5,Delivered,10830.0
+10161,2025-12-05,Sharma Hardware,Mumbai,Retail,Water Bottle 1L,25,115,0,Delivered,2875.0
+10162,2025-12-08,Northgate Distributors,Delhi,Wholesale,Industrial Crate,40,1400,8,Delivered,51520.0
+10162,2025-12-08,Northgate Distributors,Delhi,Wholesale,Storage Box 10L,35,430,5,Delivered,14297.5
+10163,2025-12-10,Coastal Foods,Chennai,Wholesale,Stackable Bin,15,290,12,Delivered,3828.0
+10164,2025-12-10,Western Logistics,Mumbai,Wholesale,Storage Box 10L,10,430,10,Delivered,3870.0
+10165,2025-12-12,Prime Wholesale,Ahmedabad,Wholesale,Stackable Bin,35,290,10,Delivered,9135.0
+10165,2025-12-12,Prime Wholesale,Ahmedabad,Wholesale,Storage Box 25L,15,750,12,Delivered,9900.0
+10166,2025-12-13,Sea Breeze Hotel,Goa,Hospitality,Food Container Set,50,620,0,Delivered,31000.0
+10166,2025-12-13,Sea Breeze Hotel,Goa,Hospitality,Storage Box 10L,10,430,0,Delivered,4300.0
+10167,2025-12-14,Harbour Traders,Kochi,Wholesale,Stackable Bin,20,290,10,Delivered,5220.0
+10167,2025-12-14,Harbour Traders,Kochi,Wholesale,Storage Box 10L,35,430,10,Delivered,13545.0
+10168,2025-12-16,Metro Mart,Mumbai,Retail,Storage Box 10L,35,430,0,Delivered,15050.0
+10168,2025-12-16,Metro Mart,Mumbai,Retail,Water Bottle 1L,20,115,0,Delivered,2300.0
+10169,2025-12-16,Evergreen Mart,Indore,Retail,Food Container Set,30,620,0,Delivered,18600.0
+10169,2025-12-16,Evergreen Mart,Indore,Retail,Stackable Bin,25,290,5,Delivered,6887.5
+10169,2025-12-16,Evergreen Mart,Indore,Retail,Storage Box 10L,25,430,5,Delivered,10212.5
+10170,2025-12-16,Kitchen Kraft,Bengaluru,Retail,Food Container Set,35,620,0,Delivered,21700.0
+10170,2025-12-16,Kitchen Kraft,Bengaluru,Retail,Storage Box 10L,35,430,0,Delivered,15050.0
+10171,2025-12-17,Deccan Packaging,Hyderabad,Wholesale,Industrial Crate,20,1400,8,Delivered,25760.0
+10171,2025-12-17,Deccan Packaging,Hyderabad,Wholesale,Storage Box 10L,30,430,8,Delivered,11868.0
+10172,2025-12-18,Spice Route Restaurants,Kolkata,Hospitality,Lunch Box Set,50,380,5,Delivered,18050.0
+10172,2025-12-18,Spice Route Restaurants,Kolkata,Hospitality,Stackable Bin,20,290,0,Delivered,5800.0
+10173,2025-12-19,Fresh Bowl Kitchens,Bengaluru,Hospitality,Water Bottle 1L,50,115,0,Delivered,5750.0
+10174,2025-12-21,Lakeview Resorts,Udaipur,Hospitality,Stackable Bin,10,290,5,Pending,2755.0
+10175,2025-12-23,Royal Banquets,Lucknow,Hospitality,Lunch Box Set,15,380,0,Shipped,5700.0
+10175,2025-12-23,Royal Banquets,Lucknow,Hospitality,Stackable Bin,30,290,0,Shipped,8700.0
+10175,2025-12-23,Royal Banquets,Lucknow,Hospitality,Storage Box 10L,55,430,0,Shipped,23650.0

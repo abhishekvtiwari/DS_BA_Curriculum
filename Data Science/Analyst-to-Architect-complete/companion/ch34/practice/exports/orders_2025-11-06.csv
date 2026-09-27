@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10139,2025-11-06,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,60,23736.00,Rahul Mehta
+10139,2025-11-06,11,Harbour Traders,Kochi,Wholesale,105,Industrial Crate,Industrial,20,24640.00,Rahul Mehta

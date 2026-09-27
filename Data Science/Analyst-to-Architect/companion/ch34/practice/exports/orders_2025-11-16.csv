@@ -1,0 +1,8 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,102,Storage Box 25L,Storage,65,48750.00,Neha Kulkarni
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,50,19000.00,Neha Kulkarni
+10146,2025-11-16,1,Sharma Hardware,Mumbai,Retail,108,Stackable Bin,Storage,50,14500.00,Neha Kulkarni
+10147,2025-11-16,19,Western Logistics,Mumbai,Wholesale,101,Storage Box 10L,Storage,30,12255.00,Farah Khan
+10147,2025-11-16,19,Western Logistics,Mumbai,Wholesale,105,Industrial Crate,Industrial,30,38640.00,Farah Khan
+10148,2025-11-16,19,Western Logistics,Mumbai,Wholesale,102,Storage Box 25L,Storage,45,29700.00,Farah Khan
+10148,2025-11-16,19,Western Logistics,Mumbai,Wholesale,108,Stackable Bin,Storage,50,13050.00,Farah Khan

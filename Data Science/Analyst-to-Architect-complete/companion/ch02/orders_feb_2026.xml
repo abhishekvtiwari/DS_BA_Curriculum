@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orders>
+  <order id="5006">
+    <customer_name>Metro Mart</customer_name>
+    <order_date>2026-02-06</order_date>
+    <status>Delivered</status>
+    <sales_rep>Rahul Mehta</sales_rep>
+    <net_revenue>14640.00</net_revenue>
+    <delivery_note/>
+  </order>
+  <order id="5007">
+    <customer_name>Coastal Foods</customer_name>
+    <order_date>2026-02-11</order_date>
+    <status>Delivered</status>
+    <sales_rep>Rahul Mehta</sales_rep>
+    <net_revenue>32625.00</net_revenue>
+    <delivery_note>Call before delivery</delivery_note>
+  </order>
+  <order id="5008">
+    <customer_name>Sunrise Caterers</customer_name>
+    <order_date>2026-02-19</order_date>
+    <status>Delivered</status>
+    <sales_rep/>
+    <net_revenue>23325.00</net_revenue>
+    <delivery_note/>
+  </order>
+  <order id="5009">
+    <customer_name>Northgate Distributors</customer_name>
+    <order_date>2026-02-25</order_date>
+    <status>Shipped</status>
+    <sales_rep>Farah Khan</sales_rep>
+    <net_revenue>76560.00</net_revenue>
+    <delivery_note>Gate 2, Okhla Phase II</delivery_note>
+  </order>
+</orders>

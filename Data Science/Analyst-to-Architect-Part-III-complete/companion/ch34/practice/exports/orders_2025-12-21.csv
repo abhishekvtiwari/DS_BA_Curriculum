@@ -1,0 +1,2 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10174,2025-12-21,9,Lakeview Resorts,Udaipur,Hospitality,108,Stackable Bin,Storage,10,2755.00,Farah Khan

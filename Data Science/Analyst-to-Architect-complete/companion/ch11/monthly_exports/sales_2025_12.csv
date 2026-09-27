@@ -1,0 +1,36 @@
+order_id,order_date,customer_code,product_id,quantity,unit_price,discount_pct,status,sales_rep
+10158,01-12-2025,0023,103,5,115,0,Delivered,Farah Khan
+10158,01-12-2025,0023,104,40,620,0,Delivered,Farah Khan
+10159,01-12-2025,0024,101,35,430,10,Delivered,Rahul Mehta
+10159,01-12-2025,0024,102,35,750,5,Delivered,Rahul Mehta
+10159,01-12-2025,0024,108,30,290,8,Delivered,Rahul Mehta
+10160,04-12-2025,0007,101,15,430,12,Delivered,Farah Khan
+10160,04-12-2025,0007,108,15,290,5,Delivered,Farah Khan
+10161,05-12-2025,0001,103,25,115,0,Delivered,Neha Kulkarni
+10161,05-12-2025,0001,107,30,380,5,Delivered,Neha Kulkarni
+10162,08-12-2025,0007,101,35,430,5,Delivered,
+10162,08-12-2025,0007,105,40,1400,8,Delivered,
+10163,10-12-2025,0004,108,15,290,12,Delivered,Rahul Mehta
+10164,10-12-2025,0019,101,10,430,10,Delivered,Farah Khan
+10165,12-12-2025,0024,102,15,750,12,Delivered,
+10165,12-12-2025,0024,108,35,290,10,Delivered,
+10166,13-12-2025,0023,101,10,430,0,Delivered,Farah Khan
+10166,13-12-2025,0023,104,50,620,0,Delivered,Farah Khan
+10167,14-12-2025,0011,101,35,430,10,Delivered,Rahul Mehta
+10167,14-12-2025,0011,108,20,290,10,Delivered,Rahul Mehta
+10168,16-12-2025,0005,101,35,430,0,Delivered,Rahul Mehta
+10168,16-12-2025,0005,103,20,115,0,Delivered,Rahul Mehta
+10169,16-12-2025,0018,101,25,430,5,Delivered,Rahul Mehta
+10169,16-12-2025,0018,104,30,620,0,Delivered,Rahul Mehta
+10169,16-12-2025,0018,108,25,290,5,Delivered,Rahul Mehta
+10170,16-12-2025,0021,101,35,430,0,Delivered,Rahul Mehta
+10170,16-12-2025,0021,104,35,620,0,Delivered,Rahul Mehta
+10171,17-12-2025,0014,101,30,430,8,Delivered,Farah Khan
+10171,17-12-2025,0014,105,20,1400,8,Delivered,Farah Khan
+10172,18-12-2025,0015,107,50,380,5,Delivered,Farah Khan
+10172,18-12-2025,0015,108,20,290,0,Delivered,Farah Khan
+10173,19-12-2025,0012,103,50,115,0,Delivered,Neha Kulkarni
+10174,21-12-2025,0009,108,10,290,5,Pending,Farah Khan
+10175,23-12-2025,0017,101,55,430,0,Shipped,Neha Kulkarni
+10175,23-12-2025,0017,107,15,380,0,Shipped,Neha Kulkarni
+10175,23-12-2025,0017,108,30,290,0,Shipped,Neha Kulkarni

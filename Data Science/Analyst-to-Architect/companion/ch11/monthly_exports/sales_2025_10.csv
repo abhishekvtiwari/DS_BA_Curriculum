@@ -1,0 +1,39 @@
+order_id,order_date,customer_code,product_id,quantity,unit_price,discount_pct,status,sales_rep
+10116,02-10-2025,0005,101,20,430,0,Delivered,Rahul Mehta
+10116,02-10-2025,0005,102,60,750,0,Delivered,Rahul Mehta
+10116,02-10-2025,0005,103,30,115,0,Delivered,Rahul Mehta
+10117,02-10-2025,0021,102,15,750,0,Delivered,Rahul Mehta
+10117,02-10-2025,0021,107,65,380,0,Delivered,Rahul Mehta
+10118,03-10-2025,0003,103,80,115,0,Delivered,Farah Khan
+10118,03-10-2025,0003,107,85,380,0,Delivered,Farah Khan
+10119,03-10-2025,0012,101,80,430,5,Delivered,Neha Kulkarni
+10119,03-10-2025,0012,107,65,380,0,Delivered,Neha Kulkarni
+10120,05-10-2025,0003,103,40,115,0,Delivered,Farah Khan
+10120,05-10-2025,0003,108,20,290,0,Delivered,Farah Khan
+10121,06-10-2025,0023,107,55,380,5,Delivered,Farah Khan
+10121,06-10-2025,0023,108,45,290,5,Delivered,Farah Khan
+10122,07-10-2025,0019,102,40,750,5,Delivered,Farah Khan
+10122,07-10-2025,0019,108,65,290,10,Delivered,Farah Khan
+10123,08-10-2025,0015,103,20,115,0,Delivered,Farah Khan
+10123,08-10-2025,0015,108,30,290,5,Delivered,Farah Khan
+10124,08-10-2025,0018,102,50,750,0,Delivered,Rahul Mehta
+10124,08-10-2025,0018,104,30,620,0,Delivered,Rahul Mehta
+10125,12-10-2025,0014,101,40,430,12,Delivered,Farah Khan
+10126,13-10-2025,0011,101,55,430,8,Delivered,Rahul Mehta
+10126,13-10-2025,0011,102,40,750,10,Delivered,Rahul Mehta
+10126,13-10-2025,0011,105,40,1400,8,Delivered,Rahul Mehta
+10127,14-10-2025,0005,102,40,750,5,Delivered,Rahul Mehta
+10128,15-10-2025,0009,103,65,115,5,Delivered,Farah Khan
+10128,15-10-2025,0009,107,70,380,5,Delivered,Farah Khan
+10129,15-10-2025,0018,101,20,430,0,Delivered,Rahul Mehta
+10130,18-10-2025,0007,102,20,750,10,Delivered,Farah Khan
+10131,18-10-2025,0022,103,70,115,0,Cancelled,
+10131,18-10-2025,0022,107,25,380,0,Cancelled,
+10131,18-10-2025,0022,108,70,290,0,Cancelled,
+10132,20-10-2025,0001,101,65,430,0,Delivered,Neha Kulkarni
+10133,25-10-2025,0001,102,70,750,5,Delivered,Neha Kulkarni
+10133,25-10-2025,0001,107,50,380,0,Delivered,Neha Kulkarni
+10134,26-10-2025,0020,103,50,115,0,Delivered,Neha Kulkarni
+10135,27-10-2025,0004,102,15,750,12,Delivered,Rahul Mehta
+10135,27-10-2025,0004,108,40,290,12,Delivered,Rahul Mehta
+10136,27-10-2025,0019,108,50,290,8,Delivered,Farah Khan

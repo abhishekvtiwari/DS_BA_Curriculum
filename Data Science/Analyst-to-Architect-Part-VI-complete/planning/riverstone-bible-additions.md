@@ -1,0 +1,58 @@
+# Riverstone Bible — Additions
+
+New canonical facts about Riverstone Supplies, accepted by the coordinator after a part chat proposed them (instructions, section 14.3). Section 7 of `planning/chapter-writing-instructions.md` holds the original facts; this file holds everything added since. **Check both before inventing anything.**
+
+| Date added | Fact | Proposed by (part, chapter) | First used in |
+|---|---|---|---|
+| 2026-09-16 | **Plants:** Plant 1, **Taloja** (Navi Mumbai) makes storage boxes and kitchenware; Plant 2, **Chakan** (Pune) makes industrial crates and furniture. Finished goods go to the central warehouse **Bhiwandi Main** (near Mumbai) and ship from there. Consistent with Ch 12's lab warehouses (Bhiwandi Main; Chakan renamed "Chakan Plant 2"). | Part 0, Ch 3 | Ch 3 §3.1 |
+| 2026-09-16 | **Departments:** Sales, Marketing, Purchasing, Production, Warehouse and dispatch, Finance, HR, Customer support. | Part 0, Ch 3 | Ch 3 §3.1 |
+| 2026-09-16 | **Systems (named by type, never by brand):** the **ERP** (customers, products, employees as reps, orders, order lines, invoices, payments, stock, production, purchasing; its invoicing module is still called "the billing system", as in Ch 2); the **CRM** (leads, contacts, quotes, pipeline); the **website** (catalog + enquiry form feeding the CRM; business customers don't order online); the **support desk** (complaints, returns); the **HRMS** (employees, attendance, payroll); **spreadsheets and email** fill the gaps. CRM and ERP are **not integrated**. The warehouse keeps a stock spreadsheet that updates the ERP once a day. The mini database is "a small copy of the ERP's sales tables". Riverstone has no POS or e-commerce store. | Part 0, Ch 3 | Ch 3 §3.3 |
+| 2026-09-16 | **Suresh Menon**, Finance Manager. | Part 0, Ch 3 | Ch 3 §3.4 story |
+| 2026-09-16 | **Order 5001 history (mini database):** website enquiry 2025-10-22 by Rakesh (Sharma Hardware) → CRM lead; Neha visits, credit check, customer 1 created 2025-11-04 with **30-day terms**; quote **Q-2025-118** on 2025-12-22 (spreadsheet → PDF → email, logged in CRM); order emailed 2026-01-05 and re-typed into the ERP by Neha; made-to-stock at Taloja, Neha phones Bhiwandi Main to confirm stock; dispatched and invoice 9001 raised 2026-01-06; delivered 2026-01-08 with signed paper proof of delivery (scanned and emailed); paid 2026-02-02 by bank transfer (reference "SHARMA HW JAN"), matched manually; January sales report 2026-02-03. Enquiry to cash 103 days; order to cash 28. | Part 0, Ch 3 | Ch 3 §3.2, Figure 3.2 |
+| 2026-09-16 | **Discount approval limits:** up to 5% the sales executive; over 5% to 10% the Sales Manager (Vikram Singh); over 10% the Sales Head (Anita Rao) after checking with the Finance Manager. Matches the mini data (5%, 10% on 5002/5007 by Rahul, 12% on 5009 by Farah). | Part 0, Ch 3 | Ch 3 §3.6 |
+| 2026-09-16 | **Meeting rhythm:** daily dispatch stand-up at Bhiwandi Main; Monday weekly sales review (Anita, Vikram, executives); monthly business review in the first week (MD and department heads); quarterly board review. | Part 0, Ch 3 | Ch 3 §3.6 |
+| 2026-09-16 | **"Sales" vocabulary:** bookings (orders placed), billings (invoices raised), collections (cash received). Mini DB Q1 2026: booked incl. cancelled ₹116,210 / ₹161,700 / ₹58,020; billed ₹104,210 / ₹161,700 / ₹31,800; collected ₹0 / ₹64,700 / ₹132,550. Since the 3 Feb 2026 story, Riverstone's monthly pack shows all three lines with definitions; the CRM "won" total reports bookings, the ERP reports billed and collected. | Part 0, Ch 3 | Ch 3 §3.4 |
+| 2026-09-17 | **Riverstone's first dedicated data hire** is advertised as *Data Analyst (Sales Analytics and Automation)*, written by Anita and Meera after Anita first asked for a data scientist. The full posting text is in Ch 8 §8.5 (head office, hybrid; 1–3 years; freshers with strong projects considered). The posting stays open; Anita interviews on the stated must-haves. | Part I, Ch 7–8 | Ch 7 story, Ch 8 §8.5 |
+| 2026-09-17 | **Meera Iyer** inherited Imran's Friday file, learned SQL, and became the person everyone asks for numbers. Before automation she produces the **Daily Sales Flash by hand, about 40 minutes each morning**, spends most of Friday on the sales pack, and copies overdue invoices from the finance system into emails for reps. | Part I, Ch 7 | Ch 7 story |
+| 2026-09-17 | **Farah Khan** (employee 5, Sales Executive reporting to Anita) has been a sales executive for four years and knows the hospitality customers best. She is working toward the analyst role (no promise of the job), spends Friday afternoons helping Meera with the at-risk customer list, and built a **Monday at-risk email** (Google Sheets + Apps Script, time-driven trigger, 9 a.m.) that Vikram asked to copy for his team. Her 12-week SQL practice log plateaued in weeks 4–8 on the LEFT JOIN / filter-placement idea (Ch 12 §12.10); she shows Meera one query every Friday; her first portfolio piece compares hospitality orders before this year's and last year's wedding season. (Consistent with Ch 5's 2025 data: Farah handled the most orders, 64, and followed up leads fastest.) | Part I, Ch 8–9 | Ch 8 story, Ch 9 §9.7 |
+| 2026-09-17 | **Not canon:** the hypothetical larger Riverstone with one specialist per role (Ch 7 §7.6), and the ten "day in the life" people and companies (Ch 8 §8.4). | Part I | — |
+| 2026-09-17 | **Seasonality and stock planning:** Riverstone builds festive inventory from July for the October peak; the festive stock plan is set in the first week of January. (Full dataset, 2025: October ₹180,620,103 vs October 2024 ₹147,221,566, +22.7%; October attainment 92.1%.) | Part II-A, Ch 15 | Ch 15 story |
+| 2026-09-17 | **January 2026 decisions (stories):** Suresh Menon proposed a 15% cut in festive stock; Meera's redesigned charts kept the plan; Vikram Singh now requires action titles and a prior-year comparison in every attainment chart. Meera rebuilt Vikram's copy-paste month-end pack with Power Query (Ch 11). *Other Part II facts wait on cross-part issues 1–5 (names, sales structure, branch offices, one-year database scope).* | Part II-A, Ch 11, 15 | Ch 11, 15 stories |
+
+## From Part III (Chapter 28), accepted 19 September 2026
+
+The HRMS `staff` view (35 people) coexists with the ERP's small `employees` table. In the ERP Anita Rao has no manager, because the ERP only knows the sales team; in the HRMS she reports to the managing director. Both are true of their own system, and Chapter 28 uses the difference as a teaching point.
+
+- **Arvind Kapoor**, Managing Director.
+- Reporting to the MD: Anita Rao (Sales Head), Suresh Menon (Finance Manager), **Harpreet Sethi** (Head of Production), **Joseph D'Souza** (Purchasing Manager), **Mahesh Yadav** (Warehouse & Dispatch Manager, Bhiwandi Main), **Lakshmi Reddy** (HR Manager), **Zoya Mirza** (Marketing Manager), **Tenzin Dorji** (Customer Support Lead).
+- Plants and operations: **Ramesh Patil** (Plant Manager, Taloja), **Kiran Bhosale** (Plant Manager, Chakan), **Ajay Kumar** and **Swati Joshi** (Shift Supervisors), **Farhan Ali** (Quality Inspector, Taloja), **Gopal Sahu**, **Sunita Pawar**, **Farid Shaikh** (Machine Operators), **Mohan Das** (Dispatch Supervisor), **Priya Nambiar** (Accounts Executive).
+- Meera Iyer reports to Anita Rao.
+- Sales organization as built: Vikram Singh is **Sales Manager, Key Accounts**; the regional branch under Anita Rao is Arjun Nair (South), Pooja Desai (West) and Sandeep Gill (North). The eight regional sales executives are the full dataset's (Kavitha Reddy, Irfan Sheikh, Meenal Joshi, Rohit Verma, Divya Menon, Aakash Jain, Simran Kaur, Tarun Bose) — see cross-part issue 10, which Chapter 28 still has to apply.
+- Suppliers and materials: bills of materials for products 101, 102, 104, 106 and 108, with materials from **Western Polymers**, **Gujarat Pigments**, **Sagar Labels**, **Deccan Cartons** and **Kaveri Steel Works**. The Garden Chair's material cost is ₹647.80.
+- 2025 customer changes recorded in the ERP audit log: Patel Kitchenware moved Wholesale → Retail on 2025-04-01; Metro Mart moved Thane → Mumbai on 2025-07-01; Harbour Traders moved Retail → Wholesale on 2025-09-01. The `customers` table shows the values after the changes.
+- **`riverstone_perf`** (2023–2025, 714,285 orders, 1,926,847 lines, seed 28) is a volume dataset for performance work, **not canon**; its totals are unrealistic by design.
+- **The digital domain** (`companion/ch30/generate_riverstone_web.py`, seed 30): Riverstone's website, 214,528 sessions and 622,090 events from 47,286 visitors over a two-week A/B test, with a novelty effect, a Safari sample-ratio mismatch, and heavy-tailed enquiry values built in. Chapter 42 is the other planned user.
+- **Causal datasets** (`companion/ch31/generate_ch31_data.py`, seed 31): a region-month panel, a selected customer program, and a threshold dataset, each with a known true effect.
+
+## From Part IV (Chapter 36), accepted 19 September 2026
+
+- An **Inside Sales Desk** (owner ID 9) handles marketplace and web-form leads.
+- Riverstone lists on a **B2B marketplace** and moved to a cheaper listing plan during 2025; the marketplace's share of leads rose from 30.1% to 44.5% while its win rate fell to 1.52%.
+- Riverstone attends **two trade fairs a year**, in February and September.
+- Lead volume grew from about 290 a month in 2023 to about 400 a month in 2025.
+
+## Part IV datasets, accepted 19 September 2026
+
+Each has a spec in `planning/data/`. All are built by seeded generators in `companion/`; the CSV and Parquet outputs are rebuilt rather than stored.
+
+| Dataset | Generator | What it is | Chapters |
+|---|---|---|---|
+| CRM | `generate_riverstone_crm.py` | 12,294 leads, 25,682 activities, 39,275 stage changes, 2023–2025 | 36, and Ch 23 may reuse it |
+| Accounts | `generate_riverstone_accounts.py` | account-level features and churn outcomes | 37, 38, 39, 42, 43, 44 |
+| Baskets | `generate_riverstone_baskets.py` | order lines for market-basket and recommender work | 38, 42 |
+| Demand | `generate_riverstone_demand.py` | a demand series for forecasting | 40 |
+| Sensors | `generate_riverstone_sensors.py` | plant sensor readings (`--full` gives the ~4.8M-row version for Ch 48) | 40, 48 |
+| Tickets | `generate_riverstone_tickets.py` | support tickets with free text | 41 |
+
+The CRM is an independent 2023–2025 dataset that reuses Riverstone's reps, segments, sources, cities and product categories, but is **not** joined row by row to `riverstone_2025`.
+

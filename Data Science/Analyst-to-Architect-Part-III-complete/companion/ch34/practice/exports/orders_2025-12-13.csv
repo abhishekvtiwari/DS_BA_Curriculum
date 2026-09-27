@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10166,2025-12-13,23,Sea Breeze Hotel,Goa,Hospitality,101,Storage Box 10L,Storage,10,4300.00,Farah Khan
+10166,2025-12-13,23,Sea Breeze Hotel,Goa,Hospitality,104,Food Container Set,Kitchen,50,31000.00,Farah Khan

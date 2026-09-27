@@ -1,0 +1,19 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10019,2025-03-04,Green Leaf Hotels,Pune,Hospitality,Lunch Box Set,35,380,5,Delivered,12635.0
+10019,2025-03-04,Green Leaf Hotels,Pune,Hospitality,Water Bottle 1L,40,115,0,Delivered,4600.0
+10020,2025-03-10,Coastal Foods,Chennai,Wholesale,Industrial Crate,25,1400,10,Delivered,31500.0
+10020,2025-03-10,Coastal Foods,Chennai,Wholesale,Storage Box 10L,15,430,5,Delivered,6127.5
+10020,2025-03-10,Coastal Foods,Chennai,Wholesale,Storage Box 25L,15,750,12,Delivered,9900.0
+10021,2025-03-18,Metro Mart,Mumbai,Retail,Food Container Set,15,620,0,Delivered,9300.0
+10022,2025-03-21,Sharma Hardware,Mumbai,Retail,Lunch Box Set,15,380,0,Delivered,5700.0
+10022,2025-03-21,Sharma Hardware,Mumbai,Retail,Storage Box 25L,45,750,0,Delivered,33750.0
+10023,2025-03-21,Blue Bay Cafe,Pune,Hospitality,Stackable Bin,10,290,0,Delivered,2900.0
+10024,2025-03-22,Northgate Distributors,Delhi,Wholesale,Storage Box 10L,35,430,10,Delivered,13545.0
+10024,2025-03-22,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,20,750,5,Delivered,14250.0
+10025,2025-03-22,City Needs Store,Jaipur,Retail,Storage Box 25L,30,750,5,Delivered,21375.0
+10026,2025-03-26,Fresh Bowl Kitchens,Bengaluru,Hospitality,Lunch Box Set,45,380,0,Delivered,17100.0
+10026,2025-03-26,Fresh Bowl Kitchens,Bengaluru,Hospitality,Storage Box 10L,55,430,0,Delivered,23650.0
+10027,2025-03-27,Om Sai Provisions,Nashik,Retail,Stackable Bin,40,290,0,Delivered,11600.0
+10028,2025-03-28,Sharma Hardware,Mumbai,Retail,Storage Box 25L,35,750,5,Delivered,24937.5
+10029,2025-03-28,Patel Kitchenware,Ahmedabad,Retail,Garden Chair,15,1150,5,Delivered,16387.5
+10029,2025-03-28,Patel Kitchenware,Ahmedabad,Retail,Storage Box 25L,25,750,0,Delivered,18750.0

@@ -1,0 +1,16 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10001,2025-01-02,Patel Kitchenware,Ahmedabad,Retail,Stackable Bin,10,290,0,Delivered,2900.0
+10002,2025-01-05,Green Leaf Hotels,Pune,Hospitality,Lunch Box Set,55,380,0,Delivered,20900.0
+10003,2025-01-12,Metro Mart,Mumbai,Retail,Stackable Bin,10,290,0,Delivered,2900.0
+10003,2025-01-12,Metro Mart,Mumbai,Retail,Storage Box 10L,25,430,0,Delivered,10750.0
+10003,2025-01-12,Metro Mart,Mumbai,Retail,Storage Box 25L,45,750,5,Delivered,32062.5
+10004,2025-01-13,Metro Mart,Mumbai,Retail,Storage Box 10L,40,430,0,Delivered,17200.0
+10004,2025-01-13,Metro Mart,Mumbai,Retail,Storage Box 25L,15,750,5,Delivered,10687.5
+10005,2025-01-20,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,15,430,5,Delivered,6127.5
+10006,2025-01-21,Coastal Foods,Chennai,Wholesale,Storage Box 25L,25,750,5,Delivered,17812.5
+10007,2025-01-24,Sharma Hardware,Mumbai,Retail,Stackable Bin,20,290,0,Delivered,5800.0
+10007,2025-01-24,Sharma Hardware,Mumbai,Retail,Storage Box 10L,45,430,0,Delivered,19350.0
+10007,2025-01-24,Sharma Hardware,Mumbai,Retail,Storage Box 25L,20,750,0,Delivered,15000.0
+10008,2025-01-26,Sharma Hardware,Mumbai,Retail,Lunch Box Set,25,380,0,Delivered,9500.0
+10008,2025-01-26,Sharma Hardware,Mumbai,Retail,Storage Box 10L,30,430,0,Delivered,12900.0
+10008,2025-01-26,Sharma Hardware,Mumbai,Retail,Storage Box 25L,25,750,0,Delivered,18750.0

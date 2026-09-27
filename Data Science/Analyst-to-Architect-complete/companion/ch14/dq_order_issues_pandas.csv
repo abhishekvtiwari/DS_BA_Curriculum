@@ -1,0 +1,38 @@
+order_item_id,issue,action
+184041,quantity missing,quarantined
+185421,quantity missing,quarantined
+185957,product_id missing,repaired from unit price
+187761,quantity above historical maximum,quarantined
+189629,quantity missing,quarantined
+190529,product_id missing,repaired from unit price
+191262,quantity missing,quarantined
+191340,quantity above historical maximum,quarantined
+192992,impossible or unreadable date,repaired from entry time (IST)
+193042,impossible or unreadable date,repaired from entry time (IST)
+193046,impossible or unreadable date,repaired from entry time (IST)
+193051,impossible or unreadable date,repaired from entry time (IST)
+195774,product_id missing,repaired from unit price
+198022,product_id missing,repaired from unit price
+200075,quantity missing,quarantined
+200735,quantity missing,quarantined
+200921,quantity missing,quarantined
+200981,quantity above historical maximum,quarantined
+201542,product_id missing,repaired from unit price
+201671,quantity missing,quarantined
+201964,quantity missing,quarantined
+201997,impossible or unreadable date,repaired from entry time (IST)
+202048,impossible or unreadable date,repaired from entry time (IST)
+202098,impossible or unreadable date,repaired from entry time (IST)
+204006,quantity missing,quarantined
+204329,quantity missing,quarantined
+204438,product_id missing,repaired from unit price
+204511,quantity missing,quarantined
+205978,quantity above historical maximum,quarantined
+206043,quantity missing,quarantined
+206204,product_id missing,repaired from unit price
+206224,quantity above historical maximum,quarantined
+207203,product_id missing,repaired from unit price
+207679,quantity missing,quarantined
+209166,quantity above historical maximum,quarantined
+209598,impossible or unreadable date,repaired from entry time (IST)
+209607,impossible or unreadable date,repaired from entry time (IST)

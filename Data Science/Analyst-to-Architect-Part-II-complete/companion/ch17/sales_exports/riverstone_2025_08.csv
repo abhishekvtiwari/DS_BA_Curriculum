@@ -1,0 +1,29 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10084,2025-08-03,Green Leaf Hotels,Pune,Hospitality,Food Container Set,15,620,0,Delivered,9300.0
+10084,2025-08-03,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,40,430,5,Delivered,16340.0
+10085,2025-08-04,Evergreen Mart,Indore,Retail,Storage Box 10L,15,430,0,Delivered,6450.0
+10085,2025-08-04,Evergreen Mart,Indore,Retail,Storage Box 25L,20,750,5,Delivered,14250.0
+10085,2025-08-04,Evergreen Mart,Indore,Retail,Water Bottle 1L,40,115,5,Delivered,4370.0
+10086,2025-08-11,Metro Mart,Mumbai,Retail,Lunch Box Set,40,380,0,Delivered,15200.0
+10086,2025-08-11,Metro Mart,Mumbai,Retail,Stackable Bin,25,290,0,Delivered,7250.0
+10087,2025-08-11,Deccan Packaging,Hyderabad,Wholesale,Industrial Crate,25,1400,12,Delivered,30800.0
+10087,2025-08-11,Deccan Packaging,Hyderabad,Wholesale,Storage Box 10L,10,430,10,Delivered,3870.0
+10087,2025-08-11,Deccan Packaging,Hyderabad,Wholesale,Storage Box 25L,15,750,12,Delivered,9900.0
+10088,2025-08-12,Sharma Hardware,Mumbai,Retail,Storage Box 10L,35,430,5,Delivered,14297.5
+10088,2025-08-12,Sharma Hardware,Mumbai,Retail,Water Bottle 1L,40,115,0,Delivered,4600.0
+10089,2025-08-13,Evergreen Mart,Indore,Retail,Food Container Set,10,620,0,Delivered,6200.0
+10089,2025-08-13,Evergreen Mart,Indore,Retail,Lunch Box Set,20,380,0,Delivered,7600.0
+10089,2025-08-13,Evergreen Mart,Indore,Retail,Stackable Bin,40,290,5,Delivered,11020.0
+10090,2025-08-14,Patel Kitchenware,Ahmedabad,Retail,Food Container Set,40,620,5,Delivered,23560.0
+10090,2025-08-14,Patel Kitchenware,Ahmedabad,Retail,Storage Box 10L,35,430,0,Delivered,15050.0
+10091,2025-08-15,Spice Route Restaurants,Kolkata,Hospitality,Lunch Box Set,50,380,0,Delivered,19000.0
+10092,2025-08-15,Western Logistics,Mumbai,Wholesale,Industrial Crate,20,1400,5,Delivered,26600.0
+10092,2025-08-15,Western Logistics,Mumbai,Wholesale,Stackable Bin,25,290,5,Delivered,6887.5
+10093,2025-08-19,Deccan Packaging,Hyderabad,Wholesale,Storage Box 10L,20,430,12,Delivered,7568.0
+10093,2025-08-19,Deccan Packaging,Hyderabad,Wholesale,Storage Box 25L,10,750,12,Delivered,6600.0
+10094,2025-08-23,Fresh Bowl Kitchens,Bengaluru,Hospitality,Storage Box 10L,40,430,0,Delivered,17200.0
+10095,2025-08-24,Harbour Traders,Kochi,Wholesale,Storage Box 10L,15,430,8,Delivered,5934.0
+10095,2025-08-24,Harbour Traders,Kochi,Wholesale,Storage Box 25L,35,750,10,Delivered,23625.0
+10096,2025-08-26,Coastal Foods,Chennai,Wholesale,Storage Box 25L,10,750,12,Delivered,6600.0
+10097,2025-08-27,Northgate Distributors,Delhi,Wholesale,Stackable Bin,10,290,10,Delivered,2610.0
+10097,2025-08-27,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,10,750,12,Delivered,6600.0

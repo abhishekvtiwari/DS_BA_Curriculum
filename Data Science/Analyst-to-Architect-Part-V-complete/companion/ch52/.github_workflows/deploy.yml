@@ -1,0 +1,40 @@
+# CI/CD for the Riverstone pipeline (Chapter 52, section 52.5).
+# Riverstone Supplies is fictional; every name and number is invented.
+name: Riverstone pipeline CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r pipeline_image/requirements.txt pytest
+      - run: pytest tests/
+
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t riverstone/pipeline:${{ github.sha }} pipeline_image/
+      - name: Push image
+        run: docker push riverstone/pipeline:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Update deployment
+        run: kubectl set image deployment/riverstone-pipeline pipeline=riverstone/pipeline:${{ github.sha }}

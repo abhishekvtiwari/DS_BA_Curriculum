@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10162,2025-12-08,7,Northgate Distributors,Delhi,Wholesale,101,Storage Box 10L,Storage,35,14297.50,unassigned
+10162,2025-12-08,7,Northgate Distributors,Delhi,Wholesale,105,Industrial Crate,Industrial,40,51520.00,unassigned

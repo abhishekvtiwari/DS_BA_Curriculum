@@ -1,0 +1,12 @@
+for s in ['A', 'Pune', 'é', '₹', 'न', 'नमस्ते', '😀', '₹14,700']:
+    print(repr(s), len(s), 'chars', len(s.encode('utf-8')), 'bytes', s.encode('utf-8').hex(' '))
+print('A binary', format(ord('A'),'08b'), ord('A'))
+print('mojibake', '₹14,700'.encode('utf-8').decode('cp1252'))
+print('Café mojibake', 'Café'.encode('utf-8').decode('cp1252'))
+print(0.1+0.2, 0.1+0.2==0.3)
+from decimal import Decimal; print(Decimal('0.1')+Decimal('0.2'))
+print('1TB in GiB', 10**12/2**30)
+print('100 Mbps in MB/s', 100/8)
+print('5GB at 100Mbps seconds', 5*1000*8/100, 'min', 5*1000*8/100/60)
+print('2^8', 2**8, '2^16',2**16, '2^32', 2**32)
+print('excel cells', 1048576*16384)

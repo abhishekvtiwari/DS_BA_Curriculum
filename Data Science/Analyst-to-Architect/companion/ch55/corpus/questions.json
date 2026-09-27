@@ -1,0 +1,327 @@
+[
+  {
+    "question": "What is the load rating of the Storage Box 10L?",
+    "doc": "spec_101",
+    "answer": "12 kg stacked"
+  },
+  {
+    "question": "What is the minimum order quantity for product 101?",
+    "doc": "spec_101",
+    "answer": "20"
+  },
+  {
+    "question": "How long is the lead time for the Storage Box 10L?",
+    "doc": "spec_101",
+    "answer": "5 working days"
+  },
+  {
+    "question": "What is the load rating of the Storage Box 25L?",
+    "doc": "spec_102",
+    "answer": "25 kg stacked"
+  },
+  {
+    "question": "What is the minimum order quantity for product 102?",
+    "doc": "spec_102",
+    "answer": "20"
+  },
+  {
+    "question": "How long is the lead time for the Storage Box 25L?",
+    "doc": "spec_102",
+    "answer": "5 working days"
+  },
+  {
+    "question": "What is the load rating of the Water Bottle 1L?",
+    "doc": "spec_103",
+    "answer": "not stackable"
+  },
+  {
+    "question": "What is the minimum order quantity for product 103?",
+    "doc": "spec_103",
+    "answer": "50"
+  },
+  {
+    "question": "How long is the lead time for the Water Bottle 1L?",
+    "doc": "spec_103",
+    "answer": "3 working days"
+  },
+  {
+    "question": "What is the load rating of the Food Container Set?",
+    "doc": "spec_104",
+    "answer": "6 kg stacked"
+  },
+  {
+    "question": "What is the minimum order quantity for product 104?",
+    "doc": "spec_104",
+    "answer": "25"
+  },
+  {
+    "question": "How long is the lead time for the Food Container Set?",
+    "doc": "spec_104",
+    "answer": "4 working days"
+  },
+  {
+    "question": "What is the load rating of the Industrial Crate?",
+    "doc": "spec_105",
+    "answer": "60 kg stacked"
+  },
+  {
+    "question": "What is the minimum order quantity for product 105?",
+    "doc": "spec_105",
+    "answer": "10"
+  },
+  {
+    "question": "How long is the lead time for the Industrial Crate?",
+    "doc": "spec_105",
+    "answer": "7 working days"
+  },
+  {
+    "question": "What is the load rating of the Garden Chair?",
+    "doc": "spec_106",
+    "answer": "120 kg user weight"
+  },
+  {
+    "question": "What is the minimum order quantity for product 106?",
+    "doc": "spec_106",
+    "answer": "8"
+  },
+  {
+    "question": "How long is the lead time for the Garden Chair?",
+    "doc": "spec_106",
+    "answer": "10 working days"
+  },
+  {
+    "question": "What is the load rating of the Lunch Box Set?",
+    "doc": "spec_107",
+    "answer": "not stackable"
+  },
+  {
+    "question": "What is the minimum order quantity for product 107?",
+    "doc": "spec_107",
+    "answer": "50"
+  },
+  {
+    "question": "How long is the lead time for the Lunch Box Set?",
+    "doc": "spec_107",
+    "answer": "3 working days"
+  },
+  {
+    "question": "What is the load rating of the Stackable Bin?",
+    "doc": "spec_108",
+    "answer": "8 kg stacked"
+  },
+  {
+    "question": "What is the minimum order quantity for product 108?",
+    "doc": "spec_108",
+    "answer": "30"
+  },
+  {
+    "question": "How long is the lead time for the Stackable Bin?",
+    "doc": "spec_108",
+    "answer": "5 working days"
+  },
+  {
+    "question": "Is delivery free, and above what order value?",
+    "doc": "policy_delivery",
+    "answer": "Rs 25,000"
+  },
+  {
+    "question": "How many delivery attempts are made before a consignment is returned?",
+    "doc": "policy_delivery",
+    "answer": "two"
+  },
+  {
+    "question": "What is the standard delivery time outside Maharashtra?",
+    "doc": "policy_delivery",
+    "answer": "5 to 9 working days"
+  },
+  {
+    "question": "How soon must transit damage be reported?",
+    "doc": "policy_returns",
+    "answer": "48 hours"
+  },
+  {
+    "question": "What is the restocking fee on goods ordered in error?",
+    "doc": "policy_returns",
+    "answer": "10%"
+  },
+  {
+    "question": "Can printed items be returned?",
+    "doc": "policy_returns",
+    "answer": "no"
+  },
+  {
+    "question": "How long is the standard warranty?",
+    "doc": "policy_warranty",
+    "answer": "12 months"
+  },
+  {
+    "question": "Which product has a 24-month warranty?",
+    "doc": "policy_warranty",
+    "answer": "Industrial Crate (105)"
+  },
+  {
+    "question": "What does the warranty not cover?",
+    "doc": "policy_warranty",
+    "answer": "misuse, temperature abuse, normal wear"
+  },
+  {
+    "question": "What are the payment terms for a new customer?",
+    "doc": "policy_payment",
+    "answer": "100% advance for the first two orders"
+  },
+  {
+    "question": "What interest is charged on overdue invoices?",
+    "doc": "policy_payment",
+    "answer": "1.5% per month"
+  },
+  {
+    "question": "What discount applies to an order of 2,000 units?",
+    "doc": "policy_bulk_discount",
+    "answer": "8%"
+  },
+  {
+    "question": "Who approves a discount above 12%?",
+    "doc": "policy_bulk_discount",
+    "answer": "the Sales Head"
+  },
+  {
+    "question": "How many garden chairs are in a standard carton?",
+    "doc": "policy_packaging",
+    "answer": "4"
+  },
+  {
+    "question": "What does custom labelling cost?",
+    "doc": "policy_packaging",
+    "answer": "Rs 3 per unit above 2,000 units"
+  },
+  {
+    "question": "What GST rate applies to Riverstone products?",
+    "doc": "policy_gst_invoicing",
+    "answer": "18%"
+  },
+  {
+    "question": "When are invoices raised?",
+    "doc": "policy_gst_invoicing",
+    "answer": "on dispatch"
+  },
+  {
+    "question": "What is the list price of the Industrial Crate?",
+    "doc": "price_list",
+    "answer": "Rs 1,400"
+  },
+  {
+    "question": "How often are prices reviewed?",
+    "doc": "price_list",
+    "answer": "quarterly"
+  },
+  {
+    "question": "Who should a warranty claim be sent to?",
+    "doc": "contacts_escalation",
+    "answer": "quality@riverstone.example"
+  },
+  {
+    "question": "When should a customer escalate to the Support Lead?",
+    "doc": "contacts_escalation",
+    "answer": "after 3 working days unresolved"
+  },
+  {
+    "question": "Are the storage boxes food safe?",
+    "doc": "faq_01",
+    "answer": "Only the Kitchen range (codes 103, 104, 107) is made from food-grade PP. Storage boxes are not certified for food contact."
+  },
+  {
+    "question": "Can the crates be used in a freezer?",
+    "doc": "faq_02",
+    "answer": "The Industrial Crate is rated to -25 C and is suitable for freezer use. Storage boxes are rated to -10 C."
+  },
+  {
+    "question": "Do you supply in custom colours?",
+    "doc": "faq_03",
+    "answer": "Custom colours are available above 5,000 units per colour, with a 15 working day lead time and a one-time masterbatch charge."
+  },
+  {
+    "question": "Is there a showroom?",
+    "doc": "faq_04",
+    "answer": "Samples are couriered on request; there is no public showroom. Sample charges are adjusted against the first order."
+  },
+  {
+    "question": "Do you export?",
+    "doc": "faq_05",
+    "answer": "Riverstone supplies within India only at present."
+  },
+  {
+    "question": "Can I collect the goods myself?",
+    "doc": "faq_06",
+    "answer": "Self-collection is available from Bhiwandi Main between 10:00 and 17:00 on working days, with 24 hours notice."
+  },
+  {
+    "question": "What is the shelf life of the products?",
+    "doc": "faq_07",
+    "answer": "Moulded products have no shelf life if stored away from direct sunlight. UV exposure over years causes fading."
+  },
+  {
+    "question": "Are the lids interchangeable between box sizes?",
+    "doc": "faq_08",
+    "answer": "No. Each box size has its own lid; the 10L and 25L lids are not interchangeable."
+  },
+  {
+    "question": "Do you offer a rental option for crates?",
+    "doc": "faq_09",
+    "answer": "No. Crates are sold outright."
+  },
+  {
+    "question": "Can I change an order after confirmation?",
+    "doc": "faq_10",
+    "answer": "Changes are possible before dispatch. Contact the support desk with the PO number; changes after dispatch are treated as a return."
+  },
+  {
+    "question": "What is Riverstone's turnover this year?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Do you supply to Sri Lanka?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Can I get a 30% discount on 100 units?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Who is the Managing Director's personal assistant?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "What is the salary of a machine operator at Taloja?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Is the Garden Chair available in purple?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Do you accept cryptocurrency?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "What is the recycled content percentage of the Stackable Bin?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "Can I visit the Chakan plant next week?",
+    "doc": null,
+    "answer": null
+  },
+  {
+    "question": "What is the warranty on a competitor's crate?",
+    "doc": null,
+    "answer": null
+  }
+]

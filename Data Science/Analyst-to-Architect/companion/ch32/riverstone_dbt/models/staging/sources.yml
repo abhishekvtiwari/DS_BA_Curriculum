@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: erp
+    description: Riverstone's ERP tables, loaded into the reporting database every night.
+    schema: public
+    tables:
+      - name: orders
+        description: One row per order.
+        columns:
+          - name: order_id
+            data_tests: [unique, not_null]
+      - name: order_items
+        description: One row per product line within an order.
+        columns:
+          - name: order_item_id
+            data_tests: [unique, not_null]
+      - name: customers
+      - name: products
+      - name: employees
+
+  - name: crm
+    description: The CRM's nightly customer extract, which holds only current values.
+    schema: raw_crm
+    tables:
+      - name: customers

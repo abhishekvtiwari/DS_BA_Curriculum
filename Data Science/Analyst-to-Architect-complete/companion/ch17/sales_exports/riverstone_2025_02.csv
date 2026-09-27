@@ -1,0 +1,21 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10009,2025-02-02,City Needs Store,Jaipur,Retail,Storage Box 10L,30,430,0,Delivered,12900.0
+10009,2025-02-02,City Needs Store,Jaipur,Retail,Storage Box 25L,30,750,5,Delivered,21375.0
+10010,2025-02-05,Sharma Hardware,Mumbai,Retail,Food Container Set,35,620,0,Delivered,21700.0
+10010,2025-02-05,Sharma Hardware,Mumbai,Retail,Storage Box 10L,20,430,0,Delivered,8600.0
+10010,2025-02-05,Sharma Hardware,Mumbai,Retail,Water Bottle 1L,10,115,0,Delivered,1150.0
+10011,2025-02-16,Green Leaf Hotels,Pune,Hospitality,Lunch Box Set,30,380,0,Delivered,11400.0
+10011,2025-02-16,Green Leaf Hotels,Pune,Hospitality,Stackable Bin,30,290,5,Delivered,8265.0
+10011,2025-02-16,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,25,430,0,Delivered,10750.0
+10012,2025-02-16,Coastal Foods,Chennai,Wholesale,Industrial Crate,40,1400,12,Delivered,49280.0
+10012,2025-02-16,Coastal Foods,Chennai,Wholesale,Stackable Bin,40,290,5,Delivered,11020.0
+10013,2025-02-17,Northgate Distributors,Delhi,Wholesale,Stackable Bin,30,290,8,Delivered,8004.0
+10013,2025-02-17,Northgate Distributors,Delhi,Wholesale,Storage Box 10L,30,430,5,Delivered,12255.0
+10014,2025-02-17,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,25,750,8,Delivered,17250.0
+10015,2025-02-20,Sunrise Caterers,Nagpur,Hospitality,Stackable Bin,20,290,0,Delivered,5800.0
+10016,2025-02-20,Fresh Bowl Kitchens,Bengaluru,Hospitality,Stackable Bin,30,290,0,Delivered,8700.0
+10016,2025-02-20,Fresh Bowl Kitchens,Bengaluru,Hospitality,Storage Box 10L,25,430,0,Delivered,10750.0
+10016,2025-02-20,Fresh Bowl Kitchens,Bengaluru,Hospitality,Water Bottle 1L,50,115,5,Delivered,5462.5
+10017,2025-02-25,Metro Mart,Mumbai,Retail,Lunch Box Set,40,380,5,Delivered,14440.0
+10018,2025-02-28,Sharma Hardware,Mumbai,Retail,Stackable Bin,15,290,0,Delivered,4350.0
+10018,2025-02-28,Sharma Hardware,Mumbai,Retail,Storage Box 10L,25,430,5,Delivered,10212.5

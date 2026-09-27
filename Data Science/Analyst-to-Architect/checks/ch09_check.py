@@ -1,0 +1,31 @@
+# Analyst to Architect - Chapter 9 number checks. Run: python3 checks/ch09_check.py (from the book root)
+# Riverstone Supplies is fictional; every name and number is invented.
+import sys; sys.path.insert(0,'figures')
+from make_figs09 import MINUTES, CHECK
+ok=True
+def check(label,got,exp):
+    global ok; good=(got==exp); ok&=good
+    print(('OK  ' if good else 'FAIL'),label,got,'' if good else f'(expected {exp})')
+check('total minutes',sum(MINUTES),2800)
+check('total hours',round(sum(MINUTES)/60,1),46.7)
+check('weeks 4-8 minutes',sum(MINUTES[3:8]),1230)
+check('weeks 4-8 score change',CHECK[7]-CHECK[3],0)
+check('weeks 1-4 minutes',sum(MINUTES[0:4]),810)
+check('weeks 1-4 score change (week1 3 -> week4 6)',CHECK[3]-CHECK[0],3)
+check('weeks 9-12 minutes',sum(MINUTES[8:12]),980)
+check('weeks 9-12 score change from week 8 (6 -> 9)',CHECK[11]-CHECK[7],3)
+check('week 7 vs week 4 minutes increase %',round(100*(270/220-1),1),22.7)
+check('avg minutes weeks 9-12',sum(MINUTES[8:12])/4,245.0)
+check('avg minutes weeks 5-7',round(sum(MINUTES[4:7])/3,1),256.7)
+# chapter time estimates: Ch 12 19-23 h, Ch 13 15-20 h
+check('Ch12+13 hours low',19+15,34); check('Ch12+13 hours high',23+20,43)
+check('weeks at 6 h/wk low',round(34/6,1),5.7); check('weeks at 6 h/wk high',round(43/6,1),7.2)
+check('weeks at 10 h/wk low',round(34/10,1),3.4); check('weeks at 10 h/wk high',round(43/10,1),4.3)
+# exercises
+check('Ex 4: 45 min x 5 days x 8 weeks, hours',45*5*8/60,30.0)
+check('Ex 4: hours short of 34',34-30,4)
+check('Ex 5: 20 min/day x 365 days hours',round(20*365/60,1),121.7)
+check('Ex 5: one 3-hour Sunday x 52 weeks',3*52,156)
+check('Ex 6: rate w1..w12 check from 3 to 9 (+%)',round(100*(9/3-1)),200)
+check('wrong answers weeks 5-7',sum(10-x for x in CHECK[4:7]),12)
+print('ALL CHECKS PASSED' if ok else 'SOME CHECKS FAILED')

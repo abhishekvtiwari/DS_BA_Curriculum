@@ -1,0 +1,8 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10168,2025-12-16,5,Metro Mart,Mumbai,Retail,101,Storage Box 10L,Storage,35,15050.00,Rahul Mehta
+10168,2025-12-16,5,Metro Mart,Mumbai,Retail,103,Water Bottle 1L,Kitchen,20,2300.00,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,101,Storage Box 10L,Storage,25,10212.50,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,104,Food Container Set,Kitchen,30,18600.00,Rahul Mehta
+10169,2025-12-16,18,Evergreen Mart,Indore,Retail,108,Stackable Bin,Storage,25,6887.50,Rahul Mehta
+10170,2025-12-16,21,Kitchen Kraft,Bengaluru,Retail,101,Storage Box 10L,Storage,35,15050.00,Rahul Mehta
+10170,2025-12-16,21,Kitchen Kraft,Bengaluru,Retail,104,Food Container Set,Kitchen,35,21700.00,Rahul Mehta

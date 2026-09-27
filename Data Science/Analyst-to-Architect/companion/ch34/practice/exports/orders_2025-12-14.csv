@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10167,2025-12-14,11,Harbour Traders,Kochi,Wholesale,101,Storage Box 10L,Storage,35,13545.00,Rahul Mehta
+10167,2025-12-14,11,Harbour Traders,Kochi,Wholesale,108,Stackable Bin,Storage,20,5220.00,Rahul Mehta

@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10161,2025-12-05,1,Sharma Hardware,Mumbai,Retail,103,Water Bottle 1L,Kitchen,25,2875.00,Neha Kulkarni
+10161,2025-12-05,1,Sharma Hardware,Mumbai,Retail,107,Lunch Box Set,Kitchen,30,10830.00,Neha Kulkarni

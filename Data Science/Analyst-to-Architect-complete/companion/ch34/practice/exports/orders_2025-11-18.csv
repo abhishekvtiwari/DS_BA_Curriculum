@@ -1,0 +1,3 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10149,2025-11-18,4,Coastal Foods,Chennai,Wholesale,102,Storage Box 25L,Storage,45,31050.00,Rahul Mehta
+10149,2025-11-18,4,Coastal Foods,Chennai,Wholesale,105,Industrial Crate,Industrial,15,18480.00,Rahul Mehta

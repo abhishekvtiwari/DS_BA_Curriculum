@@ -1,0 +1,22 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10030,2025-04-08,Metro Mart,Mumbai,Retail,Lunch Box Set,35,380,5,Delivered,12635.0
+10031,2025-04-09,Harbour Traders,Kochi,Wholesale,Storage Box 10L,15,430,8,Delivered,5934.0
+10032,2025-04-11,Patel Kitchenware,Ahmedabad,Retail,Stackable Bin,10,290,0,Delivered,2900.0
+10032,2025-04-11,Patel Kitchenware,Ahmedabad,Retail,Storage Box 10L,30,430,0,Delivered,12900.0
+10032,2025-04-11,Patel Kitchenware,Ahmedabad,Retail,Water Bottle 1L,35,115,0,Delivered,4025.0
+10033,2025-04-11,Green Leaf Hotels,Pune,Hospitality,Food Container Set,10,620,5,Delivered,5890.0
+10033,2025-04-11,Green Leaf Hotels,Pune,Hospitality,Lunch Box Set,20,380,5,Delivered,7220.0
+10034,2025-04-13,City Needs Store,Jaipur,Retail,Food Container Set,40,620,0,Cancelled,24800.0
+10035,2025-04-14,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,25,430,5,Delivered,10212.5
+10036,2025-04-15,Fresh Bowl Kitchens,Bengaluru,Hospitality,Food Container Set,30,620,5,Delivered,17670.0
+10036,2025-04-15,Fresh Bowl Kitchens,Bengaluru,Hospitality,Lunch Box Set,35,380,0,Delivered,13300.0
+10036,2025-04-15,Fresh Bowl Kitchens,Bengaluru,Hospitality,Water Bottle 1L,35,115,0,Delivered,4025.0
+10037,2025-04-20,Metro Mart,Mumbai,Retail,Stackable Bin,30,290,5,Delivered,8265.0
+10037,2025-04-20,Metro Mart,Mumbai,Retail,Storage Box 10L,45,430,0,Delivered,19350.0
+10038,2025-04-21,Sunrise Caterers,Nagpur,Hospitality,Lunch Box Set,50,380,0,Delivered,19000.0
+10039,2025-04-22,Sharma Hardware,Mumbai,Retail,Food Container Set,35,620,0,Delivered,21700.0
+10039,2025-04-22,Sharma Hardware,Mumbai,Retail,Storage Box 25L,15,750,5,Delivered,10687.5
+10040,2025-04-23,Coastal Foods,Chennai,Wholesale,Stackable Bin,25,290,5,Delivered,6887.5
+10041,2025-04-23,Fresh Bowl Kitchens,Bengaluru,Hospitality,Stackable Bin,60,290,5,Delivered,16530.0
+10041,2025-04-23,Fresh Bowl Kitchens,Bengaluru,Hospitality,Water Bottle 1L,35,115,0,Delivered,4025.0
+10042,2025-04-25,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,10,750,5,Delivered,7125.0

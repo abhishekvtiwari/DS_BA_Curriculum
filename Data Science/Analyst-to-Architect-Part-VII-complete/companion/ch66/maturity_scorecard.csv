@@ -1,0 +1,6 @@
+dimension,stage,evidence
+Data quality & reliability,3.6,"Automated tests (Ch 47), reconciled pipelines (Ch 14), but not every source has a contract yet"
+Architecture & platform,3.2,"A designed, documented platform (Ch 60-62) — still centralized, still young"
+Governance & security,3.4,A real access model and fairness audits exist (Ch 63-64) — not yet company-wide habit
+Cost discipline,2.6,"A real cost model exists (Ch 65) — but it was built once, not yet a routine practice"
+Data-driven culture,2.2,"Individual wins (Ch 19, 24) — most decisions still made by habit and hierarchy, not routinely by data"

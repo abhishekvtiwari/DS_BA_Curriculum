@@ -1,0 +1,58 @@
+[
+  {
+    "product_id": 101,
+    "name": "Storage Box 10L",
+    "category": "Storage",
+    "unit_price": 430.0,
+    "unit_cost": 300.0
+  },
+  {
+    "product_id": 102,
+    "name": "Storage Box 25L",
+    "category": "Storage",
+    "unit_price": 750.0,
+    "unit_cost": 540.0
+  },
+  {
+    "product_id": 103,
+    "name": "Water Bottle 1L",
+    "category": "Kitchen",
+    "unit_price": 115.0,
+    "unit_cost": 70.0
+  },
+  {
+    "product_id": 104,
+    "name": "Food Container Set",
+    "category": "Kitchen",
+    "unit_price": 620.0,
+    "unit_cost": 430.0
+  },
+  {
+    "product_id": 105,
+    "name": "Industrial Crate",
+    "category": "Industrial",
+    "unit_price": 1400.0,
+    "unit_cost": 1100.0
+  },
+  {
+    "product_id": 106,
+    "name": "Garden Chair",
+    "category": "Furniture",
+    "unit_price": 1150.0,
+    "unit_cost": 850.0
+  },
+  {
+    "product_id": 107,
+    "name": "Lunch Box Set",
+    "category": "Kitchen",
+    "unit_price": 380.0,
+    "unit_cost": 240.0
+  },
+  {
+    "product_id": 108,
+    "name": "Stackable Bin",
+    "category": "Storage",
+    "unit_price": 290.0,
+    "unit_cost": 190.0
+  }
+]

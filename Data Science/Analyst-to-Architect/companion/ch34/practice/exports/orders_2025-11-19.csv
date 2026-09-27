@@ -1,0 +1,2 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10150,2025-11-19,22,Festive Gifts Co,Delhi,Retail,103,Water Bottle 1L,Kitchen,70,8050.00,unassigned

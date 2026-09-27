@@ -1,0 +1,7 @@
+raw_status,clean_status
+delivered,Delivered
+dlvd,Delivered
+canceled,Cancelled
+cancelled,Cancelled
+shipped,Shipped
+pending,Pending

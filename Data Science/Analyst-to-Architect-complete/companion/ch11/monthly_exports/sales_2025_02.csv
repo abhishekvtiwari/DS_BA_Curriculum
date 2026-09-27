@@ -1,0 +1,21 @@
+order_id,order_date,customer_code,product_id,quantity,unit_price,discount_pct,status,sales_rep
+10009,02-02-2025,0010,101,30,430,0,Delivered,Rahul Mehta
+10009,02-02-2025,0010,102,30,750,5,Delivered,Rahul Mehta
+10010,05-02-2025,0001,101,20,430,0,Delivered,Neha Kulkarni
+10010,05-02-2025,0001,103,10,115,0,Delivered,Neha Kulkarni
+10010,05-02-2025,0001,104,35,620,0,Delivered,Neha Kulkarni
+10011,16-02-2025,0003,101,25,430,0,Delivered,Farah Khan
+10011,16-02-2025,0003,107,30,380,0,Delivered,Farah Khan
+10011,16-02-2025,0003,108,30,290,5,Delivered,Farah Khan
+10012,16-02-2025,0004,105,40,1400,12,Delivered,Rahul Mehta
+10012,16-02-2025,0004,108,40,290,5,Delivered,Rahul Mehta
+10013,17-02-2025,0007,101,30,430,5,Delivered,Farah Khan
+10013,17-02-2025,0007,108,30,290,8,Delivered,Farah Khan
+10014,17-02-2025,0007,102,25,750,8,Delivered,Farah Khan
+10015,20-02-2025,0006,108,20,290,0,Delivered,
+10016,20-02-2025,0012,101,25,430,0,Delivered,Neha Kulkarni
+10016,20-02-2025,0012,103,50,115,5,Delivered,Neha Kulkarni
+10016,20-02-2025,0012,108,30,290,0,Delivered,Neha Kulkarni
+10017,25-02-2025,0005,107,40,380,5,Delivered,Rahul Mehta
+10018,28-02-2025,0001,101,25,430,5,Delivered,Neha Kulkarni
+10018,28-02-2025,0001,108,15,290,0,Delivered,Neha Kulkarni

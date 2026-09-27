@@ -1,0 +1,2 @@
+order_id,order_date,customer_id,customer_name,city,segment,product_id,product_name,category,quantity,net_revenue,sales_rep
+10137,2025-11-04,12,Fresh Bowl Kitchens,Bengaluru,Hospitality,108,Stackable Bin,Storage,15,4132.50,Neha Kulkarni

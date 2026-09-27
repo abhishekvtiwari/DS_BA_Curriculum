@@ -1,0 +1,69 @@
+{
+  "orders_export": {
+    "data_rows_in_file": 25975,
+    "true_order_lines": 25832,
+    "true_orders": 14372,
+    "duplicate_rows_planted": 137,
+    "repeated_header_rows": 6,
+    "footer_rows": 1,
+    "dates_iso_kolkata": 3210,
+    "dates_dd_mm_yyyy_slash": 1800,
+    "dates_excel_serial": 40,
+    "dates_impossible": 9,
+    "impossible_date_rows": [
+      192992,
+      193042,
+      193046,
+      193051,
+      201997,
+      202048,
+      202098,
+      209598,
+      209607
+    ],
+    "codes_without_leading_zeros": 3210,
+    "discount_as_fraction": 1362,
+    "quantity_in_cartons": 141,
+    "quantity_extra_zero": 6,
+    "extra_zero_rows": [
+      187761,
+      191340,
+      200981,
+      205978,
+      206224,
+      209166
+    ],
+    "quantity_blank": 14,
+    "product_id_blank": 8,
+    "price_as_text": 2300,
+    "status_variants": 3100,
+    "sales_rep_trailing_space": 900,
+    "branch_variants": 1400,
+    "utc_date_differs_from_ist_date": 1598,
+    "true_net_revenue_non_cancelled": 423872808.0,
+    "true_net_revenue_all": 442577334.0,
+    "true_status_lines": {
+      "Delivered": 22434,
+      "Pending": 1166,
+      "Shipped": 1138,
+      "Cancelled": 1094
+    },
+    "true_lines_by_branch": {
+      "Mumbai HO": 9163,
+      "Bengaluru": 7185,
+      "Delhi": 6274,
+      "Kolkata": 3210
+    }
+  },
+  "customers_export": {
+    "rows": 5027,
+    "planted_duplicate_records": 48,
+    "city_variants_rows": 700,
+    "segment_variants_rows": 450,
+    "invalid_email_no_at": 58,
+    "email_blank": 150,
+    "signup_future_206x": 5,
+    "signup_dd_mm_yyyy_slash": 400,
+    "true_city_missing": 100
+  }
+}

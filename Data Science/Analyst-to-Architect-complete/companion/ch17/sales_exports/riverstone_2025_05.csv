@@ -1,0 +1,30 @@
+order_id,order_date,customer_name,city,segment,product_name,quantity,unit_price,discount_pct,status,net_revenue
+10043,2025-05-04,Patel Kitchenware,Ahmedabad,Retail,Food Container Set,20,620,0,Delivered,12400.0
+10043,2025-05-04,Patel Kitchenware,Ahmedabad,Retail,Storage Box 25L,15,750,0,Delivered,11250.0
+10044,2025-05-04,Coastal Foods,Chennai,Wholesale,Industrial Crate,35,1400,10,Delivered,44100.0
+10044,2025-05-04,Coastal Foods,Chennai,Wholesale,Stackable Bin,5,290,12,Delivered,1276.0
+10044,2025-05-04,Coastal Foods,Chennai,Wholesale,Storage Box 10L,15,430,8,Delivered,5934.0
+10045,2025-05-04,Om Sai Provisions,Nashik,Retail,Storage Box 25L,25,750,0,Delivered,18750.0
+10045,2025-05-04,Om Sai Provisions,Nashik,Retail,Water Bottle 1L,35,115,0,Delivered,4025.0
+10046,2025-05-06,Deccan Packaging,Hyderabad,Wholesale,Storage Box 10L,15,430,10,Delivered,5805.0
+10047,2025-05-07,Sharma Hardware,Mumbai,Retail,Garden Chair,15,1150,0,Delivered,17250.0
+10048,2025-05-08,Metro Mart,Mumbai,Retail,Lunch Box Set,15,380,0,Delivered,5700.0
+10048,2025-05-08,Metro Mart,Mumbai,Retail,Water Bottle 1L,20,115,0,Delivered,2300.0
+10049,2025-05-13,Northgate Distributors,Delhi,Wholesale,Stackable Bin,35,290,10,Delivered,9135.0
+10049,2025-05-13,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,20,750,12,Delivered,13200.0
+10050,2025-05-15,Northgate Distributors,Delhi,Wholesale,Stackable Bin,40,290,10,Delivered,10440.0
+10050,2025-05-15,Northgate Distributors,Delhi,Wholesale,Storage Box 10L,40,430,10,Delivered,15480.0
+10050,2025-05-15,Northgate Distributors,Delhi,Wholesale,Storage Box 25L,15,750,5,Delivered,10687.5
+10051,2025-05-16,Fresh Bowl Kitchens,Bengaluru,Hospitality,Food Container Set,25,620,5,Delivered,14725.0
+10051,2025-05-16,Fresh Bowl Kitchens,Bengaluru,Hospitality,Water Bottle 1L,55,115,0,Delivered,6325.0
+10052,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Food Container Set,20,620,0,Delivered,12400.0
+10052,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Storage Box 10L,35,430,0,Delivered,15050.0
+10052,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Water Bottle 1L,10,115,0,Delivered,1150.0
+10053,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Lunch Box Set,10,380,0,Delivered,3800.0
+10053,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Stackable Bin,50,290,5,Delivered,13775.0
+10053,2025-05-20,Green Leaf Hotels,Pune,Hospitality,Water Bottle 1L,40,115,5,Delivered,4370.0
+10054,2025-05-21,Sunrise Caterers,Nagpur,Hospitality,Lunch Box Set,35,380,5,Delivered,12635.0
+10055,2025-05-21,Blue Bay Cafe,Pune,Hospitality,Water Bottle 1L,20,115,0,Delivered,2300.0
+10056,2025-05-22,Lakeview Resorts,Udaipur,Hospitality,Stackable Bin,30,290,5,Delivered,8265.0
+10056,2025-05-22,Lakeview Resorts,Udaipur,Hospitality,Water Bottle 1L,25,115,5,Delivered,2731.25
+10057,2025-05-27,Harbour Traders,Kochi,Wholesale,Industrial Crate,35,1400,10,Delivered,44100.0
