@@ -39,6 +39,11 @@ Inside `Analyst-to-Architect/`:
 These are the bundles as they were approved, kept for reference. They overlap with the main
 tree; nothing here is authoritative.
 
+Each one carries its own `pdf/` directory holding one rendered PDF per chapter. Parts 0, I, IV
+and VIII additionally include a single collated file with the whole part in one document, one
+cover, one contents page and continuous page numbers. Parts II, III, V, VI and VII have no
+collated file yet.
+
 | Folder | Covers |
 |---|---|
 | `Analyst-to-Architect-Part-0-complete/` | Part 0, front matter and orientation |

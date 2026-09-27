@@ -20,7 +20,7 @@ Part IV was written before its prerequisites (Chapters 17–18 for Python, 21–
 ## Not included, by design
 
 - **Generated CSV and Parquet data.** Every generator is seeded and rebuilds its data in well under a minute. Run the generator before running a chapter's code.
-- **Chapter PDFs.** Delivered individually per chapter by the Part IV chat.
+- **Chapter PDFs.** In `pdf/`: one per chapter, ten of them, plus `Part-IV-all-ten-chapters.pdf`, the whole part in one file with a single cover, one contents page covering every chapter, and continuous page numbers. *(Added 27 September 2026; they were missing from the first build.)*
 
 ## The datasets this part builds
 

@@ -1,6 +1,8 @@
 # Analyst to Architect — Part VIII: The Interview Playbook — complete bundle
 
-Seventeen chapters, **all approved** (20 September 2026). About 110,400 words. No figures, which is correct for question banks.
+Seventeen chapters, **all approved** (20 September 2026). About 110,400 words, 274 PDF pages. No figures, which is correct for question banks.
+
+*Bundle updated 27 September 2026: the chapter PDFs were missing from the first build and are now in `pdf/`.*
 
 With Part VIII, **every part of the book has been written**. What remains is Chapters 25, 26 and 27, the closing chapter, and Appendices A to H.
 
@@ -47,8 +49,9 @@ Every answer traces back to the chapter that taught it. That link is what separa
 | `tools/` | The verifiers, `check_code_teaching.py`, and the PDF builder |
 | `planning/` | Chapter map, writing instructions, progress tracker, bible additions, cross-part issues, refresh list, promises, the code-teaching baseline, and the coherence-pass and go-to-market strategies |
 | `planning/parts/` | Part VIII's brief, status file and the coordinator's reply |
+| `pdf/` | One PDF per chapter, seventeen of them, plus `Part-VIII-all-seventeen-chapters.pdf`: the whole part in one file with a single cover, one contents page covering every chapter, and continuous page numbers |
 
-Chapter PDFs are delivered separately. Load the companion SQL into PostgreSQL 16 or MySQL 8.0 to re-run any query in Chapters 70 to 82.
+Load the companion SQL into PostgreSQL 16 or MySQL 8.0 to re-run any query in Chapters 70 to 82.
 
 ## Coordinator checks on this part
 
