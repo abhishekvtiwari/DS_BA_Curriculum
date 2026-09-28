@@ -1,7 +1,7 @@
 """
 Analyst to Architect — Chapter 23: Business Acumen, KPIs & Metrics
-build_ch23_files.py — builds Riverstone's FY2025 financial statements and a
-marketing/customer metrics table. Sales, gross margin, and delivery metrics are
+build_ch23_files.py — builds Riverstone's financial statements for calendar
+2025 (January to December) and a marketing/customer metrics table. Sales, gross margin, and delivery metrics are
 NOT invented here: they come straight from the real dataset (companion/full,
 companion/ch21). Only the P&L lines below gross profit, the balance sheet, the
 cash flow statement, and marketing spend/CAC/NPS are invented, because
@@ -13,10 +13,12 @@ Run from this folder:  python3 build_ch23_files.py   (needs pandas, numpy, pyarr
 Reads ../full/*.parquet and ../ch21/delivery_times_2025.csv.
 
 Creates:
-  financials_fy2025.md      P&L, balance sheet, cash flow statement (FY2025, ₹)
-  monthly_revenue_2025.csv  the real monthly revenue/orders/customers/AOV series
-  marketing_2025.csv        monthly marketing spend, leads, CAC, ROAS (invented)
-  kpi_tree_fy2025.md        the full KPI tree with every number and its source
+  financials_2025.md             P&L, balance sheet, cash flow statement (calendar 2025, ₹)
+  monthly_revenue_2025.csv       the real monthly revenue/orders/customers/AOV series
+  marketing_2025.csv             monthly marketing spend, leads, CAC, ROAS (invented)
+  working_capital_quarters_2025.csv  quarter-end receivables, inventory, payables and
+                                 DSO/DIO/DPO/CCC (invented balances; used by the chapter's
+                                 "In the real world" story)
 """
 import pathlib
 import numpy as np
@@ -33,7 +35,9 @@ P = pd.read_parquet(FULL / "products.parquet")
 lines = I.merge(O, on="order_id").merge(P[["product_id", "unit_cost"]], on="product_id")
 lines["net_revenue"] = lines.quantity * lines.unit_price * (1 - lines.discount_pct / 100)
 lines["cost"] = lines.quantity * lines.unit_cost
-sales = lines[(lines.status != "Cancelled") & (lines.order_date >= "2025-01-01") & (lines.order_date <= "2025-12-31")].copy()
+not_cancelled = lines[lines.status != "Cancelled"]
+sales = not_cancelled[(not_cancelled.order_date >= "2025-01-01") & (not_cancelled.order_date < "2026-01-01")].copy()
+sales_2024 = not_cancelled[(not_cancelled.order_date >= "2024-01-01") & (not_cancelled.order_date < "2025-01-01")]
 
 # ---- 1. the real monthly series (revenue, orders, customers, AOV) ------------------------------
 sales["month"] = sales.order_date.dt.to_period("M").astype(str)
@@ -48,7 +52,7 @@ COGS = round(sales.cost.sum())
 GROSS_PROFIT = REVENUE - COGS
 GROSS_MARGIN = GROSS_PROFIT / REVENUE
 
-# ---- 2. FY2025 P&L (below gross profit is invented, sized to a plausible mid-size distributor) --
+# ---- 2. 2025 P&L (below gross profit is invented, sized to a plausible mid-size manufacturer and distributor)
 selling_dist = round(REVENUE * 0.052)         # freight, warehousing, sales salaries & commission
 marketing = round(REVENUE * 0.018)
 admin = round(REVENUE * 0.041)                # office, IT, finance/HR overhead
@@ -98,13 +102,24 @@ cff = debt_drawn - dividend - round(REVENUE * 0.008)   # scheduled loan repaymen
 net_change = cfo + cfi + cff
 cash_opening = cash - net_change
 
-# ---- 5. marketing & customers (fully invented: no marketing system in the ERP) -------------------
+# ---- 5. customers (real) --------------------------------------------------------------------------
+# Both years exclude cancelled orders, exactly as the chapter's section 23.9 does.
+active_2024 = set(sales_2024.customer_id)
+active_2025 = set(sales.customer_id)
+retained = active_2024 & active_2025
+churned = active_2024 - active_2025
+new_2025 = active_2025 - active_2024
+
+# ---- 6. marketing (fully invented: no marketing system in the ERP) --------------------------------
 base_leads = np.array([420, 390, 470, 510, 480, 340, 300, 410, 560, 690, 640, 460])
 spend = np.round(base_leads * rng.uniform(950, 1250, 12)).astype(int)
 conv = rng.uniform(0.16, 0.24, 12)
 new_customers_raw = base_leads * conv
-# scaled so the annual total ties to the real count of customers new to Riverstone in 2025 (see below)
-new_customers = np.round(new_customers_raw / new_customers_raw.sum() * 767).astype(int)
+# scaled so the annual total ties to the real count of customers new to Riverstone in 2025
+# (largest-remainder rounding, so the twelve months add up to it exactly)
+share = new_customers_raw / new_customers_raw.sum() * len(new_2025)
+new_customers = np.floor(share).astype(int)
+new_customers[np.argsort(-(share - new_customers))[: len(new_2025) - new_customers.sum()]] += 1
 mk = pd.DataFrame({"month": monthly.month, "leads": base_leads, "marketing_spend": spend, "new_customers": new_customers})
 mk["cac"] = (mk.marketing_spend / mk.new_customers).round(0)
 # ROAS is measured on revenue from the new customers marketing brought in, not total company revenue
@@ -112,11 +127,6 @@ mk["attributed_revenue"] = (mk.new_customers * 45000 * rng.uniform(0.85, 1.15, 1
 mk["roas"] = (mk.attributed_revenue / mk.marketing_spend).round(2)
 mk.to_csv(HERE / "marketing_2025.csv", index=False)
 
-active_2024 = set(lines[(lines.order_date >= "2024-01-01") & (lines.order_date < "2025-01-01")].customer_id)
-active_2025 = set(sales.customer_id)
-retained = active_2024 & active_2025
-churned = active_2024 - active_2025
-new_2025 = active_2025 - active_2024
 retention_rate = len(retained) / len(active_2024)
 churn_rate = 1 - retention_rate
 
@@ -126,8 +136,9 @@ LTV_HORIZON_YEARS = 5                              # capped: nobody should bank 
 # (which includes large legacy accounts signed up years before any marketing spend existed).
 new_cust_annual_revenue = sales[sales.customer_id.isin(new_2025)].groupby("customer_id").net_revenue.sum().mean()
 avg_annual_revenue_per_customer = sales.groupby("customer_id").net_revenue.sum().mean()
-ltv_naive = new_cust_annual_revenue * GROSS_MARGIN * avg_customer_life_years_naive
-ltv = new_cust_annual_revenue * GROSS_MARGIN * LTV_HORIZON_YEARS
+LTV_MARGIN = round(GROSS_MARGIN, 3)                # 27.5%, as the chapter uses it
+ltv_naive = new_cust_annual_revenue * LTV_MARGIN * avg_customer_life_years_naive
+ltv = new_cust_annual_revenue * LTV_MARGIN * LTV_HORIZON_YEARS
 avg_cac = mk.marketing_spend.sum() / mk.new_customers.sum()
 nps = 34   # invented: % promoters (9-10) minus % detractors (0-6) from a quarterly survey
 

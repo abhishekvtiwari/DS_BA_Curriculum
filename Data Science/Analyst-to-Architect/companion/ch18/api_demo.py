@@ -1,6 +1,6 @@
 """A tiny demonstration API for Chapter 18 (section 18.14). It runs on your own computer.
 
-Start it in its own terminal, from this folder, and leave it running:
+Start it in its own terminal, from your copy of this folder (work/ch18), and leave it running:
 
     python api_demo.py
 
@@ -10,7 +10,7 @@ It listens on http://localhost:8018 and answers one kind of request:
     header  Authorization: Bearer demo-token-18
 
 It replies with Riverstone's order lines for those dates, one page at a time, as JSON:
-{"page": 1, "pages": 3, "count": 296, "results": [...]}. The data comes from ../full/*.parquet.
+{"page": 1, "pages": 3, "count": 296, "results": [...]}. The data comes from companion/full/*.parquet.
 Stop it with Ctrl+C. Riverstone Supplies is fictional; every name and number is invented.
 """
 import json
@@ -29,8 +29,9 @@ PORT = 8018
 
 def load_lines():
     """All order lines with their order's date, customer, and status, sorted by date."""
-    orders = pd.read_parquet(HERE.parent / "full" / "orders.parquet")
-    items = pd.read_parquet(HERE.parent / "full" / "order_items.parquet")
+    full = HERE.parent.parent / "companion" / "full"     # works from work/ch18 and from companion/ch18
+    orders = pd.read_parquet(full / "orders.parquet")
+    items = pd.read_parquet(full / "order_items.parquet")
     lines = items.merge(orders, on="order_id").sort_values(["order_date", "order_id", "order_item_id"])
     return lines
 

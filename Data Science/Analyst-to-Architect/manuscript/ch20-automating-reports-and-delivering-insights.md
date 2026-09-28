@@ -543,7 +543,7 @@ The honest progression: prove the value with your own mailbox for a week, then m
 
 ### Let the script work out the date
 
-A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its arguments from `sys.argv` by hand. The standard library's **`argparse`** module does the same job with names, defaults, and switches, and writes a `--help` message for free.
+A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its one argument from `sys.argv` by hand, which is fine for one. For anything more, the standard library's **`argparse`** module does the job with names, defaults, and switches, and writes a `--help` message for free.
 
 ```python
 import argparse
@@ -948,13 +948,33 @@ print(f"₹{float(month_to_date['net_revenue'].iloc[0]):,.0f}")
 
 ### Logging and run history
 
-A job that runs at 7 a.m. has nobody watching its screen, so instead of `print` it writes a **log**: short messages, each with a level and (in a file) a time, saved for later. Python's `logging` module does this. You ask it for a named **logger** with `logging.getLogger("flash")`, and write through it at one of four levels: `log.debug(...)` for detail, `log.info(...)` for normal progress, `log.warning(...)` for something odd but not fatal, `log.error(...)` for a failure. Setting `level=logging.INFO` shows INFO and above and hides DEBUG. The message can contain `%s` placeholders, filled in from the values after it.
-
-A scheduled job needs its log in two places: on the screen while you test, and in a **log file**, so that next month you can read what happened this morning. Each place a log line goes is a **handler**, and each handler has its own format:
+`print()` is fine while you're watching. A job that runs at 7 a.m. has nobody watching its screen, so it writes a **log** instead: short messages, each with a level and a time, saved for later. Python's `logging` module does this, and gives you levels, timestamps, and the option to write to a file instead of the screen, all without changing the code that calls it. The smallest version:
 
 ```python
 import logging, sys
 
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s", stream=sys.stdout, force=True)
+log = logging.getLogger("flash")
+log.debug("this detail is below INFO, so it is hidden")
+log.info("starting")
+log.warning("3 rows could not be read")
+print("the report itself")
+```
+
+```
+INFO starting
+WARNING 3 rows could not be read
+the report itself
+```
+
+- **`logging.getLogger("flash")`** gives you a named **logger**. You write through it at one of four levels: `log.debug(...)` for detail, `log.info(...)` for normal progress, `log.warning(...)` for something odd but not fatal, `log.error(...)` for a failure.
+- **`basicConfig(...)`** sets up logging once, at the start of the program. **`level=logging.INFO`** shows INFO and above and hides DEBUG, which is why the first line never appears. **`format=`** is the layout of each line: `%(levelname)s` is the level's name and `%(message)s` the message; `%(asctime)s`, the date and time, comes in below.
+- **`stream=sys.stdout`**: every program has two output streams, **standard output** (stdout), where `print` writes, and **standard error** (stderr), meant for messages about the run. Logging writes to stderr unless told otherwise, which keeps log lines apart from the report's own output; a notebook needs stdout here for the lines to appear in its output. **`force=True`** replaces any logging set up earlier, which a notebook may already have done (without it, `basicConfig` can quietly do nothing).
+- **`%s` in a message** is filled in from the values after it: `log.info("loaded %s lines", 213)`. Use this rather than an f-string in log calls, so the text is only built if the line is actually written.
+
+A scheduled job needs its log in two places: on the screen while you test, and in a **log file**, so that next month you can read what happened this morning. Each place a log line goes is a **handler**, and each handler has its own format:
+
+```python
 Path("logs").mkdir(exist_ok=True)
 screen = logging.StreamHandler(sys.stdout)
 screen.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
@@ -962,7 +982,6 @@ logfile = logging.FileHandler("logs/flash.log", encoding="utf-8")
 logfile.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%Y-%m-%dT%H:%M:%S"))
 logging.basicConfig(level=logging.INFO, handlers=[screen, logfile], force=True)
 
-log = logging.getLogger("flash")
 lines, previous = load_for_checks(day)
 log.info("loaded %s lines for %s", len(lines), day)
 log.warning("%s product(s) below %s units", len(low), 500)
@@ -973,10 +992,10 @@ INFO loaded 213 lines for 2025-12-18
 WARNING 1 product(s) below 500 units
 ```
 
-- **`StreamHandler(sys.stdout)`** writes to the screen. Every program has two output streams: **standard output** (stdout), where `print` writes, and **standard error** (stderr), meant for messages about the run. In a notebook the handler has to use `sys.stdout` for you to see it; in the script, `StreamHandler()` with no argument writes to stderr, which keeps log lines apart from the report's own output.
-- **`Path("logs").mkdir(exist_ok=True)`** makes the `logs` folder if it isn't there. **`setFormatter(logging.Formatter(...))`** gives a handler its layout: `%(levelname)s` is the level's name and `%(message)s` the message.
+- **`StreamHandler(sys.stdout)`** writes to the screen, like `stream=sys.stdout` above; in the script, `StreamHandler()` with no argument writes to stderr.
+- **`Path("logs").mkdir(exist_ok=True)`** makes the `logs` folder if it isn't there. **`setFormatter(logging.Formatter(...))`** gives a handler its own layout, in the same codes as `format=`.
 - **`FileHandler("logs/flash.log")`** adds each line to the end of a file. Its format adds **`%(asctime)s`**, the date and time, which the screen doesn't need but a file read next month does; `datefmt` writes it as `2026-01-05T07:00:12`, with no space inside, and `encoding="utf-8"` lets the file hold `₹`.
-- **`basicConfig(..., handlers=[screen, logfile], force=True)`** sends every log line to both. `force=True` replaces any setup from an earlier run, so rerunning the cell doesn't print every line twice.
+- **`basicConfig(..., handlers=[screen, logfile], force=True)`** sends every log line to both. `force=True` replaces the setup from the first cell, so no line is printed twice. `log` is the same logger as before: `getLogger("flash")` always returns the one logger with that name.
 - **`log.warning("%s product(s) below %s units", len(low), 500)`** builds the message from the data (`low` from section 20.8), not from typed-in text.
 
 The file has the same lines, with the time in front. Here are the last two, without the time, which changes every run:
@@ -1313,7 +1332,7 @@ Use `riverstone_full` and Python. Answers at the end of the chapter.
 
 ## Key terms
 
-automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · environment variable · `.env` file · `load_dotenv` · bytes · `BytesIO` · base64 · data URI · Content-ID (`cid:`) · related image · SMTP · host and port · STARTTLS · MIME type · multipart message · `EmailMessage` · attachment · test mail server (`aiosmtpd`) · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · crontab · `CRON_TZ` · working directory · cloud scheduler · time zone · `zoneinfo` · `astimezone` · reporting date · alert · exception report · threshold · percentile threshold · persistence · materiality · alert fatigue · incoming webhook · Teams Workflows · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · log handler · log file · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
+automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · environment variable · `.env` file · `load_dotenv` · bytes · `BytesIO` · base64 · data URI · Content-ID (`cid:`) · related image · SMTP · host and port · STARTTLS · MIME type · multipart message · `EmailMessage` · attachment · test mail server (`aiosmtpd`) · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · crontab · `CRON_TZ` · working directory · cloud scheduler · time zone · `zoneinfo` · `astimezone` · reporting date · alert · exception report · threshold · percentile threshold · persistence · materiality · alert fatigue · incoming webhook · Teams Workflows · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · logger · log level · log handler · log file · stdout and stderr · `argparse` · positional argument · option · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -1372,12 +1391,14 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 22. Make the job wait for a `load_status` row instead of trusting the clock, with retries every ten minutes until 08:30 and an alert if it never arrives.
 23. Add a weekly digest on Mondays that summarizes the week's exceptions, so daily alerts can be reserved for what needs same-day action.
 24. Rebuild the delivery half in a low-code tool (Power Automate, n8n, or Make) with Python producing the data, and compare maintainability.
+25. Chapter 17's `summarize_exports.py` reads its folder from `sys.argv`. Give it proper options with `argparse`: `python summarize_exports.py sales_exports --month 2025-10 --output summary.md`, where `--month` summarizes one month only. Keep the docstring, the functions, and the exit code.
+26. Add `logging` at INFO level to the same script: one line when it starts, one per file processed, one warning per unreadable row, and one line with the total at the end.
 
 ### Think about it
 
-25. Your Flash has run for six months. How would you find out whether anyone still reads it, and what would you do if the answer is "two people"?
-26. A manager asks for a daily alert whenever any customer's order is 20% below their average. What do you ask before building it?
-27. An automation you built emails a confidential margin report to a list that turns out to include a contractor. What do you do in the first hour, and what do you change afterwards?
+27. Your Flash has run for six months. How would you find out whether anyone still reads it, and what would you do if the answer is "two people"?
+28. A manager asks for a daily alert whenever any customer's order is 20% below their average. What do you ask before building it?
+29. An automation you built emails a confidential margin report to a list that turns out to include a contractor. What do you do in the first hour, and what do you change afterwards?
 
 ---
 
@@ -1431,11 +1452,15 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 
 **24.** Python writes the day's numbers to a table or a JSON file; the flow reads it, formats the message, and sends it. Maintainability improves for the business (they can change recipients and wording) and worsens for you (logic split across two places): document where the boundary is.
 
-**25.** Ask the mail platform for open rates if you have them, put a tracked link to the dashboard in the footer and watch the clicks, or stop sending it for a week and see who asks. If two people read it, either narrow it to those two, fold it into a weekly digest, or replace it with an alert; a report read by two people is not a failure if those two make decisions with it.
+**25.** Replace the `sys.argv` lines with a parser: `parser.add_argument("folder", nargs="?", default="sales_exports")`, `parser.add_argument("--month")` (default `None`, meaning every month) and `parser.add_argument("--output")` (default `None`, meaning print to the screen), then `args = parser.parse_args()`. Pass `args.folder`, `args.month` and `args.output` to `main()`, when `args.month` is given, read only that month's file (the exports are named by month, so `--month 2025-10` means `riverstone_2025_10.csv`: `Path(folder).glob(f"*{args.month.replace('-', '_')}.csv")`), write the summary to `args.output` if it is given, and keep `raise SystemExit(main(...))` so the exit code still reaches the terminal. `python summarize_exports.py --help` now lists all three.
 
-**26.** What decision follows the alert? How many customers, and therefore how many alerts a day? What's "average": mean or median, over what period? Does a 20% drop matter for a ₹5,000 customer? Who acts, and by when? And would a weekly list of the twenty biggest declines serve better than daily alerts?
+**26.** Once, at the start of `main()`: `logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")` and `log = logging.getLogger("summary")`. Then `log.info("starting: %s", folder)`, `log.info("reading %s", path)` for each file, `log.warning("row %s unreadable: %r", line_no, value)` for a bad row, and `log.info("total %s", total)` at the end. Use `%s` placeholders, not f-strings, in logging calls. Run it from the terminal: the log lines go to stderr, so `python summarize_exports.py > summary.txt` puts the summary in the file and still shows the log on the screen.
 
-**27.** First hour: stop the schedule (the stop switch), find out exactly what was sent and to whom, tell your manager and whoever owns data protection, and don't try to recall the email quietly. Afterwards: recipient lists in config with an owner, a review date, and a check that every recipient is on an approved domain; a test send to yourself on every change; and sensitivity written into the handover note.
+**27.** Ask the mail platform for open rates if you have them, put a tracked link to the dashboard in the footer and watch the clicks, or stop sending it for a week and see who asks. If two people read it, either narrow it to those two, fold it into a weekly digest, or replace it with an alert; a report read by two people is not a failure if those two make decisions with it.
+
+**28.** What decision follows the alert? How many customers, and therefore how many alerts a day? What's "average": mean or median, over what period? Does a 20% drop matter for a ₹5,000 customer? Who acts, and by when? And would a weekly list of the twenty biggest declines serve better than daily alerts?
+
+**29.** First hour: stop the schedule (the stop switch), find out exactly what was sent and to whom, tell your manager and whoever owns data protection, and don't try to recall the email quietly. Afterwards: recipient lists in config with an owner, a review date, and a check that every recipient is on an approved domain; a test send to yourself on every change; and sensitivity written into the handover note.
 
 **Timed challenge answers.** Level 1: ₹25,11,819 · 118 orders · 116 customers · ₹21,287 average order. Level 2: 27.3% gross margin; +2.3% against 18 December 2024's ₹24,54,466. Level 3: **₹5,70,69,985** (₹5.71 crore) from 1 to 18 December. If you get ₹4.45 crore, your window started on the 5th, not the 1st: reusing the 14-day series for month to date is the most common slip, and it was a real bug in the first version of `daily_flash.py`. Level 4: highest **7 December (₹37,82,009)**, lowest **9 December (₹24,88,217)**; the 18th itself is ₹25,11,819, a little above the low. Level 5: Industrial Crate, 345 units. Level 6: `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Level 7: all four pass for 18 December 2025; for 1 January 2026 the row check and the median check fail (the other two pass because there is nothing to test), so no report is sent, and the "no data" email goes out instead. Bonus: 325 hours, about 41 working days.
 
