@@ -134,6 +134,19 @@ The one known difference: on the Ch 12 cover, the short decorative bar at the to
 the kicker (≈ 38 mm), so the sandbox's cover template or Chromium differed slightly. It is cosmetic,
 and V1 replaces the covers.
 
+## Layout pass (style-pass branch, 28 Sep 2026)
+
+The builder now fixes the book's layout themes (V1–V12) for every chapter. What changed and why is in [`changelog/style-pass.md`](../changelog/style-pass.md). After the pass, **page numbers no longer match the released PDFs** (the book is 2,419 pages instead of 2,455), so page references in `review/visual/` point at the old layout.
+
+| File | Role |
+|---|---|
+| `tools/pdf/build.py` | Markdown pre-pass (bold-label lines), pandoc without `$`-maths, HTML post-pass (sub/superscripts, caret powers, unbroken IDs), two-pass render that writes contents page numbers from the PDF's bookmarks, one cover template |
+| `tools/pdf/layout.js` | Runs in the page before printing: fits code to the width (not below 7 pt), then hanging-indents and marks (↩) any line still too long; keeps headings, lead-ins, answer numbers and captions with what follows; right-aligns numeric table columns; keeps short tables and code blocks whole; drops redundant section rules and empty output boxes; reports anything wider than the text block |
+| `tools/pdf/book.css`, `cover.html` | The matching styles |
+| `tools/pdf/layout_check.py` | Checks a built PDF: contents numbers (and that each one is right), stranded headings and lead-ins, half-empty pages, clipped list numbers, draft labels, missing glyphs |
+
+Each build also writes `<name>-layout.json` beside the HTML: how many code blocks were shrunk, how many lines wrapped, how many groups were kept together, and any overflow.
+
 ## Checking a chapter, not just building it
 
 ```bash
@@ -144,7 +157,7 @@ python tools/check_code_teaching.py manuscript/ch26-*.md
 cd figures && python make_figs27.py          # redraw a chapter's figures
 ```
 
-`review/briefs/prescan.py` runs the automated layout checks against a built PDF, and
+`tools/pdf/layout_check.py` and `review/briefs/prescan.py` run the automated layout checks against a built PDF, and
 `pdftoppm -r 110` renders pages for eyeballing. The SQL verifier needs PostgreSQL and MySQL with the
 Riverstone databases loaded, which the setup script does not install. That comes with the first
 chapter whose SQL is changed.

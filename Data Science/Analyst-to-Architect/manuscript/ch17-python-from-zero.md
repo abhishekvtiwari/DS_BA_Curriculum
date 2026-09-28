@@ -126,7 +126,7 @@ A **package** is code someone else wrote that you can use: `pandas` for tables, 
 
 A **virtual environment** is a private copy of Python for one project, with its own installed packages.
 
-```
+```bash
 cd path/to/my-project
 python -m venv .venv                 # create it, once per project
 .venv\Scripts\activate               # activate: Windows

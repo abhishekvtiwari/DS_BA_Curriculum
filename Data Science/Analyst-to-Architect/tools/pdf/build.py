@@ -84,36 +84,45 @@ def carets(s):
 LAYOUT_JS = (HERE / 'layout.js').read_text()
 PRINT_W_PX = round((210 - 18 - 18) * 96 / 25.4)    # A4 minus the @page side margins, in CSS px
 
-def toc_numbers(html_text, pages):
-    """Write page numbers into the contents (V2). pages maps heading title -> list of page numbers."""
-    used = {}
+def toc_numbers(html_text, marks):
+    """Write page numbers into the contents (V2). marks is the ordered list of (title, page) bookmarks.
+    Each contents entry takes the next unused bookmark whose title starts like it. Titles are matched
+    loosely because Chromium writes a wrapped heading's bookmark with each line doubled."""
+    pos = [0]
     def one(m):
         attrs, inner = m.group(1), m.group(2)
         if '<span class="toc-t">' in inner:
             inner = re.search(r'<span class="toc-t">(.*?)</span>', inner, re.S).group(1)
-        key = norm_title(html.unescape(re.sub(r'<[^>]+>', '', inner)))
-        k = used.get(key, 0); used[key] = k + 1
-        lst = pages.get(key, [])
-        pg = str(lst[k]) if k < len(lst) else '00'
+        key = norm_title(html.unescape(re.sub(r'<[^>]+>', '', inner)))[:12]
+        pg = '00'
+        for k in range(pos[0], len(marks)):
+            if marks[k][0].startswith(key) or undouble(marks[k][0]).startswith(key):
+                pg = str(marks[k][1]); pos[0] = k + 1; break
         return f'<a{attrs}><span class="toc-t">{inner}</span><span class="toc-dots"></span><span class="toc-pg">{pg}</span></a>'
     a, b = html_text.find('<nav id="TOC"'), html_text.find('</nav>')
     if a < 0: return html_text
     nav = re.sub(r'<a(\s+href="#[^"]*"[^>]*)>(.*?)</a>', one, html_text[a:b], flags=re.S)
     return html_text[:a] + nav + html_text[b:]
 
+def undouble(s):
+    """Chromium writes a wrapped heading's bookmark as line1 line1 line2 line2 …: keep one of each."""
+    out = ''
+    while s:
+        L = next((n for n in range(len(s) // 2, 2, -1) if s[:n] == s[n:2 * n]), 0)
+        if not L: return out + s
+        out += s[:L]; s = s[2 * L:]
+    return out
+
 def norm_title(s):
     return re.sub(r'\s+', '', s).lower()        # ignore spaces: a wrapped heading loses one in the PDF
 
 def outline_pages(pdf_path):
-    """Heading title -> [page numbers], from the bookmarks Chromium writes for every heading."""
-    r = PdfReader(str(pdf_path)); out = {}
+    """Ordered (title, page) for every bookmark Chromium writes (one per heading)."""
+    r = PdfReader(str(pdf_path)); out = []
     def walk(items):
         for it in items:
             if isinstance(it, list): walk(it); continue
-            ti = it.title
-            if len(ti) % 2 == 0 and ti[:len(ti)//2] == ti[len(ti)//2:]:   # Chromium sometimes doubles a title
-                ti = ti[:len(ti)//2]
-            out.setdefault(norm_title(ti), []).append(r.get_destination_page_number(it) + 1)
+            out.append((norm_title(it.title), r.get_destination_page_number(it) + 1))
     walk(r.outline)
     return out
 
@@ -152,7 +161,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
         # V2: render, read each heading's page from the PDF bookmarks, write the numbers into the
         # contents, and render again until the numbers stop changing (usually two passes).
         base = body_html.read_text()
-        pages, rep = {}, None
+        pages, rep = [], None
         for attempt in range(4):
             body_html.write_text(toc_numbers(base, pages))
             rep = render(pw, body_html, D/f'{name}-body.pdf', footer, layout=True)

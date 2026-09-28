@@ -5,6 +5,7 @@
   const PT = 96 / 72;                          // CSS px per point
   const PAGE_H = (297 - 20 - 22) * 96 / 25.4;  // printable height in px (A4 minus @page margins)
   const MIN_CODE_PT = 7.0;                     // smallest code size allowed (print minimum)
+  const KEEP = 0.30;                           // largest group kept whole, as a share of the page
   const report = { shrunk: 0, wrappedLines: 0, kept: 0, numCols: 0, overflow: [] };
 
   // ---- titles: a hyphenated word in a heading never breaks at its hyphen (V61.9 "Trade-/offs")
@@ -48,9 +49,14 @@
     pre.style.whiteSpace = '';
     // Lines still too long wrap with a hanging indent (CSS) and get a continuation mark.
     const lh = parseFloat(getComputedStyle(pre).lineHeight);
-    for (const s of lines) if (s.getBoundingClientRect().height > lh * 1.5) { s.classList.add('wrapped'); report.wrappedLines++; }
+    for (const s of lines) if (s.getBoundingClientRect().height > lh * 1.5) {
+      const ind = (s.textContent.match(/^ */)[0].length) + 3;           // continue 3 past the line's own indent
+      s.style.paddingLeft = ind + 'ch'; s.style.textIndent = -ind + 'ch';
+      s.classList.add('wrapped'); report.wrappedLines++;
+    }
     // Short blocks stay whole; long ones may split across pages (avoids half-empty pages).
-    pre.classList.add(pre.getBoundingClientRect().height < PAGE_H * 0.45 ? 'keep' : 'split');
+    pre.classList.add(pre.getBoundingClientRect().height < PAGE_H * 0.35 ? 'keep' : 'split');
+    for (const s of lines) if (/:\s*$/.test(s.textContent)) s.classList.add('colon');   // don't break after "def f():"
   }
 
   // ---- V10: tables. Right-align numeric columns, keep short tables whole, no wraps in short code.
@@ -88,7 +94,7 @@
     const total = group.reduce((a, e) => a + h(e), 0);
     withCaption(group);
     if (group.length > 1) {
-      if (total < PAGE_H * 0.45) wrap(group);
+      if (total < PAGE_H * KEEP) wrap(group);
       else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) wrap(group.slice(0, 2));
     }
   }
@@ -97,7 +103,8 @@
     if (p.closest('.keep-together') || !leadIn(p)) continue;
     const n = p.nextElementSibling;
     const grp = withCaption([p, n].filter(Boolean));
-    if (n && (/^(PRE|TABLE|UL|OL|BLOCKQUOTE|DIV)$/.test(n.tagName) || isFig(n)) && grp.reduce((a, e) => a + h(e), 0) < PAGE_H * 0.45) wrap(grp);
+    if (n && (/^(PRE|TABLE|UL|OL|BLOCKQUOTE|DIV)$/.test(n.tagName) || isFig(n)) && grp.reduce((a, e) => a + h(e), 0) < PAGE_H * KEEP) wrap(grp);
+    else if (n) p.classList.add('leadin');
   }
 
   // every figure stays with its caption

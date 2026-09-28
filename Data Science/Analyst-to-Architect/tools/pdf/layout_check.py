@@ -87,7 +87,7 @@ def check(path):
         for l in ls:
             if l['size'] < 6.95 and not l['font'].startswith(HEAD_FONTS):
                 r['small_text'].append((i + 1, round(l['size'], 1), l['text'][:30]))
-            if re.match(r'^\d{2}\.$', l['text']) and l['x0'] < BODY_LEFT_PT - 0.5:
+            if re.match(r'^\d{2}\.(\s|$)', l['text']) and l['x0'] < BODY_LEFT_PT - 0.5:
                 r['clipped_lists'].append((i + 1, l['text']))
     r['small_text'] = r['small_text'][:15]
     return r
