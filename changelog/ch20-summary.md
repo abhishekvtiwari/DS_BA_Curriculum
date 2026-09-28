@@ -18,6 +18,9 @@ Ch 20's share of RJ-S2-7 done (bare "Chapter 76" → 76B); RJ-S2-15, RJ-S3-15, R
   `python-dotenv` (20.9); SMTP, ports, STARTTLS, MIME and multipart, tested on a local `aiosmtpd` server (20.8); the
   shell pieces of the cron line and `crontab -e` with nano (20.10); per-product percentiles (20.18); logging and
   `argparse`, which Ch 17's rebuild now leaves to Ch 20.
+- **Text received from Ch 17** (`_parked/ch17-moved-out.md`, all three blocks): the logging example opens §20.11's
+  logging subsection with its real output (fixing the one-sentence output, as 17.26 asked); old Ch 17 Stretch 23–24
+  are new exercises 25–26 with answers; the `argparse` clause opens §20.7's `argparse` subsection.
 - **Correct numbers and names.** Industrial Crate 345 (20.11), 47 working days (20.12), 41 days everywhere (20.13), two of
   four checks (20.14), a real 14-day chart (20.7), date-based windows and month to date ₹5,70,69,985 (20.19),
   credentials from the environment (20.20), Teams Workflows and Adaptive Cards (20.16), classic versus new Outlook
@@ -55,11 +58,11 @@ All other rows had one change.
 
 ## Verification
 
-- `tools/verify_python.py manuscript/ch20-*.md --cwd companion/ch20`: **22 blocks run, 22 outputs checked,
+- `tools/verify_python.py manuscript/ch20-*.md --cwd companion/ch20`: **23 blocks run, 23 outputs checked,
   0 mismatches** (needs `companion/ch20/.env`; `checks/ch20_check.py` creates it from `.env.example`).
 - `checks/ch20_check.py`: **8 of 8 pass**: the `run: none` SMTP cell against a real `aiosmtpd` server, the server
   excerpt, `daily_flash.py --send` twice (one email), answer 14's numbers, and `main()` matching the file.
 - MySQL month-to-date form run in MySQL: 57069985.00.
 - `tools/pdf/fig_check.py`: 0 figures under 7 pt. `tools/restructure.py --check`: already in order.
-- Rebuilt PDF (46 pages): `layout_check.py` clean (no stranded heads or lead-ins, no sparse pages, no small text, no
+- Rebuilt PDF (47 pages): `layout_check.py` clean (no stranded heads or lead-ins, no sparse pages, no small text, no
   tofu, map 20/20); `prescan.py` clean ("Draft" is exercise 19's verb).
