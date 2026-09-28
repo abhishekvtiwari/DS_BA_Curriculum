@@ -100,14 +100,14 @@ def fig_source_to_action():
             ("Deliver and act",ACC,"Dashboard · Report in the email body · Task written into the CRM · Alert when a rule trips")]
     who=["Business systems record it","Data engineer · integration engineer","Analytics engineer · data scientist · ML engineer","Analyst · BI developer · integration engineer · AI engineer"]
     manual=["Export by hand","Copy-paste into one file","Formulas re-typed each week","Emailed attachment, re-keyed into the CRM"]
-    X=[16,272,494]; WD=[240,206,210]; top=40; RH=100; G=22
+    X=[16,286,500]; WD=[256,200,204]; top=40; RH=104; G=20
     o.append(text(X[0],26,"AUTOMATED FLOW",11,MUTED,"bold"))
     o.append(text(X[1],26,"WHO AUTOMATES IT",11,MUTED,"bold"))
     o.append(text(X[2],26,"THE SAME STEP BY HAND",11,RED,"bold"))
     for i,(name,c,items) in enumerate(stages):
         y=top+i*(RH+G)
         o.append(header_card(X[0],y,WD[0],RH,c,name,tsize=13.5))
-        o.append(wrap(X[0]+12,y+54,wrapc(items,34," · "),12,INK,18))
+        o.append(wrap(X[0]+12,y+54,wrapc(items,37," · "),11.5,INK,18))
         o.append(rect(X[1],y,WD[1],RH,fill="#f6f9fc",stroke=RULE,rx=6))
         o.append(wrap(X[1]+12,y+26,wrapc(who[i],24," · "),12,INK,19,"bold"))
         o.append(rect(X[2],y,WD[2],RH,fill="#fbeaea",stroke="#e3b7b7",rx=6))
@@ -159,13 +159,13 @@ def fig_teams():
         o.append(wrap(tx,y+54,desc,12,INK,18))
         o.append(text(tx,y+104,plus,12.5,GREEN,"bold"))
         o.append(text(tx,y+128,minus,12.5,RED,"bold"))
-        o.append(wrap(tx,y+152,wrapc(note,34),11.5,MUTED,16))
+        o.append(wrap(tx,y+150,wrapc(note,26),11.5,MUTED,15))
     return svg(CW_,16+3*PH+2*G+16,"".join(o))
 
 # ---------- Figure 7.5: one request, every role (five phases, top to bottom) ----------
 def fig_one_request():
     o=[]
-    phases=[("Clarify and answer",ACC,[("Business analyst","turns the request into a clear question"),
+    phases=[("Clarify and answer",ACC,[("Business analyst","makes the request a clear question"),
                                         ("Data analyst","finds the five quiet customers")]),
             ("Share and standardize",ACC,[("BI developer","at-risk page on the sales dashboard"),
                                            ("Analytics engineer","one tested definition of \"active\"")]),
@@ -175,29 +175,27 @@ def fig_one_request():
             ("Act",TEAL,[("Integration engineer","tasks in the CRM, Monday email"),
                          ("AI engineer","call brief drafted; rep approves")])]
     x0=16; W=688
-    o.append(rect(x0,16,W,70,fill="#fff4e8",stroke=ORANGE,sw=1.6,rx=8))
-    o.append(text(x0+14,38,"Data architect, across every phase",14,ORANGE,"bold",family=HEAD))
-    o.append(text(x0+14,58,"Designs how the pieces fit: where the score lives, who owns each definition,",12,INK))
-    o.append(text(x0+14,76,"who may see what, and what it costs.",12,INK))
-    LW=164; CWd=252; G=10; RH=64; RG=14; ytop=104
+    o.append(rect(x0,14,W,58,fill="#fff4e8",stroke=ORANGE,sw=1.6,rx=8))
+    o.append(text(x0+14,34,"Data architect, across every phase",13.5,ORANGE,"bold",family=HEAD))
+    o.append(text(x0+14,56,"Designs how the pieces fit: where the score lives, who owns each definition, who may see what.",11.5,INK))
+    LW=164; CWd=252; G=10; RH=50; RG=10; ytop=86
     for i,(ph,c,cards) in enumerate(phases):
         y=ytop+i*(RH+RG)
-        o.append(f'<circle cx="{x0+14}" cy="{y+22}" r="12" fill="{c}"/>'); o.append(text(x0+14,y+26.5,str(i+1),12,"#fff","bold",anchor="middle"))
-        o.append(wrap(x0+34,y+27,wrapc(ph,13),13,c,18,"bold",family=HEAD))
-        if i<4: o.append(arrow(x0+14,y+38,x0+14,y+RH+RG+8,c=MUTED,sw=1.8))
+        o.append(f'<circle cx="{x0+14}" cy="{y+18}" r="12" fill="{c}"/>'); o.append(text(x0+14,y+22.5,str(i+1),12,"#fff","bold",anchor="middle"))
+        o.append(wrap(x0+34,y+23,wrapc(ph,13),13,c,17,"bold",family=HEAD))
+        if i<4: o.append(arrow(x0+14,y+32,x0+14,y+RH+RG+4,c=MUTED,sw=1.8))
         x=x0+LW+G
         for role,did in cards:
             w=CWd if len(cards)==2 else 2*CWd+G
             o.append(rect(x+3,y+3,w,RH,fill="#e9eef4",rx=7)); o.append(rect(x,y,w,RH,fill="#fff",stroke=c,sw=1.4,rx=7))
-            o.append(text(x+12,y+22,role,13,INK,"bold"))
-            o.append(wrap(x+12,y+41,wrapc(did,34 if w==CWd else 70),12,MUTED,16))
+            o.append(text(x+12,y+20,role,13,INK,"bold"))
+            o.append(text(x+12,y+39,did,11.5,MUTED))
             x+=w+G
-    yb=ytop+5*(RH+RG)
-    o.append(rect(x0,yb,W,70,fill="#f6f9fc",stroke=RULE,rx=6))
-    o.append(text(x0+14,yb+22,"Start: Anita asks, \"Some customers seem to have stopped ordering.",12,INK))
-    o.append(text(x0+14,yb+39,"Which ones, and what should we do?\"",12,INK))
-    o.append(text(x0+14,yb+60,"End: every Monday, each sales rep knows which customers to call, and why.",12,INK,"bold"))
-    return svg(CW_,yb+86,"".join(o))
+    yb=ytop+5*(RH+RG)+4
+    o.append(rect(x0,yb,W,52,fill="#f6f9fc",stroke=RULE,rx=6))
+    o.append(text(x0+14,yb+20,"Start: \"Some customers seem to have stopped ordering. Which ones, and what should we do?\"",11.5,INK))
+    o.append(text(x0+14,yb+40,"End: every Monday, each sales rep knows which customers to call, and why.",11.5,INK,"bold"))
+    return svg(CW_,yb+62,"".join(o))
 
 if __name__ == "__main__":
     for name,fn in [("fig7-1-four-questions-and-roles.svg",fig_questions),("fig7-2-the-field-as-a-tree.svg",fig_tree),

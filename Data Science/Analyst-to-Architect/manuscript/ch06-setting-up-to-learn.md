@@ -101,11 +101,11 @@ Three situations need a little planning:
 
 This is the book's **tool timeline**: which tool you'll need, and in which chapter you'll first need it.
 
-| Tool | You first need it in | Cost | Runs on |
+| Tool | First needed in | Cost | Runs on |
 |---|---|---|---|
-| Spreadsheet (Excel or Google Sheets) | Chapter 10 | Free on the web | Windows, Mac, browser |
+| A spreadsheet: Excel or Google Sheets | Chapter 10 | Free on the web | Windows, Mac, browser |
 | PostgreSQL and DBeaver (MySQL optional) | Chapter 12 | Free | Windows, Mac, Linux |
-| Power BI Desktop | Chapter 16 | Free | Windows only (Mac: see Chapter 16) |
+| Power BI Desktop | Chapter 16 | Free | Windows only |
 | Python, VS Code, and Jupyter | Chapter 17 | Free | Windows, Mac, Linux |
 | Git | Chapter 26 | Free | Windows, Mac, Linux |
 
@@ -173,7 +173,7 @@ Meera Iyer has done analyst work for months without the title: the customer coun
 
 **Her work laptop** runs Windows 11 and is locked: she can't install software. **Her home laptop** is a MacBook Air from 2020 with 8 GB of memory.
 
-**1. Which tool lives where.** She reads section 6.3 and makes a list. She doesn't install anything today; she decides which tools will live on which computer when she reaches them. The Mac can run everything except Power BI Desktop and Power Pivot. The work laptop is where Power BI would be most useful, since the company already uses Microsoft 365. So: the book's tools go on the Mac at home, each at the start of its chapter; Power BI Desktop goes on the work laptop, if IT agrees. She puts a reminder in her calendar to ask IT two weeks before she reaches Chapter 16, with the request already drafted: *"I'd like to install Power BI Desktop from the Microsoft Store for learning and for building sales reports. It doesn't need admin rights. I won't connect it to any company data without approval."*
+**1. Which tool lives where.** She reads section 6.3 and makes a list. She doesn't install anything today; she decides which tools will live on which computer when she reaches them. The Mac can run everything except Power BI Desktop and Power Pivot. The work laptop is where Power BI would be most useful, since the company already uses Microsoft 365. So: the book's tools go on the Mac at home, each at the start of its chapter; Power BI Desktop goes on the work laptop, if IT agrees. She puts a reminder in her calendar to ask IT two weeks before she reaches Chapter 16, with the request already written: *"I'd like to install Power BI Desktop from the Microsoft Store for learning and for building sales reports. It doesn't need admin rights. I won't connect it to any company data without approval."*
 
 **2. The 8 GB question.** 8 GB is enough to start. When the Mac slows down later, with a database app, an editor, twenty browser tabs, and a video call all open, the fix will cost nothing: close what she isn't using while studying.
 
@@ -276,7 +276,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ### Stretch
 
-8. Draft your 90-day plan using the checklist in the project, with specific chapters for days 30, 60, and 90, and a plan for a missed week.
+8. Write a first version of your 90-day plan using the checklist in the project, with specific chapters for days 30, 60, and 90, and a plan for a missed week.
 9. A friend plans to install all five groups of tools this weekend "to get it out of the way". Using section 6.3, give two reasons to wait, and one useful thing they could do this weekend instead.
 
 ### Think about it (no calculation needed)
@@ -310,7 +310,7 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 
 **1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and I, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and I straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
 
-**2.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my draft 90-day plan and my available hours. What's unrealistic about it?"*
+**2.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my 90-day plan and my available hours. What's unrealistic about it?"*
 
 **3.** A spreadsheet in Chapter 10; the databases (PostgreSQL and DBeaver, with MySQL optional) in Chapter 12; Power BI Desktop in Chapter 16; Python, with VS Code and Jupyter, in Chapter 17; Git in Chapter 26.
 
@@ -330,4 +330,4 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 
 **11.** Reading answers you haven't attempted feels like learning because the answers make sense, but it doesn't build the skill of producing them. The exercises are where most of the learning happens, especially the core group. Suggest a compromise: attempt every warm-up and core exercise, even partially, before reading its answer, and redo the missed ones at the end of the week.
 
-**12.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for an app you use, or for a first draft of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.
+**12.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for an app you use, or for a first version of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.

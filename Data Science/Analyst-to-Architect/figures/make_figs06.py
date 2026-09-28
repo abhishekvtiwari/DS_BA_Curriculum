@@ -36,7 +36,7 @@ def fig_week():
 # ---------- Figure 6.2: the tool timeline (the chapter that first needs each tool) ----------
 def fig_tools():
     tools=[("Chapter 10","Spreadsheets",["Excel or","Google Sheets"],["Windows, Mac,","browser"],ACC),
-           ("Chapter 12","Databases",["PostgreSQL and","DBeaver (MySQL","optional)"],["Windows, Mac,","Linux"],GREEN),
+           ("Chapter 12","Databases",["PostgreSQL and","DBeaver; MySQL","is optional"],["Windows, Mac,","Linux"],GREEN),
            ("Chapter 16","Dashboards",["Power BI","Desktop"],["Windows only"],ORANGE),
            ("Chapter 17","Programming",["Python,","VS Code,","Jupyter"],["Windows, Mac,","Linux"],PURPLE),
            ("Chapter 26","Versions",["Git"],["Windows, Mac,","Linux"],GREY)]

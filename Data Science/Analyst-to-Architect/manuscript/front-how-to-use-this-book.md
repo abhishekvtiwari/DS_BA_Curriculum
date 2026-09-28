@@ -30,7 +30,7 @@ Every teaching chapter has the same parts, in the same order, so you always know
 - **Tools.** The software and files the chapter used, and where to get them.
 - **The project.** A larger piece of work that uses the whole chapter, with a clear goal and a deliverable.
 - **You've got it when…** A checklist. If you can tick every line, you're ready for the next chapter.
-- **Recap.** The chapter's main points in a few lines, for review.
+- **Recap.** The chapter's main points in a few lines, to revise from.
 - **Practice exercises.** Four groups of exercises (see the next section).
 - **Key terms.** Every new term the chapter introduced. Use it to test yourself: can you explain each one out loud?
 - **Where this leads.** Which later chapters build on this one, and which parts of the interview chapters it prepares you for.
@@ -97,7 +97,7 @@ The book has nine parts and a closing chapter. Each part assumes the ones before
 
 - **Part 0 — First Principles: Data from Zero** (Chapters 1–6). What data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and planning your learning.
 - **Part I — The Map** (Chapters 7–9). The data jobs, how skills unlock them, and how expertise forms.
-- **Part II — The Analyst** (Chapters 10–27). Spreadsheets, SQL, cleaning, charts, Power BI, Python, statistics, business skills, and a portfolio. **The end of Part II is where "job-ready" ends**: it covers the skills of a first analyst job.
+- **Part II — The Analyst** (Chapters 10–27). Spreadsheets, SQL (the language for asking a database questions), cleaning data, charts, Power BI dashboards, the Python programming language, statistics, business skills, and a portfolio. **The end of Part II is where "job-ready" ends**: it covers the skills of a first analyst job.
 - **Part III — Advanced Analytics & Analytics Engineering** (Chapters 28–34).
 - **Part IV — Machine Learning & Data Science** (Chapters 35–44).
 - **Part V — Data Engineering, Integration & Scale** (Chapters 45–52).

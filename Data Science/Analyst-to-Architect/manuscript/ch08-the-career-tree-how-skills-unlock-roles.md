@@ -43,7 +43,7 @@ The building is the **career tree**. The floors are **tiers**. The rest of this 
 
 ## 8.1 Skills are keys; roles are doors
 
-The draft of this book introduced one idea that stays at the center of this chapter: **learn skills for the doors they open, not because they're popular.**
+One idea sits at the center of this chapter: **learn skills for the doors they open, not because they're popular.**
 
 That idea changes how you study in three ways.
 
@@ -61,7 +61,7 @@ The career tree has seven tiers, numbered from 0. They match the parts of this b
 
 ![Seven tier bands stacked from bottom to top. Tier 0, foundations, Parts 0 and I, with a door labeled reporting or MIS assistant. Tier 1, the analyst core, Part II, with doors for data analyst, business analyst, BI analyst and automation analyst. Tier 2, advanced analytics and analytics engineering, Part III, with doors for analytics engineer, BI developer, senior analyst and RPA developer. Tier 3, data science and ML, Part IV, with a data scientist door, sits side by side with tier 4, engineering and integration, Part V, with data engineer and integration engineer doors, joined by a label saying peers. Tier 5, production ML and AI, Part VI, with ML engineer and AI engineer doors. Tier 6, architecture and leadership, Part VII, with a data architect door.](figures/fig8-1-career-tree-tiers.svg)
 
-*Figure 8.1 — The career tree as tiers and doors. Tiers 3 and 4 sit side by side: they're peers, and you can climb either one first.*
+*Figure 8.1 — The career tree as tiers and doors. Tiers 3 and 4 sit side by side: they're peers, and you can climb either one first. Names in the tiers that aren't among Chapter 7's ten roles (reporting/MIS assistant, BI analyst, senior analyst) are common entry titles for those roles.*
 
 **Tier 0: Foundations (Parts 0 and I).** What data is, how computers store it, how a business runs on it, numbers without fear, thinking like an analyst, and the map you're reading now. *Unlocks:* reporting assistant and MIS (management information system) roles, where you prepare regular reports mostly by hand. Few people stay here long, and the skills matter mainly because everything above rests on them.
 
@@ -73,7 +73,7 @@ The career tree has seven tiers, numbered from 0. They match the parts of this b
 
 **Tier 4: Engineering and integration (Part V).** Ingestion, pipelines and orchestration, data quality, distributed compute, warehouses and lakehouses, streaming, data activation and APIs, and the cloud. *Unlocks:* **data engineer**, **integration engineer**, and platform roles.
 
-**Tiers 3 and 4 are peers.** They sit at the same height on the tree. The book teaches science first because many analysts move toward it first, but plenty of excellent careers go from tier 2 straight into engineering. This is the fix for the first edition's tier order, which put engineering before science while the book taught them the other way round. Now tier numbers, part numbers, and the tree agree, and the figure shows the two branches side by side.
+**Tiers 3 and 4 are peers.** They sit at the same height on the tree. The book teaches science first because many analysts move toward it first, but plenty of excellent careers go from tier 2 straight into engineering. Tier numbers match the book's part numbers, so the figure shows the two branches side by side.
 
 **Tier 5: Production ML and AI (Part VI).** Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry cases. *Unlocks:* **ML engineer**, **AI engineer**, and MLOps and ML platform roles. Most people arrive here from tier 3 (with engineering added) or from tier 4 (with machine learning added).
 
@@ -91,7 +91,7 @@ The automation and integration track from Chapter 7 doesn't fit neatly on one fl
 
 ### How the tree works: three rules
 
-These rules from the first edition still hold, and the rest of the chapter depends on them.
+Three rules make the tree work, and the rest of the chapter depends on them.
 
 1. **You keep every skill below your tier.** Climbing doesn't mean leaving skills behind. They accumulate.
 2. **A role sits at the first tier that makes you credible for it.** You don't need tier 6 to apply for a tier 1 job. Learn up to the door you want, apply, and keep climbing on the job.
@@ -109,23 +109,23 @@ The tiers tell you roughly where a role sits. The skills matrix tells you exactl
 |---|---|---|---|---|---|---|---|---|---|---|
 | Business and domain sense | ● | ● | ○ | ○ | ● | ○ | ○ | ○ | ● | ● |
 | Communication and storytelling | ● | ● | ○ | ○ | ● | ○ | ○ | ○ | ○ | ● |
-| Spreadsheets (Excel, Sheets) | ● | ● | ○ | · | ○ | · | · | · | ● | ○ |
+| Spreadsheets (Excel, Sheets) | ● | ● | ○ | – | ○ | – | – | – | ● | ○ |
 | SQL | ● | ○ | ● | ● | ● | ○ | ● | ○ | ○ | ● |
-| BI and dashboards | ● | ○ | ● | ○ | ○ | · | · | · | ○ | ○ |
-| Statistics | ○ | · | · | · | ● | ○ | · | ○ | · | · |
-| Python | ○ | · | · | ○ | ● | ● | ● | ● | ● | ○ |
-| Spreadsheet and report automation | ○ | ○ | ○ | · | · | · | · | · | ● | · |
-| Requirements and process mapping | ○ | ● | ○ | ○ | · | · | · | ○ | ● | ● |
-| Data modeling (incl. dbt) | · | · | ● | ● | · | · | ● | · | · | ● |
-| Machine learning | · | · | · | · | ● | ● | · | ○ | · | ○ |
-| Pipelines and orchestration | · | · | · | ○ | · | ● | ● | ○ | ○ | ● |
-| Cloud and infrastructure | · | · | · | ○ | ○ | ● | ● | ● | ○ | ● |
-| APIs and integration | · | · | · | · | · | ○ | ● | ● | ● | ● |
-| LLMs and AI applications | · | · | · | · | ○ | ○ | · | ● | ○ | ○ |
-| Git and version control | · | · | ○ | ● | ○ | ● | ● | ● | ○ | ○ |
-| System design and governance | · | · | · | ○ | · | ○ | ○ | ○ | ○ | ● |
+| BI and dashboards | ● | ○ | ● | ○ | ○ | – | – | – | ○ | ○ |
+| Statistics | ○ | – | – | – | ● | ○ | – | ○ | – | – |
+| Python | ○ | – | – | ○ | ● | ● | ● | ● | ● | ○ |
+| Spreadsheet and report automation | ○ | ○ | ○ | – | – | – | – | – | ● | – |
+| Requirements and process mapping | ○ | ● | ○ | ○ | – | – | – | ○ | ● | ● |
+| Data modeling (incl. dbt) | – | – | ● | ● | – | – | ● | – | – | ● |
+| Machine learning | – | – | – | – | ● | ● | – | ○ | – | ○ |
+| Pipelines and orchestration | – | – | – | ○ | – | ● | ● | ○ | ○ | ● |
+| Cloud and infrastructure | – | – | – | ○ | ○ | ● | ● | ● | ○ | ● |
+| APIs and integration | – | – | – | – | – | ○ | ● | ● | ● | ● |
+| LLMs and AI applications | – | – | – | – | ○ | ○ | – | ● | ○ | ○ |
+| Git and version control | – | – | ○ | ● | ○ | ● | ● | ● | ○ | ○ |
+| System design and governance | – | – | – | ○ | – | ○ | ○ | ○ | ○ | ● |
 
-*Key: ● core · ○ useful · · not needed to get in. DA data analyst · BA business analyst · BI BI developer · AE analytics engineer · DS data scientist · MLE ML engineer · DE data engineer · AIE AI engineer · AUT automation analyst, RPA developer, or integration engineer · ARC data architect.*
+*Key: ● core · ○ useful · – not needed to get in. DA data analyst · BA business analyst · BI BI developer · AE analytics engineer · DS data scientist · MLE ML engineer · DE data engineer · AIE AI engineer · AUT automation analyst, RPA developer, or integration engineer · ARC data architect.*
 
 ![A heatmap with 17 skills down the left and the ten roles across the top. Dark cells mark core skills, light cells mark useful skills, blank cells mark skills not needed to get in. SQL is dark or light for every role. The data architect column is the darkest overall. Machine learning is dark only for data scientist and ML engineer.](figures/fig8-2-skills-matrix.svg)
 
@@ -298,37 +298,33 @@ Salary websites build their figures in two main ways.
 
 Because they measure different things, the two can disagree for the same role, and neither is wrong.
 
-### Three roles, as published in 2026
+### One role, as published in 2026
 
-Here are figures for three roles, as shown on PayScale's India pages (updated in July 2026) when this chapter was written. **Base salary** is fixed yearly pay before bonuses; **total pay** adds bonuses and similar extras.
+Here is one role, data analyst, as a worked example of reading a salary page. The figures are from PayScale's India page for the title. **Base salary** is fixed yearly pay before bonuses; **total pay** adds bonuses and similar extras.
 
-| Role (PayScale title) | Salary profiles | Average total pay, under 1 year | Average total pay, 1–4 years | Base salary, 10th–90th percentile | Median base salary |
+| Role (PayScale title) | Salary profiles | Average total pay, under 1 year | Average total pay, 1–4 years | Base salary, 10th–90th percentile | Average base salary |
 |---|---|---|---|---|---|
-| Data Analyst | 2,389 | ₹413,462 | ₹565,999 | about ₹289,000 to ₹1 million | about ₹577,000 |
-| Data Scientist | 1,267 | ₹595,255 | ₹1,005,147 | about ₹312,000 to ₹2 million | about ₹1 million |
-| Data Engineer | 1,284 | ₹518,398 | ₹810,624 | about ₹410,000 to ₹2 million | about ₹975,000 |
+| Data Analyst | 2,389 | ₹4,13,462 | ₹5,65,999 | about ₹2,89,000 to ₹10,00,000 | ₹5,77,472 |
 
-*Source: PayScale India job pages for each title, pages updated 9–14 July 2026, retrieved 16 September 2026. PayScale rounds its percentile figures (for example "₹1m"), so those columns are approximate. Figures change often; check the live pages.*
+*As retrieved September 2026. Source: PayScale India, "Data Analyst Salary in India", page updated 10 July 2026. PayScale rounds its percentile figures (it shows "₹289k" and "₹1m"), so that column is approximate. Its chart also marks the average base salary, rounded to ₹577k, as the median. Figures change often; check the live page.*
 
-In Indian terms, a data analyst's average total pay in the first year works out to about ₹4.1 lakh, and a data scientist's average in years one to four to about ₹10.1 lakh.
+In Indian terms, a data analyst's average total pay in the first year works out to about ₹4.1 lakh, and the average base salary to about ₹5.8 lakh.
 
-A **percentile** tells you where a value sits in a sorted list. The 10th percentile is the value below which 10% of reported salaries fall; the 90th percentile is the value below which 90% fall. So "₹289,000 to ₹1 million" means the middle 80% of data analyst profiles reported base pay in that range. The **median** is the middle value: half earn less, half earn more.
+A **percentile** tells you where a value sits in a sorted list. The 10th percentile is the value below which 10% of reported salaries fall; the 90th percentile is the value below which 90% fall. So "about ₹2,89,000 to ₹10,00,000" means the middle 80% of data analyst profiles reported base pay in that range. The **median** is the middle value: half earn less, half earn more. An **average** (the mean) adds every salary and divides by how many there are, so a few very high salaries can pull it up; that's why salary pages often show both.
 
 ### Reading the table carefully
 
-**The pattern is clearer than the numbers.** Roles that need more tiers of skill (science and engineering) show higher medians and faster early growth than the analyst role in this data. The data scientist median base salary (about ₹1 million) is roughly 1.73 times the data analyst median (about ₹577,000).
-
-**Don't read growth as a promise.** Average total pay for data analysts with 1–4 years is 36.9% higher than for those under a year: (₹565,999 ÷ ₹413,462 − 1) × 100 = 36.9%. For data scientists the difference is 68.9%, and for data engineers 56.4%. But these are *different groups of people*, not the same people a few years later. People who left the field, or never reported, aren't in the data.
-
-**Sources disagree.** For data analysts, Indeed's India page (based on 681 salaries from job postings, updated 30 August 2026) showed an average of ₹633,625 a year. PayScale's average base salary for the same title was ₹577,472. The difference is ₹56,153, with Indeed about 9.7% higher. That's not an error: one counts advertised pay across all experience levels, the other counts reported base salaries.
+**Sources disagree.** For data analysts, Indeed's India page (based on 605 salaries from job postings, updated 20 September 2026) showed an average of ₹6,29,019 a year. PayScale's average base salary for the same title was ₹5,77,472. The difference is ₹51,547, with Indeed about 8.9% higher. That's not an error: one counts advertised pay across all experience levels, the other counts reported base salaries.
 
 **Some roles don't have reliable figures under their own title yet.** Analytics engineer, AI engineer, and integration engineer are newer titles, and many people doing that work are listed under older ones (data engineer, software engineer, BI developer). Business analyst figures mix IT business analysts, finance business analysts, and more. For these, look at live job postings for the work you'd do, not only the title, and compare several sources.
+
+Chapter 68 compares pay across roles, and how pay grows with experience, when you're preparing for the job search.
 
 ### CTC and in-hand pay
 
 Indian offers are usually stated as **CTC** (cost to company): everything the employer spends on you in a year. CTC often includes the employer's provident fund contribution, variable or performance pay that isn't guaranteed, and sometimes insurance, gratuity, or one-time bonuses. Your **in-hand** (take-home) pay is what reaches your bank account each month after income tax, your own provident fund contribution, and other deductions. In-hand pay is always lower than CTC ÷ 12, and how much lower depends on how the offer is structured and on tax rules at the time. Always ask for the breakup, and ask which parts are fixed.
 
-> **Watch out: what moves pay.** City, company type, industry, and your specific skills can move pay more than the job title does. Two "data analyst" offers in the same month can differ by more than the whole range between roles in the table above. Compare offers on fixed pay, the work you'll do, and what you'll learn, not on the headline CTC alone. This is general information, not financial advice.
+> **Watch out: what moves pay.** City, company type, industry, and your specific skills can move pay more than the job title does. Two "data analyst" offers in the same month can differ widely. Compare offers on fixed pay, the work you'll do, and what you'll learn, not on the headline CTC alone. This is general information, not financial advice.
 
 ### How to check salaries yourself
 
@@ -490,7 +486,7 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 - **A spreadsheet** (Excel or Google Sheets) for your skills matrix and gap score, or paper if you prefer.
 - **Two or more job portals.** Save postings as PDFs or screenshots; they disappear.
 - **Two salary sources that use different methods,** such as PayScale (self-reported) and Indeed (job postings), plus your city filter. Note the date on every figure you record.
-- **Companion files:** none for this chapter. The skills matrix values are listed in `checks/ch08_check.py` and in `figures/make_figs08.py`, if you'd like to rebuild or change it.
+- **Companion file:** `skills_matrix.xlsx`, the matrix in section 8.3 as a spreadsheet you can filter and extend.
 
 ---
 
@@ -565,16 +561,16 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 ### Core
 
 4. Classify each line from a job posting as a must-have, a nice-to-have, a hidden skill, or a signal about who can apply: (a) "Experience with Tableau or Power BI." (b) "Exposure to Python is an advantage." (c) "You'll work with regional managers to agree monthly targets." (d) "Final-year students with internship experience may apply." (e) "Strong SQL is essential."
-5. Rahul scores himself against the Riverstone posting in section 8.5. Must-haves: SQL 0, spreadsheets 2, BI tool 1, automated a report 1, written communication 1. Nice-to-haves: Python 1, VBA or Apps Script 0, forecasting 2, CRM or ERP 2. Calculate his total score out of 28, the percentage, and his must-have coverage. Which single gap would you tell him to close first, and why?
-6. Using the PayScale table in section 8.6, calculate how much higher average total pay is for data engineers with 1–4 years than for those under a year, as a percentage. Then give one reason why this isn't the pay rise a new data engineer should expect after a few years.
-7. A friend says: *"Indeed says data analysts earn ₹633,625 on average, but PayScale says ₹577,472. One of them must be wrong."* Explain why both can be right, giving two differences between the sources.
+5. Rahul Mehta, from Riverstone's sales team, scores himself against the Riverstone posting in section 8.5. Must-haves: SQL 0, spreadsheets 2, BI tool 1, automated a report 1, written communication 1. Nice-to-haves: Python 1, VBA or Apps Script 0, forecasting 2, CRM or ERP 2. Calculate his total score out of 28, the percentage, and his must-have coverage. Which single gap would you tell him to close first, and why?
+6. Using the data analyst row in section 8.6: (a) Say in one sentence what "about ₹2,89,000 to ₹10,00,000, 10th–90th percentile" tells you. (b) Calculate how much higher average total pay is for data analysts with 1–4 years than for those under a year, as a percentage. (c) PayScale's chart marks ₹577k as the median. What does a median tell you that an average doesn't?
+7. A friend says: *"Indeed says data analysts earn ₹6,29,019 on average, but PayScale says ₹5,77,472. One of them must be wrong."* Explain why both can be right, giving two differences between the sources.
 8. Explain the difference between CTC and in-hand pay in three sentences, as you would to a friend comparing two offers.
 9. Using the reader pathways table, list what someone aiming to be a BI developer should read fully, what they should skim, and which interview chapters they should prepare with.
 
 ### Stretch
 
 10. Here's a posting: *"Data Scientist (Fresher). Must know Excel, SQL, Power BI, Tableau, Python, R, Spark, Hadoop, Kafka, AWS, Azure, GCP, TensorFlow, PyTorch, and LLMs. Duties: daily data entry of invoices and preparing weekly MIS reports for the accounts team."* List at least three red flags, say what the job really is (role and tier), and write two questions you'd ask before applying.
-11. Neha, a sales executive with strong Excel skills and three years of customer contact, wants to become a data analyst. Recommend an entry route and write a five-step plan using section 8.8 and section 8.9. Include which chapters of this book close which gaps.
+11. Neha Kulkarni, one of Riverstone's sales executives, has strong Excel skills and three years of customer contact, and wants to become a data analyst. Recommend an entry route and write a five-step plan using section 8.8 and section 8.9. Include which chapters of this book close which gaps.
 12. Using the skills matrix, count the skills that data analyst and BI developer both need at least some of (core or useful in both columns), and do the same for data analyst and data engineer. What do the two counts suggest about which move is shorter, and which skills make the difference?
 
 ### Think about it (no calculation needed)
@@ -604,9 +600,7 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
-**1.** Tier 0, foundations (Parts 0 and I); tier 1, the analyst core (Part II); tier 2, advanced analytics and analytics engineering (Part III); tier 3, data science and machine learning (Part IV); tier 4, engineering and integration (Part V); tier 5, production ML and AI (Part VI); tier 6, architecture and leadership (Part VII). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3, as the first edition did; the tier numbers now follow the book's parts.
+**1.** Tier 0, foundations (Parts 0 and I); tier 1, the analyst core (Part II); tier 2, advanced analytics and analytics engineering (Part III); tier 3, data science and machine learning (Part IV); tier 4, engineering and integration (Part V); tier 5, production ML and AI (Part VI); tier 6, architecture and leadership (Part VII). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3; the tier numbers follow the book's parts, and tiers 3 and 4 are peers.
 
 **2.** (a) Automation analyst: tier 1. (b) Analytics engineer: tier 2. (c) ML engineer: tier 5. (d) Data architect: tier 6. (e) Business analyst: tier 1. (f) Integration engineer: tier 4. The trap is (a) and (f): both are on the automation track, but at different tiers, because an integration engineer needs the pipeline and API skills of Part V.
 
@@ -616,9 +610,9 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 **5.** Must-have points: (0 + 2 + 1 + 1 + 1) × 2 = 5 × 2 = 10. Nice-to-have points: 1 + 0 + 2 + 2 = 5. Total **15 of 28 = 53.6%**. Must-have coverage: 5 of 10 = **50%**, the same as Farah's, even though his total is higher, because his extra points come from nice-to-haves. Close **SQL** first: it's a must-have, he scores 0, and it's the one skill every role on the tree uses. His forecasting score won't get him shortlisted without it. The common wrong answer is to celebrate the higher total; must-haves decide the shortlist.
 
-**6.** (₹810,624 ÷ ₹518,398 − 1) × 100 = **56.4%** higher. It isn't a promised rise because the two figures come from **different groups of people**, not the same people over time. The 1–4 year group also only includes people still in the role who chose to report, and pay depends heavily on city, company, and skills. Any one of these is a good reason.
+**6.** (a) The middle 80% of data analysts who reported their pay earn a base salary between about ₹2.89 lakh and ₹10 lakh a year: 10% earn less than the lower figure and 10% more than the upper one. (b) (₹5,65,999 ÷ ₹4,13,462 − 1) × 100 = **36.9%** higher. (c) The median is the middle salary: half earn less, half earn more. An average can be pulled up by a few very high salaries, so the median is often the better picture of a typical salary. Here PayScale's average and median round to the same ₹577k, so the few high earners aren't pulling the average far.
 
-**7.** Both can be right because they measure different things. (1) **Method:** Indeed's figure comes from salaries advertised in job postings; PayScale's comes from salaries people report themselves. (2) **What's counted:** the PayScale figure quoted is average base salary, while advertised figures may include other pay. The sources also differ in **sample** (681 postings versus 2,389 profiles), **date** (updated 30 August 2026 versus July 2026), and the mix of experience and cities. The gap is ₹56,153, about 9.7%, which is small next to the range within either source.
+**7.** Both can be right because they measure different things. (1) **Method:** Indeed's figure comes from salaries advertised in job postings; PayScale's comes from salaries people report themselves. (2) **What's counted:** the PayScale figure quoted is average base salary, while advertised figures may include other pay. The sources also differ in **sample** (605 postings versus 2,389 profiles), **date** (updated 20 September 2026 versus 10 July 2026), and the mix of experience and cities. The gap is ₹6,29,019 − ₹5,77,472 = ₹51,547, and ₹51,547 ÷ ₹5,77,472 = 8.9%, which is small next to the range within either source.
 
 **8.** A sample answer: *"CTC is everything the company says it spends on you in a year, including things like the employer's provident fund share and bonuses that aren't guaranteed. In-hand pay is what actually reaches your bank account each month, after tax and your own deductions, so it's always less than CTC divided by 12. When you compare offers, ask for the breakup and compare the fixed, monthly in-hand amount, not only the CTC headline."*
 
@@ -626,7 +620,7 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 **10.** Red flags: (1) a **tool list far longer than the duties**, covering every tier from spreadsheets to cloud to LLMs; (2) a **senior title with junior duties**: invoice data entry and MIS reports aren't data science; (3) a **fresher role expected to know tools from tiers 1–5**, which nobody entering the field has. The real job is closest to a **reporting or MIS assistant (tier 0 to tier 1)**, with some data entry. Useful questions: *"What would I produce in my first three months?"* and *"Which of the listed tools are used by the team today?"* Other good questions ask about who the role reports to, or whether there's a path into analysis. The job might still be a reasonable first step if the pay and learning are fair, but not under the belief that it's a data science role.
 
-**11.** Recommended route: **internal move** if Neha's company has analysis work she can take on, otherwise **career switcher** into a sales analyst role, using her customer knowledge as her advantage. A five-step plan: (1) **Pick the door:** data analyst, ideally sales analytics. (2) **Find the keys:** the data analyst column (business sense, communication, spreadsheets, SQL, BI) checked against five postings. (3) **Score and list gaps:** likely SQL (Chapters 12–13), a BI tool (Chapter 16), and one automated report (Chapters 19–20); her spreadsheets and business sense are strengths. (4) **Build evidence on her own domain:** automate her weekly customer report and build a dashboard of her region, using non-confidential or practice data if she'll show it publicly. (5) **Make it visible:** tell her manager her goal, volunteer for an analysis nobody owns, and re-score herself in three months. Any plan that orders must-have gaps first and ties each to a project is acceptable.
+**11.** Recommended route: an **internal move**. Neha already works at Riverstone, knows its customers, and has the posting in section 8.5 in front of her, as Farah did. If no role opens there, the same plan works as a **career switcher** route into a sales analyst role elsewhere, with her customer knowledge as her advantage. A five-step plan: (1) **Pick the door:** data analyst, ideally sales analytics. (2) **Find the keys:** the data analyst column (business sense, communication, spreadsheets, SQL, BI) checked against five postings. (3) **Score and list gaps:** likely SQL (Chapters 12–13), a BI tool (Chapter 16), and one automated report (Chapters 19–20); her spreadsheets and business sense are strengths. (4) **Build evidence on her own domain:** automate her weekly customer report and build a dashboard of her region, using non-confidential or practice data if she'll show it publicly. (5) **Make it visible:** tell her manager her goal, volunteer for an analysis nobody owns, and re-score herself in three months. Any plan that orders must-have gaps first and ties each to a project is acceptable.
 
 **12.** **Data analyst and BI developer: 7 shared skills** (business and domain sense, communication and storytelling, spreadsheets, SQL, BI and dashboards, spreadsheet and report automation, requirements and process mapping). **Data analyst and data engineer: 4** (business sense, communication, SQL, and Python). Analyst to BI developer is the shorter move: the analyst already has most of what's needed, and the main new core skill is data modeling. Analyst to data engineer needs several skills the analyst column doesn't have at all: data modeling, pipelines and orchestration, cloud, APIs and integration, and Git.
 
