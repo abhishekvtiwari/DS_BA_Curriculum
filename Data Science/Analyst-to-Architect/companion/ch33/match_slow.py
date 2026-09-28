@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Riverstone's invoice matching, as it was first written: for each invoice, look through every order line.
-Analyst to Architect · Chapter 33 · the "before" version (section 33.11's project)."""
+Analyst to Architect · Chapter 33 · the "before" version (the chapter's project)."""
 import csv, sys, time
 
 
@@ -24,7 +24,7 @@ def match(invoices, order_lines):
 if __name__ == '__main__':
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
     order_lines = load('match_data/order_lines.csv')
-    invoices = load('match_data/supplier_invoices.csv')[:limit]
+    invoices = load('match_data/carrier_invoice_lines.csv')[:limit]
     started = time.perf_counter()
     results = match(invoices, order_lines)
     elapsed = time.perf_counter() - started

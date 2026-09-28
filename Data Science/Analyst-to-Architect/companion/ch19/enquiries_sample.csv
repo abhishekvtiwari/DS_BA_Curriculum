@@ -1,4 +1,7 @@
 Timestamp,Email address,Company,City,Product,Quantity,Needed by,Notes
+2026-01-02 14:40:10,stores@kaveritraders.example.com,Kaveri Traders,Mysuru,Industrial Crate,30,2026-01-16,Warehouse racking
+2026-01-03 11:05:37,admin@sunriseschool.example.com,Sunrise School,Kolkata,Storage Box 25L,60,2026-01-12,Classroom storage
+2026-01-05 08:20:02,purchase@deccanfoods.example.com,Deccan Foods,Hyderabad,Storage Box 25L,40,2026-01-19,
 2026-01-05 09:14:22,orders@metromart.example.com,Metro Mart,Mumbai,Storage Box 25L,120,2026-01-20,Repeat order
 2026-01-05 10:02:47,purchase@greenleafhotels.example.com,Green Leaf Hotels,Pune,Lunch Box Set,300,2026-01-15,New outlet opening
 2026-01-05 11:31:05,buy@sharmahardware.example.com,Sharma Hardware,Nagpur,Industrial Crate,45,2026-02-02,Please quote freight

@@ -1,6 +1,4 @@
-"""Pure calculations: DataFrames in, results out. No database, no files, so they are easy to test."""
-from __future__ import annotations
-
+"""Pure calculations: DataFrames in, results out. No database, no files, so easy to test."""
 from dataclasses import dataclass
 
 import pandas as pd
@@ -46,8 +44,10 @@ def revenue_by_category(lines: pd.DataFrame) -> pd.DataFrame:
     check_lines(lines)
     result = (lines.groupby("category", as_index=False)
                    .agg(net_revenue=("net_revenue", "sum"))
-                   .sort_values(["net_revenue", "category"], ascending=[False, True], ignore_index=True))
-    result["share_pct"] = (100 * result["net_revenue"] / result["net_revenue"].sum()).round(1)
+                   .sort_values(["net_revenue", "category"], ascending=[False, True],
+                                ignore_index=True))
+    total = result["net_revenue"].sum()
+    result["share_pct"] = (100 * result["net_revenue"] / total).round(1)
     return result
 
 
@@ -55,6 +55,8 @@ def top_customers(lines: pd.DataFrame, n: int = 5) -> pd.DataFrame:
     if n < 1:
         raise ValueError("n must be at least 1")
     check_lines(lines)
-    totals = lines.groupby("customer_name", as_index=False).agg(net_revenue=("net_revenue", "sum"))
-    ranked = totals.sort_values(["net_revenue", "customer_name"], ascending=[False, True], ignore_index=True)
+    totals = (lines.groupby("customer_name", as_index=False)
+                   .agg(net_revenue=("net_revenue", "sum")))
+    ranked = totals.sort_values(["net_revenue", "customer_name"], ascending=[False, True],
+                                ignore_index=True)
     return ranked.head(n)

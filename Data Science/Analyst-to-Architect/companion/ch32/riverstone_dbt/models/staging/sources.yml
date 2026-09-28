@@ -15,7 +15,6 @@ sources:
         columns:
           - name: order_item_id
             data_tests: [unique, not_null]
-      - name: customers
       - name: products
       - name: employees
 

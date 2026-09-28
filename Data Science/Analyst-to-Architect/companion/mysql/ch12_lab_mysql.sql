@@ -1,9 +1,10 @@
 -- =====================================================================
 -- Analyst to Architect · Chapter 12 · Section 12.13 lab, MySQL version
 -- Every statement from "Building and changing a database" and exercises 23-27, in book order.
+-- Built from the chapter by sql/ch12_lab_companion.py; don't edit by hand.
 -- Run it with:   mysql -u root -p < ch12_lab_mysql.sql
 -- or open it in MySQL Workbench or DBeaver and execute the whole script.
--- Tested on MySQL 8.0; uses only features available in MySQL 8.4 LTS and 9.x.
+-- Tested on MySQL 8.0.46; uses only features available in MySQL 8.4 LTS and 9.x.
 -- Statements that fail on purpose in the book are commented out, with the error you'd see.
 -- Riverstone Supplies is fictional; every name and number is invented.
 -- =====================================================================
@@ -14,6 +15,9 @@ DROP DATABASE IF EXISTS archive;
 -- Step 1: Create the database
 CREATE DATABASE riverstone_lab;
 USE riverstone_lab;
+
+-- Step 1: Create the database
+SHOW DATABASES LIKE 'riverstone%';
 
 -- Step 3: CREATE TABLE
 CREATE TABLE suppliers (
@@ -137,6 +141,10 @@ DELETE FROM purchase_orders
 WHERE po_id = 5;
 
 -- Step 6: DELETE: removing rows
+SELECT COUNT(*) AS orders_left
+FROM purchase_orders;
+
+-- Step 6: DELETE: removing rows
 -- Fails on purpose: ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`riverstone_lab`.`purchase_orders`, CONSTRAINT `purchase_orders_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`))
 -- DELETE FROM suppliers
 -- WHERE supplier_name = 'Western Polymers';
@@ -144,6 +152,11 @@ WHERE po_id = 5;
 -- Step 6: DELETE: removing rows
 UPDATE suppliers
 SET is_active = FALSE
+WHERE supplier_name = 'Nilgiri Packaging';
+
+-- Step 6: DELETE: removing rows
+SELECT supplier_name, is_active
+FROM suppliers
 WHERE supplier_name = 'Nilgiri Packaging';
 
 -- Step 7: Insert or update in one statement (upsert)
@@ -310,8 +323,8 @@ WHERE warehouse_name = 'Chakan';
 SELECT * FROM warehouses ORDER BY warehouse_id;
 
 -- Exercise 26
-ALTER TABLE warehouses ADD COLUMN manager_email VARCHAR(100);
 -- Fails on purpose: ERROR 3959 (HY000): Check constraint 'chk_capacity' uses column 'capacity_units', hence column cannot be dropped or renamed.
+-- ALTER TABLE warehouses ADD COLUMN manager_email VARCHAR(100);
 -- ALTER TABLE warehouses RENAME COLUMN capacity_units TO capacity_boxes;
 
 -- Exercise 26

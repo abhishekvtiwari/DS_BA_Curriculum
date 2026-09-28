@@ -1,116 +1,176 @@
 # Generates the SVG figures for Chapter 27. Run: python3 make_figs27.py
+#
+# Every figure is drawn on a 600 px canvas. It prints at the full text width (493.2 pt), so
+# 1 px = 0.822 pt and the smallest text used here, 9 px, prints at 7.4 pt (visual standard: >= 7 pt).
+# The figures carry no in-figure title: the caption under each one says what it shows.
+# Every number drawn here is printed by a query or a script in the chapter (sections 27.2-27.5).
 from make_figs import *
-from make_figs01 import wrap
+from PIL import ImageFont
 
-GREEN="#2f7d6d"; PURPLE="#7a4fa0"; ORANGE="#c0662b"; RED="#b23b3b"; TEAL="#1f6fa3"; GREY="#5b6475"
+GREEN = "#2f7d6d"; PURPLE = "#7a4fa0"; ORANGE = "#b35a1f"; RED = "#b23b3b"; TEAL = "#1f6fa3"; GREY = "#5b6475"
+W = 600
+FONTS = {
+    ("normal", ""): "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ("bold", ""): "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    ("normal", "italic"): "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
+    ("bold", "italic"): "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
+    ("mono", ""): "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+}
+_cache = {}
 
 
-def wraplines(s, n):
-    words = s.split(); lines = []; cur = ""
-    for w in words:
-        if len(cur + " " + w) > n:
+def width(s, size, weight="normal", style=""):
+    """Width in px of s set in DejaVu Sans (the figures' font) at size px."""
+    key = (weight, style)
+    if key not in _cache:
+        _cache[key] = ImageFont.truetype(FONTS[key], size=100)
+    return _cache[key].getlength(s) * size / 100
+
+
+def fit(s, maxw, size, weight="normal", style=""):
+    """Break s into lines no wider than maxw px."""
+    lines, cur = [], ""
+    for w in s.split():
+        trial = (cur + " " + w).strip()
+        if cur and width(trial, size, weight, style) > maxw:
             lines.append(cur); cur = w
         else:
-            cur = (cur + " " + w).strip()
+            cur = trial
     lines.append(cur)
     return lines
 
 
-def arrow_right(x, y, length, colour=MUTED, sw=2):
-    return (path(f"M{x},{y} H{x+length-6}", stroke=colour, sw=sw)
-            + f'<path d="M{x+length-6},{y-5} L{x+length+1},{y} L{x+length-6},{y+5} Z" fill="{colour}"/>')
+def lines_at(x, y, lines, size, fill=INK, lh=None, weight="normal", style="", family=None):
+    lh = lh or round(size * 1.35, 1)
+    return "".join(text(x, y + i * lh, l, size, fill, weight, family=family, style=style)
+                   for i, l in enumerate(lines))
 
 
-# ---------- Figure 27.1: the analyst arc ----------
+def arrow(x1, y1, x2, y2, colour=MUTED, sw=1.6):
+    """A straight arrow from (x1, y1) to (x2, y2), horizontal or vertical."""
+    if y1 == y2:
+        d = 1 if x2 > x1 else -1
+        head = f"M{x2-6*d},{y2-4} L{x2},{y2} L{x2-6*d},{y2+4} Z"
+        return path(f"M{x1},{y1} H{x2-5*d}", stroke=colour, sw=sw) + f'<path d="{head}" fill="{colour}"/>'
+    d = 1 if y2 > y1 else -1
+    head = f"M{x2-4},{y2-6*d} L{x2},{y2} L{x2+4},{y2-6*d} Z"
+    return path(f"M{x1},{y1} V{y2-5*d}", stroke=colour, sw=sw) + f'<path d="{head}" fill="{colour}"/>'
+
+
+# ---------- Figure 27.1: the analyst arc (3 x 2 cards) ----------
 def fig_arc():
     stages = [
-        ("SQL", ACC, "Get the headline out of the database", "14.8 orders vs 9.3", "Ch 12, 13"),
-        ("Cleaning", ORANGE, "Decide, log the decision, measure whether it mattered", "48 duplicates merged: +0.2 orders", "Ch 14"),
-        ("The check", RED, "Split it by the thing that could explain both", "662 of 681 are Wholesale", "Ch 21, 22"),
-        ("Python", GREEN, "Turn your choices into parameters so they can be argued with", "band_cut 3 / 5 / 8", "Ch 17, 18, 20"),
-        ("Dashboard", TEAL, "One page, one decision, one named reader", "4 objects, nothing else", "Ch 15, 16"),
-        ("Memo", PURPLE, "Recommendation first, and what did not support it", "Recommendation: no", "Ch 23, 24"),
+        ("SQL", ACC, "Get the headline out of the database", "14.8 orders vs 9.3", "Chapters 12, 13"),
+        ("Cleaning", ORANGE, "Decide, log the decision, measure whether it mattered",
+         "48 duplicates: +0.2 orders", "Chapter 14"),
+        ("The check", RED, "Split it by the thing that could explain both",
+         "662 of 681 are Wholesale", "Chapters 21, 22"),
+        ("Python", GREEN, "Turn your choices into parameters to argue with",
+         "band_cut 3 / 5 / 8", "Chapters 17, 18, 20"),
+        ("Dashboard", TEAL, "One page, one decision, one named reader", "4 objects, nothing else",
+         "Chapters 15, 16"),
+        ("Memo", PURPLE, "Recommendation first, and what did not support it", "Recommendation: no",
+         "Chapters 23, 24"),
     ]
-    W, H, G, x0, y0 = 208, 196, 16, 32, 78
-    o = [text(x0, 36, "The analyst arc, and what each stage produced in this chapter's project",
-              15.5, INK, "bold", family=HEAD),
-         text(x0, 60, "Nothing here is new. The capstone is the order, and the stage most people skip.",
-              12.5, MUTED, style="italic")]
-    for i, (name, c, what, produced, chs) in enumerate(stages):
-        x = x0 + i * (W + G)
-        o.append(rect(x + 2, y0 + 3, W, H, fill="#e9eef4", rx=8))
-        o.append(rect(x, y0, W, H, fill="#fff", stroke=c, sw=1.6 if i != 2 else 2.6, rx=8))
-        o.append(f'<path d="M{x},{y0+8} a8,8 0 0 1 8,-8 H{x+W-8} a8,8 0 0 1 8,8 V{y0+34} H{x} Z" fill="{c}"/>')
-        o.append(text(x + 12, y0 + 23, f"{i+1}  {name}", 13.5, "#fff", "bold", family=HEAD))
-        o.append(wrap(x + 12, y0 + 58, wraplines(what, 28), 11.5, INK, 17))
-        o.append(rect(x + 12, y0 + H - 66, W - 24, 34, fill="#f6f9fc", stroke=RULE, sw=1, rx=5))
-        o.append(wrap(x + 20, y0 + H - 48, wraplines(produced, 26), 10.5, c, 14))
-        o.append(text(x + 12, y0 + H - 14, chs, 10.5, MUTED, style="italic"))
-        if i < len(stages) - 1:
-            o.append(arrow_right(x + W + 1, y0 + H / 2, G, MUTED, 2))
-    ybot = y0 + H
-    o.append(path(f"M{x0},{ybot+30} H{x0+6*(W+G)-G}", stroke=RULE, sw=1.2, dash="4 4"))
-    o.append(text(x0, ybot + 56,
-                  "Stage 3 is the one that separates a capstone from a tutorial. It is also the one nobody can tell you skipped.",
-                  12.5, INK, "bold"))
-    return svg(x0 * 2 + 6 * W + 5 * G, ybot + 76, "".join(o))
+    x0, G, CW = 8, 20, 181                       # 3 cards of 181 px, gaps of 20 px: 8 + 583 + 9 = 600
+    pad, body, chip, ref = 9, 10, 9.5, 9
+    # measure every card, then use the tallest so the rows line up
+    parts = []
+    for name, c, what, produced, chs in stages:
+        wl = fit(what, CW - 2 * pad, body)
+        pl = fit(produced, CW - 2 * pad - 12, chip, "bold")
+        parts.append((wl, pl))
+    head = 24
+    ch_h = max(len(pl) for _, pl in parts) * 13 + 10
+    CH = head + 10 + max(len(wl) for wl, _ in parts) * 13.5 + 6 + ch_h + 8 + 12 + 8
+    rows_y = [4, 4 + CH + 30]
+    o = []
+    for i, ((name, c, what, produced, chs), (wl, pl)) in enumerate(zip(stages, parts)):
+        col, row = i % 3, i // 3
+        x, y = x0 + col * (CW + G), rows_y[row]
+        key = (i == 2)
+        o.append(rect(x, y, CW, CH, fill="#fff", stroke=c, sw=2.6 if key else 1.3, rx=7))
+        o.append(f'<path d="M{x},{y+7} a7,7 0 0 1 7,-7 H{x+CW-7} a7,7 0 0 1 7,7 V{y+head} H{x} Z" fill="{c}"/>')
+        label = f"{i+1}  {name}" + ("  · often skipped" if key else "")
+        o.append(text(x + pad, y + 16.5, label, 10.5 if not key else 10, "#fff", "bold"))
+        o.append(lines_at(x + pad, y + head + 16, wl, body, INK, 13.5))
+        cy = y + head + 10 + len(wl) * 13.5 + 6
+        cy = y + head + 10 + max(len(p[0]) for p in parts) * 13.5 + 6
+        o.append(rect(x + pad, cy, CW - 2 * pad, ch_h, fill="#f6f9fc", stroke=RULE, sw=1, rx=4))
+        o.append(lines_at(x + pad + 6, cy + 14, pl, chip, c, 13, "bold"))
+        o.append(text(x + pad, y + CH - 9, chs, ref, MUTED, style="italic"))
+        if col < 2:
+            o.append(arrow(x + CW + 2, y + CH / 2, x + CW + G - 1, y + CH / 2))
+    # connector from card 3 down and back to card 4
+    x3 = x0 + 2 * (CW + G) + CW / 2; x4 = x0 + CW / 2
+    ymid = rows_y[0] + CH + 15
+    o.append(path(f"M{x3},{rows_y[0]+CH+1} V{ymid} H{x4}", stroke=MUTED, sw=1.6))
+    o.append(arrow(x4, ymid, x4, rows_y[1] - 1))
+    yb = rows_y[1] + CH + 20
+    foot = fit("Stage 3 is the one that separates a capstone from a tutorial. "
+               "It is also the one nobody can tell you skipped.", W - 2 * x0, 10.5, "bold")
+    o.append(lines_at(x0, yb, foot, 10.5, INK, 14, "bold"))
+    return svg(W, yb + (len(foot) - 1) * 14 + 8, "".join(o))
 
 
-# ---------- Figure 27.2: the finding that did not survive ----------
+# ---------- Figure 27.2: the finding that did not survive (three stacked panels) ----------
 def fig_not_survive():
-    x0, y0 = 36, 86
-    PW, PH, G = 360, 250, 44
-    o = [text(x0, 36, "The same data, asked three ways. Only the third one answers the question.",
-              15.5, INK, "bold", family=HEAD),
-         text(x0, 60, "Average orders per customer, 2025. Every bar is true.",
-              12.5, MUTED, style="italic")]
-
-    def panel(px, title, subtitle, bars, note, notec, maxv=18.0):
-        b = [rect(px + 2, y0 + 3, PW, PH, fill="#e9eef4", rx=8),
-             rect(px, y0, PW, PH, fill="#fff", stroke=RULE, sw=1.4, rx=8),
-             text(px + 16, y0 + 26, title, 13, INK, "bold", family=HEAD),
-             text(px + 16, y0 + 45, subtitle, 11, MUTED, style="italic")]
-        bx, by, bw = px + 22, y0 + 64, PW - 44
-        n = len(bars)
-        slot = (PH - 118) / n
-        for k, (label, val, col, sub) in enumerate(bars):
-            yy = by + k * slot
-            ln = int((bw - 168) * min(val, maxv) / maxv)
-            b.append(text(bx, yy + 11, label, 11, INK))
-            b.append(text(bx, yy + 26, sub, 9.5, MUTED))
-            b.append(rect(bx + 118, yy + 2, bw - 168, 20, fill="#f2f5f9", rx=4))
-            b.append(rect(bx + 118, yy + 2, ln, 20, fill=col, rx=4))
-            b.append(text(bx + 118 + ln + 8, yy + 17, f"{val:.1f}", 11, col, "bold", family=MONO))
-        b.append(path(f"M{px+16},{y0+PH-44} H{px+PW-16}", stroke=RULE, sw=1, dash="3 3"))
-        b.append(wrap(px + 16, y0 + PH - 26, wraplines(note, 52), 11, notec, 15))
-        return "".join(b)
-
-    o.append(panel(x0, "1. The headline", "All customers, split at 5% discount",
-                   [("5% or deeper", 14.8, ACC, "681 customers"),
-                    ("under 5%", 9.3, GREY, "3,918 customers")],
-                   "True, quotable, and about segment rather than discount.", RED))
-    o.append(panel(x0 + PW + G, "2. Split by segment", "The same two bands, per segment",
-                   [("Wholesale, 5%+", 15.2, ACC, "662 customers"),
-                    ("Retail, 5%+", 1.1, ORANGE, "10 customers"),
-                    ("Retail, under 5%", 9.3, GREY, "2,555 customers"),
-                    ("Hospitality, 5%+", 1.2, ORANGE, "9 customers")],
-                   "No Wholesale customer is below 5%. The bands were segments.", RED))
-    o.append(panel(x0 + 2 * (PW + G), "3. Inside Wholesale", "662 customers, by discount quartile",
-                   [("Q1  7.9% discount", 14.1, GREEN, "166 customers"),
-                    ("Q2  8.5%", 16.7, GREEN, "166 customers"),
-                    ("Q3  9.0%", 16.4, GREEN, "165 customers"),
-                    ("Q4  9.7% discount", 13.6, GREEN, "165 customers")],
-                   "Q4 - Q1 = -0.48 orders, 95% CI [-1.89, 0.92]. No ladder.", GREEN))
-
-    yb = y0 + PH + 40
-    o.append(text(x0, yb, "Deeper discounts do not buy more orders. Panel 1 is what a portfolio shows when the analyst stops one query early.",
-                  12.5, INK, "bold"))
-    return svg(x0 * 2 + 3 * PW + 2 * G, yb + 24, "".join(o))
+    x0 = 6
+    PW = W - 2 * x0
+    LBL, BX, BMAX, MAXV = 14, 236, 300, 18.0     # label x offset, bar start, bar length for 18 orders
+    RH = 19
+    panels = [
+        ("1. The headline", "all customers, split at 5% discount",
+         [("5% or deeper", "681 customers", 14.8, ACC),
+          ("under 5%", "3,918 customers", 9.3, GREY)],
+         "True, quotable, and about segment rather than discount.", RED),
+        ("2. Split by segment", "the same two bands, per segment",
+         [("Hospitality, 5% or deeper", "9", 1.2, ORANGE),
+          ("Hospitality, under 5%", "1,363", 9.1, GREY),
+          ("Retail, 5% or deeper", "10", 1.1, ORANGE),
+          ("Retail, under 5%", "2,555", 9.3, GREY),
+          ("Wholesale, 5% or deeper", "662", 15.2, ACC)],
+         "Wholesale has no under-5% row: no Wholesale customer is below 5%. The bands were segments.", RED),
+        ("3. Inside Wholesale", "662 customers, by discount quartile",
+         [("Q1, average discount 7.9%", "166", 14.1, GREEN),
+          ("Q2, 8.5%", "166", 16.7, GREEN),
+          ("Q3, 9.0%", "165", 16.4, GREEN),
+          ("Q4, average discount 9.7%", "165", 13.6, GREEN)],
+         "Q4 − Q1 = −0.48 orders, and the middle two are highest. No ladder.", GREEN),
+    ]
+    o = []
+    y = 4
+    for title, sub, bars, note, notec in panels:
+        nl = fit(note, PW - 2 * LBL, 9.5, "bold")
+        ph = 44 + len(bars) * RH + 8 + len(nl) * 13 + 6
+        o.append(rect(x0, y, PW, ph, fill="#fff", stroke=RULE, sw=1.2, rx=7))
+        o.append(text(x0 + LBL, y + 18, title, 11, INK, "bold"))
+        o.append(text(x0 + LBL + width(title, 11, "bold") + 8, y + 18, sub, 9.5, MUTED, style="italic"))
+        o.append(text(x0 + BX - 8, y + 34, "customers", 9, MUTED, anchor="end"))
+        o.append(text(x0 + BX, y + 34, "average orders per customer", 9, MUTED))
+        by = y + 42
+        for k, (label, n, val, col) in enumerate(bars):
+            yy = by + k * RH
+            ln = BMAX * val / MAXV
+            o.append(text(x0 + LBL, yy + 12, label, 9.5, INK))
+            o.append(text(x0 + BX - 8, yy + 12, n.replace(" customers", ""), 9.5, MUTED, anchor="end"))
+            o.append(rect(x0 + BX, yy + 2, BMAX, 13, fill="#f2f5f9", rx=3))
+            o.append(rect(x0 + BX, yy + 2, ln, 13, fill=col, rx=3))
+            o.append(text(x0 + BX + ln + 5, yy + 12.5, f"{val:.1f}", 9.5, INK, "bold"))
+        ny = by + len(bars) * RH + 4
+        o.append(path(f"M{x0+LBL},{ny} H{x0+PW-LBL}", stroke=RULE, sw=1, dash="3 3"))
+        o.append(lines_at(x0 + LBL, ny + 14, nl, 9.5, notec, 13, "bold"))
+        y += ph + 8
+    foot = fit("Customers' 2025 orders; the bars share one scale, from 0 to 18 orders. "
+               "Deeper discounts do not buy more orders. Panel 1 is what a portfolio shows when the "
+               "analyst stops one query early.", W - 2 * x0, 9.5)
+    o.append(lines_at(x0, y + 10, foot, 9.5, MUTED, 13))
+    return svg(W, y + 10 + (len(foot) - 1) * 13 + 7, "".join(o))
 
 
 # ---------- Figure 27.3: the ninety-second scan ----------
 def fig_scan():
-    x0, y0, W = 40, 92, 980
+    x0 = 6
     rows = [
         (0, 15, "The README's first paragraph", ACC,
          "Is there a question here, or a dataset?", "Write it as the question and the answer."),
@@ -123,27 +183,22 @@ def fig_scan():
         (75, 90, "Anything saying what you did NOT find", RED,
          "Should I trust the rest of this?", "A FINDINGS.md file. Almost nobody has one."),
     ]
-    o = [text(x0, 38, "Ninety seconds: what a hiring manager reads, in order",
-              15.5, INK, "bold", family=HEAD),
-         text(x0, 62, "Then they either read properly or they close the tab. The order is predictable, so build for it.",
-              12.5, MUTED, style="italic")]
-    RH, TL = 76, 132
-    o.append(rect(x0 + TL - 22, y0, 8, len(rows) * RH - 12, fill="#e6ebf2", rx=4))
+    RH, CHIP, TX = 50, 62, 104
+    o = [rect(x0 + CHIP + 14, 8, 6, len(rows) * RH - 16, fill="#e6ebf2", rx=3)]
     for i, (a, b, what, c, concludes, fix) in enumerate(rows):
-        y = y0 + i * RH
-        o.append(rect(x0, y, TL - 44, 30, fill=c, rx=6))
-        o.append(text(x0 + (TL - 44) / 2, y + 20, f"{a}–{b}s", 12, "#fff", "bold",
-                      anchor="middle", family=MONO))
-        o.append(f'<circle cx="{x0+TL-18}" cy="{y+15}" r="7" fill="#fff" stroke="{c}" stroke-width="2.6"/>')
-        o.append(text(x0 + TL, y + 12, what, 13, INK, "bold"))
-        o.append(text(x0 + TL, y + 32, "They conclude:  " + concludes, 11.5, MUTED))
-        o.append(text(x0 + TL, y + 52, "So:  " + fix, 11.5, c))
-    yb = y0 + len(rows) * RH + 6
-    o.append(path(f"M{x0},{yb} H{x0+W}", stroke=RULE, sw=1.2, dash="4 4"))
-    o.append(text(x0, yb + 28,
-                  "Three of the five are writing, and one is a habit you cannot add at the end. Only one is the analysis.",
-                  12.5, INK, "bold"))
-    return svg(x0 * 2 + W, yb + 48, "".join(o))
+        y = 4 + i * RH
+        o.append(rect(x0, y, CHIP, 22, fill=c, rx=5))
+        o.append(text(x0 + CHIP / 2, y + 15, f"{a}–{b} s", 10, "#fff", "bold", anchor="middle"))
+        o.append(f'<circle cx="{x0+CHIP+17}" cy="{y+11}" r="5.5" fill="#fff" stroke="{c}" stroke-width="2.2"/>')
+        o.append(text(x0 + TX, y + 11, what, 10.5, INK, "bold"))
+        o.append(text(x0 + TX, y + 26, "They conclude:  " + concludes, 9.5, MUTED))
+        o.append(text(x0 + TX, y + 40, "So:  " + fix, 9.5, c, "bold"))
+    yb = 4 + len(rows) * RH + 2
+    o.append(path(f"M{x0},{yb} H{W-x0}", stroke=RULE, sw=1.2, dash="4 4"))
+    foot = fit("Three of the five are writing, and one is a habit you cannot add at the end. "
+               "Only one is the analysis.", W - 2 * x0, 10, "bold")
+    o.append(lines_at(x0, yb + 18, foot, 10, INK, 13.5, "bold"))
+    return svg(W, yb + 18 + (len(foot) - 1) * 13.5 + 8, "".join(o))
 
 
 if __name__ == "__main__":

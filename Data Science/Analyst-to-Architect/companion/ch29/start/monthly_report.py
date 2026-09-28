@@ -1,7 +1,7 @@
 # monthly_report.py - Riverstone's monthly sales report, as a first working script.
 # Analyst to Architect · Chapter 29 · the "before" version: it works, and it has every problem section 29.1 lists.
 # How: python3 monthly_report.py   (needs riverstone_2025 in PostgreSQL, pandas, openpyxl, SQLAlchemy, psycopg)
-# Tested on: Python 3.12.3, pandas 3.0.2, openpyxl 3.1.5, SQLAlchemy 2.0, psycopg 3.3.5, PostgreSQL 16.
+# Tested on: Python 3.14.7, pandas 3.0.6, openpyxl 3.1.5, SQLAlchemy 2.1.1, psycopg 3.3.6, PostgreSQL 16.
 # Riverstone Supplies is fictional; every name and number is invented.
 import pandas as pd
 from sqlalchemy import create_engine

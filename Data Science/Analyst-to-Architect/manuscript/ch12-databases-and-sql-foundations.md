@@ -8,11 +8,24 @@
 >
 > **Before you start:** Chapter 1 (what data is), Chapter 3 (how a business runs on data), and Chapters 10–11 (spreadsheets). You do *not* need any programming experience.
 >
-> **Time needed:** 19–23 hours of reading and practice, spread over three to four weeks.
+> **Time needed:** 22–26 hours of reading and practice for the PostgreSQL core (installing, sections 12.1 to 12.16, and the exercises), spread over four to five weeks. Add 6–10 hours if you also follow the MySQL track and do the project.
 >
-> **Tools:** PostgreSQL (free database) and DBeaver (free query editor), with MySQL as an optional second database. Setup for both is covered in section 12.3; section 12.16 shows how the chapter's SQL changes in MySQL.
+> **Tools:** PostgreSQL (free database) and DBeaver (free query editor), with MySQL as an optional second database. You install them in section 12.3; section 12.16 shows how the chapter's SQL changes in MySQL.
 >
-> **Practice data:** the Riverstone Supplies database (Appendix E), in PostgreSQL and MySQL versions. Every query in this chapter was run against it, and every result shown is the real output.
+> **Practice data:** the Riverstone mini database (`riverstone_setup.sql`, with a MySQL twin, `riverstone_setup_mysql.sql`) and, optionally, the one-year database (`riverstone_2025_setup.sql`), all in the companion files (Appendix E). Every query in this chapter was run against them, and every result shown is the real output.
+
+> **Plan your sittings.** This is the longest chapter in the book. Take it in about eight sittings, and stop at the end of one rather than in the middle:
+>
+> 1. Sections 12.1 to 12.3, including installing the databases.
+> 2. Sections 12.4 to 12.7: your first queries, sorting, filtering, and `NULL`.
+> 3. Sections 12.8 and 12.9: transforming values and summarizing.
+> 4. Section 12.10: joins.
+> 5. Sections 12.11 and 12.12: how a query runs, and subqueries.
+> 6. Section 12.13, Steps 1 to 6: creating tables and changing rows.
+> 7. Section 12.13, Steps 7 to 11: upserts, transactions, and changing structure.
+> 8. Sections 12.14 to 12.16 and "In the real world".
+>
+> Then the exercises and the project. Each sitting ends at a line marked **Good place to stop**.
 
 ---
 
@@ -20,7 +33,7 @@
 
 Here is a small, career-defining truth: **the data does not come to you. You go to the data.** And the language you go in is SQL.
 
-In Chapters 10 and 11 you worked with spreadsheets, where the data sits right in front of you and you can see every cell. That works well for thousands of rows. But the sales records of even a mid-sized company run to millions of rows, spread across dozens of connected tables, updated every minute by many people and systems at once. No spreadsheet can hold that, and no human can scroll through it. That data lives in a **database**, and SQL is how you ask the database questions.
+In Chapters 10 and 11 you worked with spreadsheets, where the data sits right in front of you and you can see every cell. That works well for thousands of rows. But the sales records of even a mid-sized company run to millions of rows, spread across dozens of connected tables, updated every minute by many people and systems at once. No spreadsheet can hold that, and no human can scroll through it. That data lives in a **database**, and SQL is how you ask the database questions. If you tried Google Sheets' `QUERY` function in Chapter 11, some of this chapter will feel familiar: its `select`, `where`, and `group by` are a small language similar to SQL.
 
 SQL is the single highest-leverage skill in this book. It is the one skill shared by every role on the map from Chapter 7: analysts, business analysts, data scientists, data engineers, and architects all write SQL, often every day. It has been one of the most requested skills in data job listings for decades, and it has outlived hundreds of newer tools. And it is learnable. The core that covers most real work fits in this chapter.
 
@@ -57,7 +70,7 @@ Notice what you did *not* do. You didn't tell the clerk which drawer to open fir
 
 ### Tables, rows, and columns
 
-A **relational database** stores data in **tables**. A table looks like a spreadsheet tab: it has named **columns** across the top and **rows** of data below. But a database table is much stricter than a spreadsheet, and that strictness is a feature:
+A **relational database** stores data in **tables**. A table looks like a spreadsheet tab: it has named **columns** across the top (also called *fields* or *attributes*) and **rows** of data below (also called *records*). But a database table is much stricter than a spreadsheet, and that strictness is a feature:
 
 | Spreadsheet | Database table |
 |---|---|
@@ -85,7 +98,7 @@ Types matter more than beginners expect. Because `order_date` is a real `DATE`, 
 
 > **Real-life example: phone numbers are text, not numbers.** A mobile number looks numeric, but store it as `INTEGER` and trouble follows. The leading zero in `022 2345 6789` disappears, `+91` can't be stored at all, and nobody will ever add two phone numbers together. PIN codes, GST numbers, employee codes like `EMP-0042`, and bank account numbers are the same. **Rule of thumb: if you would never do arithmetic on it, store it as text.**
 
-> **Watch out: money and decimals.** Never store money in a "floating-point" type (`REAL`, `FLOAT`, `DOUBLE PRECISION`). Those types store approximations, so 0.1 + 0.2 may come out as 0.30000000000000004. Use `NUMERIC`/`DECIMAL` for money. Interviewers like this one.
+> **Watch out: money and decimals.** Never store money in a "floating-point" type (`REAL`, `FLOAT`, `DOUBLE PRECISION`). Those types store approximations, so 0.1 + 0.2 may come out as 0.30000000000000004 (Chapter 2, section 2.1 showed why). Use `NUMERIC`/`DECIMAL` for money. Section 12.8 lets you see the difference for yourself in SQL. Interviewers like this one.
 
 ### Primary keys: every row needs an identity
 
@@ -148,7 +161,7 @@ All of them speak **SQL** (Structured Query Language; say "S-Q-L" or "sequel", b
 
 ## 12.2 Meet Riverstone Supplies
 
-Throughout this book you'll work with the data of **Riverstone Supplies**, a *fictional* company that sells storage boxes, kitchenware, and industrial crates to shops, hotels, and wholesalers across India. Like any real business, it takes orders, bills its customers, and chases payments. (Every name and number in it is invented.) In this chapter we use a small slice of its database, small enough that you can check every answer by eye. The full-size version, with thousands of orders, is in the companion files (Appendix E).
+Throughout this book you'll work with the data of **Riverstone Supplies**, a *fictional* company that sells storage boxes, kitchenware, and industrial crates to shops, hotels, and wholesalers across India. Like any real business, it takes orders, bills its customers, and chases payments. (Every name and number in it is invented.) Chapters 10 and 11 used a full year of Riverstone's sales (2025: 24 customers, 175 orders). To learn SQL we switch to a smaller slice, the first quarter of 2026: 8 customers and 12 orders, the same twelve orders you followed in Chapters 1 to 5, small enough to check every answer by eye. The one-year data comes back in Chapter 13, as the database `riverstone_2025`.
 
 ### The schema
 
@@ -182,17 +195,17 @@ Now read the diagram out loud as sentences. If a sentence sounds wrong for the b
 
 ### One real order, spread across five tables
 
-The diagram is abstract. Figure 12.2 makes it concrete. On the left is order 5001 the way Sharma Hardware's purchasing manager sees it: a single order slip. On the right is where each piece of that slip actually lives in the database.
-
-![Order 5001 as a slip and as rows in five tables](figures/fig12-2-one-order-many-tables.svg)
-
-*Figure 12.2 — One order slip, five tables. Each colored band on the slip is stored in the table of the same color.*
+The diagram is abstract. Figure 12.2, below, makes it concrete. On the left is order 5001 the way Sharma Hardware's purchasing manager sees it: a single order slip. On the right is where each piece of that slip actually lives in the database.
 
 Three things to notice:
 
 1. **Nothing is typed twice.** The slip shows the customer's name, but the `orders` row stores only `customer_id = 1`. The name lives once, in `customers`. If Sharma Hardware renames itself, every past and future order shows the new name automatically.
 2. **The slip is a join.** Rebuilding it means combining five tables on their keys. By section 12.10 you'll write that query yourself.
 3. **Calculated values aren't stored.** The line values (₹9,000 and ₹5,700) and the total (₹14,700) appear nowhere in the tables. They're calculated from quantity, price, and discount whenever someone asks. A stored total is a second copy of the truth that can drift out of date, for example when someone corrects a discount but forgets the total. (Invoices are the one deliberate exception: a tax invoice is a legal document, so `invoices.amount` records exactly what was billed.)
+
+![Order 5001 as a slip and as rows in five tables](figures/fig12-2-one-order-many-tables.svg)
+
+*Figure 12.2 — One order slip, five tables. Each band on the slip is labelled with the table it's stored in, and drawn in that table's color.*
 
 ### The data
 
@@ -351,14 +364,66 @@ This book teaches with **PostgreSQL** and shows **MySQL** alongside it. Both are
 
 For both databases you'll use **DBeaver Community Edition** as the client. It's free, runs on Windows, macOS, and Linux, and connects to almost every database, so you learn one editor, not two.
 
+**Which versions?** Choose the current release of each. In September 2026 that was **PostgreSQL 18** (supported until November 2030) and **MySQL 9.7 LTS**. Every query in this chapter was run on PostgreSQL 16 and MySQL 8.0, and uses only features that work the same way in the newer versions. Install every tool from its official website; download sites that repackage installers sometimes bundle unwanted software.
+
+### Three words you'll meet while connecting
+
+- **`localhost`** means "this computer". The database server runs on your own machine, so that's where DBeaver looks for it.
+- A **port** is the numbered door a server listens on. PostgreSQL uses `5432` and MySQL `3306`, which is why both can run on one computer at once.
+- A **driver** is the small connector file DBeaver uses to talk to one kind of database. DBeaver downloads the right one the first time you connect.
+
 ### Option A: PostgreSQL
 
-1. **Install PostgreSQL** from the official PostgreSQL website, choosing the installer for your operating system. During setup you'll choose a password for the default `postgres` user. Write it down.
-2. **Install DBeaver Community Edition.**
-3. **Connect.** In DBeaver, choose *Database → New Database Connection → PostgreSQL*, and use host `localhost`, port `5432`, user `postgres`, and your password. DBeaver offers to download the driver the first time; accept.
-4. **Create the database.** Open an SQL editor on that connection and run: `CREATE DATABASE riverstone;` Then edit the connection so its database is `riverstone`, and reconnect.
-5. **Load the data.** Open `riverstone_setup.sql` from the companion files (Appendix E) and run the whole script (*Execute SQL Script*, not *Execute Statement*). It creates the seven tables and inserts every row shown above.
-6. **Check it worked:** `SELECT COUNT(*) FROM order_items;` should return `19`.
+**1. Install the server.** Download PostgreSQL from the official PostgreSQL website, then follow the steps for your system:
+
+- **Windows.** The website recommends the interactive installer by EDB. Accept the default folders and port `5432`. On the *Select Components* page, untick **Stack Builder** (you won't need it); **pgAdmin**, PostgreSQL's own client, is optional, because you'll use DBeaver. Keep **Command Line Tools** ticked.
+- **macOS.** Use the same EDB installer, or **Postgres.app**, a small app that runs PostgreSQL from the menu bar: drag it to *Applications*, open it, and click *Initialize*.
+- **Linux (Ubuntu or Debian).** These are terminal commands. If you use Linux you've probably used a terminal; if not, Appendix B has the same steps with screenshots, and an online playground (at the end of this section) needs no install at all. `sudo` means "run as administrator", `apt` is Ubuntu's installer, and everything after `#` is a comment for you, not part of the command.
+
+  <!-- run: none -->
+  ```
+  sudo apt update
+  sudo apt install postgresql                 # the server, and the psql client
+  sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'choose-a-password';"
+  ```
+
+  The last line gives the `postgres` user a password, which DBeaver needs. (Ubuntu's own package may be a version or two behind the newest; that's fine for this book.)
+
+During setup you choose a password for the `postgres` user, the database's administrator account. **Write it down** somewhere safe: without it you can't connect.
+
+**2. Install DBeaver Community Edition** from the DBeaver website. It includes everything it needs, so there's nothing else to install.
+
+**3. Connect.** In DBeaver, choose *Database → New Database Connection → PostgreSQL*, and fill in host `localhost`, port `5432`, database `postgres`, user `postgres`, and your password. Click *Test Connection*; DBeaver offers to download the driver the first time, so accept.
+
+**4. Create the database.** Open an SQL editor on that connection (the box "Running your first query in DBeaver", below, shows how) and run:
+
+```sql
+CREATE DATABASE riverstone;
+```
+
+`CREATE DATABASE` makes a new, empty database called `riverstone`; section 12.13 explains it properly. Now point the connection at it: right-click the connection → *Edit Connection* → on the *Main* tab, set *Database* to `riverstone` → *OK*. Then right-click the connection again → *Invalidate/Reconnect* (or *Disconnect*, then *Connect*).
+
+**5. Load the data.** Open `riverstone_setup.sql` from the companion files (Appendix E) and run the whole script with *Execute SQL Script* (not *Execute Statement*; the box below explains the difference). It creates the seven tables and inserts every row shown in section 12.2.
+
+**6. Check it worked.** Run this one-line query. `COUNT(*)` counts rows (section 12.9 teaches it):
+
+```sql
+SELECT COUNT(*) FROM order_items;
+```
+
+```
+ count
+-------
+    19
+(1 row)
+```
+
+In DBeaver you see the same thing as a grid: one column, `count`, holding `19`. Nineteen order lines: the same twelve orders you followed through Chapters 1 to 5.
+
+> **Troubleshooting PostgreSQL.**
+> - **"password authentication failed".** The password doesn't match the one set during installation. If you've lost it on a practice computer with nothing you need in it, the simplest fix is to uninstall PostgreSQL, delete its data folder, and install again; Appendix B shows how to reset it without reinstalling.
+> - **The installer says port 5432 is in use.** Another PostgreSQL is already installed, often an older one. Use that one, or accept the port the installer suggests (such as `5433`) and type the same number in DBeaver.
+> - **"Connection refused".** The server isn't running. On Windows, open *Services*, find the entry that starts with `postgresql`, and click *Start*; with Postgres.app, click *Start*; on Linux, run `sudo systemctl start postgresql`.
 
 ### Option B: MySQL
 
@@ -368,14 +433,16 @@ For both databases you'll use **DBeaver Community Edition** as the client. It's 
 
 - **Windows.** Download the **MSI installer** for Windows (64-bit). If the installer asks for the *Microsoft Visual C++ Redistributable*, install that first; the download page links to it. When the MSI finishes, **MySQL Configurator** opens automatically. Accept the *Development Computer* configuration, keep port `3306`, choose a strong password for the `root` account and write it down, and leave *Configure MySQL Server as a Windows Service* and *Start the MySQL Server at System Startup* ticked. You don't need to create extra user accounts or load the sample databases.
   (Older guides tell you to use "MySQL Installer for Windows". That tool only installs version 8.0 and earlier, so skip it.)
-- **macOS.** Download the **DMG archive** that matches your Mac: *ARM* for Apple silicon (M-series chips), *x86* for older Intel Macs. Open it, run the `.pkg` installer, and set the `root` password when asked. MySQL then appears in *System Settings*, where you can start and stop it and choose whether it starts automatically. The command-line client is installed at `/usr/local/mysql/bin/mysql`.
-- **Linux (Ubuntu or Debian).** Add Oracle's **MySQL APT repository** by downloading its `mysql-apt-config` package from the MySQL downloads page, then run:
+- **macOS.** Download the **DMG archive** that matches your Mac: *ARM* for Apple silicon (M-series chips), *x86* for older Intel Macs. Open it, run the `.pkg` installer, and set the `root` password when asked. MySQL then appears in *System Settings*, where you can start and stop it and choose whether it starts automatically. The command-line client is installed at `/usr/local/mysql/bin/mysql`, for later.
+- **Linux (Ubuntu or Debian).** As for PostgreSQL, these are terminal commands (`sudo`, `apt-get`, and `#` mean the same as above). Add Oracle's **MySQL APT repository** by downloading its `mysql-apt-config` package from the MySQL downloads page, then run:
 
+  <!-- run: none -->
   ```
-  sudo dpkg -i mysql-apt-config_*_all.deb    # choose the 9.7 LTS (or 8.4 LTS) series when asked
-  sudo apt-get update
-  sudo apt-get install mysql-server           # asks you to set the root password
-  systemctl status mysql                      # should show "active (running)"
+  sudo dpkg -i mysql-apt-config_*_all.deb    # installs a downloaded package file;
+                                             # choose the 9.7 LTS (or 8.4 LTS) series when asked
+  sudo apt-get update                        # refreshes the list of available packages
+  sudo apt-get install mysql-server          # asks you to set the root password
+  systemctl status mysql                     # should show "active (running)"
   ```
 
   (Ubuntu's own `apt install mysql-server`, without the Oracle repository, also works but may give you an older series.) Fedora, Red Hat, and similar systems use Oracle's Yum repository in the same way.
@@ -384,23 +451,71 @@ For both databases you'll use **DBeaver Community Edition** as the client. It's 
 
 > **Troubleshooting: "Public Key Retrieval is not allowed".** This is the most common first-connection error with MySQL 8.4 and later. Modern MySQL protects passwords with an authentication method that needs a public key, and the driver won't fetch it unless you allow it. For a server on your own computer, open the connection's *Driver properties* tab, set `allowPublicKeyRetrieval` to `true` (and `useSSL` to `false` if it still complains), and reconnect. Don't copy these settings to a company server; ask the database administrator for the correct secure connection details instead.
 
-**3. Load the data.** Open `riverstone_setup_mysql.sql` from the companion files and run the whole script (*Execute SQL Script*). Unlike the PostgreSQL script, this one **creates the `riverstone` database itself** (`CREATE DATABASE IF NOT EXISTS riverstone; USE riverstone;`), so there's no separate step. Refresh the connection, and `riverstone` appears in the navigator. Double-click it to make it the active database; DBeaver shows the active database in the editor's toolbar.
+**3. Load the data.** Open `riverstone_setup_mysql.sql` from the companion files and run the whole script (*Execute SQL Script*). Unlike the PostgreSQL script, this one **creates the `riverstone` database itself**, so there's no separate step. Refresh the connection, and `riverstone` appears in the navigator. Double-click it to make it the active database; DBeaver shows the active database in the editor's toolbar.
 
-If you prefer the command line, this does the same thing (you'll be asked for the root password):
+> **For later (Chapter 26): loading from the command line.** Once you've met the terminal, one command does the same job, asking for the root password first: `mysql -u root -p < riverstone_setup_mysql.sql`. Until then, DBeaver's *Execute SQL Script* is all you need.
+
+**4. Check it worked.** In MySQL, `USE riverstone;` picks the database that the following statements run in. Run it, then the same count as in PostgreSQL:
+
+```mysql
+USE riverstone;
+SELECT COUNT(*) FROM order_items;
+```
 
 ```
-mysql -u root -p < riverstone_setup_mysql.sql
++----------+
+| COUNT(*) |
++----------+
+|       19 |
++----------+
 ```
 
-**4. Check it worked:** run `USE riverstone;` then `SELECT COUNT(*) FROM order_items;`. It should return `19`, exactly as in PostgreSQL.
+The same 19 lines. MySQL names the column after the expression, `COUNT(*)`, where PostgreSQL wrote `count`.
 
-> **MySQL Workbench, the other client you'll hear about.** Oracle's own free client, **MySQL Workbench**, is common in companies that run MySQL, and many online tutorials use it. It adds visual tools for designing schemas and managing users. It connects the same way (host, port 3306, user, password), and every query in this book runs in it unchanged. Use whichever your team uses; this book's screenshots and tips use DBeaver because it works with both databases.
+> **MySQL Workbench, the other client you'll hear about.** Oracle's own free client, **MySQL Workbench**, is common in companies that run MySQL, and many online tutorials use it. It adds visual tools for designing schemas and managing users. It connects the same way (host, port 3306, user, password), and every query in this book runs in it unchanged. Use whichever your team uses; this book's tips use DBeaver because it works with both databases.
 
 > **Words you'll see during MySQL setup.** A *schema* in MySQL is the same thing as a *database*: `CREATE SCHEMA riverstone` and `CREATE DATABASE riverstone` are identical. (In PostgreSQL a schema is a folder *inside* a database, which is why the two tools use the word differently.) A *collation* is the set of rules for comparing and sorting text, including whether `'delivered'` equals `'Delivered'`. MySQL's default collation ignores capital letters; section 12.16 shows why that matters.
 
-> **Can't install software on your computer?** Online SQL playgrounds let you paste a setup script and practice in a browser; most offer both PostgreSQL and MySQL. Installation steps and screens change over time; Appendix B keeps current, step-by-step instructions for both databases.
+### Optional: the one-year database
 
-> **Try it.** Before reading on, run `SELECT * FROM products;` and confirm you see six rows. If you installed both databases, run it in both. If you do, your laboratory is ready.
+Chapter 13 works on a full year of Riverstone's sales, the same 2025 data as your Chapter 10 and 11 workbooks. You can load it now while the steps are fresh, or wait until Chapter 13:
+
+- **PostgreSQL:** create a second database, `CREATE DATABASE riverstone_2025;`, make a connection to it (as in step 4), and run `riverstone_2025_setup.sql` with *Execute SQL Script*.
+- **MySQL:** run `riverstone_2025_setup_mysql.sql`; like the mini script, it creates its database for you.
+
+On `riverstone_2025`, `SELECT COUNT(*) FROM orders;` returns `175`. Exercise 30 uses it.
+
+> **Running your first query in DBeaver.**
+> 1. Right-click the `riverstone` connection → *SQL Editor* → *New SQL script* (or press **Ctrl+]**; **Cmd+]** on a Mac). An empty editor opens, connected to that database.
+> 2. Type `SELECT 1;`.
+> 3. Put the cursor anywhere in the statement and press **Ctrl+Enter** (**Cmd+Enter** on a Mac). This is *Execute Statement*: it runs the one statement under the cursor. The result grid opens below the editor, with one column (PostgreSQL calls it `?column?`, MySQL `1`) holding the value `1`. The number of rows fetched is shown at the bottom of the grid.
+> 4. **Alt+X** (**Option+X** on a Mac) is *Execute SQL Script*: it runs every statement in the editor, one after another, each result in its own tab. Use it for setup scripts, not for everyday queries.
+> 5. If a statement fails, DBeaver shows the database's error message where the grid would be. Read it: it usually names the problem and the line.
+> 6. Keep several queries in one editor by ending each with `;` and leaving a blank line between them. *Ctrl+Enter* then runs only the one your cursor is in.
+
+> **Can't install software on your computer?** A Chromebook, or a locked work laptop, can stop you here. On a work laptop, ask your IT team: PostgreSQL and DBeaver are commonly approved for learning, and exercise 33 shows how to ask. Meanwhile, online SQL playgrounds let you paste a setup script and practice in a browser; most offer both PostgreSQL and MySQL. Installation steps and screens change over time; Appendix B keeps current, step-by-step instructions for both databases.
+
+> **Try it.** Before reading on, run `SELECT * FROM products;` (the `*` means "every column"; section 12.4 explains it). You should see six rows, one per product. If you installed both databases, run it in both.
+
+```sql
+SELECT * FROM products;
+```
+
+```
+ product_id |    product_name    |  category  | unit_price | unit_cost
+------------+--------------------+------------+------------+-----------
+        101 | Storage Box 10L    | Storage    |     450.00 |    300.00
+        102 | Storage Box 25L    | Storage    |     780.00 |    540.00
+        103 | Water Bottle 1L    | Kitchen    |     120.00 |     70.00
+        104 | Food Container Set | Kitchen    |     650.00 |    430.00
+        105 | Industrial Crate   | Industrial |    1450.00 |   1100.00
+        106 | Garden Chair       | Furniture  |    1200.00 |    850.00
+(6 rows)
+```
+
+If you see these six products, your laboratory is ready.
+
+**Good place to stop.**
 
 ---
 
@@ -416,8 +531,6 @@ SELECT customer_name, city
 FROM customers;
 ```
 
-Read it aloud: *from the customers table, select the name and city.*
-
 ```
      customer_name      |   city
 ------------------------+-----------
@@ -432,6 +545,16 @@ Read it aloud: *from the customers table, select the name and city.*
 (8 rows)
 ```
 
+Read it aloud: *from the customers table, select the name and city.*
+
+> **How results are printed in this book.** Results are shown as text, the way PostgreSQL's command-line client, `psql`, prints them. In DBeaver you'll see the same rows in a grid. Two small differences: the row count ("8 rows") appears at the bottom of DBeaver's grid rather than under the table, and a missing value shows as `[NULL]` where this book shows a blank (Sunrise Caterers' city, above).
+
+A few words you'll meet in every section from now on:
+
+- A **statement** is one complete instruction to the database, ending with `;`. The query above is one statement.
+- A **clause** is one part of a statement that starts with a keyword, such as the `SELECT` clause or the `FROM` clause.
+- An **expression** is anything that works out to a value: a column name, a number such as `1.18`, or a calculation such as `unit_price * 1.18`.
+
 A few rules of the language, learned once:
 
 - **Keywords aren't case-sensitive.** `select`, `SELECT`, and `Select` all work. The convention in this book, and in most teams, is to write keywords in capitals so they stand out.
@@ -442,17 +565,62 @@ A few rules of the language, learned once:
 
 ### SELECT * — every column
 
-`SELECT *` returns all columns:
-
-```sql
-SELECT * FROM products;
-```
+`SELECT *` returns all columns. You've already run one: `SELECT * FROM products;` in section 12.3's "Try it" returned all five columns of the six products.
 
 It's handy for a quick look at an unfamiliar table. In real work, **name your columns**: the query is clearer, it runs faster on wide tables, and it won't silently change when someone adds a column to the table next year.
 
 ### Calculated columns and aliases
 
-`SELECT` can compute new values, not just return stored ones. Suppose Riverstone must quote prices including an 18% tax:
+`SELECT` can compute new values, not just return stored ones. Suppose Riverstone must quote prices including an 18% tax. Start with the calculation on its own:
+
+```sql
+SELECT product_name,
+       unit_price,
+       unit_price * 1.18
+FROM products;
+```
+
+```
+    product_name    | unit_price | ?column?
+--------------------+------------+-----------
+ Storage Box 10L    |     450.00 |  531.0000
+ Storage Box 25L    |     780.00 |  920.4000
+ Water Bottle 1L    |     120.00 |  141.6000
+ Food Container Set |     650.00 |  767.0000
+ Industrial Crate   |    1450.00 | 1711.0000
+ Garden Chair       |    1200.00 | 1416.0000
+(6 rows)
+```
+
+- **`*`** between two values means *multiply*. (On its own after `SELECT` it means "every column"; the position tells the database which you mean.)
+- **`unit_price * 1.18`** is worked out for every row: ₹450 × 1.18 = ₹531. The result is a new column in your *result* only. Nothing stored in the table changes.
+- The heading **`?column?`** is PostgreSQL's way of saying "this column has no name". (MySQL uses the expression itself as the heading.)
+- The extra decimal places appear because `unit_price` has two decimals and `1.18` has two more; multiplying keeps all four.
+
+Give the new column a name with `AS`:
+
+```sql
+SELECT product_name,
+       unit_price,
+       unit_price * 1.18 AS price_incl_tax
+FROM products;
+```
+
+```
+    product_name    | unit_price | price_incl_tax
+--------------------+------------+----------------
+ Storage Box 10L    |     450.00 |       531.0000
+ Storage Box 25L    |     780.00 |       920.4000
+ Water Bottle 1L    |     120.00 |       141.6000
+ Food Container Set |     650.00 |       767.0000
+ Industrial Crate   |    1450.00 |      1711.0000
+ Garden Chair       |    1200.00 |      1416.0000
+(6 rows)
+```
+
+`AS price_incl_tax` gives the calculated column a name, called an **alias**. The values are the same; only the heading changed.
+
+Finally, round the prices to two decimal places:
 
 ```sql
 SELECT product_name,
@@ -473,11 +641,78 @@ FROM products;
 (6 rows)
 ```
 
-`AS price_incl_tax` gives the new column a name, called an **alias**. Without it, the database invents an unhelpful name like `round`. `ROUND(value, 2)` rounds to two decimal places. The calculation doesn't change anything stored in the table; it exists only in your result.
+`ROUND` is a **function**: a named operation, written as its name followed by its inputs in brackets. Each input is called an **argument**, and arguments are separated by commas. `ROUND` takes two here: the value to round (`unit_price * 1.18`) and the number of decimal places (`2`). It's the same idea as `=ROUND(A1,0)` in your spreadsheet (Chapter 10). Section 12.8 shows how `ROUND` settles a value that sits exactly halfway, such as 2.5.
 
 You can use the usual arithmetic operators: `+`, `-`, `*`, `/`.
 
-> **Watch out: integer division.** In PostgreSQL and SQL Server, dividing one whole number by another throws away the remainder: `7 / 2` gives `3`, not `3.5`. When you need a decimal answer, make one side a decimal: `7 / 2.0` or `7 * 1.0 / 2`. This quietly breaks percentage calculations in a lot of beginners' reports. (MySQL does the opposite: `/` always gives a decimal, `3.5000`, and `DIV` gives the whole-number result. Writing `100.0 *` works correctly in all of them.)
+> **Watch out: integer division.** In PostgreSQL and SQL Server, dividing one whole number by another throws away the remainder. When you need a decimal answer, make one side a decimal.
+
+Compare the two:
+
+```sql
+SELECT 7 / 2   AS whole_numbers,
+       7 / 2.0 AS with_a_decimal;
+```
+
+```
+ whole_numbers |   with_a_decimal
+---------------+--------------------
+             3 | 3.5000000000000000
+(1 row)
+```
+
+`7 / 2` gives `3`, not `3.5`. Writing `7 / 2.0` (or `7 * 1.0 / 2`) makes one side a decimal, and the answer keeps its fraction. A `SELECT` with no `FROM` simply calculates and shows one row. This quietly breaks percentage calculations in a lot of beginners' reports. (MySQL does the opposite: `/` always gives a decimal, `3.5000`, and `DIV` gives the whole-number result. Writing `100.0 *` works correctly in all of them.)
+
+
+---
+
+## 12.5 ORDER BY and LIMIT: sorting, top-N, and unique values
+
+Rows in a table have **no guaranteed order**. If you don't sort, the database returns rows in whatever order is fastest for it that day, and that order can change. Any time order matters, say so with `ORDER BY`.
+
+```sql
+SELECT customer_name, segment, signup_date
+FROM customers
+ORDER BY segment ASC, signup_date DESC;
+```
+
+```
+     customer_name      |   segment   | signup_date
+------------------------+-------------+-------------
+ Blue Bay Cafe          | Hospitality | 2026-03-01
+ Sunrise Caterers       | Hospitality | 2026-02-03
+ Green Leaf Hotels      | Hospitality | 2026-01-08
+ Metro Mart             | Retail      | 2026-01-22
+ Patel Kitchenware      | Retail      | 2025-12-15
+ Sharma Hardware        | Retail      | 2025-11-04
+ Northgate Distributors | Wholesale   | 2026-02-17
+ Coastal Foods          | Wholesale   | 2025-10-20
+(8 rows)
+```
+
+Sorting by several columns works like sorting a phone book: first by segment A→Z (`ASC`, ascending, the default), then *within* each segment by newest signup first (`DESC`, descending).
+
+`LIMIT` keeps only the first *n* rows. Combined with `ORDER BY`, it answers "top-N" questions:
+
+```sql
+SELECT product_name, unit_price
+FROM products
+ORDER BY unit_price DESC
+LIMIT 3;
+```
+
+```
+   product_name   | unit_price
+------------------+------------
+ Industrial Crate |    1450.00
+ Garden Chair     |    1200.00
+ Storage Box 25L  |     780.00
+(3 rows)
+```
+
+> **Dialect note.** `LIMIT 3` works in PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. SQL Server uses `SELECT TOP 3 ...`; the SQL standard (and Oracle) uses `FETCH FIRST 3 ROWS ONLY`.
+
+> **Watch out: ties.** If two products shared the third-highest price, `LIMIT 3` would return one of them arbitrarily. "Top 3 with ties" is a real business requirement and a favorite interview follow-up; Chapter 13 solves it properly with `RANK()`.
 
 ### DISTINCT — unique values only
 
@@ -501,11 +736,13 @@ ORDER BY city;
 (6 rows)
 ```
 
-`DISTINCT` removes duplicate rows from the result: Mumbai and Pune each appear once. Notice the blank sixth row: Sunrise Caterers' missing city counts as a value of its own. More on that in section 12.6.
+`DISTINCT` removes duplicate rows from the result: Mumbai and Pune each appear once. That empty-looking sixth row is Sunrise Caterers' missing city. Databases mark a missing value as `NULL` (DBeaver shows it as `[NULL]`); section 12.7 is all about it.
+
+> **Dialect note: where NULLs sort.** PostgreSQL and Oracle put NULLs *last* in ascending order, as above; MySQL and SQL Server put them *first*. Once you've met `NULL` (section 12.7), you can control this explicitly: `ORDER BY city NULLS LAST` in PostgreSQL and Oracle. MySQL and SQL Server don't support `NULLS LAST`; section 12.16 shows the MySQL way.
 
 ---
 
-## 12.5 WHERE: keeping only the rows you want
+## 12.6 WHERE: keeping only the rows you want
 
 `WHERE` is a filter. The database checks the condition against each row and keeps only the rows where it's **true**.
 
@@ -538,7 +775,7 @@ WHERE status = 'Delivered';
 | `>` `<` | greater / less than | `unit_price > 500` |
 | `>=` `<=` | greater / less than or equal | `order_date >= '2026-02-01'` |
 
-> **Watch out: text comparisons may be case-sensitive.** In PostgreSQL, `'delivered'` does not equal `'Delivered'`. Other databases may ignore case depending on settings. When you're unsure how a column was typed in, compare in a consistent case: `WHERE LOWER(status) = 'delivered'`.
+> **Watch out: text comparisons may be case-sensitive.** In PostgreSQL, `'delivered'` does not equal `'Delivered'`. Other databases may ignore case depending on settings. When you're unsure how a column was typed in, compare in a consistent case: `WHERE LOWER(status) = 'delivered'`. `LOWER()` turns text into lower case, so `'Delivered'` becomes `'delivered'` before the comparison (section 12.8 has the other text functions).
 
 ### Combining conditions: AND, OR, NOT
 
@@ -590,8 +827,54 @@ WHERE (segment = 'Retail' OR segment = 'Wholesale')
 
 Three shortcuts make filters easier to read.
 
-**`IN`** matches any value in a list; it replaces a chain of `OR`s.
-**`BETWEEN`** matches a range, and it **includes both ends**.
+**`BETWEEN`** matches a range, and it **includes both ends**. *Which orders were placed in February?*
+
+```sql
+SELECT order_id, order_date
+FROM orders
+WHERE order_date BETWEEN '2026-02-01' AND '2026-02-28';
+```
+
+```
+ order_id | order_date
+----------+------------
+     5005 | 2026-02-02
+     5006 | 2026-02-06
+     5007 | 2026-02-11
+     5008 | 2026-02-19
+     5009 | 2026-02-25
+(5 rows)
+```
+
+`'2026-02-01'` is text in quotes, but because `order_date` is a `DATE` column, the database reads it as a date: 1 February 2026.
+
+**`IN`** matches any value in a list; it replaces a chain of `OR`s. *Which orders are Delivered or Shipped?*
+
+```sql
+SELECT order_id, status
+FROM orders
+WHERE status IN ('Delivered', 'Shipped');
+```
+
+```
+ order_id |  status
+----------+-----------
+     5001 | Delivered
+     5002 | Delivered
+     5003 | Delivered
+     5005 | Delivered
+     5006 | Delivered
+     5007 | Delivered
+     5008 | Delivered
+     5009 | Shipped
+     5010 | Delivered
+     5011 | Shipped
+(10 rows)
+```
+
+`status IN ('Delivered', 'Shipped')` means exactly the same as `status = 'Delivered' OR status = 'Shipped'`, only shorter. The cancelled and pending orders are left out.
+
+Now combine the two with `AND`: February orders that are Delivered or Shipped.
 
 ```sql
 SELECT order_id, order_date, status
@@ -611,7 +894,30 @@ WHERE order_date BETWEEN '2026-02-01' AND '2026-02-28'
 (5 rows)
 ```
 
-> **Watch out: BETWEEN with timestamps.** On a `DATE` column, `BETWEEN '2026-02-01' AND '2026-02-28'` is fine. On a `TIMESTAMP` column, `'2026-02-28'` means midnight at the *start* of 28 February, so every order placed later that day is silently dropped. The safe habit for any date range is a half-open range: `order_date >= '2026-02-01' AND order_date < '2026-03-01'`. It works for dates and timestamps, and for February in leap years.
+All five February orders were Delivered or Shipped, so the second filter removed nothing here. That's worth noticing: a filter that removes nothing today may matter next month.
+
+> **Watch out: BETWEEN with timestamps.** On a `DATE` column, `BETWEEN '2026-02-01' AND '2026-02-28'` is fine. On a `TIMESTAMP` column, `'2026-02-28'` means midnight at the *start* of 28 February, so every order placed later that day is silently dropped. The safe habit for any date range is a **half-open range**: from the first day, up to but *not including* the first day of the next period. It works for dates and timestamps, and for February in leap years:
+
+```sql
+SELECT order_id, order_date, status
+FROM orders
+WHERE order_date >= '2026-02-01'
+  AND order_date <  '2026-03-01'
+  AND status IN ('Delivered', 'Shipped');
+```
+
+```
+ order_id | order_date |  status
+----------+------------+-----------
+     5005 | 2026-02-02 | Delivered
+     5006 | 2026-02-06 | Delivered
+     5007 | 2026-02-11 | Delivered
+     5008 | 2026-02-19 | Delivered
+     5009 | 2026-02-25 | Shipped
+(5 rows)
+```
+
+The same five orders. Chapter 11 filtered a month with `SUMIFS` criteria `">="` the first day and `"<="` the last day; the half-open range does the same job without having to know how many days the month has.
 
 **`LIKE`** matches text patterns. `%` stands for "any number of characters (including none)" and `_` for "exactly one character".
 
@@ -644,6 +950,36 @@ WHERE product_name LIKE 'Storage%';
 
 Riverstone's finance manager asks: *"Which products earn less than 30% gross margin at list price?"* **Gross margin** is the share of the selling price left after paying for the product: (price − cost) ÷ price.
 
+Build it in two steps. First, calculate the margin for every product, with no filter, so you can see all six:
+
+```sql
+SELECT product_name,
+       unit_price,
+       unit_cost,
+       ROUND(100.0 * (unit_price - unit_cost) / unit_price, 1) AS margin_pct
+FROM products
+ORDER BY margin_pct;
+```
+
+```
+    product_name    | unit_price | unit_cost | margin_pct
+--------------------+------------+-----------+------------
+ Industrial Crate   |    1450.00 |   1100.00 |       24.1
+ Garden Chair       |    1200.00 |    850.00 |       29.2
+ Storage Box 25L    |     780.00 |    540.00 |       30.8
+ Storage Box 10L    |     450.00 |    300.00 |       33.3
+ Food Container Set |     650.00 |    430.00 |       33.8
+ Water Bottle 1L    |     120.00 |     70.00 |       41.7
+(6 rows)
+```
+
+- **`(unit_price - unit_cost) / unit_price`** is the margin as a fraction, such as 0.241. Brackets work as in arithmetic: the subtraction happens first.
+- **`100.0 *`** turns the fraction into a percentage. Here both columns are `NUMERIC`, so plain `100` would work too; writing `100.0` is a habit that protects you when the columns are whole numbers (the integer-division Watch out in section 12.4).
+- **`ROUND(…, 1)`** keeps one decimal place, and **`AS margin_pct`** names the result.
+- **`ORDER BY margin_pct`** puts the weakest product first. `ORDER BY` *can* use the alias; section 12.11 explains why.
+
+Now add the filter:
+
 ```sql
 SELECT product_name,
        unit_price,
@@ -662,16 +998,13 @@ ORDER BY margin_pct;
 (2 rows)
 ```
 
-How it works, line by line:
-
-- **`SELECT … margin_pct`** calculates the margin for display, as a percentage rounded to one decimal. Multiplying by `100.0` rather than `100` keeps the maths in decimals.
 - **`WHERE (unit_price - unit_cost) / unit_price < 0.30`** filters on a *calculation*, not a stored column. `WHERE` can test any expression.
 - Notice the `WHERE` repeats the formula instead of writing `WHERE margin_pct < 30`. That's not laziness: the alias `margin_pct` doesn't exist yet when `WHERE` runs. Section 12.11 explains why.
-- **`ORDER BY margin_pct`** puts the weakest product first, and `ORDER BY` *can* use the alias.
+- The two rows are exactly the two below 30 in the first result. Running the unfiltered version first let you check the filter by eye.
 
-Check one row by hand: the crate sells for ₹1,450 and costs ₹1,100, leaving ₹350, and 350 ÷ 1,450 = 24.1%. ✓ Keep this result in mind. In section 12.9 you'll find that the Industrial Crate is also Riverstone's biggest seller, which makes its thin margin a much bigger story.
+Check one row by hand: the crate sells for ₹1,450 and costs ₹1,100, leaving ₹350, and 350 ÷ 1,450 = 24.1%. ✓ Keep this result in mind. In section 12.10 you'll find that the Industrial Crate is also Riverstone's biggest seller, which makes its thin margin a much bigger story.
 
-## 12.6 NULL: the value that isn't there
+## 12.7 NULL: the value that isn't there
 
 Sunrise Caterers has no city. The cell isn't an empty string or a zero; it holds **`NULL`**, SQL's marker for *"unknown or missing"*. NULL causes more wrong reports than any other single thing in SQL, so it gets its own section.
 
@@ -732,8 +1065,24 @@ WHERE city <> 'Mumbai';
 Eight customers, two in Mumbai, and only five came back. **Sunrise Caterers vanished**, because "unknown is not Mumbai" is UNKNOWN, not TRUE. If NULLs should be included, say so explicitly:
 
 ```sql
-WHERE city <> 'Mumbai' OR city IS NULL
+SELECT customer_name, city
+FROM customers
+WHERE city <> 'Mumbai' OR city IS NULL;
 ```
+
+```
+     customer_name      |   city
+------------------------+-----------
+ Patel Kitchenware      | Ahmedabad
+ Green Leaf Hotels      | Pune
+ Coastal Foods          | Chennai
+ Sunrise Caterers       |
+ Northgate Distributors | Delhi
+ Blue Bay Cafe          | Pune
+(6 rows)
+```
+
+Sunrise Caterers is back: six customers, the eight minus the two in Mumbai. With only `OR` in the condition, no brackets are needed. The moment you add an `AND` (say, `AND segment = 'Retail'`), bracket the `OR` part, as section 12.6 showed.
 
 > **Real-life example: unknown is not zero.** Imagine a blank "discount" box on an order form. It could mean *no discount was given*, or *nobody wrote the discount down*. Those are different facts, and a database keeps them apart: `0` means none; `NULL` means unknown. Riverstone's order 5008 has no sales rep. That doesn't mean nobody sold it; it means the record is incomplete. A report that silently drops it loses ₹23,325 of revenue (you'll meet that exact trap in exercise 6).
 
@@ -766,67 +1115,17 @@ ORDER BY customer_id;
 
 ### NULL in arithmetic
 
-Any arithmetic involving NULL gives NULL: `5 + NULL` is NULL. If one order line has a missing discount and you compute `quantity * unit_price * (1 - discount_pct / 100)`, that line's revenue becomes NULL. Section 12.8 shows that `SUM` then skips it, so your total is quietly too low. Where a missing number really means zero, write `COALESCE(discount_pct, 0)`. Where it doesn't, the data needs fixing, and Chapter 14 covers how.
+Any arithmetic involving NULL gives NULL: `5 + NULL` is NULL. If one order line has a missing discount and you compute `quantity * unit_price * (1 - discount_pct / 100)`, that line's revenue becomes NULL. Section 12.9 shows that `SUM` then skips it, so your total is quietly too low. Where a missing number really means zero, write `COALESCE(discount_pct, 0)`. Where it doesn't, the data needs fixing, and Chapter 14 covers how.
 
 > **NULL rules to memorize**
 > 1. Test with `IS NULL` / `IS NOT NULL`, never `= NULL`.
 > 2. `WHERE col <> 'x'` silently drops rows where `col` is NULL.
 > 3. Arithmetic with NULL gives NULL.
-> 4. Aggregate functions (except `COUNT(*)`) ignore NULLs (section 12.8).
+> 4. Aggregate functions (except `COUNT(*)`) ignore NULLs (section 12.9).
 > 5. `DISTINCT` and `GROUP BY` treat all NULLs as one group.
 > 6. Before trusting any filter on a column, ask: *can this column be NULL?*
 
----
-
-## 12.7 ORDER BY and LIMIT: sorting and top-N
-
-Rows in a table have **no guaranteed order**. If you don't sort, the database returns rows in whatever order is fastest for it that day, and that order can change. Any time order matters, say so with `ORDER BY`.
-
-```sql
-SELECT customer_name, segment, signup_date
-FROM customers
-ORDER BY segment ASC, signup_date DESC;
-```
-
-```
-     customer_name      |   segment   | signup_date
-------------------------+-------------+-------------
- Blue Bay Cafe          | Hospitality | 2026-03-01
- Sunrise Caterers       | Hospitality | 2026-02-03
- Green Leaf Hotels      | Hospitality | 2026-01-08
- Metro Mart             | Retail      | 2026-01-22
- Patel Kitchenware      | Retail      | 2025-12-15
- Sharma Hardware        | Retail      | 2025-11-04
- Northgate Distributors | Wholesale   | 2026-02-17
- Coastal Foods          | Wholesale   | 2025-10-20
-(8 rows)
-```
-
-Sorting by several columns works like sorting a phone book: first by segment A→Z (`ASC`, ascending, the default), then *within* each segment by newest signup first (`DESC`, descending).
-
-`LIMIT` keeps only the first *n* rows. Combined with `ORDER BY`, it answers "top-N" questions:
-
-```sql
-SELECT product_name, unit_price
-FROM products
-ORDER BY unit_price DESC
-LIMIT 3;
-```
-
-```
-   product_name   | unit_price
-------------------+------------
- Industrial Crate |    1450.00
- Garden Chair     |    1200.00
- Storage Box 25L  |     780.00
-(3 rows)
-```
-
-> **Dialect note.** `LIMIT 3` works in PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. SQL Server uses `SELECT TOP 3 ...`; the SQL standard (and Oracle) uses `FETCH FIRST 3 ROWS ONLY`.
-
-> **Watch out: ties.** If two products shared the third-highest price, `LIMIT 3` would return one of them arbitrarily. "Top 3 with ties" is a real business requirement and a favorite interview follow-up; Chapter 13 solves it properly with `RANK()`.
-
-> **Dialect note: where NULLs sort.** PostgreSQL and Oracle put NULLs *last* in ascending order; MySQL and SQL Server put them *first*. Control it explicitly with `ORDER BY city NULLS LAST` in PostgreSQL and Oracle. MySQL and SQL Server don't support `NULLS LAST`; there, sort on a NULL test first: `ORDER BY city IS NULL, city` in MySQL (section 12.16).
+**Good place to stop.**
 
 ---
 
@@ -834,7 +1133,7 @@ LIMIT 3;
 
 ### CASE: if-then logic inside a query
 
-`CASE` works like the spreadsheet `IF` function from Chapter 10, but it can check many conditions in order. Riverstone's pricing team wants each product labeled by price band:
+`CASE` works like the spreadsheet `IF` function from Chapter 10, and like `IFS` from Chapter 11: it can check many conditions in order. Riverstone's pricing team wants each product labeled by price band:
 
 ```sql
 SELECT product_name,
@@ -863,6 +1162,112 @@ ORDER BY unit_price;
 `CASE` checks each `WHEN` from top to bottom and **stops at the first match**. The Industrial Crate is also ≥ 500, but it matched `>= 1000` first. That's why the order of conditions matters: put the most specific ones first. If nothing matches and there's no `ELSE`, the result is NULL.
 
 `CASE` is one of the most useful tools you'll learn. You'll use it to group messy categories, build flags (`CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END`), and, combined with aggregates in the next section, to pivot data into columns.
+
+### Working with dates
+
+Business questions are full of time: *this month*, *last quarter*, *same period last year*. Two PostgreSQL functions do most of the work:
+
+- `EXTRACT(part FROM date)` pulls out one part: `YEAR`, `QUARTER`, `MONTH`, `DAY`, `DOW` (day of week).
+- `DATE_TRUNC('month', date)` rounds a date *down* to the start of its month (or `'week'`, `'quarter'`, `'year'`). This is the standard way to group by month.
+
+```sql
+SELECT order_id,
+       order_date,
+       EXTRACT(MONTH FROM order_date)        AS month_no,
+       DATE_TRUNC('month', order_date)::date AS order_month
+FROM orders
+WHERE order_id <= 5004;
+```
+
+```
+ order_id | order_date | month_no | order_month
+----------+------------+----------+-------------
+     5001 | 2026-01-05 |        1 | 2026-01-01
+     5002 | 2026-01-09 |        1 | 2026-01-01
+     5003 | 2026-01-14 |        1 | 2026-01-01
+     5004 | 2026-01-20 |        1 | 2026-01-01
+(4 rows)
+```
+
+Why prefer `DATE_TRUNC` over `EXTRACT(MONTH ...)` for grouping? Because month number `1` means January of *every* year. Once your data covers more than twelve months, grouping by month number merges January 2026 with January 2027. `DATE_TRUNC` keeps the year.
+
+The `::date` is PostgreSQL shorthand for **casting** (converting) a value to another type; the standard form is `CAST(value AS DATE)`. `DATE_TRUNC` returns a date *and time* (midnight), so `::date` keeps only the date part.
+
+You can also write a fixed date straight into a query, and subtract one date from another:
+
+```sql
+SELECT DATE '2026-03-31' - DATE '2026-02-05' AS days;
+```
+
+```
+ days
+------
+   54
+(1 row)
+```
+
+- **`DATE '2026-03-31'`** is a **date literal**: the word `DATE` followed by the date in quotes, written year-month-day. It tells the database "this text is a date", even where there's no date column to compare it with.
+- **Subtracting two dates** gives the number of days between them: 54 days from 5 February to 31 March.
+
+> **Dialect note.** Date functions are where databases differ most. MySQL uses `DATE_FORMAT(order_date, '%Y-%m-01')` or `YEAR()`/`MONTH()` instead of `DATE_TRUNC`, and `DATEDIFF(later, earlier)` to count days. **Never subtract dates with `-` in MySQL**: it doesn't raise an error, it returns a meaningless number (section 12.16 shows the trap); SQL Server uses `DATETRUNC(month, order_date)` in recent versions and `DATEFROMPARTS(YEAR(d), MONTH(d), 1)` in older ones; BigQuery uses `DATE_TRUNC(order_date, MONTH)`. The idea transfers; check your database's documentation for the spelling.
+
+### Casting, and two number traps
+
+Casting lets you see, in SQL, two number traps that trip up reports. The first is the one from section 12.1's "money and decimals" Watch out. `double precision` is PostgreSQL's floating-point type:
+
+```sql
+SELECT 0.1 + 0.2                                   AS exact_numeric,
+       0.1::double precision + 0.2::double precision AS floating;
+```
+
+```
+ exact_numeric |      floating
+---------------+---------------------
+           0.3 | 0.30000000000000004
+(1 row)
+```
+
+`0.1` typed on its own is `NUMERIC`, an exact decimal, so the sum is exactly `0.3`. Cast to `double precision`, each number is stored as a close binary approximation (Chapter 2, section 2.1), and the tiny errors show up in the sum. That's why money never goes in a floating-point column.
+
+> **Watch out: how ROUND breaks ties.** What does rounding 2.5 to a whole number give? It depends on the number's type:
+
+```sql
+SELECT ROUND(2.5)                   AS exact_half,
+       ROUND(3.5)                   AS exact_three_half,
+       ROUND(2.5::double precision) AS float_half,
+       ROUND(3.5::double precision) AS float_three_half;
+```
+
+```
+ exact_half | exact_three_half | float_half | float_three_half
+------------+------------------+------------+------------------
+          3 |                4 |          2 |                4
+(1 row)
+```
+
+MySQL gives the same four answers. There, `2.5E0` (scientific notation: 2.5 × 10⁰) is how you write a floating-point number:
+
+```mysql
+SELECT ROUND(2.5)   AS exact_half,
+       ROUND(3.5)   AS exact_three_half,
+       ROUND(2.5E0) AS float_half,
+       ROUND(3.5E0) AS float_three_half;
+```
+
+```
++------------+------------------+------------+------------------+
+| exact_half | exact_three_half | float_half | float_three_half |
++------------+------------------+------------+------------------+
+|          3 |                4 |          2 |                4 |
++------------+------------------+------------+------------------+
+```
+
+So 2.5 rounds to 3 as an exact decimal and to 2 as a floating-point number. Neither database is broken; each manual says exactly what to expect:
+
+- **The PostgreSQL manual** (`round`): *"For `numeric`, ties are broken by rounding away from zero. For `double precision`, the tie-breaking behavior is platform dependent, but 'round to nearest even' is the most common rule."*
+- **The MySQL manual** (*Rounding Behavior*): exact-value numbers use the "round half up" rule, which moves a .5 away from zero; *"For approximate-value numbers, the result depends on the C library. On many systems, this means that `ROUND()` uses the 'round to nearest even' rule."*
+
+Rounding a half to the nearest even number is called **banker's rounding**. Your spreadsheet's `ROUND` (Chapter 10) rounds halves away from zero, like `NUMERIC`. Riverstone's money columns are `NUMERIC` (`DECIMAL` in MySQL), so ties round away from zero: that's why ₹124.425 becomes ₹124.43 in section 12.13, and another reason money never goes in a floating-point column. Chapter 17 shows how Python rounds the same values.
 
 ### Real-life example: which invoices are overdue?
 
@@ -899,43 +1304,11 @@ ORDER BY due_date;
 
 How it works:
 
-- **`DATE '2026-03-31'`** writes a fixed date directly into the query. Subtracting two dates gives the number of days between them. In a live report you'd use `CURRENT_DATE` (today) instead; a fixed date is used here so your results match the book.
+- **`DATE '2026-03-31'`** is the date literal from "Working with dates", and `DATE '2026-03-31' - due_date` counts the days from each due date to 31 March. In a live report you'd use `CURRENT_DATE` (today) instead; a fixed date is used here so your results match the book.
 - The `WHEN` conditions are checked **top to bottom**. An invoice 45 days late fails the first two tests and matches the third. Because the first match wins, each condition only has to handle what the earlier ones didn't.
 - Grouping amounts into bands like 1–30, 31–60, and 60+ days is called **ageing**, and an ageing report is one of the most common reports in finance.
 
 Now look closely at invoice 9001: *Overdue 31-60 days*. But Sharma Hardware paid it in full on 2 February. **This query is wrong for the business**, even though the SQL is perfect. It knows due dates but not payments. A real overdue report must also look at the `payments` table, and building it properly is the main event of section 12.15. It's a lesson worth learning early: **a technically correct query can still give the wrong business answer if it ignores data that changes the answer.**
-
-### Working with dates
-
-Business questions are full of time: *this month*, *last quarter*, *same period last year*. Two PostgreSQL functions do most of the work:
-
-- `EXTRACT(part FROM date)` pulls out one part: `YEAR`, `MONTH`, `DAY`, `DOW` (day of week).
-- `DATE_TRUNC('month', date)` rounds a date *down* to the start of its month (or `'week'`, `'quarter'`, `'year'`). This is the standard way to group by month.
-
-```sql
-SELECT order_id,
-       order_date,
-       EXTRACT(MONTH FROM order_date)        AS month_no,
-       DATE_TRUNC('month', order_date)::date AS order_month
-FROM orders
-WHERE order_id <= 5004;
-```
-
-```
- order_id | order_date | month_no | order_month
-----------+------------+----------+-------------
-     5001 | 2026-01-05 |        1 | 2026-01-01
-     5002 | 2026-01-09 |        1 | 2026-01-01
-     5003 | 2026-01-14 |        1 | 2026-01-01
-     5004 | 2026-01-20 |        1 | 2026-01-01
-(4 rows)
-```
-
-Why prefer `DATE_TRUNC` over `EXTRACT(MONTH ...)` for grouping? Because month number `1` means January of *every* year. Once your data covers more than twelve months, grouping by month number merges January 2026 with January 2027. `DATE_TRUNC` keeps the year.
-
-The `::date` is PostgreSQL shorthand for **casting** (converting) a value to another type; the standard form is `CAST(value AS DATE)`. You can also subtract dates: `DATE '2026-03-10' - DATE '2026-01-05'` returns `64`, the number of days between them.
-
-> **Dialect note.** Date functions are where databases differ most. MySQL uses `DATE_FORMAT(order_date, '%Y-%m-01')` or `YEAR()`/`MONTH()` instead of `DATE_TRUNC`, and `DATEDIFF(later, earlier)` to count days. **Never subtract dates with `-` in MySQL**: it doesn't raise an error, it returns a meaningless number (section 12.16 shows the trap); SQL Server uses `DATETRUNC(month, order_date)` in recent versions and `DATEFROMPARTS(YEAR(d), MONTH(d), 1)` in older ones; BigQuery uses `DATE_TRUNC(order_date, MONTH)`. The idea transfers; check your database's documentation for the spelling.
 
 ### Working with text
 
@@ -946,11 +1319,58 @@ A handful of text functions cover most cleaning and display work:
 | `UPPER(s)` / `LOWER(s)` | change case | `UPPER('pune')` → `PUNE` |
 | `TRIM(s)` | remove spaces at both ends | `TRIM('  Pune ')` → `Pune` |
 | `LENGTH(s)` | count characters | `LENGTH('Pune')` → `4` |
-| `SUBSTRING(s FROM 1 FOR 3)` | take part of a string | → `Pun` |
+| `SUBSTRING(s FROM 1 FOR 3)` | take part of a string | `SUBSTRING('Pune' FROM 1 FOR 3)` → `Pun` |
 | `REPLACE(s, 'a', 'b')` | swap text | `REPLACE('Box 10L', 'L', ' litre')` → `Box 10 litre` |
-| `s1 \|\| s2` or `CONCAT(s1, s2)` | join text together | `'Riverstone' \|\| ' Supplies'` (in MySQL use `CONCAT`; there `\|\|` means OR) |
+| `s1 \|\| s2` or `CONCAT(s1, s2)` | join text together | `'Riverstone' \|\| ' Supplies'` → `Riverstone Supplies` (in MySQL use `CONCAT`; there `\|\|` means OR) |
+
+Here are four of them on real rows:
+
+```sql
+SELECT customer_name,
+       UPPER(city)                              AS city_upper,
+       LENGTH(customer_name)                    AS name_length,
+       SUBSTRING(customer_name FROM 1 FOR 3)    AS short_code,
+       customer_name || ' (' || segment || ')'  AS label
+FROM customers
+ORDER BY customer_id
+LIMIT 3;
+```
+
+```
+   customer_name   | city_upper | name_length | short_code |              label
+-------------------+------------+-------------+------------+---------------------------------
+ Sharma Hardware   | MUMBAI     |          15 | Sha        | Sharma Hardware (Retail)
+ Patel Kitchenware | AHMEDABAD  |          17 | Pat        | Patel Kitchenware (Retail)
+ Green Leaf Hotels | PUNE       |          17 | Gre        | Green Leaf Hotels (Hospitality)
+(3 rows)
+```
+
+- `LENGTH` counts the space too: "Sharma Hardware" is 15 characters.
+- `SUBSTRING(customer_name FROM 1 FOR 3)` starts at character 1 and takes 3.
+- `||` joins five pieces: the name, the text `' ('`, the segment, and `')'`.
+
+Now the same functions on Sunrise Caterers, whose city is missing:
+
+```sql
+SELECT customer_name,
+       UPPER(city)                              AS city_upper,
+       customer_name || ' (' || city || ')'     AS with_pipes,
+       CONCAT(customer_name, ' (', city, ')')   AS with_concat
+FROM customers
+WHERE customer_id = 6;
+```
+
+```
+  customer_name   | city_upper | with_pipes |     with_concat
+------------------+------------+------------+---------------------
+ Sunrise Caterers |            |            | Sunrise Caterers ()
+(1 row)
+```
+
+`UPPER` of a missing city is still missing, and `||` with a NULL gives NULL for the whole label, just like arithmetic with NULL (section 12.7). `CONCAT` skips NULLs in PostgreSQL, so it keeps the name. (MySQL's `CONCAT` returns NULL instead; see exercise 21.)
 
 You'll use these heavily in Chapter 14, where real-world text is full of extra spaces, inconsistent capitals, and typos.
+
 
 ---
 
@@ -970,6 +1390,25 @@ An **aggregate function** takes many values and returns one:
 | `SUM(column)` | total |
 | `AVG(column)` | average (mean) of non-NULL values |
 | `MIN(column)` / `MAX(column)` | smallest / largest; also works on dates and text |
+
+Four of them on the invoices table:
+
+```sql
+SELECT SUM(amount)       AS invoiced,
+       AVG(amount)       AS avg_invoice,
+       MIN(invoice_date) AS first_invoice,
+       MAX(invoice_date) AS last_invoice
+FROM invoices;
+```
+
+```
+ invoiced  |    avg_invoice     | first_invoice | last_invoice
+-----------+--------------------+---------------+--------------
+ 297710.00 | 29771.000000000000 | 2026-01-06    | 2026-03-11
+(1 row)
+```
+
+The ten invoices come to ₹2,97,710, an average of ₹29,771 each; the first was raised on 6 January and the last on 11 March. Each function collapsed ten rows into one value. The long run of zeros after the average is PostgreSQL keeping extra decimal places after a division; wrap it in `ROUND(AVG(amount), 2)` for a report.
 
 The three flavors of `COUNT` answer different questions, and mixing them up is a classic error:
 
@@ -991,7 +1430,70 @@ FROM orders;
 - 11 have a sales rep; order 5008's NULL rep was skipped.
 - They came from 7 different customers; Sharma Hardware's three orders count once, and Blue Bay Cafe has none.
 
-> **Watch out: AVG ignores NULLs.** If three products have ratings 4, 5, and NULL, `AVG(rating)` is 4.5, the average of the two known ratings, not 3 (as if the missing one were zero). Usually that's what you want. Sometimes it isn't. Decide deliberately.
+> **Back to Chapter 11.** Exercise 10 there counted 326 order lines but 173 distinct orders in the 2025 data. That's this same trap: `COUNT(*)` counts rows, `COUNT(DISTINCT order_id)` counts orders.
+
+`COUNT(column)` skipping NULLs is easy to see on the customers table, where one city is missing:
+
+```sql
+SELECT COUNT(*)    AS customers,
+       COUNT(city) AS with_city
+FROM customers;
+```
+
+```
+ customers | with_city
+-----------+-----------
+         8 |         7
+(1 row)
+```
+
+Eight customers, but only seven cities to count: Sunrise Caterers' NULL was skipped.
+
+> **Watch out: AVG ignores NULLs too.** If three products had ratings 4, 5, and NULL, `AVG(rating)` would be 4.5, the average of the two known ratings, not 3 (as if the missing one were zero). Usually that's what you want. Sometimes it isn't. Decide deliberately.
+
+Now the most important calculation in this chapter: **revenue**. Each order line's net revenue is quantity × price charged × (1 − discount). Before adding anything up, look at the formula on a few lines:
+
+```sql
+SELECT order_id,
+       quantity,
+       unit_price,
+       discount_pct,
+       quantity * unit_price * (1 - discount_pct / 100) AS line_revenue
+FROM order_items
+WHERE order_id IN (5001, 5002);
+```
+
+```
+ order_id | quantity | unit_price | discount_pct |         line_revenue
+----------+----------+------------+--------------+------------------------------
+     5001 |       20 |     450.00 |         0.00 |  9000.0000000000000000000000
+     5001 |       50 |     120.00 |         5.00 |  5700.0000000000000000000000
+     5002 |       40 |    1450.00 |        10.00 | 52200.0000000000000000000000
+     5002 |       30 |     780.00 |        10.00 | 21060.0000000000000000000000
+(4 rows)
+```
+
+- **`discount_pct / 100`** turns a percentage into a fraction: 5.00 becomes 0.05.
+- **`1 - discount_pct / 100`** is the share the customer actually pays: 0.95 for a 5% discount.
+- **`quantity * unit_price * …`** multiplies it out: 50 × ₹120 × 0.95 = ₹5,700.
+- `discount_pct` is `NUMERIC`, so `/ 100` keeps its decimals. If it were a whole-number `INTEGER` column, `5 / 100` would be 0 (integer division, section 12.4), and every discount would silently vanish.
+- The long tail of zeros is again PostgreSQL keeping decimal places; `ROUND` tidies it in a moment.
+
+Put the formula inside `SUM`, and one query adds up every line in the table:
+
+```sql
+SELECT ROUND(SUM(quantity * unit_price * (1 - discount_pct / 100)), 0) AS net_revenue_all_lines
+FROM order_items;
+```
+
+```
+ net_revenue_all_lines
+-----------------------
+                335930
+(1 row)
+```
+
+An aggregate can work on any expression, not only a column. But this total includes the cancelled order 5004 (₹12,000), which shouldn't count as revenue. The status lives in the `orders` table, not in `order_items`, so leaving it out needs both tables at once, which is what joins are for (next section).
 
 ### GROUP BY: one summary row per group
 
@@ -1015,9 +1517,33 @@ ORDER BY num_orders DESC, status;
 (4 rows)
 ```
 
-Picture what the database does: it sorts the twelve orders into piles by status, then counts each pile. If you built pivot tables in Chapter 11, this is the same idea: `GROUP BY` is the pivot table's "Rows" area, and the aggregate is its "Values" area.
+Picture what the database does: it sorts the twelve orders into piles by status, then counts each pile.
 
-Now the most important calculation in this chapter: **revenue**. Each order line's net revenue is quantity × price charged × (1 − discount). Summing lines per order:
+> **Back to Chapter 11: the pivot table.** A pivot table and a `GROUP BY` query are the same idea. The pivot's **Filters** area is `WHERE`, its **Rows** area is `GROUP BY`, and its **Values** area is the aggregate (`SUM`, `COUNT`). Its **Columns** area is one `SUM(CASE …)` column per value, which you'll meet later in this section. Exercise 32 rebuilds Chapter 11's first pivot in SQL.
+
+The same works for money. Summing lines per order:
+
+```sql
+SELECT order_id,
+       SUM(quantity * unit_price * (1 - discount_pct / 100)) AS order_revenue
+FROM order_items
+GROUP BY order_id
+ORDER BY order_id
+LIMIT 5;
+```
+
+```
+ order_id |        order_revenue
+----------+------------------------------
+     5001 | 14700.0000000000000000000000
+     5002 | 73260.0000000000000000000000
+     5003 | 16250.0000000000000000000000
+     5004 | 12000.0000000000000000000000
+     5005 | 14550.0000000000000000000000
+(5 rows)
+```
+
+Order 5001's two lines, ₹9,000 and ₹5,700, became one row of ₹14,700. Now round the total to two decimal places, wrapping `SUM` in `ROUND`:
 
 ```sql
 SELECT order_id,
@@ -1041,47 +1567,6 @@ LIMIT 5;
 
 Check order 5001 by hand: 20 × ₹450 × 1.00 = ₹9,000, plus 50 × ₹120 × 0.95 = ₹5,700, total ₹14,700. ✓ **Always hand-check at least one row of any new calculation.** It takes a minute and catches most logic errors.
 
-### Real-life example: revenue is not profit
-
-Sales teams love revenue. Owners care about profit. With `unit_cost` you can show both, by category, for all non-cancelled orders:
-
-```sql
-SELECT p.category,
-       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue,
-       ROUND(SUM(oi.quantity * p.unit_cost), 0)                                  AS product_cost,
-       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)
-               - oi.quantity * p.unit_cost), 0)                                  AS gross_profit,
-       ROUND(100.0 * SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)
-               - oi.quantity * p.unit_cost)
-             / SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 1) AS margin_pct
-FROM order_items AS oi
-JOIN orders   AS o ON oi.order_id   = o.order_id
-JOIN products AS p ON oi.product_id = p.product_id
-WHERE o.status <> 'Cancelled'
-GROUP BY p.category
-ORDER BY net_revenue DESC;
-```
-
-```
-  category  | net_revenue | product_cost | gross_profit | margin_pct
-------------+-------------+--------------+--------------+------------
- Industrial |      161385 |       137500 |        23885 |       14.8
- Storage    |       81810 |        57900 |        23910 |       29.2
- Kitchen    |       80735 |        52650 |        28085 |       34.8
-(3 rows)
-```
-
-This query uses joins, which section 12.10 covers in detail; for now, read `JOIN … ON` as "bring in the matching rows from that table". Here's what each part does:
-
-- **`net_revenue`** is the money actually charged: quantity × price charged × (1 − discount).
-- **`product_cost`** is quantity × the product's cost. Cost comes from `products`, which is why that table is joined in.
-- **`gross_profit`** is revenue minus cost, summed across every line in the category.
-- **`margin_pct`** divides total profit by total revenue. Notice it divides two *sums*. Averaging each line's margin would give a different, misleading number, because a ₹50 line would count as much as a ₹50,000 one.
-
-Now read it as a manager would. **Industrial crates bring in half of all revenue (₹161,385 of ₹323,930) but earn the lowest margin, 14.8%.** Kitchen products bring in the least revenue but the most profit. The earlier margin query showed that crates are thin even at list price (24.1%); the 10–12% discounts on crate orders push it down to 14.8%. A sales team rewarded on revenue will keep pushing discounted crates. This one query can start a real conversation about pricing and incentives, which is exactly what analysis is for.
-
-> **Simplification note.** `unit_cost` here is today's standard cost. Real costs change over time, and serious profit reporting stores the cost at the time of sale, just as `order_items` stores the price at the time of sale. Chapter 23 covers how businesses define metrics like margin.
-
 ### The GROUP BY rule
 
 Once a query has `GROUP BY`, **every column in `SELECT` must either be in the `GROUP BY` or be inside an aggregate function**. This fails:
@@ -1103,7 +1588,7 @@ And it should fail. Sharma Hardware has three orders on three dates, so which si
 
 ### Conditional aggregation: CASE inside SUM
 
-Put `CASE` inside an aggregate and you can count or sum only certain rows, side by side in one result. It's how you build pivot-style reports in SQL:
+Put `CASE` inside an aggregate and you can count or sum only certain rows, side by side in one result. It's how you build pivot-style reports in SQL, and it's the SQL form of Chapter 11's `SUMIFS` and `COUNTIFS`: each `CASE` is the criterion. How many customers in each segment, and how many of those in Mumbai?
 
 ```sql
 SELECT segment,
@@ -1122,6 +1607,10 @@ ORDER BY segment;
  Wholesale   |         2 |         0
 (3 rows)
 ```
+
+- `COUNT(*)` counts every customer in the segment.
+- `CASE WHEN city = 'Mumbai' THEN 1 ELSE 0 END` turns each customer into a 1 (in Mumbai) or a 0 (anywhere else, including a NULL city).
+- `SUM(…)` adds those 1s and 0s, so it counts only the Mumbai customers: the two Retail ones, Sharma Hardware and Metro Mart.
 
 ### HAVING: filtering groups
 
@@ -1167,6 +1656,8 @@ ORDER BY customer_id;
 
 You can, and often will, use both in one query: `WHERE` to exclude cancelled orders, then `HAVING` to keep only customers above a revenue threshold. Filtering with `WHERE` whenever possible is also faster, because the database groups fewer rows.
 
+**Good place to stop.**
+
 ---
 
 ## 12.10 JOIN: combining tables
@@ -1207,7 +1698,7 @@ Read it aloud: *take each order, find the customer whose `customer_id` matches t
 
 An **inner join keeps only rows that have a match on both sides.** Blue Bay Cafe has no orders, so it could never appear in this result.
 
-> **Spreadsheet link.** In Chapter 10 you used `XLOOKUP` to fetch a customer's name from another sheet, one cell at a time. A join is the same idea done for every row at once, with far stricter rules. Chapter 18 shows the same idea again in Python as `pandas.merge`. Three tools, one concept.
+> **Spreadsheet link.** In Chapter 10 you used `XLOOKUP` to fetch a customer's name from another sheet, one cell at a time. A join is the same idea done for every row at once, with far stricter rules.
 
 ### LEFT JOIN: keep everything on the left
 
@@ -1241,7 +1732,7 @@ ORDER BY c.customer_id, o.order_id;
 (13 rows)
 ```
 
-A **left join keeps every row from the left table** (the one after `FROM`), whether or not it has a match. Where there's no match, the right table's columns are filled with NULL. Blue Bay Cafe appears with an empty `order_id`.
+A **left join keeps every row from the left table** (the one after `FROM`), whether or not it has a match. Where there's no match, the right table's columns are filled with NULL. Blue Bay Cafe appears with an empty `order_id`. (In Chapter 10's terms, it's an `XLOOKUP` for every row whose "not found" result is NULL.)
 
 Notice two more things:
 
@@ -1292,35 +1783,52 @@ WHERE oi.order_item_id IS NULL;
 (1 row)
 ```
 
-This pattern is called an **anti-join**. Test the `IS NULL` on a column that can *never* be NULL in a real match, such as the right table's primary key, so you're only catching the rows that found no partner.
+This pattern is called an **anti-join**. It's the SQL version of Chapter 11's Power Query **Left Anti** merge, which found Home Plus, the one customer with no 2025 sales. Test the `IS NULL` on a column that can *never* be NULL in a real match, such as the right table's primary key, so you're only catching the rows that found no partner.
 
 ### RIGHT JOIN, FULL OUTER JOIN, and CROSS JOIN
 
 - **`RIGHT JOIN`** is a left join viewed from the other side: it keeps every row of the *right* table. `A RIGHT JOIN B` gives the same rows as `B LEFT JOIN A`. Most analysts simply write left joins and list the "keep everything" table first; it reads more naturally.
-- **`FULL OUTER JOIN`** keeps every row from *both* tables, with NULLs wherever either side lacks a match. It's the tool for **reconciliation**: comparing the sales system's list of invoices with the finance system's, and showing what's missing on either side. (MySQL doesn't support it directly; you combine a left and a right join with `UNION`.)
-- **`CROSS JOIN`** has no matching condition. It pairs **every row with every row**. With 3 customer segments and 4 product categories, you get 3 × 4 = 12 combinations:
+- **`FULL OUTER JOIN`** keeps every row from *both* tables, with NULLs wherever either side lacks a match. It's the tool for **reconciliation**: comparing the sales system's list of invoices with the finance system's, and showing what's missing on either side. (MySQL doesn't support it directly; section 12.16 shows how.)
+- **`CROSS JOIN`** has no matching condition. It pairs **every row with every row**, as the next two queries show.
+
+With 8 customers and 6 products, a cross join gives 8 × 6 = 48 pairs:
 
 ```sql
-SELECT s.segment, p.category
-FROM (SELECT DISTINCT segment  FROM customers) AS s
-CROSS JOIN
-     (SELECT DISTINCT category FROM products)  AS p
-ORDER BY s.segment, p.category
-LIMIT 5;
+SELECT c.customer_name, p.product_name
+FROM customers AS c
+CROSS JOIN products AS p
+ORDER BY c.customer_id, p.product_id
+LIMIT 6;
 ```
 
 ```
-   segment   |  category
--------------+------------
- Hospitality | Furniture
- Hospitality | Industrial
- Hospitality | Kitchen
- Hospitality | Storage
- Retail      | Furniture
-(5 rows)
+  customer_name  |    product_name
+-----------------+--------------------
+ Sharma Hardware | Storage Box 10L
+ Sharma Hardware | Storage Box 25L
+ Sharma Hardware | Water Bottle 1L
+ Sharma Hardware | Food Container Set
+ Sharma Hardware | Industrial Crate
+ Sharma Hardware | Garden Chair
+(6 rows)
 ```
 
-That's useful for building a complete grid (every segment × every category, including combinations with zero sales) that you then left-join real sales onto. It's dangerous by accident: a cross join of two 100,000-row tables produces ten *billion* rows.
+`LIMIT 6` shows only Sharma Hardware's six pairs. Count them all:
+
+```sql
+SELECT COUNT(*) AS pairs
+FROM customers AS c
+CROSS JOIN products AS p;
+```
+
+```
+ pairs
+-------
+    48
+(1 row)
+```
+
+That's useful for building a complete grid (every customer × every product, including pairs with zero sales) that you then left-join real sales onto. To get each *segment* × *category* pair once, you first need the distinct lists, a job for subqueries (section 12.12 builds it). A cross join is dangerous by accident: a cross join of two 100,000-row tables produces ten *billion* rows.
 
 ### The self-join: a table joined to itself
 
@@ -1351,7 +1859,71 @@ Think of `e` and `m` as two photocopies of the same list: one read as "employees
 
 ### Joining three or more tables
 
-Real questions usually cross several tables. *Revenue by city, excluding cancelled orders* needs `customers` (city), `orders` (status), and `order_items` (money):
+Real questions usually cross several tables. *Revenue by city, excluding cancelled orders* needs `customers` (city), `orders` (status), and `order_items` (money). Each `JOIN` adds one table and one matching condition. Build multi-table queries **one join at a time**, running the query after each step and checking that the row count makes sense before adding the next. Here are the four steps, counting rows only.
+
+Start with one table:
+
+```sql
+SELECT COUNT(*) AS row_count
+FROM orders AS o;
+```
+
+```
+ row_count
+-----------
+        12
+(1 row)
+```
+
+Add the customers:
+
+```sql
+SELECT COUNT(*) AS row_count
+FROM orders AS o
+JOIN customers AS c ON o.customer_id = c.customer_id;
+```
+
+```
+ row_count
+-----------
+        12
+(1 row)
+```
+
+Still 12. Each order has exactly one customer, so joining customers adds columns but no rows. Good. Now add the order lines:
+
+```sql
+SELECT COUNT(*) AS row_count
+FROM orders AS o
+JOIN customers   AS c  ON o.customer_id = c.customer_id
+JOIN order_items AS oi ON o.order_id    = oi.order_id;
+```
+
+```
+ row_count
+-----------
+        19
+(1 row)
+```
+
+Nineteen: one row per order *line* now, not per order. The **grain** changed, which is expected here (the money lives on the lines), but it's the moment to be careful with counts. Finally, drop the cancelled order:
+
+```sql
+SELECT COUNT(*) AS row_count
+FROM orders AS o
+JOIN customers   AS c  ON o.customer_id = c.customer_id
+JOIN order_items AS oi ON o.order_id    = oi.order_id
+WHERE o.status <> 'Cancelled';
+```
+
+```
+ row_count
+-----------
+        18
+(1 row)
+```
+
+Order 5004 had one line, so 19 became 18. Every step's count made sense, so now group and add up:
 
 ```sql
 SELECT COALESCE(c.city, 'Unknown') AS city,
@@ -1377,7 +1949,80 @@ ORDER BY revenue DESC;
 (6 rows)
 ```
 
-Each `JOIN` adds one table and one matching condition. Build multi-table queries **one join at a time**, running the query after each step and checking the row count makes sense before adding the next.
+- `COALESCE(c.city, 'Unknown')` shows Sunrise Caterers' missing city as "Unknown", in both `SELECT` and `GROUP BY`, so it forms its own group instead of a blank one.
+- `COUNT(DISTINCT o.order_id)` counts orders, not the lines the join produced.
+- The six cities add up to ₹3,23,930, the total revenue from non-cancelled orders.
+
+### Rebuilding the order slip from Figure 12.2
+
+Section 12.2 promised you'd rebuild order 5001's slip yourself. It needs five tables: the order, its customer, its sales rep, its lines, and each line's product:
+
+```sql
+SELECT o.order_id,
+       c.customer_name,
+       e.employee_name AS sales_rep,
+       p.product_name,
+       oi.quantity,
+       ROUND(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100), 2) AS line_value
+FROM orders AS o
+JOIN      customers   AS c  ON o.customer_id  = c.customer_id
+LEFT JOIN employees   AS e  ON o.sales_rep_id = e.employee_id
+JOIN      order_items AS oi ON oi.order_id    = o.order_id
+JOIN      products    AS p  ON p.product_id   = oi.product_id
+WHERE o.order_id = 5001
+ORDER BY p.product_id;
+```
+
+```
+ order_id |  customer_name  |   sales_rep   |  product_name   | quantity | line_value
+----------+-----------------+---------------+-----------------+----------+------------
+     5001 | Sharma Hardware | Neha Kulkarni | Storage Box 10L |       20 |    9000.00
+     5001 | Sharma Hardware | Neha Kulkarni | Water Bottle 1L |       50 |    5700.00
+(2 rows)
+```
+
+Two rows, one per line on the slip, with ₹9,000 and ₹5,700 calculated, not stored, exactly as Figure 12.2 showed. The sales rep is joined with a **left** join because order 5008 has no rep: for that order an inner join would drop the whole slip. Add `o.order_date`, `o.status`, `c.city`, `oi.unit_price`, and `oi.discount_pct` to the `SELECT` and you have every piece of the paper slip.
+
+### Real-life example: revenue is not profit
+
+Sales teams love revenue. Owners care about profit. With `unit_cost` you can show both, by category, for all non-cancelled orders:
+
+```sql
+SELECT p.category,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue,
+       ROUND(SUM(oi.quantity * p.unit_cost), 0)                                  AS product_cost,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)
+               - oi.quantity * p.unit_cost), 0)                                  AS gross_profit,
+       ROUND(100.0 * SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)
+               - oi.quantity * p.unit_cost)
+             / SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 1) AS margin_pct
+FROM order_items AS oi
+JOIN orders   AS o ON oi.order_id   = o.order_id
+JOIN products AS p ON oi.product_id = p.product_id
+WHERE o.status <> 'Cancelled'
+GROUP BY p.category
+ORDER BY net_revenue DESC;
+```
+
+```
+  category  | net_revenue | product_cost | gross_profit | margin_pct
+------------+-------------+--------------+--------------+------------
+ Industrial |      161385 |       137500 |        23885 |       14.8
+ Storage    |       81810 |        57900 |        23910 |       29.2
+ Kitchen    |       80735 |        52650 |        28085 |       34.8
+(3 rows)
+```
+
+It joins the same three tables as the city query, with `products` in place of `customers`, because cost and category live there. Here's what each part does:
+
+- **`net_revenue`** is the money actually charged: quantity × price charged × (1 − discount).
+- **`product_cost`** is quantity × the product's cost. Cost comes from `products`, which is why that table is joined in.
+- **`gross_profit`** is revenue minus cost, summed across every line in the category.
+- **`margin_pct`** divides total profit by total revenue. Notice it divides two *sums*. Averaging each line's margin would give a different, misleading number, because a ₹50 line would count as much as a ₹50,000 one.
+
+Now read it as a manager would. **Industrial crates bring in half of all revenue (₹1,61,385 of ₹3,23,930) but earn the lowest margin, 14.8%.** Kitchen products bring in the least revenue but the most profit. The earlier margin query showed that crates are thin even at list price (24.1%); the 10–12% discounts on crate orders push it down to 14.8%. A sales team rewarded on revenue will keep pushing discounted crates. This one query can start a real conversation about pricing and incentives, which is exactly what analysis is for.
+
+> **Simplification note.** `unit_cost` here is today's standard cost. Real costs change over time, and serious profit reporting stores the cost at the time of sale, just as `order_items` stores the price at the time of sale. Chapter 23 covers how businesses define metrics like margin.
 
 ### The fan-out trap: when joins inflate your numbers
 
@@ -1407,10 +2052,30 @@ ORDER BY c.customer_name;
 
 Sharma Hardware has **three** orders, not five. Sunrise Caterers has **one**, not two. What happened? Joining to `order_items` created one row per *order line*, so an order with two products appears twice, and `COUNT(*)` counted lines, not orders. The data "fanned out" to the finest level of detail in the join.
 
-Two fixes:
+Two fixes. The better one: **don't join tables you don't need.** This question never needed `order_items`:
 
-1. **Count what you mean:** `COUNT(DISTINCT o.order_id)` counts each order once.
-2. **Don't join tables you don't need.** This question never needed `order_items`.
+```sql
+SELECT c.customer_name, COUNT(*) AS num_orders
+FROM customers AS c
+JOIN orders AS o ON c.customer_id = o.customer_id
+GROUP BY c.customer_name
+ORDER BY c.customer_name;
+```
+
+```
+     customer_name      | num_orders
+------------------------+------------
+ Coastal Foods          |          2
+ Green Leaf Hotels      |          2
+ Metro Mart             |          2
+ Northgate Distributors |          1
+ Patel Kitchenware      |          1
+ Sharma Hardware        |          3
+ Sunrise Caterers       |          1
+(7 rows)
+```
+
+One row per order again, so `COUNT(*)` counts orders. Sometimes you do need the finer table in the same query, for example to add each customer's revenue next to the count. Then use the fallback: **count what you mean**, with `COUNT(DISTINCT o.order_id)`, which counts each order once however many lines it has:
 
 ```sql
 SELECT c.customer_name, COUNT(DISTINCT o.order_id) AS num_orders
@@ -1434,6 +2099,8 @@ ORDER BY c.customer_name;
 (7 rows)
 ```
 
+The same seven numbers either way.
+
 ### The same trap with money
 
 Counting too many orders is embarrassing. Counting money twice can be expensive. Finance asks a simple question: *how much have we invoiced, how much has been paid, and how much is still owed?* Joining invoices to their payments seems natural:
@@ -1453,7 +2120,7 @@ LEFT JOIN payments AS p ON i.invoice_id = p.invoice_id;
 (1 row)
 ```
 
-The real total invoiced is ₹297,710 (just `SELECT SUM(amount) FROM invoices`). This query says ₹385,610, and it nearly **doubles** the amount owed to ₹188,360. A collections team chasing that number would be chasing money customers have already paid. To see why, look at the joined rows for three invoices:
+The real total invoiced is ₹2,97,710 (just `SELECT SUM(amount) FROM invoices`). This query says ₹3,85,610, and it nearly **doubles** the amount owed to ₹1,88,360. A collections team chasing that number would be chasing money customers have already paid. To see why, look at the joined rows for three invoices:
 
 ```sql
 SELECT i.invoice_id, i.amount AS invoice_amount, p.payment_id, p.amount AS payment_amount
@@ -1475,39 +2142,7 @@ ORDER BY i.invoice_id, p.payment_id;
 
 Invoice 9002 was paid in two parts, so the join produced **two rows, each carrying the full invoice amount of ₹73,260**. Summing that column counts the invoice twice. The same happens to invoice 9005. Payments aren't affected, because each payment appears once: payments are the finest grain in the join.
 
-![Fan-out: joining before adding up](figures/fig12-4-fan-out.svg)
-
-*Figure 12.4 — The fix is to bring payments to the invoice's grain (one row per invoice) before joining.*
-
-The fix: **add up payments per invoice first**, in a subquery, and join that one-row-per-invoice result:
-
-```sql
-SELECT SUM(i.amount)                        AS total_invoiced,
-       SUM(COALESCE(p.paid, 0))             AS total_paid,
-       SUM(i.amount - COALESCE(p.paid, 0))  AS outstanding
-FROM invoices AS i
-LEFT JOIN (
-    SELECT invoice_id, SUM(amount) AS paid
-    FROM payments
-    GROUP BY invoice_id
-) AS p ON i.invoice_id = p.invoice_id;
-```
-
-```
- total_invoiced | total_paid | outstanding
-----------------+------------+-------------
-      297710.00 |  197250.00 |   100460.00
-(1 row)
-```
-
-How it works:
-
-- The subquery in parentheses runs first and returns **one row per invoice** with its total paid. (Subqueries get a full section in 12.12.)
-- The left join now matches each invoice to at most one row, so nothing is repeated.
-- `COALESCE(p.paid, 0)` turns "no payments" (NULL) into zero, so unpaid invoices still count in full. Without it, `i.amount - NULL` would be NULL and those invoices would silently drop out of `outstanding`.
-- **Reconcile:** ₹297,710 invoiced minus ₹197,250 paid is ₹100,460. The totals now agree with each table summed on its own. ✓
-
-There's no `SUM(DISTINCT ...)` shortcut here, by the way. `SUM(DISTINCT i.amount)` would add each *different amount* once, so two separate invoices that happened to be for the same amount would be counted as one. The only reliable fix is to aggregate to the right grain before joining. Chapter 13 shows a tidier way to write these steps, using CTEs.
+The fix is to add up the payments for each invoice *first*, and only then join, so each invoice meets at most one row. That needs one more tool, a query inside a query; section 12.12 shows it, with this exact example.
 
 > **The grain question.** Before writing any join, ask: *what does one row of each table represent?* One row of `orders` is one order; one row of `order_items` is one product line within an order. That "what is one row" is called the table's **grain**. When you join to a finer grain, your rows multiply. Chapter 28 builds a whole discipline on this idea.
 
@@ -1560,6 +2195,8 @@ Version A answers the question. Version B throws away every customer without a p
 
 **Rule:** in a `LEFT JOIN`, conditions on the **right-hand** table belong in `ON` if you want to keep unmatched left rows. Conditions on the **left-hand** table go in `WHERE` as usual. This distinction comes up in interviews constantly (Chapter 71).
 
+**Good place to stop.**
+
 ---
 
 ## 12.11 How the database reads your query
@@ -1569,7 +2206,7 @@ You write SQL in one order. The database runs it in another. Knowing the differe
 **Written order:**
 
 ```
-SELECT → FROM → JOIN → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT
+SELECT [DISTINCT] → FROM → JOIN → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT
 ```
 
 **Logical execution order:**
@@ -1701,9 +2338,103 @@ ORDER BY p.invoice_id;
 
 Read it as: *keep a payment if its date equals the latest payment date for the same invoice.* The inner query uses `p.invoice_id` from the outer row, so for payment 2 it finds the latest date among invoice 9002's payments (2 March), and payment 2 (5 February) is dropped. The table uses two aliases, `p` and `p2`, for the same `payments` table, just like the self-join. Invoices 9007 and 9010 don't appear because they have no payments at all. "Latest record per group" is such a common need that Chapter 13 gives it a cleaner tool, `ROW_NUMBER()`.
 
-> **Watch out: NOT IN and NULLs.** `WHERE customer_id NOT IN (subquery)` returns **no rows at all** if the subquery's list contains even one NULL, because "x is not in (1, 2, NULL)" can't be confirmed true. For "not in" logic, prefer `NOT EXISTS` or the anti-join from section 12.10. This is a favorite interview trap.
+> **Watch out: NOT IN and NULLs.** `WHERE customer_id NOT IN (subquery)` returns **no rows at all** if the subquery's list contains even one NULL, because "x is not in (1, 2, NULL)" can't be confirmed true. For "not in" logic, prefer `NOT EXISTS` or the anti-join from section 12.10. This is a favorite interview trap, and Riverstone's data has a real case of it.
 
-**A table (derived table) in `FROM`.** A subquery can act as a temporary table you then query. This is how you aggregate at one level and then summarize again. *What's the average order value, excluding cancelled orders?* First total each order, then average those totals:
+*Which employees manage nobody?* The obvious query:
+
+```sql
+SELECT employee_name
+FROM employees
+WHERE employee_id NOT IN (SELECT manager_id FROM employees);
+```
+
+```
+ employee_name
+---------------
+(0 rows)
+```
+
+Zero rows, and no error, although three sales executives manage nobody. The subquery's list of `manager_id` values is (NULL, 1, 2, 2, 1): Anita Rao, the Sales Head, has no manager. For Neha Kulkarni (employee 3), "3 is not in (NULL, 1, 2, 2, 1)" would need "3 is not NULL" to be true, and that comparison is UNKNOWN (section 12.7). So no row can pass. `NOT EXISTS` asks a different question, "is there no row where this person is the manager?", and NULLs can't spoil it:
+
+```sql
+SELECT e.employee_name
+FROM employees AS e
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM employees AS m
+    WHERE m.manager_id = e.employee_id
+)
+ORDER BY e.employee_id;
+```
+
+```
+ employee_name
+---------------
+ Neha Kulkarni
+ Rahul Mehta
+ Farah Khan
+(3 rows)
+```
+
+A third option keeps `NOT IN` but removes the NULL from the list first:
+
+```sql
+SELECT employee_name
+FROM employees
+WHERE employee_id NOT IN (SELECT manager_id
+                          FROM employees
+                          WHERE manager_id IS NOT NULL)
+ORDER BY employee_id;
+```
+
+```
+ employee_name
+---------------
+ Neha Kulkarni
+ Rahul Mehta
+ Farah Khan
+(3 rows)
+```
+
+It works, but only while everyone remembers the extra line. `NOT EXISTS` is the safer habit.
+
+**A table (derived table) in `FROM` or `JOIN`.** A subquery can act as a temporary table you then query or join to. This is how you aggregate at one level and then summarize again.
+
+![Fan-out: joining before adding up](figures/fig12-4-fan-out.svg)
+
+*Figure 12.4 — The fix is to bring payments to the invoice's grain (one row per invoice) before joining.*
+
+**Its first job: the money fan-out from section 12.10.** Joining invoices to payments counted invoice 9002 twice and inflated the total invoiced to ₹3,85,610. The fix: **add up payments per invoice first**, in a derived table, and join that one-row-per-invoice result:
+
+```sql
+SELECT SUM(i.amount)                        AS total_invoiced,
+       SUM(COALESCE(p.paid, 0))             AS total_paid,
+       SUM(i.amount - COALESCE(p.paid, 0))  AS outstanding
+FROM invoices AS i
+LEFT JOIN (
+    SELECT invoice_id, SUM(amount) AS paid
+    FROM payments
+    GROUP BY invoice_id
+) AS p ON i.invoice_id = p.invoice_id;
+```
+
+```
+ total_invoiced | total_paid | outstanding
+----------------+------------+-------------
+      297710.00 |  197250.00 |   100460.00
+(1 row)
+```
+
+How it works:
+
+- The subquery in parentheses runs first and returns **one row per invoice** with its total paid. `AS p` names that result so the outer query can join to it like a table.
+- The left join now matches each invoice to at most one row, so nothing is repeated.
+- `COALESCE(p.paid, 0)` turns "no payments" (NULL) into zero, so unpaid invoices still count in full. Without it, `i.amount - NULL` would be NULL and those invoices would silently drop out of `outstanding`.
+- **Reconcile:** ₹2,97,710 invoiced minus ₹1,97,250 paid is ₹1,00,460. The totals now agree with each table summed on its own. ✓
+
+There's no `SUM(DISTINCT ...)` shortcut here, by the way. `SUM(DISTINCT i.amount)` would add each *different amount* once, so two separate invoices that happened to be for the same amount would be counted as one. The only reliable fix is to aggregate to the right grain before joining. Chapter 13 shows a tidier way to write these steps, using CTEs.
+
+**Another use: averages of totals.** *What's the average order value, excluding cancelled orders?* First total each order, then average those totals:
 
 ```sql
 SELECT ROUND(AVG(order_revenue), 2) AS avg_order_value
@@ -1725,6 +2456,30 @@ FROM (
 ```
 
 Averaging the order *lines* directly would give the average line value, a different and misleading number. Derived tables solve the fan-out problem from section 12.10 too: aggregate each table to the grain you need, then join the results. Once subqueries nest more than one level deep they become hard to read, and Chapter 13 introduces **common table expressions (CTEs)**, which do the same job with named, top-to-bottom steps.
+
+**Derived tables with a cross join.** Section 12.10 wanted every segment paired with every category, once each. Two derived tables supply the two distinct lists, and `CROSS JOIN` pairs them: 3 segments × 4 categories = 12 pairs, of which `LIMIT 5` shows the first five:
+
+```sql
+SELECT s.segment, p.category
+FROM (SELECT DISTINCT segment  FROM customers) AS s
+CROSS JOIN
+     (SELECT DISTINCT category FROM products)  AS p
+ORDER BY s.segment, p.category
+LIMIT 5;
+```
+
+```
+   segment   |  category
+-------------+------------
+ Hospitality | Furniture
+ Hospitality | Industrial
+ Hospitality | Kitchen
+ Hospitality | Storage
+ Retail      | Furniture
+(5 rows)
+```
+
+Left-join real sales onto a grid like this and the combinations with no sales show up as zeros instead of being missing.
 
 ### Set operations: stacking results
 
@@ -1750,11 +2505,61 @@ ORDER BY city;
 (4 rows)
 ```
 
-Replace `UNION` with `UNION ALL` and you get six rows: Ahmedabad once, Mumbai twice, Pune twice, and the blank (NULL) city once. Notice that `UNION` treated NULL like any other value when removing duplicates.
+Now the same with `UNION ALL`:
+
+```sql
+SELECT city FROM customers WHERE segment = 'Retail'
+UNION ALL
+SELECT city FROM customers WHERE segment = 'Hospitality'
+ORDER BY city;
+```
+
+```
+   city
+-----------
+ Ahmedabad
+ Mumbai
+ Mumbai
+ Pune
+ Pune
+
+(6 rows)
+```
+
+Six rows: Ahmedabad once, Mumbai twice, Pune twice, and the blank (NULL) city once. Notice that `UNION` treated NULL like any other value when removing duplicates.
 
 `UNION ALL` is faster, because removing duplicates requires extra work. Use it by default when you *know* the pieces don't overlap (January's table stacked on February's) or when duplicates are meaningful. Use `UNION` only when you actually want duplicates removed.
 
-Two more set operations: **`INTERSECT`** returns rows that appear in both results, and **`EXCEPT`** (called `MINUS` in Oracle) returns rows in the first result but not the second. `EXCEPT` is a quick reconciliation tool: *which product IDs are in the price list but not in the warehouse system?*
+Two more set operations: **`INTERSECT`** returns rows that appear in both results, and **`EXCEPT`** (called `MINUS` in Oracle) returns rows in the first result but not the second. `EXCEPT` is a quick reconciliation tool: *which product IDs are in the price list but not in the warehouse system?* On Riverstone's data: *which customers ordered in February but placed no (non-cancelled) order in March?*
+
+```sql
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders AS o ON c.customer_id = o.customer_id
+WHERE o.order_date >= DATE '2026-02-01'
+  AND o.order_date <  DATE '2026-03-01'
+EXCEPT
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders AS o ON c.customer_id = o.customer_id
+WHERE o.order_date >= DATE '2026-03-01'
+  AND o.order_date <  DATE '2026-04-01'
+  AND o.status <> 'Cancelled'
+ORDER BY customer_name;
+```
+
+```
+     customer_name
+------------------------
+ Coastal Foods
+ Northgate Distributors
+ Sunrise Caterers
+(3 rows)
+```
+
+The first query lists February's five customers; `EXCEPT` removes the ones that also appear in the second (Sharma Hardware and Metro Mart ordered again in March). Like `UNION`, it removes duplicates, so each name appears once. Section 12.15 uses this result to explain why March's revenue fell.
+
+**Good place to stop.**
 
 ---
 
@@ -1762,7 +2567,7 @@ Two more set operations: **`INTERSECT`** returns rows that appear in both result
 
 ## 12.13 Building and changing a database: CREATE, INSERT, UPDATE, DELETE, ALTER, and DROP
 
-Until now you've only *read* data that someone else loaded. This section is the other half: creating a database and its tables, putting data in, correcting it, removing it, and changing the structure of a table after it's already full of data. Every step is shown in **both PostgreSQL and MySQL**, because this is where the two differ most.
+Until now you've only *read* data that someone else loaded. This section is the other half: creating a database and its tables, putting data in, correcting it, removing it, and changing the structure of a table after it's already full of data. Every step is shown in **both PostgreSQL and MySQL**, because this is where the two differ most. **First time through, do the PostgreSQL blocks only**: every block that differs is labelled *PostgreSQL:* or *MySQL:*, so you can skip the MySQL ones now and come back to them with the MySQL track.
 
 As an analyst you'll mostly read data, and in many companies your account on the live business systems will be **read-only**. That's a protection, not an insult. But you'll still use everything in this section: to build practice and staging tables, to load a spreadsheet someone emails you, to keep a small tracker for your team, and, as you move toward engineering and architecture roles, to design and change the databases other people rely on.
 
@@ -1774,7 +2579,7 @@ As an analyst you'll mostly read data, and in many companies your account on the
 | **DML** | Data Manipulation Language | `INSERT`, `UPDATE`, `DELETE` (and `SELECT`, which only reads) | the **rows** inside tables |
 | **TCL** | Transaction Control Language | `BEGIN` / `START TRANSACTION`, `COMMIT`, `ROLLBACK` | whether a group of changes is kept or undone |
 
-A fourth family, **DCL** (Data Control Language: `GRANT` and `REVOKE`), controls who may do what. Chapter 64 covers it.
+A fourth family, **DCL** (Data Control Language: `GRANT` and `REVOKE`), controls who may do what. Chapter 64 covers who should get which access (roles and permissions).
 
 > **The lab rule: never practice on data that matters.** Everything in this section happens in a new, separate database called `riverstone_lab`, so nothing you do can damage the `riverstone` database the rest of the chapter uses. At work, follow the same rule: try changes on a copy, never first on the live system.
 
@@ -1798,10 +2603,12 @@ CREATE DATABASE riverstone_lab;
 
 Creating a database doesn't switch you into it. The next step depends on the database and the tool:
 
-- **PostgreSQL in DBeaver:** each connection points at one database. Edit the connection (or create a new one) so its *Database* is `riverstone_lab`, then open an SQL editor on it. In the `psql` command-line client, type `\c riverstone_lab`.
+- **PostgreSQL in DBeaver:** each connection points at one database. Edit the connection (or create a new one) so its *Database* is `riverstone_lab`, as in section 12.3, then open an SQL editor on it. (In the `psql` command-line client, which needs the terminal you'll meet in Chapter 26, the same switch is `\c riverstone_lab`.)
 - **MySQL:** run `USE riverstone_lab;`. Everything after that happens inside `riverstone_lab` until you `USE` another database. In DBeaver you can also double-click the database in the navigator.
 
-To see which databases exist:
+To see which databases exist, ask PostgreSQL's built-in list. `pg_database` is a table PostgreSQL keeps about itself, with one row per database; you can query it like any other table.
+
+PostgreSQL:
 
 <!-- run: pg -->
 ```sql
@@ -1816,11 +2623,30 @@ ORDER BY datname;
 -----------------
  riverstone
  riverstone_2025
+ riverstone_full
  riverstone_lab
-(3 rows)
+(4 rows)
 ```
 
-In MySQL, `SHOW DATABASES;` lists them all, and `SHOW DATABASES LIKE 'riverstone%';` narrows the list.
+This is the list from the machine the book was tested on, which has every Riverstone database loaded. Yours shows `riverstone` and `riverstone_lab`, plus `riverstone_2025` if you loaded it in section 12.3; `riverstone_full`, the three-year dataset, arrives in Chapter 14. `LIKE 'riverstone%'` keeps only the names that start with "riverstone" (section 12.6), which hides the databases PostgreSQL creates for itself.
+
+MySQL has a shortcut. `SHOW DATABASES;` lists them all, and adding `LIKE` narrows the list:
+
+<!-- run: mysql -->
+```mysql
+SHOW DATABASES LIKE 'riverstone%';
+```
+
+```
++------------------------+
+| Database (riverstone%) |
++------------------------+
+| riverstone             |
+| riverstone_2025        |
+| riverstone_full        |
+| riverstone_lab         |
++------------------------+
+```
 
 > **Naming.** Use lower-case letters, digits, and underscores: `riverstone_lab`, `purchase_orders`. Avoid spaces, hyphens, and capital letters. They force you to wrap every name in quotes forever after (`"Purchase Orders"` in PostgreSQL, `` `Purchase Orders` `` in MySQL), and PostgreSQL and MySQL treat capitals in names differently. `CREATE DATABASE IF NOT EXISTS riverstone_lab;` works in MySQL if you want a script that can safely run twice; PostgreSQL doesn't support `IF NOT EXISTS` for databases, only for tables and schemas.
 
@@ -1844,6 +2670,7 @@ Most types have the same or similar names in both databases. The differences you
 | You want | PostgreSQL | MySQL |
 |---|---|---|
 | Whole number | `INTEGER` (or `INT`) | `INT` (or `INTEGER`) |
+| Small whole number (−32,768 to 32,767; enough for a 1–5 rating) | `SMALLINT` | `SMALLINT` |
 | Big whole number | `BIGINT` | `BIGINT` |
 | Exact decimal, e.g. money | `NUMERIC(10,2)` | `DECIMAL(10,2)` (`NUMERIC` also accepted) |
 | Text with a maximum length | `VARCHAR(100)` | `VARCHAR(100)` |
@@ -1855,7 +2682,9 @@ Most types have the same or similar names in both databases. The differences you
 
 ### Step 3: CREATE TABLE
 
-Here is `suppliers` in PostgreSQL:
+Here is `suppliers`.
+
+PostgreSQL:
 
 <!-- run: pg -->
 ```sql
@@ -1871,7 +2700,7 @@ CREATE TABLE suppliers (
 );
 ```
 
-And in MySQL. Only the first line is different:
+MySQL (only the first column's line is different):
 
 <!-- run: mysql -->
 ```mysql
@@ -1894,10 +2723,12 @@ Read it line by line:
 - **`PRIMARY KEY`** makes the column the row's identity: unique and never empty (section 12.1).
 - **`NOT NULL`** means the column must always have a value.
 - **`UNIQUE`** means no two rows may have the same value. Here, it stops the "same supplier typed twice" problem.
-- **`CHECK (rating BETWEEN 1 AND 5)`** is a rule every row must pass. An empty rating is still allowed, because a CHECK only rejects values that are definitely false, and `NULL` is unknown (section 12.6).
+- **`CHECK (rating BETWEEN 1 AND 5)`** is a rule every row must pass. An empty rating is still allowed, because a CHECK only rejects values that are definitely false, and `NULL` is unknown (section 12.7).
 - **`DEFAULT TRUE`** fills in a value when an insert doesn't mention the column.
 
-Now `purchase_orders`, which links to `suppliers`:
+Now `purchase_orders`, which links to `suppliers`.
+
+PostgreSQL:
 
 <!-- run: pg -->
 ```sql
@@ -1912,6 +2743,8 @@ CREATE TABLE purchase_orders (
     FOREIGN KEY (supplier_id) REFERENCES suppliers (supplier_id)
 );
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -1955,7 +2788,7 @@ ORDER BY ordinal_position;
 (8 rows)
 ```
 
-(`character varying` is PostgreSQL's full name for `VARCHAR`.) In the `psql` client, `\d suppliers` shows the same thing plus the constraints. MySQL has a shortcut:
+(`character varying` is PostgreSQL's full name for `VARCHAR`.) In DBeaver you can also double-click the table in the navigator and open its *Columns* and *Constraints* tabs. (The `psql` client's shortcut is `\d suppliers`; psql only, for after Chapter 26.) MySQL has a shortcut:
 
 <!-- run: mysql -->
 ```mysql
@@ -2038,7 +2871,7 @@ VALUES (1, '2026-03-02', 'Polypropylene granules (kg)', 2000, 118.50),
 
 Every order gets `status = 'Open'` from the default.
 
-> **How do you know it worked?** The database reports how many rows each statement changed. The `psql` client prints `INSERT 0 5` (the 0 is a leftover from old PostgreSQL versions; the 5 is the row count), the MySQL client prints `Query OK, 5 rows affected`, and DBeaver shows *Updated Rows: 5*. Glance at that number after every change. If you expected 1 and it says 300, stop.
+> **How do you know it worked?** The database reports how many rows each statement changed. DBeaver shows it in the results area as *Updated Rows: 5*. (The command-line clients say the same thing their own way: `psql` prints `INSERT 0 5`, where the 0 is a leftover from old PostgreSQL versions and the 5 is the row count, and the MySQL client prints `Query OK, 5 rows affected`.) Glance at that number after every change. If you expected 1 and it says 300, stop.
 
 ### When the database says no
 
@@ -2052,12 +2885,14 @@ INSERT INTO suppliers (city, onboarded_on)
 VALUES ('Surat', '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  null value in column "supplier_name" of relation "suppliers" violates not-null constraint
 DETAIL:  Failing row contains (5, null, Surat, null, null, null, t, 2026-02-01).
 ```
 
-MySQL says:
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2072,10 +2907,14 @@ INSERT INTO suppliers (supplier_name, city, onboarded_on)
 VALUES ('Deccan Cartons', 'Nashik', '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  duplicate key value violates unique constraint "suppliers_supplier_name_key"
 DETAIL:  Key (supplier_name)=(Deccan Cartons) already exists.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2090,10 +2929,14 @@ INSERT INTO suppliers (supplier_name, city, rating, onboarded_on)
 VALUES ('Gujarat Pigments', 'Ahmedabad', 7, '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  new row for relation "suppliers" violates check constraint "suppliers_rating_check"
 DETAIL:  Failing row contains (7, Gujarat Pigments, Ahmedabad, null, null, 7, t, 2026-02-01).
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2108,10 +2951,14 @@ INSERT INTO purchase_orders (supplier_id, po_date, item, quantity, unit_cost)
 VALUES (99, '2026-03-21', 'Lids', 100, 9.00);
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  insert or update on table "purchase_orders" violates foreign key constraint "purchase_orders_supplier_id_fkey"
 DETAIL:  Key (supplier_id)=(99) is not present in table "suppliers".
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2135,6 +2982,8 @@ FROM suppliers
 ORDER BY supplier_id;
 ```
 
+PostgreSQL:
+
 ```
  supplier_id |   supplier_name
 -------------+--------------------
@@ -2145,6 +2994,8 @@ ORDER BY supplier_id;
            8 | Gujarat Pigments
 (5 rows)
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2204,11 +3055,51 @@ Malabar Resins,Kochi,2026-03-10
 Indus Moulds,Rajkot,2026-03-12
 ```
 
-- **In DBeaver (both databases):** right-click the table → *Import Data* → *CSV*, choose the file, and check that each CSV column is matched to the right table column. It's the easiest route, and fine for occasional loads.
-- **In the PostgreSQL `psql` client:** `\copy suppliers (supplier_name, city, onboarded_on) FROM 'new_suppliers.csv' WITH (FORMAT csv, HEADER true)`. It reads the file from your computer and replies `COPY 2`.
-- **In MySQL:** `LOAD DATA LOCAL INFILE 'new_suppliers.csv' INTO TABLE suppliers FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES (supplier_name, city, onboarded_on);`. Loading local files is switched off by default for security, so the first attempt usually fails with *"Loading local data is disabled; this must be enabled on both the client and server sides"*. On your own lab server, an administrator setting (`SET GLOBAL local_infile = 1;`) plus the client option `--local-infile=1` (or the *allowLoadLocalInfile* driver property in DBeaver) enables it. On a company server, ask first.
+The examples in the rest of this section don't include these two suppliers. So if you're following along, either read the steps now and try them at the very end of the section, or undo the load afterwards with `DELETE FROM suppliers WHERE supplier_name IN ('Malabar Resins', 'Indus Moulds');`.
 
-Whichever route you use, the table's constraints still apply: a duplicate name or a missing date in row 237 rejects the load, which is exactly what you want. Chapter 45 covers loading large and messy files reliably. (The examples below don't include these two suppliers, so skip the load if you're following along.)
+The route to use now is **DBeaver's import wizard**, which works the same way for both databases:
+
+1. In the navigator, expand `riverstone_lab` → *Tables* (in PostgreSQL, under *Schemas* → *public*), right-click `suppliers`, and choose *Import Data*.
+2. Choose **CSV** as the source type, then pick `new_suppliers.csv`.
+3. On the import settings page, check that the delimiter is a comma and that the first row is read as the header.
+4. On the column-mapping page, check that each CSV column goes to the table column of the same name (`supplier_name`, `city`, `onboarded_on`), and that `supplier_id` is left for the database to fill.
+5. Click *Proceed* (or *Start*), then check the result:
+
+<!-- run: none -->
+```sql
+SELECT COUNT(*) FROM suppliers;
+```
+
+```
+ count
+-------
+     8
+(1 row)
+```
+
+The count went up by exactly two, from the 6 suppliers you have at this point to 8.
+
+Whichever route you use, the table's constraints still apply: a duplicate name or a missing date in row 237 rejects the load, which is exactly what you want. Chapter 45 covers loading large and messy files reliably.
+
+**For later: loading from the command line (Chapter 45).** Once you've met the terminal (Chapter 26), each database's command-line client can load the same file with one command. You don't need these now. In PostgreSQL's `psql` client:
+
+<!-- run: none -->
+```
+\copy suppliers (supplier_name, city, onboarded_on) FROM 'new_suppliers.csv' WITH (FORMAT csv, HEADER true)
+```
+
+It reads the file from your computer and replies `COPY 2`. In MySQL:
+
+<!-- run: none -->
+```mysql
+LOAD DATA LOCAL INFILE 'new_suppliers.csv'
+INTO TABLE suppliers
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES
+(supplier_name, city, onboarded_on);
+```
+
+Loading local files is switched off by default in MySQL for security, so the first attempt usually fails with *"Loading local data is disabled; this must be enabled on both the client and server sides"*. On your own lab server, an administrator setting, `SET GLOBAL local_infile = 1;`, plus the client option `--local-infile=1` (or the `allowLoadLocalInfile` driver property in DBeaver) enables it. On a company server, ask first.
 
 ### Step 5: UPDATE: changing rows
 
@@ -2238,6 +3129,8 @@ UPDATE suppliers
 SET rating = 4
 WHERE supplier_name = 'Sagar Labels';
 ```
+
+DBeaver reports *Updated Rows: 1*: one row, as the preview promised.
 
 **Calculated updates.** Western Polymers (supplier 1) has raised prices by 5% on orders not yet received. `SET` can use the column's current value:
 
@@ -2317,6 +3210,23 @@ DELETE FROM purchase_orders
 WHERE po_id = 5;
 ```
 
+DBeaver reports *Updated Rows: 1* (it uses the same words for deletes). Check what's left:
+
+<!-- run: both -->
+```sql
+SELECT COUNT(*) AS orders_left
+FROM purchase_orders;
+```
+
+```
+ orders_left
+-------------
+           4
+(1 row)
+```
+
+Five orders minus one: MySQL gives the same 4.
+
 Now try to remove a supplier who still has orders:
 
 <!-- run: both -->
@@ -2325,10 +3235,14 @@ DELETE FROM suppliers
 WHERE supplier_name = 'Western Polymers';
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  update or delete on table "suppliers" violates foreign key constraint "purchase_orders_supplier_id_fkey" on table "purchase_orders"
 DETAIL:  Key (supplier_id)=(1) is still referenced from table "purchase_orders".
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2352,7 +3266,38 @@ SET is_active = FALSE
 WHERE supplier_name = 'Nilgiri Packaging';
 ```
 
-Reports and forms then show only `WHERE is_active = TRUE`, while the history stays complete. Most business systems work this way.
+Check it:
+
+<!-- run: both -->
+```sql
+SELECT supplier_name, is_active
+FROM suppliers
+WHERE supplier_name = 'Nilgiri Packaging';
+```
+
+PostgreSQL:
+
+```
+   supplier_name   | is_active
+-------------------+-----------
+ Nilgiri Packaging | f
+(1 row)
+```
+
+MySQL:
+
+<!-- out: mysql -->
+```
++-------------------+-----------+
+| supplier_name     | is_active |
++-------------------+-----------+
+| Nilgiri Packaging |         0 |
++-------------------+-----------+
+```
+
+`f` (false) in PostgreSQL, `0` in MySQL: the same fact, in each database's spelling of a true/false value (Step 2). Reports and forms then show only `WHERE is_active = TRUE`, while the history stays complete. Most business systems work this way.
+
+**Good place to stop.**
 
 ### Step 7: Insert or update in one statement (upsert)
 
@@ -2401,7 +3346,7 @@ ORDER BY supplier_name;
 (6 rows)
 ```
 
-> **Real-life example: the nightly supplier sync.** Many companies copy a master list, such as suppliers, products, or price lists, from one system into another every night. An upsert is the heart of that job: new suppliers are added, changed details are updated, and running the job twice doesn't create duplicates. You'll build this kind of job in Chapter 20.
+> **Real-life example: the nightly supplier sync.** Many companies copy a master list, such as suppliers, products, or price lists, from one system into another every night. An upsert is the heart of that job: new suppliers are added, changed details are updated, and running the job twice doesn't create duplicates. Chapter 45 builds this kind of load; Chapter 20 uses the same "safe to run twice" idea for reports.
 
 ### Step 8: Transactions: the undo button
 
@@ -2436,6 +3381,8 @@ Transactions are why a bank transfer never takes money out of one account withou
 
 **The big difference: structure changes.** Try undoing an `ALTER TABLE` (Step 9 explains the statement itself):
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 BEGIN;
@@ -2452,6 +3399,8 @@ WHERE table_name = 'suppliers' AND column_name = 'notes';
                    0
 (1 row)
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -2540,10 +3489,14 @@ SET gst_number = '24AAACW1234A1Z5'
 WHERE supplier_name = 'Sagar Labels';
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  duplicate key value violates unique constraint "uq_suppliers_gst"
 DETAIL:  Key (gst_number)=(24AAACW1234A1Z5) already exists.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2568,12 +3521,18 @@ Renaming is easy for the database and risky for everything around it: every save
 ALTER TABLE suppliers DROP COLUMN fax_number;
 ```
 
+A structure change like these two touches no rows, so there's no row count to check. The table description at the end of this step (`information_schema.columns`, or `DESCRIBE` in MySQL) shows both changes.
+
 **Change a column's type or size.** Purchasing has a supplier in "Thiruvananthapuram (Technopark Phase III)", which doesn't fit in 50 characters. This is where the two databases differ:
+
+PostgreSQL:
 
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN city TYPE VARCHAR(80);
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -2588,6 +3547,8 @@ Making a column *bigger* is safe. Making it *smaller*, or changing text to a num
 ```mysql
 ALTER TABLE purchase_orders MODIFY COLUMN status VARCHAR(30);
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -2620,6 +3581,8 @@ In PostgreSQL, `ALTER COLUMN … TYPE` changes only the type, and `NOT NULL` and
 ALTER TABLE purchase_orders ALTER COLUMN status TYPE VARCHAR(30);
 ```
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 SELECT column_name, character_maximum_length, is_nullable, column_default
@@ -2638,6 +3601,8 @@ The MySQL rule of thumb: **before any `MODIFY COLUMN`, run `SHOW CREATE TABLE` a
 
 **Make a column required.** Purchasing wants every supplier to have an email. Try it:
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
@@ -2646,6 +3611,8 @@ ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
 ```
 ERROR:  column "email" of relation "suppliers" contains null values
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -2665,15 +3632,21 @@ UPDATE suppliers SET email = 'hello@gujaratpigments.example' WHERE supplier_name
 UPDATE suppliers SET email = 'contact@nilgiripack.example'   WHERE supplier_name = 'Nilgiri Packaging';
 ```
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
 ```
 
+MySQL:
+
 <!-- run: mysql -->
 ```mysql
 ALTER TABLE suppliers MODIFY COLUMN email VARCHAR(100) NOT NULL;
 ```
+
+This time both statements succeed: no row breaks the rule any more. The finished-table description at the end of this step shows `email` as required.
 
 (To make a column optional again: `ALTER COLUMN email DROP NOT NULL` in PostgreSQL, or `MODIFY COLUMN email VARCHAR(100) NULL` in MySQL.)
 
@@ -2693,10 +3666,14 @@ SET status = 'Shipped'
 WHERE po_id = 2;
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  new row for relation "purchase_orders" violates check constraint "chk_po_status"
 DETAIL:  Failing row contains (2, 1, 2026-03-16, Polypropylene granules (kg), 1500, 127.05, Shipped).
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2719,6 +3696,8 @@ ALTER TABLE purchase_orders ALTER COLUMN status SET DEFAULT 'Open';
 
 Here's the finished `suppliers` table:
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 SELECT column_name, data_type, character_maximum_length AS max_length, is_nullable
@@ -2740,6 +3719,8 @@ ORDER BY ordinal_position;
  gst_number    | character varying |         15 | YES
 (8 rows)
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -2882,11 +3863,15 @@ DROP TABLE po_import_staging;
 DROP TABLE suppliers;
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  cannot drop table suppliers because other objects depend on it
 DETAIL:  constraint purchase_orders_supplier_id_fkey on table purchase_orders depends on table suppliers
 HINT:  Use DROP ... CASCADE to drop the dependent objects too.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2950,6 +3935,8 @@ For the lab, Steps 1–11 were enough. For production, the checklist is the skil
 
 ### Cheat sheet: building and changing, PostgreSQL vs MySQL
 
+Entries that start with a backslash (`\c`, `\l`, `\dt`, `\d`, `\copy`) work only in PostgreSQL's command-line client, `psql`, which you'll be able to use after Chapter 26; everything else runs in DBeaver.
+
 | Task | PostgreSQL | MySQL |
 |---|---|---|
 | Create a database | `CREATE DATABASE db;` | `CREATE DATABASE db;` (`IF NOT EXISTS` allowed) |
@@ -2983,6 +3970,8 @@ For the lab, Steps 1–11 were enough. For production, the checklist is the skil
 | Rename a database | `ALTER DATABASE a RENAME TO b;` (nobody connected) | not supported: create new, move tables |
 | Remove a database | `DROP DATABASE IF EXISTS db;` (connect elsewhere first) | `DROP DATABASE IF EXISTS db;` |
 
+**Good place to stop.**
+
 <!-- lab:end -->
 
 ---
@@ -3014,9 +4003,9 @@ Teams often adopt a published SQL style guide and enforce it with an automatic f
 
 ---
 
-## 12.15 Putting it all together: Monday morning with the sales head
+## 12.15 Putting it all together: Tuesday morning with the sales head
 
-It's Monday, 31 March 2026, the last day of the quarter. Before the 10 a.m. review, Anita Rao, Riverstone's Sales Head, sends you four questions. None of them mentions SQL. This is what real analysis work looks like, so we'll answer each one the way an experienced analyst would, with a method rather than guesswork.
+It's Tuesday, 31 March 2026, the last day of the quarter. Before the 10 a.m. review, Anita Rao, Riverstone's Sales Head, sends you five questions. None of them mentions SQL. This is what real analysis work looks like, so we'll answer each one the way an experienced analyst would, with a method rather than guesswork.
 
 ### A six-step method for any business question
 
@@ -3029,7 +4018,7 @@ It's Monday, 31 March 2026, the last day of the quarter. Before the 10 a.m. revi
 
 ### Question 1: "Which customers have gone quiet?"
 
-**Restate.** Customers with no order in the 30 days up to 31 March 2026, meaning no order since 1 March. Cancelled orders don't count as activity. Customers who have *never* ordered must be included, because they're the easiest to miss.
+**Restate.** Customers with no (non-cancelled) order in March 2026, meaning nothing since 1 March. Cancelled orders don't count as activity. Customers who have *never* ordered must be included, because they're the easiest to miss.
 
 **Shape.** One row per customer: name, segment, last order date, days since that order.
 
@@ -3063,24 +4052,26 @@ ORDER BY last_order_date NULLS FIRST;
 (5 rows)
 ```
 
-**How it works.** `GROUP BY c.customer_id, …` makes one group per customer (grouping by the ID as well as the name protects against two customers sharing a name). `MAX(o.order_date)` finds each customer's latest valid order; for Blue Bay Cafe there are no matching orders, so it's NULL. `HAVING … OR MAX(o.order_date) IS NULL` keeps the never-ordered customers, because "NULL < 1 March" is unknown, not true (section 12.6). `NULLS FIRST` puts them at the top.
+**How it works.** `GROUP BY c.customer_id, …` makes one group per customer (grouping by the ID as well as the name protects against two customers sharing a name). `MAX(o.order_date)` finds each customer's latest valid order; for Blue Bay Cafe there are no matching orders, so it's NULL. `HAVING … OR MAX(o.order_date) IS NULL` keeps the never-ordered customers, because "NULL < 1 March" is unknown, not true (section 12.7). `NULLS FIRST` puts them at the top.
 
 **Check.** Green Leaf Hotels isn't listed. Its January order was cancelled, but it ordered again on 3 March, so it's active. ✓ Sharma Hardware (10 March) and Metro Mart (15 March) are active too. ✓
 
 **What to tell Anita.** Five of eight customers haven't ordered this month. Blue Bay Cafe signed up on 1 March and has never ordered: a warm lead to call today. Patel Kitchenware has gone 76 days, far longer than any other customer.
 
+> **Back to Chapter 7.** Section 7.6 showed a data analyst answering the same question on a full year of data: every customer with no non-cancelled order in the 60 days to 31 December 2025, which found five customers. It was this query with two dates changed, run on the one-year database. Exercise 30 asks you to write it. Chapter 13 then improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
+
 ### Question 2: "How much are discounts costing us?"
 
-**Restate.** For non-cancelled orders, compare what products would have sold for at the price charged before discount (the *list value*) with the discount given, by category.
+**Restate.** For non-cancelled orders, compare the value of the goods before discount, at the price charged (the *gross value*), with the discount given, by category. We use the price on the order line, not today's list price in `products`, for the reason in section 12.2: the price charged is what the customer was offered.
 
 **Shape.** One row per category. **Tables:** `order_items` (quantities, prices, discounts), `products` (category), `orders` (status). Every join goes from a line to its one order and one product, so nothing fans out.
 
 ```sql
 SELECT p.category,
-       ROUND(SUM(oi.quantity * oi.unit_price), 0)                           AS list_value,
+       ROUND(SUM(oi.quantity * oi.unit_price), 0)                           AS gross_value,
        ROUND(SUM(oi.quantity * oi.unit_price * oi.discount_pct / 100), 0)   AS discount_given,
        ROUND(100.0 * SUM(oi.quantity * oi.unit_price * oi.discount_pct / 100)
-             / SUM(oi.quantity * oi.unit_price), 1)                         AS discount_pct_of_list
+             / SUM(oi.quantity * oi.unit_price), 1)                         AS discount_pct_of_gross
 FROM order_items AS oi
 JOIN orders   AS o ON oi.order_id   = o.order_id
 JOIN products AS p ON oi.product_id = p.product_id
@@ -3090,17 +4081,17 @@ ORDER BY discount_given DESC;
 ```
 
 ```
-  category  | list_value | discount_given | discount_pct_of_list
-------------+------------+----------------+----------------------
- Industrial |     181250 |          19865 |                 11.0
- Storage    |      85050 |           3240 |                  3.8
- Kitchen    |      82850 |           2115 |                  2.6
+  category  | gross_value | discount_given | discount_pct_of_gross
+------------+-------------+----------------+-----------------------
+ Industrial |      181250 |          19865 |                  11.0
+ Storage    |       85050 |           3240 |                   3.8
+ Kitchen    |       82850 |           2115 |                   2.6
 (3 rows)
 ```
 
-**Check.** List value minus discount should equal the net revenue from section 12.9: for Industrial, 181,250 − 19,865 = 161,385. ✓
+**Check.** Gross value minus discount should equal the net revenue from section 12.10's profit query: for Industrial, ₹1,81,250 − ₹19,865 = ₹1,61,385. ✓
 
-**What to tell Anita.** Riverstone gave away ₹19,865 on crates this quarter, 11% of their value, against under 4% elsewhere. Put that next to the gross profit query from section 12.9: crates earned only ₹23,885 of gross profit. **The discounts on crates were worth about 83% of the profit the crates actually made.** That's a finding worth a meeting.
+**What to tell Anita.** Riverstone gave away ₹19,865 on crates this quarter, 11% of their value, against under 4% elsewhere. Put that next to the gross profit query from section 12.10: crates earned only ₹23,885 of gross profit. **The discounts on crates were worth about 83% of the profit the crates actually made.** That's a finding worth a meeting.
 
 ### Question 3: "Who owes us money, and how late is it?"
 
@@ -3164,7 +4155,7 @@ FROM (
 JOIN orders    AS o ON inv.order_id  = o.order_id
 JOIN customers AS c ON o.customer_id = c.customer_id
 WHERE inv.balance > 0
-GROUP BY c.customer_name
+GROUP BY c.customer_id, c.customer_name
 ORDER BY total_due DESC;
 ```
 
@@ -3184,9 +4175,11 @@ ORDER BY total_due DESC;
 - The innermost subquery totals payments per invoice (the fan-out fix). The next layer computes each invoice's `balance`. The outer query joins balances to customers and aggregates.
 - `WHERE inv.balance > 0` removes fully paid invoices *before* grouping.
 - Each `SUM(CASE WHEN … THEN inv.balance ELSE 0.00 END)` adds up only the balances that fall into one ageing band. Five `CASE` columns turn one list of invoices into a five-column report, the same result you'd build with a pivot table in Chapter 11.
+- Each column is its own `CASE`, so there's no "first match wins" across columns, as there was in section 12.8's single `CASE`. That's why every band states both its limits (the 1–30 column checks that the invoice is past due *and* at most 30 days late): otherwise an invoice could be counted in two columns.
 - `ELSE 0.00` (rather than leaving out the `ELSE`) makes empty bands show zero instead of NULL, which matters when someone totals the columns in Excel.
+- `GROUP BY c.customer_id, c.customer_name` groups by the ID as well as the name, as in Question 1.
 
-**Check.** The `total_due` column adds up to 46,560 + 23,325 + 12,625 + 11,700 + 6,250 = ₹100,460, exactly the outstanding total from section 12.10. ✓ And each row's bands add up to its total. ✓
+**Check.** The `total_due` column adds up to 46,560 + 23,325 + 12,625 + 11,700 + 6,250 = ₹1,00,460, exactly the outstanding total from the fan-out fix in section 12.12. ✓ And each row's bands add up to its total. ✓
 
 **What to tell Anita.** ₹88,760 is overdue, and more than half of it is Northgate Distributors (₹46,560). Northgate is *also* on the "gone quiet" list from Question 1, so before sales chases them for a new order, finance should chase the old one. Sunrise Caterers hasn't paid anything, has no city recorded, and has no sales rep assigned: a credit risk and a data-quality problem at the same time.
 
@@ -3206,7 +4199,7 @@ LEFT JOIN employees   AS m  ON e.manager_id   = m.employee_id
 JOIN      orders      AS o  ON o.sales_rep_id = e.employee_id
 JOIN      order_items AS oi ON oi.order_id    = o.order_id
 WHERE o.status <> 'Cancelled'
-GROUP BY e.employee_name, m.employee_name
+GROUP BY e.employee_id, e.employee_name, m.employee_name
 ORDER BY net_revenue DESC;
 ```
 
@@ -3219,15 +4212,196 @@ ORDER BY net_revenue DESC;
 (3 rows)
 ```
 
-**How it works.** `COUNT(DISTINCT o.order_id)` avoids the fan-out from joining to order lines. Both names are in `GROUP BY` because both appear in `SELECT`. Anita Rao and Vikram Singh don't appear as reps because they have no orders of their own; the inner join to `orders` removes them, which is what this question wants.
+**How it works.** `COUNT(DISTINCT o.order_id)` avoids the fan-out from joining to order lines. Both names are in `GROUP BY` because both appear in `SELECT`, and `e.employee_id` is there too, so two reps with the same name would stay apart. Anita Rao and Vikram Singh don't appear as reps because they have no orders of their own; the inner join to `orders` removes them, which is what this question wants.
 
-**Check.** The three reps total ₹300,605. Order 5008 has no rep and is worth ₹23,325. 300,605 + 23,325 = ₹323,930, exactly the total non-cancelled revenue. ✓ **Reconciling to a known total is how you prove a report hasn't lost anything.** Mention the unassigned ₹23,325 in a footnote so nobody wonders where it went.
+**Check.** The three reps total ₹3,00,605. Order 5008 has no rep and is worth ₹23,325. 3,00,605 + 23,325 = ₹3,23,930, exactly the total non-cancelled revenue. ✓ **Reconciling to a known total is how you prove a report hasn't lost anything.** Mention the unassigned ₹23,325 in a footnote so nobody wonders where it went.
 
-**What to tell Anita.** Rahul Mehta leads on revenue with ₹146,745, largely from two big Coastal Foods orders. Neha Kulkarni handled as many orders but at a much smaller average size, which is worth understanding before judging performance. Ranking reps, showing each one's share of team revenue, and comparing this quarter with last all need **window functions**, the headline tool of Chapter 13.
+**What to tell Anita.** Rahul Mehta leads on revenue with ₹1,46,745, largely from two big Coastal Foods orders. Neha Kulkarni handled as many orders but at a much smaller average size, which is worth understanding before judging performance. Ranking reps, showing each one's share of team revenue, and comparing this quarter with last all need **window functions**, the headline tool of Chapter 13.
+
+### Question 5: "Why did March fall?"
+
+Chapter 5 asked this question and answered it with an issue tree, using numbers from this mini database. Every one of those numbers is a short query you can now write yourself. Here is the walk-through again, as SQL.
+
+**Restate.** Chapter 5 measured **billed revenue**: invoices, by invoice date. That's a business rule, so write it down. (The monthly report in "In the real world", later in this chapter, uses a different rule, orders by order date. On this data both give ₹31,800 for March, but in general they differ.)
+
+**Step 1. Split with a formula.** Billed revenue = number of invoices × average invoice:
+
+```sql
+SELECT DATE_TRUNC('month', invoice_date)::date AS month,
+       COUNT(*)                                AS invoices,
+       SUM(amount)                             AS billed,
+       ROUND(AVG(amount), 0)                   AS avg_invoice
+FROM invoices
+WHERE invoice_date >= DATE '2026-02-01'
+GROUP BY DATE_TRUNC('month', invoice_date)
+ORDER BY month;
+```
+
+```
+   month    | invoices |  billed   | avg_invoice
+------------+----------+-----------+-------------
+ 2026-02-01 |        5 | 161700.00 |       32340
+ 2026-03-01 |        2 |  31800.00 |       15900
+(2 rows)
+```
+
+February: 5 invoices averaging ₹32,340, ₹1,61,700 in all. March: 2 averaging ₹15,900, ₹31,800. The same numbers as Chapter 5. The split of the ₹1,29,900 fall is arithmetic, done by hand exactly as there: at February's average, March's 2 invoices would have brought ₹64,680, so fewer invoices explain ₹1,61,700 − ₹64,680 = ₹97,020, and smaller invoices the other ₹64,680 − ₹31,800 = ₹32,880. ✓ ₹97,020 + ₹32,880 = ₹1,29,900.
+
+**Step 2. Which customers stopped?** Customers invoiced in February, `EXCEPT` those with a non-cancelled order in March:
+
+```sql
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01'
+EXCEPT
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders AS o ON c.customer_id = o.customer_id
+WHERE o.order_date >= DATE '2026-03-01'
+  AND o.order_date <  DATE '2026-04-01'
+  AND o.status <> 'Cancelled'
+ORDER BY customer_name;
+```
+
+```
+     customer_name
+------------------------
+ Coastal Foods
+ Northgate Distributors
+ Sunrise Caterers
+(3 rows)
+```
+
+Coastal Foods, Northgate Distributors, and Sunrise Caterers: the three from Chapter 5. ✓ A tempting shortcut gets this wrong. Take away the customers *invoiced* in March instead:
+
+```sql
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01'
+EXCEPT
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-03-01'
+  AND i.invoice_date <  DATE '2026-04-01'
+ORDER BY customer_name;
+```
+
+```
+     customer_name
+------------------------
+ Coastal Foods
+ Metro Mart
+ Northgate Distributors
+ Sunrise Caterers
+(4 rows)
+```
+
+Four customers, and Metro Mart is wrong: it *did* order in March; the order just isn't billed yet. "Didn't reorder" is a question about orders, so the second half must look at orders.
+
+**Step 3. Booked, not billed.** Which non-cancelled orders have no invoice? An anti-join (section 12.10), with each order's revenue:
+
+```sql
+SELECT o.order_id,
+       o.order_date,
+       o.status,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS order_revenue
+FROM orders AS o
+JOIN order_items AS oi ON oi.order_id = o.order_id
+LEFT JOIN invoices AS i ON i.order_id = o.order_id
+WHERE i.invoice_id IS NULL
+  AND o.status <> 'Cancelled'
+GROUP BY o.order_id, o.order_date, o.status;
+```
+
+```
+ order_id | order_date | status  | order_revenue
+----------+------------+---------+---------------
+     5012 | 2026-03-15 | Pending |         26220
+(1 row)
+```
+
+Metro Mart's order 5012, ₹26,220, still Pending. Billed, March would be ₹31,800 + ₹26,220 = ₹58,020, as Chapter 5 said. ✓
+
+**Step 4. The wholesale mix.** How much of February's billing came from wholesale customers? Conditional aggregation (section 12.9):
+
+```sql
+SELECT SUM(i.amount)                                                   AS billed,
+       SUM(CASE WHEN c.segment = 'Wholesale' THEN i.amount ELSE 0 END) AS wholesale,
+       ROUND(100.0 * SUM(CASE WHEN c.segment = 'Wholesale' THEN i.amount ELSE 0 END)
+             / SUM(i.amount), 1)                                       AS wholesale_pct
+FROM invoices AS i
+JOIN orders    AS o ON o.order_id    = i.order_id
+JOIN customers AS c ON c.customer_id = o.customer_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01';
+```
+
+```
+  billed   | wholesale | wholesale_pct
+-----------+-----------+---------------
+ 161700.00 | 109185.00 |          67.5
+(1 row)
+```
+
+₹1,09,185 of ₹1,61,700, 67.5%, from two wholesale orders. ✓
+
+**Step 5. Did they stop ordering, and do they owe money?** Reuse Question 3's balance for each invoice, add it up per customer, and add a yes/no column with `EXISTS`: *is there a non-cancelled March order for this customer?* An `EXISTS (…)` in the `SELECT` list gives true or false for each row; it's the same test you used in `WHERE` in section 12.12.
+
+```sql
+SELECT c.customer_name,
+       EXISTS (SELECT 1
+               FROM orders AS m
+               WHERE m.customer_id = c.customer_id
+                 AND m.order_date >= DATE '2026-03-01'
+                 AND m.status <> 'Cancelled')           AS ordered_in_march,
+       COALESCE(SUM(inv.balance), 0.00)                 AS owed,
+       SUM(CASE WHEN inv.due_date < DATE '2026-03-31'
+                THEN inv.balance ELSE 0.00 END)          AS overdue
+FROM customers AS c
+JOIN orders AS o ON o.customer_id = c.customer_id
+LEFT JOIN (
+    SELECT i.order_id, i.due_date,
+           i.amount - COALESCE(pay.paid, 0) AS balance
+    FROM invoices AS i
+    LEFT JOIN (SELECT invoice_id, SUM(amount) AS paid
+               FROM payments
+               GROUP BY invoice_id) AS pay
+           ON i.invoice_id = pay.invoice_id
+) AS inv ON inv.order_id = o.order_id
+GROUP BY c.customer_id, c.customer_name
+ORDER BY overdue DESC, owed DESC, c.customer_name;
+```
+
+```
+     customer_name      | ordered_in_march |   owed   | overdue
+------------------------+------------------+----------+----------
+ Northgate Distributors | f                | 46560.00 | 46560.00
+ Sunrise Caterers       | f                | 23325.00 | 23325.00
+ Coastal Foods          | f                | 12625.00 | 12625.00
+ Patel Kitchenware      | f                |  6250.00 |  6250.00
+ Sharma Hardware        | t                | 11700.00 |     0.00
+ Green Leaf Hotels      | t                |     0.00 |     0.00
+ Metro Mart             | t                |     0.00 |     0.00
+(7 rows)
+```
+
+Chapter 5's seven-row table, row for row. ✓ `ordered_in_march` shows `t` (true) or `f` (false). The joins start from `orders`, so Blue Bay Cafe, which has never ordered, isn't listed, and `SUM(CASE … ELSE 0.00 END)` counts a balance as overdue only when its due date has passed.
+
+**What the data can't answer.** As in Chapter 5, the queries stop at *what* happened. Whether March is always slow needs last year's March, which the mini database doesn't have; whether a competitor is involved needs a phone call. The overdue pattern in step 5 is a hypothesis to test with the customers, not a cause.
+
+> **Watch out: billed revenue and order revenue are different rules.** Billed revenue counts invoices by invoice date; order revenue counts orders by order date and status. An order placed on 28 February and invoiced on 2 March lands in different months under the two rules. Say which one you report, every time.
 
 ### What just happened
 
-Four questions, four queries, and each answer came with a number *and* a reason to act. None of the SQL was new; every piece came from sections 12.4 to 12.12. What made the difference was the method: restating the question, knowing the grain of each table, choosing joins deliberately, building in steps, and checking every result against something you already trusted. That habit, far more than syntax, is what makes an analyst trusted.
+Five questions, a handful of queries, and each answer came with a number *and* a reason to act. None of the SQL was new; every piece came from sections 12.4 to 12.12. What made the difference was the method: restating the question, knowing the grain of each table, choosing joins deliberately, building in steps, and checking every result against something you already trusted. That habit, far more than syntax, is what makes an analyst trusted.
 
 ## 12.16 The same SQL in MySQL
 
@@ -3316,7 +4490,22 @@ The same five customers, in the same order, with the same day counts as the Post
 
 ### Trap 2: MySQL ignores capital letters when comparing text
 
-Run this in both databases:
+Run the same query in both databases. PostgreSQL:
+
+```sql
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE status = 'delivered';
+```
+
+```
+ delivered_orders
+------------------
+                0
+(1 row)
+```
+
+MySQL:
 
 ```mysql
 SELECT COUNT(*) AS delivered_orders
@@ -3338,7 +4527,25 @@ That's often convenient: a user who types "mumbai" in a search box still finds M
 
 - **A query that works in MySQL can silently return nothing when moved to PostgreSQL**, Snowflake, or most other warehouses. When a company migrates its reports, this is one of the first things to break.
 - **Duplicate checks behave differently.** In MySQL, `GROUP BY email` treats `Ravi@Example.com` and `ravi@example.com` as one group, and a `UNIQUE` column won't accept both. In PostgreSQL they're two.
-- **When you really need an exact match** in MySQL, such as for case-sensitive codes or passwords, ask for a binary comparison: `WHERE status COLLATE utf8mb4_bin = 'delivered'` returns 0.
+- **When you really need an exact match** in MySQL, such as for case-sensitive codes or passwords, ask for a binary comparison, shown below.
+
+`COLLATE utf8mb4_bin` compares the stored characters exactly:
+
+```mysql
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE status COLLATE utf8mb4_bin = 'delivered';
+```
+
+```
++------------------+
+| delivered_orders |
++------------------+
+|                0 |
++------------------+
+```
+
+Zero, like PostgreSQL.
 
 **Portable habit:** match the stored capitalization exactly, or write `LOWER(status) = 'delivered'`, which gives the same answer in every database.
 
@@ -3361,7 +4568,13 @@ In MySQL's default settings, `||` is an old synonym for `OR`. MySQL tried to tre
 
 ### Where NULLs sort
 
-`SELECT DISTINCT city FROM customers ORDER BY city;` returns the same six rows in both databases, but PostgreSQL puts Sunrise Caterers' missing city **last**, and MySQL puts it **first**:
+Section 12.5's `DISTINCT` query returns the same six rows in both databases, but PostgreSQL put Sunrise Caterers' missing city **last**, and MySQL puts it **first**:
+
+```mysql
+SELECT DISTINCT city
+FROM customers
+ORDER BY city;
+```
 
 ```
 +-----------+
@@ -3426,37 +4639,6 @@ The same answer. The cancelled order and the pending order have no invoice, whic
 
 Each half has its own `WHERE`, so the two halves can never return the same row, which is why `UNION ALL` is safe (and faster than `UNION`). If you want *all* rows from both sides, not just the unmatched ones, remove the first `WHERE`, keep the second, and still use `UNION ALL`: the second half then adds only the rows the first half couldn't produce.
 
-### The monthly report, in MySQL
-
-The "In the real world" report at the end of this chapter needs one change: `DATE_FORMAT` builds the first day of each month, because MySQL has no `DATE_TRUNC`.
-
-```mysql
--- Monthly sales summary (MySQL)
--- Revenue counts Delivered and Shipped orders (finance policy).
-SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
-       COUNT(DISTINCT o.order_id)                          AS orders,
-       COUNT(DISTINCT o.customer_id)                       AS active_customers,
-       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
-FROM orders AS o
-JOIN order_items AS oi
-  ON o.order_id = oi.order_id
-WHERE o.status IN ('Delivered', 'Shipped')
-GROUP BY month
-ORDER BY month;
-```
-
-```
-+------------+--------+------------------+-------------+
-| month      | orders | active_customers | net_revenue |
-+------------+--------+------------------+-------------+
-| 2026-01-01 |      3 |                3 |      104210 |
-| 2026-02-01 |      5 |                5 |      161700 |
-| 2026-03-01 |      2 |                2 |       31800 |
-+------------+--------+------------------+-------------+
-```
-
-`'%Y-%m-01'` is a format pattern: `%Y` is the four-digit year, `%m` the two-digit month, and `-01` is typed literally, giving text like `2026-02-01`. `CAST(… AS DATE)` turns that text back into a real date, so it sorts and joins like one. The format letters are MySQL's own; `%d` is the day, `%M` the month's name, and `%b` its short name, which is handy for chart labels (`DATE_FORMAT(order_date, '%b %Y')` gives `Feb 2026`).
-
 ### Habits that make your SQL portable
 
 You'll probably work with more than one database in your career; many companies run MySQL for their applications and copy the data into a warehouse for analysis. These habits make a query move between them with the fewest surprises:
@@ -3501,6 +4683,7 @@ You'll probably work with more than one database in your career; many companies 
 | Adding `NOT NULL` or a constraint while old rows break it | `ALTER TABLE` fails | Fix the existing data first, then add the rule |
 | `DROP … CASCADE` to make an error go away | Constraints, or whole tables in a schema, silently removed | Read what depends on the object; drop children first |
 | Practicing changes on a real database | Real data changed or lost | Use a lab database or a copy |
+| Forgetting the database password set during installation | Can't connect to PostgreSQL or MySQL | Write it down during installation, somewhere safe |
 | Not hand-checking a new calculation | Wrong logic ships in a report | Verify one row or one group by hand, every time |
 
 ---
@@ -3536,11 +4719,40 @@ ORDER BY month;
 (3 rows)
 ```
 
-It runs in well under a second, it gives the same answer every time, and a late correction just means running it again. Every idea in this chapter is in it: filtering, a join, aggregates, `COUNT(DISTINCT)` to avoid fan-out, date truncation, and a comment recording a **business rule** (which statuses count as revenue).
+**The same report in MySQL.** The report you just built needs one change in MySQL (section 12.16): `DATE_FORMAT` builds the first day of each month, because MySQL has no `DATE_TRUNC`.
+
+```mysql
+-- Monthly sales summary (MySQL)
+-- Revenue counts Delivered and Shipped orders (finance policy).
+SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
+       COUNT(DISTINCT o.order_id)                          AS orders,
+       COUNT(DISTINCT o.customer_id)                       AS active_customers,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
+FROM orders AS o
+JOIN order_items AS oi
+  ON o.order_id = oi.order_id
+WHERE o.status IN ('Delivered', 'Shipped')
+GROUP BY month
+ORDER BY month;
+```
+
+```
++------------+--------+------------------+-------------+
+| month      | orders | active_customers | net_revenue |
++------------+--------+------------------+-------------+
+| 2026-01-01 |      3 |                3 |      104210 |
+| 2026-02-01 |      5 |                5 |      161700 |
+| 2026-03-01 |      2 |                2 |       31800 |
++------------+--------+------------------+-------------+
+```
+
+`'%Y-%m-01'` is a format pattern: `%Y` is the four-digit year, `%m` the two-digit month, and `-01` is typed literally, giving text like `2026-02-01`. `CAST(… AS DATE)` turns that text back into a real date, so it sorts and joins like one. The format letters are MySQL's own; `%d` is the day, `%M` the month's name, and `%b` its short name, which is handy for chart labels (`DATE_FORMAT(order_date, '%b %Y')` gives `Feb 2026`).
+
+The query runs in well under a second, it gives the same answer every time, and a late correction just means running it again. Every idea in this chapter is in it: filtering, a join, aggregates, `COUNT(DISTINCT)` to avoid fan-out, date truncation, and a comment recording a **business rule** (which statuses count as revenue).
 
 That business rule is the most important line in the query, and SQL can't decide it for you. Does a Shipped order count as revenue, or only Delivered? Does Pending? Finance, sales, and operations may each give a different answer. **Your first job on any report is to find out and write it down.** Chapter 24 covers how to have that conversation.
 
-And once the query is right, nobody should have to run it by hand at all. **Chapter 20** takes this exact query and turns it into a *Daily Sales Flash*: an email that lands in every manager's inbox at 8 a.m., with the numbers in the body of the email, an alert when stock runs low, and a warning to you if the job ever fails.
+And once the query is right, nobody should have to run it by hand at all. **Chapter 20** takes a query of exactly this kind and turns it into a *Daily Sales Flash*: an email that lands in every manager's inbox by 7:30 each morning, with the numbers in the body of the email, an alert when something in the data looks wrong, and a warning to you if the job ever fails.
 
 ---
 
@@ -3553,12 +4765,12 @@ And once the query is right, nobody should have to run it by hand at all. **Chap
 - **PostgreSQL**: a free, professional-grade relational database that follows the SQL standard closely. It's the recommended database for learning and a common choice in industry.
 - **MySQL Community Server** (optional second database): the free edition of MySQL, behind a large share of web and e-commerce applications. Install the current LTS release (section 12.3).
 - **DBeaver Community Edition**: a free query editor that connects to almost any database, including both of the above. Alternatives: pgAdmin (PostgreSQL's own tool), MySQL Workbench (MySQL's own tool), or the editor built into your company's data warehouse.
-- **The Riverstone practice files** (Appendix E): `riverstone_setup.sql` (the small database used in this chapter), its MySQL twin `riverstone_setup_mysql.sql`, `ch12_queries_mysql.sql` (every query in this chapter, tested in MySQL), `ch12_lab_postgresql.sql` and `ch12_lab_mysql.sql` (every statement from section 12.13 and exercises 23–27, in order), and the full-size version with thousands of orders, for the project.
+- **The Riverstone practice files** (Appendix E): `riverstone_setup.sql` (the small database used in this chapter) and its MySQL twin `riverstone_setup_mysql.sql`; `riverstone_2025_setup.sql` and `riverstone_2025_setup_mysql.sql` (the one-year database: 24 customers and 175 orders from 2025, for exercise 30 and the project); `ch12_queries_postgresql.sql` and `ch12_queries_mysql.sql` (every query in this chapter, in each database's spelling, including Chapter 7's quiet-customer query from exercise 30); and `ch12_lab_postgresql.sql` and `ch12_lab_mysql.sql` (every statement from section 12.13 and exercises 23–27, in order).
 - **Later in the book:** a cloud data warehouse (Chapter 49), where the same SQL runs on billions of rows.
 
 **Option A: your own work data.** Use a report you actually produce: sales, collections, inventory, attendance, leads. Get permission first, and never copy confidential data to personal devices. Remove or mask names if needed.
 
-**Option B: the full Riverstone dataset** from Appendix E, if you don't have suitable work data.
+**Option B: the one-year Riverstone database** (`riverstone_2025_setup.sql`, 175 orders from 2025; section 12.3), if you don't have suitable work data.
 
 **Steps:**
 
@@ -3568,7 +4780,7 @@ And once the query is right, nobody should have to run it by hand at all. **Chap
 4. **Build step by step.** Start with `SELECT ... FROM` one table. Add one join at a time, checking row counts after each. Add filters. Add aggregation last.
 5. **Reconcile.** Compare your SQL totals with the report you trust. They *will* differ at first. Track down every difference: a cancelled order counted, a join that fanned out, a date boundary, a NULL. Write down what you found.
 6. **Make it readable.** Apply the style guide from section 12.14 and comment every business rule.
-7. **Save it** in a Git repository (Chapter 26) with a short README: what the report is, the rules, and how to run it.
+7. **Save it.** Put the query and a short README (what the report is, the rules, and how to run it) in a dated project folder. In Chapter 26 you'll put this folder under version control.
 
 **Stretch goals:**
 
@@ -3593,13 +4805,14 @@ And once the query is right, nobody should have to run it by hand at all. **Chap
 - **Subqueries** nest queries; `NOT EXISTS` is safer than `NOT IN`. `UNION ALL` stacks results; `UNION` also removes duplicates.
 - **DDL** (`CREATE`, `ALTER`, `DROP`, `TRUNCATE`) builds and changes structure; **DML** (`INSERT`, `UPDATE`, `DELETE`) changes rows. Turn business rules into **constraints**, check the `WHERE` before every change, and use **transactions**. In MySQL, structure changes can't be rolled back, so back up first.
 - Readable SQL is correct SQL more often. Always hand-check one result.
-- **MySQL** runs the same SQL with a few different spellings and three silent traps: subtract dates with `DATEDIFF`, join text with `CONCAT`, and remember that its default collation ignores capital letters and sorts NULLs first.
+- **MySQL** runs the same SQL with a few different spellings, and four behaviours that change results without an error: date subtraction (use `DATEDIFF`), `||` (use `CONCAT`), case-insensitive comparison, and NULLs sorting first.
+- **Install from official sources, and check each tool before moving on:** `SELECT COUNT(*) FROM order_items;` returning 19 proves the database, the client, and the data all work.
 
 ---
 
 ## Key terms
 
-attribute/column · row/record · table · relational database · DBMS · schema · data type · `NUMERIC` vs floating point · entity-relationship (ER) diagram · primary key · composite key · foreign key · referential integrity · one-to-many · many-to-many · bridge table · normalization · grain · SQL dialect · alias · `DISTINCT` · three-valued logic · `NULL` · `COALESCE` · `CASE` · cast · aggregate function · `GROUP BY` · `HAVING` · inner join · left join · right join · full outer join · cross join · self-join · anti-join · fan-out · reconciliation · logical execution order · subquery · correlated subquery · derived table · gross margin · ageing report · `UNION` / `UNION ALL` · `INTERSECT` / `EXCEPT` · DDL · DML · TCL · DCL · `CREATE DATABASE` · `CREATE TABLE` · constraint · `NOT NULL` · `UNIQUE` · `CHECK` · `DEFAULT` · identity column / `AUTO_INCREMENT` · `INSERT` · `RETURNING` / `LAST_INSERT_ID()` · `UPDATE` · `DELETE` · `ON DELETE CASCADE` · soft delete · upsert · `ALTER TABLE` · `MODIFY COLUMN` · schema (PostgreSQL) · `TRUNCATE` · `DROP` · implicit commit · staging table · migration · transaction · `COMMIT` / `ROLLBACK` · auto-commit · MySQL · LTS release · collation · `DATEDIFF` · `ONLY_FULL_GROUP_BY`
+attribute/column · row/record · table · relational database · DBMS · PostgreSQL · DBeaver · installer · `localhost` · port · driver · statement · clause · expression · function · argument · schema · data type · `NUMERIC` vs floating point · entity-relationship (ER) diagram · primary key · composite key · foreign key · referential integrity · one-to-many · many-to-many · bridge table · normalization · grain · SQL dialect · alias · `DISTINCT` · three-valued logic · `NULL` · `COALESCE` · `CASE` · cast · date literal · banker's rounding · aggregate function · `GROUP BY` · `HAVING` · inner join · left join · right join · full outer join · cross join · self-join · anti-join · fan-out · reconciliation · logical execution order · subquery · correlated subquery · derived table · gross margin · ageing report · `UNION` / `UNION ALL` · `INTERSECT` / `EXCEPT` · DDL · DML · TCL · DCL · `CREATE DATABASE` · `CREATE TABLE` · constraint · `NOT NULL` · `UNIQUE` · `CHECK` · `DEFAULT` · identity column / `AUTO_INCREMENT` · `INSERT` · `RETURNING` / `LAST_INSERT_ID()` · `UPDATE` · `DELETE` · `ON DELETE CASCADE` · soft delete · upsert · `ALTER TABLE` · `MODIFY COLUMN` · schema (PostgreSQL) · `TRUNCATE` · `DROP` · implicit commit · staging table · migration · transaction · `COMMIT` / `ROLLBACK` · auto-commit · MySQL · LTS release · collation · `DATEDIFF` · `ONLY_FULL_GROUP_BY`
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -3608,6 +4821,8 @@ attribute/column · row/record · table · relational database · DBMS · schema
 ## Check yourself
 
 Be strict with yourself as you check each box:
+
+- [ ] PostgreSQL (and, if I chose it, MySQL) and DBeaver are installed, and `SELECT COUNT(*) FROM order_items;` returns 19 in the Riverstone database.
 
 - [ ] I can explain what a table, row, column, primary key, and foreign key are, using an example from my own work.
 - [ ] I can look at a schema and state the grain of each table.
@@ -3620,7 +4835,7 @@ Be strict with yourself as you check each box:
 - [ ] I can create a table with keys and constraints, fill it, correct it, change its structure with `ALTER TABLE`, and remove it, in PostgreSQL and in MySQL.
 - [ ] Before any `UPDATE`, `DELETE`, `ALTER`, or `DROP`, I preview, back up, or use a transaction without being reminded.
 - [ ] I have rebuilt one real report in SQL and reconciled it to the trusted numbers.
-- [ ] *(If you use MySQL.)* I can move a query between PostgreSQL and MySQL and name the three differences that change results without an error.
+- [ ] *(If you use MySQL.)* I can move a query between PostgreSQL and MySQL and name the four differences that change results without an error.
 
 When a new business question arrives and your thinking is about *the business*, not about the syntax, SQL has become a tool in your hands.
 
@@ -3648,7 +4863,7 @@ All exercises use the Riverstone database from section 12.2. Try each one before
 
 ### Stretch
 
-11. For each customer who has ordered, show their first order date, most recent order date, and the number of days between them. Largest gap first.
+11. For each customer who has ordered, show their first order date, most recent order date, and the number of days between them, ignoring cancelled orders. Largest gap first.
 12. Show net revenue by product category and each category's percentage of total net revenue (non-cancelled orders), to one decimal place.
 13. Which customers' total net revenue is above the average customer's total net revenue?
 14. For every invoice with money still owed, show the invoice amount, the number of payments, the amount paid, and the balance. Largest balance first.
@@ -3659,7 +4874,7 @@ All exercises use the Riverstone database from section 12.2. Try each one before
 16. A colleague's report says Riverstone had "19 orders" in Q1 2026. Where might that number have come from, and what's the right figure?
 17. The business wants to know revenue by city. Sunrise Caterers has no city. Should the report drop it, show it as "Unknown", or something else? Who should decide?
 18. Explain to a non-technical manager, in three sentences, why the sales report must not overwrite old prices when the price list changes.
-19. In exercise 14 you can safely join invoices to payments and use `SUM(p.amount)`, but in section 12.10 the same join gave a wrong total. What's the difference? Use invoice 9005 in your explanation.
+19. In exercise 14 you can safely join invoices to payments and show `i.amount` next to `SUM(p.amount)`, but in section 12.10 the same join made `SUM(i.amount)` wrong. What's the difference? Use invoice 9005 in your explanation.
 
 ### MySQL track (optional, section 12.16)
 
@@ -3679,11 +4894,18 @@ Use the `riverstone_lab` database. If you've already dropped it, create it again
 28. A table called `daily_stock_import` is emptied and reloaded with fresh data every morning. Compare `DELETE FROM daily_stock_import;`, `TRUNCATE TABLE daily_stock_import;`, and `DROP TABLE daily_stock_import;` for this job. Which would you use, and what's the one situation in MySQL where your choice behaves differently from PostgreSQL?
 29. At 6 p.m. on a Friday, a manager asks you to change every `'Open'` status to `'Pending'` in the live `purchase_orders` table "quickly, before the weekend". List the steps you'd take, in order.
 
+### Back to earlier chapters
+
+30. *(PostgreSQL, then MySQL; needs the one-year database from section 12.3.)* Chapter 7, section 7.6, asked for every customer with no non-cancelled order in the 60 days up to 31 December 2025, including customers who have never ordered. On `riverstone_2025`, write the query, starting from Question 1 in section 12.15. Predict first: Chapter 7 found 5 customers, with Tasty Tiffins at 66 days. Then write the MySQL version (section 12.16).
+31. Using the rounding Watch out in section 12.8, predict each result, then run it to check: (a) PostgreSQL `SELECT ROUND(4.5);` (b) PostgreSQL `SELECT ROUND(4.5::double precision);` (c) MySQL `SELECT ROUND(45E-1);` Explain each.
+32. *(Needs the one-year database.)* Chapter 11, section 11.5, built its first pivot table on the 2025 sales: `segment` in Rows, the quarters in Columns, net revenue in Values, and `status` in Filters with Cancelled cleared. On `riverstone_2025`, write the same table in SQL, one row per segment and one column per quarter plus a total. Check your numbers against Figure 11.3.
+33. Write a short, specific request to your IT team asking permission to install PostgreSQL and DBeaver on a work laptop for learning. Say what each tool is for, what data you will and won't connect to, and ask them one question.
+
 ---
 
 ## Answers
 
-*(In the finished book these move to Appendix G. Every query below was run against the Riverstone database, and the outputs are real.)*
+*(Every query below was run against the Riverstone database, and the outputs are real.)*
 
 **1.**
 
@@ -3855,7 +5077,7 @@ FROM (
 (1 row)
 ```
 
-Check: total non-cancelled revenue is ₹323,930 across 11 orders; 323,930 ÷ 11 = 29,448.18. ✓
+Check: total non-cancelled revenue is ₹3,23,930 across 11 orders; 3,23,930 ÷ 11 = 29,448.18. ✓
 
 **9.**
 
@@ -3875,7 +5097,7 @@ ORDER BY amount_received DESC;
 (3 rows)
 ```
 
-The three amounts add up to ₹197,250, the total of the `payments` table. ✓
+The three amounts add up to ₹1,97,250, the total of the `payments` table. ✓
 
 **10.** An anti-join from invoices to payments:
 
@@ -3906,6 +5128,7 @@ SELECT c.customer_name,
        MAX(o.order_date) - MIN(o.order_date) AS days_between
 FROM customers AS c
 JOIN orders AS o ON c.customer_id = o.customer_id
+WHERE o.status <> 'Cancelled'
 GROUP BY c.customer_name
 ORDER BY days_between DESC, c.customer_name;
 ```
@@ -3914,16 +5137,16 @@ ORDER BY days_between DESC, c.customer_name;
      customer_name      | first_order | latest_order | days_between
 ------------------------+-------------+--------------+--------------
  Sharma Hardware        | 2026-01-05  | 2026-03-10   |           64
- Green Leaf Hotels      | 2026-01-20  | 2026-03-03   |           42
  Metro Mart             | 2026-02-06  | 2026-03-15   |           37
  Coastal Foods          | 2026-01-09  | 2026-02-11   |           33
+ Green Leaf Hotels      | 2026-03-03  | 2026-03-03   |            0
  Northgate Distributors | 2026-02-25  | 2026-02-25   |            0
  Patel Kitchenware      | 2026-01-14  | 2026-01-14   |            0
  Sunrise Caterers       | 2026-02-19  | 2026-02-19   |            0
 (7 rows)
 ```
 
-Grouping by name works here because names are unique in this data. In real data, group by `c.customer_id, c.customer_name` so two customers with the same name aren't merged.
+`WHERE o.status <> 'Cancelled'` drops Green Leaf Hotels' cancelled January order, so its first and latest valid orders are the same day, 3 March. Grouping by name works here because names are unique in this data. In real data, group by `c.customer_id, c.customer_name` so two customers with the same name aren't merged.
 
 **12.**
 
@@ -4017,7 +5240,7 @@ ORDER BY balance DESC;
 (5 rows)
 ```
 
-`COUNT(p.payment_id)` counts only real payments, so unpaid invoices show 0; `COUNT(*)` would wrongly show 1 for them, because the left join still produces one row. The balances add up to ₹100,460. ✓
+`COUNT(p.payment_id)` counts only real payments, so unpaid invoices show 0; `COUNT(*)` would wrongly show 1 for them, because the left join still produces one row. The balances add up to ₹1,00,460. ✓
 
 **15.**
 
@@ -4041,7 +5264,7 @@ ORDER BY days_open DESC;
 (3 rows)
 ```
 
-The parentheses matter: each status has its own day limit (section 12.5). Order 5009 has been "Shipped" for 34 days, which almost certainly means someone forgot to mark it Delivered, or it's lost. Either way, somebody should find out today.
+The parentheses matter: each status has its own day limit (section 12.6). Order 5009 has been "Shipped" for 34 days, which almost certainly means someone forgot to mark it Delivered, or it's lost. Either way, somebody should find out today.
 
 **16.** 19 is the number of rows in `order_items`, i.e. order *lines*, probably from counting rows after a join or from the wrong table. Riverstone had **12 orders** in Q1 2026 (11 if the cancelled order is excluded; which one to report is a business rule to agree on). It's the fan-out trap in the wild.
 
@@ -4222,6 +5445,8 @@ ERROR 3959 (HY000): Check constraint 'chk_capacity' uses column 'capacity_units'
 
 (The first statement ran; the second failed.) Drop the rule, rename, and add the rule back. Then widen `city` with `MODIFY`, restating `NOT NULL` so the column stays required:
 
+MySQL:
+
 <!-- run: mysql -->
 ```mysql
 ALTER TABLE warehouses DROP CONSTRAINT chk_capacity;
@@ -4229,6 +5454,8 @@ ALTER TABLE warehouses RENAME COLUMN capacity_units TO capacity_boxes;
 ALTER TABLE warehouses ADD CONSTRAINT chk_capacity CHECK (capacity_boxes > 0);
 ALTER TABLE warehouses MODIFY COLUMN city VARCHAR(80) NOT NULL;
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -4292,6 +5519,135 @@ No other table points to `warehouses` with a foreign key, so the drop succeeds s
 7. **Tell people** what changed, and keep the script.
 
 And the most important step: if steps 1 and 2 can't be settled with the people who own the app and the reports before they leave, **don't do it on a Friday evening.** A change nobody is around to check or fix over the weekend is a risk, not a favor. Saying *"I'll have it ready first thing Monday, tested"* is the professional answer.
+
+**30.** Change two dates in Question 1's query, 31 March 2026 to 31 December 2025, and 1 March 2026 to 1 November 2025 (60 days before 31 December is 1 November), and run it on `riverstone_2025`. PostgreSQL:
+
+<!-- db: riverstone_2025 -->
+```sql
+SELECT c.customer_name,
+       c.segment,
+       MAX(o.order_date)                     AS last_order_date,
+       DATE '2025-12-31' - MAX(o.order_date) AS days_since_last_order
+FROM customers AS c
+LEFT JOIN orders AS o
+       ON c.customer_id = o.customer_id
+      AND o.status <> 'Cancelled'
+GROUP BY c.customer_id, c.customer_name, c.segment
+HAVING MAX(o.order_date) < DATE '2025-11-01'
+    OR MAX(o.order_date) IS NULL
+ORDER BY last_order_date NULLS FIRST;
+```
+
+```
+   customer_name   |   segment   | last_order_date | days_since_last_order
+-------------------+-------------+-----------------+-----------------------
+ Home Plus         | Retail      |                 |
+ City Needs Store  | Retail      | 2025-03-22      |                   284
+ Sunrise Caterers  | Hospitality | 2025-06-10      |                   204
+ Om Sai Provisions | Retail      | 2025-07-22      |                   162
+ Tasty Tiffins     | Hospitality | 2025-10-26      |                    66
+(5 rows)
+```
+
+The same five customers as Chapter 7, with Tasty Tiffins at 66 days. ✓ In plain words: the query starts from every customer and looks up each one's orders, ignoring cancelled ones; for each customer it finds the latest order date and counts the days from that date to 31 December 2025; and it keeps only customers whose latest order was before 1 November, plus customers with no orders at all. The blank dates are Home Plus: it signed up on 18 June 2025 and has never ordered, so there's no date to show.
+
+MySQL needs the two changes from section 12.16, `DATEDIFF` instead of subtracting dates and a hand-made sort to put the blank dates first:
+
+```mysql
+SELECT c.customer_name,
+       c.segment,
+       MAX(o.order_date)                              AS last_order_date,
+       DATEDIFF(DATE '2025-12-31', MAX(o.order_date)) AS days_since_last_order
+FROM customers AS c
+LEFT JOIN orders AS o
+       ON c.customer_id = o.customer_id
+      AND o.status <> 'Cancelled'
+GROUP BY c.customer_id, c.customer_name, c.segment
+HAVING MAX(o.order_date) < DATE '2025-11-01'
+    OR MAX(o.order_date) IS NULL
+ORDER BY last_order_date IS NULL DESC, last_order_date;
+```
+
+```
++-------------------+-------------+-----------------+-----------------------+
+| customer_name     | segment     | last_order_date | days_since_last_order |
++-------------------+-------------+-----------------+-----------------------+
+| Home Plus         | Retail      | NULL            |                  NULL |
+| City Needs Store  | Retail      | 2025-03-22      |                   284 |
+| Sunrise Caterers  | Hospitality | 2025-06-10      |                   204 |
+| Om Sai Provisions | Retail      | 2025-07-22      |                   162 |
+| Tasty Tiffins     | Hospitality | 2025-10-26      |                    66 |
++-------------------+-------------+-----------------+-----------------------+
+```
+
+The same five rows. Both versions are in the companion files `ch12_queries_postgresql.sql` and `ch12_queries_mysql.sql`.
+
+**31.** (a) and (b), in PostgreSQL:
+
+<!-- db: riverstone -->
+```sql
+SELECT ROUND(4.5)                   AS exact_numeric,
+       ROUND(4.5::double precision) AS floating;
+```
+
+```
+ exact_numeric | floating
+---------------+----------
+             5 |        4
+(1 row)
+```
+
+(c), in MySQL:
+
+```mysql
+SELECT ROUND(45E-1) AS approximate;
+```
+
+```
++-------------+
+| approximate |
++-------------+
+|           4 |
++-------------+
+```
+
+(a) `5`: `4.5` is `numeric`, and PostgreSQL breaks ties away from zero. (b) `4`: as `double precision`, the usual rule is round half to even, and 4 is even. (c) `4`: `45E-1` (45 × 10⁻¹, which is 4.5) is written in scientific notation, which makes it an approximate value, so on most systems MySQL rounds it to the nearest even number. A spreadsheet's `=ROUND(4.5,0)` would give 5, like (a).
+
+**32.** A derived table first works out each line's quarter and revenue (the pivot's source rows, with the Filters condition as `WHERE`); the outer query groups by segment (Rows) and spreads the quarters into columns with conditional aggregation (Columns and Values):
+
+<!-- db: riverstone_2025 -->
+```sql
+SELECT segment,
+       ROUND(SUM(CASE WHEN qtr = 1 THEN line_revenue ELSE 0 END), 2) AS q1,
+       ROUND(SUM(CASE WHEN qtr = 2 THEN line_revenue ELSE 0 END), 2) AS q2,
+       ROUND(SUM(CASE WHEN qtr = 3 THEN line_revenue ELSE 0 END), 2) AS q3,
+       ROUND(SUM(CASE WHEN qtr = 4 THEN line_revenue ELSE 0 END), 2) AS q4,
+       ROUND(SUM(line_revenue), 2)                                  AS grand_total
+FROM (
+    SELECT c.segment,
+           EXTRACT(QUARTER FROM o.order_date)                  AS qtr,
+           oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100) AS line_revenue
+    FROM order_items AS oi
+    JOIN orders    AS o ON oi.order_id   = o.order_id
+    JOIN customers AS c ON o.customer_id = c.customer_id
+    WHERE o.status <> 'Cancelled'
+) AS sales_lines
+GROUP BY segment
+ORDER BY segment;
+```
+
+```
+   segment   |    q1     |    q2     |    q3     |    q4     | grand_total
+-------------+-----------+-----------+-----------+-----------+-------------
+ Hospitality | 149040.00 | 252170.00 | 307277.50 | 435551.25 |  1144038.75
+ Retail      | 394327.50 | 198473.75 | 333972.50 | 562000.00 |  1488773.75
+ Wholesale   | 190944.00 | 275924.50 | 479039.00 | 756751.00 |  1702658.50
+(3 rows)
+```
+
+Every cell matches Figure 11.3, for example Wholesale's Q4 of ₹7,56,751 and its total of ₹17,02,658.50. ✓ `EXTRACT(QUARTER FROM …)` gives 1 to 4, the same as Chapter 11's `quarter` column. The derived table is called `sales_lines`, not `lines`, because `LINES` is a reserved word in MySQL and the query would fail there. The pivot's Grand Total row is the same query without `segment` and without `GROUP BY`: one row, ₹43,35,471.
+
+**33.** One good version: *"Hello, I'd like permission to install two free tools on my work laptop for learning data analysis: PostgreSQL (a database, used to practice SQL on sample data) and DBeaver Community (an app for writing SQL). I'll only use practice datasets from a textbook, and I won't connect them to any company system or customer data without your approval. Could you tell me whether there's an approved way to connect to company data later, if my manager asks for reports?"* A good request names each tool and its purpose, promises what you won't do, and asks one clear question.
 
 ---
 

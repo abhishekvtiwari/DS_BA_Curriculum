@@ -43,7 +43,9 @@ def run(command):
 def norm(text):
     return [l.rstrip() for l in text.strip('\n').splitlines() if l.strip()]
 
-block = re.compile(r'<!-- run: (none) -->|^```\w*\n(# terminal.*?)^```$', re.S | re.M)
+# every fenced block is matched, so a "run: none" marker applies to the very next block only (a marker
+# before a Python block used to stay armed and skip the next terminal block instead)
+block = re.compile(r'<!-- run: (none) -->|^```\w*\n(# terminal.*?)^```$|^```\w*\n(?!# terminal).*?^```$', re.S | re.M)
 pieces, pos, checked = [], 0, 0
 mismatches = ran = filled = 0
 skip = False
@@ -55,6 +57,8 @@ for m in block.finditer(md):
         skip = False
         continue
     body = m.group(2)
+    if body is None:            # not a terminal session
+        continue
     lines = body.split('\n')
     out_lines, i = [], 0
     while i < len(lines):

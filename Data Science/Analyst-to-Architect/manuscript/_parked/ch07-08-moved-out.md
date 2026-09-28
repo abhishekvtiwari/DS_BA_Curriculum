@@ -12,6 +12,8 @@ behind it"), and deletes it from this file. Rupee amounts are as they stood befo
 ## 1. Ch 7 §7.6 Step 2: the PostgreSQL query and its output
 
 **Destination:** Ch 12 (Part 2 build), next to the mini-database version in §12.15, as "the query behind
+
+**Landed** in Ch 12's answer 30 (exercise 30 asks the reader to write it first), re-run on riverstone_2025 (Part 2/3 build).
 Chapter 7's five quiet customers". Rechecked on 28 Sep 2026 against `companion/riverstone_2025_setup.sql`
 (loaded into SQLite): the same five customers, 284 / 204 / 162 / 66 days, Home Plus with no order.
 
@@ -56,6 +58,8 @@ ORDER BY last_order_date NULLS FIRST;
 
 **Destination:** Ch 12 §12.15 / Ch 13 Pattern 6 intro, rewritten to point back to Chapter 7.
 
+**Landed** in Ch 12 §12.15 (the "Back to Chapter 7" box after Question 1) and Ch 13 §13.8 (Pattern 6 opens with a pointer back to Chapter 7) (Part 2/3 build).
+
 > **SQL link.** Chapter 12 teaches every clause in this query and includes a version of it on the mini database (section 12.15). Chapter 13 improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
 
 ---
@@ -63,6 +67,8 @@ ORDER BY last_order_date NULLS FIRST;
 ## 3. Ch 7 §7.6 "Dialect note" and the MySQL query and output
 
 **Destination:** Ch 12 (MySQL column of the same example).
+
+**Landed** in Ch 12's answer 30 (the MySQL version), re-run (Part 2/3 build).
 
 > **Dialect note.** The same question in MySQL needs two changes: `DATEDIFF` instead of subtracting dates, and a manual sort to put the blank dates first, because MySQL has no `NULLS FIRST`. The result is the same five customers.
 
@@ -98,6 +104,8 @@ ORDER BY last_order_date IS NOT NULL, last_order_date;
 ## 4. Ch 7 Tools: companion file line
 
 **Destination:** Ch 12's companion list (fix instruction 7.4). The file itself stays where it is:
+
+**Landed** in Ch 12's Tools list (Part 2/3 build); the file was merged into `companion/mysql/ch12_queries_mysql.sql`.
 `companion/mysql/ch07_queries_mysql.sql` (consider renaming it for Ch 12 in the Part 2 build).
 
 > - **Companion file (optional):** `companion/mysql/ch07_queries_mysql.sql` holds the section 7.6 query in PostgreSQL and MySQL form, for readers who already have the practice databases loaded (Chapter 12, section 12.3, explains the setup).

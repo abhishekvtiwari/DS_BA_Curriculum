@@ -11,8 +11,8 @@ if [[ ! -f "$FILE" ]]; then
     exit 2
 fi
 
-LINES=$(( $(wc -l < "$FILE") - 1 ))
+ORDER_LINES=$(( $(wc -l < "$FILE") - 1 ))
 REVENUE=$(awk -F, 'FNR > 1 { total += $11 } END { printf "%.2f", total + 0 }' "$FILE")
 CUSTOMERS=$(awk -F, 'FNR > 1 { seen[$4] = 1 } END { print length(seen) }' "$FILE")
 
-echo "$DAY: $LINES order lines, $CUSTOMERS customers, revenue $REVENUE"
+echo "$DAY: order lines $ORDER_LINES, customers $CUSTOMERS, revenue $REVENUE"

@@ -4,7 +4,7 @@ Before publishing any Power BI page:
 
 **Numbers**
 - [ ] Every card matches a SQL query you ran (`ch16_checks_postgresql.sql`).
-- [ ] The parts add to the whole: region bars + "Region missing" = the card total.
+- [ ] The parts add to the whole: region bars + "City missing" = the card total.
 - [ ] Orders use `DISTINCTCOUNT` on the order key, not the row count.
 - [ ] Cancelled orders are excluded once, in one documented place.
 - [ ] Ratios use `DIVIDE`, and totals of ratios are recomputed, not summed.
@@ -25,5 +25,5 @@ Before publishing any Power BI page:
 - [ ] Published to a shared workspace, not "My workspace".
 - [ ] Credentials use a service account; refresh scheduled after the source load; failure alerts to a team address.
 - [ ] Roles tested with View as and Test as role against a known total.
-- [ ] Last-refresh timestamp on the page; an "About this report" page with sources, exclusions, and definitions.
+- [ ] The data date and the refresh time (captured at refresh, not with NOW()) on the page; an "About this report" page with sources, exclusions, and definitions.
 - [ ] Licences confirmed for every reader.

@@ -49,7 +49,7 @@ p:has(> img) + p > em:only-child { display: block; text-align: center; font-size
 pre.lines { white-space: pre-wrap; overflow-wrap: anywhere; }
 pre.lines .ln { display: block; padding-left: 3ch; text-indent: -3ch; }
 pre.lines .ln.wrapped { position: relative; }
-pre.lines .ln.wrapped::after { content: "\21A9"; position: absolute; right: -2.6mm; top: 0; text-indent: 0; color: var(--muted); font-size: 0.9em; }
+pre.lines .ln.wrapped::after { content: "\21A9"; position: absolute; right: -2.6mm; top: 0; text-indent: 0; color: var(--muted); font-size: max(0.9em, 7pt);   /* never under the 7 pt print minimum */ }
 pre.split { break-inside: auto; }
 pre.keep { break-inside: avoid; }
 /* V7: headings, lead-ins, answer numbers and captions stay with what follows */

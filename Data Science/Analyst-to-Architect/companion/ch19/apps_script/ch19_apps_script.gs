@@ -1,5 +1,6 @@
-// Analyst to Architect, Chapter 19 — Google Apps Script for Sheets.
-// Paste into Extensions > Apps Script. Set CRM_TOKEN in Project Settings > Script Properties.
+// Analyst to Architect, Chapter 19 - Google Apps Script for Sheets.
+// Paste into Extensions > Apps Script. Set CRM_TOKEN in Project Settings > Script Properties,
+// and the project's time zone to India (Asia/Kolkata) before adding timed triggers.
 
 function formatMaster() {
   const sheet = SpreadsheetApp.getActive().getSheetByName('Master');
@@ -13,14 +14,14 @@ function formatMaster() {
   sheet.setFrozenRows(1);
   sheet.autoResizeColumns(1, lastCol);
 
-  Logger.log('formatted %s rows and %s columns', lastRow, lastCol);
+  Logger.log(`formatted ${lastRow} rows and ${lastCol} columns`);
 }
-
 
 function cleanStatuses() {
   const sheet = SpreadsheetApp.getActive().getSheetByName('Master');
-  const range = sheet.getDataRange();
-  const values = range.getValues();                    // one read
+  const lastRow = sheet.getLastRow();
+  const range = sheet.getRange(2, 9, lastRow - 1, 1);    // I2 down: row 2, column 9, one column
+  const values = range.getValues();                      // one read
 
   const map = {
     'delivered': 'Delivered', 'dlvd': 'Delivered', 'cancelled': 'Cancelled',
@@ -28,16 +29,15 @@ function cleanStatuses() {
   };
 
   let unmapped = 0;
-  for (let r = 1; r < values.length; r++) {
-    const raw = String(values[r][8]).trim().toLowerCase();
-    if (map[raw]) values[r][8] = map[raw];
+  for (let r = 0; r < values.length; r++) {
+    const raw = String(values[r][0]).trim().toLowerCase();
+    if (map[raw]) values[r][0] = map[raw];
     else unmapped++;
   }
 
-  range.setValues(values);                             // one write
-  Logger.log('%s rows cleaned, %s unmapped', values.length - 1, unmapped);
+  range.setValues(values);                               // one write, of column I only
+  Logger.log(`${values.length} rows cleaned, ${unmapped} unmapped`);
 }
-
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -46,7 +46,6 @@ function onOpen() {
     .addItem('Send daily summary', 'sendDailySummary')
     .addToUi();
 }
-
 
 /**
  * Riverstone's loyalty rebate percentage.
@@ -60,22 +59,33 @@ function REBATEPCT(annualValue) {
   return 0;
 }
 
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
 
 function onFormSubmit(e) {
-  const row = e.namedValues;                          // {'Email address': ['x@y.com'], ...}
-  const email = row['Email address'][0];
-  const company = row['Company'][0];
-  const product = row['Product'][0];
-  const quantity = row['Quantity'][0];
+  const answers = e.namedValues;          // {'Email address': ['x@y.com'], 'Company': [...], ...}
+  const email = answers['Email address'][0];
+  const company = answers['Company'][0];
+  const product = answers['Product'][0];
+  const quantity = answers['Quantity'][0];
 
   const html = `
-    <p>Dear ${company},</p>
-    <p>Thank you for your enquiry. We have logged it and a sales executive will reply within one working day.</p>
+    <p>Dear ${escapeHtml(company)},</p>
+    <p>Thank you for your enquiry. We have logged it and a sales executive will reply
+       within one working day.</p>
     <table style="border-collapse:collapse;font-family:Arial;font-size:13px">
-      <tr><td style="padding:4px 12px;color:#5b6475">Product</td><td style="padding:4px 12px"><b>${product}</b></td></tr>
-      <tr><td style="padding:4px 12px;color:#5b6475">Quantity</td><td style="padding:4px 12px"><b>${quantity}</b></td></tr>
+      <tr><td style="padding:4px 12px;color:#5b6475">Product</td>
+          <td style="padding:4px 12px"><b>${escapeHtml(product)}</b></td></tr>
+      <tr><td style="padding:4px 12px;color:#5b6475">Quantity</td>
+          <td style="padding:4px 12px"><b>${escapeHtml(quantity)}</b></td></tr>
     </table>
-    <p style="color:#5b6475;font-size:12px">Riverstone Supplies · this is an automatic acknowledgement.</p>`;
+    <p style="color:#5b6475;font-size:12px">
+      Riverstone Supplies · this is an automatic acknowledgement.</p>`;
 
   MailApp.sendEmail({
     to: email,
@@ -85,43 +95,70 @@ function onFormSubmit(e) {
   });
 
   SpreadsheetApp.getActive().getSheetByName('Enquiries')
-    .appendRow([new Date(), email, company, product, quantity, 'acknowledged']);
+    .appendRow([new Date(), email, company, product, Number(quantity), 'acknowledged']);
 }
 
+function readEnquiries() {
+  const sheet = SpreadsheetApp.getActive().getSheetByName('Enquiries');
+  const rows = sheet.getDataRange().getValues().slice(1);   // every row after the header
+  Logger.log(`${rows.length} enquiries in the sheet`);
+  return rows;
+}
+
+function keepSince(rows, since) {
+  const recent = rows.filter(r => r[0] > since);            // column 0 holds the date received
+  Logger.log(`${recent.length} arrived since the last summary`);
+  return recent;
+}
+
+function unitsByProduct(rows) {
+  const totals = {};
+  rows.forEach(r => {
+    const product = r[3];
+    totals[product] = (totals[product] || 0) + Number(r[4]);
+  });
+  Logger.log(JSON.stringify(totals));
+  return totals;
+}
+
+function buildSummaryHtml(count, totals) {
+  if (count === 0) {
+    return '<p style="font-family:Arial">No enquiries were received since the last summary.</p>';
+  }
+  let tableRows = '';
+  Object.keys(totals).sort().forEach(product => {
+    tableRows += `<tr><td style="padding:4px 12px">${escapeHtml(product)}</td>` +
+                 `<td style="padding:4px 12px;text-align:right">${totals[product]}</td></tr>`;
+  });
+  return `<h3 style="font-family:Arial">Enquiries since the last summary: ${count}</h3>
+    <table style="border-collapse:collapse;font-family:Arial;font-size:13px">
+      <tr><th style="text-align:left;padding:4px 12px">Product</th>
+          <th style="text-align:right;padding:4px 12px">Units</th></tr>
+      ${tableRows}
+    </table>
+    <p style="color:#5b6475;font-size:12px">
+      Sent automatically by the Riverstone enquiries sheet.</p>`;
+}
 
 function sendDailySummary() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName('Enquiries');
-  const values = sheet.getDataRange().getValues().slice(1);
+  const now = new Date();
+  if (now.getDay() === 0 || now.getDay() === 6) return;      // 0 is Sunday, 6 is Saturday
+  const props = PropertiesService.getScriptProperties();
+  const lastSent = new Date(props.getProperty('LAST_SUMMARY') || 0);
 
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  const isYesterday = (d) => new Date(d).toDateString() === yesterday.toDateString();
-  const rows = values.filter(r => isYesterday(r[0]));
+  const rows = keepSince(readEnquiries(), lastSent);
+  const html = buildSummaryHtml(rows.length, unitsByProduct(rows));
+  Logger.log(html);                                           // read it before it goes out
 
-  const byProduct = {};
-  rows.forEach(r => { byProduct[r[3]] = (byProduct[r[3]] || 0) + Number(r[4]); });
-
-  const tableRows = Object.keys(byProduct).sort()
-    .map(p => `<tr><td style="padding:4px 12px">${p}</td>
-                   <td style="padding:4px 12px;text-align:right">${byProduct[p].toLocaleString('en-IN')}</td></tr>`)
-    .join('');
-
-  const html = `
-    <h3 style="font-family:Arial">Enquiries yesterday: ${rows.length}</h3>
-    ${rows.length === 0 ? '<p>No enquiries were received.</p>' :
-      `<table style="border-collapse:collapse;font-family:Arial;font-size:13px">
-         <tr><th style="text-align:left;padding:4px 12px;border-bottom:1px solid #c9d3df">Product</th>
-             <th style="text-align:right;padding:4px 12px;border-bottom:1px solid #c9d3df">Units</th></tr>
-         ${tableRows}
-       </table>`}
-    <p style="color:#5b6475;font-size:12px">Sent automatically at ${new Date().toLocaleString('en-IN')}.</p>`;
-
-  MailApp.sendEmail({ to: 'sales.team@riverstone.example', subject: 'Riverstone enquiries — daily summary',
+  MailApp.sendEmail({ to: 'sales.team@riverstone.example',
+                      subject: 'Riverstone enquiries — daily summary',
                       htmlBody: html, name: 'Riverstone reporting' });
+  props.setProperty('LAST_SUMMARY', now.toISOString());
 }
 
-
 function fetchOpenEnquiries() {
-  const token = PropertiesService.getScriptProperties().getProperty('CRM_TOKEN');  // not in the code
+  const token = PropertiesService.getScriptProperties()
+                                 .getProperty('CRM_TOKEN');    // not in the code
   const response = UrlFetchApp.fetch('https://crm.example.com/api/v1/enquiries?status=open', {
     method: 'get',
     headers: { Authorization: 'Bearer ' + token },
@@ -129,12 +166,18 @@ function fetchOpenEnquiries() {
   });
 
   if (response.getResponseCode() !== 200) {
-    throw new Error('CRM returned ' + response.getResponseCode() + ': ' + response.getContentText().slice(0, 200));
+    throw new Error('CRM returned ' + response.getResponseCode() + ': ' +
+                    response.getContentText().slice(0, 200));
   }
 
   const data = JSON.parse(response.getContentText());
   const rows = data.results.map(r => [r.id, r.company, r.product, r.quantity, r.created_at]);
   const sheet = SpreadsheetApp.getActive().getSheetByName('CRM');
+  sheet.getRange(2, 1, sheet.getMaxRows() - 1, 5).clearContent();   // clear the last run
+  if (rows.length === 0) {
+    Logger.log('no open enquiries');
+    return;
+  }
   sheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
-  Logger.log('%s enquiries written', rows.length);
+  Logger.log(`${rows.length} enquiries written`);
 }

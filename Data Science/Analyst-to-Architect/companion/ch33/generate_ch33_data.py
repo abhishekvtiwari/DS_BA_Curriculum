@@ -3,11 +3,15 @@
 Analyst to Architect · Chapter 33 · The Computer Science You Actually Need
 File: generate_ch33_data.py - builds the two files the chapter's matching project uses.
 What: writes, under match_data/:
-        order_lines.csv        200,000 order lines from Riverstone's ERP (order_id, product_id, quantity, net_revenue, order_date)
-        supplier_invoices.csv   20,000 invoice lines a supplier sent, each billing one order line, plus 500 that match nothing
-How:  python3 generate_ch33_data.py [--lines 200000] [--invoices 20000]
+        order_lines.csv              176,110 order lines (order_id, product_id, quantity, net_revenue, order_date):
+                                     200,000 drawn, minus repeats of the same product on one order
+        carrier_invoice_lines.csv     20,000 lines the logistics partner billed (invoice_line_id, order_id,
+                                     product_id, amount): 19,500 bill a real order line, 500 match nothing
+      The data is a synthetic, scaled-up Riverstone (about 66,700 orders over 23 months), big enough for
+      the slow version to be slow; its amounts are not Riverstone's real revenue.
+How:  python generate_ch33_data.py [--lines 200000] [--invoices 20000]
 Seed: 33 (fixed), so timings and match counts are comparable with the book's.
-Tested on: Python 3.12.3 (Ubuntu 24.04). Standard library only.
+Tested on: Python 3.11.15, 3.12 and 3.13 (Ubuntu 24.04). Standard library only.
 Riverstone Supplies is fictional; every number here is invented.
 """
 import argparse, csv, os, random
@@ -31,7 +35,7 @@ for i in range(a.lines):
     unit_price = rng.choice([290, 380, 430, 620, 750, 1150, 1400])
     order_date = START + timedelta(days=rng.randrange(700))
     lines.append((order_id, product_id, quantity, round(quantity * unit_price, 2), order_date.isoformat()))
-# One order can bill the same product only once, which is the grain from Chapter 28.
+# One order has at most one line per product: the grain (Chapter 14).
 seen = set()
 unique_lines = []
 for row in lines:
@@ -54,10 +58,11 @@ for n in range(len(invoices) + 1, len(invoices) + 501):             # invoices f
     invoices.append((f'INV{n:06d}', rng.randrange(900_000, 999_999), rng.choice(PRODUCTS),
                      round(rng.uniform(2000, 90000), 2)))
 rng.shuffle(invoices)
-with open(f'{a.out}/supplier_invoices.csv', 'w', newline='', encoding='utf-8') as f:
+with open(f'{a.out}/carrier_invoice_lines.csv', 'w', newline='', encoding='utf-8') as f:
     w = csv.writer(f)
     w.writerow(['invoice_line_id', 'order_id', 'product_id', 'amount'])
     w.writerows(invoices)
 
-print(f'order lines {len(unique_lines):,}  invoice lines {len(invoices):,} '
+print(f'wrote {a.out}/order_lines.csv: {len(unique_lines):,} order lines')
+print(f'wrote {a.out}/carrier_invoice_lines.csv: {len(invoices):,} invoice lines '
       f'({len(invoices) - 500:,} should match, 500 should not)')

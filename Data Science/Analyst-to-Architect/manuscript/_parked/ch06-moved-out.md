@@ -10,6 +10,8 @@ Labels: **→ Destination** (still to be placed) · **Landed** (already placed i
 
 **→ Ch 12 (`riverstone_setup.sql`, at its §12.3) and Ch 17 §17.0 (`check_setup.py`).**
 
+**Landed** in Ch 12 (Chapter at a glance, §12.3) and Ch 17 §17.0 (`companion/ch17/check_setup.py`) (Part 2/3 build).
+
 > **Practice data:** the Riverstone mini database (`riverstone_setup.sql`) and a small script, `check_setup.py`, both in the companion files (Appendix E). Every version, install method, and output in this chapter was checked against official sources or run, in September 2026.
 
 ---
@@ -27,6 +29,8 @@ Labels: **→ Destination** (still to be placed) · **Landed** (already placed i
 | **Internet** | enough to download installers | enough for video calls and cloud tools later |
 
 Old locked-laptop bullet, before trimming (the Python install manager clause → Ch 17 §17.0):
+
+**Landed** (the Python install manager clause) in Ch 17 §17.0 (Part 2/3 build).
 
 - **A work laptop you can't install software on.** Many companies lock their laptops, for good security reasons. Ask your IT team; learning tools like PostgreSQL, Python, and DBeaver are commonly approved. Some tools install without administrator rights: Microsoft's documentation notes that Power BI Desktop from the Microsoft Store doesn't need admin rights, and Python's install manager installs for your own user. The story later in this chapter shows one way through.
 
@@ -67,6 +71,8 @@ Install in this order. Each step ends with a check, so a problem shows up immedi
 
 **→ Ch 10, new first section "10.0 Getting a spreadsheet and checking it works"** (install or sign in, then a one-line first run). The "(Section 6.6 explains why…)" pointer must become a pointer inside Ch 10/17, where the rounding comparison lands.
 
+**Landed** in Ch 10 §10.0 (Part 2/3 build); the "Section 6.6 explains why" pointer became a pointer to Ch 17.
+
 ### Step 1. A spreadsheet
 
 If you already have Excel through work or a Microsoft 365 subscription, you're done. If not, either works:
@@ -81,6 +87,8 @@ If you already have Excel through work or a Microsoft 365 subscription, you're d
 ### 4.2 Step 2. The databases and DBeaver
 
 **→ Ch 12 §12.3 (already has full, tested steps).** Nothing here needs to be added there except, if wanted, the order_items check. Finding 0.4: the "do them now, and come back" loop is gone from Ch 6. Visual V6.8: if the two `SELECT COUNT(*)` blocks are reused, label them "PostgreSQL:" and "MySQL:".
+
+**Landed** in Ch 12 §12.3, with the order_items check in both databases (Part 2/3 build).
 
 ### Step 2. The databases and DBeaver
 
@@ -121,6 +129,8 @@ Nineteen order lines: the same twelve orders you followed through Chapters 1 to 
 ### 4.3 Step 3. Python and the analyst's packages
 
 **→ Ch 17, new first section "17.0 Setting up Python, the terminal and Jupyter".** Every command explained line by line (what `python -m venv .venv` does and each part; what "activate" changes; what `pip` is; why `python -m pip`; what the PowerShell policy line does and whether you need it). Outputs must be re-run, not copied.
+
+**Landed** in Ch 17 §17.0 (Part 2/3 build).
 
 ### Step 3. Python and the analyst's packages
 
@@ -178,9 +188,13 @@ Fix the lines above, then run this script again.
 
 **Also → Ch 17 §17.0:** the folder line `.venv/  the Python environment from section 6.3` from the old §6.4 folder tree (the front section's tree has no `.venv/`), and the first notebook (JupyterLab, one cell, Shift+Enter, a markdown cell), which is new writing there.
 
+**Landed** in Ch 17 §17.0 (the `.venv/` folder line and the first notebook) (Part 2/3 build).
+
 ### 4.4 Step 4. VS Code
 
 **→ Ch 17 §17.0.**
+
+**Landed** in Ch 17 §17.0 (Part 2/3 build).
 
 ### Step 4. VS Code
 
@@ -191,6 +205,8 @@ Fix the lines above, then run this script again.
 ### 4.5 Step 5. Git
 
 **→ Ch 26 (install plus `git --version`), with the new §26.0 "The terminal in 20 minutes" (D2) or §26.2 "Your first repository".**
+
+**Landed** in Ch 26 §26.0, "Step 0. Install Git", with the check re-run (`git version 2.43.0`) (Part 2/3 build).
 
 ### Step 5. Git
 
@@ -203,6 +219,8 @@ Fix the lines above, then run this script again.
 ### 4.6 Step 6. Power BI Desktop
 
 **→ Ch 16, first section (install from the Microsoft Store; the Mac options).**
+
+**Landed** in Ch 16 §16.0 "Install Power BI Desktop and make your first report" (Part 2/3 build).
 
 ### Step 6. Power BI Desktop (Windows)
 
@@ -257,6 +275,8 @@ Two rules keep it useful. **Never edit the companion files themselves**: copy wh
 
 **→ Ch 10 §10.0 (the general rows; the first chapter at a keyboard) and Ch 17 §17.0 (the VS Code row).** Question for Abhishek in the Part 0 + I PR (6-B): confirm Ch 10 as the home for the general rows.
 
+**Landed** in Ch 10 §10.16 (the general rows, merged into its shortcut tables) and Ch 17 §17.0 (the VS Code row) (Part 2/3 build).
+
 ## 6.5 Keyboard, files, and the terminal: the basics that save hours
 
 ### Keyboard shortcuts worth learning this week
@@ -286,6 +306,8 @@ From Chapter 2, make sure you can: **show file extensions** (so `orders.csv` doe
 
 **→ Ch 17 §17.0 (the minimum needed to run Python) and Ch 26 new §26.0 "The terminal in 20 minutes" (D2).** Explained command by command there.
 
+**Landed** (the Python minimum) in Ch 17 §17.0 (Part 2/3 build). The rest **landed** in Ch 26 §26.0 "The terminal in 20 minutes" (Part 2/3 build).
+
 ### The terminal
 
 A **terminal** is a window where you type commands instead of clicking. You'll use it for Python, Git, and later for much more (Chapter 34 teaches it properly). For now, four things are enough:
@@ -304,6 +326,8 @@ The most common beginner error is running a command in the wrong folder, which g
 ## 7. Old §6.6 Reading documentation: the rounding comparison
 
 **→ Ch 17, section on numbers (the Python and spreadsheet parts: `round(2.5)`, `round(2.675, 2)`, `=ROUND(2.5,0)`, `=ROUND(2.675,2)`, the Python documentation quote, banker's rounding) and → Ch 12 (the SQL part, as a documentation Watch out: the PostgreSQL and MySQL queries, outputs and manual quotes).** Finding S.2: each part only where the reader knows that tool. Re-run every block there; don't copy these outputs. The method ("How to read a documentation page") stayed in Ch 6 §6.4, rewritten for a non-code page; its original, code-flavoured wording is kept at the end of this block for the tool chapters.
+
+**Landed** in Ch 17 §17.3 (the Python and spreadsheet parts) and Ch 12 §12.8 (the SQL part, as a Watch out) (Part 2/3 build).
 
 ## 6.6 Reading documentation
 
@@ -429,6 +453,8 @@ The answers are at the end of each chapter in this draft and move to **Appendix 
 
 **→ Ch 10 §10.0 and Ch 16 (installer row), Ch 12 §12.3 (password row), Ch 17 §17.0 (virtual environment row, wrong-folder row), Ch 26 §26.0 (wrong-folder row).**
 
+**Landed** in the Common mistakes of Ch 10 and Ch 16 (installer row), Ch 12 (password row) and Ch 17 (virtual environment and wrong-folder rows) (Part 2/3 build). The wrong-folder row also **landed** in Ch 26's Common mistakes (Part 2/3 build).
+
 | Mistake | Symptom | Fix |
 |---|---|---|
 | Downloading installers from third-party sites | unwanted extra software; outdated versions | Use each tool's official website or the Microsoft Store |
@@ -441,6 +467,8 @@ The answers are at the end of each chapter in this draft and move to **Appendix 
 ## 11. Old story "Meera sets up": the install episode
 
 **→ Ch 17 §17.0 as its real-life example (the `check_setup.py` / "matplotlab" episode).** Items 2 and 4 were rewritten as planning in Ch 6's "Meera makes a plan"; item 3 is parked whole. RJ-S1-4: when this lands in Ch 17, Meera is setting up her home computer to go further, not starting SQL from scratch.
+
+**Landed** in Ch 17 as Meera's setup episode, adapted (the missing package is JupyterLab installed outside `.venv`) (Part 2/3 build).
 
 **3. The Mac.** She installs Postgres.app, DBeaver, MySQL, Python from python.org (remembering *Install Certificates.command*), VS Code with its Python and Jupyter extensions, and Git with `xcode-select --install`. She creates the `analyst-to-architect` folder, the `.venv`, and runs `check_setup.py`. It reports matplotlib missing: she had typed `matplotlab`. One command later: *All set.* In DBeaver, `SELECT COUNT(*) FROM order_items;` returns 19 in both databases.
 
@@ -460,6 +488,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ Appendix B (the official websites line) and Ch 17 §17.0 (`check_setup.py`).**
 
+**Landed** (`check_setup.py`) in Ch 17 §17.0 (Part 2/3 build). The official-websites line is still → Appendix B.
+
 - **The official websites** for each tool: PostgreSQL, MySQL, DBeaver, python.org, VS Code, Git, and Microsoft for Excel and Power BI. Appendix B lists the current download pages and install steps.
 - **`check_setup.py`** (companion files, `ch06/`): checks your Python version and the four packages. Tested on Python 3.11.15 and 3.13.13, with pandas 3.0.5, openpyxl 3.1.5, matplotlib 3.11.2, and JupyterLab 4.6.3.
 
@@ -468,6 +498,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 ## 13. Old project Step 1 (install and check), Step 3 and the deliverable
 
 **→ Each tool's first-run check in Ch 10, 12, 16, 17, 26; the whole table → Appendix B.** Step 3 (documentation of a spreadsheet function such as `MEDIAN` or `RRI`) → Ch 10 or 11.
+
+**Landed** in the first-run checks of Ch 10, 12, 16 and 17, and Step 3 as Ch 10's Stretch exercise 27 (Part 2/3 build). The Git check **landed** in Ch 26's Check yourself (`git --version`) (Part 2/3 build). Still → Appendix B (the whole table).
 
 **Goal:** a working toolkit, verified, and a study plan you can keep.
 
@@ -493,6 +525,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ The chapter that installs each tool (Ch 10, 12, 17, 26).**
 
+**Landed** in Ch 10 and Ch 12 (Check yourself) (Part 2/3 build); Ch 17 wrote its own line; Ch 26's Check yourself has the Git and terminal lines (Part 2/3 build).
+
 - [ ] Every core tool is installed from its official source, and each check passed.
 - [ ] `SELECT COUNT(*) FROM order_items;` returns 19 in the Riverstone database.
 - [ ] `check_setup.py` prints *All set.*
@@ -505,6 +539,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 ## 15. Old recap bullets (installing)
 
 **→ Ch 12, 17, 26 recaps as they apply.**
+
+**Landed** in Ch 12's Recap (Part 2/3 build); Ch 17 wrote its own recap; Ch 26's Recap opens with the terminal paragraph (Part 2/3 build).
 
 - **The core toolkit is free:** a spreadsheet, PostgreSQL and MySQL with DBeaver, Power BI Desktop, Python with VS Code and Jupyter, and Git. Later parts add their own tools.
 - **Install in order, from official sources, and check each tool** before moving on. Chapter 12, section 12.3, has the full database steps.
@@ -519,6 +555,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 ## 16. Old exercises 2, 3, 5, 6, 7, 10, 11 and their answers
 
 **Destinations (6-B), each reworded for the chapter that receives it:** 2(a) → Ch 26; 2(b) → Ch 12; 2(c) → Ch 17; 2(d) → Ch 10; 3 → Ch 17; 5 → Ch 17; 6 → Ch 17 (parts c, d) and Ch 12 (parts a, b, e); 7 → Ch 17; 10 → Ch 12; 11 → Ch 17 (Python) or Ch 12 (PostgreSQL). **S.2:** when exercise 6 lands, check part (e) still reads `ROUND(45E-1)` (it does here) and that the double-precision/approximate-value rule has been taught before it.
+
+**Landed** (Part 2/3 build): 2(d) → Ch 10 Check yourself; 3, 5, 6(c, d), 7, 11 → Ch 17 exercises 7, 25, 8, 33, 26; 6(a, b, e) → Ch 12 exercise 31; 10 → Ch 12 exercise 33. Not landed: 2(b) (Ch 12), 2(c) (Ch 17) and 2(a) (Ch 26), because a one-item matching exercise makes no sense alone; Ch 26 checks `git --version` in its Check yourself instead.
 
 2. Match each check to the tool it confirms: (a) `git --version`; (b) `SELECT COUNT(*) FROM order_items;` returning 19; (c) `check_setup.py` printing *All set.*; (d) `=ROUND(2.5,0)` returning 3.
 3. A friend's terminal shows `python: can't open file 'check_setup.py': No such file or directory`. List two likely causes and how to check each.
@@ -547,6 +585,8 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 ## 17. Old key terms removed from Ch 6
 
 **→ The chapter that teaches each (6-E):** operating system, RAM stays in Ch 6; virtual machine, Microsoft Store, admin rights → Ch 16; installer, LTS, PostgreSQL, MySQL, DBeaver → Ch 12; Python install manager, virtual environment, pip, package, VS Code, extension, Jupyter, terminal, command, banker's rounding, round half away from zero, floating-point number → Ch 17 (banker's rounding also Ch 12's Watch out); Git, terminal, command → Ch 26; path, keyboard shortcut, companion files → front section (described there, not as key terms); signature → Ch 17; warm-up, core, stretch exercises → front section.
+
+**Landed** (Part 2/3 build): virtual machine, Microsoft Store, admin rights → Ch 16 Key terms; installer, LTS, DBeaver, banker's rounding → Ch 12 Key terms; the Python terms → Ch 17 Key terms; terminal, shell, option, argument and the Git terms (version control, repository, …) → Ch 26 Key terms ("command" is explained in Ch 26 §26.0 but not listed as a key term).
 
 operating system · virtual machine · installer · Microsoft Store · administrator (admin) rights · LTS (long-term support) · PostgreSQL · MySQL · DBeaver · Power BI Desktop · Python install manager · virtual environment · pip · package · VS Code · extension · Jupyter · Git · companion files · terminal · command · path · keyboard shortcut · signature · banker's rounding (round half to even) · round half away from zero · floating-point number · warm-up, core, stretch exercises
 

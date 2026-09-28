@@ -37,6 +37,8 @@
       lines = [...code.children];
     }
     lines.forEach(s => s.classList.add('ln'));
+    // an empty line in a highlighted block is an empty span, which has no height: keep it as a blank line
+    for (const s of lines) if (s.textContent === '') s.appendChild(document.createTextNode('\u200b'));
     pre.classList.add('lines');
     // Shrink the font (not below MIN_CODE_PT) until the longest line fits without wrapping.
     pre.style.whiteSpace = 'pre';

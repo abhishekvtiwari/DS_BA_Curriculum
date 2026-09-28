@@ -32,7 +32,7 @@ bash tools/setup_databases.sh
 
 # verify a chapter's SQL, Python and terminal output against real runs
 python3 tools/verify_sql.py    manuscript/ch13-sql-for-real-analysis.md --db riverstone_2025
-python3 tools/verify_python.py manuscript/ch27-capstone-your-analyst-portfolio.md --cwd companion/full
+python3 tools/verify_python.py manuscript/ch27-capstone-your-analyst-portfolio.md --cwd companion/ch27
 python3 tools/verify_shell.py  manuscript/ch34-the-command-line-linux-and-networking-basics.md
 
 # check a chapter against the section 6.5 code-teaching standard

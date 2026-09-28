@@ -1,49 +1,85 @@
 
-===== PG P1 one customer, no index: median 30.11 ms over 7 runs =====
-                           QUERY PLAN                           
-----------------------------------------------------------------
- Seq Scan on orders (actual time=0.610..29.350 rows=40 loops=1)
-   Filter: (customer_id = 2718)
-   Rows Removed by Filter: 714245
- Planning Time: 0.151 ms
- Execution Time: 29.381 ms
-(5 rows)
-
-
-
 ===== P1 plan with costs =====
                          QUERY PLAN                         
 ------------------------------------------------------------
- Seq Scan on orders  (cost=0.00..14149.56 rows=98 width=17)
+ Seq Scan on orders  (cost=0.00..14149.56 rows=97 width=17)
    Filter: (customer_id = 2718)
 (2 rows)
 
 
 
-===== PG P1 one customer, with index: median 0.08 ms over 7 runs =====
+===== PG P1 one customer, no index: median 38.77 ms over 7 runs =====
+                           QUERY PLAN                           
+----------------------------------------------------------------
+ Seq Scan on orders (actual time=1.051..47.426 rows=40 loops=1)
+   Filter: (customer_id = 2718)
+   Rows Removed by Filter: 714245
+ Planning Time: 0.260 ms
+ Execution Time: 47.479 ms
+(5 rows)
+
+
+
+===== P1 buffers, no index =====
+                           QUERY PLAN                           
+----------------------------------------------------------------
+ Seq Scan on orders (actual time=0.763..41.560 rows=40 loops=1)
+   Filter: (customer_id = 2718)
+   Rows Removed by Filter: 714245
+   Buffers: shared hit=2421 read=2800
+ Planning:
+   Buffers: shared hit=69
+ Planning Time: 0.255 ms
+ Execution Time: 41.611 ms
+(8 rows)
+
+
+
+===== P1 index build =====
+263 ms
+
+===== PG P1 one customer, with index: median 0.18 ms over 7 runs =====
                                           QUERY PLAN                                          
 ----------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=0.014..0.037 rows=40 loops=1)
+ Bitmap Heap Scan on orders (actual time=0.023..0.132 rows=40 loops=1)
    Recheck Cond: (customer_id = 2718)
    Heap Blocks: exact=40
-   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.007..0.008 rows=40 loops=1)
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.010..0.011 rows=40 loops=1)
          Index Cond: (customer_id = 2718)
- Planning Time: 0.209 ms
- Execution Time: 0.077 ms
+ Planning Time: 0.303 ms
+ Execution Time: 0.179 ms
 (7 rows)
 
 
 
-===== PG P2 biggest customer 4534 with index: median 9.72 ms over 7 runs =====
+===== P1 buffers, with index =====
+                                          QUERY PLAN                                          
+----------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=0.023..0.135 rows=40 loops=1)
+   Recheck Cond: (customer_id = 2718)
+   Heap Blocks: exact=40
+   Buffers: shared hit=43
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.010..0.011 rows=40 loops=1)
+         Index Cond: (customer_id = 2718)
+         Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=86
+ Planning Time: 0.334 ms
+ Execution Time: 0.180 ms
+(11 rows)
+
+
+
+===== PG P2 biggest customer 4534 with index: median 15.26 ms over 7 runs =====
                                            QUERY PLAN                                            
 -------------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=1.520..7.539 rows=23526 loops=1)
+ Bitmap Heap Scan on orders (actual time=1.851..14.610 rows=23526 loops=1)
    Recheck Cond: (customer_id = 4534)
    Heap Blocks: exact=5170
-   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.916..0.916 rows=23526 loops=1)
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=1.123..1.124 rows=23526 loops=1)
          Index Cond: (customer_id = 4534)
- Planning Time: 0.182 ms
- Execution Time: 8.363 ms
+ Planning Time: 0.319 ms
+ Execution Time: 15.571 ms
 (7 rows)
 
 
@@ -51,105 +87,117 @@
 ===== P2 delivered plan =====
                           QUERY PLAN                           
 ---------------------------------------------------------------
- Seq Scan on orders  (cost=0.00..14149.56 rows=688404 width=4)
+ Seq Scan on orders  (cost=0.00..14149.56 rows=688214 width=4)
    Filter: ((status)::text = 'Delivered'::text)
 (2 rows)
 
 
 
-===== PG P3 lines of one order, no FK index: median 79.62 ms over 7 runs =====
-                                     QUERY PLAN                                     
-------------------------------------------------------------------------------------
- Nested Loop (actual time=80.006..80.007 rows=1 loops=1)
-   Join Filter: (p.product_id = oi.product_id)
-   Rows Removed by Join Filter: 7
-   ->  Seq Scan on products p (actual time=0.001..0.003 rows=8 loops=1)
-   ->  Materialize (actual time=7.022..10.000 rows=1 loops=8)
-         ->  Seq Scan on order_items oi (actual time=56.175..79.993 rows=1 loops=1)
-               Filter: (order_id = 500000)
-               Rows Removed by Filter: 1926846
- Planning Time: 0.459 ms
- Execution Time: 80.043 ms
-(10 rows)
+===== P2 status counts =====
+  status   | count  
+-----------+--------
+ Delivered | 689050
+ Cancelled |  14215
+ Shipped   |   7090
+ Pending   |   3930
+(4 rows)
 
 
 
-===== PG P3b one customer revenue, no FK index: median 225.37 ms over 7 runs =====
+===== PG P3b one customer revenue, no FK index: median 262.47 ms over 7 runs =====
                                                    QUERY PLAN                                                   
 ----------------------------------------------------------------------------------------------------------------
- Aggregate (actual time=225.300..225.326 rows=1 loops=1)
-   ->  Hash Join (actual time=4.120..225.209 rows=108 loops=1)
+ Aggregate (actual time=285.475..285.485 rows=1 loops=1)
+   ->  Hash Join (actual time=5.181..285.266 rows=108 loops=1)
          Hash Cond: (oi.order_id = o.order_id)
-         ->  Seq Scan on order_items oi (actual time=0.013..116.108 rows=1926847 loops=1)
-         ->  Hash (actual time=0.060..0.084 rows=40 loops=1)
+         ->  Seq Scan on order_items oi (actual time=0.027..142.289 rows=1926847 loops=1)
+         ->  Hash (actual time=0.151..0.158 rows=40 loops=1)
                Buckets: 1024  Batches: 1  Memory Usage: 10kB
-               ->  Bitmap Heap Scan on orders o (actual time=0.018..0.051 rows=40 loops=1)
+               ->  Bitmap Heap Scan on orders o (actual time=0.025..0.143 rows=40 loops=1)
                      Recheck Cond: (customer_id = 2718)
                      Heap Blocks: exact=40
-                     ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.011..0.012 rows=40 loops=1)
+                     ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.014..0.015 rows=40 loops=1)
                            Index Cond: (customer_id = 2718)
- Planning Time: 0.455 ms
- Execution Time: 225.368 ms
+ Planning Time: 0.717 ms
+ Execution Time: 285.549 ms
 (13 rows)
 
 
 
-===== PG P3 lines of one order, with FK index: median 0.06 ms over 7 runs =====
-                                                 QUERY PLAN                                                  
--------------------------------------------------------------------------------------------------------------
- Hash Join (actual time=0.024..0.026 rows=1 loops=1)
-   Hash Cond: (oi.product_id = p.product_id)
-   ->  Index Scan using idx_order_items_order_id on order_items oi (actual time=0.005..0.006 rows=1 loops=1)
-         Index Cond: (order_id = 500000)
-   ->  Hash (actual time=0.008..0.008 rows=8 loops=1)
-         Buckets: 1024  Batches: 1  Memory Usage: 9kB
-         ->  Seq Scan on products p (actual time=0.002..0.003 rows=8 loops=1)
- Planning Time: 0.335 ms
- Execution Time: 0.059 ms
-(9 rows)
+===== PG P3 lines of one order, no FK index: median 109.78 ms over 7 runs =====
+                              QUERY PLAN                              
+----------------------------------------------------------------------
+ Seq Scan on order_items (actual time=82.541..125.286 rows=1 loops=1)
+   Filter: (order_id = 500000)
+   Rows Removed by Filter: 1926846
+ Planning Time: 0.303 ms
+ Execution Time: 125.326 ms
+(5 rows)
 
 
 
-===== PG P3b one customer revenue, with FK index: median 0.30 ms over 7 runs =====
+===== P3 index build =====
+562 ms
+
+===== PG P3b one customer revenue, with FK index: median 0.64 ms over 7 runs =====
                                                      QUERY PLAN                                                     
 --------------------------------------------------------------------------------------------------------------------
- Aggregate (actual time=0.242..0.243 rows=1 loops=1)
-   ->  Nested Loop (actual time=0.024..0.195 rows=108 loops=1)
-         ->  Bitmap Heap Scan on orders o (actual time=0.016..0.046 rows=40 loops=1)
+ Aggregate (actual time=0.541..0.541 rows=1 loops=1)
+   ->  Nested Loop (actual time=0.050..0.468 rows=108 loops=1)
+         ->  Bitmap Heap Scan on orders o (actual time=0.027..0.132 rows=40 loops=1)
                Recheck Cond: (customer_id = 2718)
                Heap Blocks: exact=40
-               ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.009..0.009 rows=40 loops=1)
+               ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.017..0.017 rows=40 loops=1)
                      Index Cond: (customer_id = 2718)
-         ->  Index Scan using idx_order_items_order_id on order_items oi (actual time=0.003..0.003 rows=3 loops=40)
+         ->  Index Scan using idx_order_items_order_id on order_items oi (actual time=0.007..0.008 rows=3 loops=40)
                Index Cond: (order_id = o.order_id)
- Planning Time: 0.445 ms
- Execution Time: 0.274 ms
+ Planning Time: 0.798 ms
+ Execution Time: 0.601 ms
 (11 rows)
 
 
 
-===== PG P4 December via EXTRACT: median 100.95 ms over 7 runs =====
+===== PG P3 lines of one order, with FK index: median 0.06 ms over 7 runs =====
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Index Scan using idx_order_items_order_id on order_items (actual time=0.023..0.023 rows=1 loops=1)
+   Index Cond: (order_id = 500000)
+ Planning Time: 0.283 ms
+ Execution Time: 0.053 ms
+(4 rows)
+
+
+
+===== P3 result =====
+ order_item_id | product_id | quantity 
+---------------+------------+----------
+       1349466 |        106 |       12
+(1 row)
+
+
+
+===== PG P4 December via EXTRACT: median 131.33 ms over 7 runs =====
                                                         QUERY PLAN                                                        
 --------------------------------------------------------------------------------------------------------------------------
- Aggregate (actual time=109.158..109.159 rows=1 loops=1)
-   ->  Seq Scan on orders (actual time=101.616..108.010 rows=25078 loops=1)
+ Aggregate (actual time=131.698..131.701 rows=1 loops=1)
+   ->  Seq Scan on orders (actual time=123.024..130.388 rows=25078 loops=1)
          Filter: ((EXTRACT(year FROM order_date) = '2025'::numeric) AND (EXTRACT(month FROM order_date) = '12'::numeric))
          Rows Removed by Filter: 689207
- Planning Time: 0.279 ms
- Execution Time: 109.196 ms
+ Planning Time: 0.432 ms
+ Execution Time: 131.749 ms
 (6 rows)
 
 
 
-===== PG P4 December via range: median 2.88 ms over 7 runs =====
+===== PG P4 December via range: median 2.95 ms over 7 runs =====
                                                 QUERY PLAN                                                 
 -----------------------------------------------------------------------------------------------------------
- Aggregate (actual time=2.840..2.841 rows=1 loops=1)
-   ->  Index Only Scan using idx_orders_order_date on orders (actual time=0.016..1.625 rows=25078 loops=1)
+ Aggregate (actual time=2.797..2.797 rows=1 loops=1)
+   ->  Index Only Scan using idx_orders_order_date on orders (actual time=0.021..1.672 rows=25078 loops=1)
          Index Cond: ((order_date >= '2025-12-01'::date) AND (order_date < '2026-01-01'::date))
          Heap Fetches: 0
- Planning Time: 0.303 ms
- Execution Time: 2.876 ms
+ Planning Time: 0.383 ms
+ Execution Time: 2.834 ms
 (6 rows)
 
 
@@ -167,143 +215,205 @@
 
 
 
-===== PG P6 one customer 2025, composite (order_date, customer_id): median 0.08 ms over 7 runs =====
-                                          QUERY PLAN                                          
-----------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=0.035..0.044 rows=12 loops=1)
-   Recheck Cond: (customer_id = 2718)
+===== PG P6 big customer 2025, single-column indexes only: median 16.15 ms over 7 runs =====
+                                           QUERY PLAN                                            
+-------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=10.308..16.677 rows=9301 loops=1)
+   Recheck Cond: (customer_id = 4534)
    Filter: (order_date >= '2025-01-01'::date)
-   Rows Removed by Filter: 28
-   Heap Blocks: exact=40
-   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.008..0.008 rows=40 loops=1)
-         Index Cond: (customer_id = 2718)
- Planning Time: 0.247 ms
- Execution Time: 0.077 ms
+   Rows Removed by Filter: 14225
+   Heap Blocks: exact=5170
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=1.513..1.513 rows=23526 loops=1)
+         Index Cond: (customer_id = 4534)
+ Planning Time: 0.400 ms
+ Execution Time: 17.093 ms
 (9 rows)
 
 
 
-===== PG P6 one customer 2025, composite (customer_id, order_date): median 0.06 ms over 7 runs =====
-                                           QUERY PLAN                                           
-------------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=0.015..0.025 rows=12 loops=1)
-   Recheck Cond: ((customer_id = 2718) AND (order_date >= '2025-01-01'::date))
-   Heap Blocks: exact=12
-   ->  Bitmap Index Scan on idx_orders_customer_date (actual time=0.009..0.009 rows=12 loops=1)
-         Index Cond: ((customer_id = 2718) AND (order_date >= '2025-01-01'::date))
- Planning Time: 0.245 ms
- Execution Time: 0.061 ms
-(7 rows)
-
-
-
-===== PG P6c big customer 2025, composite: median 3.69 ms over 7 runs =====
+===== PG P6 big customer 2025, composite (customer_id, order_date): median 7.78 ms over 7 runs =====
                                             QUERY PLAN                                            
 --------------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=0.678..3.259 rows=9301 loops=1)
+ Bitmap Heap Scan on orders (actual time=0.786..7.325 rows=9301 loops=1)
    Recheck Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
    Heap Blocks: exact=2047
-   ->  Bitmap Index Scan on idx_orders_customer_date (actual time=0.420..0.420 rows=9301 loops=1)
+   ->  Bitmap Index Scan on idx_orders_customer_date (actual time=0.516..0.517 rows=9301 loops=1)
          Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
- Planning Time: 0.231 ms
- Execution Time: 3.686 ms
+ Planning Time: 0.399 ms
+ Execution Time: 7.776 ms
 (7 rows)
 
 
 
-===== PG P6c big customer 2025, covering INCLUDE (status): median 1.24 ms over 7 runs =====
+===== P6 buffers, composite =====
+                                            QUERY PLAN                                            
+--------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=0.848..7.026 rows=9301 loops=1)
+   Recheck Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
+   Heap Blocks: exact=2047
+   Buffers: shared hit=2058
+   ->  Bitmap Index Scan on idx_orders_customer_date (actual time=0.552..0.552 rows=9301 loops=1)
+         Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
+         Buffers: shared hit=11
+ Planning:
+   Buffers: shared hit=126
+ Planning Time: 0.385 ms
+ Execution Time: 7.464 ms
+(11 rows)
+
+
+
+===== PG P6 big customer 2025, covering INCLUDE (status): median 1.68 ms over 7 runs =====
                                                  QUERY PLAN                                                 
 ------------------------------------------------------------------------------------------------------------
- Index Only Scan using idx_orders_customer_date_incl on orders (actual time=0.015..0.950 rows=9301 loops=1)
+ Index Only Scan using idx_orders_customer_date_incl on orders (actual time=0.032..1.029 rows=9301 loops=1)
    Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
    Heap Fetches: 0
- Planning Time: 0.270 ms
- Execution Time: 1.282 ms
+ Planning Time: 0.363 ms
+ Execution Time: 1.374 ms
 (5 rows)
 
 
 
-===== PG P7 pending orders, no status index: median 32.26 ms over 7 runs =====
+===== PG P7 pending orders, no status index: median 44.12 ms over 7 runs =====
                                QUERY PLAN                                
 -------------------------------------------------------------------------
- Sort (actual time=29.821..29.960 rows=3930 loops=1)
+ Sort (actual time=44.081..44.329 rows=3930 loops=1)
    Sort Key: order_date
    Sort Method: quicksort  Memory: 250kB
-   ->  Seq Scan on orders (actual time=28.880..29.428 rows=3930 loops=1)
+   ->  Seq Scan on orders (actual time=42.663..43.509 rows=3930 loops=1)
          Filter: ((status)::text = 'Pending'::text)
          Rows Removed by Filter: 710355
- Planning Time: 0.203 ms
- Execution Time: 30.093 ms
+ Planning Time: 0.396 ms
+ Execution Time: 44.551 ms
 (8 rows)
 
 
 
-===== PG P7 pending orders, partial index: median 0.56 ms over 7 runs =====
+===== PG P7 pending orders, partial index: median 0.75 ms over 7 runs =====
                                          QUERY PLAN                                         
 --------------------------------------------------------------------------------------------
- Index Scan using idx_orders_pending on orders (actual time=0.009..0.410 rows=3930 loops=1)
- Planning Time: 0.274 ms
- Execution Time: 0.546 ms
+ Index Scan using idx_orders_pending on orders (actual time=0.015..0.596 rows=3930 loops=1)
+ Planning Time: 0.404 ms
+ Execution Time: 0.746 ms
 (3 rows)
 
 
 
 ===== index sizes =====
-        index_name        |  size   
---------------------------+---------
- order_items_pkey         | 41 MB
- idx_order_items_order_id | 28 MB
- orders_pkey              | 15 MB
- idx_orders_customer_date | 13 MB
- idx_orders_order_date    | 5056 kB
- idx_orders_customer_id   | 4960 kB
- idx_orders_pending       | 48 kB
+          index_name           |  size   
+-------------------------------+---------
+ order_items_pkey              | 41 MB
+ idx_order_items_order_id      | 28 MB
+ idx_orders_customer_date_incl | 28 MB
+ orders_pkey                   | 15 MB
+ idx_orders_order_date         | 5056 kB
+ idx_orders_customer_id        | 4960 kB
+ idx_orders_pending            | 48 kB
 (7 rows)
 
 
 
-===== write cost 500k rows =====
-no indexes median 356 ms [790.0965550000052, 356.45640100000264, 336.5905560000044]; four indexes median 2121 ms [2113.872719, 2395.975389, 2121.498337999995]
+===== table sizes =====
+   relname   |  size  | relpages 
+-------------+--------+----------
+ orders      | 41 MB  |     5221
+ order_items | 101 MB |    12873
+(2 rows)
 
-===== PG P9 monthly revenue by category, live: median 2343.00 ms over 5 runs =====
+
+
+===== write cost indexes on oi_copy_4 =====
+             indexname             
+-----------------------------------
+ oi_copy_4_order_id_idx
+ oi_copy_4_order_id_product_id_idx
+ oi_copy_4_pkey
+ oi_copy_4_product_id_idx
+(4 rows)
+
+
+
+===== write cost 500k rows =====
+no indexes median 416 ms [390, 416, 606]; four indexes median 2301 ms [2112, 2301, 2865]
+
+===== PG P9 monthly revenue by category, live: median 2626.33 ms over 5 runs =====
                                               QUERY PLAN                                              
 ------------------------------------------------------------------------------------------------------
- HashAggregate (actual time=2330.100..2330.174 rows=144 loops=1)
+ HashAggregate (actual time=2493.774..2493.852 rows=144 loops=1)
    Group Key: (date_trunc('month'::text, (o.order_date)::timestamp with time zone))::date, p.category
    Batches: 1  Memory Usage: 273kB
-   ->  Hash Join (actual time=160.359..1486.132 rows=1888466 loops=1)
+   ->  Hash Join (actual time=169.802..1587.008 rows=1888466 loops=1)
          Hash Cond: (oi.product_id = p.product_id)
-         ->  Hash Join (actual time=151.351..936.407 rows=1888466 loops=1)
+         ->  Hash Join (actual time=159.751..1012.459 rows=1888466 loops=1)
                Hash Cond: (oi.order_id = o.order_id)
-               ->  Seq Scan on order_items oi (actual time=0.010..171.745 rows=1926847 loops=1)
-               ->  Hash (actual time=150.320..150.321 rows=700070 loops=1)
+               ->  Seq Scan on order_items oi (actual time=0.014..175.595 rows=1926847 loops=1)
+               ->  Hash (actual time=158.483..158.484 rows=700070 loops=1)
                      Buckets: 262144  Batches: 8  Memory Usage: 5472kB
-                     ->  Seq Scan on orders o (actual time=0.016..69.600 rows=700070 loops=1)
+                     ->  Seq Scan on orders o (actual time=0.061..72.687 rows=700070 loops=1)
                            Filter: ((status)::text <> 'Cancelled'::text)
                            Rows Removed by Filter: 14215
-         ->  Hash (actual time=8.968..8.969 rows=8 loops=1)
+         ->  Hash (actual time=10.016..10.017 rows=8 loops=1)
                Buckets: 1024  Batches: 1  Memory Usage: 9kB
-               ->  Seq Scan on products p (actual time=8.950..8.953 rows=8 loops=1)
- Planning Time: 0.678 ms
- Execution Time: 2342.999 ms
+               ->  Seq Scan on products p (actual time=9.991..9.994 rows=8 loops=1)
+ Planning Time: 0.818 ms
+ Execution Time: 2508.699 ms
 (18 rows)
 
 
 
-===== PG P9 monthly revenue by category, from materialized view: median 0.04 ms over 7 runs =====
-                                   QUERY PLAN                                    
----------------------------------------------------------------------------------
- Seq Scan on monthly_category_revenue (actual time=0.006..0.012 rows=48 loops=1)
-   Filter: (month >= '2025-01-01'::date)
-   Rows Removed by Filter: 96
- Planning Time: 0.110 ms
- Execution Time: 0.038 ms
-(5 rows)
+===== P9 buffers, live =====
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ HashAggregate (actual time=2857.039..2857.116 rows=144 loops=1)
+   Group Key: (date_trunc('month'::text, (o.order_date)::timestamp with time zone))::date, p.category
+   Batches: 1  Memory Usage: 273kB
+   Buffers: shared hit=2341 read=15754, temp read=10577 written=10577
+   ->  Hash Join (actual time=203.950..1836.889 rows=1888466 loops=1)
+         Hash Cond: (oi.product_id = p.product_id)
+         Buffers: shared hit=2341 read=15754, temp read=10577 written=10577
+         ->  Hash Join (actual time=190.975..1178.753 rows=1888466 loops=1)
+               Hash Cond: (oi.order_id = o.order_id)
+               Buffers: shared hit=2340 read=15754, temp read=10577 written=10577
+               ->  Seq Scan on order_items oi (actual time=0.016..200.998 rows=1926847 loops=1)
+                     Buffers: shared hit=2180 read=10693
+               ->  Hash (actual time=189.456..189.458 rows=700070 loops=1)
+                     Buckets: 262144  Batches: 8  Memory Usage: 5472kB
+                     Buffers: shared hit=160 read=5061, temp written=2091
+                     ->  Seq Scan on orders o (actual time=0.080..84.032 rows=700070 loops=1)
+                           Filter: ((status)::text <> 'Cancelled'::text)
+                           Rows Removed by Filter: 14215
+                           Buffers: shared hit=160 read=5061
+         ->  Hash (actual time=12.932..12.933 rows=8 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on products p (actual time=12.898..12.903 rows=8 loops=1)
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=357
+ Planning Time: 1.146 ms
+ Execution Time: 2877.426 ms
+(28 rows)
+
+
+
+===== PG P9 one month from materialized view: median 0.10 ms over 7 runs =====
+                                      QUERY PLAN                                      
+--------------------------------------------------------------------------------------
+ Sort (actual time=0.075..0.076 rows=4 loops=1)
+   Sort Key: (round(net_revenue, 0)) DESC
+   Sort Method: quicksort  Memory: 25kB
+   ->  Seq Scan on monthly_category_revenue (actual time=0.020..0.023 rows=4 loops=1)
+         Filter: (month = '2025-12-01'::date)
+         Rows Removed by Filter: 140
+ Planning Time: 0.266 ms
+ Execution Time: 0.105 ms
+(8 rows)
 
 
 
 ===== P9 build/refresh =====
-build 1906 ms, refresh 1926 ms
+build 2321 ms, refresh 2300 ms
 
 ===== P9 mv rows =====
  count 
@@ -313,63 +423,69 @@ build 1906 ms, refresh 1926 ms
 
 
 
+===== P9 counts =====
+ count  
+--------
+ 700070
+(1 row)
+
+  count  
+---------
+ 1888466
+(1 row)
+
+
+
 ===== MySQL indexes before =====
 Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment	Visible	Expression
 orders	0	PRIMARY	1	order_id	A	712008	NULL	NULL		BTREE			YES	NULL
-orders	1	customer_id	1	customer_id	A	4947	NULL	NULL		BTREE			YES	NULL
+orders	1	customer_id	1	customer_id	A	3226	NULL	NULL		BTREE			YES	NULL
 orders	1	sales_rep_id	1	sales_rep_id	A	4	NULL	NULL	YES	BTREE			YES	NULL
 
 
-===== MySQL P1 one customer (FK index exists): median 0.08 ms over 7 runs =====
+===== MySQL P1 one customer (FK index exists): median 0.17 ms over 7 runs =====
 EXPLAIN
--> Index lookup on orders using customer_id (customer_id=2718)  (cost=43.4 rows=40) (actual time=0.0725..0.0766 rows=40 loops=1)
+-> Index lookup on orders using customer_id (customer_id=2718)  (cost=43.2 rows=40) (actual time=0.177..0.183 rows=40 loops=1)
 
 
 
-===== MySQL P1 tree =====
+===== MySQL P4 December via EXTRACT: median 136.00 ms over 7 runs =====
 EXPLAIN
--> Index lookup on orders using customer_id (customer_id=2718)  (cost=43.4 rows=40)
+-> Aggregate: count(0)  (cost=143003 rows=1) (actual time=131..131 rows=1 loops=1)
+    -> Filter: ((extract(year from orders.order_date) = 2025) and (extract(month from orders.order_date) = 12))  (cost=71803 rows=712008) (actual time=125..129 rows=25078 loops=1)
+        -> Covering index scan on orders using idx_orders_order_date  (cost=71803 rows=712008) (actual time=0.548..81 rows=714285 loops=1)
 
 
 
-===== MySQL P4 December via EXTRACT: median 115.00 ms over 7 runs =====
-EXPLAIN
--> Aggregate: count(0)  (cost=143147 rows=1) (actual time=113..113 rows=1 loops=1)
-    -> Filter: ((extract(year from orders.order_date) = 2025) and (extract(month from orders.order_date) = 12))  (cost=71842 rows=713052) (actual time=107..112 rows=25078 loops=1)
-        -> Covering index scan on orders using idx_orders_order_date  (cost=71842 rows=713052) (actual time=0.519..69.8 rows=714285 loops=1)
-
-
-
-===== MySQL P4 December via range: median 6.38 ms over 7 runs =====
+===== MySQL P4 December via range: median 7.09 ms over 7 runs =====
 EXPLAIN
 -> Aggregate: count(0)  (cost=14488 rows=1) (actual time=6.74..6.74 rows=1 loops=1)
-    -> Filter: ((orders.order_date >= DATE'2025-12-01') and (orders.order_date < DATE'2026-01-01'))  (cost=9672 rows=48152) (actual time=0.31..5.64 rows=25078 loops=1)
-        -> Covering index range scan on orders using idx_orders_order_date over ('2025-12-01' <= order_date < '2026-01-01')  (cost=9672 rows=48152) (actual time=0.309..3.22 rows=25078 loops=1)
+    -> Filter: ((orders.order_date >= DATE'2025-12-01') and (orders.order_date < DATE'2026-01-01'))  (cost=9672 rows=48152) (actual time=0.308..5.62 rows=25078 loops=1)
+        -> Covering index range scan on orders using idx_orders_order_date over ('2025-12-01' <= order_date < '2026-01-01')  (cost=9672 rows=48152) (actual time=0.306..3.19 rows=25078 loops=1)
 
 
 
 ===== SUMMARY =====
-p1_seq: 30.11
-p1_idx: 0.08
-p2_big: 9.72
-p3_seq: 79.62
-p3b_seq: 225.37
+p1_seq: 38.77
+p1_idx: 0.18
+p2_big: 15.26
+p3b_seq: 262.47
+p3_seq: 109.78
+p3b_idx: 0.64
 p3_idx: 0.06
-p3b_idx: 0.30
-p4_fn: 100.95
-p4_range: 2.88
-p6_wrong_order: 0.08
-p6_right_order: 0.06
-p6c_comp: 3.69
-p6c_cover: 1.24
-p7_seq: 32.26
-p7_partial: 0.56
-w0: 356.46
-w4: 2121.50
-p9_live: 2343.00
-p9_build: 1906.11
-p9_mv: 0.04
-p9_refresh: 1925.55
-my_p1: 0.08
-my_p4_fn: 115.00
-my_p4_range: 6.38
+p4_fn: 131.33
+p4_range: 2.95
+p6_single: 16.15
+p6_comp: 7.78
+p6_cover: 1.68
+p7_seq: 44.12
+p7_partial: 0.75
+w0: 415.60
+w4: 2300.67
+p9_live: 2626.33
+p9_build: 2321.07
+p9_mv: 0.10
+p9_refresh: 2300.14
+my_p1: 0.17
+my_p4_fn: 136.00
+my_p4_range: 7.09

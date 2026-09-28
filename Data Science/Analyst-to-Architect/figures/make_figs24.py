@@ -1,104 +1,172 @@
-# Diagrams for Chapter 24. Run: python3 make_figs24.py
+# Diagrams for Chapter 24. Run from this folder: python3 make_figs24.py
+# Every canvas is 680 px wide and prints at 174 mm (493.2 pt), so 1 px prints at 0.725 pt:
+# the smallest text here (10 px) prints at 7.3 pt.
+# Figure 24.3's numbers come from companion/ch24/build_ch24_files.py (dec_dip), which computes
+# them from the full Riverstone order data; nothing in it is typed by hand.
+import math, pathlib, sys
 from make_figs import *
-GREEN="#2f7d6d"; PURPLE="#7a4fa0"; ORANGE="#c0662b"; GOLD="#b7791f"; RED="#b23b3b"; SOFT="#eef2f7"; LIGHT="#dfe5ec"
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "companion" / "ch24"))
+
+GREEN="#2f7d6d"; PURPLE="#7a4fa0"; GOLD="#b7791f"; RED="#b23b3b"; SOFT="#eef2f7"; LIGHT="#dfe5ec"
+W = 680
+MINUS = "−"
+
 def arrow(x1,y1,x2,y2,c=MUTED,sw=1.6):
-    import math
     a=math.atan2(y2-y1,x2-x1); s=7
     p1=(x2-s*math.cos(a-0.45),y2-s*math.sin(a-0.45)); p2=(x2-s*math.cos(a+0.45),y2-s*math.sin(a+0.45))
     return path(f"M{x1},{y1} L{x2},{y2}",stroke=c,sw=sw)+f'<path d="M{x2},{y2} L{p1[0]:.1f},{p1[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f} Z" fill="{c}"/>'
 
-def f1():  # power-interest stakeholder grid
-    o=[text(30,30,"Stakeholder mapping: power vs. interest",14.5,INK,"bold",family=HEAD)]
-    gx,gy,gw,gh=140,60,760,420
+def lines(x,y,rows,size,fill,step,weight="normal",anchor="start"):
+    return "".join(text(x,y+i*step,r,size,fill,weight,anchor) for i,r in enumerate(rows))
+
+
+# Figure 24.1: power-interest grid. Each person sits in the quadrant section 24.3 and 24.9 give them.
+def f1():
+    o=[]
+    gx,gy,gw,gh=46,8,620,330
     o.append(rect(gx,gy,gw,gh,fill="#fff",stroke=RULE,sw=1.4))
     o.append(path(f"M{gx+gw/2},{gy} V{gy+gh}",stroke=RULE,sw=1)); o.append(path(f"M{gx},{gy+gh/2} H{gx+gw}",stroke=RULE,sw=1))
-    labels=[("Keep satisfied","(high power, low interest)",gx+gw*0.25,gy+18,MUTED),
-            ("Manage closely","(high power, high interest)",gx+gw*0.75,gy+18,INK),
-            ("Monitor","(low power, low interest)",gx+gw*0.25,gy+gh-8,MUTED),
-            ("Keep informed","(low power, high interest)",gx+gw*0.75,gy+gh-8,MUTED)]
-    for t,sub,x,y,c in labels:
-        o.append(text(x,y,t,11.5,c,"bold",anchor="middle")); o.append(text(x,y+15,sub,9.5,MUTED,anchor="middle"))
-    o.append(text(gx-14,gy+gh/2,"POWER",11,MUTED,"bold",anchor="middle")); o.append(f'<g transform="rotate(-90 {gx-14} {gy+gh/2})">{text(gx-14,gy+gh/2,"POWER",11,MUTED,"bold",anchor="middle")}</g>')
-    o.append(text(gx+gw/2,gy+gh+22,"INTEREST →",11,MUTED,"bold",anchor="middle"))
-    people=[("Anita Rao\n(Sales Head)",0.82,0.90,ACC),("Vikram Singh\n(Sales Mgr)",0.68,0.80,ACC),
-            ("Finance Controller",0.75,0.35,GOLD),("Regional Sales Managers",0.55,0.85,GREEN),
-            ("Branch staff",0.30,0.55,MUTED),("IT / ERP team",0.60,0.20,PURPLE),
-            ("Board / owning family",0.90,0.15,RED)]
-    for name,ix,py,c in people:
+    q=[("Keep satisfied","high power, low interest",gx+gw*0.25,gy+22),
+       ("Manage closely","high power, high interest",gx+gw*0.75,gy+22),
+       ("Monitor","low power, low interest",gx+gw*0.25,gy+gh-26),
+       ("Keep informed","low power, high interest",gx+gw*0.75,gy+gh-26)]
+    for t,sub,x,y in q:
+        o.append(text(x,y,t,12,INK,"bold",anchor="middle")); o.append(text(x,y+15,sub,10.5,MUTED,anchor="middle"))
+    # one axis title per axis, each clear of everything else
+    cy=gy+gh/2
+    o.append(f'<g transform="rotate(-90 20 {cy})">{text(20,cy+4,"POWER →",11.5,MUTED,"bold",anchor="middle")}</g>')
+    o.append(text(gx+gw/2,gy+gh+20,"INTEREST →",11.5,MUTED,"bold",anchor="middle"))
+    # (interest 0-1, power 0-1): upper half = high power, right half = high interest
+    people=[("Vikram Singh","Sales Manager (asked)",0.60,0.73,ACC),
+            ("Anita Rao","Sales Head (decides)",0.74,0.60,ACC),
+            ("Board / owning family","",0.07,0.74,GOLD),
+            ("Suresh Menon","Finance Manager",0.18,0.61,GOLD),
+            ("Regional Sales Managers","",0.60,0.33,GREEN),
+            ("Branch staff","",0.07,0.36,MUTED),
+            ("IT / ERP team","",0.24,0.27,MUTED)]
+    for name,role,ix,py,c in people:
         x=gx+gw*ix; y=gy+gh*(1-py)
-        o.append(f'<circle cx="{x}" cy="{y}" r="5" fill="{c}"/>')
-        for i,l in enumerate(name.split("\n")):
-            o.append(text(x+9,y-4+i*12,l,9.8,INK,"bold" if i==0 else None))
-    o.append(text(30,504,"Manage closely = involve in requirements and review drafts. Keep informed = share findings, don't ask for time. Keep satisfied = brief them once, on their terms.",11,MUTED))
-    return svg(940,522,"".join(o))
+        o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="5" fill="{c}"/>')
+        o.append(text(x+9,y+4,name,11,INK,"bold"))
+        if role: o.append(text(x+9,y+18,role,10.5,MUTED))
+    o.append(text(10,gy+gh+44,"Manage closely: involve them in the question and show drafts.   Keep satisfied: brief them once, on their terms.",10.5,MUTED))
+    o.append(text(10,gy+gh+60,"Keep informed: share the finding once it's solid; don't ask for their time.   Monitor: answer if asked.",10.5,MUTED))
+    return svg(W,gy+gh+70,"".join(o))
 
-def f2():  # pyramid principle: bottom-up thinking vs top-down telling
-    o=[text(30,30,"The pyramid principle: how you think is not how you tell it",14.5,INK,"bold",family=HEAD)]
-    o.append(text(30,58,"How the analysis was built (bottom-up)",12.5,MUTED,"bold"))
-    steps=["Pulled Nov & Dec order data","Computed customers, orders/cust, AOV","Ran the chain-linked decomposition","Checked segment mix for a confound","Compared with the May–June pattern","Concluded: seasonal, no action needed"]
+
+# Figure 24.2: how the December analysis was built (bottom-up) vs how it is told (an upright pyramid).
+def f2():
+    o=[]
+    o.append(text(10,18,"How the analysis was built",12,MUTED,"bold"))
+    o.append(text(10,33,"(in the order it was done)",10.5,MUTED))
+    steps=["1  Pulled Nov and Dec order data","2  Customers, orders per customer, AOV","3  Ran the chain-linked decomposition",
+           "4  Checked the segment mix","5  Compared with the May \u2192 June dip","6  Concluded: seasonal, no action"]
     for i,s in enumerate(steps):
-        y=80+i*30
-        o.append(rect(30,y,300,24,fill="#fff",stroke=RULE,rx=4)); o.append(text(42,y+16,s,10.3,INK))
-        if i<len(steps)-1: o.append(arrow(180,y+24,180,y+30-4,MUTED,1.2))
-    o.append(arrow(345,190,395,190,ACC,2))
-    o.append(text(430,58,"How it's told to Anita Rao (top-down)",12.5,MUTED,"bold"))
-    tiers=[("December's fall is seasonal — no action needed",120,ACC),
-           ("Because: AOV drove 66% of it, mix didn't shift, same pattern as June",170,GREEN),
-           ("Detail: the decomposition, the segment table, the appendix",220,LIGHT)]
-    cx=680
-    for i,(t,y,c) in enumerate(tiers):
-        w=280-i*70
-        o.append(f'<polygon points="{cx-w/2},{y+40} {cx+w/2},{y+40} {cx+w/2-25},{y} {cx-w/2+25},{y}" fill="{c}" stroke="{ACC}" stroke-width="1"/>')
-        fontc = "#fff" if c in (ACC,GREEN) else INK
-        o.append(text(cx,y+24,t,9.8 if i==2 else 10.6,fontc,"bold" if i==0 else None,anchor="middle"))
-    o.append(text(430,290,"Say the answer first. The reasoning and the detail support it —",11,MUTED))
-    o.append(text(430,306,"they don't have to be discovered in the order you found them.",11,MUTED))
-    return svg(940,330,"".join(o))
+        y=44+i*34
+        last=i==len(steps)-1
+        o.append(rect(10,y,240,26,fill=SOFT if last else "#fff",stroke=ACC if last else RULE,sw=1.4 if last else 1,rx=4))
+        o.append(text(20,y+17,s,10.5,INK,"bold" if last else "normal"))
+        if not last: o.append(arrow(130,y+26,130,y+34,MUTED,1.2))
+    o.append(text(130,44+6*34+10,"the answer arrives last",10.5,RED,"bold",anchor="middle"))
+    o.append(arrow(258,150,286,150,ACC,2))
+    # right: upright pyramid, answer at the apex; the text sits beside each tier, so nothing clips
+    o.append(text(296,18,"How it's told to Vikram Singh",12,MUTED,"bold"))
+    o.append(text(296,33,"(top-down: the answer first)",10.5,MUTED))
+    px,top,base,th=384,46,104,62      # apex x, apex y, half-width of the base, tier height
+    tiers=[("Answer",["December's fall is","seasonal. No action","needed."],ACC,"#fff"),
+           ("Reasons",["AOV drove two-thirds of it;","the mix didn't shift; same","shape as May \u2192 June."],GREEN,"#fff"),
+           ("Detail",["The decomposition, the","segment table, the appendix."],LIGHT,INK)]
+    hw=lambda y: base*(y-top)/(3*th)
+    for i,(lab,rows,c,fc) in enumerate(tiers):
+        y0=top+i*th; y1=y0+th
+        o.append(f'<polygon points="{px-hw(y0):.1f},{y0} {px+hw(y0):.1f},{y0} {px+hw(y1):.1f},{y1} {px-hw(y1):.1f},{y1}" fill="{c}" stroke="#fff" stroke-width="2"/>')
+        o.append(text(px,y1-10,lab,10,fc,"bold",anchor="middle"))
+        tx=px+base+14; ym=(y0+y1)/2
+        o.append(path(f"M{px+hw(ym)+4:.1f},{ym:.1f} H{tx-4}",stroke=RULE,sw=1))
+        o.append(lines(tx,ym-(len(rows)-1)*7.5+4,rows,10.5,INK,15,"bold" if i==0 else "normal"))
+    o.append(text(296,top+3*th+22,"A reader who stops after the top tier still has the answer.",10.5,MUTED))
+    return svg(W,top+3*th+32,"".join(o))
 
-def f3():  # one message per slide: before/after
-    o=[text(30,30,"One message per slide",14.5,INK,"bold",family=HEAD)]
-    o.append(rect(30,58,430,300,fill="#fff",stroke=RED,sw=1.6,rx=6)); o.append(rect(30,58,430,26,fill=RED))
-    o.append(text(44,76,"Before: \"December Sales Review\"",11.5,"#fff","bold"))
-    rows=["• Nov revenue ₹15.60 cr, Dec ₹8.73 cr (-44.1%)","• Customer effect -₹1.26 cr","• Orders/customer effect -₹1.06 cr",
-          "• AOV effect -₹4.55 cr","• Retail share 50.5% → 52.0%","• Wholesale share 22.0% → 21.1%","• Hospitality share 27.5% → 26.8%",
-          "• Compare with May→June (-40.4%)","• Same pattern both times","• Recommend: review Jan actuals"]
-    for i,r in enumerate(rows): o.append(text(46,102+i*24,r,10,MUTED))
-    o.append(text(46,102+10*24+6,"→ reader has to find the point",10.5,RED,"bold"))
-    o.append(rect(480,58,430,300,fill="#fff",stroke=GREEN,sw=1.6,rx=6)); o.append(rect(480,58,430,26,fill=GREEN))
-    o.append(text(494,76,"After: \"December's dip is seasonal, not a problem\"",10.8,"#fff","bold"))
-    o.append(text(494,110,"December revenue: ₹8.73 cr",13.5,INK,"bold"))
-    o.append(text(494,132,"44% below November — but AOV-led,",11.5,MUTED))
-    o.append(text(494,150,"mix-stable, and matches June's pattern.",11.5,MUTED))
-    o.append(rect(494,175,390,120,fill=SOFT,rx=6))
-    o.append(text(510,196,"Nov ₹15.6cr → Dec ₹8.73cr",10.5,INK))
-    for i,(lab,v) in enumerate([("customers","-1.26"),("freq.","-1.06"),("AOV","-4.55")]):
-        x=520+i*120
-        o.append(rect(x,215,90,60*(float(v.strip('-'))/4.55),fill=RED))
-        o.append(text(x+45,280,lab,9.5,MUTED,anchor="middle")); o.append(text(x+45,210,v,9.5,RED,"bold",anchor="middle"))
-    o.append(text(494,320,"→ recommendation: no action; re-check after January",10.8,GREEN,"bold"))
-    return svg(940,378,"".join(o))
 
-def f4():  # handling pushback decision flow
-    o=[text(30,30,"\"Can you just change the number?\" — a decision flow",14.5,INK,"bold",family=HEAD)]
-    o.append(rect(30,60,260,70,fill="#fff",stroke=RULE,rx=6)); o.append(text(48,85,"A stakeholder asks you to",11.5,INK,"bold")); o.append(text(48,105,"change a method, filter, or number",11.5,INK,"bold"))
-    o.append(arrow(160,130,160,158,MUTED))
-    o.append(rect(60,160,200,60,fill="#fff",stroke=GOLD,sw=1.6,rx=6)); o.append(text(75,185,"Ask: what's the reason",10.6,INK)); o.append(text(75,203,"for the change?",10.6,INK))
-    o.append(arrow(60,190,10,190,MUTED)); o.append(text(-40,186,"",1,INK))
-    branches=[("A genuine error you missed\n(wrong filter, wrong period)",GREEN,"Fix it, thank them,\nre-check nearby numbers too",340),
-              ("A reasonable alternative\ndefinition, argued on merits",ACC,"Show both versions,\nlet them choose, document it",440),
-              ("\"It doesn't look good\" —\nno methodological reason",RED,"Hold the number; offer\nto explain it, in writing",540)]
-    for label,c,resp,y in branches:
-        o.append(path(f"M160,220 C160,{y-30} 260,{y} 300,{y}",stroke=c,sw=1.6))
-        o.append(rect(300,y-24,270,52,fill="#fff",stroke=c,sw=1.4,rx=6))
-        for i,l in enumerate(label.split("\n")): o.append(text(312,y-6+i*15,l,10,INK))
-        o.append(arrow(570,y,610,y,c))
-        o.append(rect(615,y-24,300,52,fill=c,rx=6))
-        for i,l in enumerate(resp.split("\n")): o.append(text(628,y-6+i*15,l,10.2,"#fff","bold" if i==0 else None))
-    o.append(text(30,570,"The test is always the same: would you be comfortable explaining this change, and the reason for it, to the person who first asked for the number?",11.3,MUTED))
-    return svg(940,588,"".join(o))
+# Figure 24.3: one message per slide. The waterfall uses the computed December numbers.
+def f3():
+    from build_ch24_files import dec_dip, cr
+    n=dec_dip(); b=n["bridge"]; nov=n["nov"]["revenue"]; dec=n["dec"]["revenue"]
+    ss=lambda k,s: n[k]["segment_share"][s]
+    o=[]
+    sw_,sh=325,300
+    # before
+    o.append(rect(10,8,sw_,sh,fill="#fff",stroke=RED,sw=1.6,rx=6)); o.append(rect(10,8,sw_,24,fill=RED,rx=0))
+    o.append(text(20,25,"BEFORE",11,"#fff","bold")); o.append(text(88,25,"Slide title: “December Sales Review”",10.5,"#fff"))
+    rows=[f"• Nov revenue ₹{cr(nov)} cr, Dec ₹{cr(dec)} cr ({MINUS}{abs(n['pct']):.1f}%)",
+          f"• Customer effect {MINUS}₹{cr(b['customer'])} cr",
+          f"• Orders/customer effect {MINUS}₹{cr(b['frequency'])} cr",
+          f"• AOV effect {MINUS}₹{cr(b['aov'])} cr",
+          f"• Retail share {ss('nov','Retail'):.1f}% → {ss('dec','Retail'):.1f}%",
+          f"• Wholesale share {ss('nov','Wholesale'):.1f}% → {ss('dec','Wholesale'):.1f}%",
+          f"• Hospitality share {ss('nov','Hospitality'):.1f}% → {ss('dec','Hospitality'):.1f}%",
+          f"• Compare with May → June ({MINUS}{abs(n['pct_may_jun']):.1f}%)",
+          "• Same pattern both times","• Recommend: review Jan actuals"]
+    o.append(lines(22,54,rows,10.5,INK,22))
+    o.append(text(22,sh-2,"→ the reader has to find the point",10.5,RED,"bold"))
+    # after
+    x0=345
+    o.append(rect(x0,8,sw_,sh,fill="#fff",stroke=GREEN,sw=1.6,rx=6)); o.append(rect(x0,8,sw_,24,fill=GREEN))
+    o.append(text(x0+10,25,"AFTER",11,"#fff","bold")); o.append(text(x0+62,25,"Slide title states the finding",10.5,"#fff"))
+    o.append(text(x0+12,52,"December's dip is seasonal, not a problem",11.5,INK,"bold"))
+    o.append(text(x0+12,74,f"₹{cr(dec)} crore, {abs(n['pct']):.0f}% below November",13,INK,"bold"))
+    o.append(text(x0+12,91,"Led by smaller orders; the segment mix didn't shift.",10.5,MUTED))
+    # waterfall: November, three effects (floating), December; values above, labels below the axis
+    base_y,top_y=250,112; k=(base_y-top_y)/nov
+    bars=[("Nov",0,nov,ACC,f"{cr(nov)}"),
+          ("customers",nov+b["customer"],nov,RED,f"{MINUS}{cr(b['customer'])}"),
+          ("orders/cust",nov+b["customer"]+b["frequency"],nov+b["customer"],RED,f"{MINUS}{cr(b['frequency'])}"),
+          ("AOV",dec,nov+b["customer"]+b["frequency"],RED,f"{MINUS}{cr(b['aov'])}"),
+          ("Dec",0,dec,ACC,f"{cr(dec)}")]
+    bw,gap=44,17; bx=x0+22
+    for i,(lab,lo,hi,c,val) in enumerate(bars):
+        x=bx+i*(bw+gap); y_hi=base_y-hi*k; y_lo=base_y-lo*k
+        o.append(rect(x,y_hi,bw,y_lo-y_hi,fill=c))
+        o.append(text(x+bw/2,y_hi-4,val,10.5,INK,"bold",anchor="middle"))
+        o.append(text(x+bw/2,base_y+14,lab,10,MUTED,anchor="middle"))
+        if 0<i<len(bars)-1:
+            pass
+    o.append(path(f"M{bx-6},{base_y} H{bx+5*(bw+gap)-gap+6}",stroke=MUTED,sw=1))
+    o.append(text(x0+12,base_y+30,"₹ crore",10,MUTED))
+    o.append(text(x0+12,sh-2,"→ No action; re-check after January.",10.5,GREEN,"bold"))
+    return svg(W,sh+16,"".join(o))
+
+
+# Figure 24.4: "can you just change the number?" as a decision flow.
+def f4():
+    o=[]
+    o.append(rect(10,8,250,48,fill="#fff",stroke=RULE,rx=6))
+    o.append(text(22,28,"A stakeholder asks you to change",11,INK,"bold")); o.append(text(22,44,"a method, a filter, or a number",11,INK,"bold"))
+    o.append(arrow(260,32,300,32,MUTED))
+    o.append(rect(300,8,370,48,fill="#fff",stroke=GOLD,sw=1.6,rx=6))
+    o.append(text(312,28,"You ask: “Help me understand why — is something",11,INK)); o.append(text(312,44,"wrong with the calculation, or should the comparison change?”",11,INK))
+    o.append(text(10,82,"THE REASON TURNS OUT TO BE…",10.5,MUTED,"bold")); o.append(text(372,82,"SO YOU…",10.5,MUTED,"bold"))
+    branches=[("1","A genuine error you missed","(wrong filter, wrong period)",GREEN,"Fix it and thank them;","re-check nearby numbers too"),
+              ("2","A reasonable alternative definition,","argued on its merits",ACC,"Show both versions, let them","choose, document which and why"),
+              ("3","“It doesn't look good”:","no methodological reason",RED,"Hold the number; offer to","explain the method in writing")]
+    for i,(num,l1,l2,c,r1,r2) in enumerate(branches):
+        y=94+i*62
+        o.append(rect(10,y,340,50,fill="#fff",stroke=c,sw=1.6,rx=6)); o.append(rect(10,y,26,50,fill=c,rx=0))
+        o.append(text(23,y+30,num,13,"#fff","bold",anchor="middle"))
+        o.append(text(46,y+21,l1,11,INK)); o.append(text(46,y+37,l2,11,MUTED))
+        o.append(arrow(350,y+25,372,y+25,c))
+        o.append(rect(372,y,298,50,fill=c,rx=6))
+        o.append(text(384,y+21,r1,11,"#fff","bold")); o.append(text(384,y+37,r2,11,"#fff"))
+    y=94+3*62+10
+    o.append(text(10,y,"The test is always the same: would you be comfortable explaining this change, and the reason for it,",10.5,MUTED))
+    o.append(text(10,y+15,"to the person who first asked for the number?",10.5,MUTED))
+    return svg(W,y+24,"".join(o))
+
 
 if __name__ == "__main__":
     for n,f in [("fig24-1-stakeholder-grid.svg",f1),("fig24-2-pyramid-principle.svg",f2),
                 ("fig24-3-one-message-per-slide.svg",f3),("fig24-4-handling-pushback.svg",f4)]:
-        open(n,"w").write(f())
+        (HERE / n).write_text(f(), encoding="utf-8")
     print("ok")

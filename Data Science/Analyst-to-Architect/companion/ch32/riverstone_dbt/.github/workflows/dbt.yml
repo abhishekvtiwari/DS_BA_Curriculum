@@ -25,5 +25,5 @@ jobs:
       - run: pip install dbt-core dbt-postgres sqlfluff sqlfluff-templater-dbt
       - run: psql -h localhost -U postgres -c "CREATE DATABASE riverstone_2025" && ./load_test_data.sh
       - run: sqlfluff lint models/
-      - run: dbt deps --profiles-dir .
-      - run: dbt build --profiles-dir . --target ci
+      - run: dbt deps
+      - run: dbt build --target ci

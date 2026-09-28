@@ -3,14 +3,14 @@
 (db markers, stateful lab regions, run/out markers) and replaces output blocks that contain only FILL with the
 real output. Output is copied verbatim from psql / mysql -t. Afterwards verify_sql.py must report 0 mismatches."""
 import re, subprocess, sys
-subprocess.run(["bash", "/home/claude/book/checks/up.sh"])
-sys.path.insert(0, '/home/claude/book/tools')
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'tools'))
 from verify_sql import run_pg, run_my, DML
 
 path = sys.argv[1]
 md = open(path, encoding='utf-8').read()
 token = re.compile(r'<!-- (db|run|out): ([\w]+) -->|<!-- lab:(start|end) -->|^```(\w*)\n(.*?)^```$', re.S | re.M)
-db = 'riverstone'; in_lab = False; pending_run = None; pending_out = None; last = {}; labs_seen = False
+db = sys.argv[2] if len(sys.argv) > 2 else 'riverstone'; in_lab = False; pending_run = None; pending_out = None; last = {}; labs_seen = False
 pieces, pos, filled = [], 0, 0
 def clean(s):
     lines = [l.rstrip() for l in s.strip('\n').splitlines()]

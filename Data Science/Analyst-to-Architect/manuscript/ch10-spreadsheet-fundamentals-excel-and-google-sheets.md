@@ -4,15 +4,17 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** find your way around Excel and Google Sheets, create and save workbooks, and manage rows, columns, and sheets · copy, paste values, find and replace · tell what a cell really contains, not only what it shows · import a CSV file without losing leading zeros or scrambling dates · format numbers, dates, and currency · write formulas with relative, absolute, and mixed references · use the essential functions (`SUM`, `AVERAGE`, `COUNT`, `IF`, `COUNTIFS`, `SUMIFS`, text and date functions) · fetch a value from another sheet with a first lookup · sort, filter, and turn a range into a table · guard your data with validation and highlight it with conditional formatting · read error values and name ranges · split and fill data with Flash Fill and Smart Fill · remove duplicates · build a clear chart · print and save as PDF · share, protect, and track versions of a workbook · build a monthly sales tracker from a raw export.
+> **You will learn to:** get a spreadsheet app working and check it · find your way around Excel and Google Sheets, create and save workbooks, and manage rows, columns, and sheets · copy, paste values, find and replace · tell what a cell really contains, not only what it shows · import a CSV file without losing leading zeros or scrambling dates · format numbers, dates, and currency · write formulas with relative, absolute, and mixed references · use the essential functions (`SUM`, `AVERAGE`, `COUNT`, `IF`, `COUNTIFS`, `SUMIFS`, text and date functions) · fetch a value from another sheet with a first lookup · sort, filter, and turn a range into a table · guard your data with validation and highlight it with conditional formatting · read error values and name ranges · split and fill data with Flash Fill and Smart Fill · remove duplicates · build a clear chart · print and save as PDF · share, protect, and track versions of a workbook · build a monthly sales tracker from a raw export.
 >
-> **Before you start:** Chapter 1 (data types, levels of measurement, data quality) and Chapter 2 (files and formats, especially CSV). Chapter 3 (how a business runs on data) helps but isn't required.
+> **Before you start:** Chapter 1 (data types, levels of measurement, data quality), Chapter 2 (files and formats, especially CSV) and Chapter 4 (percentages and averages). Chapter 3 (how a business runs on data, including cancelled orders and targets) helps.
 >
-> **Time needed:** 14–17 hours of reading and practice, spread over two weeks.
+> **Time needed:** 18–22 hours of reading and practice, spread over two to three weeks.
 >
-> **Tools:** Microsoft Excel (Microsoft 365 on Windows is the main version shown; Mac differences are noted) and Google Sheets (free with a Google account). You can follow the whole chapter with only one of them, and section 10.1 shows how to get both at no cost.
+> **Sittings (about two hours each):** 1: sections 10.0–10.3 · 2: 10.4–10.5 · 3: 10.6 · 4: 10.7–10.8 · 5: 10.9–10.10 · 6: 10.11–10.13 · 7: 10.14–10.16 · 8 and 9: the project · 10: the exercises.
 >
-> **Practice data:** Riverstone Supplies' 2025 sales export (`companion/ch10/riverstone_sales_export_2025.csv`, 330 order lines) and the practice workbook `ch10_practice.xlsx`. They hold the same data as the `riverstone_2025` database you'll query in Chapter 13, so every total here matches. Every formula result in this chapter was calculated on these files and checked independently in Python.
+> **Tools:** Microsoft Excel (Microsoft 365 on Windows is the main version shown; Mac differences are noted) and Google Sheets (free with a Google account). You can follow the whole chapter with only one of them, and section 10.0 shows how to get both at no cost.
+>
+> **Practice data:** Riverstone Supplies' 2025 sales export (`companion/ch10/riverstone_sales_export_2025.csv`, 330 order lines), the practice workbook `ch10_practice.xlsx`, and Chapter 4's workbook `companion/ch04/numbers_practice.xlsx`. They hold the same 2025 data as Chapter 4, so every total matches; you'll load the same data into a database in Chapter 13. Every formula result in this chapter was calculated on these files and checked independently in Python.
 
 ---
 
@@ -47,7 +49,54 @@ Here's the mapping:
 
 ---
 
-## 10.1 Excel and Google Sheets: what they are and how to get them
+## 10.0 Getting a spreadsheet and checking it works
+
+This is the first chapter where you work at the keyboard, so start by getting a spreadsheet app open and proving it calculates. It takes about 20 minutes. If you already have Excel through work, college, or a Microsoft 365 subscription, skip to the first run below.
+
+Pick one route. You can add the other later, and every section of this chapter shows both apps.
+
+| Route | Cost | How to start | Good to know |
+|---|---|---|---|
+| **Google Sheets** | Free with a Google account | Sign in at sheets.google.com and click **Blank spreadsheet** | Files live in Google Drive and save themselves |
+| **Excel for the web** | Free with a Microsoft account | Sign in at office.com (Microsoft 365 on the web) and open **Excel**, then **Blank workbook** | Files live in OneDrive, which includes 5 GB of free storage |
+| **Excel desktop app** | Microsoft 365 subscription (often provided by an employer or college) | Install it from your Microsoft 365 account, then choose **Blank workbook** | The most complete version; the only one with every feature in this chapter |
+
+Two places need more than the free routes: the Excel import steps in section 10.4 (Google Sheets has its own route there, so you won't get stuck), and Chapter 11's Power Query and Power Pivot sections (11.7 and 11.8).
+
+> **Watch out: download only from the official site.** Download sites that repackage installers can add unwanted software or give you an old version. Use office.com, the Microsoft Store, or sheets.google.com.
+
+### First run: one formula
+
+In the blank workbook, click cell `A1` (the first box, top left), type `2.5`, and press Enter. Then click `B1` and type:
+
+```excel
+=ROUND(A1,0)
+```
+
+Press Enter. `B1` shows **3**.
+
+How it works:
+
+- `=` tells the app "calculate this" instead of "store these characters".
+- `ROUND` is a **function**, a ready-made calculation with a name. It rounds a number.
+- `A1`, the first thing in the brackets, is the cell to read. Whatever `A1` holds is what gets rounded.
+- `0`, after the comma, is how many decimal places to keep. `0` means a whole number.
+
+**What happens if you change it?** Click `A1`, type `2.4`, and press Enter. `B1` changes to **2** on its own. That's the whole idea of a spreadsheet formula: it recalculates the moment its inputs change. Keep this little test in mind: Python, which you meet in Chapter 17, rounds 2.5 to 2.
+
+### Open the practice files
+
+Download the companion folders `companion/ch10/` and `companion/ch04/` (Appendix E), and unzip them before opening anything. Then open `ch10_practice.xlsx`:
+
+- **Excel desktop:** double-click the file.
+- **Excel for the web:** upload the file to OneDrive (**Upload** at onedrive.com), then click it to open it in Excel for the web.
+- **Google Sheets:** **File → Import → Upload**, choose the file, and pick **Create new spreadsheet**.
+
+**Checkpoint:** you should see five sheet tabs along the bottom: **Data**, **Customers**, **Products**, **Targets**, and **Cell detective**. Open `numbers_practice.xlsx` from the `ch04` folder the same way. It holds every number from Chapter 4, now with the formulas behind them, on four sheets: **monthly**, **orders**, **discounts**, and **segments**. You'll use it in section 10.8.
+
+---
+
+## 10.1 Excel and Google Sheets: what they are
 
 A **spreadsheet application** is a program for storing data in a grid and calculating with it. Two dominate business use.
 
@@ -66,11 +115,9 @@ A **spreadsheet application** is a program for storing data in a grid and calcul
 
 > **Tool note.** The limits in this table are the documented limits at the time of writing. Google counts blank cells toward its 10 million, and both apps slow down well before their limits. If a file is heading toward hundreds of thousands of rows, that's a sign it belongs in a database (Chapter 12).
 
-**Getting set up.** For Excel, sign in at office.com with a free Microsoft account to use Excel for the web, or install the desktop app if your employer or college provides Microsoft 365. For Google Sheets, sign in at sheets.google.com. Download the companion folder `companion/ch10/` (Appendix E) so you have the practice files.
-
 ### A tour of the screen
 
-Open `ch10_practice.xlsx` in both apps. In Excel, double-click the file. In Google Sheets, go to **File → Import → Upload**, choose the file, and pick **Create new spreadsheet**. Figure 10.1 shows the same workbook in each.
+Open `ch10_practice.xlsx` as you did in section 10.0. Figure 10.1 shows the same workbook in each app.
 
 ![Two side-by-side sketches of the same workbook open in Excel and in Google Sheets, labeling the menu, ribbon or toolbar, name box, formula bar, grid, and sheet tabs](figures/fig10-1-spreadsheet-anatomy.svg)
 
@@ -115,7 +162,7 @@ The practice workbook has five sheets:
 | Customers | Customer code, name, city, segment, signup date | 24 |
 | Products | Product ID, name, category, list price, unit cost | 8 |
 | Targets | Monthly revenue target for 2025 | 12 |
-| Cell detective | Six cells that look alike but aren't (section 10.3) | 6 |
+| Cell detective | Seven cells that look ordinary but aren't what they seem (section 10.3) | 7 |
 
 Click the **Data** sheet. Row 1 holds the **headers** (column names), and each row below is one line of an order: which product, how many, at what price and discount. An order with three products has three rows. This is the **grain** of the data from Chapter 1: one row per order line, not one row per order. Keeping the grain in mind will stop you from counting 330 "orders" when Riverstone received 175.
 
@@ -134,16 +181,16 @@ A few ways to refer to cells:
 
 > **Try it.** Click the name box, type `I331`, and press Enter. You land on the last row of the export: order 10175, sold by Neha Kulkarni. Now press **Ctrl+Home** to jump back to `A1` (on a Mac laptop without a Home key, Excel uses **Fn+Ctrl+Left arrow**).
 
-**Moving around fast.** Press **Ctrl+Arrow** (Mac Excel: **Cmd+Arrow**) to jump to the edge of the data in that direction; add **Shift** to select as you go. **Ctrl+Shift+End** selects from the current cell to the last used cell. These shortcuts work in both apps, and section 10.15 lists more.
+**Moving around fast.** Press **Ctrl+Arrow** (Mac Excel: **Cmd+Arrow**) to jump to the edge of the data in that direction; add **Shift** to select as you go. **Ctrl+Shift+End** selects from the current cell to the last used cell. These shortcuts work in both apps, and section 10.16 lists more.
 
 ### Quick answers from the status bar
 
-*"What's the total of these cells?"* You don't always need a formula. Select `J2:J331` after you've added the net revenue column in section 10.6 (or any column of numbers now), and look at the bottom of the window.
+*"What's the total of these cells?"* You don't always need a formula. Select the quantities, `E2:E331` (click `E2`, then press **Ctrl+Shift+Down arrow**), and look at the bottom of the window.
 
 - **Excel** shows **Average**, **Count**, and **Sum** in the **status bar** (bottom right). Right-click the status bar to add **Numerical Count**, **Minimum**, and **Maximum**.
 - **Google Sheets** shows **Sum** in the bottom-right corner; click it to switch to Average, Min, Max, Count, and Count Numbers.
 
-For the net revenue column, the status bar reads Sum **4,398,121**, Average **13,327.64**, and Count **330**, the same values `SUM`, `AVERAGE`, and `COUNT` return in section 10.7. It's the fastest way to sanity-check a number someone quotes to you in a meeting.
+For the quantity column, the status bar reads Sum **9,680**, Average **29.33** (more decimals, depending on the column's format), and Count **330**: 9,680 units sold across 330 order lines, about 29 per line. These are the same values the functions `SUM`, `AVERAGE`, and `COUNT` return (section 10.7). It's the fastest way to sanity-check a number someone quotes to you in a meeting.
 
 ### Rows, columns, and sheets
 
@@ -176,7 +223,7 @@ Paste doesn't have to paste everything. **Paste special** lets you choose:
 | Column widths | **Paste Special → Column widths** | **Edit → Paste special → Column width only** |
 | Rows turned into columns | **Paste Special → Transpose** | **Edit → Paste special → Transposed** |
 
-**Paste values** is the one you'll use daily: to freeze a result before sending a file, to turn repaired codes into real text (section 10.8), or to stop a pasted table from carrying broken references into another workbook.
+**Paste values** is the one you'll use daily: to freeze a result before sending a file, to turn repaired codes into real text (section 10.9), or to stop a pasted table from carrying broken references into another workbook.
 
 ### Find and replace, and undo
 
@@ -184,7 +231,7 @@ Paste doesn't have to paste everything. **Paste special** lets you choose:
 
 > **Watch out: replace can reach further than you meant.** Replacing `Box` with `Bin` also changes `Lunch Box Set` and any formula text containing "Box". Tick **Match entire cell contents** when you mean whole values, select the range first, and check the count the dialog reports before you save.
 
-**Undo** (**Ctrl+Z**) reverses the last action, and pressing it again goes further back; **Redo** is **Ctrl+Y**. Undo history is lost when an Excel file is closed. Google Sheets keeps version history instead (section 10.13).
+**Undo** (**Ctrl+Z**) reverses the last action, and pressing it again goes further back; **Redo** is **Ctrl+Y**. Undo history is lost when an Excel file is closed. Google Sheets keeps version history instead (section 10.14).
 
 ---
 
@@ -199,7 +246,7 @@ A cell can hold one of four kinds of content:
 - a **logical value**: `TRUE` or `FALSE`;
 - a **formula**, which produces one of the above, or an **error** such as `#N/A` or `#DIV/0!`.
 
-Open the **Cell detective** sheet. Cells `A2` to `A7` look ordinary. Figure 10.2 shows what four of them really contain.
+Open the **Cell detective** sheet. Cells `A2` to `A8` look ordinary. Figure 10.2 shows what four of them really contain.
 
 ![A four-row diagram contrasting what a cell displays with what it stores: 32,063 stores 32062.5, a date stores 45659, 0005 is text, and 2900 with a trailing space is text](figures/fig10-2-value-vs-display.svg)
 
@@ -212,37 +259,41 @@ Open the **Cell detective** sheet. Cells `A2` to `A7` look ordinary. Figure 10.2
 3. **Ask with a function.** `ISNUMBER` returns `TRUE` for numbers, `ISTEXT` for text, and `LEN` counts characters.
 4. **Show every formula.** Press **Ctrl+\`** (the key above Tab) in either app to switch between showing results and showing formulas. Press it again to switch back. In Excel the command is also at **Formulas → Formula Auditing → Show Formulas**; in Sheets, **View → Show → Formulas**.
 
-Try these formulas in column C of the Cell detective sheet. The results are the same in Excel and Google Sheets:
+A reminder from section 10.0 before you type any: a formula starts with `=`. A function, such as `ROUND`, is a named calculation, and what goes in its brackets is its input, called an **argument**. Type the formula, press Enter, and the cell shows the result.
+
+Type each formula below into column C of the Cell detective sheet, one per cell, starting in `C2`. Because the formulas are on the same sheet as the cells they read, a plain address such as `A2` is enough. The results are the same in Excel and Google Sheets:
 
 ```excel
-=ISNUMBER('Cell detective'!A2)      → TRUE
-=ISTEXT('Cell detective'!A3)        → TRUE
-=LEN('Cell detective'!A3)           → 4
-=LEN('Cell detective'!A4)           → 5
-=ISNUMBER('Cell detective'!A5)      → TRUE
-=ISNUMBER('Cell detective'!A6)      → FALSE
-=SUM('Cell detective'!A2:A4)        → 2900
+=ISNUMBER(A2)      → TRUE
+=ISTEXT(A3)        → TRUE
+=LEN(A3)           → 4
+=LEN(A4)           → 5
+=ISNUMBER(A5)      → TRUE
+=ISNUMBER(A6)      → FALSE
+=SUM(A2:A4)        → 2900
+=ISTEXT(A8)        → TRUE
 ```
 
 How it works:
 
 - `A3` and `A4` both display `2900`, but `LEN` reveals that `A4` has five characters: the digits plus a **trailing space**, invisible on screen. Text copied from websites, PDFs, and other systems often carries spaces like this.
 - `A5` displays `2025-01-02` and `ISNUMBER` says it's a number. `A6` displays `02-01-2025` and is text. Only `A5` can be sorted by date, filtered by month, or used in date arithmetic.
-- `SUM(A2:A4)` returns 2900, not 8700. **`SUM` silently skips text in a range.** Nothing warns you. If a column of amounts contains some numbers stored as text, the total comes out smaller than it should be, which is the most common way a spreadsheet total goes wrong without anyone noticing.
+- `A8` displays `0005` and `ISTEXT` says it's text. That's how a customer code keeps its leading zeros: as the number 5 it would display `5`.
+- `SUM(A2:A4)` adds up the range `A2:A4` and returns 2900, not 8700. **`SUM` silently skips text in a range.** Nothing warns you. If a column of amounts contains some numbers stored as text, the total comes out smaller than it should be, which is the most common way a spreadsheet total goes wrong without anyone noticing.
 
-> **Watch out: SUM ignores text without telling you.** Before you trust a total, compare `=COUNT(range)` (how many numbers) with `=COUNTA(range)` (how many non-empty cells). On a column of amounts they should match. If `COUNTA` is bigger, some amounts are text.
+> **Watch out: SUM ignores text without telling you.** Before you trust a total, compare `=COUNT(range)` (how many numbers, and dates, which are numbers too) with `=COUNTA(range)` (how many non-empty cells); section 10.7 covers both. On a column of amounts they should match. If `COUNTA` is bigger, some amounts are text.
 
 ### Dates are numbers in disguise
 
-Both apps store a date as the **number of days** since a starting point, and a date format makes that number look like a date. In the Windows Excel date system, day 1 is 1 January 1900; Google Sheets counts from 30 December 1899, which gives the same numbers for any modern date. Order 10001's date, 2 January 2025, is stored as **45659**:
+Both apps store a date as the **number of days** since a starting point, and a date format makes that number look like a date. In the Windows Excel date system, day 1 is 1 January 1900; Google Sheets counts from 30 December 1899, which gives the same numbers for any modern date. Order 10001's date, 2 January 2025, is stored as **45659**. See it for yourself: in a spare cell, type
 
 ```excel
-=Data!B2*1        → 45659
+=Data!B2
 ```
 
-Because dates are numbers, you can subtract them to get days, add 30 to get a due date, and compare them with `>` and `<`. Because they're only numbers underneath, a date that arrives as *text* can't do any of that. Section 10.4 shows how dates become text by accident, and section 10.8 shows how to rescue them.
+The cell shows `2025-01-02`, because the app copies the date format along with the value. Now change the cell's format to a plain number (**Excel: Home → Number → General**; **Sheets: Format → Number → Number**). It shows **45659** (Sheets writes it as 45,659.00). The value never changed; only its display did.
 
-> **Watch out: a date result that looks like 1900.** Subtract two dates, such as `=EOMONTH(B2,0)-B2` (days from an order to the end of its month), and the answer may display as `29-01-1900` because the cell picked up a date format. The value is 29. Change the cell's format to **Number** or **General** and the 29 appears.
+Because dates are numbers, you can subtract them to get days, add 30 to get a due date, and compare them with `>` and `<`. Because they're only numbers underneath, a date that arrives as *text* can't do any of that. Section 10.4 shows how dates become text by accident, and section 10.9 shows how to rescue them.
 
 ---
 
@@ -267,17 +318,19 @@ We opened this file in a spreadsheet app that read the dates month first, as a c
 
 ![Three panels: the raw CSV text, the file opened with month-first dates showing swapped dates and codes without zeros, and the file imported with column types set correctly](figures/fig10-3-csv-import-damage.svg)
 
-*Figure 10.3 — The same 330 lines imported two ways. Nothing warned about the damage in the middle panel; the numbers are measured on Riverstone's export.*
+*Figure 10.3 — The same 330 lines: the raw CSV, opened with month-first dates, and imported with column types set. Nothing warned about the damage in the middle panel; the numbers are measured on Riverstone's export.*
 
 - **Customer codes lost their zeros in all 330 lines.** `0002` became the number `2`. A code is a label, not a quantity (Chapter 1's levels of measurement), so the zeros were part of it. Every lookup against the Customers sheet, where the code is `0002`, now fails.
-- **135 dates became the wrong real dates.** Any date whose day is 12 or less could be read month first, so `02-01-2025` became 1 February 2025 and `12-01-2025` became 1 December 2025. Ten of them survived by luck because the day equals the month (`03-03-2025`).
+- **125 dates became the wrong real dates.** Any date whose day is 12 or less could be read month first, so `02-01-2025` became 1 February 2025 and `12-01-2025` became 1 December 2025. Ten more survived by luck because the day equals the month (`03-03-2025`). So 135 cells hold real dates, and only 10 of them are right.
 - **195 dates stayed as text**, because a month-first reading of `13-01-2025` would need a 13th month.
 
-The dangerous part is the middle group. The 135 wrong dates are real dates, they sort and filter normally, and nothing looks broken. On the damaged file, a formula for January revenue returns **₹91,649**. The correct figure is **₹202,640**.
+The dangerous part is the middle group. The 125 wrong dates are real dates, they sort and filter normally, and nothing looks broken. On the damaged file, a formula for January revenue returns **₹91,649**. The correct figure is **₹2,02,640**.
 
 ### Importing correctly in Excel
 
 Don't double-click the CSV. Import it so you can tell Excel what each column is.
+
+> **Tool note: these steps need the Power Query editor.** The Excel desktop app has it. Excel for the web has it only on some Microsoft 365 plans (Microsoft lists the full Power Query experience for Business and Enterprise plans). In Excel for the web, check whether **Data → Get Data → From Text/CSV** offers **Transform Data**. If it doesn't, use the Google Sheets route below; the lesson is the same.
 
 1. Open a blank workbook. Go to **Data → Get & Transform Data → From Text/CSV**, choose the file, and click **Import**.
 2. In the preview window, set **Data Type Detection** to **Do not detect data types**, then click **Transform Data**. The Power Query Editor opens (Chapter 11 covers it in depth).
@@ -292,11 +345,11 @@ You can also stop Excel from stripping zeros when you type or open files: **File
 1. Set the spreadsheet's locale first: **File → Settings → General → Locale → India**, then **Save settings**. The locale decides how Sheets reads dates and which date and currency formats it offers.
 2. Go to **File → Import → Upload** and choose the CSV. Set **Import location** to **Insert new sheet(s)** and **Separator type** to **Comma**.
 3. Decide on **Convert text to numbers, dates, and formulas**. If you leave it checked, Sheets converts quantities and prices to numbers, reads dates using the India locale, and strips the zeros from codes. If you clear it, every column arrives as text, codes included.
-4. With the box checked, repair the codes afterward with `=TEXT(C2,"0000")` (section 10.8). This works only because every code has exactly four digits. When codes vary in length, clear the box instead and convert the numeric and date columns yourself.
+4. With the box checked, the codes lose their zeros, and you repair them afterward with the `TEXT` function (section 10.9 shows the formula and the steps). This works only because every code has exactly four digits. When codes vary in length, clear the box instead and convert the numeric and date columns yourself.
 
-> **Watch out: check the import, don't assume it.** After any import, run three quick checks. The row count should match the source (`=COUNTA(A2:A331)` → 330). A code column should still show its zeros. A date column should be all real dates: `=COUNT(B2:B331)` should equal the number of rows, because `COUNT` counts only numbers and real dates are numbers. On the damaged file, that formula returns 135.
+> **Watch out: check the import, don't assume it.** After any import, run three quick checks. **Count the rows:** there should be 330, as in the source. **Look at the code column:** row 2 should still show `0002`. **Count how many dates are real dates:** all 330 should be, because a real date is a number and text isn't. On the damaged file only 135 are (125 wrong + 10 right). Section 10.7 gives you the three counting formulas, and exercise 19 asks you to come back and run them.
 
-> **Spreadsheet link.** The same problem exists in every tool that reads CSV files: Python's pandas (Chapter 18) and database loaders (section 12.13) guess types too. The fix is always the same: tell the tool the type of each column instead of letting it guess.
+Every tool that reads CSV files guesses types, and you'll see the same fix in later chapters: tell the tool the type of each column instead of letting it guess.
 
 ---
 
@@ -323,7 +376,7 @@ The fill handle (above) does more than copy. Type `1` and `2` in two cells, sele
 - **Excel** suggests the rest in grey; press **Enter** to accept, or use **Data → Data Tools → Flash Fill** (**Ctrl+E**).
 - **Google Sheets** offers **Smart Fill** suggestions in the same way; press the tick to accept (**Ctrl+Shift+Y** opens the suggestion).
 
-These tools write **fixed values**, not formulas, so they don't update if the names change. When the data will change, use a formula instead: `=LEFT(D1,FIND(" ",D1)-1)` returns `Neha` from `Neha Kulkarni`, and `=MID(D1,FIND(" ",D1)+1,100)` returns `Kulkarni`. (`FIND` gives the position of the space; section 10.8 covers `LEFT` and `MID`.)
+These tools write **fixed values**, not formulas, so they don't update if the names change. When the data will change, use a formula instead; section 10.9 builds that formula one step at a time.
 
 ### Splitting one column into several
 
@@ -374,7 +427,7 @@ A **number format** controls how a value is displayed. It never changes the stor
 | `yyyy-mm-dd` | (for 45659) 2025-01-02 | Unambiguous dates |
 | `mmm yyyy` | (for 45659) Jan 2025 | Month labels |
 
-> **Tool note: Indian digit grouping.** This book writes numbers with international grouping (₹4,335,471). If your team prefers lakh and crore grouping (₹43,35,471), choosing **English (India)** as the locale in Sheets, or the ₹ English (India) currency symbol in Excel, applies it to currency formats. Pick one style for a report and use it everywhere.
+> **Tool note: Indian digit grouping.** This book writes rupees with lakh and crore grouping (₹43,35,471), as Chapter 4 did. Spreadsheets group digits the way your settings say: the `#,##0` code shows 4,335,471 on many computers. Choosing **English (India)** as the locale in Sheets, or the ₹ English (India) currency symbol in Excel, applies lakh grouping to currency formats. Formula results in this chapter are shown as the app returns them, with no grouping at all (`4335471`). Pick one style for a report and use it everywhere.
 
 > **Watch out: `0000` formatting doesn't fix a code.** A custom format of `0000` makes the number 5 *look like* `0005`, but the cell still holds 5, so a lookup for the text `0005` still fails. To create real text, use `=TEXT(C2,"0000")`.
 
@@ -384,13 +437,22 @@ A **number format** controls how a value is displayed. It never changes the stor
 
 If dates are whole days (section 10.3), a time is the **fraction of a day** that has passed. `9:30 AM` is stored as 0.3958333 (9.5 hours ÷ 24). Type times with a colon (`9:30`, `17:30`) and both apps recognize them.
 
-That's why a time difference needs `× 24` to become hours:
+That's why a time difference needs `× 24` to become hours. The function `TIME(hour, minute, second)` builds a time from its three parts: `TIME(17,30,0)` is 5:30 PM. Work out a shift from 9:15 AM to 5:30 PM in four cells on a spare sheet:
 
 ```excel
-=(TIME(17,30,0)-TIME(9,15,0))*24     → 8.25
+A1:  =TIME(9,15,0)      → 9:15 AM
+B1:  =TIME(17,30,0)     → 5:30 PM
+C1:  =B1-A1             → 0.34375
+D1:  =C1*24             → 8.25
 ```
 
-A shift from 9:15 AM to 5:30 PM is 8.25 hours. Without `*24`, the cell would show `8:15` in a time format, or 0.34375 as a plain number. Format hour totals as **Number**, and use a format like `[h]:mm` if you want totals above 24 hours to display as hours rather than wrapping around.
+How it works:
+
+- `A1` and `B1` build the start and end times; `0` is the seconds.
+- `C1` subtracts them. The answer is 0.34375 of a day, but the app may display it as a time, such as `8:15` or `8:15 AM`, because it copies the time format. Format `C1` as **Number** to see 0.34375.
+- `D1` multiplies the fraction of a day by 24 hours: 0.34375 × 24 = **8.25 hours**.
+
+Format hour totals as **Number**, and use a format like `[h]:mm` if you want totals above 24 hours to display as hours rather than wrapping around.
 
 ---
 
@@ -417,6 +479,8 @@ How it works:
 Check row 5 by hand. Order 10003 has a second line: 45 Storage Box 25L at ₹750 with a 5% discount. 45 × ₹750 = ₹33,750, and 95% of ₹33,750 is **₹32,062.50**. `J5` shows 32062.5. ✓
 
 Click `J3` and look at the formula bar: `=E3*F3*(1-G3/100)`. You typed the formula once, yet each row refers to its own row. That's a relative reference at work.
+
+Now select `J2:J331` and read the status bar (section 10.2): Sum **4398121** (₹43,98,121), Average about **13327.64**, Count **330**. Keep the sum in mind; section 10.7 shows why it's not Riverstone's real revenue.
 
 ### AutoSum and inserting functions
 
@@ -471,10 +535,10 @@ When a formula can't produce a result, it shows an **error value**. Each one tel
 
 | Error | Meaning | Riverstone example | Typical fix |
 |---|---|---|---|
-| `#DIV/0!` | Dividing by zero or by an empty cell | `=J2/0` | Check the denominator; `=IF(B5=0,"",D5/B5)` for months with no target |
-| `#VALUE!` | The wrong type of value, such as text in arithmetic | `="abc"*2` | Find the text cell (section 10.3); convert it with `VALUE` |
+| `#DIV/0!` | Dividing by zero or by an empty cell | `=J2/0` | Check the denominator; section 10.8's `IF` can show a blank instead |
+| `#VALUE!` | The wrong type of value, such as text in arithmetic | `="abc"*2` | Find the text cell (section 10.3); convert it with `VALUE` (section 10.9) |
 | `#NAME?` | A misspelled function, an unquoted text value, or an unknown named range | `=SUMM(J2:J5)` | Correct the spelling; put text in quotes |
-| `#N/A` | A lookup didn't find what it was looking for | Looking up customer code `9999` | Check the code and its type (section 10.9); add an "if not found" value |
+| `#N/A` | A lookup didn't find what it was looking for | Looking up customer code `9999` | Check the code and its type (section 10.10); add an "if not found" value |
 | `#REF!` | A reference points at cells that were deleted | A formula using a deleted row | Undo, or rewrite the reference |
 | `#NUM!` | An impossible number, such as `=SQRT(-1)` | — | Check the inputs |
 | `#SPILL!` (Excel) | A formula that returns several cells is blocked by existing data (Chapter 11) | — | Clear the cells in its way |
@@ -494,7 +558,7 @@ A **named range** gives a range a meaningful name, so `=SUM(net_revenue)` replac
 =SUM(net_revenue)     → 4398121
 ```
 
-Names are always absolute, so they don't slide when copied, and they make formulas readable to the next person. Tables (section 10.10) do the same job and also grow with the data, which is why many analysts prefer them for data columns and keep names for single input cells such as `as_of_date` or `vat_rate`.
+Names are always absolute, so they don't slide when copied, and they make formulas readable to the next person. Tables (section 10.11) do the same job and also grow with the data, which is why many analysts prefer them for data columns and keep names for single input cells such as `as_of_date` or `vat_rate`.
 
 ### Checking a formula's inputs
 
@@ -507,15 +571,13 @@ In long workbooks you'll want to see which cells feed a formula.
 
 ### Referring to another sheet
 
-To use a cell on another sheet, type `=` and click across to that sheet, or type the sheet name followed by `!`: `=Targets!B2` returns January's target, 300,000. Sheet names with spaces need quotes: `='Cell detective'!A2`. The references update if the sheet is renamed.
-
-> **Spreadsheet link.** You'll meet the same idea in SQL (Chapter 12) and Python (Chapter 18), but there the formula is written once for a whole column instead of copied row by row. That's one reason large datasets move to those tools.
+To use a cell on another sheet, type `=` and click across to that sheet, or type the sheet name followed by `!`: `=Targets!B2` returns January's target, ₹3,00,000. Sheet names with spaces need quotes: `='Cell detective'!A2`. The references update if the sheet is renamed.
 
 ---
 
-## 10.7 Essential functions
+## 10.7 Totals, counts, and rounding
 
-A **function** is a named calculation that takes **arguments** inside brackets, separated by commas: `=SUM(J2:J331)`. Start typing `=SU` and both apps suggest matching functions and show the arguments as you type. Everything in this section works identically in Excel and Google Sheets unless a note says otherwise.
+A **function** is a named calculation that takes **arguments** inside brackets, separated by commas: `=SUM(J2:J331)`. You met one, `ROUND`, in section 10.0. Start typing `=SU` and both apps suggest matching functions and show the arguments as you type. Everything in this section and the next works identically in Excel and Google Sheets unless a note says otherwise.
 
 > **Tool note: argument separators.** Some regional settings (much of Europe, for example) use semicolons: `=SUM(J2;J331)`. Indian and United States settings use commas, as this book does.
 
@@ -529,7 +591,7 @@ A **function** is a named calculation that takes **arguments** inside brackets, 
 =ROUND(Data!J5,0)           → 32063
 ```
 
-The export totals ₹4,398,121. But Chapter 13 reported Riverstone's 2025 net revenue as **₹4,335,471**, and it was right. The difference is **₹62,650**: the lines of the two **cancelled** orders, 10034 and 10131, which `SUM` happily included. You'll fix that with `SUMIFS` in a moment.
+The export totals ₹43,98,121. But Chapter 4 used **₹43,35,471** as Riverstone's 2025 revenue, and that figure is right. The difference is **₹62,650**: the lines of the two **cancelled** orders, 10034 and 10131, which `SUM` happily included. You'll fix that with `SUMIFS` in section 10.8.
 
 The **median** is the middle value when the numbers are sorted, so a few very large lines don't pull it up the way they pull up the average:
 
@@ -537,7 +599,7 @@ The **median** is the middle value when the numbers are sorted, so a few very la
 =MEDIAN(Data!J2:J331)     → 10212.5
 ```
 
-Half the order lines are worth ₹10,212.50 or less, while the average is ₹13,327.64. When an average and a median are far apart, a few big values are doing the work. Chapter 21 explains which average to report, and why the choice depends on the level of measurement from Chapter 1.
+Half the order lines are worth ₹10,212.50 or less, while the average is ₹13,327.64. When an average and a median are far apart, a few big values are doing the work. Chapter 4 (section 4.5) showed why with Riverstone's orders: a few large orders pull the mean up. Here the same thing happens at the level of order lines.
 
 `ROUND(value, digits)` changes the stored value, unlike a number format. `ROUND(32062.5, 0)` gives 32063. Its relatives round in one direction: `=ROUNDUP(Data!J5,-2)` gives **32100** and `=ROUNDDOWN(Data!J5,-2)` gives **32000** (a negative number of digits rounds to tens, hundreds, and so on), and `=INT(Data!J5)` drops the decimals to give **32062**. Use `ROUND` when a rounded number feeds further calculations (for example, invoice amounts to the paisa: `ROUND(x, 2)`); use a number format when you only want a tidy display.
 
@@ -555,6 +617,12 @@ Half the order lines are worth ₹10,212.50 or less, while the average is ₹13,
 
 That gap is worth a question to the sales team later: which orders came in without a rep, and who gets credit for them?
 
+These are also the import checks from section 10.4: `=COUNTA(A2:A331)` should return 330 (no rows lost), and `=COUNT(B2:B331)` should return 330 too (every date is a real date). On the damaged file from section 10.4, `COUNT` on the dates returns 135.
+
+---
+
+## 10.8 Decisions and conditions
+
 ### Decisions: IF, IFS, AND, OR, IFERROR
 
 `IF(test, value_if_true, value_if_false)` returns one of two results:
@@ -571,7 +639,7 @@ For more than two outcomes, `IFS` checks conditions in order and returns the res
 =IFS(Data!J5>=50000,"Large",Data!J5>=10000,"Medium",TRUE,"Small")     → Medium
 ```
 
-The final `TRUE,"Small"` is the catch-all, like `ELSE` in SQL's `CASE` (Chapter 12). In older Excel versions you'd nest `IF`s instead: `=IF(J5>=50000,"Large",IF(J5>=10000,"Medium","Small"))`.
+The final `TRUE,"Small"` is the catch-all: `TRUE` is always true, so any line that reaches it is "Small". In older Excel versions you'd nest `IF`s instead: `=IF(J5>=50000,"Large",IF(J5>=10000,"Medium","Small"))`.
 
 `AND` is TRUE only when every test is TRUE; `OR` is TRUE when at least one is:
 
@@ -605,17 +673,47 @@ How it works:
 
 - `COUNTIF(range, criterion)` counts cells in one range that meet one criterion. 186 lines had a discount.
 - `COUNTIFS` takes several pairs and counts rows where **all** of them are true. 185 lines were delivered *and* discounted.
-- `SUMIFS(sum_range, criteria_range1, criterion1, …)` adds up the first range on the rows where every criterion holds. The **sum range comes first** in `SUMIFS`. `"<>Cancelled"` means "not equal to Cancelled", so the total is **₹4,335,471**, matching Chapter 13. ✓
-- `AVERAGEIFS` averages the non-cancelled lines: ₹13,298.99 per line.
-- `MAXIFS` and `MINIFS` (Excel 2019 or later, and Sheets) return the largest or smallest value that meets the criteria: `=MAXIFS(Data!J2:J331,Data!N2:N331,"Retail",Data!H2:H331,"<>Cancelled")` returns **49875**, the biggest Retail line (column N holds the segment you'll add in section 10.9).
+- `SUMIFS(sum_range, criteria_range1, criterion1, …)` adds up the first range on the rows where every criterion holds. The **sum range comes first** in `SUMIFS`. `"<>Cancelled"` means "not equal to Cancelled", so the total is **₹43,35,471**, matching Chapter 4's figure. ✓
+- `AVERAGEIFS(average_range, criteria_range1, criterion1, …)` works the same way, with the range to average first. It averages the non-cancelled lines: ₹13,298.99 per line.
 
-Criteria are written as text: `">0"`, `"Delivered"`, `"<>Cancelled"`. To compare with a cell's value, join the operator to the cell with `&`:
+You'll also meet the older one-condition versions, `SUMIF` and `AVERAGEIF`, in inherited files:
 
 ```excel
-=SUMIFS(Data!J2:J331,Data!B2:B331,">="&DATE(2025,11,1),Data!B2:B331,"<="&DATE(2025,11,30),Data!H2:H331,"<>Cancelled")     → 633408
+=SUMIF(Data!H2:H331,"Delivered",Data!J2:J331)     → 4294666
 ```
 
-November's net revenue was **₹633,408**: every non-cancelled line dated on or after 1 November and on or before 30 November. The same date range can appear in two criteria, one for each end.
+> **Watch out: SUMIF puts the range to add last.** `SUMIF(range, criterion, sum_range)` checks the first range and adds the **last** one; `SUMIFS` puts the range to add **first**. The same total with `SUMIFS` is `=SUMIFS(Data!J2:J331,Data!H2:H331,"Delivered")`. Use `SUMIFS` even for one condition and you never have to remember which way round it goes.
+
+### Criteria built from dates and cells
+
+Criteria are written as text: `">0"`, `"Delivered"`, `"<>Cancelled"`. To compare with a date or a cell's value, join the operator to it with `&`, the join operator from section 10.6. Build November's revenue one step at a time, in spare cells of column `P` on the Data sheet. Because the formulas sit on the same sheet as the data, they don't need `Data!` in front of each range.
+
+First, the two ends of the month. `DATE(year, month, day)` builds a real date from its three parts (section 10.9 has more date functions):
+
+```excel
+P1:  =DATE(2025,11,1)      → 2025-11-01
+P2:  =DATE(2025,11,30)     → 2025-11-30
+```
+
+Next, see what a criterion built from a cell looks like. `&` glues the text `">="` to the date in `P1`. Because the date is really a day number (section 10.3), the result is the text `>=45962`, which is exactly the kind of criterion `SUMIFS` wants:
+
+```excel
+P3:  =">="&P1     → >=45962
+```
+
+Now add one pair at a time to the non-cancelled total:
+
+```excel
+=SUMIFS(J2:J331,H2:H331,"<>Cancelled")                                    → 4335471
+=SUMIFS(J2:J331,H2:H331,"<>Cancelled",B2:B331,">="&P1)                    → 1073231.5
+=SUMIFS(J2:J331,H2:H331,"<>Cancelled",B2:B331,">="&P1,B2:B331,"<="&P2)    → 633408
+```
+
+How it works:
+
+- The first formula is the full year's non-cancelled revenue.
+- The second adds the pair `B2:B331, ">="&P1`: only lines dated on or after 1 November, so November plus December, ₹10,73,231.50.
+- The third adds `"<="&P2` on the same date column, cutting off December. November's net revenue was **₹6,33,408**. The same date column can appear in two criteria, one for each end of the range. Change `P1` and `P2` to another month and the total follows.
 
 Two more criterion tricks:
 
@@ -624,27 +722,81 @@ Two more criterion tricks:
 
 > **Watch out: the row ranges must line up.** Every range in a `SUMIFS` must be the same size and start on the same row: `J2:J331` with `H2:H331`, not `H1:H330`. Excel returns `#VALUE!` for different sizes, but ranges of the same size that are offset by one row give a wrong answer with no error at all.
 
-> **SQL link.** `SUMIFS(J, H, "<>Cancelled")` is the spreadsheet version of `SELECT SUM(net_revenue) FROM … WHERE status <> 'Cancelled'`. When you build a table of `SUMIFS` with one row per month, you're doing by hand what `GROUP BY` does in one line (section 12.9).
-
 ### A reconciliation habit
 
 Whenever you break a total into parts, add the parts back up and compare. The sales reps' non-cancelled revenue, from four `SUMIFS` (three names and the blank):
 
 | Sales rep | Net revenue (₹) |
 |---|---|
-| Rahul Mehta | 1,494,000.50 |
-| Farah Khan | 1,489,073.00 |
-| Neha Kulkarni | 1,147,895.00 |
-| (no rep) | 204,502.50 |
-| **Total** | **4,335,471.00** |
+| Rahul Mehta | 14,94,000.50 |
+| Farah Khan | 14,89,073.00 |
+| Neha Kulkarni | 11,47,895.00 |
+| (no rep) | 2,04,502.50 |
+| **Total** | **43,35,471.00** |
 
 The four parts add to exactly the non-cancelled total. ✓ If they didn't, a name would be misspelled somewhere (`Farah  Khan` with two spaces is a different criterion), or a line would have a rep who isn't on your list.
 
-> **Interview extra point.** When an interviewer hands you a spreadsheet task, finish by reconciling out loud: *"The segment totals add to ₹4,335,471, which matches the non-cancelled total, and I excluded the two cancelled orders worth ₹62,650."* Checking your own work unprompted is one of the moves Chapter 69 teaches, and Chapter 70 has spreadsheet questions that reward it.
+> **Interview extra point.** When an interviewer hands you a spreadsheet task, finish by reconciling out loud: *"The rep totals, plus the lines with no rep, add to ₹43,35,471, which matches the non-cancelled total, and I excluded the two cancelled orders worth ₹62,650."* Checking your own work unprompted is one of the moves Chapter 69 teaches, and Chapter 70 has spreadsheet questions that reward it.
+
+### Back to Chapter 4: let the spreadsheet do it
+
+In Chapter 4 you worked out Riverstone's averages, percentages, and growth rates by hand. Open `numbers_practice.xlsx` (section 10.0) and let the spreadsheet do them. For each one, write down the answer you expect from Chapter 4 first, then type the formula into a spare cell and compare. The workbook already holds these formulas in its own cells; typing your own is the practice.
+
+**Averages, on the `orders` sheet.** This sheet has one row per **order**: 173 orders in `B2:B174`. In `G1`, `G2`, and `G3`:
+
+```excel
+G1:  =AVERAGE(B2:B174)           → 25060.5260115607
+G2:  =MEDIAN(B2:B174)            → 21375
+G3:  =COUNTIF(B2:B174,">"&G1)    → 70
+```
+
+How it works:
+
+- `G1` is the mean order, ₹25,061, and `G2` the median, ₹21,375: Chapter 4's two numbers.
+- `G3` counts the orders above the mean. The criterion `">"&G1` glues `>` to the mean, just like the November criterion above. Only 70 of the 173 orders are above the "average" order.
+- Earlier in this section, the average **order line** was ₹13,298.99. Same data, different grain (section 10.2): an order has one or more lines, so an average per order is bigger than an average per line.
+
+**Percentages, on the `monthly` sheet.** Revenue is in column B, one row per month from January (`B2`) to December (`B13`). In a spare cell:
+
+```excel
+=(B3-B2)/B2       → 0.251796288985393
+=1276/(1-12%)     → 1450
+```
+
+How it works:
+
+- The first is Chapter 4's percent change (section 4.1): new minus old, divided by old. Format it as a percentage and it shows +25.2%, February's rise over January.
+- The second reverses a discount: Northgate paid ₹1,276 per crate after 12% off, so the list price is ₹1,276 ÷ 0.88 = ₹1,450. Typing `12%` in a formula means 0.12.
+
+**Compound growth.** Chapter 4 (section 4.4) found Riverstone's steady monthly growth rate from January's ₹2,02,640 to December's ₹4,39,824. First with the power operator `^` from section 10.6, then with a function made for the job:
+
+```excel
+=(439824/202640)^(1/11)-1        → 0.0729902982766781
+=RRI(11,202640,439824)           → 0.0729902982766781
+=RRI(3,4335471,6000000)          → 0.114392861892716
+=AVERAGE(F3:F13)                 → 0.130701170428964
+```
+
+How it works:
+
+- The first line is Chapter 4's formula, (end ÷ start)^(1 ÷ periods) − 1: **7.3%** a month.
+- `RRI(number_of_periods, start_value, end_value)` gives the same answer in one step. Its arguments are the number of periods (11 monthly steps from January to December), the starting value, and the ending value. Excel's help calls them `nper`, `pv`, and `fv`.
+- The third line is Chapter 4's CAGR: from ₹43,35,471 to ₹60,00,000 in 3 years needs **11.4%** a year.
+- The last line averages the eleven monthly changes in column F: 13.1%, the misleading number Chapter 4 warned about. The spreadsheet calculates it happily; knowing not to report it is your job.
+
+**Rounding to significant figures.** Chapter 4 (section 4.6) rounded ₹43,35,471 to "about ₹43 lakh". `ROUND` with a negative number of digits does it:
+
+```excel
+=ROUND(4335471,-5)     → 4300000
+```
+
+In `ROUND(4335471,-5)`, the `-5` rounds to the nearest 1,00,000 (five places to the left of the decimal point), which leaves two significant figures: ₹43,00,000, or ₹43 lakh.
+
+The `discounts` sheet holds Chapter 4's weighted average discount, 4.69%. It uses `SUMPRODUCT`, which Chapter 11 teaches, so leave it until then: Chapter 11 shows how the discounts sheet gets 4.69%.
 
 ---
 
-## 10.8 Text and date functions
+## 10.9 Text and date functions
 
 Real data arrives with codes that need padding, names in the wrong case, and dates stored as text. These functions fix them. They work the same in both apps.
 
@@ -655,12 +807,12 @@ Real data arrives with codes that need padding, names in the wrong case, and dat
 | `LEN` | `=LEN("2900 ")` | 5 | Counts characters, spaces included |
 | `TRIM` | `=VALUE(TRIM('Cell detective'!A4))` | 2900 | Removes extra spaces; `VALUE` then turns the text into a number |
 | `UPPER`, `LOWER`, `PROPER` | `=PROPER("METRO MART")` | Metro Mart | Change case |
-| `LEFT`, `RIGHT` | `=LEFT("0005",2)` | 00 | First or last *n* characters |
+| `LEFT`, `RIGHT` | `=LEFT("0005",2)`; `=RIGHT("RS-2025-0418",4)` | 00; 0418 | First or last *n* characters |
 | `MID` | `=MID("RS-2025-0418",4,4)` | 2025 | *n* characters starting at a position |
 | `SUBSTITUTE` | `=SUBSTITUTE("Storage Box 10L","Box","Bin")` | Storage Bin 10L | Replace text |
 | `TEXT` | `=TEXT(5,"0000")` | 0005 | Turn a number into formatted **text** |
 | `FIND` | `=FIND(" ","Neha Kulkarni")` | 5 | Position of one text inside another (`SEARCH` ignores case) |
-| `&`, `CONCAT` | `=Customers!B3&" ("&Customers!A3&")"` | Patel Kitchenware (0002) | Join text; `=CONCAT("RS-",Data!A2)` gives RS-10001 |
+| `&`, `CONCAT` | `=Customers!B3&" ("&Customers!A3&")"` | Patel Kitchenware (0002) | Join text; `=CONCAT("RS-",Data!A2)` gives RS-10001 (`CONCAT` needs Excel 2019 or later) |
 
 `TEXT` is the one to remember from this table. It takes a number and a format code (the same codes as section 10.5) and returns text:
 
@@ -671,7 +823,33 @@ Real data arrives with codes that need padding, names in the wrong case, and dat
 
 That's how you repair customer codes that lost their zeros on import (section 10.4): in a new column, `=TEXT(C2,"0000")`, then copy the column and paste it back **as values** (**Excel: Home → Paste → Paste Values**, or **Ctrl+Alt+V**, then **V**; **Sheets: Edit → Paste special → Values only**, or **Ctrl+Shift+V**).
 
-To join many values with a separator, `TEXTJOIN(", ",TRUE,range)` (Excel 2019 or later, and Sheets) skips blanks when its second argument is `TRUE`. Chapter 14 goes much further with messy text.
+To join many values with a separator, use `TEXTJOIN(delimiter, ignore_empty, range)` (Excel 2019 or later, and Sheets). The delimiter goes between the values, and `TRUE` as the second argument skips blank cells:
+
+```excel
+=TEXTJOIN(", ",TRUE,Customers!B2:B4)     → Sharma Hardware, Patel Kitchenware, Green Leaf Hotels
+```
+
+Chapter 14 goes much further with messy text.
+
+### Splitting a name with a formula
+
+Section 10.5 split `Neha Kulkarni` into two names with Flash Fill, which writes fixed values. A formula keeps working when the names change. Build it one cell at a time, in spare columns on row 2 of the Data sheet, where `I2` holds `Neha Kulkarni`:
+
+```excel
+=FIND(" ",I2)                  → 5
+=LEFT(I2,5-1)                  → Neha
+=LEFT(I2,FIND(" ",I2)-1)       → Neha
+=MID(I2,FIND(" ",I2)+1,100)    → Kulkarni
+```
+
+How it works:
+
+- `FIND(" ",I2)` looks for a space inside `I2` and returns its position: the space is the 5th character.
+- `LEFT(I2,5-1)` takes the first 4 characters, the ones before the space: `Neha`.
+- The third formula replaces the typed 5 with the `FIND`, so it works for any name, however long the first name is.
+- `MID(I2, start, count)` takes characters from the middle. It starts one character after the space (`FIND(...)+1`), and `100` just means "the rest": it's more characters than any name has.
+
+Fill the last two formulas down to row 331 and every rep's name is split. A line with no rep, or a one-word name, has no space, so `FIND` returns `#VALUE!`: the same caution as section 10.5.
 
 > **Watch out: text results can't be summed.** `TEXT(J2,"#,##0")` looks like a number but is text, and `SUM` skips it (section 10.3). Format numbers for *display* with number formats; use `TEXT` only when you're building a label or a code.
 
@@ -694,6 +872,8 @@ A common need is a **month key**, a single value that says which month a row bel
 
 Every January order gets 2025-01-01, every February order 2025-02-01, and so on. Month keys like this are what the monthly tracker in this chapter's project groups by.
 
+> **Watch out: a date result that looks like 1900.** Subtract two dates, such as `=EOMONTH(B2,0)-B2` (days from an order to the end of its month), and the answer may display as `29-01-1900` because the cell picked up a date format. The value is 29. Change the cell's format to **Number** or **General** and the 29 appears.
+
 `NETWORKDAYS` has an optional third argument, a range of holiday dates to exclude. Riverstone would list its declared holidays on a sheet and use `=NETWORKDAYS(start,end,Holidays!A2:A20)`.
 
 > **Watch out: TODAY() makes reports drift.** A formula such as `=TODAY()-B2` for "days since order" gives a different answer every day, which is what you want in a live receivables report and a problem in a report someone will check next week. This chapter's examples use fixed dates (Riverstone's "today" for 2025 data is 31 December 2025), and a live report would use `TODAY()`. When you send a report, write the as-of date on it.
@@ -712,7 +892,7 @@ When a date column arrives as text (`13-01-2025`), build a real date from its pi
 
 ---
 
-## 10.9 A first lookup: fetching values from another sheet
+## 10.10 A first lookup: fetching values from another sheet
 
 The export has `customer_code` but not the customer's name or segment. Those live on the **Customers** sheet. A **lookup** finds a value in one list and returns the matching value from another column, one row at a time. Chapter 11 covers lookups in depth; this section gives you the one you'll use most.
 
@@ -736,7 +916,7 @@ How it works:
 - **Argument 4**, `"not found"`: what to show if the code isn't in the list. Without it, a missing code shows `#N/A`.
 - The ranges are **absolute** so they stay on rows 2 to 25 as the formula is copied down 330 rows (section 10.6).
 
-`XLOOKUP` looks for an **exact match** by default. It's available in Microsoft 365, Excel 2021 and later, Excel for the web, and Google Sheets. With older Excel, use `INDEX` and `MATCH`, which give the same result:
+`XLOOKUP` looks for an **exact match** by default. It's available in Microsoft 365, Excel 2021 and later, Excel for the web, and Google Sheets. In older files you'll see `INDEX` and `MATCH` doing the same job; recognize the shape:
 
 ```excel
 =IFERROR(INDEX(Customers!$B$2:$B$25,MATCH(C2,Customers!$A$2:$A$25,0)),"not found")
@@ -746,31 +926,39 @@ Chapter 11 explains how `INDEX` and `MATCH` work. You'll also see an older funct
 
 ### Why the import in section 10.4 mattered
 
-Try the lookup against the number 5 instead of the text `0005`:
+Try the lookup with the text `0005`, then with the number 5:
 
 ```excel
-=IFERROR(INDEX(Customers!B2:B25,MATCH("0005",Customers!A2:A25,0)),"not found")     → Metro Mart
-=IFERROR(INDEX(Customers!B2:B25,MATCH(5,Customers!A2:A25,0)),"not found")          → not found
+=XLOOKUP("0005",Customers!A2:A25,Customers!B2:B25,"not found")     → Metro Mart
+=XLOOKUP(5,Customers!A2:A25,Customers!B2:B25,"not found")          → not found
 ```
 
-A lookup matches on the stored value *and its type*. The number 5 and the text `0005` are different values. If the codes lost their zeros on import, every one of the 330 lookups says "not found", and any report by customer or segment comes out empty.
+The first looks for the text `0005` (in quotes) and finds Metro Mart. The second looks for the number 5 (no quotes) and finds nothing. A lookup matches on the stored value *and its type*. The number 5 and the text `0005` are different values. If the codes lost their zeros on import, every one of the 330 lookups says "not found", and any report by customer or segment comes out empty.
 
 Once the segment column is filled, `SUMIFS` can use it. Non-cancelled net revenue by segment:
 
 | Segment | Orders | Net revenue (₹) | Share |
 |---|---|---|---|
-| Wholesale | 55 | 1,702,658.50 | 39.3% |
-| Retail | 59 | 1,488,773.75 | 34.3% |
-| Hospitality | 59 | 1,144,038.75 | 26.4% |
-| **Total** | **173** | **4,335,471.00** | **100.0%** |
+| Wholesale | 55 | 17,02,658.50 | 39.3% |
+| Retail | 59 | 14,88,773.75 | 34.3% |
+| Hospitality | 59 | 11,44,038.75 | 26.4% |
+| **Total** | **173** | **43,35,471.00** | **100.0%** |
+
+Each revenue figure is one `SUMIFS`, such as `=SUMIFS(Data!J2:J331,Data!N2:N331,"Wholesale",Data!H2:H331,"<>Cancelled")`. The Orders column counts **orders**, not lines, and that needs one more helper column: the `first_line_of_order` flag you'll build in the project (step 3). With it in column `L`, `=SUMIFS(Data!L2:L331,Data!N2:N331,"Wholesale",Data!H2:H331,"<>Cancelled")` returns 55.
 
 Wholesale brought in the most revenue from the fewest orders: its orders are bigger. The three segments add back to the total. ✓
 
-> **SQL link.** A lookup is a join done one cell at a time. In Chapter 12 you'll write `JOIN customers ON …` and fetch every name in one statement, and in Chapter 18 you'll do it in Python with `pandas.merge`.
+`MAXIFS` and `MINIFS` (Excel 2019 or later, and Sheets) return the largest or smallest value that meets the criteria. They take their arguments in the same order as `SUMIFS`: the range to search first, then the pairs. Now that the segment column exists:
+
+```excel
+=MAXIFS(Data!J2:J331,Data!N2:N331,"Retail",Data!H2:H331,"<>Cancelled")     → 49875
+```
+
+That's the biggest non-cancelled line bought by a Retail customer: ₹49,875. Chapter 11 takes both functions further.
 
 ---
 
-## 10.10 Sorting, filtering, and tables
+## 10.11 Sorting, filtering, and tables
 
 ### Freeze the header row first
 
@@ -804,13 +992,18 @@ A **filter** hides the rows that don't match a condition, without deleting anyth
 
 *"Show November's wholesale orders."* Filter `segment` to **Wholesale**, then filter `order_date` to November 2025 (**Excel:** in the date list, expand 2025 and tick only November; **Sheets:** **Filter by condition → Date is between**, 2025-11-01 and 2025-11-30). 15 lines remain.
 
-Now watch what totals do. A plain `=SUM(J2:J331)` still says 4,398,121, because `SUM` includes hidden rows. `SUBTOTAL` with function number 109 adds **visible rows only**:
+Now watch what totals do. A plain `=SUM(J2:J331)` still returns 4398121, because `SUM` includes hidden rows. `SUBTOTAL` adds **visible rows only**:
 
 ```excel
-=SUBTOTAL(109,J2:J331)
+=SUBTOTAL(109,J2:J331)     → 343685.5
+=SUBTOTAL(103,A2:A331)     → 15
 ```
 
-With the November wholesale filter on, it returns **343,685.5**, the same as the matching `SUMIFS`. Clear the filter and it returns the full total again. `SUBTOTAL` works the same way in both apps.
+How it works:
+
+- `SUBTOTAL(function_code, range)` runs a calculation on the rows you can see. The code picks the calculation: 101 = `AVERAGE`, 102 = `COUNT`, 103 = `COUNTA`, 109 = `SUM`.
+- Codes 1 to 11 do the same calculations but still include rows you hid by hand; codes 101 to 111 skip them. Both kinds skip rows that a filter hides.
+- With the November wholesale filter on, the first returns **₹3,43,685.50**, the same as the matching `SUMIFS`, and the second counts the **15** visible lines. Clear the filter and they return the full total and 330 again. `SUBTOTAL` works the same way in both apps.
 
 > **Tool note: filters on shared files.** In Google Sheets, a normal filter changes the view for **everyone** who has the file open. Use **Data → Filter views → Create new filter view** to filter only your own view, and name it so colleagues can reuse it. Excel offers **View → Sheet View → New** for the same purpose when the workbook is stored on OneDrive or SharePoint.
 
@@ -853,7 +1046,7 @@ A **table reference** such as `Sales[net_revenue]` is easier to read than `J2:J3
 
 ---
 
-## 10.11 Data validation and conditional formatting
+## 10.12 Data validation and conditional formatting
 
 ### Data validation: stop bad data at the door
 
@@ -899,15 +1092,17 @@ How it works: the formula is written for the top-left cell of the selection (`A2
 
 Other rule types worth knowing: **data bars** and **color scales** (Excel: **Conditional Formatting → Data Bars / Color Scales**; Sheets: **Color scale** tab) for a quick visual of size, **duplicate values** (Excel: **Highlight Cells Rules → Duplicate Values**; Sheets: custom formula `=COUNTIF($A:$A,$A2)>1`), and **dates** ("in the last 7 days").
 
+A duplicates rule on `order_id` lights up 274 of the 330 lines: every order with more than one line. That's the grain (section 10.2), not a mistake. Use it on a column that should be unique, such as the customer codes in `Customers!A:A`, where nothing lights up.
+
 > **Watch out: color is not the message.** Some readers can't tell red from green, and colors disappear when a report is printed in black and white. Pair color with something readable, such as a status column that says "Below target". Chapter 15 covers color in charts and reports.
 
 ---
 
-## 10.12 Charts
+## 10.13 Charts
 
 A chart shows the shape of numbers faster than a table does. Chapter 15 teaches how to choose and design charts properly; this section covers building one in each app.
 
-*"How did monthly revenue compare with target in 2025?"* Put the monthly figures in a small summary table (you'll build it with `SUMIFS` in the project; the numbers are in Figure 10.5), then select the `month`, `target`, and `net_revenue` columns.
+*"How did monthly revenue compare with target in 2025?"* Put the monthly figures in a small summary table (you'll build it with `SUMIFS` in the project; the numbers are in Figure 10.5, in the project section), then select the `month`, `target`, and `net_revenue` columns.
 
 - **Excel: Insert → Charts → Recommended Charts → All Charts → Combo.** Set `net_revenue` to **Clustered Column** and `target` to **Line**, then **OK**.
 - **Sheets: Insert → Chart.** In the **Chart editor**, under **Setup → Chart type**, choose **Combo chart**. Check that `net_revenue` is drawn as columns and `target` as a line (**Customize → Series**).
@@ -919,7 +1114,7 @@ Then finish it:
 3. **Remove clutter**: heavy gridlines, 3-D effects, and a legend you don't need.
 4. **Start the value axis at zero** for column charts, so a small difference doesn't look huge.
 
-The chart shows a weak first half (₹1,460,880 against a target of ₹1,860,000, or 78.5%) and a strong second half (₹2,874,591 against ₹2,380,000, or 120.8%), with the peak in October.
+The chart shows a weak first half (₹14,60,880 against a target of ₹18,60,000, or 78.5%) and a strong second half (₹28,74,591 against ₹23,80,000, or 120.8%), with the peak in October.
 
 | Chart | Use it when the question is… | Riverstone example |
 |---|---|---|
@@ -933,7 +1128,7 @@ The chart shows a weak first half (₹1,460,880 against a target of ₹1,860,000
 
 ---
 
-## 10.13 Working together: sharing, protection, and version history
+## 10.14 Working together: sharing, protection, and version history
 
 Spreadsheets are team tools. This is where Google Sheets was built to be strong, and where Excel has caught up for files stored in the cloud.
 
@@ -991,7 +1186,7 @@ The form does the validation for you: dropdowns keep categories consistent, and 
 
 ---
 
-## 10.14 Moving between apps, printing, and saving as PDF
+## 10.15 Moving between apps, printing, and saving as PDF
 
 You'll often receive an Excel file and want it in Sheets, or build in Sheets and send an Excel file to finance.
 
@@ -1036,12 +1231,13 @@ Many reports still end up printed or sent as a PDF. Set them up so every page is
 
 ---
 
-## 10.15 Keyboard shortcuts for both apps
+## 10.16 Keyboard shortcuts for both apps
 
-Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Mac, use **Cmd** where the table says **Ctrl** unless noted. Press **Ctrl+/** in Sheets to see its full list; in Excel, press **Alt** to see ribbon key tips.
+Shortcuts save hours over a year. In Google Sheets on a Mac, use **Cmd** where the table says **Ctrl** unless noted. Press **Ctrl+/** in Sheets to see its full list; in Excel, press **Alt** to see ribbon key tips.
 
 | Action | Excel (Windows) | Excel (Mac) | Google Sheets |
 |---|---|---|---|
+| Copy, cut, paste | Ctrl+C, Ctrl+X, Ctrl+V | Cmd+C, Cmd+X, Cmd+V | Ctrl+C, Ctrl+X, Ctrl+V |
 | Edit the active cell | F2 | Ctrl+U | F2 or Enter |
 | Cycle `$` in a reference | F4 | Cmd+T | F4 |
 | Show formulas / results | Ctrl+\` | Ctrl+\` | Ctrl+\` |
@@ -1063,6 +1259,17 @@ Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Ma
 | Undo / redo | Ctrl+Z / Ctrl+Y | Cmd+Z / Cmd+Y | Ctrl+Z / Ctrl+Y |
 | Version history | File → Info → Version History | File → Browse Version History | Ctrl+Alt+Shift+H |
 
+A few shortcuts work in every app on your computer, not only in spreadsheets:
+
+| Action | Windows | Mac |
+|---|---|---|
+| Switch between apps | Alt+Tab | Cmd+Tab |
+| Search for an app or file | Windows key, then type | Cmd+Space, then type |
+| Screenshot of part of the screen | Windows+Shift+S | Cmd+Shift+4 |
+| Undo, redo | Ctrl+Z, Ctrl+Y | Cmd+Z, Cmd+Shift+Z (most Mac apps) |
+
+Learn a few at a time: use one new shortcut deliberately for a week, until your hands do it on their own.
+
 > **Tool note.** Shortcuts vary with keyboard layout, operating system version, and browser, and Mac laptops often need **Fn** for function keys. If a shortcut doesn't work, check the app's own shortcut list.
 
 ---
@@ -1071,6 +1278,7 @@ Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Ma
 
 | Mistake | Symptom | Fix |
 |---|---|---|
+| Downloading the app or its installer from a third-party site | Unwanted extra software; an outdated version | Use office.com, the Microsoft Store, or sheets.google.com (section 10.0) |
 | Double-clicking a CSV to open it | Codes like `0002` show as `2`; some dates are wrong, others left-aligned as text | Import with column types set (section 10.4); check `COUNT` on the date column equals the row count |
 | Trusting what a cell displays | A total is off by a little; `32,063` is really 32062.5 | Look at the formula bar; use `ROUND` when a rounded value must feed calculations |
 | Numbers stored as text | `SUM` is too small; `COUNT` is less than `COUNTA`; green triangles in Excel | Convert with `VALUE`, `VALUE(TRIM())`, or Excel's **Convert to Number** |
@@ -1099,7 +1307,7 @@ Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Ma
 
 It was the second week of January 2026, and Riverstone's sales review was on Thursday. Vikram Singh, the Sales Manager, forwarded Meera Iyer a spreadsheet with one line: *"Anita says January 2025 was our worst month ever. Finance says it wasn't. Which is it?"*
 
-The file was a monthly revenue tracker that a new trainee had put together from the ERP's 2025 export. Its January row said **₹91,649**. The finance team's figure for January 2025 was **₹202,640**. December looked odd too: ₹172,039 in the tracker, against the ₹439,824 Meera remembered from the year-end review.
+The file was a monthly revenue tracker that a new trainee had put together from the ERP's 2025 export. Its January row said **₹91,649**. The finance team's figure for January 2025 was **₹2,02,640**. December looked odd too: ₹1,72,039 in the tracker, against the ₹4,39,824 Meera remembered from the year-end review.
 
 Meera didn't start by rebuilding anything. She started by checking what the cells contained.
 
@@ -1107,17 +1315,17 @@ Meera didn't start by rebuilding anything. She started by checking what the cell
 
 **Step 2: check the dates.** She typed `=COUNT(B2:B331)` next to the data. It returned **135**. If every date had been a real date, it would have said 330. So 195 "dates" were text. She clicked `B4`: it held the text `13-01-2025`, left-aligned. Then she clicked `B2`. It displayed a proper date, but the formula bar said **2025-02-01**, and the raw CSV in Notepad said `02-01-2025`: 2 January. The trainee's laptop was set to United States regional settings, so the app had read every date month first. Where that was impossible, it had given up and left text.
 
-That explained both numbers at once. A month-first reading puts a line in "January" only if its real date fell on the 1st of some month, so the January row held seven lines really dated 1 June and 1 December, and none of January's own. And the tracker's total for the year, ₹1,739,092, was barely 40% of the real figure, because 195 lines had no usable date at all.
+That explained both numbers at once. A month-first reading puts a line in "January" only if its real date fell on the 1st of some month, so the January row held seven lines really dated 1 June and 1 December, and none of January's own. And the tracker's total for the year, ₹17,39,092, was barely 40% of the real figure, because 195 lines had no usable date at all.
 
 **Step 3: check the codes.** The trainee had added a customer name column with a lookup, and it said "not found" on every row. `=COUNTIF(M2:M331,"not found")` returned 330. The customer codes had become the numbers 2, 3, and 5, and the Customers sheet held the text `0002`, `0003`, `0005`.
 
-**Step 4: fix at the source, not in the tracker.** Meera could have patched the damaged file with `DATE(RIGHT(),MID(),LEFT())` for the text dates and `TEXT(C2,"0000")` for the codes, but the 135 dates that had turned into *wrong real dates* couldn't be repaired from the file itself: nothing in the cell said which ones had been swapped. So she went back to the original CSV and imported it properly with **Data → From Text/CSV**, setting `order_date` to **Date** with the **English (India)** locale and `customer_code` to **Text**.
+**Step 4: fix at the source, not in the tracker.** Meera could have patched the damaged file with `DATE(RIGHT(),MID(),LEFT())` for the text dates and `TEXT(C2,"0000")` for the codes, but the 125 dates that had turned into *wrong real dates* couldn't be repaired from the file itself: nothing in the cell said which ones had been swapped. So she went back to the original CSV and imported it properly with **Data → From Text/CSV**, setting `order_date` to **Date** with the **English (India)** locale and `customer_code` to **Text**.
 
-**Step 5: reconcile.** With the clean import, the tracker's January row showed ₹202,640, matching finance. She added the check rows she always used: the monthly revenues summed to **₹4,335,471**, which equaled `SUMIFS` on the whole Data sheet excluding cancelled orders, with a difference of 0. The two cancelled orders, worth ₹62,650, were excluded on purpose, and she wrote that rule in the note at the top of the tracker.
+**Step 5: reconcile.** With the clean import, the tracker's January row showed ₹2,02,640, matching finance. She added the check rows she always used: the monthly revenues summed to **₹43,35,471**, which equaled `SUMIFS` on the whole Data sheet excluding cancelled orders, with a difference of 0. The two cancelled orders, worth ₹62,650, were excluded on purpose, and she wrote that rule in the note at the top of the tracker.
 
 **Step 6: answer the question.** Her reply to Vikram was four sentences:
 
-> *January 2025 was ₹202,640, 67.5% of target. It was weak, but not the worst month: June was lower at ₹186,928 (62.3%). The ₹91,649 figure came from a CSV opened with US date settings, which swapped days and months and dropped 195 lines. I've rebuilt the tracker from the original export and it now matches finance to the rupee.*
+> *January 2025 was ₹2,02,640, 67.5% of target. It was weak, but not the worst month: June was lower at ₹1,86,928 (62.3%). The ₹91,649 figure came from a CSV opened with US date settings, which swapped days and months and dropped 195 lines. I've rebuilt the tracker from the original export and it now matches finance to the rupee.*
 
 Then she did the part that stops it happening again. She saved the import steps (Power Query remembers them, so next year's file is one **Refresh**), moved the tracker to the team's shared drive with version history on, and added a line to the tracker's first sheet: *"Import the ERP export with Data → From Text/CSV. Never open the CSV directly."*
 
@@ -1140,11 +1348,7 @@ What Meera did that the trainee didn't:
 - **Google Sheets**, free at sheets.google.com with a Google account. **Google Forms** at forms.google.com.
 - **A plain text editor** (Notepad, TextEdit, or VS Code) for looking inside CSV files.
 - **Free alternative:** LibreOffice Calc opens and edits `.xlsx` files; most classic functions work, but some newer Excel functions such as `XLOOKUP` may not, depending on the version.
-- **Companion files** (`companion/ch10/`, Appendix E):
-  - `riverstone_sales_export_2025.csv`: the raw ERP export, 330 order lines, day-first dates, zero-padded codes.
-  - `ch10_practice.xlsx`: Data, Customers, Products, Targets, and Cell detective sheets, with no formulas, for you to work in.
-  - `ch10_tracker_solution.xlsx`: the finished tracker from the project, with every formula.
-  - `build_ch10_files.py`: the Python script that builds all of the above from Riverstone's data (seed 20251), so the files can be regenerated.
+- **Companion files** (`companion/ch10/`, Appendix E): `riverstone_sales_export_2025.csv`, the raw ERP export (330 order lines, day-first dates, zero-padded codes); `ch10_practice.xlsx`, with the Data, Customers, Products, Targets, and Cell detective sheets and no formulas, for you to work in; and `ch10_tracker_solution.xlsx`, the finished tracker from the project, with every formula.
 
 **Option A: your own data.** Use an export you work with, such as sales, expenses, or support tickets. Remove or replace customer names, employee names, phone numbers, and anything confidential before you practice on it or show it to anyone. Follow the same steps with your own columns.
 
@@ -1157,17 +1361,17 @@ What Meera did that the trainee didn't:
 3. **Add calculated columns** to Data, filled down to row 331:
    - `J` `net_revenue`: `=E2*F2*(1-G2/100)`
    - `K` `month_start`: `=DATE(YEAR(B2),MONTH(B2),1)`
-   - `L` `first_line_of_order`: `=IF(COUNTIF($A$2:A2,A2)=1,1,0)`, which is 1 on the first line of each order and 0 on the others, so adding it up counts orders instead of lines. Notice the mixed range `$A$2:A2`: its start is locked and its end grows as the formula moves down.
-   - `M` `customer_name` and `N` `segment`: `XLOOKUP` from the Customers sheet (section 10.9).
+   - `L` `first_line_of_order`: `=IF(COUNTIF($A$2:A2,A2)=1,1,0)`, which is 1 on the first line of each order and 0 on the others, so adding it up counts orders instead of lines. Notice the mixed range `$A$2:A2`: its start is locked and its end grows as the formula moves down. A criterion that's just a cell (`A2`, with no operator) means "equal to that cell's value". Trace it on order 10003, which has two lines, in rows 4 and 5: in `L4`, `COUNTIF($A$2:A4,A4)` counts 10003 once in rows 2 to 4 → 1, so the flag is **1**; in `L5`, `COUNTIF($A$2:A5,A5)` counts it twice → 2, so the flag is **0**.
+   - `M` `customer_name` and `N` `segment`: `XLOOKUP` from the Customers sheet (section 10.10).
 4. **Build the Tracker sheet.** A title in `A1`, a one-line note in `A2` stating the rules (*"Net revenue = quantity × unit price × (1 − discount %). Cancelled orders excluded. Source: ERP export."*), and headers in row 4: `month`, `target`, `orders`, `net_revenue`, `pct_of_target`, `vs_prev_month`, `status`. In rows 5 to 16:
    - `A5`: `=Targets!A2` (format `mmm yyyy`), `B5`: `=Targets!B2`, both filled down.
    - `C5`: `=SUMIFS(Data!$L$2:$L$331,Data!$K$2:$K$331,A5,Data!$H$2:$H$331,"<>Cancelled")`
-   - `D5`: `=SUMIFS(Data!$J$2:$J$331,Data!$B$2:$B$331,">="&A5,Data!$B$2:$B$331,"<="&EOMONTH(A5,0),Data!$H$2:$H$331,"<>Cancelled")`
+   - `D5`: `=SUMIFS(Data!$J$2:$J$331,Data!$K$2:$K$331,A5,Data!$H$2:$H$331,"<>Cancelled")`, the same month key as `C5`: that's why you built column K. (A date-range version, `…Data!$B$2:$B$331,">="&A5,Data!$B$2:$B$331,"<="&EOMONTH(A5,0)…`, gives the same answer without a helper column.)
    - `E5`: `=D5/B5` (format `0.0%`); `F6`: `=D6/D5-1` (format `+0.0%;-0.0%`), starting in February; `G5`: `=IF(D5>=B5,"On target","Below target")`.
 5. **Add totals and a check.** Row 17: `=SUM()` of target, orders, and net revenue, and `=D17/B17`. Row 19: `=SUMIFS(Data!$J$2:$J$331,Data!$H$2:$H$331,"<>Cancelled")`. Row 20: `=D17-D19`, which must be **0**.
 6. **Format for reading.** Freeze the header row, apply `#,##0` to money, and add conditional formatting to `pct_of_target`: green for 100% or more, red for below 80%.
 7. **Add a combo chart** of net revenue (columns) and target (line), with a title that states the finding.
-8. **Add a Reps sheet** with revenue and orders per sales rep (including a "(no rep)" row using the `""` criterion), a segment breakdown, and a drop-down (data validation) that picks a rep and shows their revenue.
+8. **Add a Reps sheet** with revenue and orders per sales rep (including a "(no rep)" row using the `""` criterion), a segment breakdown, and a drop-down (data validation) that picks a rep and shows their revenue. Put the drop-down in `G1` (a list of the three rep names, section 10.12), and in `G2`: `=SUMIFS(Data!$J$2:$J$331,Data!$I$2:$I$331,G1,Data!$H$2:$H$331,"<>Cancelled")`. The criterion is the drop-down cell, so the total follows whatever you pick: choose Farah Khan and `G2` shows 1489073 (₹14,89,073).
 9. **Protect and share.** Protect the formula cells, share with named people as viewers or commenters, and name the version "2025 tracker, first release".
 
 Your tracker should match Figure 10.5.
@@ -1180,23 +1384,25 @@ The finished Tracker sheet (numbers rounded to whole rupees here; `ch10_tracker_
 
 | month | target | orders | net_revenue | pct_of_target | vs_prev_month | status |
 |---|---|---|---|---|---|---|
-| Jan 2025 | 300,000 | 8 | 202,640 | 67.5% | | Below target |
-| Feb 2025 | 300,000 | 10 | 253,664 | 84.6% | +25.2% | Below target |
-| Mar 2025 | 320,000 | 11 | 278,008 | 86.9% | +9.6% | Below target |
-| Apr 2025 | 320,000 | 12 | 210,282 | 65.7% | -24.4% | Below target |
-| May 2025 | 320,000 | 15 | 329,359 | 102.9% | +56.6% | On target |
-| Jun 2025 | 300,000 | 13 | 186,928 | 62.3% | -43.2% | Below target |
-| Jul 2025 | 280,000 | 13 | 232,692 | 83.1% | +24.5% | Below target |
-| Aug 2025 | 320,000 | 14 | 329,282 | 102.9% | +41.5% | On target |
-| Sep 2025 | 380,000 | 18 | 558,315 | 146.9% | +69.6% | On target |
-| Oct 2025 | 520,000 | 20 | 681,071 | 131.0% | +22.0% | On target |
-| Nov 2025 | 500,000 | 21 | 633,408 | 126.7% | -7.0% | On target |
-| Dec 2025 | 380,000 | 18 | 439,824 | 115.7% | -30.6% | On target |
-| **Total** | **4,240,000** | **173** | **4,335,471** | **102.3%** | | |
+| Jan 2025 | 3,00,000 | 8 | 2,02,640 | 67.5% | | Below target |
+| Feb 2025 | 3,00,000 | 10 | 2,53,664 | 84.6% | +25.2% | Below target |
+| Mar 2025 | 3,20,000 | 11 | 2,78,008 | 86.9% | +9.6% | Below target |
+| Apr 2025 | 3,20,000 | 12 | 2,10,282 | 65.7% | -24.4% | Below target |
+| May 2025 | 3,20,000 | 15 | 3,29,359 | 102.9% | +56.6% | On target |
+| Jun 2025 | 3,00,000 | 13 | 1,86,928 | 62.3% | -43.2% | Below target |
+| Jul 2025 | 2,80,000 | 13 | 2,32,692 | 83.1% | +24.5% | Below target |
+| Aug 2025 | 3,20,000 | 14 | 3,29,282 | 102.9% | +41.5% | On target |
+| Sep 2025 | 3,80,000 | 18 | 5,58,315 | 146.9% | +69.6% | On target |
+| Oct 2025 | 5,20,000 | 20 | 6,81,071 | 131.0% | +22.0% | On target |
+| Nov 2025 | 5,00,000 | 21 | 6,33,408 | 126.7% | -7.0% | On target |
+| Dec 2025 | 3,80,000 | 18 | 4,39,824 | 115.7% | -30.6% | On target |
+| **Total** | **42,40,000** | **173** | **43,35,471** | **102.3%** | | |
 
-The check: the Data sheet's non-cancelled total is ₹4,335,471; difference **0**. ✓ The 173 orders and ₹4,335,471 match Chapter 13's figures for the same year. ✓
+The months are rounded to whole rupees here, so they add to ₹43,35,473; the tracker adds the full values, which total ₹43,35,471.
 
-**What to tell Anita:** Riverstone finished 2025 at 102.3% of its annual target, but the year had two halves. January to June reached only 78.5% of target, with June the weakest month (62.3%). From August onward, every month beat its target, and October's ₹681,071 was the best month of the year. Q4 alone brought in 40.5% of the year's revenue, so a slow Q4 would put the whole year at risk.
+The check: the Data sheet's non-cancelled total is ₹43,35,471; difference **0**. ✓ The 173 orders and ₹43,35,471 match Chapter 4's figures for the same year. ✓
+
+**What to tell Anita:** Riverstone finished 2025 at 102.3% of its annual target, but the year had two halves. January to June reached only 78.5% of target, with June the weakest month (62.3%). From August onward, every month beat its target, and October's ₹6,81,071 was the best month of the year. Q4 alone brought in 40.5% of the year's revenue, so a slow Q4 would put the whole year at risk.
 
 **Stretch goals**
 
@@ -1209,9 +1415,10 @@ The check: the Data sheet's non-cancelled total is ₹4,335,471; difference **0*
 
 ## Recap
 
+- **Getting started is free:** Google Sheets or Excel for the web. A first formula, `=ROUND(A1,0)`, proves the app works and shows that formulas recalculate when their inputs change.
 - A **workbook** holds **sheets**; each **cell** has an **address**, and a block of cells is a **range**. Excel and Google Sheets share this model; their menus and a few features differ.
 - **What a cell shows isn't always what it contains.** Number formats round and dress up values; text can look like a number; dates are day counts. Check with the formula bar, `ISNUMBER`, `ISTEXT`, and `LEN`, and compare `COUNT` with `COUNTA`.
-- **CSV imports guess types.** Opening a day-first CSV with month-first settings scrambled 135 of Riverstone's 330 dates silently, left 195 as text, and stripped the zeros from every customer code. Import with column types set.
+- **CSV imports guess types.** Opening a day-first CSV with month-first settings turned 125 of Riverstone's 330 dates into wrong dates silently, left 195 as text, and stripped the zeros from every customer code. Import with column types set.
 - **Everyday handling** matters: save and name files clearly, insert and delete rows knowing what formulas will do, **paste values** to freeze results, and use **find and replace** with care. The **status bar** gives an instant sum, average, and count.
 - **Error values** name the problem: `#N/A` (not found), `#REF!` (deleted reference), `#VALUE!` (wrong type), `#DIV/0!`, `#NAME?`; `#####` means a narrow column.
 - **Formulas** start with `=`. **Relative references** shift when copied, **absolute references** (`$J$2`) don't, and **mixed references** lock one part.
@@ -1235,6 +1442,7 @@ spreadsheet application · workbook · worksheet (sheet) · cell · cell address
 
 ## Check yourself
 
+- [ ] Your spreadsheet app opens `ch10_practice.xlsx` with its five sheets, and `=ROUND(2.5,0)` gives 3.
 - [ ] You can create, save, rename, and copy a workbook in both apps, and insert, delete, hide, and resize rows and columns.
 - [ ] You know when to paste values, how to find and replace safely, and what each error value (`#N/A`, `#REF!`, `#VALUE!`, `#DIV/0!`, `#NAME?`) is telling you.
 - [ ] You can open the formula bar on a suspicious number and say whether it's a number, text, a date, or a formula.
@@ -1290,18 +1498,17 @@ Use `ch10_practice.xlsx` in Excel or Google Sheets unless an exercise says other
 24. What share of 2025's non-cancelled revenue came in October to December?
 25. A colleague's damaged copy has customer codes as numbers (`2`, `5`) and some dates as text (`13-01-2025`). Write the formulas that repair each, and explain which kind of date damage *can't* be repaired from the damaged file.
 26. Build a combo chart of monthly revenue and target. Write two titles for it, one that names the topic and one that states the finding, using this chapter's numbers.
+27. Find the official documentation page for `RRI` (or `MEDIAN`) in your app: Microsoft's support site for Excel, or the Google Docs Editors Help for Sheets. Write down the function's signature, one example you ran yourself on `numbers_practice.xlsx`, and one note or warning from the page.
 
 ### Think about it (no spreadsheet needed)
 
-27. Anita wants the tracker shared with 12 branch managers. They should see everything, filter it for their own region, and change nothing. How would you set this up in Google Sheets, and in Excel?
-28. A colleague built a tracker in Google Sheets using `QUERY` and `IMPORTRANGE`, and finance wants it as an Excel file. What will happen when they download it, and what would you do?
-29. Your total matches the database to the rupee, but the sales head's own figure is ₹62,650 higher. Before you tell anyone they're wrong, what's the most likely explanation, and what question would you ask?
+28. Anita wants the tracker shared with 12 branch managers. They should see everything, filter it for their own region, and change nothing. How would you set this up in Google Sheets, and in Excel?
+29. A colleague built a tracker in Google Sheets using `QUERY` and `IMPORTRANGE`, and finance wants it as an Excel file. What will happen when they download it, and what would you do?
+30. Your total matches the database to the rupee, but the sales head's own figure is ₹62,650 higher. Before you tell anyone they're wrong, what's the most likely explanation, and what question would you ask?
 
 ---
 
 ## Answers
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** `=A1*2` returns **64125**. Formulas use the stored value, 32062.5, not the displayed 32,063. The number format only rounds the display. If you expected 64,126 (2 × 32,063), you were calculating with what you saw.
 
@@ -1326,7 +1533,7 @@ Use `ch10_practice.xlsx` in Excel or Google Sheets unless an exercise says other
 =SUMIFS(J2:J331,H2:H331,"<>Cancelled")     → 4335471
 ```
 
-The difference is **₹62,650**: the four lines of the two cancelled orders, **10034** (Rahul Mehta, ₹24,800) and **10131** (Festive Gifts Co, three lines, ₹37,850). The non-cancelled total matches the database in Chapter 13.
+The difference is **₹62,650**: the four lines of the two cancelled orders, **10034** (Rahul Mehta, ₹24,800) and **10131** (Festive Gifts Co, three lines, ₹37,850). The non-cancelled total matches Chapter 4's figure. ✓
 
 **10.** `=COUNTIFS(H2:H331,"Delivered",G2:G331,">0")` returns **185**. (186 lines had a discount in total; the other one is order 10174's Pending line.)
 
@@ -1340,9 +1547,9 @@ The difference is **₹62,650**: the four lines of the two cancelled orders, **1
 =SUMIFS($J$2:$J$331,$N$2:$N$331,"Wholesale",$H$2:$H$331,"<>Cancelled")     → 1702658.5
 ```
 
-Wholesale ₹1,702,658.50, Retail ₹1,488,773.75, Hospitality ₹1,144,038.75. They add to **₹4,335,471.00**. ✓ If any lookup says "not found", the codes are numbers instead of text (section 10.9).
+Wholesale ₹17,02,658.50, Retail ₹14,88,773.75, Hospitality ₹11,44,038.75. They add to **₹43,35,471.00**. ✓ If any lookup says "not found", the codes are numbers instead of text (section 10.10).
 
-**14.** `=SUMIFS(J2:J331,B2:B331,">="&DATE(2025,11,1),B2:B331,"<="&DATE(2025,11,30),H2:H331,"<>Cancelled")` returns **₹633,408**. Adding `N2:N331,"Wholesale"` as a fourth pair returns **₹343,685.50**, from 15 lines. A common mistake is `"<=30-11-2025"` typed as text, which some locales misread; building the date with `DATE` avoids that.
+**14.** `=SUMIFS(J2:J331,B2:B331,">="&DATE(2025,11,1),B2:B331,"<="&DATE(2025,11,30),H2:H331,"<>Cancelled")` returns **₹6,33,408**. Adding `N2:N331,"Wholesale"` as a fourth pair returns **₹3,43,685.50**, from 15 lines. A common mistake is `"<=30-11-2025"` typed as text, which some locales misread; building the date with `DATE` avoids that.
 
 **15.** `=EOMONTH(B4,0)` returns **2025-01-31** (order 10003 was placed on 12 January). Reports use end-of-month dates for "orders up to and including this month" criteria, for due dates such as "end of next month" (`EOMONTH(date,1)`), and for month labels.
 
@@ -1354,41 +1561,43 @@ Wholesale ₹1,702,658.50, Retail ₹1,488,773.75, Hospitality ₹1,144,038.75. 
 =COUNTBLANK(I2:I331)                                   → 19
 ```
 
-₹204,502.50 from 10 orders had no rep. In total 19 lines have no rep: 16 non-cancelled lines plus the 3 lines of cancelled order 10131.
+₹2,04,502.50 from 10 orders had no rep. In total 19 lines have no rep: 16 non-cancelled lines plus the 3 lines of cancelled order 10131.
 
 **17.** Status: **Data Validation → List** (Excel) or **Dropdown** (Sheets) with `Delivered,Shipped,Pending,Cancelled`. Quantity: **Whole number between 1 and 1000** (Excel), or **Custom formula** `=AND(E2>=1,E2<=1000,INT(E2)=E2)` with **Reject the input** (Sheets). Typing `0` is refused with an error message. The existing data passes: quantities run from 5 to 85, and every status is one of the four. Excel's **Circle Invalid Data** finds no cells to circle.
 
 **18.** Red (below 80%): **January (67.5%), April (65.7%), and June (62.3%)**. Green (100% or more): **6 months**: May, August, September, October, November, and December. February, March, and July stay uncolored.
 
-**19.** Three checks: `=COUNTA(A2:A331)` returns 330 (no rows lost); `C2` shows `0002` and `=ISTEXT(C2)` is TRUE (codes kept); `=COUNT(B2:B331)` returns 330 (every date is a real date). A fourth, stronger check: January's non-cancelled revenue is ₹202,640.
+**19.** Three checks: `=COUNTA(A2:A331)` returns 330 (no rows lost); `C2` shows `0002` and `=ISTEXT(C2)` is TRUE (codes kept); `=COUNT(B2:B331)` returns 330 (every date is a real date). A fourth, stronger check: January's non-cancelled revenue is ₹2,02,640.
 
-**20.** **175** values remain: one per order, compared with 330 order lines (2 of the 175 orders were cancelled, which is why the tracker counts 173). Excel's message reports 155 duplicate values removed. For `J2:J331`, the status bar shows Sum **4,398,121**, Average **13,327.64**, and Count **330**. The sum includes the cancelled lines, so it's ₹62,650 higher than the non-cancelled total; the status bar has no criteria.
+**20.** **175** values remain: one per order, compared with 330 order lines (2 of the 175 orders were cancelled, which is why the tracker counts 173). Excel's message reports 155 duplicate values removed. For `J2:J331`, the status bar shows Sum **4398121** (₹43,98,121), Average about **13327.64**, and Count **330**. The sum includes the cancelled lines, so it's ₹62,650 higher than the non-cancelled total; the status bar has no criteria.
 
 **21.** Excel: **Page Layout → Orientation → Landscape**; **File → Print → Scaling → Fit All Columns on One Page**; **Page Layout → Print Titles → Rows to repeat at top** `$1:$1`; optionally **Insert → Header & Footer** for page numbers; then **File → Export → Create PDF/XPS**. Google Sheets: freeze row 1 (**View → Freeze → 1 row**), then **File → Download → PDF** (or **File → Print**) with **Page orientation: Landscape**, **Scale: Fit to width**, and **Headers & footers → Repeat frozen rows** ticked, plus page numbers. Check the preview: every page should start with the header row, and no column should spill onto its own page.
 
 **22.** For non-cancelled lines, `=SUMIFS(L2:L331,H2:H331,"<>Cancelled")` returns **173**; for all lines, `=SUM(L2:L331)` returns **175**. `COUNTIFS(H2:H331,"<>Cancelled")` would return 326, the number of *lines*, because an order with three products has three rows. The flag works because `COUNTIF($A$2:A2,A2)` counts how many times this order ID has appeared *so far*; it's 1 only on the first line.
 
-**23.** With `=D6/D5-1` filled down: the biggest rise was **September, +69.6%** (₹329,282 to ₹558,315); the biggest fall was **June, −43.2%** (₹329,359 to ₹186,928). Note that a big percentage fall after a big month isn't automatically bad news: December fell 30.6% from November and still beat its target.
+**23.** With `=D6/D5-1` filled down: the biggest rise was **September, +69.6%** (₹3,29,282 to ₹5,58,315); the biggest fall was **June, −43.2%** (₹3,29,359 to ₹1,86,928). Note that a big percentage fall after a big month isn't automatically bad news: December fell 30.6% from November and still beat its target.
 
-**24.** October to December: ₹681,070.75 + ₹633,408.00 + ₹439,823.50 = **₹1,754,302.25**, which is 1,754,302.25 ÷ 4,335,471 = **40.5%** of the year.
+**24.** October to December: ₹6,81,070.75 + ₹6,33,408.00 + ₹4,39,823.50 = **₹17,54,302.25**, which is 17,54,302.25 ÷ 43,35,471 = **40.5%** of the year.
 
 **25.** Codes: `=TEXT(C2,"0000")`, then paste as values over the original column (this works because every code has four digits). Text dates: `=DATE(RIGHT(B2,4),MID(B2,4,2),LEFT(B2,2))`. What can't be repaired: dates that were read month first and **became valid wrong dates**, such as 2 January stored as 1 February. The cell holds a real date, and nothing in the damaged file says which of those were swapped. The only reliable fix is to re-import from the original CSV, as Meera did.
 
-**26.** Build it as in section 10.12 (Excel: **Insert → Combo**; Sheets: **Chart editor → Combo chart**). A topic title: *"Monthly revenue vs target, 2025"*. A finding title, for example: *"Riverstone beat its target in six of the last eight months of 2025"* or *"A weak first half (78.5% of target) was rescued by a strong second half (120.8%)"*. The finding title tells the reader what to see before they study the bars.
+**26.** Build it as in section 10.13 (Excel: **Insert → Combo**; Sheets: **Chart editor → Combo chart**). A topic title: *"Monthly revenue vs target, 2025"*. A finding title, for example: *"Riverstone beat its target in six of the last eight months of 2025"* or *"A weak first half (78.5% of target) was rescued by a strong second half (120.8%)"*. The finding title tells the reader what to see before they study the bars.
 
-**27.** Google Sheets: **Share** with the 12 managers by name as **Viewers**; in the Share settings, decide whether viewers may download or copy; ask each manager to use **Data → Filter views → Create new filter view** (viewers can create temporary filter views that don't affect anyone else), or create a named filter view per region for them. Excel: store the file on OneDrive or SharePoint, **Share → Can view**; viewers can sort and filter in Excel for the web without saving changes to the file. In both, protect formula cells anyway in case someone is later given edit access. The common wrong answer is "share as editors and ask them not to change anything".
+**27.** Answers vary. A complete answer copies the signature exactly as the page gives it (Excel: `RRI(nper, pv, fv)`; Sheets names the arguments number of periods, present value, and future value), shows one example you ran, such as `=RRI(11,202640,439824)` → 0.0729902982766781 from section 10.8, and quotes one note from the page, such as what happens when an argument isn't valid. Write down the page's date or product version too, because documentation changes.
 
-**28.** `QUERY` and `IMPORTRANGE` are Google Sheets–only functions. In the downloaded `.xlsx`, those cells arrive as fixed values (or errors) and stop updating, so the Excel file is a snapshot. Tell finance it's a snapshot as of the download date, or rebuild those parts with functions both apps share (`SUMIFS`, lookups) or with Power Query in Excel (Chapter 11). Then check the totals in the Excel copy against the Sheets original.
+**28.** Google Sheets: **Share** with the 12 managers by name as **Viewers**; in the Share settings, decide whether viewers may download or copy; ask each manager to use **Data → Filter views → Create new filter view** (viewers can create temporary filter views that don't affect anyone else), or create a named filter view per region for them. Excel: store the file on OneDrive or SharePoint, **Share → Can view**; viewers can sort and filter in Excel for the web without saving changes to the file. In both, protect formula cells anyway in case someone is later given edit access. The common wrong answer is "share as editors and ask them not to change anything".
 
-**29.** ₹62,650 is exactly the value of the two cancelled orders. The most likely explanation is that the sales head's figure *includes* cancelled orders and yours excludes them. Neither number is "wrong" until the rule is agreed. Ask: *"Should cancelled orders count in this report?"* Then write the agreed rule on the report, as Meera did. Chapter 24 covers how to have that conversation.
+**29.** `QUERY` and `IMPORTRANGE` are Google Sheets–only functions. In the downloaded `.xlsx`, those cells arrive as fixed values (or errors) and stop updating, so the Excel file is a snapshot. Tell finance it's a snapshot as of the download date, or rebuild those parts with functions both apps share (`SUMIFS`, lookups) or with Power Query in Excel (Chapter 11). Then check the totals in the Excel copy against the Sheets original.
+
+**30.** ₹62,650 is exactly the value of the two cancelled orders. The most likely explanation is that the sales head's figure *includes* cancelled orders and yours excludes them. Neither number is "wrong" until the rule is agreed. Ask: *"Should cancelled orders count in this report?"* Then write the agreed rule on the report, as Meera did. Chapter 24 covers how to have that conversation.
 
 ---
 
 ## Where this leads
 
 - **Chapter 11, The Spreadsheet, Mastered:** lookups in depth (`XLOOKUP` options, `INDEX`/`MATCH`), pivot tables, dynamic arrays (`FILTER`, `UNIQUE`, `SORT`), Power Query for refreshable imports, and Google Sheets' `QUERY` and `IMPORTRANGE`. The tracker you built becomes a one-click refresh.
+- **Chapter 19, Spreadsheet Automation:** macros, VBA, Office Scripts, and Google Apps Script, including the form-to-email workflow started in section 10.14.
 - **Chapter 12, Databases & SQL Foundations:** the same questions (net revenue, excluding cancelled orders, revenue by segment) answered with `WHERE`, `GROUP BY`, and `JOIN`, on data too large for a spreadsheet.
 - **Chapter 14, Data Cleaning & Preparation:** messy text, duplicates, mixed date formats, and missing values at scale, in spreadsheets, SQL, and pandas.
 - **Chapter 15, Data Visualization Principles:** choosing the right chart, titles that state the finding, and color with meaning.
-- **Chapter 19, Spreadsheet Automation:** macros, VBA, Office Scripts, and Google Apps Script, including the form-to-email workflow started in section 10.13.
 - **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) tests this chapter's skills, from "what's the difference between `COUNT` and `COUNTA`?" to live `SUMIFS` and lookup tasks.

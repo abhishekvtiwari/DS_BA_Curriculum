@@ -1,8 +1,8 @@
-import pandas as pd
 import pytest
 
 from riverstone_report.errors import NoDataError
-from riverstone_report.transform import MonthSummary, revenue_by_category, summarize, top_customers
+from riverstone_report.transform import (MonthSummary, revenue_by_category, summarize,
+                                         top_customers)
 
 
 def test_summarize_counts_orders_not_lines(lines):
@@ -24,7 +24,8 @@ def test_categories_are_sorted_and_shares_add_up(lines):
     assert result["share_pct"].sum() == pytest.approx(100.0, abs=0.2)
 
 
-@pytest.mark.parametrize("n, expected", [(1, ["Sharma Hardware"]), (2, ["Sharma Hardware", "Green Leaf Hotels"])])
+@pytest.mark.parametrize("n, expected", [(1, ["Sharma Hardware"]),
+                                         (2, ["Sharma Hardware", "Green Leaf Hotels"])])
 def test_top_customers(lines, n, expected):
     assert list(top_customers(lines, n)["customer_name"]) == expected
 

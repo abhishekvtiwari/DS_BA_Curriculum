@@ -1,0 +1,11 @@
+# Secrets: never commit these
+.env
+
+# Generated output: rebuildable, so not worth versioning
+exports/
+*.xlsx
+
+# Local noise
+.venv/
+.ipynb_checkpoints/
+__pycache__/

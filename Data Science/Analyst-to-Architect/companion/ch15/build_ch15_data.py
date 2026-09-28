@@ -24,7 +24,7 @@ L = L[L.status != "Cancelled"].copy()
 L["net_revenue"] = L.quantity * L.unit_price * (1 - L.discount_pct / 100)
 L["cost"] = L.quantity * L.unit_cost
 L["year"] = L.order_date.dt.year; L["month"] = L.order_date.dt.month
-L["region"] = L.city.map(region).fillna("Unknown")
+L["region"] = L.city.map(region).fillna("City missing")   # one label for the no-city bucket in every table and figure (V15.16)
 tables = {}
 
 # 1. revenue by segment, 2025

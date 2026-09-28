@@ -1,7 +1,7 @@
 """
 Analyst to Architect — Chapter 23: Business Acumen, KPIs & Metrics
-build_ch23_files.py — builds Riverstone's FY2025 financial statements and a
-marketing/customer metrics table. Sales, gross margin, and delivery metrics are
+build_ch23_files.py — builds Riverstone's financial statements for calendar
+2025 (January to December) and a marketing/customer metrics table. Sales, gross margin, and delivery metrics are
 NOT invented here: they come straight from the real dataset (companion/full,
 companion/ch21). Only the P&L lines below gross profit, the balance sheet, the
 cash flow statement, and marketing spend/CAC/NPS are invented, because
@@ -13,10 +13,12 @@ Run from this folder:  python3 build_ch23_files.py   (needs pandas, numpy, pyarr
 Reads ../full/*.parquet and ../ch21/delivery_times_2025.csv.
 
 Creates:
-  financials_fy2025.md      P&L, balance sheet, cash flow statement (FY2025, ₹)
-  monthly_revenue_2025.csv  the real monthly revenue/orders/customers/AOV series
-  marketing_2025.csv        monthly marketing spend, leads, CAC, ROAS (invented)
-  kpi_tree_fy2025.md        the full KPI tree with every number and its source
+  financials_2025.md             P&L, balance sheet, cash flow statement (calendar 2025, ₹)
+  monthly_revenue_2025.csv       the real monthly revenue/orders/customers/AOV series
+  marketing_2025.csv             monthly marketing spend, leads, CAC, ROAS (invented)
+  working_capital_quarters_2025.csv  quarter-end receivables, inventory, payables and
+                                 DSO/DIO/DPO/CCC (invented balances; used by the chapter's
+                                 "In the real world" story)
 """
 import pathlib
 import numpy as np
@@ -33,7 +35,9 @@ P = pd.read_parquet(FULL / "products.parquet")
 lines = I.merge(O, on="order_id").merge(P[["product_id", "unit_cost"]], on="product_id")
 lines["net_revenue"] = lines.quantity * lines.unit_price * (1 - lines.discount_pct / 100)
 lines["cost"] = lines.quantity * lines.unit_cost
-sales = lines[(lines.status != "Cancelled") & (lines.order_date >= "2025-01-01") & (lines.order_date <= "2025-12-31")].copy()
+not_cancelled = lines[lines.status != "Cancelled"]
+sales = not_cancelled[(not_cancelled.order_date >= "2025-01-01") & (not_cancelled.order_date < "2026-01-01")].copy()
+sales_2024 = not_cancelled[(not_cancelled.order_date >= "2024-01-01") & (not_cancelled.order_date < "2025-01-01")]
 
 # ---- 1. the real monthly series (revenue, orders, customers, AOV) ------------------------------
 sales["month"] = sales.order_date.dt.to_period("M").astype(str)
@@ -48,7 +52,7 @@ COGS = round(sales.cost.sum())
 GROSS_PROFIT = REVENUE - COGS
 GROSS_MARGIN = GROSS_PROFIT / REVENUE
 
-# ---- 2. FY2025 P&L (below gross profit is invented, sized to a plausible mid-size distributor) --
+# ---- 2. 2025 P&L (below gross profit is invented, sized to a plausible mid-size manufacturer and distributor)
 selling_dist = round(REVENUE * 0.052)         # freight, warehousing, sales salaries & commission
 marketing = round(REVENUE * 0.018)
 admin = round(REVENUE * 0.041)                # office, IT, finance/HR overhead
@@ -98,13 +102,24 @@ cff = debt_drawn - dividend - round(REVENUE * 0.008)   # scheduled loan repaymen
 net_change = cfo + cfi + cff
 cash_opening = cash - net_change
 
-# ---- 5. marketing & customers (fully invented: no marketing system in the ERP) -------------------
+# ---- 5. customers (real) --------------------------------------------------------------------------
+# Both years exclude cancelled orders, exactly as the chapter's section 23.9 does.
+active_2024 = set(sales_2024.customer_id)
+active_2025 = set(sales.customer_id)
+retained = active_2024 & active_2025
+churned = active_2024 - active_2025
+new_2025 = active_2025 - active_2024
+
+# ---- 6. marketing (fully invented: no marketing system in the ERP) --------------------------------
 base_leads = np.array([420, 390, 470, 510, 480, 340, 300, 410, 560, 690, 640, 460])
 spend = np.round(base_leads * rng.uniform(950, 1250, 12)).astype(int)
 conv = rng.uniform(0.16, 0.24, 12)
 new_customers_raw = base_leads * conv
-# scaled so the annual total ties to the real count of customers new to Riverstone in 2025 (see below)
-new_customers = np.round(new_customers_raw / new_customers_raw.sum() * 767).astype(int)
+# scaled so the annual total ties to the real count of customers new to Riverstone in 2025
+# (largest-remainder rounding, so the twelve months add up to it exactly)
+share = new_customers_raw / new_customers_raw.sum() * len(new_2025)
+new_customers = np.floor(share).astype(int)
+new_customers[np.argsort(-(share - new_customers))[: len(new_2025) - new_customers.sum()]] += 1
 mk = pd.DataFrame({"month": monthly.month, "leads": base_leads, "marketing_spend": spend, "new_customers": new_customers})
 mk["cac"] = (mk.marketing_spend / mk.new_customers).round(0)
 # ROAS is measured on revenue from the new customers marketing brought in, not total company revenue
@@ -112,11 +127,6 @@ mk["attributed_revenue"] = (mk.new_customers * 45000 * rng.uniform(0.85, 1.15, 1
 mk["roas"] = (mk.attributed_revenue / mk.marketing_spend).round(2)
 mk.to_csv(HERE / "marketing_2025.csv", index=False)
 
-active_2024 = set(lines[(lines.order_date >= "2024-01-01") & (lines.order_date < "2025-01-01")].customer_id)
-active_2025 = set(sales.customer_id)
-retained = active_2024 & active_2025
-churned = active_2024 - active_2025
-new_2025 = active_2025 - active_2024
 retention_rate = len(retained) / len(active_2024)
 churn_rate = 1 - retention_rate
 
@@ -126,20 +136,48 @@ LTV_HORIZON_YEARS = 5                              # capped: nobody should bank 
 # (which includes large legacy accounts signed up years before any marketing spend existed).
 new_cust_annual_revenue = sales[sales.customer_id.isin(new_2025)].groupby("customer_id").net_revenue.sum().mean()
 avg_annual_revenue_per_customer = sales.groupby("customer_id").net_revenue.sum().mean()
-ltv_naive = new_cust_annual_revenue * GROSS_MARGIN * avg_customer_life_years_naive
-ltv = new_cust_annual_revenue * GROSS_MARGIN * LTV_HORIZON_YEARS
+LTV_MARGIN = round(GROSS_MARGIN, 3)                # 27.5%, as the chapter uses it
+ltv_naive = new_cust_annual_revenue * LTV_MARGIN * avg_customer_life_years_naive
+ltv = new_cust_annual_revenue * LTV_MARGIN * LTV_HORIZON_YEARS
 avg_cac = mk.marketing_spend.sum() / mk.new_customers.sum()
 nps = 34   # invented: % promoters (9-10) minus % detractors (0-6) from a quarterly survey
 
-md = f"""# Riverstone Supplies — FY2025 financial statements
+# ---- 7. quarter-end working capital (invented balances, real sales) -------------------------------
+# The chapter's "In the real world" story: DSO and DIO drifted up during 2025 while the year-end
+# snapshot looked normal. Each quarter-end balance is set from a target number of days on the twelve
+# months of sales (or cost of sales) up to that date; the December balances are the balance sheet's.
+TARGET_DAYS = {  # quarter end: (DSO, DIO, DPO)
+    "2025-03-31": (36, 52, 37), "2025-06-30": (38, 53, 37),
+    "2025-09-30": (40, 54, 38), "2025-12-31": (DSO, DIO, DPO)}
+rows = []
+for q_end, (dso_t, dio_t, dpo_t) in TARGET_DAYS.items():
+    end = pd.Timestamp(q_end) + pd.Timedelta(days=1)
+    ttm = not_cancelled[(not_cancelled.order_date >= end - pd.DateOffset(years=1)) & (not_cancelled.order_date < end)]
+    ttm_rev, ttm_cogs = round(ttm.net_revenue.sum()), round(ttm.cost.sum())
+    if q_end == "2025-12-31":
+        rec, inv, pay = receivables, inventory, payables
+    else:
+        rec, inv, pay = round(ttm_rev / 365 * dso_t), round(ttm_cogs / 365 * dio_t), round(ttm_cogs / 365 * dpo_t)
+    d_so, d_io, d_po = rec / ttm_rev * 365, inv / ttm_cogs * 365, pay / ttm_cogs * 365
+    rows.append({"quarter_end": q_end, "revenue_12m": ttm_rev, "cogs_12m": ttm_cogs, "receivables": rec,
+                 "inventory": inv, "payables": pay, "dso": round(d_so, 1), "dio": round(d_io, 1),
+                 "dpo": round(d_po, 1), "ccc": round(d_io + d_so - d_po, 1)})
+wcq = pd.DataFrame(rows)
+wcq.to_csv(HERE / "working_capital_quarters_2025.csv", index=False)
+wcq_md = "".join(f"| {r.quarter_end} | {r.receivables:,} | {r.inventory:,} | {r.payables:,} | {r.dso:.0f} | {r.dio:.0f} | {r.dpo:.0f} | {r.ccc:.0f} |\n" for r in wcq.itertuples())
 
-*Companion data for Chapter 23. Revenue, cost of goods sold, and gross margin come directly from the
-real order data (`companion/full/`) and match every earlier chapter exactly. Everything from operating
-expenses downward — the P&L below gross profit, the whole balance sheet, the cash flow statement, and
-all marketing and NPS figures — is invented for this chapter, sized to a plausible mid-size B2B
-distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplies is fictional.*
+md = f"""# Riverstone Supplies — financial statements for calendar 2025
 
-## Profit & loss, FY2025 (₹)
+*Companion data for Chapter 23. The statements cover calendar 2025, 1 January to 31 December, so that
+they line up with the order data; they are not India's April–March financial year from Chapter 16.
+Revenue, cost of goods sold, gross margin, and the customer counts come directly from the real order
+data (`companion/full/`) and match Chapter 16's 2025 figures. Everything from operating expenses
+downward (the P&L below gross profit, the whole balance sheet, the cash flow statement, the quarter-end
+balances) and all marketing and NPS figures are invented for this chapter, sized to a plausible
+mid-size B2B manufacturer and distributor, and built by a seeded script in this folder (seed 202301).
+Riverstone Supplies is fictional.*
+
+## Profit & loss, calendar 2025 (₹)
 
 | Line | ₹ | % of revenue |
 |---|---:|---:|
@@ -156,7 +194,7 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | Tax (25%) | ({tax:,}) | {tax/REVENUE*100:.1f}% |
 | **Profit after tax (net profit)** | **{pat:,}** | **{pat/REVENUE*100:.1f}%** |
 
-## Balance sheet, 31 March 2026 (year-end, ₹)
+## Balance sheet, 31 December 2025 (year-end, ₹)
 
 | Assets | ₹ | | Liabilities & equity | ₹ |
 |---|---:|---|---|---:|
@@ -170,9 +208,16 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | **Total assets** | **{total_assets:,}** | | **Total liabilities & equity** | **{total_assets:,}** |
 
 **Working capital** = current assets − current liabilities = ₹{working_capital:,}
-**Cash conversion cycle** = DIO ({DIO}d) + DSO ({DSO}d) − DPO ({DPO}d) = **{cash_conversion_cycle} days**
+**Liabilities-to-equity** = total liabilities ÷ equity = {total_liabilities/equity:.2f}
 
-## Cash flow statement, FY2025 (₹, indirect method)
+**Days on the cycle** (year-end balances stand in for the year's averages):
+
+- DIO = inventory ÷ COGS × 365 = {inventory:,} ÷ {COGS:,} × 365 = {inventory/COGS*365:.1f} days
+- DSO = receivables ÷ revenue × 365 = {receivables:,} ÷ {REVENUE:,} × 365 = {receivables/REVENUE*365:.1f} days
+- DPO = payables ÷ COGS × 365 = {payables:,} ÷ {COGS:,} × 365 = {payables/COGS*365:.1f} days
+- **Cash conversion cycle** = DIO + DSO − DPO = {DIO} + {DSO} − {DPO} = **{cash_conversion_cycle} days**
+
+## Cash flow statement, calendar 2025 (₹, indirect method)
 
 | Line | ₹ |
 |---|---:|
@@ -192,7 +237,7 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | Cash, opening | {cash_opening:,} |
 | Cash, closing | {cash:,} |
 
-## Customer and marketing metrics, FY2025
+## Customer and marketing metrics, 2025
 
 | Metric | Value |
 |---|---:|
@@ -210,12 +255,20 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | LTV, naive formula (revenue × margin × 1/churn) | ₹{ltv_naive:,.0f} |
 | **LTV, 5-year-capped (recommended)** | **₹{ltv:,.0f}** |
 | 2025 marketing spend | ₹{mk.marketing_spend.sum():,} |
-| 2025 new customers (marketing-attributed) | {mk.new_customers.sum():,} |
+| 2025 new customers (the count CAC divides by) | {mk.new_customers.sum():,} |
 | **Customer acquisition cost (CAC)** | **₹{avg_cac:,.0f}** |
 | **LTV : CAC** | **{ltv/avg_cac:.1f} : 1** |
 | Net Promoter Score (quarterly survey, invented) | {nps:+d} |
-"""
-(HERE / "financials_fy2025.md").write_text(md, encoding="utf-8")
+
+## Quarter-end working capital, 2025 (invented balances)
+
+Each ratio uses the quarter-end balance and the twelve months of sales (DSO) or cost of sales (DIO, DPO)
+up to that date. The 31 December row is the balance sheet above.
+
+| Quarter end | Receivables | Inventory | Payables | DSO | DIO | DPO | CCC |
+|---|---:|---:|---:|---:|---:|---:|---:|
+{wcq_md}"""
+(HERE / "financials_2025.md").write_text(md, encoding="utf-8")
 
 print(f"Revenue {REVENUE:,}  COGS {COGS:,}  Gross margin {GROSS_MARGIN*100:.1f}%")
 print(f"EBIT {ebit:,} ({ebit/REVENUE*100:.1f}%)  PAT {pat:,} ({pat/REVENUE*100:.1f}%)")
@@ -223,3 +276,5 @@ print(f"Total assets {total_assets:,}  Equity {equity:,}  Working capital {worki
 print(f"CCC {cash_conversion_cycle}d  Retention {retention_rate*100:.1f}%  LTV:CAC {ltv/avg_cac:.1f}")
 print(f"new-customer annual revenue {new_cust_annual_revenue:,.0f}  all-customer annual revenue {avg_annual_revenue_per_customer:,.0f}")
 print(f"naive LTV (1/churn = {avg_customer_life_years_naive:.1f}y): {ltv_naive:,.0f}  |  5-year-capped LTV: {ltv:,.0f}  |  LTV:CAC (capped) {ltv/avg_cac:.1f}")
+print(f"new customers {len(new_2025):,} (marketing file sums to {mk.new_customers.sum():,})  CAC {avg_cac:,.0f}")
+print(wcq.to_string(index=False))

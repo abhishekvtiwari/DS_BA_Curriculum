@@ -4,15 +4,15 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** explain how people read charts, and why position and length beat angle, area, and color · start from the question and pick the chart that answers it · build clear bar, line, histogram, box, scatter, stacked, waterfall, heatmap, and map charts, and know when each fails · use color with meaning: one highlight, sequential and diverging palettes, color-blind-safe choices · write titles that state the finding and annotations that explain it · remove clutter without removing information · recognize misleading charts (truncated axes, dual axes, 3D, cherry-picked ranges) and avoid making them · show missing and uncertain data openly · make charts accessible · build the charts in Excel and Google Sheets, with a first look at matplotlib · redesign a poor management pack.
+> **You will learn to:** explain how people read charts, and why position and length beat angle, area, and color · start from the question and pick the chart that answers it · build clear bar, line, histogram, box, scatter, stacked, waterfall, heatmap, and map charts, and know when each fails · use color with meaning: one highlight, sequential and diverging palettes, color-blind-safe choices · write titles that state the finding and annotations that explain it · remove clutter without removing information · recognize misleading charts (truncated axes, dual axes, 3D, cherry-picked ranges) and avoid making them · show missing and uncertain data openly · make charts accessible · build the charts in Excel and Google Sheets · redesign a poor management pack.
 >
-> **Before you start:** Chapter 1 (levels of measurement), Chapter 4 (averages, spread, percentages, and the visual tricks in section 4.7), Chapter 10 and 11 (spreadsheets and pivot tables), and Chapter 13 (SQL aggregation). Chapter 14 helps: charts of dirty data are wrong however well they're drawn.
+> **Before you start:** Chapter 1 (levels of measurement), Chapter 4 (averages (mean vs median), percentages, and the chart checks in section 4.7), Chapter 10 and 11 (spreadsheets and pivot tables), and Chapter 13 (SQL aggregation). Chapter 14 helps: charts of dirty data are wrong however well they're drawn.
 >
 > **Time needed:** 12–15 hours of reading and practice, spread over two weeks.
 >
-> **Tools:** Excel for Windows (Microsoft 365) or Google Sheets; PostgreSQL or MySQL for preparing chart data; optionally Python 3.12 with pandas and matplotlib for section 15.14.
+> **Tools:** Excel for Windows (Microsoft 365) or Google Sheets; PostgreSQL or MySQL for preparing chart data.
 >
-> **Practice data:** `companion/ch15/ch15_chart_data.xlsx`, one sheet for every chart in this chapter, built from the full Riverstone dataset by `companion/ch15/build_ch15_data.py`. The same tables are in `companion/ch15/chart_data/` as CSV files, and every one can be rebuilt with SQL from `riverstone_full`.
+> **Practice data:** `companion/ch15/ch15_chart_data.xlsx`, one sheet for every chart in this chapter, made from the full Riverstone dataset. The same tables are in `companion/ch15/chart_data/` as CSV files, and every table can be rebuilt from `riverstone_full` with SQL like the queries in this chapter.
 
 ---
 
@@ -69,16 +69,64 @@ Figure 15.1 shows why. Riverstone's 2025 revenue by segment is drawn twice.
 
 In the pie, is Wholesale bigger than Hospitality? Most people can't tell: 27.3% and 24.2% are angles of 98° and 87°, drawn in different orientations. In the bar chart, the difference is visible at a glance, and the labels give the exact values.
 
-The data for the chart is one query on the full dataset (the `sales_lines` view from Chapter 13, section 13.2, which excludes cancelled orders):
+The data for the chart comes from the full dataset (the `sales_lines` view from Chapter 13, section 13.2, which excludes cancelled orders). Every piece of the query is from Chapters 12 and 13, but it's built here in three small steps, so you can see what each piece adds.
+
+**Step 1: one total per segment.** Join each sales line to its customer to get the segment, keep 2025, and add up revenue for each segment:
 
 <!-- db: riverstone_full -->
+
+```sql
+SELECT c.segment, SUM(s.net_revenue) AS net_revenue
+FROM sales_lines s JOIN customers c ON c.customer_id = s.customer_id
+WHERE s.order_date BETWEEN '2025-01-01' AND '2025-12-31'
+GROUP BY c.segment;
+```
+
+```
+   segment   |           net_revenue            
+-------------+----------------------------------
+ Hospitality | 277476705.0000000000000000000000
+ Retail      | 556436453.7500000000000000000000
+ Wholesale   | 312728492.5000000000000000000000
+(3 rows)
+```
+
+How it works:
+
+- `FROM sales_lines s JOIN customers c ON c.customer_id = s.customer_id` gives each sales line its customer's row, so the line knows its `segment` (the join from Chapter 12, section 12.10; `s` and `c` are short aliases).
+- `WHERE s.order_date BETWEEN '2025-01-01' AND '2025-12-31'` keeps only 2025.
+- `GROUP BY c.segment` with `SUM(s.net_revenue)` makes one row per segment with its total.
+
+The totals are right, but the long decimals are hard to read and the rows aren't in any useful order.
+
+**Step 2: round and sort.** `ROUND(...)` with no second argument rounds to whole rupees, and `ORDER BY net_revenue DESC` puts the biggest segment first, the order the bar chart needs:
+
+```sql
+SELECT c.segment, ROUND(SUM(s.net_revenue)) AS net_revenue
+FROM sales_lines s JOIN customers c ON c.customer_id = s.customer_id
+WHERE s.order_date BETWEEN '2025-01-01' AND '2025-12-31'
+GROUP BY c.segment
+ORDER BY net_revenue DESC;
+```
+
+```
+   segment   | net_revenue 
+-------------+-------------
+ Retail      |   556436454
+ Wholesale   |   312728493
+ Hospitality |   277476705
+(3 rows)
+```
+
+**Step 3: add each segment's share.** A share is the segment's total divided by the total of all segments. The all-segment total is a window over the grouped result:
 
 ```sql
 SELECT c.segment, ROUND(SUM(s.net_revenue)) AS net_revenue,
        ROUND(100 * SUM(s.net_revenue) / SUM(SUM(s.net_revenue)) OVER (), 1) AS share_pct
 FROM sales_lines s JOIN customers c ON c.customer_id = s.customer_id
 WHERE s.order_date BETWEEN '2025-01-01' AND '2025-12-31'
-GROUP BY c.segment ORDER BY net_revenue DESC;
+GROUP BY c.segment
+ORDER BY net_revenue DESC;
 ```
 
 ```
@@ -90,7 +138,13 @@ GROUP BY c.segment ORDER BY net_revenue DESC;
 (3 rows)
 ```
 
-`SUM(SUM(s.net_revenue)) OVER ()` is a window function over the grouped result (Chapter 13): the total of all segments, so each row can show its share.
+How the new line works:
+
+- `SUM(s.net_revenue)` on its own is each segment's total, as in step 1.
+- `SUM(SUM(s.net_revenue)) OVER ()`: the inner `SUM` makes each segment's total (it belongs to `GROUP BY`); the outer `SUM ... OVER ()` adds those three totals across all rows, so every row can see the grand total of about ₹1,14,66,41,651. The empty `OVER ()` means "the window is every row". Chapter 13, section 13.3, showed why a window can wrap an aggregate: grouping happens first.
+- `100 * ... / ...` turns the ratio into a percentage, and `ROUND(..., 1)` keeps one decimal place.
+
+The three shares add up to 100.0%, and Retail's 48.5% is the "almost half" the bar chart shows.
 
 ### What the eye notices first
 
@@ -113,15 +167,15 @@ People can hold only a few things in mind at once. A legend with eight entries f
 
 The most common charting mistake happens before any chart is drawn: starting from the data ("I have sales by month and region, what chart can I make?") instead of the question ("Is our festive peak getting bigger, and is it the same everywhere?"). The question decides the chart.
 
-![A chart chooser with six rows. Compare categories: sorted bar chart. Show change over time: line chart. Show a distribution: histogram or box plot. Show a relationship: scatter plot. Show parts of a whole: stacked or 100% bar. Show where: map. Each row lists alternatives](figures/fig15-2-chart-chooser.svg)
-
-*Figure 15.2 — Start from the kind of question, then choose the chart. The alternatives column matters: the first choice isn't always the best one for your data.*
-
-Three more questions sharpen the choice:
+Figure 15.2 matches the kind of question to a chart. Three more questions sharpen the choice:
 
 1. **Who is reading it, and where?** A CEO scanning a slide on a phone needs one message in large type. An analyst exploring data in a workbook can handle a detailed scatter plot.
 2. **Explore or explain?** **Exploratory** charts are for you: quick, many, rough, to find what's interesting. **Explanatory** charts are for others: few, polished, each with one message. Most of this chapter is about explanatory charts; section 15.5's distributions are also your main exploratory tools.
 3. **What should they do next?** If the chart should lead to a decision ("increase September stock"), design it so that decision is the obvious conclusion, with the evidence visible.
+
+![A chart chooser with six rows. Compare categories: sorted bar chart. Show change over time: line chart. Show a distribution: histogram or box plot. Show a relationship: scatter plot. Show parts of a whole: stacked or 100% bar. Show where: map. Each row lists alternatives](figures/fig15-2-chart-chooser.svg)
+
+*Figure 15.2 — Start from the kind of question, then choose the chart. The alternatives column matters: the first choice isn't always the best one for your data.*
 
 ### Levels of measurement decide what's allowed
 
@@ -219,7 +273,14 @@ FROM sales_lines WHERE order_date >= '2024-01-01' GROUP BY 1 ORDER BY 1;
 (12 rows)
 ```
 
-October 2025 (₹180,620,103) was 22.7% above October 2024 (₹147,221,566): the kind of comparison the year-over-year chart makes visible.
+How it works:
+
+- `EXTRACT(MONTH FROM order_date)` turns each date into its month number, 1 to 12 (Chapter 12, section 12.8).
+- `SUM(net_revenue) FILTER (WHERE EXTRACT(YEAR FROM order_date) = 2024)` adds up only the 2024 rows; the next line does the same for 2025. This is the pivot pattern from Chapter 13 (Pattern 9), with years as the columns.
+- `WHERE order_date >= '2024-01-01'` leaves out 2023, which this table doesn't need.
+- `GROUP BY 1` means "group by the first column in the `SELECT` list" (here, the month). It saves retyping a long expression. `ORDER BY 1` works the same way: sort by the first column.
+
+October 2025 (₹18,06,20,103) was 22.7% above October 2024 (₹14,72,21,566): the kind of comparison the year-over-year chart makes visible.
 
 ### Rules for lines
 
@@ -246,13 +307,13 @@ For a handful of periods (four quarters, three years), a **column chart** is oft
 
 ## 15.5 Distributions: histograms and box plots
 
-Averages hide shape. Chapter 4 showed that two sets of numbers with the same mean can look completely different. **Distribution charts** show the shape: where most values are, how spread out they are, whether the data is skewed, and where the outliers are (Chapter 14, section 14.6).
+Averages hide shape. Chapter 4 showed that only 70 of Riverstone's 173 orders were above the "average" order: one number hid the shape of the data. **Distribution charts** show the shape: where most values are, how spread out they are, whether the data is skewed, and where the outliers are (Chapter 14, section 14.6).
 
 ### Histograms
 
 A **histogram** groups a numeric variable into **bins** (ranges of equal width) and draws a bar for the count in each bin. The bars touch, because the bins are continuous.
 
-The data for Riverstone's 46,356 non-cancelled 2025 orders, in ₹25,000 bins:
+A coarse first look at Riverstone's 46,356 non-cancelled 2025 orders, in ₹25,000 bins:
 
 ```sql
 WITH order_values AS (
@@ -275,7 +336,61 @@ FROM order_values GROUP BY 1 ORDER BY 1;
 (6 rows)
 ```
 
-`FLOOR(order_value / 25000) * 25000` assigns every order to the start of its bin. Most orders are under ₹25,000, and the counts fall quickly after that: a **right-skewed** distribution, common for money.
+How it works:
+
+- The CTE `order_values` (Chapter 13, section 13.2) adds up each order's lines, so there is one row per order with its `order_value`.
+- `FLOOR(order_value / 25000) * 25000` assigns every order to the start of its bin. `FLOOR` rounds a number **down** to the whole number below it, like Chapter 11's `FLOOR.MATH`. By hand, for an order of ₹37,480: 37,480 ÷ 25,000 = 1.4992; `FLOOR` makes it 1; 1 × 25,000 = 25,000, so the order falls in the ₹25,000–₹49,999 bin.
+- `COUNT(*)` with `GROUP BY 1` counts the orders in each bin, and `ORDER BY 1` lists the bins from the lowest.
+
+Most orders are under ₹25,000, and the counts fall quickly after that: a **right-skewed** distribution, common for money.
+
+Six bars is only a first look. What happens if you change the bin width? **Before you run the next query, predict:** with bins five times narrower (₹5,000), roughly how many bars will there be, and will the tallest bar still be the first one? The only change is `25000` to `5000`, in both places:
+
+```sql
+WITH order_values AS (
+  SELECT order_id, SUM(net_revenue) AS order_value FROM sales_lines
+  WHERE order_date BETWEEN '2025-01-01' AND '2025-12-31' GROUP BY order_id
+)
+SELECT FLOOR(order_value / 5000) * 5000 AS bin_start, COUNT(*) AS orders
+FROM order_values GROUP BY 1 ORDER BY 1;
+```
+
+```
+ bin_start | orders 
+-----------+--------
+         0 |   4005
+      5000 |   6146
+     10000 |   6210
+     15000 |   6239
+     20000 |   5027
+     25000 |   4107
+     30000 |   3648
+     35000 |   2700
+     40000 |   2117
+     45000 |   1650
+     50000 |   1227
+     55000 |    936
+     60000 |    669
+     65000 |    512
+     70000 |    374
+     75000 |    244
+     80000 |    167
+     85000 |    119
+     90000 |     73
+     95000 |     54
+    100000 |     49
+    105000 |     31
+    110000 |     21
+    115000 |     14
+    120000 |      7
+    125000 |      5
+    130000 |      1
+    135000 |      3
+    140000 |      1
+(29 rows)
+```
+
+Twenty-nine bars, and the tallest is no longer the first. Orders under ₹5,000 (4,005) are fewer than those in each ₹5,000 band from ₹5,000 to ₹20,000 (about 6,200 each): the typical order is ₹5,000–₹20,000, and the ₹25,000 bins hid that. This is the histogram to show; the six-bin version was only a quick look.
 
 The **bin width** changes what you see:
 
@@ -283,16 +398,64 @@ The **bin width** changes what you see:
 
 *Figure 15.5 — The same 46,356 orders in three bin widths. Too narrow shows noise; too wide hides the shape.*
 
-There's no single right bin width. Start with a round number that gives roughly 20–40 bins over the range, then try a narrower and a wider one. If the story changes, say which one you're showing and why.
+There's no single right bin width. Start with a round number that gives roughly 20–40 bins over the range (₹5,000 gives 29 here), then try a narrower and a wider one. If the story changes, say which one you're showing and why.
 
 ### Box plots
 
 A **box plot** (box-and-whisker plot) summarizes a distribution in five numbers, so several groups can be compared side by side:
 
-- The **box** spans the **first quartile (Q1)** to the **third quartile (Q3)**: the middle 50% of values. Its width is the **interquartile range (IQR)**.
+- The **box** spans the **first quartile (Q1)** to the **third quartile (Q3)**: the middle 50% of values. Its length along the value axis is the **interquartile range (IQR)**.
 - The line inside is the **median**.
 - The **whiskers** reach to the most extreme values within 1.5 × IQR of the box (the most common convention).
 - Points beyond the whiskers are drawn individually: potential outliers.
+
+### Quartiles by hand
+
+**Quartiles** split sorted values into four equal parts: a quarter of the values are below Q1, half below the median, and three quarters below Q3. Work one small example by hand before letting a tool do it. Palm Trading Co, a Wholesale customer in Mangaluru, placed nine orders in 2025. Sorted from smallest to largest:
+
+| Position | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|---|---|---|---|---|---|---|---|---|---|
+| Order value (₹) | 9,678 | 15,136 | 19,292 | 20,520 | 25,865 | 27,960 | 39,975 | 62,335 | 99,680 |
+
+1. **Median:** the middle value, the 5th of 9: **₹25,865**.
+2. **Q1:** the middle of the lower half. The lower half is positions 1 to 5 (up to and including the median), and its middle is the 3rd value: **₹19,292**.
+3. **Q3:** the middle of the upper half, positions 5 to 9: the 7th value, **₹39,975**.
+4. **IQR** = Q3 − Q1 = 39,975 − 19,292 = **₹20,683**.
+5. **Upper fence** = Q3 + 1.5 × IQR = 39,975 + 1.5 × 20,683 = 39,975 + 31,024.50 = **₹70,999.50**. The ₹99,680 order is above it, so a box plot draws it as a separate dot, and the upper whisker stops at ₹62,335, the largest order inside the fence. The lower fence, 19,292 − 31,024.50, is below zero, so no order is unusually small; the lower whisker reaches ₹9,678.
+
+The spreadsheet does the same with functions you met in Chapter 11, section 11.3. With the nine values in `A2:A10`:
+
+```excel
+=MEDIAN(A2:A10)          → 25865
+=QUARTILE.INC(A2:A10,1)  → 19292
+=QUARTILE.INC(A2:A10,3)  → 39975
+```
+
+The second argument of `QUARTILE.INC` says which quartile: 1 for Q1, 3 for Q3 (2 would be the median). With nine values, the hand method and `QUARTILE.INC` agree exactly. With other counts they can differ slightly, because `QUARTILE.INC` **interpolates**: when a quartile falls between two values, it takes a point part of the way between them. Report the tool's answer, and say which tool you used. Chapter 21 treats quartiles and percentiles properly.
+
+### Box plots for the three segments
+
+For all 46,356 orders of 2025, the `order_values_2025` sheet of the practice workbook has one row per order: `order_id` in column A, `segment` in B, and `order_value` in C. `FILTER` (Chapter 11, section 11.6) hands `QUARTILE.INC` only one segment's orders. For Wholesale:
+
+```excel
+=QUARTILE.INC(FILTER(C2:C46357, B2:B46357="Wholesale"), 1)   → 13340
+=MEDIAN(FILTER(C2:C46357, B2:B46357="Wholesale"))            → 25762.5
+=QUARTILE.INC(FILTER(C2:C46357, B2:B46357="Wholesale"), 3)   → 43826.25
+```
+
+Change `"Wholesale"` to `"Retail"` or `"Hospitality"` for the other segments. Rounded to whole rupees:
+
+| Segment | Orders | Q1 (₹) | Median (₹) | Q3 (₹) | Largest (₹) |
+|---|---:|---:|---:|---:|---:|
+| Hospitality | 12,432 | 10,212 | 19,122 | 31,000 | 1,15,550 |
+| Retail | 23,865 | 10,750 | 19,425 | 32,275 | 1,13,430 |
+| Wholesale | 10,059 | 13,340 | 25,762 | 43,826 | 1,43,175 |
+
+(Hospitality's Q1 is ₹10,212.50 and Wholesale's median ₹25,762.50 before rounding.)
+
+### The same numbers in SQL (optional, PostgreSQL)
+
+PostgreSQL can calculate quartiles too, with a function you haven't met yet. This is optional: the spreadsheet route above gives the same numbers.
 
 ```sql
 WITH order_values AS (
@@ -318,7 +481,15 @@ FROM order_values GROUP BY segment ORDER BY median;
 (3 rows)
 ```
 
-`PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY order_value)` is the median, interpolated between the two middle values when needed (PostgreSQL; MySQL has no `PERCENTILE_CONT`, so the percentiles come from a window-function query or from the spreadsheet).
+How it works:
+
+- The CTE `order_values` makes one row per order, now with the customer's `segment` from the join.
+- `PERCENTILE_CONT(0.25)` asks for the value a quarter (0.25) of the way through the sorted values: Q1. `0.5` is the median and `0.75` is Q3. "CONT" stands for continuous: like `QUARTILE.INC`, it interpolates between two values when needed, which is why the results match the spreadsheet.
+- `WITHIN GROUP (ORDER BY order_value)` says which column to sort before counting a quarter of the way through. It's needed because a percentile only makes sense on sorted values.
+- `GROUP BY segment` makes the calculation run once per segment, like `SUM` does; `ROUND(...)` gives whole rupees, and `MAX(order_value)` is the largest order.
+- `ORDER BY median` sorts the segments from the smallest median.
+
+`PERCENTILE_CONT` is PostgreSQL's; MySQL doesn't have it, so in MySQL use the spreadsheet route above or the window-function query in section 15.15.
 
 ![Horizontal box plots of 2025 order values for Hospitality, Retail, and Wholesale. Wholesale's box is further right and wider, with median ₹25,762; Retail's median is ₹19,425 and Hospitality's ₹19,122. All three have many individual dots to the right of the whiskers](figures/fig15-6-box-plots.svg)
 
@@ -336,7 +507,7 @@ The box plots show what a bar chart of averages would hide: Retail and Hospitali
 
 ### In Excel and Google Sheets
 
-**Excel** (2016 and later): select the order values, **Insert → Insert Statistic Chart → Histogram**; set the bin width in **Format Axis → Axis Options → Bin width**. **Insert → Insert Statistic Chart → Box and Whisker** draws box plots; with a category column next to the values, it draws one box per category. Excel's box plot uses its own quartile method (**Inclusive** or **Exclusive median**, set in **Format Data Series**), which can differ slightly from `PERCENTILE_CONT`.
+**Excel** (2016 and later): select the order values, **Insert → Insert Statistic Chart → Histogram**; set the bin width in **Format Axis → Axis Options → Bin width**. **Insert → Insert Statistic Chart → Box and Whisker** draws box plots; with a category column next to the values, it draws one box per category. Excel's box plot uses its own quartile method (**Inclusive** or **Exclusive median**, set in **Format Data Series**), which can differ slightly from `QUARTILE.INC`.
 
 **Google Sheets:** **Insert → Chart → Chart type → Histogram chart**, with **Customize → Histogram → Bucket size**. Sheets has no built-in box plot; the usual workaround is a candlestick chart built from Q1, median, Q3, minimum, and maximum, or `QUARTILE.INC` values in a table.
 
@@ -345,6 +516,8 @@ The box plots show what a bar chart of averages would hide: Retail and Hospitali
 ## 15.6 Relationships: scatter plots
 
 A **scatter plot** places each record at the position of two numeric values, one on each axis. It answers "do these two measures move together?", and it's the chart most likely to reveal something a summary number hides.
+
+The usual summary number for a relationship is the **correlation**: a number from −1 to +1 that says how closely two measures follow a straight line together. +1 is a perfect rising line, 0 is no straight-line pattern, and −1 is a perfect falling line. In a spreadsheet, `=CORREL(range1, range2)` returns it, with the two measures in two ranges of the same length. Chapter 22, section 22.5, shows how it's calculated and where it misleads; the next example shows the first warning.
 
 ### Why you must look: Anscombe's quartet
 
@@ -375,7 +548,7 @@ The relationship is strong (a correlation of 0.916: customers who order more oft
 
 1. **Put the likely cause on the x-axis** and the effect on the y-axis (orders → revenue; discount → quantity).
 2. **Start axes where the data is**, not necessarily at zero; scatter plots encode by position.
-3. **Consider a log scale** when values span several orders of magnitude (customer revenue from ₹5,000 to ₹50 lakh). Label it clearly ("log scale") because many readers won't notice.
+3. **Consider a log scale** when values span several orders of magnitude (Riverstone's 2025 customers range from under ₹5,000 to over ₹10 lakh). On a log scale, ₹1,000, ₹10,000, ₹1,00,000, and ₹10,00,000 are equally spaced: each step is ten times the last. Label it clearly ("log scale") because many readers won't notice.
 4. **Add a trend line only if it helps**, and never let it stand in for looking at the points. Anscombe's quartet has the same trend line four times.
 5. **Correlation isn't causation.** A scatter plot shows that two measures move together, not why (Chapter 21 and Chapter 22 return to this).
 
@@ -419,13 +592,13 @@ A **waterfall chart** (bridge chart) explains how one total became another: a st
 The right side of Figure 15.9 is built from the change by segment:
 
 | Segment | 2024 (₹) | 2025 (₹) | Change (₹) |
-|---|---|---|---|
-| Retail | 443,810,189 | 556,436,454 | +112,626,265 |
-| Wholesale | 238,457,929 | 312,728,492 | +74,270,563 |
-| Hospitality | 220,747,358 | 277,476,705 | +56,729,347 |
-| **Total** | **903,015,475** | **1,146,641,651** | **+243,626,176** |
+|---|---:|---:|---:|
+| Retail | 44,38,10,189 | 55,64,36,454 | +11,26,26,265 |
+| Wholesale | 23,84,57,929 | 31,27,28,492 | +7,42,70,563 |
+| Hospitality | 22,07,47,358 | 27,74,76,705 | +5,67,29,347 |
+| **Total** | **90,30,15,475** | **1,14,66,41,651** | **+24,36,26,176** |
 
-(The 2025 Wholesale figure is ₹312,728,492.50 before rounding, which is why section 15.1's query shows ₹312,728,493 and this table ₹312,728,492.) Sorting the changes from largest to smallest shows at a glance that Retail contributed the most growth. Waterfalls also handle negative steps (a lost customer, a price cut), which are drawn downward, usually in a contrasting color.
+(The 2025 Wholesale figure is ₹31,27,28,492.50 before rounding, which is why section 15.1's query shows 312728493 and this table ₹31,27,28,492. Each figure is rounded on its own, so rows can differ from the total by ₹1.) Sorting the changes from largest to smallest shows at a glance that Retail contributed the most growth. Waterfalls also handle negative steps (a lost customer, a price cut), which are drawn downward, usually in a contrasting color.
 
 **Excel** (2016 and later): **Insert → Insert Waterfall, Funnel, Stock, Surface, or Radar Chart → Waterfall**; then select the total bars and tick **Set as total** in **Format Data Point**. **Google Sheets:** **Chart type → Waterfall chart**; add the totals with **Customize → Series → Add subtotal**, or include them as rows and mark them.
 
@@ -439,11 +612,11 @@ A **treemap** fills a rectangle with nested rectangles sized by value, for examp
 
 A **heatmap** is a table whose cells are shaded by value. It's the best chart for a **two-way** question, such as "which months and which regions are strongest?", when there are too many combinations for bars or lines.
 
-![Top: a heatmap of 2025 revenue by region (West, South, North, East, Unknown) and month, in shades of blue with values in each cell, darkest in West October at ₹6.0 crore. Bottom: a heatmap of monthly percentage of target for 2023 to 2025, from red below 100 to blue above 100, with 2025 January at 110 and February at 112 in blue and October at 92 in red](figures/fig15-10-heatmaps.svg)
+![Top: a heatmap of 2025 revenue by region (West, South, North, East, and City missing) and month, in shades of blue with values in each cell, darkest in West October at ₹6.0 crore. Bottom: a heatmap of monthly percentage of target for 2023 to 2025, from red below 100 to blue above 100, with 2025 January at 110 and February at 112 in blue and October at 92 in red](figures/fig15-10-heatmaps.svg)
 
 *Figure 15.10 — Top: a sequential palette for amounts. Bottom: a diverging palette for performance against a midpoint (100% of target).*
 
-The top heatmap shows two patterns at once: across the rows, West is the largest region every month; down the columns, October is the peak everywhere. The "Unknown" row is the ₹2.3 crore of 2025 revenue from customers with no city (Chapter 14), kept visible instead of dropped.
+The top heatmap shows two patterns at once: across the rows, West is the largest region every month; down the columns, October is the peak everywhere. The "City missing" row is the ₹2.3 crore of 2025 revenue from customers with no city (Chapter 14), kept visible instead of dropped.
 
 The bottom heatmap shows **attainment**: revenue as a percentage of target, month by month. Because the meaningful midpoint is 100%, it uses a **diverging** palette: red for below target, blue for above, and near-white for on target. Two things stand out that a line chart of revenue would hide: 2025 started well above target (110% and 112% in January and February), and every month from August to December missed, with October the worst at 92%.
 
@@ -459,7 +632,7 @@ The bottom heatmap shows **attainment**: revenue as a percentage of target, mont
 Chapter 10 and Chapter 11 formatted tables for reading; the same principles make a table an effective visual:
 
 - **Right-align numbers** and use the same number of decimals, so digits line up.
-- **Round to what matters.** ₹18.1 crore is easier to read than ₹180,620,103 on a management slide; keep full values in the appendix or the workbook.
+- **Round to what matters.** ₹18.1 crore is easier to read than ₹18,06,20,103 on a management slide; keep full values in the appendix or the workbook.
 - **Remove heavy borders**; light horizontal rules or alternating shading are enough.
 - **Highlight with restraint:** conditional formatting (Excel: **Home → Conditional Formatting → Color Scales**; Sheets: **Format → Conditional formatting → Color scale**) turns a table into a heatmap; data bars (**Conditional Formatting → Data Bars**) add in-cell bars.
 - **Add sparklines** for a trend beside each row (section 15.4).
@@ -477,7 +650,7 @@ Two common kinds:
 
 For Riverstone, a map of 39 cities could show that revenue is concentrated along the west coast and in the metros. But "which cities bring the most revenue?" is better as a sorted bar chart of the top ten cities: Mumbai ₹9.7 crore, Delhi ₹8.6 crore, Bengaluru ₹7.0 crore, and so on.
 
-**Excel:** **Insert → Maps → Filled Map** shades countries, states, and districts from place names (it looks names up online, so it needs an internet connection and can misread ambiguous names). **Google Sheets:** **Chart type → Geo chart** for countries and regions. For city-level symbol maps with custom boundaries, BI tools (Power BI's map visuals, Chapter 16) or Python are better.
+**Excel:** **Insert → Maps → Filled Map** shades countries, states, and districts from place names (it looks names up online, so it needs an internet connection and can misread ambiguous names). **Google Sheets:** **Chart type → Geo chart** for countries and regions. For city-level symbol maps with custom boundaries, BI tools such as Power BI (Chapter 16) are better.
 
 > **Watch out: maps and missing locations.** Customers with no city don't appear on a map at all, and nothing tells the reader they're missing. Say how much is missing in a note ("₹2.3 crore of revenue has no city and isn't shown").
 
@@ -499,7 +672,7 @@ Using the wrong kind is a common, subtle error. A rainbow (red, orange, yellow, 
 
 ### Highlight, don't decorate
 
-The most effective use of color in business charts is **one highlight color against gray**:
+The most effective use of color in business charts is **one highlight color against gray**, as Figure 15.11 shows.
 
 ![Left, before: eleven lines of monthly revenue per sales rep in eleven colors with a legend. Right, after: ten lines in light gray and one line, Rahul Mehta, in orange with a direct label, and a label for the ten other reps](figures/fig15-11-highlight.svg)
 
@@ -540,13 +713,46 @@ Most business charts have a **label** for a title: "Monthly Revenue vs Target 20
 
 *Figure 15.12 — The same data. The top chart describes; the bottom chart explains, with a finding in the title, direct labels, and one annotation.*
 
-The data behind it:
+The data behind it takes two steps: first each month's revenue, then the join to the targets. Step 1 is a CTE (Chapter 13, section 13.2) that totals revenue by month; the `LIMIT 3` is only there to check the first rows:
 
 ```sql
-SELECT t.target_month, ROUND(a.revenue) AS net_revenue, t.target_revenue, ROUND(100 * a.revenue / t.target_revenue, 1) AS pct_of_target
+WITH monthly AS (
+  SELECT DATE_TRUNC('month', order_date)::date AS m, SUM(net_revenue) AS revenue
+  FROM sales_lines
+  GROUP BY 1
+)
+SELECT m, ROUND(revenue) AS net_revenue
+FROM monthly
+WHERE m >= '2025-01-01'
+ORDER BY m
+LIMIT 3;
+```
+
+```
+     m      | net_revenue 
+------------+-------------
+ 2025-01-01 |    85195521
+ 2025-02-01 |    78582579
+ 2025-03-01 |   101009066
+(3 rows)
+```
+
+How it works: `DATE_TRUNC('month', order_date)` rounds each date down to the first day of its month, and `::date` turns the result into a plain date (both from Chapter 12, section 12.8), so every order in January 2025 gets `2025-01-01`. `GROUP BY 1` adds up the revenue for each of those month starts. The dates look like `2025-01-01` because that's how `sales_targets` stores its months, which is what lets step 2 match them.
+
+Step 2 keeps the CTE and replaces the final `SELECT` with a join to `sales_targets`:
+
+```sql
+WITH monthly AS (
+  SELECT DATE_TRUNC('month', order_date)::date AS m, SUM(net_revenue) AS revenue
+  FROM sales_lines
+  GROUP BY 1
+)
+SELECT t.target_month, ROUND(a.revenue) AS net_revenue, t.target_revenue,
+       ROUND(100 * a.revenue / t.target_revenue, 1) AS pct_of_target
 FROM sales_targets t
-JOIN (SELECT DATE_TRUNC('month', order_date)::date AS m, SUM(net_revenue) AS revenue FROM sales_lines GROUP BY 1) a ON a.m = t.target_month
-WHERE t.target_month >= '2025-01-01' ORDER BY t.target_month;
+JOIN monthly a ON a.m = t.target_month
+WHERE t.target_month >= '2025-01-01'
+ORDER BY t.target_month;
 ```
 
 ```
@@ -566,6 +772,14 @@ WHERE t.target_month >= '2025-01-01' ORDER BY t.target_month;
  2025-12-01   |    87266804 |    92400000.00 |          94.4
 (12 rows)
 ```
+
+How it works:
+
+- `JOIN monthly a ON a.m = t.target_month` puts each month's revenue next to that month's target (`a` is a short alias for the CTE, `t` for the targets table).
+- `ROUND(100 * a.revenue / t.target_revenue, 1)` is the **attainment**: revenue as a percentage of target, to one decimal place.
+- `WHERE t.target_month >= '2025-01-01'` keeps 2025, and `ORDER BY t.target_month` lists the months in order.
+
+Over the whole year, revenue was 98.3% of target: ₹1,14,66,41,651 against ₹1,16,69,50,000. Five months beat their target: January, February, May, June, and July.
 
 A good action title:
 
@@ -612,19 +826,19 @@ Edward Tufte's idea of the **data-ink ratio** (1983) is a useful discipline: the
 
 Most misleading charts aren't made by people trying to deceive. They come from software defaults, from zooming in "to see the detail", and from wanting a chart to look impressive. Chapter 4, section 4.7, introduced several tricks; this section shows them on Riverstone data, with the honest alternative.
 
-![Three charts. Left: Delhi and Bengaluru revenue bars with a y-axis from 10.175 to 10.183 crore, making Delhi's bar look far taller. Middle: the same two bars from zero, almost identical, titled the gap is 0.04%. Right: revenue bars for 2023 to 2025 on a left axis starting at 55 and gross margin as a red line on a right axis from 20 to 28.5, so the line appears to track the bars](figures/fig15-13-misleading.svg)
+![Three charts. Top left: Delhi and Bengaluru revenue bars with a y-axis from 10.175 to 10.183 crore, making Delhi's bar look far taller. Top right: the same two bars from zero, almost identical, titled the gap is 0.04%. Bottom: revenue bars for 2023 to 2025 on a left axis starting at 55 and gross margin as a red line on a right axis from 20 to 28.5, so the line appears to track the bars](figures/fig15-13-misleading.svg)
 
-*Figure 15.13 — Left and middle: a truncated axis turns a 0.04% difference into a visual landslide. Right: a dual-axis chart whose two scales were chosen so that margin seems to follow revenue.*
+*Figure 15.13 — Top: a truncated axis turns a 0.04% difference into a visual landslide. Bottom: a dual-axis chart whose two scales were chosen so that margin seems to follow revenue.*
 
 ### Truncated axes on bars
 
-The left chart uses the quick (and wrong) Q4 branch numbers from Chapter 14's story: Delhi ₹101,831,086 and Bengaluru ₹101,788,506. With the axis starting at ₹10.175 crore, Delhi's bar looks about twice as tall. From zero, the bars are indistinguishable, which is the truth: a difference of ₹42,580, or 0.04%. (And the clean numbers put Bengaluru ahead by ₹14.7 million, which a correct chart of clean data would show.)
+The top-left chart uses the quick (and wrong) Q4 branch numbers from Chapter 14's story: Delhi ₹10,18,31,086 and Bengaluru ₹10,17,88,506. With the axis starting at ₹10.175 crore, Delhi's bar looks about twice as tall. From zero, the bars are indistinguishable, which is the truth: a difference of ₹42,580, or 0.04%. (And the clean numbers put Bengaluru ahead by ₹1.47 crore, which a correct chart of clean data would show.)
 
 **The rule:** bars always start at zero. If the differences you care about are small relative to the values, show the **differences** (a bar chart of change, or a dot plot of attainment) instead of truncating.
 
 ### Dual axes chosen to agree
 
-The right chart puts revenue (bars, left axis) and gross margin (line, right axis) together. With the left axis starting at ₹55 crore and the right at 20%, the margin line climbs in step with revenue, and a reader concludes "as we grew, margins grew with volume". But the chart-maker could as readily have chosen scales that made margin look flat, or falling behind. In Riverstone's case, margin rose mainly because prices rose while unit costs were held constant in the data (the dataset's documented simplification), not because of volume.
+The bottom chart puts revenue (bars, left axis) and gross margin (line, right axis) together. With the left axis starting at ₹55 crore and the right at 20%, the margin line climbs in step with revenue, and a reader concludes "as we grew, margins grew with volume". But the chart-maker could as readily have chosen scales that made margin look flat, or falling behind. In Riverstone's case, margin rose mainly because prices rose while unit costs were held constant in the data (the dataset's documented simplification), not because of volume.
 
 **The alternative:** two aligned charts, or one chart with margin labeled on the bars (the project's makeover B in the answers), so no scale choice creates a relationship.
 
@@ -692,7 +906,7 @@ The figures in this chapter have alt text, and none relies on color alone for it
 
 ---
 
-## 15.14 Building charts in Excel, Google Sheets, and code
+## 15.14 Building charts in Excel and Google Sheets
 
 ### A repeatable workflow in any tool
 
@@ -702,59 +916,95 @@ The figures in this chapter have alt text, and none relies on color alone for it
 4. **Check it** against sections 15.11–15.13: honest axes, visible missing data, alt text, contrast.
 5. **Save the design** so the next chart starts right.
 
-**Excel.** **Insert → Recommended Charts** suggests chart types for the selected data; treat the suggestions as a starting point. After formatting one chart the way you want, right-click it → **Save as Template**, and later choose it under **Insert → Recommended Charts → All Charts → Templates**. A **combo chart** (**Insert → Insert Combo Chart**) combines columns and lines; its **Secondary Axis** checkbox creates the dual axis that section 15.12 warns about, so leave it unticked unless you've considered the alternatives. To turn a chart title into a dynamic action title, select the title, type `=` in the formula bar, and click a cell that builds the sentence with a formula, such as `="2025 finished at "&TEXT(B14,"0.0%")&" of target"`.
+**Excel.** **Insert → Recommended Charts** suggests chart types for the selected data; treat the suggestions as a starting point. After formatting one chart the way you want, right-click it → **Save as Template**, and later choose it under **Insert → Recommended Charts → All Charts → Templates**. A **combo chart** (**Insert → Insert Combo Chart**) combines columns and lines; its **Secondary Axis** checkbox creates the dual axis that section 15.12 warns about, so leave it unticked unless you've considered the alternatives. To turn a chart title into a **dynamic action title**, first put the number in a cell. In the `monthly_2023_2025` sheet, with the 2025 revenue cells named `Revenue` and the 2025 target cells named `Target`, put the attainment in `B14`:
 
-**Google Sheets.** **Insert → Chart** opens the **Chart editor**: **Setup** for the chart type and ranges, **Customize** for titles, series colors, labels, gridlines, and axes. Sheets has no chart templates; copy a finished chart (**⋮ → Copy chart**) and change its data range instead. `=SPARKLINE(range, {"charttype","bar"})` draws in-cell bars.
+```excel
+B14:  =SUM(Revenue)/SUM(Target)                              → 0.9826 (98.3%)
+C14:  ="2025 finished at "&TEXT(B14,"0.0%")&" of target"     → 2025 finished at 98.3% of target
+```
+
+`TEXT(B14,"0.0%")` turns the number into text with a percentage format of one decimal place, and `&` joins the pieces into one sentence. Then select the chart title, type `=` in the formula bar, click `C14`, and press **Enter**. When next month's data arrives, the title changes with it.
+
+**Google Sheets.** **Insert → Chart** opens the **Chart editor**: **Setup** for the chart type and ranges, **Customize** for titles, series colors, labels, gridlines, and axes. Sheets has no chart templates; copy a finished chart (**⋮ → Copy chart**) and change its data range instead. `=SPARKLINE(range, {"charttype","bar"})` draws in-cell bars; the braces hold an option name and its value.
 
 In both tools, it's common to add a new month of data and not notice that the chart's range didn't grow to include it. Base charts on a **table** (Excel, **Ctrl+T**) or a named range that grows, as Chapter 11 recommended for formulas.
 
-### A first look at charts in code
+---
 
-Python is taught in its own block: Chapter 17 covers the language and Chapter 18 covers pandas and charting with **matplotlib** and **seaborn**. If you haven't reached them yet, read this section as a preview and return to it afterwards. The same principles apply in code, where they're easier to repeat: once a chart function is written, every chart it draws follows the rules. This preview uses the chart data in `companion/ch15`.
+## 15.15 Running this chapter's SQL in MySQL
 
-<!-- py: reset -->
-```python
-import pandas as pd
-monthly = pd.read_csv("chart_data/monthly_2023_2025.csv")
-m25 = monthly[monthly["year"] == 2025]
-print(m25[["month", "net_revenue", "target_revenue"]].head(3).to_string(index=False))
-print(round(m25["net_revenue"].sum() / m25["target_revenue"].sum() * 100, 1))
+Most of this chapter's SQL runs unchanged in MySQL 8.0: the segment shares in section 15.1 (MySQL has the same window over an aggregate) and both histogram queries in section 15.5 (`FLOOR` is the same) return exactly the same rows. Three PostgreSQL features don't exist in MySQL. The companion file `companion/ch15/ch15_queries_mysql.sql` has every query in its MySQL form.
+
+<!-- db: riverstone_full -->
+
+**`FILTER` and `EXTRACT` (section 15.4).** MySQL has no `FILTER` clause. Use `SUM(CASE WHEN … THEN … END)`, the form Chapter 13, section 13.9, showed; `MONTH()` and `YEAR()` replace `EXTRACT`:
+
+```mysql
+SELECT MONTH(order_date) AS month,
+       ROUND(SUM(CASE WHEN YEAR(order_date) = 2024 THEN net_revenue END)) AS rev_2024,
+       ROUND(SUM(CASE WHEN YEAR(order_date) = 2025 THEN net_revenue END)) AS rev_2025
+FROM sales_lines WHERE order_date >= '2024-01-01' GROUP BY 1 ORDER BY 1;
 ```
 
 ```
- month  net_revenue  target_revenue
-     1   85195520.0        77350000
-     2   78582579.0        70000000
-     3  101009066.0       108050000
-98.3
++-------+-----------+-----------+
+| month | rev_2024  | rev_2025  |
++-------+-----------+-----------+
+|     1 |  64063515 |  85195521 |
+|     2 |  58632364 |  78582579 |
+|     3 |  78193384 | 101009066 |
+|     4 |  72534870 |  95194709 |
+|     5 |  66888391 |  87249568 |
+|     6 |  39531504 |  51972483 |
+|     7 |  30515645 |  40028093 |
+|     8 |  57166214 |  71835346 |
+|     9 |  87548908 | 111701479 |
+|    10 | 147221566 | 180620103 |
+|    11 | 127896564 | 155985902 |
+|    12 |  72822552 |  87266804 |
++-------+-----------+-----------+
 ```
 
-The first three months, and the year's attainment: 98.3%. (January shows ₹85,195,520 here and ₹85,195,521 in SQL, because each tool rounded the unrounded ₹85,195,520.50 differently.)
+`CASE WHEN YEAR(order_date) = 2024 THEN net_revenue END` gives the revenue on 2024 rows and nothing (NULL) on the others, and `SUM` skips the NULLs, so the column adds up 2024 only. The numbers match section 15.4.
 
-```python
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+**`DATE_TRUNC` and `::date` (section 15.11).** MySQL builds the first day of the month with `DATE_FORMAT` and converts it with `CAST(... AS DATE)`, as Chapter 12, section 12.16, showed:
 
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(m25["month"], m25["net_revenue"] / 1e7, color="#0f5c8c", linewidth=2.5)
-ax.plot(m25["month"], m25["target_revenue"] / 1e7, color="#5b6475", linewidth=1.5, linestyle="--")
-ax.text(12.1, m25["net_revenue"].iloc[-1] / 1e7, "Actual", color="#0f5c8c", va="center")
-ax.text(12.1, m25["target_revenue"].iloc[-1] / 1e7, "Target", color="#5b6475", va="center")
-ax.set_title("2025 finished at 98.3% of target", loc="left", fontweight="bold")
-ax.set_ylabel("Net revenue (₹ crore)")
-ax.set_ylim(0, 22)
-ax.set_xticks(range(1, 13))
-ax.spines[["top", "right"]].set_visible(False)
-fig.savefig("my_revenue_chart.png", dpi=150, bbox_inches="tight")
-print("saved")
+```mysql
+WITH monthly AS (
+  SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS m, SUM(net_revenue) AS revenue
+  FROM sales_lines
+  GROUP BY 1
+)
+SELECT t.target_month, ROUND(a.revenue) AS net_revenue, t.target_revenue,
+       ROUND(100 * a.revenue / t.target_revenue, 1) AS pct_of_target
+FROM sales_targets t
+JOIN monthly a ON a.m = t.target_month
+WHERE t.target_month >= '2025-01-01'
+ORDER BY t.target_month;
 ```
 
 ```
-saved
++--------------+-------------+----------------+---------------+
+| target_month | net_revenue | target_revenue | pct_of_target |
++--------------+-------------+----------------+---------------+
+| 2025-01-01   |    85195521 |    77350000.00 |         110.1 |
+| 2025-02-01   |    78582579 |    70000000.00 |         112.3 |
+| 2025-03-01   |   101009066 |   108050000.00 |          93.5 |
+| 2025-04-01   |    95194709 |    96900000.00 |          98.2 |
+| 2025-05-01   |    87249568 |    85900000.00 |         101.6 |
+| 2025-06-01   |    51972483 |    50400000.00 |         103.1 |
+| 2025-07-01   |    40028093 |    36500000.00 |         109.7 |
+| 2025-08-01   |    71835346 |    76050000.00 |          94.5 |
+| 2025-09-01   |   111701479 |   118300000.00 |          94.4 |
+| 2025-10-01   |   180620103 |   196150000.00 |          92.1 |
+| 2025-11-01   |   155985902 |   158950000.00 |          98.1 |
+| 2025-12-01   |    87266804 |    92400000.00 |          94.4 |
++--------------+-------------+----------------+---------------+
 ```
 
-Every principle from the chapter is a line of code: direct labels instead of a legend (`ax.text`), an action title, a unit in the axis title, a zero baseline, and no top or right border. `matplotlib.use("Agg")` draws without opening a window, which is what you want in a script. The full figure code for this chapter is `figures/make_figs15.py`.
+`DATE_FORMAT(order_date, '%Y-%m-01')` writes the date's year and month and a fixed day `01`, as text such as `2025-01-01`; `CAST(... AS DATE)` turns that text back into a date so it can be joined to `target_month`. The rest of the query is unchanged, and so are the results.
+
+**`PERCENTILE_CONT` (section 15.5).** MySQL has no percentile function. Use the spreadsheet route in section 15.5, or build the median from window functions: exercise 21 asks you to, and its answer is the MySQL query.
 
 ---
 
@@ -778,7 +1028,7 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 | Wrong histogram bins | Noise or hidden shape | Try several bin widths; say which you show |
 | Averages without spread | A typical value that isn't typical | Box plot, histogram, or median and quartiles |
 | Overplotted scatter plots | Density hidden | Transparency, jitter, binning |
-| Missing categories silently dropped | Totals don't match other reports | Show "Unknown" in gray; add a note |
+| Missing categories silently dropped | Totals don't match other reports | Show "City missing" (or "Unknown") in gray; add a note |
 | Gaps filled with zeros | A fake collapse in a line | Break the line; label missing periods |
 | Cherry-picked time ranges | Exaggerated growth or decline | Standard full periods; justify exceptions |
 | Tiny text on slides | Unreadable when projected | Chart text at least as large as body text |
@@ -796,11 +1046,11 @@ Suresh Menon, the Finance Manager, suggested building 15% less festive stock for
 
 Meera didn't start by redrawing the chart. She wrote down the question the meeting was really answering: *Did festive-season demand weaken in 2025?* The attainment chart couldn't answer that, because attainment depends on the target as much as on sales. She pulled three numbers:
 
-- **October 2025 revenue: ₹180,620,103**, the highest month in Riverstone's history.
-- **October 2024 revenue: ₹147,221,566**, so October grew **22.7%** year over year.
-- **October 2025 target: ₹196,150,000**, which had required growth of **33%** over October 2024.
+- **October 2025 revenue: ₹18,06,20,103**, the highest month in Riverstone's history.
+- **October 2024 revenue: ₹14,72,21,566**, so October grew **22.7%** year over year.
+- **October 2025 target: ₹19,61,50,000**, which had required growth of **33%** over October 2024.
 
-Q4 as a whole told the same story: revenue of ₹423.9 million, up 21.8% on Q4 2024, but 94.7% of a ₹447.5 million target.
+Q4 as a whole told the same story: revenue of ₹42.4 crore, up 21.8% on Q4 2024, but 94.7% of a ₹44.75 crore target.
 
 She built two charts for the follow-up meeting.
 
@@ -808,7 +1058,7 @@ The first was Figure 15.12's redesign: 2025 revenue and target as two lines from
 
 The second answered the question directly: one line per year from Figure 15.4, titled *"Festive demand grew again: October 2025 was 22.7% above October 2024."* The three Octobers stood out clearly, each higher than the last.
 
-She added a short note under both charts: *"Attainment compares sales with the plan. In Q4 the plan assumed 33% growth; actual growth was about 22%. The shortfall is in the plan, not in demand."*
+She added a short note under both charts: *"Attainment compares sales with the plan. October's plan assumed 33% growth and actual growth was 22.7%; across Q4 the plan assumed 29% and actual growth was 21.8%. The shortfall is in the plan, not in demand."*
 
 At the follow-up meeting, nobody argued with the numbers, because the charts made the difference between "missed target" and "weaker demand" visible. The team kept the festive stock build at the planned level and asked Finance and Sales to review how October targets are set. Vikram Singh asked for one more change to the monthly pack: every chart title would state its finding, and every attainment chart would show revenue and the previous year next to it.
 
@@ -830,39 +1080,37 @@ What made the difference:
 - **Excel for Windows** (Microsoft 365). Histogram, box-and-whisker, waterfall, treemap, and filled map charts need Excel 2016 or later; the filled map needs an internet connection.
 - **Google Sheets:** most chart types; no native box plot.
 - **PostgreSQL 16 or MySQL 8.0** for preparing chart data (tested on PostgreSQL 16.15 and MySQL 8.0.46 with `riverstone_full`).
-- **Python 3.12** with **pandas 3.0.2** and **matplotlib 3.10** (optional, section 15.14).
 - **Companion files:**
   - `companion/ch15/ch15_chart_data.xlsx`: one sheet per chart (segment shares, monthly revenue and targets 2023–2025, 2025 order values, customers, the 2024–2025 bridge, region by month, category by month, cities, regions, margin by year, reps by month, products, Anscombe's quartet).
   - `companion/ch15/chart_data/*.csv`: the same tables as CSV.
-  - `companion/ch15/build_ch15_data.py`: rebuilds them from `companion/full/`.
-  - `figures/make_figs15.py` and `make_figs15_diagrams.py`: the code for every figure in this chapter, including the project's before and after charts.
+  - `companion/ch15/ch15_queries_mysql.sql`: the chapter's queries in their MySQL form (section 15.15).
+  - Every table can be rebuilt from `riverstone_full` with SQL like the queries in this chapter.
 - **Free helpers:** a color-blindness simulator (such as Coblis), a contrast checker (such as WebAIM's), and ColorBrewer for sequential and diverging palettes.
 
 **Option A: your own charts.** Take five charts from a report, dashboard, or presentation you've received or made (remove confidential numbers, or rebuild them with invented data). Redesign each one using this chapter's principles.
 
 **Option B: Riverstone's data.** Figure 15.15 shows five charts from Riverstone's old monthly management pack. The data for each is in `ch15_chart_data.xlsx` (sheets `product_2025`, `margin_by_year`, `region_2025`, `rep_month_2025`, and `region_month_2025`).
 
-![Five poor charts. A: an exploded, shadowed pie of eight products in rainbow colors. B: revenue columns for 2023–2025 on an axis starting at 55 with a gross margin line on a second axis. C: region columns on an axis starting at 13, in four colors, with heavy gridlines. D: a rainbow stacked area chart of eleven sales reps by month with a legend. E: clustered columns for four regions across twelve months with tiny rotated data labels and heavy gridlines](figures/fig15-15-project-before.svg)
-
-*Figure 15.15 — Five charts from Riverstone's old management pack, each with several of this chapter's mistakes.*
-
 **Steps**
 
 1. **For each chart, write down its question** and the one message the reader should take away. If you can't find a message, decide what question the data could answer for a manager.
 2. **List every problem** you see, using the mistakes table.
 3. **Choose a better chart type** with the chart chooser (Figure 15.2). Explain the choice in one sentence.
-4. **Build the redesign** in Excel, Google Sheets, or Python from the chart data. Sort, remove clutter, label directly, choose colors deliberately, and start bars at zero.
+4. **Build the redesign** in Excel or Google Sheets from the chart data. Sort, remove clutter, label directly, choose colors deliberately, and start bars at zero.
 5. **Write an action title** for each chart, and check it against the data.
 6. **Add alt text** to each chart, and check it in grayscale.
 7. **Put the before-and-after pairs on five slides** (or one page each), with three bullet points under each explaining what you changed and why.
 8. **Test it:** show only the "after" charts to someone who hasn't seen the data, give them ten seconds per chart, and ask what each one says. If their answer doesn't match your title, revise.
+
+![Five poor charts. A: an exploded, shadowed pie of eight products in rainbow colors. B: revenue columns for 2023–2025 on an axis starting at 55 with a gross margin line on a second axis. C: region columns on an axis starting at 13, in four colors, with heavy gridlines. D: a rainbow stacked area chart of eleven sales reps by month with a legend. E: clustered columns for four regions across twelve months with crowded, rotated data labels and heavy gridlines](figures/fig15-15-project-before.svg)
+
+*Figure 15.15 — Five charts from Riverstone's old management pack, each with several of this chapter's mistakes.*
 
 **What good looks like:** each redesign answers one question in under ten seconds; every bar chart starts at zero; no chart needs a legend with more than three entries; titles state findings with numbers; missing data (the ₹2.3 crore with no city) is visible; the charts work in grayscale. One set of solutions is in Figure 15.16 in the answers, but many good redesigns exist.
 
 **Stretch goals**
 
 - Build the five redesigns as a one-page dashboard in Excel with a shared color theme, and make every title dynamic (section 15.14).
-- Rebuild all five in Python with a single `style_chart(ax, title)` function that applies your rules, so every chart comes out consistent.
 - Write a one-page "chart style guide" for Riverstone: fonts, colors (with codes and a color-blind check), number formats (lakh and crore), title rules, and which chart to use for the ten most common questions.
 
 ---
@@ -901,13 +1149,13 @@ data visualization · encoding · graphical perception · pre-attentive attribut
 - [ ] You spot truncated axes, dual axes, 3D, cherry-picked ranges, and averages without spread, and replace them with honest alternatives.
 - [ ] You show missing data and uncertainty instead of hiding them.
 - [ ] Your charts have alt text, sufficient contrast, readable text, and don't rely on color alone.
-- [ ] You can build all of this in Excel or Google Sheets, and recognize the same principles in code.
+- [ ] You can build all of this in Excel or Google Sheets.
 
 ---
 
 ## Exercises
 
-Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_full` database, and Excel, Google Sheets, or Python.
+Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_full` database, and Excel or Google Sheets.
 
 ### Warm-up
 
@@ -922,12 +1170,12 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 7. Build Figure 15.3's "after" chart from `product_2025` in Excel or Google Sheets. Which two products together sell less than any other single product, and what's their combined revenue?
 8. From `order_values_2025`, build a histogram with ₹10,000 bins. How many orders fall in each of the first three bins? Then try ₹2,000 and ₹50,000 bins and describe what changes.
-9. Build box plots of order value by segment (Excel's Box and Whisker, or Python). Using the SQL output in section 15.5, what's the IQR of Wholesale orders, and what's the 1.5 × IQR upper fence?
+9. Build box plots of order value by segment (Excel's Box and Whisker). Using the quartiles in section 15.5, what's the IQR of Wholesale orders, and what's the 1.5 × IQR upper fence?
 10. From `monthly_2023_2025`, in how many months of each year was revenue above target? Which 2025 month had the lowest attainment, and which the highest?
-11. Using `region_month_2025`, which region and month had the highest revenue, and which region and month the lowest (excluding Unknown)? Build the heatmap with a sequential palette.
+11. Using `region_month_2025`, which region and month had the highest revenue, and which region and month the lowest (excluding City missing)? Build the heatmap with a sequential palette.
 12. Build the waterfall from `bridge_2024_2025`. What was the total change, and what share of it came from Retail?
-13. From `customers_2025`, build a scatter plot of orders against revenue with transparency. What's the correlation between the two columns?
-14. Using `anscombe.csv`, calculate the mean of each y column and the correlation of each pair. Then draw the four scatter plots. What do the charts show that the numbers don't?
+13. From `customers_2025`, build a scatter plot of orders against revenue with transparency. What's the correlation between the two columns? (Use `=CORREL`, section 15.6.)
+14. Using `anscombe.csv`, calculate the mean of each y column (`=AVERAGE`) and the correlation of each pair (`=CORREL`). Then draw the four scatter plots. What do the charts show that the numbers don't?
 15. What share of 2025 revenue has no city? Redraw a region bar chart that shows it, and write a one-sentence note for the chart.
 16. Chart C in Figure 15.15 starts its axis at ₹13 crore. How many times longer does West's column look than East's, compared with the true ratio? (Use `region_2025`.)
 17. Write alt text (two sentences at most) for Figure 15.6.
@@ -938,8 +1186,7 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 ### Stretch
 
 21. MySQL has no `PERCENTILE_CONT`. Write a MySQL query that returns the median order value per segment for 2025 using window functions. Do the results match PostgreSQL exactly?
-22. In Python, write a function `highlight_lines(df, focus)` that draws every column of a month-by-rep table in light gray and the `focus` column in orange with a direct label. Use it for two different reps.
-23. Design a color palette of five colors for Riverstone's charts: one highlight, one neutral, a sequential scale, and a diverging pair. Give the color codes, and check the highlight and text colors for contrast against white.
+22. Design a color palette of five colors for Riverstone's charts: one highlight, one neutral, a sequential scale, and a diverging pair. Give the color codes, and check the highlight and text colors for contrast against white.
 
 ### Think about it
 
@@ -950,19 +1197,17 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 ## Answers
 
-*(In the finished book these move to Appendix G.)*
-
-**Project (Option B): one set of redesigns.**
-
-![Five redesigned charts. A: sorted horizontal bars of product revenue in gray with Storage Box 25L highlighted in blue and values labeled. B: revenue columns for 2023 to 2025 from a zero baseline with revenue labels above and gross margin percentages inside each column. C: sorted horizontal bars of region revenue with a gray City missing bar at the bottom. D: eleven rep lines in light gray with Rahul Mehta in orange. E: a blue heatmap of revenue by region and month](figures/fig15-16-project-after.svg)
-
-*Figure 15.16 — One set of redesigns for the old management pack. Each chart has one message in its title.*
+**Project (Option B): one set of redesigns, shown in Figure 15.16.**
 
 - **A (exploded pie → sorted bars):** eight slices can't be ranked by angle, and the shadow and explosion distort them. Sorted bars with values, one highlight. Title: *"Storage Box 25L led 2025"*.
 - **B (dual axis → one chart with labels):** the two scales were chosen so margin appears to follow revenue. Revenue bars from zero with margin written in each bar; no second axis. Title: *"Revenue up 87% since 2023; margin up 6.4 points"*.
 - **C (truncated, multicolored columns → sorted bars from zero, missing data shown):** an axis starting at ₹13 crore made East look about a twentieth of West. Title: *"West brings 33% of 2025 revenue"*.
 - **D (rainbow stacked area → highlight lines):** the middle layers of a stacked area can't be read, and eleven colors need a legend. Gray lines and one highlight (or small multiples). Title: *"Every rep follows the same season; Rahul Mehta leads"*.
-- **E (48 clustered columns with tiny labels → heatmap):** a two-way question with too many bars. A sequential heatmap with values. Title: *"October is the peak in every region"*.
+- **E (48 clustered columns with crowded labels → heatmap):** a two-way question with too many bars. A sequential heatmap with values. Title: *"October is the peak in every region"*.
+
+![Five redesigned charts. A: sorted horizontal bars of product revenue in gray with Storage Box 25L highlighted in blue and values labeled. B: revenue columns for 2023 to 2025 from a zero baseline with revenue labels above and gross margin percentages inside each column. C: sorted horizontal bars of region revenue with a gray City missing bar at the bottom. D: eleven rep lines in light gray with Rahul Mehta in orange. E: a blue heatmap of revenue by region and month](figures/fig15-16-project-after.svg)
+
+*Figure 15.16 — One set of redesigns for the old management pack. Each chart has one message in its title.*
 
 **1.** Dot position on a common scale; bar length on a common baseline; pie slice angle; bubble area; color saturation.
 
@@ -976,7 +1221,7 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 **6.** (a) Sequential (or one color for bars). (b) Diverging, centered on 0%. (c) Categorical. (d) Sequential.
 
-**7.** **Garden Chair (₹45,075,400)** and **Water Bottle 1L (₹40,319,029)**: together **₹85,394,429** (₹8.5 crore), less than Lunch Box Set, the next smallest at ₹131,102,660.
+**7.** **Garden Chair (₹4,50,75,400)** and **Water Bottle 1L (₹4,03,19,029)**: together **₹8,53,94,429** (₹8.5 crore), less than Lunch Box Set, the next smallest at ₹13,11,02,660.
 
 **8.** With ₹10,000 bins starting at 0: **10,151** orders under ₹10,000; **12,449** from ₹10,000 to under ₹20,000; **9,134** from ₹20,000 to under ₹30,000. Narrower (₹2,000) bins show a jagged, noisy shape; wider (₹50,000) bins collapse the data into three or four bars and hide that most orders cluster between about ₹5,000 and ₹30,000. (Excel's histogram labels bins as ranges and may place the boundary value in the lower bin; the counts can differ by a few orders at the edges.)
 
@@ -984,21 +1229,21 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 **10.** Months above target: **2023: 5**, **2024: 6**, **2025: 5**. In 2025, the lowest attainment was **October (92.1%)** and the highest **February (112.3%)**.
 
-**11.** Highest: **West in October (₹60,325,631)**. Lowest (excluding Unknown): **East in July (₹4,702,844)**.
+**11.** Highest: **West in October (₹6,03,25,631)**. Lowest (excluding City missing): **East in July (₹47,02,844)**.
 
-**12.** Total change **₹243,626,176** (from ₹903,015,475 to ₹1,146,641,651). Retail's +₹112,626,265 is **46.2%** of the growth.
+**12.** Total change **₹24,36,26,176** (from ₹90,30,15,475 to ₹1,14,66,41,651). Retail's +₹11,26,26,265 is **46.2%** of the growth.
 
-**13.** **0.916** (for example `=CORREL(C2:C4600, D2:D4600)` in Excel on the `customers_2025` sheet, or `df[["orders", "net_revenue"]].corr()` in pandas).
+**13.** **0.916**, for example with `=CORREL(C2:C4600, D2:D4600)` on the `customers_2025` sheet (orders in column C, revenue in column D).
 
 **14.** Every y column has a mean of **7.50** (to two decimals), and every pair has a correlation of **0.82** (0.816 or 0.817 at three decimals); the x columns all have a mean of 9. The charts show four different patterns: a loose linear relationship, a smooth curve, a perfect line with one outlier, and no relationship except one extreme point that creates the correlation on its own. Summary statistics can't distinguish them.
 
-**15.** ₹22,669,946 of ₹1,146,641,651: **2.0%**. Note: *"₹2.3 crore (2.0%) of 2025 revenue comes from customers with no city recorded and is shown separately."*
+**15.** ₹2,26,69,946 of ₹1,14,66,41,651: **2.0%**. Note: *"₹2.3 crore (2.0%) of 2025 revenue comes from customers with no city recorded and is shown separately."*
 
 **16.** Values: West ₹38.4 crore, East ₹14.2 crore, a true ratio of **2.7**. With the axis starting at 13, the visible columns are 38.4 − 13 = 25.4 and 14.2 − 13 = 1.2, so West looks about **21 times** as long as East.
 
 **17.** Example: *"Box plots of 2025 order values by segment. Wholesale orders are larger and more spread out (median ₹25,762) than Retail (₹19,425) and Hospitality (₹19,122), and all three have a long tail of large orders."*
 
-**18.** Q4 2024: 147,221,566 + 127,896,564 + 72,822,552 = **₹347,940,682**. Q4 2025: 180,620,103 + 155,985,902 + 87,266,804 = **₹423,872,809** (₹423,872,808 before rounding each month). Growth **21.8%**. A line chart of January–December for 2023, 2024, and 2025 with direct labels; title such as *"Festive demand grew again: October 2025 was 22.7% above October 2024"*.
+**18.** Q4 2024: 14,72,21,566 + 12,78,96,564 + 7,28,22,552 = **₹34,79,40,682**. Q4 2025: 18,06,20,103 + 15,59,85,902 + 8,72,66,804 = **₹42,38,72,809** (₹42,38,72,808 before rounding each month). Growth **21.8%**. A line chart of January–December for 2023, 2024, and 2025 with direct labels; title such as *"Festive demand grew again: October 2025 was 22.7% above October 2024"*.
 
 **19.** Small multiples show each rep's full pattern on its own panel without overlap, with a shared axis so sizes stay comparable. They're better when the reader needs to look at **every** rep (a sales manager reviewing the team); highlighting is better when the story is about **one** rep or one comparison.
 
@@ -1023,24 +1268,9 @@ FROM ranked WHERE rn IN (FLOOR((n + 1) / 2), CEIL((n + 1) / 2))
 GROUP BY segment ORDER BY median;
 ```
 
-It returns Hospitality **19,122**, Retail **19,425**, Wholesale **25,763**. For odd counts the two row numbers are the same row; for even counts it averages the middle two, which is what `PERCENTILE_CONT(0.5)` does. Wholesale differs by ₹1 from PostgreSQL's 25,762 only in rounding: the exact median ends in .50, PostgreSQL's `PERCENTILE_CONT` returns a floating-point number that `ROUND` rounds to the nearest even value, while MySQL rounds the exact decimal half away from zero.
+It returns Hospitality **19,122**, Retail **19,425**, Wholesale **25,763**. For odd counts the two row numbers are the same row; for even counts it averages the middle two, which is what `PERCENTILE_CONT(0.5)` does. The exact Wholesale median is ₹25,762.50. PostgreSQL rounded it down and MySQL rounded it up, because the two databases break ties differently. Round only for display.
 
-**22.** One solution:
-
-```
-def highlight_lines(df, focus, ax):
-    for col in df.columns:
-        if col != focus:
-            ax.plot(df.index, df[col] / 1e7, color="#dfe5ec", linewidth=1)
-    ax.plot(df.index, df[focus] / 1e7, color="#c0662b", linewidth=2.5)
-    ax.text(df.index[-1] + 0.2, df[focus].iloc[-1] / 1e7, focus, color="#c0662b", va="center")
-    ax.set_title(f"{focus} against the rest of the team", loc="left", fontweight="bold")
-    ax.spines[["top", "right"]].set_visible(False)
-```
-
-Call it with `rep = pd.read_csv("chart_data/rep_month_2025.csv").set_index("month")` and, for example, `"Rahul Mehta"` and `"Simran Kaur"`.
-
-**23.** Many good answers. An example: highlight orange `#c0662b`, neutral gray `#b8c0cc`, text dark `#1d2330`, sequential blues from `#e3edf5` to `#0f5c8c`, diverging red `#b23b3b` and blue `#0f5c8c` through white. Check with a contrast checker: `#1d2330` on white is far above 4.5:1; the orange `#c0662b` on white is about 4.1:1, enough for bars, lines, and large text but slightly below the 4.5:1 needed for small text, so use the dark text color for labels. Test the palette in a color-blindness simulator; red–blue stays distinguishable, unlike red–green.
+**22.** Many good answers. An example: highlight orange `#c0662b`, neutral gray `#b8c0cc`, text dark `#1d2330`, sequential blues from `#e3edf5` to `#0f5c8c`, diverging red `#b23b3b` and blue `#0f5c8c` through white. Check with a contrast checker: `#1d2330` on white is far above 4.5:1; the orange `#c0662b` on white is about 4.1:1, enough for bars, lines, and large text but slightly below the 4.5:1 needed for small text, so use the dark text color for labels. Test the palette in a color-blindness simulator; red–blue stays distinguishable, unlike red–green.
 
 **24.** Acknowledge the goal (a professional look) and explain the cost with evidence: in a 3D pie, near slices look bigger than far ones, so the chart shows the wrong sizes, and pies can't show close shares (Figure 15.1). Offer a design that looks polished and is accurate: a sorted bar chart in the company's colors, with an action title and clean labels. If a pie is still wanted for a simple two- or three-part share, make it flat, with labels on the slices.
 
@@ -1051,8 +1281,8 @@ Call it with `rep = pd.read_csv("chart_data/rep_month_2025.csv").set_index("mont
 ## Where this leads
 
 - **Chapter 16, Business Intelligence with Power BI:** these principles applied to interactive dashboards: visual choice, themes, tooltips, and report layout.
-- **Chapter 18, Python for Analysts:** matplotlib and seaborn properly, including reusable chart styles.
+- **Chapter 18, Python for Analysts:** Chapter 18 draws these charts in Python, with matplotlib and seaborn, including reusable chart styles.
 - **Chapter 20, Automating Reports & Delivering Insights:** charts in automated reports and emails, and presenting findings to stakeholders.
 - **Chapter 21, Descriptive Statistics & Probability:** the statistics behind histograms, box plots, percentiles, correlation, and uncertainty bands.
 - **Chapter 22, Statistics Without Fooling Yourself:** correlation versus causation, and how to show uncertainty clearly.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes "critique this chart" and "which chart would you use?" questions, and the Business Analyst bank (Chapter 76) covers presenting findings.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes "critique this chart" and "which chart would you use?" questions, and the Business Analyst Question Bank (Chapter 76B) covers presenting findings.

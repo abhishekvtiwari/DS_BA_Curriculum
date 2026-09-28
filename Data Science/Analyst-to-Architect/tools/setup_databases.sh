@@ -35,18 +35,47 @@ mysql -uroot < "$C/mysql/riverstone_setup_mysql.sql"
 mysql -uroot < "$C/mysql/riverstone_2025_setup_mysql.sql"
 mysql -uroot riverstone < /tmp/rs_view.sql
 mysql -uroot riverstone_2025 < /tmp/rs_view.sql
+# Chapter 13's calendar tables (calendar_months, calendar_days) in the one-year database.
+cp "$C/ch13/calendar_tables_postgresql.sql" "$C/ch13/calendar_tables_mysql.sql" /tmp/ && chmod 644 /tmp/calendar_tables_*.sql
+PG -d riverstone_2025 -f /tmp/calendar_tables_postgresql.sql
+mysql -uroot riverstone_2025 < /tmp/calendar_tables_mysql.sql
 # Chapter 28 add-ons: the HRMS staff table, the bill of materials, the ERP audit log and the dw star schema.
 # Skipped without complaint if the Part III companion files aren't present.
 if [ -f "$C/ch28/ch28_2025_addons.sql" ]; then
   cp "$C/ch28/ch28_2025_addons.sql" "$C/ch28/ch28_star_schema.sql" /tmp/ && chmod 644 /tmp/ch28_*.sql
   PG -d riverstone_2025 -f /tmp/ch28_2025_addons.sql
   PG -d riverstone_2025 -f /tmp/ch28_star_schema.sql
+  if [ -f "$C/mysql/ch28_2025_addons_mysql.sql" ]; then
+    mysql -uroot riverstone_2025 < "$C/mysql/ch28_2025_addons_mysql.sql"      # staff, parts, bom_lines for MySQL
+  fi
   echo "Chapter 28 add-ons and star schema loaded into riverstone_2025."
 fi
 
 # riverstone_perf (Chapter 28's volume dataset, about 200 MB) is NOT loaded here: generate it with
 #   cd companion/ch28 && python3 generate_riverstone_perf.py
 #   createdb riverstone_perf && psql -d riverstone_perf -f perf_data/load_postgresql.sql
-# riverstone_full (Chapters 14 onward) is loaded from companion/full/riverstone_full_setup_postgresql.sql.
+#   psql -d riverstone_perf -c 'ALTER DATABASE riverstone_perf SET max_parallel_workers_per_gather = 0;'   # the book's plans assume it
+# riverstone_full (three years, Chapters 14 onward), then Chapter 14's staging, mapping and clean tables.
+PG -d postgres -c "\"DROP DATABASE IF EXISTS riverstone_full\"" >/dev/null 2>&1 || true
+PG -d postgres -c "\"CREATE DATABASE riverstone_full\""
+cp "$C/full/riverstone_full_setup_postgresql.sql" "$C/full/riverstone_full_setup_mysql.sql" /tmp/ && chmod 644 /tmp/riverstone_full_setup_*.sql
+PG -d riverstone_full -f /tmp/riverstone_full_setup_postgresql.sql
+mysql -uroot -e "DROP DATABASE IF EXISTS riverstone_full"
+mysql -uroot < /tmp/riverstone_full_setup_mysql.sql
+if [ -f "$C/ch14/sql/ch14_load_postgresql.sql" ]; then
+  cp "$C/ch14/sql/"ch14_load_*.sql "$C/ch14/sql/"ch14_clean_*.sql /tmp/ && chmod 644 /tmp/ch14_*.sql
+  PG -d riverstone_full -c "\"CREATE EXTENSION IF NOT EXISTS pg_trgm\""
+  PG -d riverstone_full -f /tmp/ch14_load_postgresql.sql
+  PG -d riverstone_full -f /tmp/ch14_clean_postgresql.sql
+  mysql -uroot riverstone_full < /tmp/ch14_load_mysql.sql
+  mysql -uroot riverstone_full < /tmp/ch14_clean_mysql.sql
+  echo "riverstone_full and Chapter 14's tables loaded."
+fi
+
+# The read-only login the chapter checks use (e.g. checks/ch20_check.py: postgresql://book:book@localhost/riverstone_full).
+PG -d postgres -c "\"DO \$\$BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'book') THEN CREATE ROLE book LOGIN PASSWORD 'book'; END IF; END\$\$\""
+for DB in riverstone riverstone_2025 riverstone_full; do
+  PG -d $DB -c "\"GRANT CONNECT ON DATABASE $DB TO book; GRANT USAGE ON SCHEMA public TO book; GRANT SELECT ON ALL TABLES IN SCHEMA public TO book;\""
+done
 
 echo "PostgreSQL and MySQL practice databases loaded."

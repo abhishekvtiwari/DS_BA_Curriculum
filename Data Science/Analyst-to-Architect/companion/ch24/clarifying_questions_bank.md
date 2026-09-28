@@ -1,6 +1,7 @@
 # Clarifying questions for a vague ask
 
 Six questions that turn almost any stakeholder request into something answerable.
+Questions 1, 2, 3 and 5 are Chapter 5's checks (section 5.2), asked out loud; 4 and 6 are new.
 Riverstone Supplies is fictional; every name is invented.
 
 1. **What decision will this answer inform?** ("So I know what to cut, or what to defend")

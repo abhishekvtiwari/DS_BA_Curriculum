@@ -1,0 +1,7 @@
+# ssh-keygen -t ed25519 -C "meera@laptop", run as user meera (home /home/meera, private mount namespace), Enter pressed three times; OpenSSH_9.6p1 Ubuntu-3ubuntu13.19, 28 Sep 2026. First six lines of the real transcript (fingerprint and randomart follow and are random).
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/meera/.ssh/id_ed25519): 
+Created directory '/home/meera/.ssh'.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/meera/.ssh/id_ed25519

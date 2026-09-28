@@ -9,7 +9,8 @@ Seed for the damage: 20251014. Same seed, same mess.
 Creates:
   orders_q4_2025_export.csv      the ERP's Q4 2025 order-line export, with the data-entry habits of four branch sales offices (messy)
   customers_crm_export.csv       the CRM's customer list (messy)
-  city_map.csv, status_map.csv   starter mapping tables (incomplete on purpose; the chapter completes them)
+  city_map.csv, status_map.csv, branch_map.csv   starter mapping tables, columns raw_value and clean_value
+                                 (incomplete on purpose; the chapter and its exercises complete them)
   answer_key.json                every planted problem with its count, plus the true clean totals
   clean_truth_orders_q4_2025.csv the correct clean table (for checking your work only)
 
@@ -151,10 +152,13 @@ for i, r in cc.iterrows():
 with open(HERE / "customers_crm_export.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f); w.writerow(["customer_code", "customer_name", "city", "segment", "email", "signup_date"]); w.writerows(cust_rows)
 
-pd.DataFrame([("Bombay", "Mumbai"), ("Bangalore", "Bengaluru"), ("Gurgaon", "Gurugram"), ("Calcutta", "Kolkata")],
-             columns=["raw_city", "clean_city"]).to_csv(HERE / "city_map.csv", index=False)
+pd.DataFrame([("bombay", "Mumbai"), ("bangalore", "Bengaluru"), ("gurgaon", "Gurugram"), ("calcutta", "Kolkata")],
+             columns=["raw_value", "clean_value"]).to_csv(HERE / "city_map.csv", index=False)
 pd.DataFrame([("delivered", "Delivered"), ("dlvd", "Delivered"), ("canceled", "Cancelled"), ("cancelled", "Cancelled"),
-              ("shipped", "Shipped"), ("pending", "Pending")], columns=["raw_status", "clean_status"]).to_csv(HERE / "status_map.csv", index=False)
+              ("shipped", "Shipped"), ("pending", "Pending")], columns=["raw_value", "clean_value"]).to_csv(HERE / "status_map.csv", index=False)
+# starter branch map (incomplete on purpose: Exercise 7 completes it to 12 rows); same columns as the SQL map_ tables
+pd.DataFrame([("mumbai ho", "Mumbai HO"), ("bengaluru", "Bengaluru"), ("bangalore", "Bengaluru"), ("delhi", "Delhi"),
+              ("kolkata", "Kolkata"), ("calcutta", "Kolkata")], columns=["raw_value", "clean_value"]).to_csv(HERE / "branch_map.csv", index=False)
 
 valid = truth[truth.status != "Cancelled"]
 key = {

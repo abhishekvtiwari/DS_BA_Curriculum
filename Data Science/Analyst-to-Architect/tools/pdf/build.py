@@ -448,10 +448,10 @@ JOBS['ch25'] = lambda: build('ch25-the-business-analyst-track.md', 'Ch25-The-Bus
 
 JOBS['ch26'] = lambda: build('ch26-the-professional-toolkit-git-agile-documentation-and-ai-assistants.md', 'Ch26-The-Professional-Toolkit', '',
       'Chapter 26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants',
-      'Analyst to Architect \u00b7 Chapter 26 \u00b7 The Professional Toolkit',
+      'Analyst to Architect \u00b7 Chapter 26 \u00b7 The Professional Toolkit: Git, Agile, Documentation & AI Assistants',
       dict(KICKER='Analyst to Architect \u00b7 Part 2 \u2014 The Analyst',
-           TITLE='Chapter 26<br>The Professional Toolkit',
-           SUB='Git, GitHub and pull requests; the four undos; keeping secrets out of a repository; one automated check; a README a stranger can follow; Agile, Scrum, Kanban and Jira; and working with an AI assistant.',
+           TITLE='Chapter 26<br>The Professional Toolkit: Git, Agile, Documentation &amp; AI Assistants',
+           SUB='The terminal in 20 minutes; Git, GitHub and pull requests; the four undos; keeping secrets out of a repository; one automated check; a README a stranger can follow; Agile, Scrum, Kanban and Jira; and working with an AI assistant.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>Every terminal session was run and its output captured'), 2)
 
 JOBS['ch27'] = lambda: build('ch27-capstone-your-analyst-portfolio.md', 'Ch27-Capstone-Your-Analyst-Portfolio', '',
@@ -518,6 +518,7 @@ def stamp_footers(pdf_path, heads, label):
 def build_package(srcs, name, title, cover):
     """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …)."""
     joined = '\n\n'.join((MS / s).read_text(encoding='utf-8').strip() for s in srcs) + '\n'
+    joined = re.sub(r'^\*Part \d+ — [^\n]*\*\n', '', joined, flags=re.M)   # the part opening page says it once
     src = D / f'{name}.src.md'
     src.write_text(joined, encoding='utf-8')
     body_html = D / f'{name}.html'
@@ -555,6 +556,26 @@ JOBS['package-0-1'] = lambda: build_package(
     dict(KICKER='Analyst to Architect · Parts 0 and 1', TITLE='First Principles<br>and The Map',
          SUB='How to use this book; Part 0, First Principles: Data from Zero (Chapters 1–6); and Part 1, The Map (Chapters 7–9).'))
 
+
+
+def chapter_files(order):
+    return [sorted(MS.glob(f'ch{n:02d}-*.md'))[0].name for n in order]
+
+
+PART2_ORDER = [10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27]   # approved reading order
+PART3_ORDER = [28, 34, 29, 32, 33, 30, 31]
+
+JOBS['package-2'] = lambda: build_package(
+    ['part2-the-analyst.md'] + chapter_files(PART2_ORDER),
+    'Part-2-The-Analyst', 'Analyst to Architect — Part 2: The Analyst',
+    dict(KICKER='Analyst to Architect · Part 2', TITLE='The Analyst',
+         SUB='Spreadsheets, SQL, cleaning, charts, Power BI, Python, statistics, business skills and a portfolio: the skills of a first analyst job.'))
+
+JOBS['package-3'] = lambda: build_package(
+    ['part3-advanced-analytics.md'] + chapter_files(PART3_ORDER),
+    'Part-3-Advanced-Analytics-and-Analytics-Engineering', 'Analyst to Architect — Part 3: Advanced Analytics & Analytics Engineering',
+    dict(KICKER='Analyst to Architect · Part 3', TITLE='Advanced Analytics &amp;<br>Analytics Engineering',
+         SUB='Advanced SQL and data modelling, the command line, Python as software, dbt, the computer science behind fast code, experiments, and causal inference.'))
 
 # ---------------------------------------------------------------------------
 # Generic builder.

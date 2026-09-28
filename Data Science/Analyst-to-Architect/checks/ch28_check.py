@@ -30,17 +30,20 @@ check('avg other Q3', (232692+329282)/2, 280987, 0.5)
 check('quartile orders', 44+43+43+43, 173, 0); check('quartile revenue', 307338+716217+1196060+2115857, 4335472, 0)
 check('top quartile share', 100*2115857/4335471, 48.8); check('bottom quartile share', 100*307338/4335471, 7.1)
 # 28.4-28.6 timings (medians in the log)
-log = open('/home/claude/book/checks/ch28_perf_log.txt').read()
+import os
+log = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'companion', 'ch28', 'ch28_perf_log.txt')).read()
 med = {k: float(v) for k, v in re.findall(r'^(\w+): ([\d.]+)$', log.split('===== SUMMARY =====')[1], re.M)}
-check('index speed-up ~380x', med['p1_seq']/med['p1_idx'], 376, 5)
-check('EXTRACT vs range 35x', med['p4_fn']/med['p4_range'], 35, 0.3)
-check('writes 6x slower', med['w4']/med['w0'], 6.0, 0.1)
+check('index speed-up ~200x', med['p1_seq']/med['p1_idx'], 215, 5)
+check('EXTRACT vs range ~45x', med['p4_fn']/med['p4_range'], 44.5, 0.5)
+check('writes 5.5x slower', med['w4']/med['w0'], 5.5, 0.1)
 check('delivered share', 100*689050/714285, 96.5)
-check('pages in orders', 41*1024/8, 5248, 0)
+check('pages in orders', 41*1024/8, 5248, 0); check('heap blocks 4534 of 5221', 5170/5221*100, 99.0, 0.1)
+check('rows removed composite', 23526-9301, 14225, 0)
 dash_before = med['p3b_seq'] + med['p4_fn'] + med['p7_seq'] + med['p9_live']
 dash_after = med['p3b_idx'] + med['p4_range'] + med['p7_partial'] + med['p9_mv']
-check('dashboard before', dash_before, 2702, 1); check('trend share', 100*med['p9_live']/dash_before, 86.7)
-check('dashboard after under 4 ms', dash_after, 3.78, 0.01)
+check('dashboard before', dash_before, 3064, 1); check('trend share', 100*med['p9_live']/dash_before, 85.7)
+check('dashboard after under 5 ms', dash_after, 4.44, 0.01)
+check('hash join remainder', 285.266-142.289, 143, 0.5)
 # 28.7 normalization
 check('order sheet revenue', 2900 + 20900 + 15*430*0.95 + 25*750*0.95 + 45*430 + 20*750 + 20*290 + 30*430 + 25*750 + 25*380, 129040, 0.001)
 # 28.8 grain
@@ -53,8 +56,20 @@ patel_before = int(q("SELECT ROUND(SUM(net_revenue)) FROM sales_lines WHERE cust
 harbour_retail = int(q("SELECT ROUND(SUM(net_revenue)) FROM sales_lines WHERE customer_id = 11 AND order_date < '2025-09-01'"))
 check('Patel before April', patel_before, 38038, 1); check('Harbour as Retail', harbour_retail, 122880, 1)
 check('segment difference', patel_before - harbour_retail, -84842, 1)
-check('SCD2 trap total', 77500+18000+77500, 173000, 0); check('SCD2 true total', 42000+35500+18000, 95500, 0)
+check('SCD2 trap total', 90000+18000+90000, 198000, 0); check('SCD2 true total', 42000+12500+35500+18000, 108000, 0)
+check('Sharma both versions', 42000+12500+35500, 90000, 0)
 metro = int(q("SELECT ROUND(SUM(net_revenue)) FROM sales_lines WHERE customer_id = 5 AND order_date < '2025-07-01'"))
 check('Metro Mart in Thane', metro, 152040, 1); check('Mumbai difference', 1080800-928760, 152040, 0)
 check('Q4 from star equals view', int(q("SELECT ROUND(SUM(net_revenue)) FROM sales_lines WHERE order_date >= '2025-10-01'")), 1754302, 1)
 print(f'ch28_check.py: {ok} checks passed')
+
+# every QUERY PLAN / MySQL tree printed in the chapter must appear, line for line, in the recorded log
+md = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'manuscript',
+                       'ch28-advanced-sql-performance-and-data-modeling.md')).read()
+norm = lambda t: [re.sub(r'\s+', ' ', l).strip() for l in t.strip().splitlines() if l.strip() and not re.fullmatch(r'[-\s]+', l)]
+logn = '\n'.join(norm(log))
+plans = [b for lang, b in re.findall(r'^```(\w*)\n(.*?)^```$', md, re.S | re.M) if not lang and ('QUERY PLAN' in b or b.startswith('-> '))]
+for b in plans:
+    assert '\n'.join(norm(b)) in logn, 'plan not in log:\n' + b[:300]
+    ok += 1
+print(f'ch28_check.py: {ok} checks passed, including {len(plans)} plans found in the log')

@@ -15,23 +15,30 @@ def box(x,y,w,h,title,c,lines=(),size=11.3,mono=False):
     return "".join(o)
 
 def fig_workflow():
+    # 2 rows of 3, snake order (1-2-3, then 4-5-6 right to left), so text prints at >= 7 pt; the loop goes to box 2
     o=[]
     st=[("1 Load as text","stg_orders_raw",["25,976 rows read","nothing rejected"],MUTED),
         ("2 Profile","count, pattern, range",["4 date formats","18 status spellings","6 price formats"],ACC),
         ("3 Fix","type, standardize, dedupe",["7 non-data rows out","137 duplicates out","17 values repaired"],PURPLE),
         ("4 Validate","rules that must be 0",["8 rules","20 lines quarantined"],ORANGE),
-        ("5 Reconcile","against the source",["25,832 lines","25,812 identical","₹423,561,010.50"],GREEN),
+        ("5 Reconcile","against the source",["25,832 lines","25,812 identical","₹42,35,61,010.50"],GREEN),
         ("6 Document","cleaning log",["every rule, count,","and decision","dq_order_issues"],INK)]
-    W=150; G=20
-    for i,(t,sub,lines,c) in enumerate(st):
-        x=30+i*(W+G)
-        o.append(box(x,60,W,150,t,c,[sub,""]+lines,11))
-        if i<5: o.append(arrow(x+W+2,135,x+W+G-2,135))
-    o.append(text(30,36,"The cleaning workflow, with Riverstone's Q4 2025 order export",13.5,INK,"bold",family=HEAD))
-    o.append(path("M960,215 C960,270 600,270 180,270 C140,270 110,250 105,215",stroke=MUTED,sw=1.4,dash="5 4"))
-    o.append(f'<path d="M105,215 l-6,10 l12,0 z" fill="{MUTED}"/>')
-    o.append(rect(330,256,420,26,fill="#fff",stroke=RULE,rx=13)); o.append(text(540,274,"A failed check sends you back to profiling, never to the report",11.5,MUTED,anchor="middle"))
-    return svg(1060,300,"".join(o))
+    W=200; G=40; H=140; X0=20; Y1=50; Y2=270
+    xs=[X0, X0+W+G, X0+2*(W+G)]
+    pos=[(xs[0],Y1),(xs[1],Y1),(xs[2],Y1),(xs[2],Y2),(xs[1],Y2),(xs[0],Y2)]
+    for (t,sub,lines,c),(x,y) in zip(st,pos):
+        o.append(box(x,y,W,H,t,c,[sub,""]+lines,11.2))
+    o.append(arrow(xs[0]+W+3,Y1+70,xs[1]-3,Y1+70)); o.append(arrow(xs[1]+W+3,Y1+70,xs[2]-3,Y1+70))
+    o.append(arrow(xs[2]+W/2,Y1+H+6,xs[2]+W/2,Y2-4))
+    o.append(arrow(xs[2]-3,Y2+70,xs[1]+W+3,Y2+70)); o.append(arrow(xs[1]-3,Y2+70,xs[0]+W+3,Y2+70))
+    # failed check: from Validate (4) and Reconcile (5) back up to Profile (2)
+    o.append(path(f"M{xs[1]+W/2},{Y2-2} V{Y1+H+10}",stroke=RED,sw=1.6,dash="5 4"))
+    o.append(f'<path d="M{xs[1]+W/2},{Y1+H+6} l-6,10 l12,0 z" fill="{RED}"/>')
+    o.append(path(f"M{xs[2]+W*0.25},{Y2-2} V{Y2-30} H{xs[1]+W/2}",stroke=RED,sw=1.6,dash="5 4"))
+    o.append(text(xs[1]+W/2-8,Y1+H+36,"a failed check goes back",11.2,RED,"bold",anchor="end"))
+    o.append(text(xs[1]+W/2-8,Y1+H+52,"to 2 Profile, never to the report",11.2,RED,"bold",anchor="end"))
+    o.append(text(X0,30,"The cleaning workflow, with Riverstone's Q4 2025 order export",13.5,INK,"bold",family=HEAD))
+    return svg(700,Y2+H+14,"".join(o))
 
 def fig_mapping():
     o=[]
@@ -41,64 +48,73 @@ def fig_mapping():
          ("Cancelled",985),("Cxl",32),("CANCELLED",31),("Canceled",28),("cancelled",24)]
     groups={"Delivered":range(0,5),"Pending":range(5,9),"Shipped":range(9,13),"Cancelled":range(13,18)}
     col={"Delivered":GREEN,"Pending":ORANGE,"Shipped":ACC,"Cancelled":RED}
-    o.append(text(30,30,"18 spellings in the export",13.5,INK,"bold",family=HEAD)); o.append(text(640,30,"4 values after the mapping table",13.5,INK,"bold",family=HEAD))
-    o.append(text(330,30,"key = LOWER(TRIM(status))",12,MUTED,family=MONO))
+    o.append(text(30,30,"18 spellings in the export",13.5,INK,"bold",family=HEAD)); o.append(text(620,30,"4 values after mapping",13.5,INK,"bold",family=HEAD))
+    o.append(text(300,56,"key = LOWER(TRIM(status))",12.6,MUTED,family=MONO))
     ys={}
     for g,rg in groups.items():
         for i in rg:
-            y=50+i*21; name,n=raw[i]
-            o.append(rect(30,y,230,18,fill="#fff",stroke=col[g],sw=1,rx=3))
-            o.append(text(38,y+13,name,11,INK,family=MONO)); o.append(text(252,y+13,f"{n:,}",11,MUTED,anchor="end",family=MONO))
-            ys.setdefault(g,[]).append(y+9)
+            y=70+i*23; name,n=raw[i]
+            o.append(rect(30,y,240,20,fill="#fff",stroke=col[g],sw=1,rx=3))
+            o.append(text(38,y+15,name,12.6,INK,family=MONO)); o.append(text(262,y+15,f"{n:,}",12.6,MUTED,anchor="end",family=MONO))
+            ys.setdefault(g,[]).append(y+10)
     clean={"Delivered":22551,"Pending":1174,"Shipped":1144,"Cancelled":1100}
     for k,(g,rg) in enumerate(groups.items()):
-        cy=sum(ys[g])/len(ys[g]); 
-        for y in ys[g]: o.append(path(f"M262,{y} C400,{y} 500,{cy} 636,{cy}",stroke=col[g],sw=1.1))
-        o.append(rect(640,cy-16,200,32,fill=col[g],rx=6)); o.append(text(652,cy+5,g,13,"#fff","bold"))
-        o.append(text(830,cy+5,f"{clean[g]:,}",12,"#fff","bold",anchor="end",family=MONO))
-    o.append(text(30,448,"Counts are raw data rows (duplicates still included). ␣ marks a trailing space. Unmapped values fail a validation rule instead of disappearing.",11.5,MUTED))
-    return svg(880,465,"".join(o))
+        cy=sum(ys[g])/len(ys[g])
+        for y in ys[g]: o.append(path(f"M272,{y} C400,{y} 500,{cy} 616,{cy}",stroke=col[g],sw=1.1))
+        o.append(rect(620,cy-17,230,34,fill=col[g],rx=6)); o.append(text(632,cy+5,g,13.5,"#fff","bold"))
+        o.append(text(840,cy+5,f"{clean[g]:,}",13,"#fff","bold",anchor="end",family=MONO))
+    o.append(text(30,512,"Counts are raw data rows (duplicates still included). ␣ marks a trailing space.",12.6,MUTED))
+    o.append(text(30,531,"Unmapped values fail a validation rule instead of disappearing.",12.6,MUTED))
+    return svg(880,545,"".join(o))
 
 def fig_dupes():
+    # steps in the same order as the SQL: remove suffix, collapse spaces, LOWER
     o=[]
-    o.append(text(30,30,"Building a match key for customer names",13.5,INK,"bold",family=HEAD))
-    steps=[("As entered","BHARAT  Stores Agra Pvt Ltd"),("LOWER","bharat  stores agra pvt ltd"),("collapse spaces, TRIM","bharat stores agra pvt ltd"),("remove legal suffix","bharat stores agra")]
+    o.append(text(20,28,"Building a match key for customer names",13.5,INK,"bold",family=HEAD))
+    steps=[("As entered","BHARAT\u00a0\u00a0Stores Agra Pvt Ltd"),("1 remove legal suffix","BHARAT\u00a0\u00a0Stores Agra"),
+           ("2 collapse spaces (two spaces become one)","BHARAT Stores Agra"),("3 LOWER","bharat stores agra")]
     for i,(t,v) in enumerate(steps):
-        x=30+i*250
-        o.append(rect(x,50,228,64,fill="#fff",stroke=ACC if i<3 else GREEN,sw=1.5,rx=6))
-        o.append(text(x+10,70,t,11.5,MUTED,"bold")); o.append(text(x+10,98,v,11.5,INK,family=MONO))
-        if i<3: o.append(arrow(x+230,82,x+248,82))
-    rows=[("match on name key only","48 groups, 96 records","every planted duplicate found; 0 false matches",GREEN),
-          ("match on name key + city","46 groups, 92 records","misses 2 pairs where one record has no city",ORANGE),
-          ("match on exact name","9 groups","misses every case, space, and suffix variant",RED)]
-    for i,(a,b,c,col) in enumerate(rows):
-        y=150+i*46
-        o.append(rect(30,y,960,36,fill="#fff",stroke=col,sw=1.4,rx=6)); o.append(rect(30,y,8,36,fill=col))
-        o.append(text(50,y+23,a,12.3,INK,"bold")); o.append(text(330,y+23,b,12.3,col,"bold",family=MONO)); o.append(text(560,y+23,c,12,INK))
-    o.append(text(30,305,"Riverstone's CRM export: 5,027 records, 48 planted duplicates. A key finds candidates; a person confirms them before any merge.",11.8,MUTED))
-    return svg(1010,320,"".join(o))
+        x=20+(i%2)*350; y=44+(i//2)*72
+        o.append(rect(x,y,310,58,fill="#fff",stroke=ACC if i<3 else GREEN,sw=1.5,rx=6))
+        o.append(text(x+10,y+21,t,11.5,MUTED,"bold")); o.append(text(x+10,y+45,v,12,INK,family=MONO))
+    o.append(arrow(332,73,368,73)); o.append(path("M525,104 V110 H175 V114",stroke=MUTED,sw=1.6)); o.append(f'<path d="M175,116 l-5,-8 l10,0 z" fill="{MUTED}"/>')
+    o.append(arrow(332,145,368,145))
+    rows=[("match on name key only","48 groups, 96 records","every planted duplicate found; 0 false matches",GREEN,"✓"),
+          ("match on name key + city","46 groups, 92 records","misses 2 pairs where one record has no city",ORANGE,"!"),
+          ("match on exact name","9 groups","misses every case, space, and suffix variant",RED,"✗")]
+    for i,(a,b,c,col,mk) in enumerate(rows):
+        y=200+i*56
+        o.append(rect(20,y,660,48,fill="#fff",stroke=col,sw=1.4,rx=6)); o.append(rect(20,y,24,48,fill=col))
+        o.append(text(32,y+30,mk,14,"#fff","bold",anchor="middle"))
+        o.append(text(56,y+20,a,12,INK,"bold")); o.append(text(660,y+20,b,12,col,"bold",anchor="end",family=MONO)); o.append(text(56,y+40,c,11.5,INK))
+    o.append(text(20,388,"Riverstone's CRM export: 5,027 records, 48 planted duplicate pairs.",11.5,MUTED))
+    o.append(text(20,406,"A key finds candidates; a person confirms them before any merge.",11.5,MUTED))
+    return svg(700,418,"".join(o))
 
 def fig_missing():
     o=[]
-    o.append(text(30,30,"What to do with a missing or wrong value",13.5,INK,"bold",family=HEAD))
-    q=[("Is it really missing?","'', NULL, 'N/A', '-', 'unknown', 'NULL' all mean the same thing",ACC),
-       ("Can another column supply it reliably?","product from a unique list price; date from the entry timestamp",PURPLE),
-       ("Is it needed for the number you report?","quantity is needed for revenue; sales rep is not",ORANGE)]
-    for i,(t,sub,c) in enumerate(q):
-        y=56+i*96
-        o.append(rect(30,y,420,62,fill="#fff",stroke=c,sw=1.6,rx=8)); o.append(text(46,y+26,t,13,INK,"bold")); o.append(text(46,y+47,sub,11.3,MUTED))
-    outs=[("Standardize to NULL","100 cities, 150 emails",ACC),("Repair, and log it","8 products, 9 dates",PURPLE),("Quarantine, and report the gap","14 quantities (+6 impossible)",ORANGE),("Keep NULL and label it","3.1% of lines have no sales rep",GREEN)]
-    ys=[87,183,279,340]
-    for i,((t,sub,c),y) in enumerate(zip(outs,ys)):
-        o.append(rect(560,y-24,400,50,fill=c,rx=8)); o.append(text(576,y-2,t,13,"#fff","bold")); o.append(text(576,y+17,sub,11.5,"#fff"))
-    o.append(arrow(452,87,556,87,ACC)); o.append(text(470,80,"yes",11,ACC,"bold"))
-    o.append(arrow(240,120,240,150)); o.append(text(250,140,"then",11,MUTED))
-    o.append(arrow(452,183,556,183,PURPLE)); o.append(text(470,176,"yes",11,PURPLE,"bold"))
-    o.append(arrow(240,216,240,246)); o.append(text(250,236,"no",11,MUTED))
-    o.append(arrow(452,279,556,279,ORANGE)); o.append(text(470,272,"yes",11,ORANGE,"bold"))
-    o.append(path("M240,310 V340 H556",stroke=GREEN,sw=1.6)); o.append(f'<path d="M556,340 l-8,-5 l0,10 z" fill="{GREEN}"/>'); o.append(text(250,334,"no",11,GREEN,"bold"))
-    o.append(text(30,390,"Never fill an identifier, a price, or a quantity with 0 or an average: the report would look complete and be wrong.",11.8,RED))
-    return svg(990,405,"".join(o))
+    o.append(text(20,28,"What to do with a missing or wrong value",13.5,INK,"bold",family=HEAD))
+    q=[("Is it really missing?",["'', NULL, 'N/A', '-', 'unknown', 'NULL'","all mean the same thing"],ACC),
+       ("Can another column supply it reliably?",["product from a unique list price;","date from the entry timestamp"],PURPLE),
+       ("Is it needed for the number you report?",["quantity is needed for revenue;","sales rep is not"],ORANGE)]
+    for i,(t,subs,c) in enumerate(q):
+        y=48+i*100
+        o.append(rect(20,y,330,72,fill="#fff",stroke=c,sw=1.6,rx=8)); o.append(text(32,y+22,t,12,INK,"bold"))
+        for j,sub in enumerate(subs): o.append(text(32,y+42+j*17,sub,11,MUTED))
+    outs=[("1 Standardize to NULL","100 cities, 150 emails",ACC),("2 Repair, and log it","8 products, 9 dates",PURPLE),
+          ("3 Quarantine, report the gap","14 quantities (+6 impossible)",ORANGE),("4 Keep NULL and label it","3.1% of lines have no rep",GREEN)]
+    ys=[84,184,284,356]
+    for (t,sub,c),y in zip(outs,ys):
+        o.append(rect(440,y-26,245,52,fill=c,rx=8)); o.append(text(452,y-5,t,12,"#fff","bold")); o.append(text(452,y+15,sub,11,"#fff"))
+    o.append(arrow(352,84,436,84,ACC)); o.append(text(362,77,"yes",11,ACC,"bold"))
+    o.append(arrow(185,121,185,146)); o.append(text(195,138,"then",11,MUTED))
+    o.append(arrow(352,184,436,184,PURPLE)); o.append(text(362,177,"yes",11,PURPLE,"bold"))
+    o.append(arrow(185,221,185,246)); o.append(text(195,238,"no",11,MUTED))
+    o.append(arrow(352,284,436,284,ORANGE)); o.append(text(362,277,"yes",11,ORANGE,"bold"))
+    o.append(path("M185,321 V356 H432",stroke=GREEN,sw=1.6)); o.append(f'<path d="M436,356 l-8,-5 l0,10 z" fill="{GREEN}"/>'); o.append(text(195,348,"no",11,GREEN,"bold"))
+    o.append(text(20,410,"Never fill an identifier, a price, or a quantity with 0 or an average:",11.5,RED,"bold"))
+    o.append(text(20,428,"the report would look complete and be wrong.",11.5,RED,"bold"))
+    return svg(700,440,"".join(o))
 
 if __name__ == "__main__":
     for n,f in [("fig14-1-cleaning-workflow.svg",fig_workflow),("fig14-4-status-mapping.svg",fig_mapping),("fig14-3-duplicate-match-keys.svg",fig_dupes),("fig14-2-missing-values-decisions.svg",fig_missing)]:

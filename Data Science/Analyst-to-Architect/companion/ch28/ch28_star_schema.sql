@@ -32,7 +32,7 @@ SELECT TO_CHAR(d, 'YYYYMMDD')::INTEGER,
 FROM generate_series(DATE '2025-01-01', DATE '2025-12-31', INTERVAL '1 day') AS d;
 
 CREATE TABLE dw.dim_product (
-    product_key   SERIAL PRIMARY KEY,
+    product_key   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     product_id    INTEGER NOT NULL UNIQUE,
     product_name  VARCHAR(100) NOT NULL,
     category      VARCHAR(30) NOT NULL
@@ -41,7 +41,7 @@ INSERT INTO dw.dim_product (product_id, product_name, category)
 SELECT product_id, product_name, category FROM products ORDER BY product_id;
 
 CREATE TABLE dw.dim_sales_rep (
-    sales_rep_key  SERIAL PRIMARY KEY,
+    sales_rep_key  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     employee_id    INTEGER UNIQUE,
     rep_name       VARCHAR(100) NOT NULL,
     job_title      VARCHAR(50) NOT NULL
@@ -52,7 +52,7 @@ INSERT INTO dw.dim_sales_rep (employee_id, rep_name, job_title)
 SELECT employee_id, employee_name, job_title FROM employees ORDER BY employee_id;
 
 CREATE TABLE dw.dim_customer (
-    customer_key   SERIAL PRIMARY KEY,
+    customer_key   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_id    INTEGER NOT NULL,
     customer_name  VARCHAR(100) NOT NULL,
     city           VARCHAR(50),

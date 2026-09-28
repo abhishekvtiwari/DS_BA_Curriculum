@@ -1,0 +1,10 @@
+[project]
+name = "analytics"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "dbt-core>=1.12.5",
+    "dbt-postgres>=1.11.0",
+    "sqlfluff>=4.3.0",
+    "sqlfluff-templater-dbt>=4.3.0",
+]

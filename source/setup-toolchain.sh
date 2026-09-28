@@ -11,6 +11,11 @@ apt-get install -y -qq pandoc poppler-utils fonts-dejavu-core fonts-dejavu-extra
 pip install -q --ignore-installed cryptography
 pip install -q pypdf pillow pymupdf fonttools            # pymupdf: tools/pdf/layout_check.py
 pip install -q "matplotlib==3.10.8" pandas numpy   # the version the figure scripts were drawn with
+# Chapter code checks (Parts 2 and 3): databases, statistics, spreadsheets, tests
+apt-get install -y -qq postgresql mysql-server libreoffice-calc nodejs
+pip install -q scipy statsmodels scikit-learn duckdb seaborn pyarrow openpyxl xlsxwriter tabulate \
+    psycopg2-binary "psycopg[binary]" pymysql mysql-connector-python sqlalchemy python-dotenv aiosmtpd \
+    pytest nbformat nbclient ipykernel jupyter
 
 # Playwright must match the Chromium on disk. The cloud container ships chromium-1194 in
 # /opt/pw-browsers, which is Playwright 1.56.0. Elsewhere, install any version and then run

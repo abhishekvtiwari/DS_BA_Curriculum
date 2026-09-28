@@ -1,6 +1,4 @@
 """Reading from the database. The only module that knows SQL."""
-from __future__ import annotations
-
 from datetime import date
 
 import pandas as pd
@@ -19,7 +17,8 @@ TARGET_SQL = text("SELECT target_revenue FROM sales_targets WHERE target_month =
 def fetch_sales_lines(engine: Engine, month_start: date, next_month: date) -> pd.DataFrame:
     """One row per non-cancelled order line in the month, with net_revenue as a float."""
     with engine.connect() as conn:
-        lines = pd.read_sql(SALES_LINES_SQL, conn, params={"month_start": month_start, "next_month": next_month})
+        lines = pd.read_sql(SALES_LINES_SQL, conn,
+                            params={"month_start": month_start, "next_month": next_month})
     return lines.astype({"net_revenue": "float64"})
 
 
