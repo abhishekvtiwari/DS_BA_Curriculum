@@ -44,11 +44,12 @@ def f1():
         misses += not covers
         ax.plot([lo/1000, hi/1000], [i, i], color=ACC if covers else RED, lw=1.5 if covers else 2.2, alpha=0.9)
         ax.plot(s.mean()/1000, i, "o", ms=2.4, color=ACC if covers else RED)
-        if not covers:   # label the misses, so red is not the only cue
-            ax.text(hi/1000 + 0.25 if s.mean() < truth else lo/1000 - 0.25, i, "misses", va="center",
-                    ha="left" if s.mean() < truth else "right", color=RED, fontsize=8, fontweight="bold")
+        if not covers:   # label the misses at their far end, so red is not the only cue
+            left = s.mean() < truth
+            ax.text(lo/1000 - 0.2 if left else hi/1000 + 0.2, i, "misses", va="center",
+                    ha="right" if left else "left", color=RED, fontsize=8, fontweight="bold")
     ax.axvline(truth/1000, color=INK, lw=1.8)
-    ax.set_ylim(-1.5, 64.5)
+    ax.set_ylim(-1.5, 64.5); ax.set_xlim(17.2, 32.4)
     ax.annotate(f"the true mean, ₹{truth:,.0f}", xy=(truth/1000, 61.5), xytext=(truth/1000 + 2.2, 62.3),
                 color=INK, fontsize=8.5, fontweight="bold", va="center",
                 bbox=dict(boxstyle="square,pad=0.15", fc="white", ec="none"),
@@ -102,8 +103,8 @@ def f3():
         y = v + 0.6 if v > 8 else 6.2       # the small bar's label sits above the 5% line, not on it
         ax.text(bar.get_x()+bar.get_width()/2, y, f"{v:.1f}%", ha="center", fontweight="bold", color=INK)
     ax.axhline(5, color=MUTED, ls="--", lw=1.2)
-    ax.text(2.28, 3.2, "the 5% you\nsigned up for", color=MUTED, fontsize=8, ha="right", va="top")
-    ax.set_ylim(0, 29)
+    ax.text(2.34, 5.5, "the 5% you\nsigned up for", color=MUTED, fontsize=8, ha="left", va="bottom")
+    ax.set_ylim(0, 29); ax.set_xlim(-0.45, 2.95)
     ax.set_xlabel("number of times the test is checked before it ends")
     ax.set_ylabel("false 'winners' (%)"); tidy(ax)
     ax.set_title("Two identical variants, 1,500 tests per bar: how often peeking declares a winner", pad=8)
@@ -132,9 +133,9 @@ def f4():
     shades = {"Metro": "#c8b6dd", "Upcountry": PURPLE}
     for route in ["Upcountry", "Metro"]:
         vals = mix[route].values
-        a3.bar(mix.index, vals, bottom=bottom, color=shades[route], width=0.55, edgecolor="white", lw=1)
+        a3.bar(mix.index, vals, bottom=bottom, color=shades[route], width=0.8, edgecolor="white", lw=1)
         for i, v in enumerate(vals):
-            a3.text(i, bottom[i] + v/2, f"{v:.0f}%\n{route.lower()}", ha="center", va="center", fontsize=7.5,
+            a3.text(i, bottom[i] + v/2, f"{v:.0f}%\n{route.lower()}", ha="center", va="center", fontsize=7,
                     color="white" if route == "Upcountry" else INK, fontweight="bold")
         bottom += vals
     a3.set_ylim(0, 108); a3.set_title("3. Why:\nthe route mix differs"); tidy(a3)

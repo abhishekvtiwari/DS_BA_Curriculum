@@ -56,7 +56,7 @@ Every confidence interval in this chapter has the same shape:
 
 - The **estimate** is the number from your sample.
 - The **standard error** (Chapter 21, section 21.8) is how much that estimate would typically change from one sample to the next.
-- The **multiplier** says how many standard errors to go each side. For 95% confidence it's about 1.96, because 95% of a normal distribution lies within 1.96 standard deviations of its centre (Chapter 21, section 21.5). The part added and subtracted, multiplier × standard error, is the **margin of error**.
+- The **multiplier** says how many standard errors to go each side. For 95% confidence it's about 1.96. Chapter 21's 68–95–99.7 rule (section 21.5) says 95% of a normal distribution lies within about 2 standard deviations of its centre; 1.96 is the exact figure. The part added and subtracted, multiplier × standard error, is the **margin of error**.
 
 Start with a percentage, because the arithmetic is shortest. A survey of 400 customers finds 62% satisfied.
 
@@ -251,9 +251,9 @@ With 45,040 orders the company interval is ±0.4 points, so the on-time figure i
 
 Section 22.2 compares two open rates. The interval for the difference between two proportions adds the two squared standard errors under one square root:
 
-> **The formula: an interval for a difference of two proportions.** (p̂_B − p̂_A) ± 1.96 × √(p̂_A(1 − p̂_A) ÷ *n*_A + p̂_B(1 − p̂_B) ÷ *n*_B)
+> **The formula: an interval for a difference of two proportions.** (p̂<sub>B</sub> − p̂<sub>A</sub>) ± 1.96 × √(p̂<sub>A</sub>(1 − p̂<sub>A</sub>) ÷ *n*<sub>A</sub> + p̂<sub>B</sub>(1 − p̂<sub>B</sub>) ÷ *n*<sub>B</sub>)
 >
-> - **p̂_A** and **p̂_B** are the two groups' rates; ***n*_A** and ***n*_B** their sizes.
+> - **p̂<sub>A</sub>** and **p̂<sub>B</sub>** are the two groups' rates; ***n*<sub>A</sub>** and ***n*<sub>B</sub>** their sizes.
 > - Each term under the root is one group's squared standard error. Uncertainties add as squares, not as plain numbers, which is why the root goes round the sum.
 
 > **Watch out: precision is not accuracy.** A confidence interval measures sampling error only. It says nothing about a biased sample, a broken query, or the 100 customers with no city. Chapter 14's checks come first; the interval is the last step, not the first.
@@ -349,7 +349,7 @@ A χ² of 0 would mean the observed table matches the no-difference table exactl
 
 In a spreadsheet, put the observed counts in one 2×2 range and the expected counts in another; `=CHISQ.TEST(observed, expected)` returns the p-value directly.
 
-In Python, build the observed table straight from the data with `pd.crosstab` (Chapter 18), which counts rows for each combination of two columns:
+In Python, build the observed table straight from the data with `pd.crosstab` (Chapter 21), which counts rows for each combination of two columns:
 
 ```python
 from scipy.stats import chi2_contingency
@@ -567,12 +567,12 @@ Running the test is the simple part. The design is where it's won or lost.
 For a proportion, the sample size needs the baseline rate, the smallest difference worth detecting (the **minimum detectable effect**), α, and power:
 
 > **The formula: sample size per variant for two proportions.**
-> *n* = [ z_α/2 × √(2 p̄(1 − p̄)) + z_β × √(p₁(1 − p₁) + p₂(1 − p₂)) ]² ÷ (p₂ − p₁)²
+> *n* = [ z<sub>α/2</sub> × √(2 p̄(1 − p̄)) + z<sub>β</sub> × √(p₁(1 − p₁) + p₂(1 − p₂)) ]² ÷ (p₂ − p₁)²
 >
 > - **p₁** is the baseline rate and **p₂** the rate you want to be able to detect; p₂ − p₁ is the minimum detectable effect.
 > - **p̄** ("p-bar") is their average, (p₁ + p₂) ÷ 2.
-> - **z_α/2** is the multiplier for α, two-sided: 1.960 for α = 0.05, from `NORM.S.INV(0.975)`. It's α/2 because the 5% is split between two tails.
-> - **z_β** is the multiplier for power: 0.842 for 80% power, from `NORM.S.INV(0.8)`.
+> - **z<sub>α/2</sub>** is the multiplier for α, two-sided: 1.960 for α = 0.05, from `NORM.S.INV(0.975)`. It's α/2 because the 5% is split between two tails.
+> - **z<sub>β</sub>** is the multiplier for power: 0.842 for 80% power, from `NORM.S.INV(0.8)`.
 
 By hand, for an open rate of 24% and a hoped-for 27%:
 
@@ -615,7 +615,7 @@ What each line does:
 
 - `baseline` is p₁ as a proportion (0.24); `lift_points` is the lift in percentage points (3), so `p2 = baseline + lift_points / 100` is 0.27.
 - `alpha=0.05` and `power=0.80` are **default arguments**: used unless you pass something else.
-- `stats.norm.ppf(1 - alpha/2)` is z_α/2 = `ppf(0.975)` = 1.960, and `stats.norm.ppf(power)` is z_β = 0.842: the same numbers as `NORM.S.INV`.
+- `stats.norm.ppf(1 - alpha/2)` is z<sub>α/2</sub> = `ppf(0.975)` = 1.960, and `stats.norm.ppf(power)` is z<sub>β</sub> = 0.842: the same numbers as `NORM.S.INV`.
 - `numerator` is the squared bracket of the formula; `np.ceil(...)` rounds **up** to the next whole number, and `int(...)` makes it a whole-number type.
 - `{...:>7,}` right-aligns the number in 7 characters with thousands commas, so the column lines up.
 
@@ -854,7 +854,7 @@ print(f"r = {stats.pearsonr(x, y).statistic:.3f}")
 r = 0.992
 ```
 
-`np.array([...])` makes a NumPy array from a list (Chapter 18). `stats.pearsonr(x, y)` returns a result with two parts, the correlation `.statistic` and a p-value `.pvalue` for the test "is the true correlation zero?". In a spreadsheet, `=CORREL(A2:A7,B2:B7)` gives the same 0.992.
+`np.array([...])` turns a list into a NumPy **array**, a list of numbers you can do arithmetic on all at once. `stats.pearsonr(x, y)` returns a result with two parts, the correlation `.statistic` and a p-value `.pvalue` for the test "is the true correlation zero?". In a spreadsheet, `=CORREL(A2:A7,B2:B7)` gives the same 0.992.
 
 ### On Riverstone's customers
 
@@ -1113,8 +1113,8 @@ slowest 100 in H1: H1 7.89 days, H2 6.24 days
 ```
 
 - `.dt.month <= 6` keeps January to June; `>= 7` keeps July to December. Each half is grouped by customer, with the mean and count of delivery days.
-- `first.join(second, lsuffix="_h1", rsuffix="_h2")` lines the two halves up by customer (Chapter 18); the suffixes keep the two `mean` and `count` columns apart.
-- `nlargest(100, "mean_h1")` keeps the 100 customers with the slowest first half.
+- `first.join(second, lsuffix="_h1", rsuffix="_h2")` lines the two halves up side by side, matching rows by their index, the customer ID. It's a shortcut for Chapter 18's `merge` on the index. Both tables have columns called `mean` and `count`, so the suffixes rename them `mean_h1`, `count_h2`, and so on. Customers missing from the second half get empty values, which the next line's filter drops.
+- `nlargest(100, "mean_h1")` keeps the 100 rows with the largest `mean_h1` (Chapter 21): the customers with the slowest first half.
 
 These 100 customers got faster by more than a day and a half, while the company as a whole got slower. Nobody did anything for them; their first half was partly bad luck, and bad luck doesn't repeat on schedule.
 
@@ -1147,8 +1147,10 @@ that is 1,800 extra opens per 500,000 emails
 at Riverstone's real list size of 8,400, it would be 30 extra opens
 ```
 
-- `successes` is a 2×2 table built by hand, as in the chi-square section: opens and non-opens for two imaginary variants of 500,000 each.
+- `big_n = 500_000` is 500,000 recipients per variant (the underscore is only for reading, as in section 22.2); `rate_a` and `rate_b` are two open rates 0.36 points apart.
+- `successes` is a 2×2 table built by hand with `np.array`, as in the chi-square section: opens and non-opens for the two imaginary variants. `chi2_contingency(..., correction=False)` is the same test as before; `chi2_big` and the two `_` catch the results we don't print.
 - `:.2e` prints the p-value in scientific notation with two decimals: 2.62e-05 is 0.0000262.
+- `extra_opens` turns the difference into a count of emails opened, the unit the business cares about.
 
 A large enough sample makes any difference "significant". The questions that decide whether it matters:
 
@@ -1165,7 +1167,15 @@ The honest write-up has four parts: the **effect**, its **interval**, the **deci
 
 ## 22.9 Writing up a result
 
-A template that survives scrutiny:
+A write-up that survives scrutiny rests on five habits:
+
+1. **Lead with the effect, not the p-value.**
+2. **Always give the interval**, and say what you couldn't have detected.
+3. **Report the metrics you didn't use**, and say they weren't primary.
+4. **State the population and period**, because that's what the result applies to.
+5. **Say what would change your mind.** It's the fastest way to be trusted, and it makes the next test easier to justify.
+
+Here is the email test written up that way. The five bold labels make a template you can reuse for any result.
 
 > **What we tested.** Two subject lines for the February offer email, randomly assigned to 4,200 recipients each, measured for seven days. Primary metric: open rate, decided before the test, because the email's goal was reach. Secondary metrics: order rate and revenue per recipient.
 >
@@ -1176,14 +1186,6 @@ A template that survives scrutiny:
 > **What we recommend.** Adopt B, at no cost. If order rate becomes the goal, run a test of about 14,000 per variant to detect a 0.5-point lift, or about 30,000 to detect a lift as small as the one observed (0.33 points), or test the offer rather than the subject line.
 >
 > **What could overturn this.** The test ran in one week of February, on the full list; behaviour may differ in the festive season, and we didn't test on the lapsed segment.
-
-Five habits behind it:
-
-1. **Lead with the effect, not the p-value.**
-2. **Always give the interval**, and say what you couldn't have detected.
-3. **Report the metrics you didn't use**, and say they weren't primary.
-4. **State the population and period**, because that's what the result applies to.
-5. **Say what would change your mind.** It's the fastest way to be trusted, and it makes the next test easier to justify.
 
 ---
 
@@ -1227,7 +1229,7 @@ Many lines pass near the points. The standard choice is **least squares**: choos
 > b = Σ(x − x̄)(y − ȳ) ÷ Σ(x − x̄)²
 > a = ȳ − b × x̄
 >
-> The top of b is the same sum of products as the correlation; the bottom is the spread of x. So the slope is the correlation scaled into the units of y per unit of x: b = r × (*s*_y ÷ *s*_x), where *s*_y and *s*_x are the standard deviations of y and x. The formula for a makes the line pass through the point (x̄, ȳ).
+> The top of b is the same sum of products as the correlation; the bottom is the spread of x. So the slope is the correlation scaled into the units of y per unit of x: b = r × (*s*<sub>y</sub> ÷ *s*<sub>x</sub>), where *s*<sub>y</sub> and *s*<sub>x</sub> are the standard deviations of y and x. The formula for a makes the line pass through the point (x̄, ȳ).
 
 ### By hand: six customers
 
@@ -1259,14 +1261,14 @@ The residuals add up to zero, which the least-squares line always does: its miss
 
 How much of the variation in y does the line explain? Compare two sums of squares:
 
-- **SS_tot** = Σ(y − ȳ)² = **38,120.83**, the total spread of revenue around its mean (the last column of section 22.5's table). This is how badly you'd do with no line at all, predicting ȳ for everyone.
-- **SS_res** = Σe² = **608.52**, the spread left over around the line.
+- **SS<sub>tot</sub>** = Σ(y − ȳ)² = **38,120.83**, the total spread of revenue around its mean (the last column of section 22.5's table). This is how badly you'd do with no line at all, predicting ȳ for everyone.
+- **SS<sub>res</sub>** = Σe² = **608.52**, the spread left over around the line.
 
-> **The formula: R², the coefficient of determination.** R² = 1 − SS_res ÷ SS_tot
+> **The formula: R², the coefficient of determination.** R² = 1 − SS<sub>res</sub> ÷ SS<sub>tot</sub>
 
 Here R² = 1 − 608.52 ÷ 38,120.83 = 1 − 0.016 = **0.984**. Read it as "the line accounts for 98.4% of the variation in revenue among these six customers". With one x, R² is simply r squared: 0.992² = 0.984.
 
-Three cautions. A high R² doesn't mean x causes y. It doesn't mean the line predicts well outside the range of the data. And a low R² is normal for human behaviour: when Chapter 30 explains order values with several measures at once, R² is 0.045, and the model is still useful for what it's asked.
+Three cautions. A high R² doesn't mean x causes y. It doesn't mean the line predicts well outside the range of the data. And a low R² is normal for human behaviour: when Chapter 30 explains how long visitors stay on Riverstone's website with several measures at once, R² is 0.045, and the model is still useful for what it's asked.
 
 ### The same in a spreadsheet
 
@@ -1382,7 +1384,7 @@ R² from the residuals 0.984, from rvalue 0.984
 
 - `fitted` is ŷ for every customer at once, and `residuals` is y − ŷ: the columns of the hand table.
 - The sum is zero to six decimals; as with the U-shape in section 22.5, the minus sign is only a rounding trace.
-- `r_squared` is 1 − SS_res ÷ SS_tot, and it equals `rvalue` squared.
+- `r_squared` is 1 − SS<sub>res</sub> ÷ SS<sub>tot</sub>, and it equals `rvalue` squared.
 
 Sixth, the two charts of Figure 22.6, with Chapter 18's matplotlib:
 
@@ -1401,7 +1403,7 @@ right.set_ylabel("residual (₹ thousand)")
 plt.show()
 ```
 
-- `plt.subplots(1, 2, ...)` makes one row of two charts, unpacked into `left` and `right`.
+- `plt.subplots(1, 2, figsize=(9, 3.5))` makes one row of two charts, unpacked into `left` and `right`; `figsize` is the width and height of the whole figure in inches.
 - `left.plot(x, fitted)` joins the fitted values, which all lie on the line.
 - `right.axhline(0, linestyle="--")` draws a dashed line at zero. A **residual plot** like this is the standard check of a straight-line fit. Residuals scattered evenly above and below zero are fine. A curve in them means the relationship isn't straight; a **fan**, residuals spreading wider as x grows, means the line is less reliable for big values of x.
 
@@ -1750,7 +1752,7 @@ sampling error · estimate · confidence interval · confidence level · margin 
 
 **22.** See the template in section 22.9; the numbers are in answers 8 to 11. The primary metric is the open rate.
 
-**23.** x̄ = 6 and ȳ = 110. x − x̄: −4, −2, 0, 2, 4; y − ȳ: −60, −30, 10, 20, 60. Σ(x − x̄)(y − ȳ) = 240 + 60 + 0 + 40 + 240 = 580; Σ(x − x̄)² = 40. Slope b = 580 ÷ 40 = **14.5** (₹14,500 per order); intercept a = 110 − 14.5 × 6 = **23**. Fitted values 52, 81, 110, 139, 168; residuals −2, −1, 10, −9, 2 (they add to 0). SS_res = 4 + 1 + 100 + 81 + 4 = 190; SS_tot = 3,600 + 900 + 100 + 400 + 3,600 = 8,600; R² = 1 − 190 ÷ 8,600 = **0.978**. `SLOPE`, `INTERCEPT`, and `RSQ` give 14.5, 23, and 0.978.
+**23.** x̄ = 6 and ȳ = 110. x − x̄: −4, −2, 0, 2, 4; y − ȳ: −60, −30, 10, 20, 60. Σ(x − x̄)(y − ȳ) = 240 + 60 + 0 + 40 + 240 = 580; Σ(x − x̄)² = 40. Slope b = 580 ÷ 40 = **14.5** (₹14,500 per order); intercept a = 110 − 14.5 × 6 = **23**. Fitted values 52, 81, 110, 139, 168; residuals −2, −1, 10, −9, 2 (they add to 0). SS<sub>res</sub> = 4 + 1 + 100 + 81 + 4 = 190; SS<sub>tot</sub> = 3,600 + 900 + 100 + 400 + 3,600 = 8,600; R² = 1 − 190 ÷ 8,600 = **0.978**. `SLOPE`, `INTERCEPT`, and `RSQ` give 14.5, 23, and 0.978.
 
 **24.** Slope 26.70 (₹ thousand per order), intercept −18.23, R² 0.838. The five largest positive residuals are customers 3497, 1423, 3578, 1562, and 3252, each bringing ₹3.2–4.0 lakh more than their order count predicts. They place unusually large orders: the line explains revenue by the *number* of orders, so it misses customers whose orders are big.
 
