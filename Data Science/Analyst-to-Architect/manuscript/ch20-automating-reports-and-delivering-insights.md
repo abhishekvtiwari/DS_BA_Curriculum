@@ -543,7 +543,7 @@ The honest progression: prove the value with your own mailbox for a week, then m
 
 ### Let the script work out the date
 
-A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 18's monthly report (section 18.15) already reads its command line with **`argparse`**: `ArgumentParser`, a positional argument, an option written with `--`, `parse_args()`, and a free `--help` message. The Flash needs two things that script didn't: an argument that can be left out, and an on/off switch.
+A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 18's monthly report (section 18.15) already reads its command line with **`argparse`**: `ArgumentParser`, a positional argument, an option written with `--`, `parse_args()`, and a free `--help` message. The Flash needs two things that script didn't: a positional argument that can be left out (the day), and an on/off switch (`--send`).
 
 ```python
 import argparse
