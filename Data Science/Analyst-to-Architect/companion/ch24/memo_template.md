@@ -1,6 +1,9 @@
 # One-page analysis memo — template
 
-**To:** [who needs to act]  **From:** [you]  **Date:** [date]
+**To:** [who needs to act]
+**Cc:** [who decides, or needs to know]
+**From:** [you]
+**Date:** [date]
 **Re:** [the question in one line]
 
 ## Bottom line

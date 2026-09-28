@@ -8,11 +8,11 @@
 >
 > **Before you start:** Chapter 3 (how a business runs on data, especially section 3.2's order journey and section 3.7's manual work) and Chapter 24 (turning an ask into a question, documenting business rules, and stakeholders). Chapter 23 (KPIs, and section 23.13 on defining a metric so two teams agree) helps, as does Chapter 16 (dashboards) and Chapter 20 (delivering reports).
 >
-> **Time needed:** 5–7 hours, including the exercises and the project.
+> **Time needed:** 6–8 hours, including the exercises and the project. Two sittings work well: sections 25.1 to 25.5, then section 25.6 to the end.
 >
-> **Tools:** a pen and paper, or any free diagramming tool (draw.io, Lucidchart, or even PowerPoint) for the process maps. A shared document for the requirements. No software to install.
+> **Tools:** a pen and paper, or any free diagramming tool (draw.io, Lucidchart, or even PowerPoint) for the process maps. A shared document for the requirements. DBeaver and PostgreSQL from Chapter 12 for the one query in section 25.6. Nothing new to install.
 >
-> **Practice data:** none new. This chapter works on the Riverstone order that Chapter 3 followed from enquiry to cash, order 5001, and on the manual steps Chapter 3 listed. Every figure and date here is the one that chapter established.
+> **Practice data:** none new. This chapter works on the Riverstone order that Chapter 3 followed from enquiry to cash, order 5001, and on the manual steps Chapter 3 listed; every date and step here is the one that chapter established. Section 25.6 checks one rule against the one-year database `riverstone_2025` from Chapter 13, and the volume figures come from Chapter 14's `riverstone_full`.
 
 ---
 
@@ -28,7 +28,7 @@ Three reasons to read it, and you may only care about one.
 
 **If the BA track is the job you want**, this is the map. It is one of the most common entry points into a data career for people coming from operations, sales, finance, or support, because the first qualification is knowing how a business actually runs, which you may already have.
 
-**If you want to be a data analyst, data scientist, or data engineer**, this is the half of your job that nobody teaches. Every dashboard you build starts as somebody's sentence. Every pipeline has a requirement behind it, written down or not, and the ones that are not written down are the ones you rebuild twice. Chapter 8's skills matrix marks requirements work as a "hidden skill" in data job descriptions, which is a polite way of saying it is expected and rarely listed.
+**If you want to be a data analyst, data scientist, or data engineer**, this is the half of your job that nobody teaches. Every dashboard you build starts as somebody's sentence. Every pipeline has a requirement behind it, written down or not, and the ones that are not written down are the ones you rebuild twice. Chapter 8's skills matrix showed requirements and process mapping as a core skill for a business analyst, and its job-description decoding (section 8.5) showed that for analyst roles it is a "hidden skill": expected, and rarely listed.
 
 **And if neither**, there is still the automation thread. Chapter 3 found six manual steps in one Riverstone order. Chapters 19 and 20 automated reports. Somebody has to decide *which* manual step is worth automating and write down what "done" means before anyone builds it. That is BA work, and doing it badly is how companies end up with automations nobody uses.
 
@@ -79,18 +79,18 @@ Those four verbs are the whole job. Everything else in this chapter is a techniq
 
 Most things a BA specifies get built by somebody else, and that building follows a shape called the **software development life cycle**, or SDLC. The names of the phases vary; the sequence does not. A dashboard, a pipeline, and a model all go through it, in a lighter form than a banking system but the same shape.
 
-![Six SDLC phases in a row, with the business analyst's work marked under each: requirements, design, build, test, deploy, and maintain](figures/fig25-1-sdlc-and-the-ba.svg)
+Two terms first, because the table uses them. **QA**, quality assurance, is the testers who check that the system does what the specification says. **UAT**, user acceptance testing, is the business users themselves checking that what was built meets their need; section 25.10 covers it in full.
 
-*Figure 25.1 — The BA's work does not stop when the requirements are signed off. It thins out and changes shape.*
+| Phase | What happens | What the BA does | BA effort |
+|---|---|---|---|
+| **1 Requirements** | the need is established and written down | all of it: elicitation, process mapping, gap analysis, writing the requirements and getting them agreed | heaviest |
+| **2 Design** | technical people decide how to build it | answers questions, defends the requirement when the design quietly drops part of it, records the decisions that change scope | heavy |
+| **3 Build** | it gets built | stays available, clarifies, handles the small questions that would otherwise be guessed at | light |
+| **4 Test** | QA checks the system behaves as specified | writes or reviews the UAT plan, prepares the business users who will run it | medium |
+| **5 Deploy** | it goes live | runs UAT, confirms the business need is met, signs off or does not, plans the handover and the training | heavy |
+| **6 Maintain** | it runs, and changes | collects what did not work, specifies the changes, watches the process drift back toward its old shape | medium |
 
-| Phase | What happens | What the BA does |
-|---|---|---|
-| **Requirements** | the need is established and written down | all of it: elicitation, process mapping, gap analysis, writing the requirements and getting them agreed |
-| **Design** | technical people decide how to build it | answers questions, defends the requirement when the design quietly drops part of it, records the decisions that change scope |
-| **Build** | it gets built | stays available, clarifies, handles the small questions that would otherwise be guessed at |
-| **Test** | QA checks the system behaves as specified | writes or reviews the UAT plan, prepares the business users who will run it |
-| **Deploy** | it goes live | runs UAT, confirms the business need is met, signs off or does not, plans the handover and the training |
-| **Maintain** | it runs, and changes | collects what did not work, specifies the changes, watches the process drift back toward its old shape |
+Sign-off happens at the end of phase 1. The BA's work does not stop there: it thins out and changes shape, and most of the damage in this job happens in the five phases after it.
 
 **Waterfall and Agile.** In a **waterfall** project the phases run once, in order, and the requirements are signed off before the build starts. In an **Agile** project the same six activities repeat every two or three weeks on a small slice of the work, so the requirements arrive as a stream of user stories rather than one document. Most data work is closer to Agile, because a dashboard is worth showing after a week. Chapter 26 covers how Agile is actually run, with Scrum, Kanban, and Jira. What matters here is that the four verbs do not change. Agile changes the batch size, not the job.
 
@@ -137,9 +137,9 @@ A flowchart is enough when one team owns the whole process. Riverstone's order-t
 
 A **swimlane diagram** is a flowchart with one lane per role or department. Every step sits in the lane of whoever is responsible for it, which makes something visible that a plain flowchart hides completely: the **handoffs**, the points where work crosses from one lane to another.
 
-![The ten steps of order 5001 laid out in four lanes, customer, sales, warehouse, and finance, with the five crossings between lanes marked](figures/fig25-2-order-to-cash-swimlane.svg)
+![The ten steps of order 5001 from top to bottom, each placed in one of four lanes, customer, sales, warehouse, and finance, with its date on the left; the five transitions that cross from one lane to another are drawn in red and marked H for handoff](figures/fig25-1-order-to-cash-swimlane.svg)
 
-*Figure 25.2 — The same ten steps as Figure 3.2, now showing who owns each. Five of the nine transitions cross a lane.*
+*Figure 25.1 — The same ten steps as Figure 3.2, now showing who owns each. Five of the nine transitions cross a lane.*
 
 Each step goes in the lane of whoever does the work, even where two parties are involved. Rakesh asks for prices at step 3, but it is Neha who builds and sends the quote, so step 3 sits in the sales lane.
 
@@ -150,9 +150,9 @@ Each step goes in the lane of whoever does the work, even where two parties are 
 | **Warehouse** | 5 stock check and reserve, 6 pick, pack, ship, 8 signed proof of delivery scanned |
 | **Finance** | 7 invoice, 9 payment matched, 10 January report |
 
-Now read Figure 25.2 again and notice where the time went. Chapter 3 measured the whole journey at 103 days, but only 28 days from order to cash, and only 1 day from order to invoice. The long waits are on the customer's side of the lane boundary, which is a different problem from the one inside the building. **The delays a project can fix are almost always at the crossings between lanes, not inside them.**
+Now read Figure 25.1 again and notice where the time went. Chapter 3 measured the whole journey at 103 days, but only 28 days from order to cash, and only 1 day from order to invoice. The long waits are on the customer's side of the lane boundary, which is a different problem from the one inside the building. **The delays a project can fix are usually at the crossings between lanes, not inside them**, and on a clean order like 5001 they happen to be quick.
 
-There is a second reason this matters to a data person specifically. **Every handoff is where a data quality problem is born.** Step 4 is where an order is re-typed, which is where the wrong product code enters the data you will later clean in Chapter 14. Step 8 is where a proof of delivery becomes an email attachment, which is why delivery dates are missing. Step 9 is where a bank line is matched by eye, which is why some payments sit against the wrong invoice. When you map a process and find the handoffs, you have also found the columns you will not be able to trust.
+There is a second reason this matters to a data person specifically. **Every handoff is where a data quality problem is born.** Step 4 is where an order is re-typed, which is where the wrong product code enters the kind of data you cleaned in Chapter 14. Step 8 is where a proof of delivery becomes an email attachment, which is why delivery dates are missing. Step 9 is where a bank line is matched by eye, which is why some payments sit against the wrong invoice. When you map a process and find the handoffs, you have also found the columns you will not be able to trust.
 
 ### BPMN makes the map unambiguous
 
@@ -178,9 +178,9 @@ There is a second reason, and experienced BAs will tell you it is the bigger one
 
 Three words that get used interchangeably and should not be.
 
-A **business requirement** says what the organization needs and why. It contains no technology. *Riverstone needs to invoice customers within one working day of shipment, because the current one to two day delay adds directly to the time between shipping goods and collecting cash.*
+A **business requirement** says what the organization needs and why. It contains no technology. *Riverstone needs a delivery date recorded for every delivered order, because on-time delivery cannot be measured without one.*
 
-A **functional requirement** says what the system must do. *When an order's status changes to Shipped, the system shall generate the invoice for that order.*
+A **functional requirement** says what the system must do. *When the customer signs for a delivery, the system shall set the order's status to Delivered and record the date and time of delivery.*
 
 A **non-functional requirement** says how well: speed, volume, availability, security, accuracy.
 
@@ -203,7 +203,7 @@ Generic non-functional requirements are about speed and uptime. Data work has it
 | **Timeliness** | by when must it be ready? | the daily file shall be loaded by 07:00 IST |
 | **History** | how far back, and what happens when the past changes? | three years retained; a corrected order updates history and is flagged |
 | **Access** | who may see which rows? | a regional rep sees only their own region |
-| **Volume** | how much, growing how fast? | 210,000 order lines today, about 15% growth a year |
+| **Volume** | how much, growing how fast? | 209,006 order lines for 2023 to 2025 (Chapter 14's full dataset), with 22% more lines in 2025 than in 2024 |
 
 **Non-functional requirements are the ones that get dropped**, because they are invisible when the thing is demonstrated with five rows of test data and expensive to add once it is built. A dashboard that takes four minutes to open is technically working and practically abandoned. A pipeline with no stated freshness is a pipeline nobody can tell is late. Write the numbers down in the first draft.
 
@@ -213,17 +213,17 @@ Chapter 60 takes these to architecture scale, where non-functional requirements 
 
 ## 25.6 The four things a data team is asked to build
 
-Almost every request that reaches a data team turns into one of four things. Each has its own questions that must be answered before anybody starts, and each has a way of going wrong that the other three do not share.
+Almost every request that reaches a data team turns into one of four things: a report or dashboard, a pipeline, a model, or a metric definition. Together they are the **data products**: anything a data team delivers for other people to use. Each has its own questions that must be answered before anybody starts, and each has a way of going wrong that the other three do not share.
 
-![Four cards, a report or dashboard, a pipeline, a model, and a metric definition, each listing the questions its requirement must answer and the way it typically fails](figures/fig25-3-four-data-products.svg)
+![Four cards in a two-by-two grid, a report or dashboard, a pipeline, a model, and a metric definition, each listing the five questions its requirement must answer and, in a box at the bottom, the way it typically fails](figures/fig25-2-four-data-products.svg)
 
-*Figure 25.3 — Ask the wrong set of questions and you will build something that works and nobody uses.*
+*Figure 25.2 — The four data products, the questions each requirement must pin down, and how each one fails.*
 
 ### A report or dashboard
 
-> **BR-01.** Key accounts sales managers need to see which accounts have gone quiet, so they can decide which one to spend a call on this week.
+> **BR-01.** The Sales Manager and the sales executives need to see which key accounts have gone quiet, so they can decide which one to spend a call on this week.
 >
-> **FR-01.** The dashboard shall list accounts whose last order is more than 1.5 times their own average gap between orders.
+> **FR-01.** The dashboard shall list the accounts with at least four days of orders whose time since their last order is more than 1.5 times their own average gap between orders.
 > **FR-02.** Each row shall show the account's last twelve months' revenue and the date of its last order.
 > **FR-03.** A user shall see only accounts where they are the assigned rep, except that a sales head sees all.
 >
@@ -235,18 +235,93 @@ The questions to ask before writing any of that: **who opens it, how often, and 
 
 **How dashboards fail:** they answer a question the reader already knew the answer to. That is the story at the end of this chapter.
 
+**FR-01 is a rule you have already built.** Chapter 13's Pattern 6 found at-risk customers with a query, and FR-01 is that rule with two changes the requirement has to own. Pattern 6 flagged an account at **twice** its usual gap; FR-01 flags it at **1.5 times**, because a call is cheap and a lost account is not, so the sales team wants the warning earlier. And Pattern 6 simply left accounts with fewer than four days of orders off its report; FR-01 keeps that minimum and writes it down, and section 25.8 says what the dashboard does with those accounts, because an account that never appears on the list should be a decision, not an accident. Both changes are business decisions, and a requirement is where a business decision is written down.
+
+Before you write a threshold into a requirement, ask how often it would fire (section 25.3, move 3). The query below applies both rules to the 24 key accounts in `riverstone_2025` as of 31 December 2025, and keeps every account that is not simply on rhythm. Before you run it, predict: will 1.5 times flag many more accounts than twice, or only one or two?
+
+<!-- db: riverstone_2025 -->
+
+```sql
+WITH order_days AS (
+    SELECT DISTINCT customer_id, order_date
+    FROM sales_lines
+),
+gaps AS (
+    SELECT customer_id,
+           order_date,
+           order_date - LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date)
+               AS gap_days
+    FROM order_days
+),
+rhythm AS (
+    SELECT customer_id,
+           COUNT(*)                            AS order_days,
+           ROUND(AVG(gap_days))                AS usual_gap,
+           DATE '2025-12-31' - MAX(order_date) AS days_quiet
+    FROM gaps
+    GROUP BY customer_id
+),
+verdicts AS (
+    SELECT c.customer_name,
+           r.order_days,
+           r.usual_gap,
+           r.days_quiet,
+           CASE WHEN r.order_days IS NULL OR r.order_days < 4 THEN 'too new to judge'
+                WHEN r.days_quiet > 2   * r.usual_gap THEN 'at risk at 2x'
+                WHEN r.days_quiet > 1.5 * r.usual_gap THEN 'at risk at 1.5x only'
+                ELSE 'on rhythm'
+           END AS verdict
+    FROM customers AS c
+    LEFT JOIN rhythm AS r ON r.customer_id = c.customer_id
+)
+SELECT *
+FROM verdicts
+WHERE verdict <> 'on rhythm'
+ORDER BY verdict, customer_name;
+```
+
+```
+   customer_name   | order_days | usual_gap | days_quiet |       verdict
+-------------------+------------+-----------+------------+----------------------
+ Green Leaf Hotels |         15 |        23 |         35 | at risk at 1.5x only
+ Om Sai Provisions |          4 |        39 |        162 | at risk at 2x
+ Sunrise Caterers  |          4 |        37 |        204 | at risk at 2x
+ City Needs Store  |          2 |        48 |        284 | too new to judge
+ Festive Gifts Co  |          2 |        65 |         42 | too new to judge
+ Home Plus         |            |           |            | too new to judge
+ Prime Wholesale   |          2 |        11 |         19 | too new to judge
+ Royal Banquets    |          3 |        53 |          8 | too new to judge
+ Sea Breeze Hotel  |          3 |        34 |         18 | too new to judge
+ Tasty Tiffins     |          2 |        44 |         66 | too new to judge
+(10 rows)
+```
+
+**How it works.** The first three steps are Pattern 6, so only what is new needs explaining.
+
+- `order_days`, `gaps` and `rhythm` do what they did in Chapter 13: one row per customer per day with orders, the days since the previous order day with `LAG`, then per customer the number of order days, the usual gap (`ROUND(AVG(gap_days))`), and `days_quiet`, the days from the last order to 31 December 2025.
+- `verdicts` starts from `customers`, not from the orders, and uses a `LEFT JOIN` (section 12.10), so an account that never ordered still gets a row, with empty rhythm columns. Home Plus is that account.
+- The `CASE` (section 12.8) tests its conditions in order and stops at the first one that is true. "Too new" comes first, and `IS NULL` catches the account with no orders at all. Then twice the usual gap, then 1.5 times. So "at risk at 1.5x only" means an account the new rule flags and Pattern 6's rule does not.
+- `WHERE verdict <> 'on rhythm'` keeps only the accounts somebody has to think about. You can filter on `verdict` here because an earlier step gave it that name (section 13.2).
+- `ORDER BY verdict, customer_name` groups the rows by verdict, and sorts each group by name.
+
+**Reading it.** Moving from twice to 1.5 times adds one account, Green Leaf Hotels, quiet for 35 days against a usual 23. The bigger surprise is the edge case. **Seven of the 24 key accounts are too new to judge**, including Home Plus, which has not ordered at all. Seven accounts that no rule is watching is a finding in itself, which is why the dashboard needs a "too new to judge" count and why the story in section 25.8 has an acceptance criterion for them.
+
+**What if you change it?** Change `r.order_days < 4` to `r.order_days < 2`, so that two days of orders count as a rhythm, and run it again. The list shrinks to six rows. City Needs Store and Prime Wholesale join the at-risk list, four accounts drop to "on rhythm", and only Home Plus is still too new. Prime Wholesale's "usual gap" of 11 days is one gap, which is not a rhythm. That is why the minimum belongs in the requirement: it changes who gets a call.
+
+(Using MySQL? Replace both date subtractions with `DATEDIFF`, as section 13.9 showed: `DATEDIFF(order_date, LAG(order_date) OVER (…))` and `DATEDIFF(DATE '2025-12-31', MAX(order_date))`. Subtracting dates with `-` in MySQL runs without an error and gives wrong numbers.)
+
 ### A pipeline
 
-> **BR-02.** Analysis of sales needs order data in the warehouse each morning, because the team's questions are asked at the 9 a.m. meeting.
+> **BR-02.** Sales analysis needs yesterday's orders loaded into the data warehouse (the analytics database the reports read from, Chapter 3) by each morning, because the team's questions are asked at the 9 a.m. meeting.
 >
-> **FR-04.** The pipeline shall load the previous day's orders, order lines, and invoices from the ERP.
+> **FR-04.** The pipeline shall load the previous day's orders, order lines, and invoices from the ERP into the data warehouse.
 > **FR-05.** Where a row already exists, it shall be updated rather than duplicated.
 > **FR-06.** A row that fails validation shall be written to a rejects table with the reason, and shall not be loaded.
 > **FR-07.** The run shall be idempotent: running it twice for the same day shall leave the same result.
 >
 > **NFR-04.** Loaded and validated by 07:00 IST on working days.
 > **NFR-05.** A failed run shall alert a named owner within fifteen minutes.
-> **NFR-06.** A backfill of any past day shall be possible without deleting other days.
+> **NFR-06.** A backfill, re-loading any one past day, shall be possible without deleting other days.
 
 The questions: **what is the source of truth, what happens when it is late, and what happens when the past changes?** A customer's city gets corrected in March for an order placed in January. Does your table change? That single question separates a pipeline that survives from one that quietly disagrees with the ERP forever. Chapters 45 and 46 build exactly this; your job is to specify it before they do.
 
@@ -260,8 +335,10 @@ The questions: **what is the source of truth, what happens when it is late, and 
 > **FR-09.** The output shall be written to a table refreshed weekly, with the score date and the model version.
 > **FR-10.** Each scored account shall carry the three features that contributed most to its score.
 >
-> **NFR-07.** The model shall beat the current rule of thumb, "no order in ninety days", measured on accounts held back from training.
+> **NFR-07.** The model shall beat the current rule of thumb, "no order in ninety days", measured on accounts set aside and not used to build the model.
 > **NFR-08.** A score shall never be produced for an account with fewer than three historical orders.
+
+A few words in that specification come from machine learning, which Part 4 teaches properly. Here is enough to read it. A **feature** is one input column the model uses, such as days since the last order. Accounts **set aside and not used to build the model** are ones it never saw while it was being built, kept back to test it fairly (Chapter 36). A **false positive** is the model flagging an account that would have kept ordering; a **false negative** is the model missing one that stops. A **baseline** is the simple rule a model must beat, here "no order in ninety days".
 
 The questions: **what decision does this serve, what is the cost of each kind of mistake, and what is it being compared against?** A model with no baseline is unfalsifiable. A model whose false positives and false negatives cost the same amount is rare, and if you have not asked, you have not specified it. Chapters 36 and 39 teach the measurement; this is where you agree what "good enough" means, in advance, with the person who will live with it.
 
@@ -297,7 +374,7 @@ A rough rule: the **BRD** should be readable by someone who will never log in. T
 
 For a dashboard inside your own company, one page with BR, FR, and NFR sections is usually the whole documentation set, and the three-document structure is what you scale up to when the thing is bigger or the builder is further away.
 
-**Requirements get numbers, and the numbers matter.** BR-01, FR-07, NFR-03. A number lets you trace a line of code back to a business reason, and lets you notice that FR-12 was quietly dropped in design. That trail is a **requirements traceability matrix**: one row per requirement, with columns for the business requirement it serves, the design element that implements it, the test that proves it, and its status. In a small project it is a spreadsheet, and Chapter 11's skills are enough to maintain one.
+**Requirements get numbers, and the numbers matter.** BR-01, FR-07, NFR-03. A number lets you trace a line of code back to a business reason, and lets you notice that FR-12 was quietly dropped in design. In a real project each number is used once across the whole document; this chapter keeps one running list (BR-01 to BR-06, FR-01 to FR-17, NFR-01 to NFR-10) so you can see it done. That trail is a **requirements traceability matrix**: one row per requirement, with columns for the business requirement it serves, the design element that implements it, the test that proves it, and its status. In a small project it is a spreadsheet, and Chapter 11's skills are enough to maintain one.
 
 ---
 
@@ -327,22 +404,17 @@ The two alternative flows are most of the value. The main flow was obvious.
 
 A **user story** is one sentence in a fixed shape, plus the conditions that decide when it is done. It is sized to be built in a few days.
 
-![A user story broken into its three clauses, with four acceptance criteria below it, each labeled with what it contributes](figures/fig25-4-user-story-anatomy.svg)
+Figure 25.3 shows a story for the at-risk dashboard of section 25.6, with its four acceptance criteria.
 
-*Figure 25.4 — The three clauses of a story, and four criteria that make it testable. AC-3 is the edge case.*
+![A user story in three clauses: as a sales rep, I want to see which of my accounts are at risk of not ordering again, so that I can call them before they go quiet, each clause labeled with what it answers. Below it, four acceptance criteria in Given, When, Then form, AC-1 to AC-4, each labeled with what it contributes: scope, the actual rule, the edge case, and behavior the user can check](figures/fig25-3-user-story-anatomy.svg)
 
-> **As a** sales rep, **I want** to see which of my accounts are at risk of not ordering again, **so that** I can call them before they go quiet.
+*Figure 25.3 — The three clauses of a story, and four criteria that make it testable. AC-3 is the edge case.*
 
 The shape forces three things into the open: who wants it, what they want, and why. The "so that" clause is the one people drop, and it is the one that prevents building something correct and useless.
 
-A story without **acceptance criteria** cannot be tested, so it cannot be finished. The common form is Given, When, Then:
+A story without **acceptance criteria** cannot be tested, so it cannot be finished. The common form is Given, When, Then, as in the four criteria of the figure.
 
-> **AC-1** *Given* I am a logged-in sales rep, *when* I open the at-risk list, *then* I see only accounts where I am the assigned rep.
-> **AC-2** *Given* an account whose last order was more than 1.5 times its own average gap between orders, *when* the list is generated, *then* that account appears on it.
-> **AC-3** *Given* an account with no orders at all, *when* the list is generated, *then* it does not appear, because there is no gap to compare against.
-> **AC-4** *Given* the list is open, *when* I sort by value at risk, *then* accounts are ordered by their last twelve months' revenue, highest first.
-
-Three things to copy. **AC-2 contains the actual rule**, not the word "recently". **AC-3 is an edge case**, and a story with no edge case has not been thought about. And every criterion could be run by hand by a person who says yes or no, which is what makes them usable later as acceptance tests.
+Three things to copy. **AC-2 contains the actual rule**, not the word "recently". **AC-3 is an edge case**, and a story with no edge case has not been thought about. It is not a rare one either: the query in section 25.6 found seven of Riverstone's 24 key accounts with fewer than four days of orders, and an account with a single order has no gap at all to compare against. And every criterion could be run by hand by a person who says yes or no, which is what makes them usable later as acceptance tests.
 
 **Acceptance criteria for data have a fourth kind**, and it is the one people new to this work miss. Alongside scope, rule, and edge case, write a **reconciliation criterion**:
 
@@ -367,28 +439,27 @@ A **gap analysis** compares the as-is state against the to-be state and names th
 
 Done badly it produces a list of observations. Done well every row ends in something buildable, and names the **root cause** rather than the symptom.
 
-![As-is and to-be states side by side for Riverstone's invoicing step, with the gap and the resulting requirement drawn between them](figures/fig25-5-gap-analysis.svg)
+Take step 8 of Chapter 3's order journey, the delivery. On order 5001 the truck arrived on 8 January, Rakesh signed a paper proof of delivery, and somebody at Bhiwandi Main scanned it, emailed it to finance, and changed the order to *Delivered* by hand. Chapter 3 listed what goes wrong: lost paper, and orders left as *Shipped* for weeks. Look at the `orders` table you queried in Chapter 12 and you will find the data side of the same problem: it has a `status` column that can say Delivered, and no column that says when. Figure 25.4 shows the gap analysis row for this step.
 
-*Figure 25.5 — A gap analysis row is only finished when it produces a requirement.*
+![One gap analysis row for Riverstone's delivery step. Top: the as-is box (paper proof of delivery scanned, emailed, and the status changed by hand, so there is no delivery date), an arrow to the gap (nothing records the delivery when it happens), and an arrow to the to-be box (the delivery is recorded in the ERP when the customer signs). Below, three linked boxes: the root cause (no device at the customer's site), the resulting requirement FR-14, and what it depends on, NFR-09](figures/fig25-4-gap-analysis.svg)
 
-> **As-is.** Finance raises the invoice after the warehouse emails a shipment notification, typically one to two days after the goods actually leave Bhiwandi Main.
-> **To-be.** The invoice is raised automatically when the warehouse marks the order Shipped in the ERP.
-> **Gap.** There is no link between the warehouse's shipment status and invoicing. The handoff is an email read by a person.
-> **Root cause.** Not "finance is slow". The warehouse updates the ERP once a day from its own spreadsheet, so the status change is not reliable enough to trigger anything. That is the thing to fix first.
-> **Resulting requirement.** FR-14: when an order's status changes to Shipped, the system shall generate the invoice for that order within one hour.
-> **Depends on.** NFR-09: order status in the ERP shall be updated within fifteen minutes of dispatch.
+*Figure 25.4 — A gap analysis row is only finished when it produces a requirement.*
 
-The root-cause line is what separates a useful gap analysis from a complaint. Without it, Riverstone would have built automatic invoicing on top of a status field that updates once a day, and invoices would have gone out a day late anyway, automatically.
+The root-cause line is what separates a useful gap analysis from a complaint. Without it, Riverstone would have told the warehouse to scan faster, and the delivery date would still arrive days late, typed by hand from a piece of paper that had to travel back on the truck.
 
-**Ranking the gaps.** One analysis produces ten of these and you cannot do ten. Score each on what it saves and what it costs:
+**Ranking the gaps.** One analysis produces ten of these and you cannot do ten. Score each on what it saves and what it costs. One simple method, which you can reproduce:
 
-| Gap | People affected | Time saved per month | Error risk removed | Build effort | Rank |
-|---|---|---|---|---|---|
-| Invoice on shipment status | finance, 1 person | ~8 hours | invoices raised late, cash delayed | medium | 1 |
-| Stock figures live, not daily | sales, 4 people | ~6 hours | stock promised that is already sold | large | 2 |
-| Order re-keyed from email | sales, 4 people | ~17 hours | wrong quantity, wrong code, lost discount | medium | 3 |
+*score = hours saved per month × error weight ÷ build effort*, with error weight high 3, medium 2, low 1, and build effort small 1, medium 2, large 3.
 
-Those hour figures are not facts about a database. They are what the BA collected by asking the people who do the work, and they should be labeled that way in the document. A number you gathered in an interview is evidence; a number you invented to make a case is the thing this book has spent twenty-four chapters teaching you not to do.
+| Gap | People affected | Time saved per month | Error risk removed | Build effort | Score | Rank |
+|---|---|---|---|---|---|---|
+| Order re-keyed from email (step 4) | sales, 4 people | ~17 hours | wrong quantity, wrong code, lost discount: high | large | 17 × 3 ÷ 3 = 17 | 1 |
+| Delivery recorded at the door (step 8) | warehouse, 1 person | ~8 hours | missing delivery dates, orders stuck as Shipped: medium | medium | 8 × 2 ÷ 2 = 8 | 2 |
+| Stock figures live, not daily (step 5) | sales, 4 people | ~6 hours | stock promised that is already sold: high | large | 6 × 3 ÷ 3 = 6 | 3 |
+
+The re-keying hours come from Chapter 3's illustration: 4 hours a week is about 17 a month. Re-keying ranks first even though its build effort is large, because customers send orders in many formats; Chapter 58 builds exactly that automation. The delivery gap from Figure 25.4 ranks second: it saves fewer hours, but it is what makes on-time delivery measurable at all. The score is a way to make the argument visible, not a replacement for it; if two scores are close, the conversation decides.
+
+None of those hour figures is a fact about a database. The re-keying figure is Chapter 3's round-number illustration, and the other two are what the BA collected by asking the people who do the work. All three should be labeled as estimates in the document. A number you gathered in an interview is evidence; a number you invented to make a case is the thing this book has spent twenty-four chapters teaching you not to do.
 
 ---
 
@@ -403,7 +474,7 @@ The distinction that matters:
 
 A system can pass one hundred percent of its QA test cases and fail UAT, because the test cases were written from a requirement that turned out not to capture what the business needed. QA cannot catch that, and neither can the developers, because both are working from the same document. Only the people with the original need can judge it.
 
-**For a data product, UAT has a second job that QA structurally cannot do: checking whether the numbers are right.** A dashboard can pass every functional test, load in two seconds, respect every access rule, and show a revenue figure that is four lakh rupees short because cancelled orders were included. QA has no way to know. The finance manager who has been closing the month for six years knows in four seconds.
+**For a data product, UAT has a second job that QA structurally cannot do: checking whether the numbers are right.** A dashboard can pass every functional test, load in two seconds, respect every access rule, and show 2025 revenue for the key accounts as ₹43,98,121 instead of ₹43,35,471, ₹62,650 too high, because the two cancelled orders you met in Chapter 10 were included. QA has no way to know. The finance manager who has been closing the month for six years knows in four seconds.
 
 So a data UAT plan has two halves:
 
@@ -442,7 +513,7 @@ This is the section that connects the BA track to the automation thread running 
 
 ### Finding it
 
-Chapter 3 section 3.7 gave you the question: at every step of the map, did a person copy, re-type, check, or carry data by hand? Six of Riverstone's ten steps answered yes. The named patterns are worth memorizing, because you will see them everywhere, and because each one is also a data quality problem waiting to be found in Chapter 14:
+Chapter 3 section 3.7 gave you the question: at every step of the map, did a person copy, re-type, check, or carry data by hand? Six of Riverstone's ten steps answered yes. The named patterns are worth memorizing, because you will see them everywhere, and because each one is also a data quality problem of the kind Chapter 14 taught you to find:
 
 - **Re-keying**: typing data that already exists somewhere else.
 - **Copy-paste integration**: moving data between systems by copying it.
@@ -461,7 +532,7 @@ Not every manual step should be automated. Rank candidates on four things, and b
 
 Chapter 3's illustration is the shape of the arithmetic: forty emailed orders a week at about six minutes each is four hours a week, roughly two hundred hours a year. That is the kind of number that decides whether a project happens.
 
-**The steps that should stay manual** are the ones where a person's judgment is the point. Approving an unusual discount, deciding whether a disputed delivery gets credited, and reading a customer's tone in an email are not re-keying. Chapter 58 makes this case with real numbers: an email-intake pipeline that was right 88% of the time was still not safe to run unattended, because of what the other 12% did quietly.
+**The steps that should stay manual** are the ones where a person's judgment is the point. Approving an unusual discount, deciding whether a disputed delivery gets credited, and reading a customer's tone in an email are not re-keying. Chapter 58 makes the case with numbers (it builds this pipeline): an email-intake pipeline loaded 88% of orders without a person touching them, which looked like success, but 19% of those automatically loaded orders were quietly wrong. The 12% it handed to a person, with reasons, were the safe part.
 
 ### Specifying it
 
@@ -470,6 +541,8 @@ The requirement for an automation is written like any other, with three addition
 Take Riverstone's invoice matching, the step where a finance assistant reads a bank statement line and works out which invoice it pays.
 
 > **BR-05.** Riverstone needs payments matched to invoices without a person reading each bank line, because manual matching delays the cash position and produces customers being chased for money they have already paid.
+>
+> **BR-06.** A payment shall be matched automatically only when it equals an open invoice for the same customer to within ₹1, to allow for rounding; any other difference is an exception.
 >
 > **FR-15.** The system shall compare each imported bank statement line against open invoices for that customer, and record a match where the amount and the customer both agree.
 >
@@ -515,17 +588,17 @@ And one question before any of it: **how often does the exception happen?** If n
 
 ## In the real world: the report that passed every test
 
-Riverstone approved a small project in March 2026: a dashboard showing accounts at risk of going quiet. Vikram Singh, the key accounts sales manager, had asked for it twice.
+Riverstone approved a small project in March 2026: a dashboard showing accounts at risk of going quiet. Vikram Singh, the Sales Manager, who looks after the key accounts, had asked for it twice.
 
 Ayesha Qureshi, who had moved into a business analyst role from the customer support desk eighteen months earlier, took the requirement. She did the work properly by most measures. She interviewed Vikram. She wrote the business requirement, four functional requirements, and two non-functional ones. She drew the as-is: a rep noticing, usually late, that a customer had gone quiet. She wrote acceptance criteria with an edge case in them. QA tested the build against the specification and every test passed. The numbers reconciled to the ERP to the rupee.
 
 UAT failed in eleven minutes.
 
-Vikram opened the dashboard, scrolled, and said: "I know all of these. Coastal went quiet in January, I know why, their kitchen is being rebuilt. What I don't know is what to do about Northgate."
+Vikram opened the dashboard, scrolled, and said: "I know all of these. Green Leaf Hotels went quiet in January, I know why, their kitchen is being rebuilt. What I don't know is what to do about Northgate."
 
 The specification was correct. The requirement was wrong. Ayesha had asked what Vikram wanted to see and had written down the answer. She had not asked the question from section 25.3 that would have caught it: *what will you do differently when you have this?* The answer, had she asked, was not "know which accounts are quiet". Reps already knew that. It was "decide which quiet account to spend Thursday afternoon on", and that needs a reason and a value, not a list of names.
 
-The fix took nine days and was mostly subtraction. The dashboard kept its list and added two columns: the value of the account's last twelve months, and which of three reasons the drop matched, seasonal, a lost tender, or a service complaint logged in the last quarter. The version Vikram now uses is shorter than the one that passed QA.
+The fix took nine days and was mostly subtraction: the account-detail page and three of the filters went. The list stayed and gained two columns: the value of the account's last twelve months, and which of three reasons the drop matched, seasonal, a lost tender, or a service complaint logged in the last quarter. The version Vikram now uses is shorter than the one that passed QA.
 
 Three things are worth taking from this. **UAT did its job**: a build passed every technical test and every reconciliation, and still failed, and the only person who could see it was the one with the original need. **Correct numbers are not the same as a useful product**, which is the trap a data team falls into most often, because correctness is the part we know how to check. And **the cost of the missing question was nine days**, which is cheap. Asked in the first interview it would have cost nine minutes.
 
@@ -573,7 +646,7 @@ You have done this well if somebody who has not read Chapter 3 could take your p
 
 A business analyst works out what a business needs, writes it down so it can be built, and stays until what was built is what was needed. Four verbs: elicit, analyze, specify, validate. On a data team the BA sits beside the data analyst, the data scientist, and the data engineer, and the four verbs are the part of all four jobs that happens before the code.
 
-The work spans all six phases of the software development life cycle, not only the first. Most of the damage happens in the three phases after sign-off, when the BA has stopped paying attention.
+The work spans all six phases of the software development life cycle, not only the first. Most of the damage happens in the five phases after sign-off, when the BA has stopped paying attention.
 
 Turn asks into requirements by finding the holes: who and what they will do differently, what the words actually mean, what happens on the exception path, and how often. Map the process before changing it. A flowchart shows what happens; a swimlane shows whose job each step is and exposes the handoffs, which is where delay, error, and bad data all collect; BPMN makes the map readable by people who were not in the room. Always as-is before to-be.
 
@@ -598,7 +671,7 @@ business analyst · elicitation · software development life cycle (SDLC) · wat
 ## Check yourself
 
 - You can say in one sentence how a business analyst's output differs from a data analyst's, a data scientist's, and a data engineer's.
-- You can name the six SDLC phases and say what the BA does in each, including the three after sign-off.
+- You can name the six SDLC phases and say what the BA does in each, including the phases after sign-off.
 - You can explain what a swimlane adds to a flowchart, and why every handoff is also a future data quality problem.
 - You never propose a to-be without having drawn the as-is.
 - You can take "we need a way to see X" and produce four questions that have to be answered before anything is written down.
@@ -704,10 +777,10 @@ Owning it first is not politeness. It moves the meeting from blame to scope in o
 
 ## Where this leads
 
+Looking back first: you have already met this chapter's handoffs as dirty columns in Chapter 14, and built dashboards like the one in section 25.6, on a shared model that holds the metric definitions, in Chapter 16. Looking ahead:
+
 - **Chapter 26, The Professional Toolkit,** covers Agile, Scrum, Kanban, and Jira as they are actually run, plus Git for the documents and queries this chapter produces.
 - **Chapter 27** turns your Part 2 projects, including this chapter's requirements pack, into a portfolio.
-- **Chapter 14** cleans the data that the handoffs on your process map created.
-- **Chapter 16** builds the dashboard you specified, on a shared model that holds the metric definition.
 - **Chapters 36 and 39** measure whether a model is good enough, which is the number your requirement has to name in advance.
 - **Chapters 45 and 46** build the pipeline, with the late-data and backfill behavior you specified.
 - **Chapter 47** turns your business rules and non-functional requirements into automated data-quality tests and data contracts.
