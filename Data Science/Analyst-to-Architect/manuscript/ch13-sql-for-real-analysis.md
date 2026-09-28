@@ -466,7 +466,7 @@ Read the Sharma Hardware rows: three orders, each shown with the customer's tota
 
 *Figure 13.1 — `GROUP BY` returns one row per customer. `PARTITION BY` returns every order, with the customer's total added alongside.*
 
-> **Spreadsheet link.** In Excel you'd get the customer total with `SUMIFS` in a helper column, one formula per row. `SUM(...) OVER (PARTITION BY ...)` is that helper column, calculated for every row at once.
+> **Spreadsheet link.** You've used this idea before, in Chapters 10 and 11. In a helper column, `SUMIFS` gave each row its customer's total, one formula per row; `SUM(...) OVER (PARTITION BY ...)` is that helper column, calculated for every row at once. And in a pivot table (section 11.5), **Show Values As → % of Grand Total** and **Running Total In** put each value's share of the total, or the total so far, next to the value itself. Window functions are the SQL version of both: `SUM(...) OVER ()` gave the shares at the start of this section, and section 13.6 builds the running total.
 
 ### The anatomy of a window
 

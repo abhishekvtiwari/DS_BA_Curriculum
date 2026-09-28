@@ -944,7 +944,7 @@ Now look for Q4 lines above 90 in the cleaned table (built in section 14.9; see 
 SELECT order_item_id, product_id, quantity, unit_price, branch
 FROM clean_order_lines
 WHERE quantity > 90
-ORDER BY quantity DESC;
+ORDER BY quantity DESC, order_item_id;
 ```
 
 ```
