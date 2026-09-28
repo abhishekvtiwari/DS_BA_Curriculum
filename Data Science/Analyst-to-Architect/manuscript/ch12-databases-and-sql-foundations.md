@@ -5631,7 +5631,7 @@ FROM (
     JOIN orders    AS o ON oi.order_id   = o.order_id
     JOIN customers AS c ON o.customer_id = c.customer_id
     WHERE o.status <> 'Cancelled'
-) AS lines
+) AS sales_lines
 GROUP BY segment
 ORDER BY segment;
 ```
@@ -5645,7 +5645,7 @@ ORDER BY segment;
 (3 rows)
 ```
 
-Every cell matches Figure 11.3, for example Wholesale's Q4 of ₹7,56,751 and its total of ₹17,02,658.50. ✓ `EXTRACT(QUARTER FROM …)` gives 1 to 4, the same as Chapter 11's `quarter` column. The pivot's Grand Total row is the same query without `segment` and without `GROUP BY`: one row, ₹43,35,471.
+Every cell matches Figure 11.3, for example Wholesale's Q4 of ₹7,56,751 and its total of ₹17,02,658.50. ✓ `EXTRACT(QUARTER FROM …)` gives 1 to 4, the same as Chapter 11's `quarter` column. The derived table is called `sales_lines`, not `lines`, because `LINES` is a reserved word in MySQL and the query would fail there. The pivot's Grand Total row is the same query without `segment` and without `GROUP BY`: one row, ₹43,35,471.
 
 **33.** One good version: *"Hello, I'd like permission to install two free tools on my work laptop for learning data analysis: PostgreSQL (a database, used to practice SQL on sample data) and DBeaver Community (an app for writing SQL). I'll only use practice datasets from a textbook, and I won't connect them to any company system or customer data without your approval. Could you tell me whether there's an approved way to connect to company data later, if my manager asks for reports?"* A good request names each tool and its purpose, promises what you won't do, and asks one clear question.
 

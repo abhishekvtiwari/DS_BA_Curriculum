@@ -1,6 +1,7 @@
 -- =====================================================================
 -- Analyst to Architect · Chapter 12 · Section 12.13 lab, PostgreSQL version
 -- Every statement from "Building and changing a database" and exercises 23-27, in book order.
+-- Built from the chapter by sql/ch12_lab_companion.py; don't edit by hand.
 -- Run it with psql:   psql -U postgres -d postgres -f ch12_lab_postgresql.sql
 -- In DBeaver: run the CREATE DATABASE statement, connect to riverstone_lab, then run the rest
 -- (skip the \c line, which only psql understands).
@@ -146,6 +147,10 @@ DELETE FROM purchase_orders
 WHERE po_id = 5;
 
 -- Step 6: DELETE: removing rows
+SELECT COUNT(*) AS orders_left
+FROM purchase_orders;
+
+-- Step 6: DELETE: removing rows
 -- Fails on purpose: ERROR:  update or delete on table "suppliers" violates foreign key constraint "purchase_orders_supplier_id_fkey" on table "purchase_orders"
 -- DELETE FROM suppliers
 -- WHERE supplier_name = 'Western Polymers';
@@ -153,6 +158,11 @@ WHERE po_id = 5;
 -- Step 6: DELETE: removing rows
 UPDATE suppliers
 SET is_active = FALSE
+WHERE supplier_name = 'Nilgiri Packaging';
+
+-- Step 6: DELETE: removing rows
+SELECT supplier_name, is_active
+FROM suppliers
 WHERE supplier_name = 'Nilgiri Packaging';
 
 -- Step 7: Insert or update in one statement (upsert)

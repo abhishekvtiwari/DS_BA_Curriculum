@@ -1,20 +1,18 @@
 -- =====================================================================
 -- Analyst to Architect · Chapter 12 · Databases & SQL Foundations
--- Every reading query in the chapter, rewritten for MySQL, in book order.
+-- Every reading query in the chapter, in PostgreSQL, in book order.
 -- Built from the chapter by sql/ch12_companion.py; don't edit by hand.
 --
--- Setup: run riverstone_setup_mysql.sql first (it creates the `riverstone` database).
--- Exercises 30 and 32 use riverstone_2025 (riverstone_2025_setup_mysql.sql).
--- Tested on MySQL 8.0.46; uses only features that work the same in MySQL 8.4 LTS and 9.x
--- (EXCEPT needs 8.0.31 or later). Results match the PostgreSQL outputs printed in the chapter,
--- except where a comment says otherwise. Queries that fail on purpose in the book are
--- commented out. Section 12.13's statements are in ch12_lab_mysql.sql.
+-- Setup: section 12.3 (riverstone_setup.sql). Exercises 30 and 32 use the one-year database
+-- (riverstone_2025_setup.sql); the file switches to it with \c, which works in psql. In DBeaver,
+-- open those queries in an editor connected to riverstone_2025 instead.
+-- Section 12.13's statements are in ch12_lab_postgresql.sql.
+-- Queries that fail on purpose in the book are commented out, with the error you'd see.
 -- Riverstone Supplies is fictional; every name and number is invented.
 -- =====================================================================
 
 -- ---------------------------------------------------------------
 -- 12.3 Setting up your SQL laboratory
-USE riverstone;
 SELECT COUNT(*) FROM order_items;
 SELECT * FROM products;
 
@@ -34,7 +32,6 @@ SELECT product_name,
        unit_price,
        ROUND(unit_price * 1.18, 2) AS price_incl_tax
 FROM products;
--- Differs from the PostgreSQL result on purpose: MySQL division always gives a decimal (section 12.4).
 SELECT 7 / 2   AS whole_numbers,
        7 / 2.0 AS with_a_decimal;
 
@@ -47,7 +44,6 @@ SELECT product_name, unit_price
 FROM products
 ORDER BY unit_price DESC
 LIMIT 3;
--- Differs from the PostgreSQL result on purpose: MySQL sorts the NULL city first (section 12.16).
 SELECT DISTINCT city
 FROM customers
 ORDER BY city;
@@ -129,22 +125,22 @@ ORDER BY unit_price;
 SELECT order_id,
        order_date,
        EXTRACT(MONTH FROM order_date)        AS month_no,
-       CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS order_month
+       DATE_TRUNC('month', order_date)::date AS order_month
 FROM orders
 WHERE order_id <= 5004;
-SELECT DATEDIFF(DATE '2026-03-31', DATE '2026-02-05') AS days;
--- (PostgreSQL only; the MySQL form is the next query, or isn't needed.)
--- (PostgreSQL only; the MySQL form is the next query, or isn't needed.)
-SELECT ROUND(2.5)   AS exact_half,
-       ROUND(3.5)   AS exact_three_half,
-       ROUND(2.5E0) AS float_half,
-       ROUND(3.5E0) AS float_three_half;
+SELECT DATE '2026-03-31' - DATE '2026-02-05' AS days;
+SELECT 0.1 + 0.2                                   AS exact_numeric,
+       0.1::double precision + 0.2::double precision AS floating;
+SELECT ROUND(2.5)                   AS exact_half,
+       ROUND(3.5)                   AS exact_three_half,
+       ROUND(2.5::double precision) AS float_half,
+       ROUND(3.5::double precision) AS float_three_half;
 SELECT invoice_id,
        due_date,
        CASE
            WHEN due_date >= DATE '2026-03-31'             THEN 'Not yet due'
-           WHEN DATEDIFF(DATE '2026-03-31', due_date) <= 30         THEN 'Overdue 1-30 days'
-           WHEN DATEDIFF(DATE '2026-03-31', due_date) <= 60         THEN 'Overdue 31-60 days'
+           WHEN DATE '2026-03-31' - due_date <= 30         THEN 'Overdue 1-30 days'
+           WHEN DATE '2026-03-31' - due_date <= 60         THEN 'Overdue 31-60 days'
            ELSE 'Overdue 60+ days'
        END AS due_status
 FROM invoices
@@ -153,21 +149,19 @@ SELECT customer_name,
        UPPER(city)                              AS city_upper,
        LENGTH(customer_name)                    AS name_length,
        SUBSTRING(customer_name FROM 1 FOR 3)    AS short_code,
-       CONCAT(customer_name, ' (', segment, ')') AS label
+       customer_name || ' (' || segment || ')'  AS label
 FROM customers
 ORDER BY customer_id
 LIMIT 3;
--- Differs from the PostgreSQL result on purpose: MySQL's CONCAT returns NULL when any piece is NULL (section 12.8, exercise 21).
 SELECT customer_name,
        UPPER(city)                              AS city_upper,
-       CONCAT(customer_name, ' (', city, ')') AS with_pipes,
+       customer_name || ' (' || city || ')'     AS with_pipes,
        CONCAT(customer_name, ' (', city, ')')   AS with_concat
 FROM customers
 WHERE customer_id = 6;
 
 -- ---------------------------------------------------------------
 -- 12.9 Summarizing: aggregate functions, GROUP BY, and HAVING
--- Differs from the PostgreSQL result on purpose: same value; MySQL prints fewer decimal places.
 SELECT SUM(amount)       AS invoiced,
        AVG(amount)       AS avg_invoice,
        MIN(invoice_date) AS first_invoice,
@@ -206,7 +200,7 @@ FROM order_items
 GROUP BY order_id
 ORDER BY order_id
 LIMIT 5;
--- Fails on purpose in the book:
+-- Fails on purpose in the book (ERROR:  column "orders.order_date" must appear in the GROUP BY clause):
 -- SELECT customer_id, order_date, COUNT(*)
 -- FROM orders
 -- GROUP BY customer_id;
@@ -216,7 +210,7 @@ SELECT segment,
 FROM customers
 GROUP BY segment
 ORDER BY segment;
--- Fails on purpose in the book:
+-- Fails on purpose in the book (ERROR:  column "num_orders" does not exist):
 -- SELECT customer_id, COUNT(*) AS num_orders
 -- FROM orders
 -- WHERE num_orders > 1
@@ -435,12 +429,10 @@ CROSS JOIN
      (SELECT DISTINCT category FROM products)  AS p
 ORDER BY s.segment, p.category
 LIMIT 5;
--- Differs from the PostgreSQL result on purpose: MySQL sorts the NULL city first (section 12.16).
 SELECT city FROM customers WHERE segment = 'Retail'
 UNION
 SELECT city FROM customers WHERE segment = 'Hospitality'
 ORDER BY city;
--- Differs from the PostgreSQL result on purpose: MySQL sorts the NULL city first (section 12.16).
 SELECT city FROM customers WHERE segment = 'Retail'
 UNION ALL
 SELECT city FROM customers WHERE segment = 'Hospitality'
@@ -468,7 +460,7 @@ select c.city,count(distinct o.order_id),sum(oi.quantity*oi.unit_price*(1-oi.dis
 SELECT c.customer_name,
        c.segment,
        MAX(o.order_date)                     AS last_order_date,
-       DATEDIFF(DATE '2026-03-31', MAX(o.order_date)) AS days_since_last_order
+       DATE '2026-03-31' - MAX(o.order_date) AS days_since_last_order
 FROM customers AS c
 LEFT JOIN orders AS o
        ON c.customer_id = o.customer_id
@@ -476,7 +468,7 @@ LEFT JOIN orders AS o
 GROUP BY c.customer_id, c.customer_name, c.segment
 HAVING MAX(o.order_date) < DATE '2026-03-01'
     OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NULL DESC, last_order_date;
+ORDER BY last_order_date NULLS FIRST;
 SELECT p.category,
        ROUND(SUM(oi.quantity * oi.unit_price), 0)                           AS gross_value,
        ROUND(SUM(oi.quantity * oi.unit_price * oi.discount_pct / 100), 0)   AS discount_given,
@@ -503,9 +495,9 @@ SELECT c.customer_name,
        SUM(inv.balance) AS total_due,
        SUM(CASE WHEN inv.due_date >= DATE '2026-03-31' THEN inv.balance ELSE 0.00 END) AS not_yet_due,
        SUM(CASE WHEN inv.due_date <  DATE '2026-03-31'
-                 AND DATEDIFF(DATE '2026-03-31', inv.due_date) <= 30 THEN inv.balance ELSE 0.00 END) AS overdue_1_30,
-       SUM(CASE WHEN DATEDIFF(DATE '2026-03-31', inv.due_date) BETWEEN 31 AND 60 THEN inv.balance ELSE 0.00 END) AS overdue_31_60,
-       SUM(CASE WHEN DATEDIFF(DATE '2026-03-31', inv.due_date) > 60 THEN inv.balance ELSE 0.00 END) AS overdue_60_plus
+                 AND DATE '2026-03-31' - inv.due_date <= 30 THEN inv.balance ELSE 0.00 END) AS overdue_1_30,
+       SUM(CASE WHEN DATE '2026-03-31' - inv.due_date BETWEEN 31 AND 60 THEN inv.balance ELSE 0.00 END) AS overdue_31_60,
+       SUM(CASE WHEN DATE '2026-03-31' - inv.due_date > 60 THEN inv.balance ELSE 0.00 END) AS overdue_60_plus
 FROM (
     SELECT i.invoice_id, i.order_id, i.due_date,
            i.amount - COALESCE(pay.paid, 0) AS balance
@@ -529,13 +521,13 @@ JOIN      order_items AS oi ON oi.order_id    = o.order_id
 WHERE o.status <> 'Cancelled'
 GROUP BY e.employee_id, e.employee_name, m.employee_name
 ORDER BY net_revenue DESC;
-SELECT CAST(DATE_FORMAT(invoice_date, '%Y-%m-01') AS DATE) AS month,
+SELECT DATE_TRUNC('month', invoice_date)::date AS month,
        COUNT(*)                                AS invoices,
        SUM(amount)                             AS billed,
        ROUND(AVG(amount), 0)                   AS avg_invoice
 FROM invoices
 WHERE invoice_date >= DATE '2026-02-01'
-GROUP BY month
+GROUP BY DATE_TRUNC('month', invoice_date)
 ORDER BY month;
 SELECT c.customer_name
 FROM customers AS c
@@ -609,53 +601,21 @@ ORDER BY overdue DESC, owed DESC, c.customer_name;
 
 -- ---------------------------------------------------------------
 -- 12.16 The same SQL in MySQL
-SELECT DATE '2026-03-31' - DATE '2026-02-05'         AS looks_like_days,
-       DATEDIFF(DATE '2026-03-31', DATE '2026-02-05') AS actual_days;
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                              AS last_order_date,
-       DATEDIFF(DATE '2026-03-31', MAX(o.order_date)) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < DATE '2026-03-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NULL DESC, last_order_date;
--- Differs from the PostgreSQL result on purpose: MySQL's default collation ignores case: 8, not 0 (section 12.16, Trap 2).
 SELECT COUNT(*) AS delivered_orders
 FROM orders
 WHERE status = 'delivered';
-SELECT COUNT(*) AS delivered_orders
-FROM orders
-WHERE status = 'delivered';
-SELECT COUNT(*) AS delivered_orders
-FROM orders
-WHERE status COLLATE utf8mb4_bin = 'delivered';
-SELECT 'Riverstone' || ' Supplies'      AS pipes,
-       CONCAT('Riverstone', ' Supplies') AS concat_result;
-SELECT DISTINCT city
-FROM customers
-ORDER BY city;
--- (PostgreSQL only; the MySQL form is the next query, or isn't needed.)
 SELECT o.order_id, o.status, i.invoice_id
 FROM orders AS o
-LEFT JOIN invoices AS i ON o.order_id = i.order_id
-WHERE i.invoice_id IS NULL
-UNION ALL
-SELECT o.order_id, o.status, i.invoice_id
-FROM orders AS o
-RIGHT JOIN invoices AS i ON o.order_id = i.order_id
-WHERE o.order_id IS NULL
-ORDER BY order_id;
+FULL OUTER JOIN invoices AS i ON o.order_id = i.order_id
+WHERE o.order_id IS NULL OR i.invoice_id IS NULL
+ORDER BY o.order_id;
 
 -- ---------------------------------------------------------------
 -- In the real world: Riverstone's monthly sales report
 -- Monthly sales summary
 -- Revenue counts Delivered and Shipped orders (finance policy);
 -- Pending and Cancelled orders are excluded.
-SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
+SELECT DATE_TRUNC('month', o.order_date)::date AS month,
        COUNT(DISTINCT o.order_id)             AS orders,
        COUNT(DISTINCT o.customer_id)          AS active_customers,
        ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
@@ -663,19 +623,7 @@ FROM orders AS o
 JOIN order_items AS oi
   ON o.order_id = oi.order_id
 WHERE o.status IN ('Delivered', 'Shipped')
-GROUP BY month
-ORDER BY month;
--- Monthly sales summary (MySQL)
--- Revenue counts Delivered and Shipped orders (finance policy).
-SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
-       COUNT(DISTINCT o.order_id)                          AS orders,
-       COUNT(DISTINCT o.customer_id)                       AS active_customers,
-       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
-FROM orders AS o
-JOIN order_items AS oi
-  ON o.order_id = oi.order_id
-WHERE o.status IN ('Delivered', 'Shipped')
-GROUP BY month
+GROUP BY DATE_TRUNC('month', o.order_date)
 ORDER BY month;
 
 -- ---------------------------------------------------------------
@@ -744,7 +692,7 @@ ORDER BY i.due_date;
 SELECT c.customer_name,
        MIN(o.order_date)                     AS first_order,
        MAX(o.order_date)                     AS latest_order,
-       DATEDIFF(MAX(o.order_date), MIN(o.order_date)) AS days_between
+       MAX(o.order_date) - MIN(o.order_date) AS days_between
 FROM customers AS c
 JOIN orders AS o ON c.customer_id = o.customer_id
 WHERE o.status <> 'Cancelled'
@@ -798,29 +746,16 @@ ORDER BY balance DESC;
 SELECT order_id,
        order_date,
        status,
-       DATEDIFF(DATE '2026-03-31', order_date) AS days_open
+       DATE '2026-03-31' - order_date AS days_open
 FROM orders
-WHERE (status = 'Pending' AND DATEDIFF(DATE '2026-03-31', order_date) > 7)
-   OR (status = 'Shipped' AND DATEDIFF(DATE '2026-03-31', order_date) > 14)
+WHERE (status = 'Pending' AND DATE '2026-03-31' - order_date > 7)
+   OR (status = 'Shipped' AND DATE '2026-03-31' - order_date > 14)
 ORDER BY days_open DESC;
-SELECT order_id,
-       order_date,
-       status,
-       DATEDIFF(DATE '2026-03-31', order_date) AS days_open
-FROM orders
-WHERE (status = 'Pending' AND DATEDIFF(DATE '2026-03-31', order_date) > 7)
-   OR (status = 'Shipped' AND DATEDIFF(DATE '2026-03-31', order_date) > 14)
-ORDER BY days_open DESC;
-SELECT CONCAT(e.employee_name, ' (', e.job_title, ')') AS employee,
-       COALESCE(m.employee_name, '(none)')             AS reports_to
-FROM employees AS e
-LEFT JOIN employees AS m ON e.manager_id = m.employee_id
-ORDER BY e.employee_id;
-USE riverstone_2025;
+\c riverstone_2025
 SELECT c.customer_name,
        c.segment,
        MAX(o.order_date)                     AS last_order_date,
-       DATEDIFF(DATE '2025-12-31', MAX(o.order_date)) AS days_since_last_order
+       DATE '2025-12-31' - MAX(o.order_date) AS days_since_last_order
 FROM customers AS c
 LEFT JOIN orders AS o
        ON c.customer_id = o.customer_id
@@ -828,23 +763,10 @@ LEFT JOIN orders AS o
 GROUP BY c.customer_id, c.customer_name, c.segment
 HAVING MAX(o.order_date) < DATE '2025-11-01'
     OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NULL DESC, last_order_date;
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                              AS last_order_date,
-       DATEDIFF(DATE '2025-12-31', MAX(o.order_date)) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < DATE '2025-11-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NULL DESC, last_order_date;
--- (PostgreSQL only; the MySQL form is the next query, or isn't needed.)
-USE riverstone;
-SELECT ROUND(45E-1) AS approximate;
-USE riverstone_2025;
+ORDER BY last_order_date NULLS FIRST;
+SELECT ROUND(4.5)                   AS exact_numeric,
+       ROUND(4.5::double precision) AS floating;
+\c riverstone_2025
 SELECT segment,
        ROUND(SUM(CASE WHEN qtr = 1 THEN line_revenue ELSE 0 END), 2) AS q1,
        ROUND(SUM(CASE WHEN qtr = 2 THEN line_revenue ELSE 0 END), 2) AS q2,
