@@ -2,19 +2,22 @@
 """
 Analyst to Architect · Chapter 28 · Advanced SQL, Performance & Data Modeling
 File: migrate.py - a tiny versioned-migration runner, to show how tools like Flyway work (section 28.12).
-How:  python3 migrate.py --db DATABASE MIGRATIONS_FOLDER      (add --user NAME if needed)
+How:  python3 migrate.py --db DATABASE MIGRATIONS_FOLDER      (python on Windows)
+      Options: --user NAME (default: psql's own default, or PGUSER); --psql PATH_TO_PSQL (default: psql on PATH).
+      The password comes from the PGPASSWORD environment variable, as for psql itself (section 28.12).
       Files named V<number>__<description>.sql are applied once each, in number order, each inside a
       transaction together with its row in schema_migrations. An applied file whose contents change is
       reported and nothing further runs. Uses the psql command-line client, so it needs no Python packages.
-Tested on: Python 3.12.3, PostgreSQL 16 (Ubuntu 24.04). For learning only: use a real tool in production.
+Tested on: Python 3.11 and 3.12, PostgreSQL 16 (Ubuntu 24.04). For learning only: use a real tool in production.
 Riverstone Supplies is fictional; every name and number is invented.
 """
 import argparse, hashlib, pathlib, re, subprocess, sys
 
 ap = argparse.ArgumentParser()
 ap.add_argument('folder'); ap.add_argument('--db', required=True); ap.add_argument('--user', default=None)
+ap.add_argument('--psql', default='psql')
 a = ap.parse_args()
-PSQL = ['psql', '-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-d', a.db] + (['-U', a.user] if a.user else [])
+PSQL = [a.psql, '-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-d', a.db] + (['-U', a.user] if a.user else [])
 
 def psql(sql):
     r = subprocess.run(PSQL, input=sql, capture_output=True, text=True)

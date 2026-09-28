@@ -1,33 +1,46 @@
-== naive matching grows with the square of the work
-  250 invoices x 176,110 order lines:   0.96 s
-  500 invoices x 176,110 order lines:   1.84 s
- 1000 invoices x 176,110 order lines:   3.73 s
- 2000 invoices x 176,110 order lines:   7.51 s
+machine: 4 CPU(s), x86_64, Linux 6.18.44-fc-v42, Python 3.11.15
 
-== the same job with a dictionary index
-build the index over 176,110 lines: 0.045 s
-look up all 20,000 invoices:        0.009 s
+== reading the order file once
+load order_lines.csv: 0.261 s
 
-== membership: list vs set vs dict (1,000 lookups)
-list  "in" :    1.451 s
-set   "in" :  0.00004 s
-dict  "in" :  0.00009 s
+== naive matching: every invoice against every order line (median of 3 runs)
+  250 invoices x 176,110 order lines:   0.91 s
+  500 invoices x 176,110 order lines:   2.02 s
+ 1000 invoices x 176,110 order lines:   4.00 s
+ 2000 invoices x 176,110 order lines:   8.09 s
+predicted for 20,000 invoices: 81 s
+
+== the same job with a dictionary index (median of 5 runs)
+build the index over 176,110 lines: 0.063 s
+look up all 20,000 invoices:        0.008 s
+build + match:                      0.070 s
 
 == queue: list.pop(0) vs deque.popleft (100,000 items)
-list.pop(0)      : 0.873 s
-deque.popleft()  : 0.003 s
+list.pop(0)      : 0.862 s
+deque.popleft()  : 0.005 s
 
-== searching a sorted list of 1,000,000 numbers (10,000 searches)
-list.index()  200 searches : 0.713 s
-bisect     10,000 searches : 0.0061 s
+== cycle check on a chain of 18 diamonds (a DAG with no cycle)
+re-walking every path : 2.31 s
+remembering done nodes: 0.000027 s
+
+== searching a sorted list of 1,000,000 numbers
+list.index()  200 searches : 0.738 s
+bisect     10,000 searches : 0.0077 s
+
+== top 10 of 176,110 values: sorted vs heapq.nlargest (median of 5)
+sorted(...)[:10]   : 0.057 s
+heapq.nlargest(10) : 0.008 s
+
+== distinct pairs in 20,000 rows: a list of seen pairs vs a set
+list: 3.87 s   set: 0.0040 s   ratio: 968x
 
 == recursion: fibonacci with and without memoization
-fib(25) plain      :   0.008 s
-fib(30) plain      :   0.087 s
-fib(32) plain      :   0.226 s
+fib(25) plain      :   0.009 s
+fib(30) plain      :   0.101 s
+fib(32) plain      :   0.261 s
 fib(32) memoized   : 0.000023 s
 fib(300) memoized  : 222232244629420445529739893461909967206666939096499764990979600
 
-== memory: a list of 1,000,000 rows vs a generator
+== memory: a list of 1,000,000 numbers vs a generator
 list        : 40.4 MB peak, sum 999999000000
 generator   : 0.0005 MB peak, sum 999999000000

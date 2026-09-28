@@ -6,13 +6,24 @@
 >
 > **You will learn to:** walk org charts and bills of materials of any depth with recursive CTEs · protect a recursive query against loops · choose between `ROWS`, `RANGE`, and `GROUPS` frames, and use `EXCLUDE` and named windows · read a query plan with `EXPLAIN` and `EXPLAIN ANALYZE` · decide which indexes to create (single-column, composite, covering, partial) and which to avoid · recognize queries that can't use an index, and rewrite them · normalize a messy table to first, second, and third normal form · declare and test the grain of any table · design a star schema with facts, dimensions, and a date dimension · build slowly changing dimensions of types 1, 2, and 3 · decide when denormalizing is worth it · change a production database safely with versioned migration scripts.
 >
-> **Before you start:** Chapter 12 (joins, keys, `CREATE TABLE`, `ALTER TABLE`, transactions, the fan-out trap) and Chapter 13 (CTEs, views, window functions, the `sales_lines` view).
+> **Before you start:** Chapter 12 (joins, keys, `CREATE TABLE`, `ALTER TABLE`, transactions, the fan-out trap) and Chapter 13 (CTEs, views, window functions, the `sales_lines` view). The chapter also leans on Chapter 4 (the median), Chapters 15 and 21 (percentiles in SQL, sections 15.5 and 21.3), Chapter 16 (section 16.3, the star schema you built in Power BI), Chapter 17 (running a Python script), and Chapter 26 (section 26.0, the terminal).
 >
-> **Time needed:** 18–24 hours of reading and practice, spread over three to four weeks.
+> **Time needed:** 22–30 hours of reading and practice, including the project, spread over four to five weeks.
 >
-> **Tools:** PostgreSQL 16 or later and DBeaver, as in Chapter 12. MySQL 8.0 or later works for most of the chapter; section 28.13 shows what changes.
+> **Tools:** PostgreSQL 15 or later (every query was run on PostgreSQL 16) and DBeaver, as in Chapter 12, plus PostgreSQL's command-line client, `psql`, which you installed with the server in section 12.3. MySQL works for most of the chapter; section 28.13 shows what changes.
 >
-> **Practice data:** the one-year database `riverstone_2025` with three new companion tables, a large generated database `riverstone_perf` (1.9 million order lines), and the `riverstone_lab` database you build yourself (section 28.1). Every query was run, and every result shown is the real output. Timings were measured on a small machine and are labeled with it.
+> **Practice data:** the one-year database `riverstone_2025` with three new companion tables, a large generated database `riverstone_perf` (1.9 million order lines) that you build in section 28.1, and the `riverstone_lab` database you build yourself. Every query was run, and every result shown is the real output. Timings were measured on the author's test machine and are labeled as such.
+
+> **Plan your sittings.** This is the longest chapter in Part 3: six topics that are each a chapter elsewhere. Take it in six sittings, and stop at the end of one rather than in the middle:
+>
+> 1. Sections 28.1 (the one-year tables) to 28.3: recursive queries and advanced windows, 5–6 hours.
+> 2. Section 28.1's box "Build riverstone_perf", then sections 28.4 to 28.6: plans and indexes, 5–6 hours.
+> 3. Sections 28.7 and 28.8: normalization and grain, about 3 hours.
+> 4. Sections 28.9 to 28.11: the star schema, slowly changing dimensions, and denormalization, 5–6 hours.
+> 5. Sections 28.12 and 28.13: migrations and MySQL, about 3 hours.
+> 6. The project, 4–6 hours.
+>
+> Each sitting ends at a line marked **Good place to stop**.
 
 ---
 
@@ -72,19 +83,271 @@ The `staff` table is Riverstone's reporting lines, from the managing director, A
 | `orders` | 714,285 |
 | `order_items` | 1,926,847 |
 
-It uses a fixed seed (28), so your data is identical to the book's. If you have the book's full three-year dataset loaded, every command in sections 28.4 to 28.6 works on that instead; only the timings change. The script writes CSV files and two load scripts, one for PostgreSQL and one for MySQL; the header of each file shows how to run it. The data takes about 200 MB in PostgreSQL. Apart from primary keys, the tables start with **no indexes**, because adding them is the lesson.
-
-> **Simplification note.** The loaded database has one setting changed: `ALTER DATABASE riverstone_perf SET max_parallel_workers_per_gather = 0;`. It turns off parallel query, which PostgreSQL uses on machines with several processor cores. Parallel plans are correct but longer to read, and the timings in this chapter were measured on a single-core machine where parallelism only adds noise. Leave the setting on your own copy if you like; the lessons are the same.
+It uses a fixed seed (28), so your data is identical to the book's. If you have the book's full three-year dataset loaded, every command in sections 28.4 to 28.6 works on that instead; only the numbers change. The data takes about 200 MB in PostgreSQL. Apart from primary keys, the tables start with **no indexes**, because adding them is the lesson. You build it at the start of sitting 2, with the box below; skip it until then.
 
 **The lab database (`riverstone_lab`)** is a scratch database you create and change freely, as in section 12.13. Sections 28.7, 28.10, and 28.12 build tables in it step by step. If you still have Chapter 12's lab, the first lab step drops and recreates it.
 
-> **Watch out: timings are measurements, not facts.** Every timing in this chapter was measured on the author's test machine: a single virtual processor with 3 GB of memory, running PostgreSQL 16 and MySQL 8.0.46 on Ubuntu 24.04. Each query was run seven times and the median is reported. Your laptop will give different numbers. What should match is the *plan* the database chooses and the *ratio* between a slow and a fast version. The companion script `ch28_perf.py` reruns every experiment.
+> **Watch out: timings are measurements, not facts.** Every timing in this chapter was measured on the author's test machine: four virtual processors and 16 GB of memory, running PostgreSQL 16 and MySQL 8.0.46 on Ubuntu 24.04, with other work running alongside. Each query was run seven times and the median is reported. Your laptop will give different numbers. What should match is the *plan* the database chooses and the *ratio* between a slow and a fast version. The companion script `ch28_perf.py` reruns every experiment on your machine and writes its plans and timings to `ch28_perf_log.txt`.
+
+### Build riverstone_perf (about 20 minutes)
+
+This is the chapter's only setup that needs the terminal. You need three things from earlier chapters: a terminal open in a folder (section 26.0), Python (Chapter 17), and your PostgreSQL password (section 12.3).
+
+**Step 1. Create the empty database.** In DBeaver, on your usual PostgreSQL connection, run:
+
+<!-- run: none -->
+```sql
+CREATE DATABASE riverstone_perf;
+```
+
+**Step 2. Generate the data.** In the terminal, move into the chapter's companion folder and run the generator (type `python` instead of `python3` on Windows, as in Chapter 17). It takes about half a minute and prints one line:
+
+<!-- run: none -->
+```
+# terminal, in the companion files folder
+$ cd ch28
+$ python3 generate_riverstone_perf.py
+customers 5,000  orders 714,285  order lines 1,926,847  (seed 28)
+```
+
+It has written a folder `perf_data` next to the script: five CSV files (about 80 MB) and two load scripts, `load_postgresql.sql` and `load_mysql.sql`.
+
+**Step 3. Find `psql`.** The load script uses `\copy`, a command only PostgreSQL's command-line client understands. The client was installed with the server in section 12.3 (on Windows, the *Command Line Tools* component). Check that the terminal can find it:
+
+<!-- run: none -->
+```
+# terminal
+$ psql --version
+psql (PostgreSQL) 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)
+```
+
+Your version line will differ. If the terminal says *command not found* instead:
+
+- **Windows:** type the full path in place of `psql`, in quotes, for example `"C:\Program Files\PostgreSQL\16\bin\psql.exe" --version` (change `16` to your version). Chapter 34 shows how to add that folder to your `PATH` so the short name works.
+- **macOS:** with Postgres.app, use `/Applications/Postgres.app/Contents/Versions/latest/bin/psql`; with Homebrew, `brew install libpq` installs the client.
+- **Linux:** `sudo apt install postgresql-client`.
+
+**Step 4. Load the data.** Still in the `ch28` folder:
+
+<!-- run: none -->
+```
+# terminal
+$ psql -U postgres -d riverstone_perf -f perf_data/load_postgresql.sql
+Password for user postgres:
+psql:perf_data/load_postgresql.sql:2: NOTICE:  table "order_items" does not exist, skipping
+psql:perf_data/load_postgresql.sql:2: NOTICE:  table "orders" does not exist, skipping
+psql:perf_data/load_postgresql.sql:2: NOTICE:  table "employees" does not exist, skipping
+psql:perf_data/load_postgresql.sql:2: NOTICE:  table "products" does not exist, skipping
+psql:perf_data/load_postgresql.sql:2: NOTICE:  table "customers" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+COPY 5000
+COPY 8
+COPY 5
+COPY 714285
+COPY 1926847
+ANALYZE
+```
+
+**What each part does:**
+
+- **`-U postgres`** connects as the user `postgres`, the administrator account from section 12.3. psql asks for its password; nothing appears on the screen while you type it, which is normal.
+- **`-d riverstone_perf`** chooses the database, the one you created in step 1.
+- **`-f perf_data/load_postgresql.sql`** runs every statement in that file, in order, and prints what each one did.
+- The five **`NOTICE`** lines are harmless: the script starts by dropping the tables in case you run it twice, and on the first run there's nothing to drop. **`COPY 714285`** means 714,285 rows were read from `orders.csv`. The load takes under a minute; the final `ANALYZE` collects the statistics section 28.5 explains.
+
+**Step 5. One setting.** Back in DBeaver, run:
+
+<!-- run: none -->
+```sql
+ALTER DATABASE riverstone_perf SET max_parallel_workers_per_gather = 0;
+```
+
+It turns off *parallel query*, which PostgreSQL uses on machines with several processor cores. Parallel plans are correct but longer to read, and they make timings jump about. The book's plans were all made with this setting. It applies to connections opened *after* you run it, so disconnect and reconnect DBeaver's `riverstone_perf` connection. You can reset it later with `ALTER DATABASE riverstone_perf RESET max_parallel_workers_per_gather;`.
+
+**Step 6. Check it.** Make a DBeaver connection to `riverstone_perf` (as in section 12.3, with *Database* set to `riverstone_perf`) and run:
+
+<!-- db: riverstone_perf -->
+
+```sql
+SELECT COUNT(*) FROM order_items;
+```
+
+```
+  count
+---------
+ 1926847
+(1 row)
+```
+
+If you see 1,926,847, you're ready for section 28.4.
+
+> **No terminal access?** DBeaver can do the load instead. Run the five `CREATE TABLE` statements from `load_postgresql.sql` in DBeaver, then right-click each table → *Import Data* → *CSV*, and load the files in this order, so every foreign key finds its row: `customers.csv`, `products.csv`, `employees.csv`, `orders.csv`, `order_items.csv`. The files have no header row, so untick *Header*. It's slower, but the result is the same.
+
+> **Using MySQL?** The same steps, with MySQL's client. The server must allow file loading once: as the `root` user, run `SET GLOBAL local_infile = 1;` in DBeaver. Then, in the `ch28` folder, `mysql -u root -p --local-infile=1 < perf_data/load_mysql.sql`. Here `-u root` is the user, `-p` makes the client ask for the password, `--local-infile=1` lets the client send files from your computer, and `<` feeds the script to the client as its input. The script creates the database itself. Section 28.13 uses it.
 
 ---
 
 ## 28.2 Recursive CTEs: walking trees of any depth
 
-Chapter 13 used `WITH RECURSIVE` once, to generate a list of months (section 13.8). Its real power is walking **hierarchies**: data where rows point at other rows of the same table.
+A **recursive CTE** is a CTE that refers to itself. It is how SQL walks data where rows point at other rows of the same table: org charts, product structures, account hierarchies. It can also build a list, such as every month of a year, when no table holds one. This section starts with the smallest recursive query there is, then climbs to Riverstone's org chart and its bills of materials.
+
+### Your first recursive query: counting to five
+
+The plan: start with the number 1, and keep adding 1 until you reach 5. In the one-year database (any database works; this query reads no tables):
+
+<!-- db: riverstone_2025 -->
+
+```sql
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n        -- anchor: runs once
+    UNION ALL
+    SELECT n + 1         -- recursive part: runs again and again
+    FROM numbers
+    WHERE n < 5          -- stop rule
+)
+SELECT n FROM numbers;
+```
+
+```
+ n
+---
+ 1
+ 2
+ 3
+ 4
+ 5
+(5 rows)
+```
+
+**How it works, line by line:**
+
+- **`WITH RECURSIVE numbers AS (…)`** is a CTE, as in section 13.2, with one new word. **`RECURSIVE`** tells the database that a CTE in this `WITH` list may refer to itself. It is written once, straight after `WITH`, and covers the whole list, even when some of the CTEs in it aren't recursive (you'll see that in "Guarding against loops").
+- **`SELECT 1 AS n`** is the **anchor**. It runs once and produces the starting row. Its column names and types fix the CTE's columns: there is one column, `n`, and it holds whole numbers.
+- **`UNION ALL`** glues each pass's rows onto the result.
+- **`SELECT n + 1 FROM numbers WHERE n < 5`** is the **recursive part**. Inside it, `numbers` does not mean the whole result so far. It means only the rows the **previous pass** produced (the database's name for them is the *working table*). So each pass reads one row and makes the next number.
+- **The stop rule:** when a pass produces no rows, the query ends. `WHERE n < 5` is what makes that happen.
+- The final **`SELECT n FROM numbers`** reads everything the passes produced, like any CTE.
+
+Trace it pass by pass:
+
+| Pass | Reads (the previous pass's rows) | Produces |
+|---|---|---|
+| anchor | nothing | 1 |
+| 1 | 1 | 2 |
+| 2 | 2 | 3 |
+| 3 | 3 | 4 |
+| 4 | 4 | 5 |
+| 5 | 5 | nothing, because `5 < 5` is false: stop |
+
+**What happens if you change it?** Predict before you run it: what does the query do without `WHERE n < 5`? Nothing ever stops the passes. In PostgreSQL the query keeps going until you cancel it (DBeaver's *Cancel* button, next to the results) or the numbers grow too large for their type. MySQL protects you. It stops any recursive CTE that runs more than 1,000 passes, a limit held in the setting **`cte_max_recursion_depth`**:
+
+```mysql
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n
+    UNION ALL
+    SELECT n + 1 FROM numbers
+)
+SELECT COUNT(*) FROM numbers;
+```
+
+```
+ERROR 3636 (HY000): Recursive query aborted after 1001 iterations. Try increasing @@cte_max_recursion_depth to a larger value.
+```
+
+For a legitimate walk longer than 1,000 steps, raise the limit for your session first: `SET SESSION cte_max_recursion_depth = 10000;`. PostgreSQL has no such limit, which is why "Guarding against loops", later in this section, matters there.
+
+> **UNION or UNION ALL?** Plain `UNION` (section 12.12) would remove duplicate rows on every pass. Use `UNION ALL` unless you have a reason not to: it's faster, and it keeps repeats that are real. You'll see one in the bill of materials below, where steel tube legitimately appears twice.
+
+### A list of months when there's no calendar table
+
+Chapter 13's Pattern 5 filled in the missing months with a **date spine**, and used the calendar table `calendar_months` for it. Most companies have one; when yours doesn't, a recursive CTE builds the same list. Change the counter to count months: start at 1 January 2025 and add one month per pass until December.
+
+```sql
+WITH RECURSIVE months AS (
+    SELECT DATE '2025-01-01' AS month
+    UNION ALL
+    SELECT month + INTERVAL '1 month'
+    FROM months
+    WHERE month < DATE '2025-12-01'
+)
+SELECT month FROM months;
+```
+
+```
+ERROR:  recursive query "months" column 1 has type date in non-recursive term but type timestamp without time zone overall
+```
+
+A real error, and a useful one. The anchor's `DATE '2025-01-01'` is a `date`, but `month + INTERVAL '1 month'` gives a timestamp (a date with a time of day, as `generate_series` did in Pattern 5). The anchor fixes the column's type, so the recursive part must produce the same type. `CAST(… AS DATE)` (section 12.8) turns each new month back into a date:
+
+```sql
+WITH RECURSIVE months AS (
+    SELECT DATE '2025-01-01' AS month
+    UNION ALL
+    SELECT CAST(month + INTERVAL '1 month' AS DATE)
+    FROM months
+    WHERE month < DATE '2025-12-01'
+)
+SELECT COUNT(*) AS months, MIN(month) AS first_month, MAX(month) AS last_month
+FROM months;
+```
+
+```
+ months | first_month | last_month
+--------+-------------+------------
+     12 | 2025-01-01  | 2025-12-01
+(1 row)
+```
+
+Twelve months, the same rows as `calendar_months`. Pass 11 produces 1 December; pass 12 reads it, finds `month < '2025-12-01'` false, and produces nothing. To use it, put this `months` step where Pattern 5 had `calendar_months`. In MySQL only the step changes spelling (`month + INTERVAL 1 MONTH`, and no `CAST` is needed, because MySQL keeps a date plus a month as a date). Here is Pattern 5's Garden Chair query in MySQL with that spine:
+
+```mysql
+WITH RECURSIVE months AS (
+    SELECT DATE '2025-01-01' AS month           -- the first month
+    UNION ALL
+    SELECT month + INTERVAL 1 MONTH             -- add one month...
+    FROM months
+    WHERE month < DATE '2025-12-01'             -- ...until December
+),
+furniture AS (
+    SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month,
+           SUM(net_revenue)                                  AS revenue
+    FROM sales_lines
+    WHERE category = 'Furniture'
+    GROUP BY CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE)
+),
+filled AS (
+    SELECT m.month,
+           COALESCE(f.revenue, 0)                              AS revenue,
+           LAG(COALESCE(f.revenue, 0)) OVER (ORDER BY m.month) AS previous_month
+    FROM months AS m
+    LEFT JOIN furniture AS f ON f.month = m.month
+)
+SELECT month, ROUND(revenue, 0) AS revenue, ROUND(previous_month, 0) AS previous_month
+FROM filled
+WHERE month BETWEEN '2025-02-01' AND '2025-06-01'
+ORDER BY month;
+```
+
+```
++------------+---------+----------------+
+| month      | revenue | previous_month |
++------------+---------+----------------+
+| 2025-02-01 |       0 |              0 |
+| 2025-03-01 |   16388 |              0 |
+| 2025-04-01 |       0 |          16388 |
+| 2025-05-01 |   17250 |              0 |
+| 2025-06-01 |       0 |          17250 |
++------------+---------+----------------+
+```
+
+The same five rows as Pattern 5. Only the first CTE is recursive, and `WITH RECURSIVE` is still written once, at the start of the list. `DATE_FORMAT(order_date, '%Y-%m-01')` is Chapter 13's MySQL spelling of "the first of the month" (section 13.9). A monthly spine needs 11 passes, far below MySQL's limit; a *daily* spine for three years needs 1,095 and would stop with error 3636 unless you raise `cte_max_recursion_depth` first. For dates you'll use again and again, a permanent calendar table is still the better answer.
+
+Counting and listing months are warm-ups. The real power of recursion is walking **hierarchies**.
 
 ### The problem
 
@@ -114,7 +377,9 @@ ORDER BY staff_id;
 
 A self-join (section 12.10) gets you one level: each person and their manager. Two self-joins get you two levels. But the org chart is five levels deep today and may be six next year, and you can't write a query with a join for every level that might exist. You need a query that keeps going until it runs out of people.
 
-### The recursive CTE
+### The org chart, level by level
+
+The same shape as the counter. The anchor is the one person with no manager. The recursive part finds everyone whose manager was found on the previous pass, and adds 1 to the level, where the counter added 1 to `n`:
 
 ```sql
 WITH RECURSIVE org AS (
@@ -179,14 +444,27 @@ ORDER BY level, staff_id;
 **How it works:**
 
 - A recursive CTE has two queries joined by `UNION ALL`. The first is the **anchor**: it runs once and produces the starting rows. Here that's Arvind Kapoor, the only person with no manager.
-- The second is the **recursive part**. It refers to `org`, the CTE's own name. On each pass it sees only the rows the *previous* pass produced, and joins `staff` to them: "who reports to someone we found last time?" Pass 1 finds the eight department heads, pass 2 finds the ten managers below them, and so on.
+- The second is the **recursive part**. It refers to `org`, the CTE's own name. On each pass it sees only the rows the *previous* pass produced, and joins `staff` to them: "who reports to someone we found last time?"
 - `o.level + 1` carries information down the tree. Each person's level is their manager's level plus one.
 - The recursion stops by itself when a pass finds no new rows. After the machine operators, nobody reports to anybody new, so pass 5 returns nothing and the query ends.
 - The final `SELECT` reads the whole accumulated result like any other CTE.
 
-![An organization chart of 16 of Riverstone's 35 staff in five colored levels, from the managing director at the top through department heads, managers, supervisors, and machine operators](figures/fig28-1-org-chart-levels.svg)
+The passes, counted from the output:
 
-*Figure 28.1 — Each pass of the recursive part adds one level. The query stops when a pass finds nobody new.*
+| Pass | Reads | Finds | Who they are |
+|---|---|---|---|
+| anchor | nothing | 1 | the managing director (level 1) |
+| 1 | 1 | 8 | the eight department heads (level 2) |
+| 2 | 8 | 10 | the ten people at level 3: six managers, and four people who manage no one |
+| 3 | 10 | 13 | level 4: supervisors, an inspector, and the sales executives |
+| 4 | 13 | 3 | the three machine operators (level 5) |
+| 5 | 3 | 0 | nobody reports to an operator: stop |
+
+1 + 8 + 10 + 13 + 3 = 35 people.
+
+![An organization chart of 16 of Riverstone's 35 staff in five levels, each level labeled with its number and the pass that finds it, from the managing director at the top through department heads, managers, supervisors, and machine operators](figures/fig28-1-org-chart-levels.svg)
+
+*Figure 28.1 — Each pass of the recursive part adds one level. The query stops when a pass finds nobody new. The chart shows 16 of the 35 people; the query returns all of them.*
 
 Check a number by hand: Farah Khan reports directly to Anita Rao, who reports to Arvind Kapoor. Level 1, 2, 3. ✓ And the row count, 35, matches `SELECT COUNT(*) FROM staff`, so nobody was lost. That check matters more than it looks: a person whose `manager_id` points to someone who doesn't exist would silently disappear from a recursive walk. Exercise 4 asks you to find such orphans.
 
@@ -306,9 +584,9 @@ ORDER BY net_revenue DESC NULLS LAST;
 (5 rows)
 ```
 
-The three executives' revenue adds up to ₹4,130,969. Chapter 13's total for 2025 is ₹4,335,471, so ₹204,502 belongs to orders with no sales rep recorded (Chapter 13's data-quality check found 11 of them). The team walk is right; the gap is a data problem, and it's exactly the kind of gap you should explain before anyone else finds it. Meera Iyer isn't in the result at all: she has no `employee_id`, because a coordinator doesn't take orders. Vikram Singh has no orders recorded under his own name in 2025; his team's orders are credited to the executives who took them.
+The three executives' revenue adds up to ₹4,130,969. Chapter 13's total for 2025 is ₹4,335,471, so ₹204,502 belongs to orders with no sales rep recorded (Chapter 13's data-quality check, Pattern 10, found 11 orders with no rep; 10 of them are not cancelled, and those hold the ₹204,502). The team walk is right; the gap is a data problem, and it's exactly the kind of gap you should explain before anyone else finds it. Meera Iyer isn't in the result at all: she has no `employee_id`, because a coordinator doesn't take orders. Vikram Singh has no orders recorded under his own name in 2025; his team's orders are credited to the executives who took them.
 
-> **Watch out: a recursive CTE's column types must match.** In the next example, if the anchor returns `quantity` as `NUMERIC(8,3)` and the recursive part multiplies it (giving plain `NUMERIC`), PostgreSQL stops with *ERROR: recursive query "explode" column 3 has type numeric(8,3) in non-recursive term but type numeric overall*. The fix is to cast the anchor's column to the wider type, `CAST(b.quantity AS NUMERIC)`. MySQL has the opposite problem: it sizes text columns from the anchor, so a path string that grows on each pass fails with a *Data too long* error unless you `CAST` it to a long enough `CHAR` in the anchor (section 28.13).
+> **Watch out: a recursive CTE's column types must match.** You met this with the list of months. It bites again in the next example: if the anchor returns `quantity` as `NUMERIC(8,3)` and the recursive part multiplies it (giving plain `NUMERIC`), PostgreSQL stops with *ERROR: recursive query "explode" column 3 has type numeric(8,3) in non-recursive term but type numeric overall*. The fix is to cast the anchor's column to the wider type, `CAST(b.quantity AS NUMERIC)`. MySQL has the opposite problem: it sizes text columns from the anchor, so a path string that grows on each pass fails with a *Data too long* error unless you `CAST` it to a long enough `CHAR` in the anchor (section 28.13).
 
 ### Bills of materials
 
@@ -341,7 +619,7 @@ WITH RECURSIVE explode AS (
            CAST(b.quantity AS NUMERIC) AS qty_per_product,
            1 AS depth
     FROM bom_lines AS b
-    WHERE b.parent_part_id = 106
+    WHERE b.parent_part_id = 106          -- 106 = Garden Chair
     UNION ALL
     SELECT e.product_id,
            b.child_part_id,
@@ -429,6 +707,8 @@ ORDER BY p.part_id;
 (5 rows)
 ```
 
+The last join works because Riverstone numbered its parts to match its products: part 106 *is* product 106, the Garden Chair, so `pr.product_id = p.part_id` fetches the product's standard cost from Chapter 12's `products` table. Products 103, 105, and 107 are missing from the result because the `parts` table holds the bills of materials for only five of the eight products.
+
 Check the chair by hand, using the explosion above: polypropylene 2.2 kg × ₹110 = ₹242.00, masterbatch 0.08 kg × ₹260 = ₹20.80, steel tube 3.4 kg × ₹95 = ₹323.00, fasteners 3 × ₹14 = ₹42.00, label ₹2.00, carton ₹18.00. Total ₹647.80. ✓
 
 **What to tell the production head.** Materials are three-quarters of the Garden Chair's ₹850 standard cost (₹647.80, or 76.2%), and half of that (₹323.00, 49.9%) is steel tube. A 10% rise in the steel price would add ₹32.30 to every chair, while the same rise in polypropylene would add ₹24.20. For the Food Container Set, materials are only ₹59.42 of ₹430: the cost is in molding time, not plastic. Those are two different conversations with two different suppliers. (Standard cost also includes labor, machine time, and overheads, which the BOM doesn't hold.)
@@ -441,7 +721,7 @@ The reverse question matters when a supplier has a problem: *"Kaveri Steel Works
 WITH RECURSIVE uses AS (
     SELECT b.parent_part_id, CAST(b.quantity AS NUMERIC) AS qty
     FROM bom_lines AS b
-    WHERE b.child_part_id = 305
+    WHERE b.child_part_id = 305           -- 305 = Steel tube
     UNION ALL
     SELECT b.parent_part_id, u.qty * b.quantity
     FROM uses AS u
@@ -466,7 +746,27 @@ Only the Garden Chair, at 3.4 kg per unit, matching the explosion. ✓ This is c
 
 ### Guarding against loops
 
-A tree has no loops: nobody is their own manager's manager. But data entered by people can contain one. Suppose, by mistake, person 1 reports to 3, 3 reports to 2, and 2 reports to 1. A recursive walk would go round forever. Here's what it produces, stopped after seven rows by `LIMIT`:
+A tree has no loops: nobody is their own manager's manager. But data entered by people can contain one. Suppose, by mistake, person 1 reports to 3, 3 reports to 2, and 2 reports to 1. To experiment safely, build those three rows as a tiny table inside the query, with `VALUES`:
+
+```sql
+WITH bad_staff (staff_id, manager_id) AS (
+    VALUES (1, 3), (2, 1), (3, 2)
+)
+SELECT * FROM bad_staff;
+```
+
+```
+ staff_id | manager_id
+----------+------------
+        1 |          3
+        2 |          1
+        3 |          2
+(3 rows)
+```
+
+**How it works:** `VALUES (1, 3), (2, 1), (3, 2)` builds a three-row table from typed-in values, exactly as in section 14.3. There you named its columns with `AS v(row_no, branch, line)`; here the names go in brackets after the CTE's name, `bad_staff (staff_id, manager_id)`. It's the quickest way to make test data that no real table holds.
+
+Now walk up the chain from person 1, as in "Walking up instead of down". The loop means the walk would go round forever, so `LIMIT` stops the output after seven rows:
 
 ```sql
 WITH RECURSIVE bad_staff (staff_id, manager_id) AS (
@@ -497,11 +797,81 @@ SELECT * FROM chain LIMIT 7;
 (7 rows)
 ```
 
-Without the `LIMIT`, the query never ends (until it runs out of memory or someone cancels it). There are three defenses:
+`bad_staff` isn't recursive, but `WITH RECURSIVE` covers the whole list, so `chain` can refer to itself. Without the `LIMIT`, the query never ends in PostgreSQL (until it runs out of memory or someone cancels it). There are three defenses.
 
-1. **A depth limit** in the recursive part: `WHERE c.steps < 20`. Simple, works everywhere, and an honest org chart never needs twenty levels.
-2. **A visited-path check**: carry an array or string of the ids seen so far, and stop when the next id is already in it.
-3. **PostgreSQL's `CYCLE` clause** (PostgreSQL 14 and later), which does the path check for you:
+**Defense 1: a depth limit.** Add a condition on the level to the recursive part, so the passes stop at a set depth:
+
+```sql
+WITH RECURSIVE bad_staff (staff_id, manager_id) AS (
+    VALUES (1, 3), (2, 1), (3, 2)
+),
+chain AS (
+    SELECT staff_id, manager_id, 1 AS steps
+    FROM bad_staff
+    WHERE staff_id = 1
+    UNION ALL
+    SELECT b.staff_id, b.manager_id, c.steps + 1
+    FROM bad_staff AS b
+    JOIN chain AS c ON b.staff_id = c.manager_id
+    WHERE c.steps < 7                -- defense 1: a depth limit
+)
+SELECT * FROM chain;
+```
+
+```
+ staff_id | manager_id | steps
+----------+------------+-------
+        1 |          3 |     1
+        3 |          2 |     2
+        2 |          1 |     3
+        1 |          3 |     4
+        3 |          2 |     5
+        2 |          1 |     6
+        1 |          3 |     7
+(7 rows)
+```
+
+The same seven rows, but now the query stops on its own: the pass that reads the row with `steps = 7` finds `7 < 7` false and produces nothing. It's simple and works in every database. The catch: it also stops a *legitimate* tree that's deeper than the limit, and it doesn't tell you there was a loop. Set it well above the real depth (Riverstone's org chart has five levels; 20 is a safe limit).
+
+**Defense 2: remember the path.** Carry the ids visited so far in a text column, and refuse to visit an id that's already in it:
+
+```sql
+WITH RECURSIVE bad_staff (staff_id, manager_id) AS (
+    VALUES (1, 3), (2, 1), (3, 2)
+),
+chain AS (
+    SELECT staff_id, manager_id,
+           CAST(staff_id AS VARCHAR(200)) AS path
+    FROM bad_staff
+    WHERE staff_id = 1
+    UNION ALL
+    SELECT b.staff_id, b.manager_id,
+           CAST(c.path || '/' || b.staff_id AS VARCHAR(200))
+    FROM bad_staff AS b
+    JOIN chain AS c ON b.staff_id = c.manager_id
+    WHERE '/' || c.path || '/' NOT LIKE '%/' || b.staff_id || '/%'   -- defense 2
+)
+SELECT * FROM chain;
+```
+
+```
+ staff_id | manager_id | path
+----------+------------+-------
+        1 |          3 | 1
+        3 |          2 | 1/3
+        2 |          1 | 1/3/2
+(3 rows)
+```
+
+**How it works:**
+
+- The anchor starts the path with the first id, `'1'`. Each pass adds `/` and the new id with `||`, PostgreSQL's operator for joining text (section 12.8), so the path grows `1`, `1/3`, `1/3/2`.
+- The `CAST(… AS VARCHAR(200))` in both parts keeps the column's type the same on every pass (the rule you met with the list of months).
+- The `WHERE` wraps the path in slashes (`/1/3/2/`) and asks, with `NOT LIKE` (section 12.6), whether `/1/` is already in it. It is, so the fourth row is never made and the walk stops after three rows, each person once.
+
+The same idea works in MySQL (with `CONCAT` instead of `||`); section 28.13 uses it.
+
+**Defense 3: PostgreSQL's `CYCLE` clause** (PostgreSQL 14 and later) does the path check for you:
 
 ```sql
 WITH RECURSIVE bad_staff (staff_id, manager_id) AS (
@@ -531,9 +901,59 @@ FROM chain;
 (4 rows)
 ```
 
-`CYCLE staff_id` watches that column. When a row's `staff_id` is already in the path, it's marked `is_loop = t` and not followed further. The `visited` column shows the path. Filter `WHERE is_loop` to list the loops so someone can fix the data.
+**How it works:** `CYCLE staff_id` watches that column. `SET is_loop` names a new true/false column, and `USING visited` names the column that holds the path. When a row's `staff_id` is already in its path, it's marked `is_loop = t` and not followed further. PostgreSQL prints the path as a list in curly braces, `{(1),(3)}`; each id sits in its own round brackets because `CYCLE` can watch several columns at once, and then each entry would hold several values. Filter `WHERE is_loop` to list the loops so someone can fix the data.
 
-> **Dialect note: ordering a tree.** PostgreSQL also has a `SEARCH DEPTH FIRST BY` clause that numbers rows in the order you'd draw an indented org chart (each manager followed by their whole team). It's used in exercise 5's answer. MySQL has neither `SEARCH` nor `CYCLE`; section 28.13 builds a sort path by hand instead, which works in both databases.
+### Ordering a tree: SEARCH DEPTH FIRST
+
+The org chart query sorted people by level: everyone at level 2, then everyone at level 3. An indented org chart is drawn differently: each manager, followed straight away by their whole team. PostgreSQL's `SEARCH` clause (PostgreSQL 14 and later) produces that order. Here's Anita Rao's branch:
+
+```sql
+WITH RECURSIVE org AS (
+    SELECT staff_id, staff_name, 1 AS level
+    FROM staff
+    WHERE staff_name = 'Anita Rao'
+    UNION ALL
+    SELECT s.staff_id, s.staff_name, o.level + 1
+    FROM staff AS s
+    JOIN org AS o ON s.manager_id = o.staff_id
+)
+SEARCH DEPTH FIRST BY staff_id SET visit_order
+SELECT REPEAT('    ', level - 1) || staff_name AS team
+FROM org
+ORDER BY visit_order;
+```
+
+```
+          team
+------------------------
+ Anita Rao
+     Vikram Singh
+         Neha Kulkarni
+         Rahul Mehta
+     Farah Khan
+     Meera Iyer
+     Arjun Nair
+         Divya Krishnan
+         Vivek Chandran
+         Sneha Pillai
+     Pooja Desai
+         Nisha Bhatt
+         Aditya Verma
+         Rohit Kamat
+     Sandeep Gill
+         Karan Ahuja
+         Ritu Bansal
+(17 rows)
+```
+
+**How it works:**
+
+- **`SEARCH DEPTH FIRST BY staff_id`** goes down each branch to the bottom before moving to the next branch ("depth first"), taking people with the same manager in `staff_id` order.
+- **`SET visit_order`** names a new column that records that order. You don't show it; you sort by it with `ORDER BY visit_order`.
+- **`SEARCH BREADTH FIRST BY staff_id`** would sort level by level instead, like the org chart query above.
+- **`REPEAT('    ', level - 1)`** repeats four spaces once per level below the top, so each team is indented under its manager; `||` joins the spaces to the name.
+
+Anita has 16 people below her plus herself: 17 rows. ✓ MySQL has neither `SEARCH` nor `CYCLE`; section 28.13 builds the same order with a sort path, which works in both databases.
 
 ---
 
@@ -549,9 +969,63 @@ A frame answers *"which rows around me count?"*, and there are three ways to mea
 |---|---|---|
 | `ROWS` | physical rows | the one row before me |
 | `GROUPS` | groups of rows with the same `ORDER BY` value | every row in the previous distinct value (a *peer group*) |
-| `RANGE` | the `ORDER BY` value itself | every row whose value is within 1 unit (1 day, ₹1…) of mine |
+| `RANGE` | the `ORDER BY` value itself | every row whose value is within the offset of mine; on a date column the offset must be an interval, such as `INTERVAL '1 day'` |
 
-The difference only shows when values repeat or have gaps. On 16, 17, and 20 February 2025, Riverstone received two orders each:
+The difference only shows when values repeat or have gaps. On 16, 17, and 20 February 2025, Riverstone received two orders each. Take the three frame types one at a time, starting with `ROWS`:
+
+```sql
+SELECT o.order_date,
+       o.order_id,
+       COUNT(*) OVER (ORDER BY o.order_date, o.order_id
+                      ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS rows_in_frame
+FROM orders AS o
+WHERE o.order_date BETWEEN DATE '2025-02-14' AND DATE '2025-02-21'
+ORDER BY o.order_date, o.order_id;
+```
+
+```
+ order_date | order_id | rows_in_frame
+------------+----------+---------------
+ 2025-02-16 |    10011 |             1
+ 2025-02-16 |    10012 |             2
+ 2025-02-17 |    10013 |             2
+ 2025-02-17 |    10014 |             2
+ 2025-02-20 |    10015 |             2
+ 2025-02-20 |    10016 |             2
+(6 rows)
+```
+
+**Reading it:** `ROWS BETWEEN 1 PRECEDING AND CURRENT ROW` counts the row before and this row: always 2 after the first row, whatever the dates. The window orders by `order_date, order_id`, so the order of two same-day orders is fixed; without `order_id`, which of them counts as "first" would be up to the database. The first row has no row before it, because **windows are calculated after `WHERE`**: the frame can't see rows the `WHERE` removed. (14 and 15 February had no orders anyway.)
+
+Now add a `GROUPS` column beside it:
+
+```sql
+SELECT o.order_date,
+       o.order_id,
+       COUNT(*) OVER (ORDER BY o.order_date, o.order_id
+                      ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)   AS rows_in_frame,
+       COUNT(*) OVER (ORDER BY o.order_date
+                      GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW) AS rows_in_2_dates
+FROM orders AS o
+WHERE o.order_date BETWEEN DATE '2025-02-14' AND DATE '2025-02-21'
+ORDER BY o.order_date, o.order_id;
+```
+
+```
+ order_date | order_id | rows_in_frame | rows_in_2_dates
+------------+----------+---------------+-----------------
+ 2025-02-16 |    10011 |             1 |               2
+ 2025-02-16 |    10012 |             2 |               2
+ 2025-02-17 |    10013 |             2 |               4
+ 2025-02-17 |    10014 |             2 |               4
+ 2025-02-20 |    10015 |             2 |               4
+ 2025-02-20 |    10016 |             2 |               4
+(6 rows)
+```
+
+**Reading it:** rows with the same `ORDER BY` value are **peers**, and each set of peers is a **peer group**: here, one date's orders. This window orders by date alone, so that it has peers to count. `GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW` counts this date's peer group plus the previous one, the previous *date that has orders*. On 20 February that's 20 Feb and 17 Feb: 4 orders, even though 17 Feb is three days earlier.
+
+Finally, `RANGE` with an interval. Three windows with three frames make a long `SELECT`, so name them with the `WINDOW` clause from section 13.6, where you named one window `w`. Each `OVER` then refers to a window by name:
 
 ```sql
 SELECT o.order_date,
@@ -561,9 +1035,9 @@ SELECT o.order_date,
        COUNT(*) OVER w_range  AS rows_in_2_days
 FROM orders AS o
 WHERE o.order_date BETWEEN DATE '2025-02-14' AND DATE '2025-02-21'
-WINDOW w_rows   AS (ORDER BY o.order_date ROWS   BETWEEN 1 PRECEDING AND CURRENT ROW),
+WINDOW w_rows   AS (ORDER BY o.order_date, o.order_id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
        w_groups AS (ORDER BY o.order_date GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW),
-       w_range  AS (ORDER BY o.order_date RANGE  BETWEEN INTERVAL '1 day' PRECEDING AND CURRENT ROW)
+       w_range  AS (ORDER BY o.order_date RANGE BETWEEN INTERVAL '1 day' PRECEDING AND CURRENT ROW)
 ORDER BY o.order_date, o.order_id;
 ```
 
@@ -581,13 +1055,11 @@ ORDER BY o.order_date, o.order_id;
 
 **Reading it:**
 
-- **`ROWS`** counts the row before and this row: always 2 after the first row, whatever the dates.
-- **`GROUPS`** counts this date's orders plus the previous *date that has orders*. On 20 February that's 20 Feb and 17 Feb: 4 orders, even though 17 Feb is three days earlier.
-- **`RANGE … INTERVAL '1 day'`** counts orders from yesterday and today. On 20 February, 19 February had no orders, so only today's 2 count. On 17 February, 16 February is exactly one day earlier: 4.
+- The first two columns are unchanged: naming a window changes nothing about what it calculates. Several windows go in one `WINDOW` clause, separated by commas.
+- **`RANGE BETWEEN INTERVAL '1 day' PRECEDING AND CURRENT ROW`** counts orders from yesterday and today, measured on the calendar. On 20 February, 19 February had no orders, so only today's 2 count. On 17 February, 16 February is exactly one day earlier: 4.
+- On a date column, the offset must be an interval. Write `RANGE BETWEEN 1 PRECEDING …` and PostgreSQL refuses: *RANGE with offset PRECEDING/FOLLOWING is not supported for column type date and offset type integer*.
 
-Use `ROWS` for "the last N records", `GROUPS` for "the last N distinct dates that had activity", and `RANGE` with an interval for "the last N calendar days".
-
-**The `WINDOW` clause** at the end of that query is also new. It names a window definition once (`w_rows`), so `OVER w_rows` can reuse it. When several columns share the same partition and order, a named window keeps the query readable and guarantees they really do use the same window. You can extend a named window too: `OVER (w ROWS BETWEEN …)` adds a frame to a window that defines only the partition and order.
+Use `ROWS` for "the last N records", `GROUPS` for "the last N distinct dates that had activity", and `RANGE` with an interval for "the last N calendar days". You can also extend a named window: `OVER (w ROWS BETWEEN …)` adds a frame to a window that defines only the partition and order. You'll use that in "FIRST_VALUE, LAST_VALUE, and the default frame" below.
 
 ### Calendar windows with RANGE and intervals
 
@@ -667,7 +1139,7 @@ ORDER BY month;
 (6 rows)
 ```
 
-September's ₹558,315 against the other two months of Q3 (₹232,692 and ₹329,282, averaging ₹280,987) shows the festive season starting in September, not October. (Check: (232,692 + 329,282) ÷ 2 = 280,987. ✓) `EXCLUDE` has four forms: `CURRENT ROW`, `GROUP` (the current row and its peers), `TIES` (the peers but not the current row), and `NO OTHERS` (the default).
+September's ₹558,315 against the other two months of Q3 (₹232,692 and ₹329,282, averaging ₹280,987) shows the festive season starting in September, not October. (Check: (232,692 + 329,282) ÷ 2 = 280,987. ✓) `DATE_TRUNC('quarter', month)` works like the `'month'` version from Chapter 13: it returns the first day of the quarter, so each quarter's three months form one partition. `EXCLUDE` has four forms: `CURRENT ROW`, `GROUP` (the current row and its peers), `TIES` (the peers but not the current row), and `NO OTHERS` (the default). It is PostgreSQL only; MySQL has no `EXCLUDE` (section 28.13).
 
 ### FIRST_VALUE, LAST_VALUE, and the default frame
 
@@ -678,7 +1150,7 @@ WITH order_values AS (
     SELECT o.customer_id, o.order_id, o.order_date, SUM(sl.net_revenue) AS order_value
     FROM orders AS o
     JOIN sales_lines AS sl ON sl.order_id = o.order_id
-    WHERE o.customer_id = 2
+    WHERE o.customer_id = 2               -- 2 = Patel Kitchenware
     GROUP BY o.customer_id, o.order_id, o.order_date
 )
 SELECT order_date,
@@ -709,7 +1181,7 @@ With an `ORDER BY` and no frame, the frame ends at the current row, so "the last
 
 ### Percentiles and quartiles
 
-*"What's a typical order worth?"* Chapter 4 explained why the median is often more honest than the mean. SQL calculates percentiles with **ordered-set aggregates**, written with `WITHIN GROUP`:
+*"What's a typical order worth?"* Chapter 4 explained why the median is often more honest than the mean, Chapter 15 (section 15.5) used `PERCENTILE_CONT` for medians and quartiles, and Chapter 21 (section 21.3) added `PERCENTILE_DISC`. This is a recap, with a name for the family. Functions written with `WITHIN GROUP (ORDER BY …)` are called **ordered-set aggregates**: aggregates that need their input sorted first. Here are the mean, the median, and the 90th percentile of the year's order values:
 
 ```sql
 WITH order_values AS (
@@ -731,9 +1203,26 @@ FROM order_values;
 (1 row)
 ```
 
-The mean (₹25,061) is above the median (₹21,375), because a few large orders pull it up. One order in ten is worth more than ₹48,334. `PERCENTILE_CONT` interpolates between two middle values when needed; `PERCENTILE_DISC` returns an actual value from the data. These are aggregates, not window functions: in PostgreSQL they can't take `OVER`.
+There are 173 orders here, not the 175 of section 28.1, because `sales_lines` leaves out the two cancelled ones. The mean (₹25,061) is above the median (₹21,375), because a few large orders pull it up. One order in ten is worth more than ₹48,334. As in section 21.3, `::NUMERIC` converts the percentile before rounding: `PERCENTILE_CONT` returns a type (`double precision`) that `ROUND` accepts only without a number of decimals, and the cast keeps this query working if you later ask for `ROUND(…, 2)`.
 
-To put every order into a band instead, use the window function **`NTILE(n)`**, which splits ordered rows into *n* groups as equal in size as possible:
+The difference between the two percentile functions, on four numbers you can check by eye:
+
+```sql
+SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY x) AS cont_median,
+       PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY x) AS disc_median
+FROM (VALUES (10), (20), (30), (40)) AS v(x);
+```
+
+```
+ cont_median | disc_median
+-------------+-------------
+          25 |          20
+(1 row)
+```
+
+`PERCENTILE_CONT` interpolates between the two middle values, 20 and 30, and returns 25, a value that isn't in the data. `PERCENTILE_DISC` returns an actual value: the first one at or past the halfway mark, 20. These are aggregates, not window functions: in PostgreSQL they can't take `OVER`.
+
+To put every order into a band instead, use the window function **`NTILE(n)`**, which Chapter 27 introduced (section 27.4). As a reminder, it splits the ordered rows into *n* groups as equal in size as possible and numbers them 1 to *n*:
 
 ```sql
 WITH order_values AS (
@@ -769,6 +1258,8 @@ ORDER BY quartile;
 
 > **Watch out: NTILE splits by count, not by value.** If many orders have the same value, `NTILE` may put identical values into different bands, because it only cares about getting equal-sized groups. For value-based bands, compute the cut points with `PERCENTILE_CONT` and use `CASE`.
 
+**Good place to stop.**
+
 ---
 
 ## 28.4 How a database finds rows
@@ -785,13 +1276,13 @@ With no other help, the only way to find customer 2718's orders is a **sequentia
 
 ### Indexes
 
-An **index** is a separate structure that stores one column's values (or several columns') in sorted order, each with a pointer to where its row lives in the table. It works like the index at the back of this book: to find "grain", you don't read every page, you look it up and go straight to the right page.
+An **index** is a separate structure that stores one column's values (or several columns') in sorted order, each with a pointer to where its row lives in the table. It works like the index at the back of a printed book: to find "grain", you don't read every page, you look it up and go straight to the right page.
 
 The standard kind is the **B-tree** (balanced tree). Its top page, the root, divides the key range into a few hundred slices and points to a page for each; those pages divide their slices again, until the bottom **leaf** pages list individual values and row pointers. Because each page fans out into hundreds of children, even millions of values need only three or four levels. Finding customer 2718 means reading the root, a page or two below it, a leaf, and then the 40 table pages holding those rows.
 
-![Two panels. Left: a grid of table rows scanned end to end, with two matching rows highlighted, labeled 714,285 rows checked and median 30.11 ms. Right: a B-tree from a root page through narrower key ranges down to a leaf containing 2718, leading to 40 row pointers, labeled median 0.08 ms](figures/fig28-3-scan-vs-index.svg)
+![Two panels. Left: a grid of table rows scanned end to end, with two matching rows highlighted, labeled 714,285 rows checked and median 38.77 ms. Right: a B-tree from a root page through narrower key ranges down to a leaf containing 2718, leading to 40 row pointers, labeled median 0.18 ms](figures/fig28-3-scan-vs-index.svg)
 
-*Figure 28.3 — The same question answered two ways. On the test machine the index made it about 380 times faster.*
+*Figure 28.3 — The same question answered two ways. On the test machine the index made it about 200 times faster.*
 
 ### What indexes cost
 
@@ -803,13 +1294,13 @@ Indexes aren't free, which is why databases don't index every column automatical
 
 A **primary key** always has an index, because the database needs one to enforce uniqueness. So does a `UNIQUE` constraint. Everything else is your decision.
 
-> **Watch out: PostgreSQL does not index foreign keys for you.** Declaring `order_items.order_id REFERENCES orders(order_id)` creates a rule, not an index. Joins on that column, and every delete from `orders` (which must check for lines that still point at the order), then scan the whole `order_items` table. MySQL's InnoDB engine *does* create an index for each foreign key automatically. Section 28.6 shows the difference on real data.
+> **Watch out: PostgreSQL does not index foreign keys for you.** Declaring `order_items.order_id REFERENCES orders(order_id)` creates a rule, not an index. Joins on that column, and every delete from `orders` (which must check for lines that still point at the order), then scan the whole `order_items` table. MySQL's InnoDB engine *does* create an index for each foreign key automatically. Section 28.13 shows the difference on real data.
 
 ---
 
 ## 28.5 Reading query plans with EXPLAIN
 
-Chapter 12 (section 12.11) promised you'd see what the database actually does with a query. Put **`EXPLAIN`** in front of any query, and PostgreSQL shows its **query plan**, the steps it has chosen, without running the query:
+Chapter 12 (section 12.11) promised you'd see what the database actually does with a query. From here to the end of section 28.6, work in `riverstone_perf`, the database you built in section 28.1. Put **`EXPLAIN`** in front of any query, and PostgreSQL shows its **query plan**, the steps it has chosen, without running the query:
 
 <!-- run: none -->
 ```sql
@@ -822,24 +1313,24 @@ WHERE customer_id = 2718;
 ```
                          QUERY PLAN
 ------------------------------------------------------------
- Seq Scan on orders  (cost=0.00..14149.56 rows=98 width=17)
+ Seq Scan on orders  (cost=0.00..14149.56 rows=97 width=17)
    Filter: (customer_id = 2718)
 (2 rows)
 ```
 
-*(Run on `riverstone_perf` with no index on `customer_id`. The outputs in sections 28.5 and 28.6 come from the recorded runs in `ch28_perf_log.txt`, because timings change on every run.)*
+*(Customer 2718 is a typical customer, with 40 orders. There is no index on `customer_id` yet. The plans in sections 28.5 and 28.6 are copied from the recorded runs in `ch28_perf_log.txt`, because timings change on every run; the costs and row counts on your machine should match or come very close.)*
 
 **Reading it:**
 
 - **`Seq Scan on orders`**: the step, a sequential scan of the whole table.
 - **`Filter: (customer_id = 2718)`**: the condition checked on each row as it's read.
 - **`cost=0.00..14149.56`**: the planner's *estimate* of effort, in arbitrary units (roughly, the cost of reading one page in order is 1). The first number is the cost before the first row can be returned; the second is the cost to return all rows. Costs let the planner compare plans. They are not milliseconds.
-- **`rows=98`**: the estimated number of rows returned. The planner guesses from **statistics** it keeps about each column (how many distinct values, which are most common), refreshed by `ANALYZE`. The real answer is 40, so the estimate is in the right neighborhood.
+- **`rows=97`**: the estimated number of rows returned. The planner guesses from **statistics** it keeps about each column (how many distinct values, which are most common), refreshed by `ANALYZE`. The real answer is 40, so the estimate is in the right neighborhood.
 - **`width=17`**: the estimated average size of each row in bytes.
 
 ### EXPLAIN ANALYZE: run it and measure
 
-**`EXPLAIN ANALYZE`** runs the query for real and adds what actually happened. The option `COSTS OFF` hides the estimates to keep lines short:
+**`EXPLAIN ANALYZE`** runs the query for real and adds what actually happened. Options go in brackets after `EXPLAIN`; the option `COSTS OFF` hides the estimates to keep lines short:
 
 <!-- run: none -->
 ```sql
@@ -852,18 +1343,19 @@ WHERE customer_id = 2718;
 ```
                            QUERY PLAN
 ----------------------------------------------------------------
- Seq Scan on orders (actual time=0.610..29.350 rows=40 loops=1)
+ Seq Scan on orders (actual time=1.051..47.426 rows=40 loops=1)
    Filter: (customer_id = 2718)
    Rows Removed by Filter: 714245
- Planning Time: 0.151 ms
- Execution Time: 29.381 ms
+ Planning Time: 0.260 ms
+ Execution Time: 47.479 ms
 (5 rows)
 ```
 
-- **`actual time=0.610..29.350`**: milliseconds until the first row, and until the last row.
+- **`actual time=1.051..47.426`**: milliseconds until the first row, and until the last row.
 - **`rows=40 loops=1`**: rows actually returned, and how many times this step ran.
 - **`Rows Removed by Filter: 714245`**: the tell-tale sign. The database read 714,285 rows to keep 40. When you see a filter throwing away almost everything, an index on the filtered column is the first thing to consider.
-- **`Execution Time`**: the whole query, 29.4 ms on this run. Across seven runs the median was 30.11 ms.
+- **`Planning Time`**: the time spent choosing the plan, before anything ran.
+- **`Execution Time`**: the whole query, 47.5 ms on this run. Across seven runs the median was 38.77 ms.
 
 > **Watch out: EXPLAIN ANALYZE really runs the statement.** `EXPLAIN ANALYZE DELETE FROM orders …` deletes the rows. To measure a change safely, wrap it: `BEGIN; EXPLAIN ANALYZE …; ROLLBACK;`.
 
@@ -882,20 +1374,21 @@ WHERE customer_id = 2718;
 ```
                                           QUERY PLAN
 ----------------------------------------------------------------------------------------------
- Bitmap Heap Scan on orders (actual time=0.014..0.037 rows=40 loops=1)
+ Bitmap Heap Scan on orders (actual time=0.023..0.132 rows=40 loops=1)
    Recheck Cond: (customer_id = 2718)
    Heap Blocks: exact=40
-   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.007..0.008 rows=40 loops=1)
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.010..0.011 rows=40 loops=1)
          Index Cond: (customer_id = 2718)
- Planning Time: 0.209 ms
- Execution Time: 0.077 ms
+ Planning Time: 0.303 ms
+ Execution Time: 0.179 ms
 (7 rows)
 ```
 
-Building the index took under half a second. The query's median fell from 30.11 ms to 0.08 ms. **Read plans from the most indented line outwards**: the innermost step runs first and feeds the one above it.
+Building the index took about a quarter of a second. The query's median fell from 38.77 ms to 0.18 ms. **Read plans from the most indented line outwards**: the innermost step runs first and feeds the one above it.
 
-- **`Bitmap Index Scan`** reads the index and collects the locations of the 40 matching rows (`Index Cond` is the condition the index answered).
-- **`Bitmap Heap Scan`** then visits those locations in page order. **`Heap Blocks: exact=40`** says it read 40 table pages: this customer's orders are scattered, one per page. (The *heap* is PostgreSQL's name for the table's own pages.)
+- **`Bitmap Index Scan`** reads the index and collects the locations of the 40 matching rows. **`Index Cond`** is the condition the index answered.
+- **`Bitmap Heap Scan`** then visits those locations in page order. (The *heap* is PostgreSQL's name for the table's own pages.) **`Heap Blocks: exact=40`** says it read 40 table pages: this customer's orders are scattered, one per page.
+- **`Recheck Cond`** is the condition the heap scan would check again on each row if memory ran short. Then the bitmap remembers only *which pages* to read, not which rows (PostgreSQL calls that *lossy*), and every row on those pages must be rechecked. `exact=40` means every location was exact, so no rechecking was needed.
 
 ### The planner chooses, and it can say no
 
@@ -908,7 +1401,30 @@ PostgreSQL has several ways to use an index, and chooses by estimated cost:
 | `Bitmap Index Scan` + `Bitmap Heap Scan` | collects all matching locations first, then reads pages in order | a moderate number of rows |
 | `Index Only Scan` | answers from the index alone, never touching the table | every column needed is in the index |
 
-Try the customer with the most orders, customer 4534, who has 23,526 of them. The same index is used, but the plan reads 5,170 pages and takes a median of 9.72 ms. And for a condition that matches almost everything, the planner ignores the index entirely, even when one exists:
+Try the customer with the most orders, customer 4534, who has 23,526 of them:
+
+<!-- run: none -->
+```sql
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT order_id, order_date, status
+FROM orders
+WHERE customer_id = 4534;
+```
+
+```
+                                           QUERY PLAN
+-------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=1.851..14.610 rows=23526 loops=1)
+   Recheck Cond: (customer_id = 4534)
+   Heap Blocks: exact=5170
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=1.123..1.124 rows=23526 loops=1)
+         Index Cond: (customer_id = 4534)
+ Planning Time: 0.319 ms
+ Execution Time: 15.571 ms
+(7 rows)
+```
+
+The same index is used, but `Heap Blocks: exact=5170` says it read 5,170 of the table's 5,221 pages, because this customer has an order on almost every page. The median was 15.26 ms. And for a condition that matches almost everything, the planner ignores the index entirely, even when one exists:
 
 <!-- run: none -->
 ```sql
@@ -919,20 +1435,31 @@ SELECT order_id FROM orders WHERE status = 'Delivered';
 ```
                           QUERY PLAN
 ---------------------------------------------------------------
- Seq Scan on orders  (cost=0.00..14149.56 rows=688404 width=4)
+ Seq Scan on orders  (cost=0.00..14149.56 rows=688214 width=4)
    Filter: ((status)::text = 'Delivered'::text)
 (2 rows)
 ```
 
-689,050 of the 714,285 orders are delivered (96.5%). Jumping from an index to a table page 689,050 times would be slower than reading the table from start to end, and the planner knows it from its statistics. **An index helps when a condition is selective**, meaning it keeps a small fraction of rows.
+(PostgreSQL prints the column and the text it's compared with as type `text`, with `::text`; that's how it displays the comparison, not something you wrote.) 689,050 of the 714,285 orders are delivered (96.5%). Jumping from an index to a table page 689,050 times would be slower than reading the table from start to end, and the planner knows it from its statistics. **An index helps when a condition is selective**, meaning it keeps a small fraction of rows.
 
 ### Joins in a plan
 
-Plans for joins have one more thing to read: the **join method**. Here's *"customer 2718's total revenue"*, which joins orders to their lines, run while `order_items.order_id` still has no index:
+Plans for joins have one more thing to read: the **join method**. Here's *"customer 2718's total revenue"*, which joins orders to their lines. `order_items.order_id` has no index yet:
 
-![An EXPLAIN ANALYZE plan with numbered callouts: 1, a bitmap index scan finds 40 orders; 2, their ids go into a hash; 3, a sequential scan reads all 1,926,847 order lines in 116 ms; 4, the aggregate at the top finishes at 225 ms](figures/fig28-4-reading-a-plan.svg)
+<!-- run: none -->
+```sql
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)) AS net_revenue
+FROM orders AS o
+JOIN order_items AS oi ON oi.order_id = o.order_id
+WHERE o.customer_id = 2718;
+```
 
-*Figure 28.4 — Read the plan from the inside out, and look for the step where the time jumps.*
+Figure 28.4 shows its plan, with the steps numbered in the order they run.
+
+![An EXPLAIN ANALYZE plan with numbered callouts: 1, a bitmap index scan finds 40 orders; 2, their ids go into a hash; 3, a sequential scan reads all 1,926,847 order lines in 142 ms; 4, the hash join keeps 108 of them; 5, the aggregate at the top finishes at 285 ms](figures/fig28-4-reading-a-plan.svg)
+
+*Figure 28.4 — Read the plan from the inside out, and look for the step where the time jumps. (One run; the median of seven was 262.47 ms.)*
 
 PostgreSQL uses three join methods:
 
@@ -942,17 +1469,17 @@ PostgreSQL uses three join methods:
 
 You don't choose the method; the planner does. Your job is to give it the indexes that make the cheap methods possible, and then check that it used them.
 
-> **Try it.** Run `EXPLAIN SELECT * FROM sales_lines;` in `riverstone_2025`. A view is replaced by its query before planning, so the plan shows the joins inside `sales_lines`. With tables this small, you'll see sequential scans and hash joins, and that's the right choice.
+> **Try it.** Run `EXPLAIN SELECT * FROM sales_lines;` in `riverstone_2025`. A view is replaced by its query before planning, so the plan shows the joins inside `sales_lines`. With tables this small you'll mostly see sequential scans and a hash join, and that's the right choice: reading a few pages whole is cheaper than using an index.
 
 ---
 
 ## 28.6 Indexes in practice
 
-This section runs six experiments on `riverstone_perf`. Each one starts from a question, measures it, changes one thing, and measures again. The table at the end collects the results.
+This section runs six experiments on `riverstone_perf`. Each one starts from a question, measures it, changes one thing, and measures again. Run them in order: each experiment keeps the indexes the earlier ones created, as a real database would. The table at the end collects the results.
 
 ### 1. Index the foreign keys you join on
 
-The query from Figure 28.4, run before and after one new index:
+The query from Figure 28.4, unchanged, run after one new index:
 
 <!-- run: none -->
 ```sql
@@ -968,66 +1495,102 @@ WHERE o.customer_id = 2718;
 ```
                                                      QUERY PLAN
 --------------------------------------------------------------------------------------------------------------------
- Aggregate (actual time=0.242..0.243 rows=1 loops=1)
-   ->  Nested Loop (actual time=0.024..0.195 rows=108 loops=1)
-         ->  Bitmap Heap Scan on orders o (actual time=0.016..0.046 rows=40 loops=1)
+ Aggregate (actual time=0.541..0.541 rows=1 loops=1)
+   ->  Nested Loop (actual time=0.050..0.468 rows=108 loops=1)
+         ->  Bitmap Heap Scan on orders o (actual time=0.027..0.132 rows=40 loops=1)
                Recheck Cond: (customer_id = 2718)
                Heap Blocks: exact=40
-               ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.009..0.009 rows=40 loops=1)
+               ->  Bitmap Index Scan on idx_orders_customer_id (actual time=0.017..0.017 rows=40 loops=1)
                      Index Cond: (customer_id = 2718)
-         ->  Index Scan using idx_order_items_order_id on order_items oi (actual time=0.003..0.003 rows=3 loops=40)
+         ->  Index Scan using idx_order_items_order_id on order_items oi (actual time=0.007..0.008 rows=3 loops=40)
                Index Cond: (order_id = o.order_id)
- Planning Time: 0.445 ms
- Execution Time: 0.274 ms
+ Planning Time: 0.798 ms
+ Execution Time: 0.601 ms
 (11 rows)
 ```
 
-The median fell from 225.37 ms to 0.30 ms. The join method changed from a hash join to a **nested loop**: for each of the 40 orders (`loops=40`), look up its lines in the new index, about 3 lines each (40 × 3 is close to the 108 lines found; `rows=3` is a rounded average). Looking up one order's lines, which a screen in an order-entry system does thousands of times a day, went from 79.62 ms to 0.06 ms.
+The median fell from 262.47 ms to 0.64 ms. The join method changed from a hash join to a **nested loop**: for each of the 40 orders (`loops=40`), look up its lines in the new index, about 3 lines each (40 × 3 is close to the 108 lines found; `rows=3` is a rounded average).
+
+The same index serves a simpler question that a screen in an order-entry system asks thousands of times a day, *"show me one order's lines"*:
+
+<!-- run: none -->
+```sql
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT order_item_id, product_id, quantity
+FROM order_items
+WHERE order_id = 500000;
+```
+
+```
+                                             QUERY PLAN
+----------------------------------------------------------------------------------------------------
+ Index Scan using idx_order_items_order_id on order_items (actual time=0.023..0.023 rows=1 loops=1)
+   Index Cond: (order_id = 500000)
+ Planning Time: 0.283 ms
+ Execution Time: 0.053 ms
+(4 rows)
+```
+
+Before the index, the same query was a `Seq Scan` that removed 1,926,846 rows to keep 1, with a median of 109.78 ms. With it, the median is 0.06 ms.
 
 **The rule:** in PostgreSQL, index every foreign key column that you join on or delete through. It's the single most common missing index.
 
 ### 2. Don't wrap the indexed column in a function
 
-*"How many orders came in December 2025?"* There's an index on `order_date`. Two ways to write the filter:
+*"How many orders came in December 2025?"* First give `order_date` an index:
+
+<!-- run: none -->
+```sql
+CREATE INDEX idx_orders_order_date ON orders (order_date);
+```
+
+Now two ways to write the filter, each with its plan:
 
 <!-- run: none -->
 ```sql
 -- version A: extract parts of the date
+EXPLAIN (ANALYZE, COSTS OFF)
 SELECT COUNT(*) FROM orders
 WHERE EXTRACT(YEAR FROM order_date) = 2025 AND EXTRACT(MONTH FROM order_date) = 12;
 
 -- version B: a date range
+EXPLAIN (ANALYZE, COSTS OFF)
 SELECT COUNT(*) FROM orders
 WHERE order_date >= DATE '2025-12-01' AND order_date < DATE '2026-01-01';
 ```
 
-Both return 25,078. Their plans are very different:
+Without `EXPLAIN`, both return 25,078. Their plans are very different. Version A's plan:
 
 ```
                                                         QUERY PLAN
 --------------------------------------------------------------------------------------------------------------------------
- Aggregate (actual time=109.158..109.159 rows=1 loops=1)
-   ->  Seq Scan on orders (actual time=101.616..108.010 rows=25078 loops=1)
+ Aggregate (actual time=131.698..131.701 rows=1 loops=1)
+   ->  Seq Scan on orders (actual time=123.024..130.388 rows=25078 loops=1)
          Filter: ((EXTRACT(year FROM order_date) = '2025'::numeric) AND (EXTRACT(month FROM order_date) = '12'::numeric))
          Rows Removed by Filter: 689207
- Planning Time: 0.279 ms
- Execution Time: 109.196 ms
+ Planning Time: 0.432 ms
+ Execution Time: 131.749 ms
 (6 rows)
 ```
+
+Version B's plan:
 
 ```
                                                 QUERY PLAN
 -----------------------------------------------------------------------------------------------------------
- Aggregate (actual time=2.840..2.841 rows=1 loops=1)
-   ->  Index Only Scan using idx_orders_order_date on orders (actual time=0.016..1.625 rows=25078 loops=1)
+ Aggregate (actual time=2.797..2.797 rows=1 loops=1)
+   ->  Index Only Scan using idx_orders_order_date on orders (actual time=0.021..1.672 rows=25078 loops=1)
          Index Cond: ((order_date >= '2025-12-01'::date) AND (order_date < '2026-01-01'::date))
          Heap Fetches: 0
- Planning Time: 0.303 ms
- Execution Time: 2.876 ms
+ Planning Time: 0.383 ms
+ Execution Time: 2.834 ms
 (6 rows)
 ```
 
-Version A scans the whole table (median 100.95 ms). Version B uses the index (median 2.88 ms), 35 times faster. The index stores dates sorted, so it can find "from 1 December up to (but not including) 1 January" directly. It does not store "the month part of each date", so it can't help with `EXTRACT(MONTH …) = 12`. A condition the database can answer from an index is called **sargable** (from *search argument*).
+- **Version A** scans the whole table (median 131.33 ms), although the index exists.
+- **Version B** uses the index (median 2.95 ms), about 45 times faster. It's an **`Index Only Scan`**: `COUNT(*)` needs no column values, so the index alone answers it. **`Heap Fetches: 0`** means no table page was visited; experiment 4 explains when that's possible.
+
+The index stores dates sorted, so it can find "from 1 December up to (but not including) 1 January" directly. It does not store "the month part of each date", so it can't help with `EXTRACT(MONTH …) = 12`. A condition the database can answer from an index is called **sargable** (from *search argument*).
 
 The same trap appears in many disguises. Each pair below returns the same rows, but only the second form can use a plain index on the column:
 
@@ -1041,18 +1604,58 @@ The same trap appears in many disguises. Each pair below returns the same rows, 
 
 The half-open range (`>=` the start, `<` the next start) is also the correct form for timestamps, which `BETWEEN … AND '2025-12-31'` gets wrong by missing everything after midnight on the 31st.
 
-If a function in the filter is truly needed, PostgreSQL and MySQL (8.0.13 and later) can index the expression itself: `CREATE INDEX idx_customers_upper_city ON customers (UPPER(city));`. The query must then use exactly the same expression.
+If a function in the filter is truly needed, you can index the expression itself, an **expression index**. In PostgreSQL: `CREATE INDEX idx_customers_upper_city ON customers (UPPER(city));`. MySQL (8.0.13 and later) needs an extra pair of brackets around the expression: `CREATE INDEX idx_customers_upper_city ON customers ((UPPER(city)));`. Either way, the query must then use exactly the same expression.
 
 ### 3. Composite indexes: order matters
 
-*"Customer 4534's orders since 1 January 2025."* This filters on two columns. A **composite index** stores several columns sorted together, like a phone book sorted by surname and then first name:
+*"Customer 4534's orders since 1 January 2025."* This filters on two columns. With the indexes you have so far (one on `customer_id`, one on `order_date`), here's the plan:
+
+<!-- run: none -->
+```sql
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT order_date, status
+FROM orders
+WHERE customer_id = 4534 AND order_date >= DATE '2025-01-01';
+```
+
+```
+                                           QUERY PLAN
+-------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=10.308..16.677 rows=9301 loops=1)
+   Recheck Cond: (customer_id = 4534)
+   Filter: (order_date >= '2025-01-01'::date)
+   Rows Removed by Filter: 14225
+   Heap Blocks: exact=5170
+   ->  Bitmap Index Scan on idx_orders_customer_id (actual time=1.513..1.513 rows=23526 loops=1)
+         Index Cond: (customer_id = 4534)
+ Planning Time: 0.400 ms
+ Execution Time: 17.093 ms
+(9 rows)
+```
+
+The index finds all 23,526 of the customer's orders; the table pages are then read and each order's date checked, and 14,225 are thrown away (23,526 − 9,301). A **composite index** stores several columns sorted together, like a phone book sorted by surname and then first name:
 
 <!-- run: none -->
 ```sql
 CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);
 ```
 
-With only the single-column index on `customer_id`, the database finds customer 2718's 40 orders and then checks each one's date (`Filter: … Rows Removed by Filter: 28`). With the composite index, both conditions go into the `Index Cond`, and only the 12 matching rows are fetched. For a customer with 40 orders that's a small saving. For customer 4534, with 9,301 orders in 2025 alone, it's the difference between reading all their orders and reading only the ones you need.
+The same `EXPLAIN` now gives:
+
+```
+                                            QUERY PLAN
+--------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders (actual time=0.786..7.325 rows=9301 loops=1)
+   Recheck Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
+   Heap Blocks: exact=2047
+   ->  Bitmap Index Scan on idx_orders_customer_date (actual time=0.516..0.517 rows=9301 loops=1)
+         Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
+ Planning Time: 0.399 ms
+ Execution Time: 7.776 ms
+(7 rows)
+```
+
+Both conditions are now in the `Index Cond`, there's no `Filter` line, and only the 9,301 matching orders are fetched, from 2,047 pages instead of 5,170. The median fell from 16.15 ms to 7.78 ms. (For a typical customer such as 2718, with 40 orders, the saving is tiny: the index lets you skip 28 unwanted rows.)
 
 The column order decides which questions an index can answer. An index on `(customer_id, order_date)` is sorted by customer first:
 
@@ -1063,14 +1666,16 @@ The column order decides which questions an index can answer. An index on `(cust
 
 The usual guideline: put columns you test with `=` first, and a column you test with a range (`>=`, `<`, `BETWEEN`) last.
 
-> **Watch out: extra indexes are often redundant.** Once `(customer_id, order_date)` exists, a separate index on `customer_id` alone is almost never needed, because the composite index answers the same lookups. Dropping the redundant one saves space and speeds up writes. In the test run, for customer 2718's query, the planner ignored an index on `(order_date, customer_id)` and preferred the single `customer_id` index: the column-order rule in action.
+> **Watch out: extra indexes are often redundant.** Once `(customer_id, order_date)` exists, a separate index on `customer_id` alone is almost never needed, because the composite index answers the same lookups. Dropping the redundant one saves space and speeds up writes.
 
 ### 4. Covering indexes: never touch the table
 
-If every column a query needs is inside the index, the database can skip the table altogether. PostgreSQL lets you carry extra columns in an index without sorting by them, using `INCLUDE`:
+The query in experiment 3 still read 2,047 table pages, only to fetch `status`. If every column a query needs is inside the index, the database can skip the table altogether. PostgreSQL lets you carry extra columns in an index without sorting by them, using `INCLUDE`. The new index answers everything the plain composite one did, so it replaces it:
 
 <!-- run: none -->
 ```sql
+DROP INDEX idx_orders_customer_date;
+
 CREATE INDEX idx_orders_customer_date_incl
     ON orders (customer_id, order_date) INCLUDE (status);
 VACUUM ANALYZE orders;
@@ -1084,21 +1689,21 @@ WHERE customer_id = 4534 AND order_date >= DATE '2025-01-01';
 ```
                                                  QUERY PLAN
 ------------------------------------------------------------------------------------------------------------
- Index Only Scan using idx_orders_customer_date_incl on orders (actual time=0.015..0.950 rows=9301 loops=1)
+ Index Only Scan using idx_orders_customer_date_incl on orders (actual time=0.032..1.029 rows=9301 loops=1)
    Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
    Heap Fetches: 0
- Planning Time: 0.270 ms
- Execution Time: 1.282 ms
+ Planning Time: 0.363 ms
+ Execution Time: 1.374 ms
 (5 rows)
 ```
 
-**`Index Only Scan`** with **`Heap Fetches: 0`**: all 9,301 rows came from the index. The median fell from 3.69 ms (composite index, reading 2,047 table pages) to 1.24 ms. The `VACUUM` matters: PostgreSQL can only skip a table page if it knows every row on it is visible to everyone, and `VACUUM` records that. On a busy table, autovacuum does this in the background.
+**`Index Only Scan`** with **`Heap Fetches: 0`**: all 9,301 rows came from the index. The median fell from 7.78 ms (composite index, reading 2,047 table pages) to 1.68 ms. The `VACUUM` matters: PostgreSQL can only skip a table page if it knows every row on it is visible to everyone, and `VACUUM` records that. On a busy table, autovacuum does this in the background.
 
 A covering index is a strong tool for one important, frequent query. It's a poor default, because every included column makes the index bigger.
 
 ### 5. Partial indexes: index only the rows you ask about
 
-The warehouse screen asks one question all day: *"Which orders are still pending, oldest first?"* Only 3,930 of 714,285 orders are pending. An index on `status` would mostly store the word *Delivered*. A **partial index** stores only the rows that match its `WHERE`:
+The warehouse screen asks one question all day: *"Which orders are still pending, oldest first?"* Only 3,930 of 714,285 orders are pending. Without help, the plan scans all 714,285 orders, removes 710,355 of them, and sorts the rest: a median of 44.12 ms. An index on `status` would mostly store the word *Delivered*. A **partial index** stores only the rows that match its `WHERE`:
 
 <!-- run: none -->
 ```sql
@@ -1114,41 +1719,55 @@ ORDER BY order_date;
 ```
                                          QUERY PLAN
 --------------------------------------------------------------------------------------------
- Index Scan using idx_orders_pending on orders (actual time=0.009..0.410 rows=3930 loops=1)
- Planning Time: 0.274 ms
- Execution Time: 0.546 ms
+ Index Scan using idx_orders_pending on orders (actual time=0.015..0.596 rows=3930 loops=1)
+ Planning Time: 0.404 ms
+ Execution Time: 0.746 ms
 (3 rows)
 ```
 
-The median fell from 32.26 ms (scan everything, then sort) to 0.56 ms, and the plan has no sort step because the index already stores the pending orders in date order. The index is 48 kB, against 5,056 kB for an index on all order dates. As orders move from Pending to Shipped, they drop out of the index automatically. MySQL has no partial indexes (section 28.13).
+The median fell from 44.12 ms to 0.75 ms, and the plan has no sort step because the index already stores the pending orders in date order. There's no `Index Cond` or `Filter` line either: every entry in a partial index already satisfies `status = 'Pending'`, so the planner has nothing left to check. The query's `WHERE` must imply the index's `WHERE`, or the index can't be used. The index is 48 kB, against 5,056 kB for the index on all order dates. As orders move from Pending to Shipped, they drop out of the index automatically. MySQL has no partial indexes (section 28.13).
 
 ### 6. Measure what indexes cost on writes
 
-The same 500,000 order lines were inserted into two empty copies of `order_items`: one with no indexes, one with four. Three rounds each, median reported (`ch28_perf.py` has the code):
+*"How much slower do writes get?"* Copy the first 500,000 order lines into two empty tables: one with no indexes at all, and one with four. `CREATE TABLE … (LIKE order_items)` makes an empty table with the same columns; `INCLUDING INDEXES` also copies `order_items`' two indexes (its primary key and `idx_order_items_order_id` from experiment 1), and two more are added:
+
+<!-- run: none -->
+```sql
+CREATE TABLE oi_copy_0 (LIKE order_items);
+CREATE TABLE oi_copy_4 (LIKE order_items INCLUDING INDEXES);
+CREATE INDEX ON oi_copy_4 (product_id);
+CREATE INDEX ON oi_copy_4 (order_id, product_id);
+
+INSERT INTO oi_copy_0 SELECT * FROM order_items WHERE order_item_id <= 500000;
+INSERT INTO oi_copy_4 SELECT * FROM order_items WHERE order_item_id <= 500000;
+```
+
+`CREATE INDEX ON` with no name lets PostgreSQL choose one. Time each `INSERT` (DBeaver shows the time under the results; `ch28_perf.py` repeats the whole thing three times). The medians of three rounds:
 
 | Table | Median time to insert 500,000 rows |
 |---|---|
-| no indexes | 356 ms |
-| four indexes | 2,122 ms |
+| `oi_copy_0`, no indexes | 416 ms |
+| `oi_copy_4`, four indexes (primary key, `order_id`, `product_id`, `(order_id, product_id)`) | 2,301 ms |
 
-Six times slower. Each index is a sorted structure that must be updated for every row. That's why data loads often **drop indexes, load, and recreate them**, and why "add an index for every column someone might filter on" is bad advice for a table that receives thousands of writes a minute.
+About five and a half times slower. Each index is a sorted structure that must be updated for every row. That's why data loads often **drop indexes, load, and recreate them**, and why "add an index for every column someone might filter on" is bad advice for a table that receives thousands of writes a minute. Drop the copies when you're done: `DROP TABLE oi_copy_0, oi_copy_4;`.
 
 ### The experiments in one table
 
 | Question (riverstone_perf) | Before | After | Change made |
 |---|---|---|---|
-| One customer's orders (40 rows) | 30.11 ms | 0.08 ms | index on `orders.customer_id` |
-| One customer's revenue (join) | 225.37 ms | 0.30 ms | index on `order_items.order_id` |
-| One order's lines | 79.62 ms | 0.06 ms | same index |
-| December's order count | 100.95 ms | 2.88 ms | rewrote `EXTRACT` as a date range |
-| Big customer's 2025 orders | 3.69 ms | 1.24 ms | covering index with `INCLUDE (status)` |
-| Pending orders, oldest first | 32.26 ms | 0.56 ms | partial index |
-| Insert 500,000 lines | 356 ms | 2,122 ms | four indexes added (the cost) |
+| One customer's orders (40 rows) | 38.77 ms | 0.18 ms | index on `orders.customer_id` |
+| One customer's revenue (join) | 262.47 ms | 0.64 ms | index on `order_items.order_id` |
+| One order's lines | 109.78 ms | 0.06 ms | same index |
+| December's order count | 131.33 ms | 2.95 ms | rewrote `EXTRACT` as a date range |
+| Big customer's 2025 orders | 16.15 ms | 7.78 ms | composite index `(customer_id, order_date)` |
+| Big customer's 2025 orders | 7.78 ms | 1.68 ms | covering index with `INCLUDE (status)` |
+| Pending orders, oldest first | 44.12 ms | 0.75 ms | partial index |
+| Insert 500,000 lines | 416 ms | 2,301 ms | four indexes (the cost) |
 
 ### A checklist for a slow query
 
-1. **Confirm it's the query.** Time it in DBeaver or `psql` (`\timing on`). A slow dashboard can be slow for reasons outside the database.
-2. **Run `EXPLAIN (ANALYZE, BUFFERS)`** on a copy of production-sized data. `BUFFERS` adds how many pages each step read.
+1. **Confirm it's the query.** Time it in DBeaver, which shows the execution time under the results (in `psql`, type `\timing on` first). A slow dashboard can be slow for reasons outside the database.
+2. **Run `EXPLAIN (ANALYZE, BUFFERS)`** on a copy of production-sized data. `BUFFERS` adds how many pages each step read (see the example below the list).
 3. **Find the expensive step**: where the time jumps, where `Rows Removed by Filter` is huge, where estimated and actual rows differ by ten times or more.
 4. **Estimates far off?** Run `ANALYZE table_name` so the statistics are current, then plan again.
 5. **Scan with a selective filter?** Check the filter is sargable; then consider an index (composite if several columns).
@@ -1156,7 +1775,35 @@ Six times slower. Each index is a sorted structure that must be updated for ever
 7. **Still slow because the question itself reads millions of rows?** No index will fix that. Pre-aggregate (section 28.11).
 8. **Measure again**, and write down the before and after. Then check that writes to the table haven't become a problem.
 
+Here is what `BUFFERS` adds, on section 28.5's first query as it ran before `idx_orders_customer_id` existed (recorded output):
+
+<!-- run: none -->
+```sql
+EXPLAIN (ANALYZE, BUFFERS, COSTS OFF)
+SELECT order_id, order_date, status
+FROM orders
+WHERE customer_id = 2718;
+```
+
+```
+                           QUERY PLAN
+----------------------------------------------------------------
+ Seq Scan on orders (actual time=0.763..41.560 rows=40 loops=1)
+   Filter: (customer_id = 2718)
+   Rows Removed by Filter: 714245
+   Buffers: shared hit=2421 read=2800
+ Planning:
+   Buffers: shared hit=69
+ Planning Time: 0.255 ms
+ Execution Time: 41.611 ms
+(8 rows)
+```
+
+**`Buffers: shared hit=2421 read=2800`** counts pages: 2,421 were already in PostgreSQL's memory (**hit**), and 2,800 had to be fetched from outside it, from the operating system or the disk (**read**). Together, 5,221: every page of the table. After the index, the same query touched 43 pages (`shared hit=43`). The `Planning:` lines count the pages read while choosing the plan. Run the query twice and the `read` number usually drops, because the first run left the pages in memory; that's one reason to take the median of several runs.
+
 > **Real-life example: the index that took down checkout.** A common story: an analyst notices a slow report and adds an index on a busy production table in the middle of the day. In PostgreSQL, a plain `CREATE INDEX` blocks inserts and updates to the table until it finishes, so on a very large table, orders stop being saved for minutes. `CREATE INDEX CONCURRENTLY` builds the index without blocking writes (slower, and it can't run inside a transaction). Changes to production tables go through a reviewed migration (section 28.12), not a query window.
+
+**Good place to stop.**
 
 ---
 
@@ -1516,6 +2163,8 @@ ORDER BY m.month;
 January: ₹202,640 of ₹300,000 is 67.5%. ✓ Both sides now have the grain "one month", so the join can't multiply anything.
 
 > **Interview extra point.** When an interviewer gives you two tables and a question, say the grain of each table before you write a join: *"orders is one row per order, order_items is one row per line, so if I join them I'll aggregate the lines first."* It shows the habit that prevents the most common wrong answer, and it's the kind of move Part 8's SQL bank (Chapter 71) scores as an extra point.
+
+**Good place to stop.**
 
 ---
 
@@ -2223,6 +2872,8 @@ Three rules keep denormalization safe:
 
 > **Dialect note.** PostgreSQL's `REFRESH MATERIALIZED VIEW CONCURRENTLY` lets people keep reading during a refresh (it needs a unique index on the view). MySQL has no materialized views: create a summary table and refresh it with a scheduled `DELETE` and `INSERT … SELECT` in a transaction, or an event (section 28.13). Warehouses such as Snowflake and BigQuery have their own materialized views with automatic refresh (Chapter 49), and dbt builds summary tables as *models* on a schedule (Chapter 32).
 
+**Good place to stop.**
+
 ---
 
 ## 28.12 Schema migrations: changing a live database safely
@@ -2613,6 +3264,8 @@ ON DUPLICATE KEY UPDATE city = x.city, segment = x.segment;
 The type 2 load (close, then insert) works as in section 28.10, except that MySQL's multi-table `UPDATE` is written `UPDATE dim_customer_t2 AS d JOIN customer_extract AS x ON … SET …`. Both versions are in `ch28_queries_mysql.sql`.
 
 > **Watch out: MySQL can't roll back an ALTER TABLE.** In MySQL, `CREATE`, `ALTER`, and `DROP` commit immediately, even inside `BEGIN … COMMIT`. A migration that fails halfway leaves the first half applied. Keep each MySQL migration to one structure change, and test it on a copy.
+
+**Good place to stop.**
 
 ---
 

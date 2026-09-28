@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """The same job, with an index: build a dictionary once, then look each invoice up.
-Analyst to Architect · Chapter 33 · the "after" version (section 33.11's project)."""
+Analyst to Architect · Chapter 33 · the "after" version (the chapter's project)."""
 import csv, time
 
 
@@ -21,7 +21,7 @@ def match(invoices, index):
 
 if __name__ == '__main__':
     order_lines = load('match_data/order_lines.csv')
-    invoices = load('match_data/supplier_invoices.csv')
+    invoices = load('match_data/carrier_invoice_lines.csv')
     started = time.perf_counter()
     index = build_index(order_lines)
     built = time.perf_counter()
