@@ -332,7 +332,7 @@ End Sub
 - **`Select Case value`** names the value to test once; each **`Case`** below is one possibility, checked from the top, and only the first that fits runs.
 - **`Case Is >= 50000`**: `Is` stands for the value being tested, so this reads "value is at least 50,000".
 - **`Case Else`** catches anything no other `Case` matched, and **`End Select`** closes the block.
-- The bands go **from the top down**, each with only a lower edge, so no value can fall into a gap: 49,999.995 is "large", and exactly 25,000 is "large" too. A rule written as `Case 25000 To 49999.99` would miss 49,999.995 and send it to "small". Riverstone's size bands always include the lower edge: from ₹10,000 is medium, from ₹25,000 large, from ₹50,000 very large.
+- The bands go **from the top down**, each with only a lower edge, so no value can fall into a gap: 49,999.995 is "large", and exactly 25,000 is "large" too. A rule written as `Case 25000 To 49999.99` would miss 49,999.995 and send it to "small". Each band here includes its lower edge: from ₹10,000 is medium, from ₹25,000 large, from ₹50,000 very large.
 
 **What happens if you change the order** and put `Case Is >= 10000` first? Then 50,000, 49,999.995 and 25,000 all print "medium", because the first `Case` that fits wins. Order the bands from the top down.
 
@@ -516,7 +516,7 @@ Scratch | order_item_id | 184000 | $A$1:$K$1
 
 ### The five things you'll write constantly
 
-This one reads from **Master** but changes only **Scratch**:
+This one only reads, from **Master**:
 
 ```vb
 Sub RangeToolkit()
@@ -531,12 +531,6 @@ Sub RangeToolkit()
     Set data = ws.Range(ws.Cells(2, 1), ws.Cells(lastRow, lastCol))   ' data, no header
     Debug.Print data.Address & " holds " & data.Rows.Count & " rows"
     Debug.Print "the block around A1 is " & ws.Range("A1").CurrentRegion.Address
-
-    Dim scratch As Worksheet
-    Set scratch = ThisWorkbook.Worksheets("Scratch")
-    scratch.Rows(1).Insert                                         ' insert, delete, clear
-    scratch.Rows(1).Delete
-    scratch.Range("L:L").ClearContents
 End Sub
 ```
 
@@ -550,7 +544,20 @@ the block around A1 is $A$1:$K$995
 - **`.End(xlToLeft).Column`** does the same along row 1, from the far right, and gives the last column number: 11 is column K.
 - **`ws.Range(ws.Cells(2, 1), ws.Cells(lastRow, lastCol))`** is the block from its top-left cell to its bottom-right cell: every data row, without the header.
 - **`.CurrentRegion`** is the block of filled cells around A1, the same block **Ctrl+A** selects.
-- **`.Rows(1).Insert`**, **`.Rows(1).Delete`** and **`.Range("L:L").ClearContents`** insert a row, delete it, and empty column L. Run these only where it's safe, which is why they point at Scratch.
+
+The methods that change a sheet go in a procedure of their own, pointed at **Scratch**:
+
+```vb
+Sub ScratchEdits()
+    Dim scratch As Worksheet
+    Set scratch = ThisWorkbook.Worksheets("Scratch")
+    scratch.Rows(1).Insert                   ' insert a row above row 1
+    scratch.Rows(1).Delete                   ' delete it again
+    scratch.Range("L:L").ClearContents       ' empty column L
+End Sub
+```
+
+It prints nothing; look at Scratch before and after. **`.Rows(1).Insert`** pushes everything down one row, **`.Rows(1).Delete`** pulls it back up, and **`.ClearContents`** empties the cells but keeps their formatting. On Master, after consolidation, column L holds `source_file` (section 19.6), which is why experiments like this never point at real data.
 
 Use `UsedRange` only when you must: it can include formatted-but-empty cells and lie to you.
 
@@ -947,13 +954,6 @@ Sub AskForMonth()
     End If
     Debug.Print "running for " & answer
 End Sub
-
-Sub PickFolder()
-    With Application.FileDialog(msoFileDialogFolderPicker)
-        .Title = "Choose the folder with the branch files"
-        If .Show = -1 Then Debug.Print .SelectedItems(1)
-    End With
-End Sub
 ```
 
 Run `AskForMonth` and type `2025-12`: the Immediate window shows `running for 2025-12`. Type `Dec 2025` instead and a warning box says *Please use the format 2025-12.*
@@ -962,6 +962,18 @@ Run `AskForMonth` and type `2025-12`: the Immediate window shows `running for 20
 - **`Exit Sub`** leaves the procedure at once.
 - **`answer Like "####-##"`** checks text against a pattern: `#` is any digit, `?` any single character, and `*` any run of characters. `Not` turns the answer around, so the warning shows when the text *doesn't* fit.
 - **`vbExclamation`** is one of VBA's built-in named numbers, called **constants**: it tells `MsgBox` to show a warning icon. `vbInformation` shows an "i", `vbCritical` a red cross, and `vbCrLf` (section 19.9) is a line break inside text.
+
+For a folder, Windows' own folder picker is one `With` block:
+
+```vb
+Sub PickFolder()
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        .Title = "Choose the folder with the branch files"
+        If .Show = -1 Then Debug.Print .SelectedItems(1)
+    End With
+End Sub
+```
+
 - **`Application.FileDialog(msoFileDialogFolderPicker)`** is Windows' own "choose a folder" dialog. **`.Show`** opens it and returns **-1** when the user clicks OK (0 for Cancel), and **`.SelectedItems(1)`** is the folder they chose.
 
 `InputBox`, `MsgBox`, and `Application.FileDialog` cover most needs and cost one line each. A **UserForm** (**Insert → UserForm** in the editor, then drag labels, text boxes, combo boxes, and buttons) is worth it when there are several inputs at once: a month, a branch, and a checkbox for "email it". Name the controls properly (`cmbBranch`, `txtMonth`, `btnRun`), write the code in the form's `btnRun_Click` event, and keep the actual work in a module the form calls, so the logic can be tested without the form.
@@ -1317,7 +1329,7 @@ formatted 25833 rows and 12 columns
 
 ### Read and write in batches
 
-Apps Script has quotas and a six-minute limit per execution, and every call to the spreadsheet is a round trip. The single most important habit is the same as VBA's arrays:
+Apps Script has quotas and a six-minute limit per execution, and every call to the spreadsheet is a round trip. The single most important habit is the same as VBA's arrays: read once, work in memory, write once.
 
 ```javascript
 function cleanStatuses() {
@@ -1583,7 +1595,7 @@ To run it every morning: **Triggers → Add Trigger**, choose `sendDailySummary`
 
 ### Calling an API
 
-Chapter 2 introduced **APIs**: a program sends a **request** to a web address and gets a **response** back, often in **JSON**, with a **status code** that says whether it worked (200 means OK). Apps Script can call one with `UrlFetchApp`. Here it asks Riverstone's CRM (the customer system) for the open enquiries and writes them to a sheet called **CRM**:
+Chapter 2 introduced **APIs**: a program sends a **request** to a web address and gets a **response** back, often in **JSON**, with a **status code** that says whether it worked (200 means OK). Apps Script can call one with `UrlFetchApp`. Here it asks Riverstone's CRM (the customer system) for the open enquiries and writes them to a sheet called **CRM**.
 
 ```javascript
 function fetchOpenEnquiries() {
@@ -1632,15 +1644,15 @@ Consolidating and cleaning, as it appears in each environment:
 
 | Task | VBA | Office Scripts | Apps Script |
 |---|---|---|---|
-| Get the sheet | `Set ws = ThisWorkbook.Worksheets("Master")` | `const sheet = workbook.getWorksheet("Master")` | `const sheet = SpreadsheetApp.getActive().getSheetByName('Master')` |
-| Last row | `ws.Cells(ws.Rows.Count, "A").End(xlUp).Row` | `sheet.getUsedRange().getRowCount()` | `sheet.getLastRow()` |
-| Read a block | `v = rng.Value2` | `const v = range.getValues()` | `const v = range.getValues()` |
+| Get the sheet | `Worksheets("Master")` | `getWorksheet("Master")` | `getSheetByName('Master')` |
+| Last row | `.End(xlUp).Row` | `getUsedRange()` then `.getRowCount()` | `getLastRow()` |
+| Read a block | `v = rng.Value2` | `v = range.getValues()` | `v = range.getValues()` |
 | Write a block | `rng.Value2 = v` | `range.setValues(v)` | `range.setValues(v)` |
-| Loop | `For r = 1 To UBound(v, 1)` | `for (let r = 0; r < v.length; r++)` | `for (let r = 0; r < v.length; r++)` |
+| Loop | `For r = 1 To UBound(v, 1)` | `for (let r = 0; …; r++)` | `for (let r = 0; …; r++)` |
 | Lookup table | `Scripting.Dictionary` | object literal `{}` or `Map` | object literal `{}` or `Map` |
-| Bold the header | `.Font.Bold = True` | `.getFormat().getFont().setBold(true)` | `.setFontWeight('bold')` |
+| Bold the header | `.Font.Bold = True` | `getFont()` then `.setBold(true)` | `.setFontWeight('bold')` |
 | Log | `Debug.Print` | `console.log` | `Logger.log` |
-| Open other files | `Workbooks.Open` | not available | `SpreadsheetApp.openById` |
+| Open other files | `Workbooks.Open` | not available | `openById` |
 | Email | Outlook object | via Power Automate | `MailApp` / `GmailApp` |
 | Schedule | Task Scheduler plus a launcher script (fragile; see Chapter 20's laptop trap) | Power Automate | Time-driven trigger |
 

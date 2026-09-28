@@ -182,12 +182,14 @@ Sub RangeToolkit()
     Set data = ws.Range(ws.Cells(2, 1), ws.Cells(lastRow, lastCol))   ' data, no header
     Debug.Print data.Address & " holds " & data.Rows.Count & " rows"
     Debug.Print "the block around A1 is " & ws.Range("A1").CurrentRegion.Address
+End Sub
 
+Sub ScratchEdits()
     Dim scratch As Worksheet
     Set scratch = ThisWorkbook.Worksheets("Scratch")
-    scratch.Rows(1).Insert                                         ' insert, delete, clear
-    scratch.Rows(1).Delete
-    scratch.Range("L:L").ClearContents
+    scratch.Rows(1).Insert                   ' insert a row above row 1
+    scratch.Rows(1).Delete                   ' delete it again
+    scratch.Range("L:L").ClearContents       ' empty column L
 End Sub
 
 Sub FormatHeader(ByVal ws As Worksheet, ByVal lastCol As Long)
