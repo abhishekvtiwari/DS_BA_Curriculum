@@ -312,6 +312,36 @@ def render(pw, html_path, pdf_path, footer_text=None, layout=False):
     b.close()
     return rep
 
+
+def clean_bookmarks(doc, html_text):
+    """Chromium writes a wrapped heading's bookmark with its lines or words doubled ("How to Use This
+    BookHow to Use This Book"). Give every bookmark its heading's real text, matched in order."""
+    heads = [text_of(m.group(3)) for m in HEAD.finditer(html_text)]
+    toc, k = doc.get_toc(simple=False), 0
+    for e in toc:
+        t = norm_title(e[1])
+        for n in (12, 6):
+            hit = next((j for j in range(k, min(k + 8, len(heads)))
+                        if t.startswith(norm_title(heads[j])[:n]) or undouble(t).startswith(norm_title(heads[j])[:n])), None)
+            if hit is not None:
+                e[1] = heads[hit]; k = hit + 1; break
+    doc.set_toc(toc)
+
+
+def join_cover(cover_pdf, body_pdf, out, title, html_path=None):
+    """Cover + body in one file. The cover is inserted into the body, so the body's tags (screen
+    readers, reflow) and bookmarks survive; merging the other way round dropped both tags."""
+    import pymupdf
+    doc = pymupdf.open(str(body_pdf))
+    cov = pymupdf.open(str(cover_pdf))
+    doc.insert_pdf(cov, start_at=0)
+    if html_path: clean_bookmarks(doc, pathlib.Path(html_path).read_text())
+    doc.set_metadata(dict(doc.metadata, title=title, author='Abhishek Tiwari'))
+    doc.save(str(out), garbage=3, deflate=True)
+    doc.close(); cov.close()
+    print(out, len(PdfReader(str(out)).pages), 'pages')
+
+
 def build(src, name, bodyclass, title, footer, cover, toc_depth):
     src = str(src if os.path.isabs(str(src)) else MS / str(src))   # bare names resolve to manuscript/
     body_html = D/f'{name}.html'
@@ -338,13 +368,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
         (D/f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
         if rep and rep.get('overflow'):
             print('  WARNING wider than the text block:', rep['overflow'][:3])
-    w = PdfWriter()
-    w.append(str(D/f'{name}-cover.pdf'))
-    w.append(str(D/f'{name}-body.pdf'))
-    w.add_metadata({'/Title': title, '/Author': 'Abhishek Tiwari'})
-    out = str(OUT / f'{name}.pdf')
-    with open(out, 'wb') as f: w.write(f)
-    print(out, len(PdfReader(out).pages), 'pages')
+    join_cover(D/f'{name}-cover.pdf', D/f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
 
 JOBS = {}
 JOBS['blueprint'] = lambda: build('blueprint.md', 'Analyst-to-Architect-Blueprint', '',
@@ -521,13 +545,7 @@ def build_package(srcs, name, title, cover):
         (D / f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
     heads = [(ids[i], t) for i, t in h1s if i in ids]
     stamp_footers(D / f'{name}-body.pdf', heads, label)
-    w = PdfWriter()
-    w.append(str(D / f'{name}-cover.pdf'))
-    w.append(str(D / f'{name}-body.pdf'))
-    w.add_metadata({'/Title': title, '/Author': 'Abhishek Tiwari'})
-    out = str(OUT / f'{name}.pdf')
-    with open(out, 'wb') as f: w.write(f)
-    print(out, len(PdfReader(out).pages), 'pages')
+    join_cover(D / f'{name}-cover.pdf', D / f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
     return heads, label
 
 

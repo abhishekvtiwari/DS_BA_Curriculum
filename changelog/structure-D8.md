@@ -56,6 +56,7 @@ Parts 0 and 1, so every chapter reads the same way from now on.
   - `page_numbers()` matches every heading to its PDF bookmark, so contents and maps get page numbers.
   - `build_package()` and `stamp_footers()` produce the part package with running footers.
   - A chapter not in stage order keeps a full contents page instead.
+  - `join_cover()` inserts the cover into the tagged body, so the PDF stays tagged for screen readers and reflow (the old merge dropped the tags). `clean_bookmarks()` gives each bookmark its heading's real text; Chromium had doubled wrapped titles, e.g. "How to Use This BookHow to Use This Book".
 - **`book.css`:** styles for the stage labels, the chapter map, the two-level contents and part openings.
 - **`layout.js`:**
   - A table taller than a quarter page may now split, with its header row repeated. Before, "Common mistakes" tables jumped to the next page and left half a page empty.
@@ -66,5 +67,6 @@ Parts 0 and 1, so every chapter reads the same way from now on.
 
 ## Checks
 
-- **Part 0 + 1 PDF:** 93 of 93 contents entries and 128 of 128 map entries point to the right page. No stranded headings or lead-ins, no small text, no missing glyphs.
+- **Whole book:** all 85 chapters build (2,380 pages). 1,225 of 1,226 chapter-map entries carry a page number, and none point to the wrong page.
+- **Part 0 + 1 PDF:** tagged; 358 of 358 bookmarks have clean titles and point to the right page; 93 of 93 contents entries and 128 of 128 map entries point to the right page. No stranded headings or lead-ins, no small text, no missing glyphs.
 - **Two pages are still half empty (p. 144 and p. 170).** Figures 7.1 and 8.1 are taller than the space left on the page before them. They could shrink by only 7% before their text drops below 7 pt, which isn't enough, so they need redrawing more compactly. That is listed for Abhishek.
