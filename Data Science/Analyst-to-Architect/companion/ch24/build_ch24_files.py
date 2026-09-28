@@ -53,7 +53,7 @@ def dec_dip():
     n["pct_may_jun"] = (n["jun"]["revenue"] - n["may"]["revenue"]) / n["may"]["revenue"] * 100
     n["aov_share"] = n["bridge"]["aov"] / n["bridge"]["total"] * 100
     # share of orders by segment, and AOV by segment, in each month
-    for key, m in (("nov", "2025-11"), ("dec", "2025-12")):
+    for key, m in (("nov", "2025-11"), ("dec", "2025-12"), ("may", "2025-05"), ("jun", "2025-06")):
         x = lines[lines.month == m]
         first = x.drop_duplicates("order_id")
         n[key]["segment_share"] = (first.segment.value_counts(normalize=True) * 100).to_dict()
