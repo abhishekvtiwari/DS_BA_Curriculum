@@ -99,6 +99,9 @@ def main():
             last['_next'] = None
             continue
         pending_out = None
+        # a "run:" marker belongs to the very next code block: if that block isn't SQL, drop it, or it
+        # would leak to the next SQL block (reported by the Ch 32 build)
+        if lang: pending_run = None
     print(f'{a.path}: statements run {ran}, outputs checked {checked}, mismatches {bad}')
     sys.exit(1 if bad else 0)
 
