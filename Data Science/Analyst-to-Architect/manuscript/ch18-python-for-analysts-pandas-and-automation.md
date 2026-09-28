@@ -2580,7 +2580,7 @@ def write_markdown(path, month, headlines, by_segment, checks):
 
 dec_checks = check(dec_lines, dec_last_year, "2025-12")
 md = write_markdown(reports / "riverstone_2025-12.md", "2025-12", dec_headlines, dec_by_segment, dec_checks)
-print("\n".join(line for line in md.read_text(encoding="utf-8").splitlines() if not line.startswith("_Generated")))
+print("\n".join([line for line in md.read_text(encoding="utf-8").splitlines() if not line.startswith("_Generated")]))
 ```
 
 ```
@@ -2615,8 +2615,9 @@ print("\n".join(line for line in md.read_text(encoding="utf-8").splitlines() if 
 ```
 
 - **Markdown** is plain text with light marks for formatting: `#` for a heading, `-` for a list item, `**…**` for bold. Email tools, chat tools, and GitHub all display it neatly, and it's still readable as plain text.
-- **`out`** collects the lines; **`"\n".join(out)`** joins them with line breaks into one text, which **`write_text`** saves.
-- **`datetime.now():%d %b %Y %H:%M`** stamps the time the report was made, using the `strftime` codes of Chapter 17 (section 17.11). (The print leaves that line out, because it changes every run.)
+- **`out`** collects the lines of the file, starting with a heading and the time stamp. The first loop adds one list line per headline: **`shown`** is "not available" when the value is `None` (a month with no target) and otherwise the number with thousands separators, and **`out.append(...)`** adds the line. **`out += [...]`** adds several lines at once, and the second loop adds one line per check.
+- **`"\n".join(out)`** joins the lines with line breaks into one text, which **`write_text`** saves.
+- **`datetime.now():%d %b %Y %H:%M`** stamps the time the report was made, using the `strftime` codes of Chapter 17 (section 17.11). (The last line of the cell prints the file back, and its list comprehension leaves out that line, because it changes every run.)
 - **`by_segment.to_markdown(index=False, floatfmt=",.2f")`** writes the table as a Markdown table. `to_markdown` borrows a small package, **`tabulate`**, to draw it, which is why it's in the install line; `floatfmt=",.2f"` formats the decimals with separators, so no scientific notation reaches the reader.
 
 ### Step 6: `main`, which runs the steps in order

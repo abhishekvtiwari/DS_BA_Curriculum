@@ -18,7 +18,7 @@
 
 ## Why this matters
 
-Chapter 24 left you able to turn "make the report better" into a precise question and a memo that lands. That is most of what an analyst needs when the answer is a query.
+Chapter 24 left you able to turn a vague ask into a precise question, and the answer into a memo that lands. That is most of what an analyst needs when the answer is a query.
 
 This chapter is what happens when the answer is a **thing that has to be built**: a dashboard somebody will open every Monday, a pipeline that has to survive a late file, a model whose mistakes cost money, a metric that two departments have to agree on. Somebody has to work out what is actually needed, write it down precisely enough that it can be built, and stay involved until what appears is what was needed.
 
@@ -100,7 +100,7 @@ Sign-off happens at the end of phase 1. The BA's work does not stop there: it th
 
 ## 25.3 From a vague ask to a written requirement
 
-Chapter 24 taught the first move: when someone says "make the report better", find out what they would do differently with a better one. This section is what happens next, when the answer turns out to need something built.
+Chapter 24 taught the first move (section 24.1, turning an ask into a question): when someone asks for something vague, find out what decision the answer will inform, and what they would do differently with it. This section is what happens next, when the answer turns out to need something built.
 
 **The ask:** "We need a way to see which customers haven't ordered recently."
 
@@ -459,7 +459,7 @@ FR-14 and NFR-09 take the next free numbers in this chapter's running list. The 
 
 The scores: re-keying 17 × 3 ÷ 3 = 17; delivery 8 × 2 ÷ 2 = 8; stock 6 × 3 ÷ 3 = 6.
 
-The re-keying hours come from Chapter 3's illustration: 4 hours a week is about 17 a month. Re-keying ranks first even though its build effort is large, because customers send orders in many formats; Chapter 58 builds exactly that automation. The delivery gap from Figure 25.4 ranks second: it saves fewer hours, but it is what makes on-time delivery measurable at all. The score is a way to make the argument visible, not a replacement for it; if two scores are close, the conversation decides.
+The re-keying hours come from Chapter 3's illustration: 4 hours a week is about 17 a month. Re-keying ranks first even though its build effort is large (customers send orders in many formats), because it saves the most hours and removes the costliest errors; Chapter 58 builds exactly that automation. The delivery gap from Figure 25.4 ranks second: it saves fewer hours, but it is what makes on-time delivery measurable at all. The score is a way to make the argument visible, not a replacement for it; if two scores are close, the conversation decides.
 
 None of those hour figures is a fact about a database. The re-keying figure is Chapter 3's round-number illustration, and the other two are what the BA collected by asking the people who do the work. All three should be labeled as estimates in the document. A number you gathered in an interview is evidence; a number you invented to make a case is the thing this book has spent twenty-four chapters teaching you not to do.
 

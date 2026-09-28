@@ -1,0 +1,9 @@
+# Files the chapter's code writes when you run it (they are not companion inputs)
+*.png
+*.xlsx
+*.db
+reports/
+clean_order_lines_pandas.csv
+dq_order_issues_pandas.csv
+.env
+__pycache__/
