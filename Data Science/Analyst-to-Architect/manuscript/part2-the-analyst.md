@@ -22,7 +22,7 @@ Read the chapters in this order:
 | **23. Business Acumen, KPIs & Metrics** | 17–20 hours |
 | **24. Requirements, Storytelling & Stakeholders** | 10–12 hours |
 | **25. The Business Analyst Track** | 6–8 hours |
-| **26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants** | 17–22 hours |
+| **26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants** | 9–11 hours |
 | **27. Capstone: Your Analyst Portfolio** | 22–33 hours |
 
-In total, allow 375–462 hours, including the exercises and projects.
+In total, allow 367–451 hours, including the exercises and projects.
