@@ -97,7 +97,7 @@ with pd.ExcelWriter("Monthly_Report_Dec_FINAL.xlsx") as w:
 print("done")
 ```
 
-Run it from a terminal in `work/ch29/start`, with the book's `.venv` active (Chapter 17, section 17.0):
+The password in its `create_engine` line is Imran's. To run it, change `riverstone123` to your own PostgreSQL password, which is already the first of its problems. Then run it from a terminal in `work/ch29/start`, with the book's `.venv` active (Chapter 17, section 17.0):
 
 <!-- run: none -->
 ```
@@ -796,7 +796,7 @@ $ uv run python -c "import pandas, openpyxl, requests; print(pandas.__version__,
 *(Shortened: the full output names the project's folder and lists all 53 packages.)*
 
 - **`--locked`** means *"install exactly what the lockfile says, and fail if `pyproject.toml` and `uv.lock` disagree"*. That's the command for servers and automated test runs.
-- **`uv run`** runs any command inside the project's environment without activating it: `uv run pytest`, `uv run mypy`, `uv run riverstone-report --month 2025-12`. **`python -c "…"`** runs the Python code in quotes and exits, which is handy for a one-line check.
+- **`uv run`** runs any command inside the project's environment without activating it: `uv run pytest`, `uv run mypy`, `uv run riverstone-report --help`. **`python -c "…"`** runs the Python code in quotes and exits, which is handy for a one-line check.
 - The numbers reconcile. The lockfile has 58 entries: your package, the 15 it needs, the dev tools and everything they need, plus 5 packages used only on Windows or macOS. On Linux, 53 of them are installed.
 - **`uv sync` installs the dev group too**, which is why it installed 53 packages, not 16. On a server that only runs the report, use `uv sync --locked --no-dev`: it installs the 16.
 
