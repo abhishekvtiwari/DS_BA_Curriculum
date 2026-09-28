@@ -80,6 +80,25 @@ try:
     check("the test server received two emails in all (the cell's and the script's)",
           server_log.read_text(encoding="utf-8").count("---------- MESSAGE FOLLOWS ----------") == 2)
 
+    # Answer 14: the per-product 10th-percentile rule on 18 and 17 December 2025.
+    import pandas as pd
+    from datetime import date, timedelta
+    from sqlalchemy import create_engine, text
+    engine = create_engine(DB)
+    q = text("""SELECT s.order_date, p.product_name, SUM(s.quantity) AS quantity
+                FROM sales_lines s JOIN products p ON p.product_id = s.product_id
+                WHERE s.order_date BETWEEN :start AND :end GROUP BY s.order_date, p.product_name""")
+    flagged = {}
+    for d in (date(2025, 12, 18), date(2025, 12, 17)):
+        p10 = pd.read_sql(q, engine, params={"start": d - timedelta(days=90), "end": d - timedelta(days=1)}
+                          ).groupby("product_name")["quantity"].quantile(0.10)
+        today = pd.read_sql(q, engine, params={"start": d, "end": d}).set_index("product_name")["quantity"]
+        flagged[d.day] = sorted((name, int(today[name]), float(p10[name])) for name in today.index if today[name] < p10[name])
+    check("answer 14, 17 December: only Food Container Set (960 against 990)",
+          flagged[17] == [("Food Container Set", 960, 990.0)], flagged[17])
+    check("answer 14, 18 December: six products, not Industrial Crate",
+          len(flagged[18]) == 6 and "Industrial Crate" not in [f[0] for f in flagged[18]], flagged[18])
+
     shown = re.search(r'<!-- run: none -->\n```python\n(def main\(.*?)```', md, re.S).group(1)
     real = re.search(r'^def main\(.*?^        return 2\n', (C20 / "daily_flash.py").read_text(), re.S | re.M).group(0)
     check("main() in section 20.11 matches daily_flash.py", shown == real)

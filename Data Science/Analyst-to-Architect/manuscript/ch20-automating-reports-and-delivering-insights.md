@@ -221,7 +221,7 @@ Line by line:
 
 ### Connecting without a password in the code
 
-The tiles above have their numbers typed in. The real ones come from the database, and a script that connects to a database needs its address and password. Those must not be in the code (Chapter 17 said why: a password in a script is a password in your Git history forever). They go in **environment variables**: named settings that belong to the running program's surroundings, not to its code. Python reads them from `os.environ`, a dictionary of every variable the program was started with.
+The tiles above have their numbers typed in. The real ones come from the database, and a script that connects to a database needs its address and password. Those must not be in the code (Chapter 17 said why: a password in a script is a password in every copy of that script, forever). They go in **environment variables**: named settings that belong to the running program's surroundings, not to its code. Python reads them from `os.environ`, a dictionary of every variable the program was started with.
 
 The easy way to set them for one project is a **`.env` file**: a plain-text file named `.env`, in the project folder, with one `NAME=value` per line. Copy `.env.example` from the companion folder to `.env` and fill in your own values. The Flash's looks like this:
 
@@ -237,7 +237,7 @@ FLASH_FAILURE_TO=you@riverstone.example
 
 `RIVERSTONE_DB` is the database address in the form Chapter 18 used, with the user and password you set in Chapter 12, section 12.3. The `SMTP_` lines point at a test mail server on your own computer (section 20.6), so nothing can reach a real inbox while you learn; when you're ready for real, they become your mail service's host, port 587, and a service account's password. The two `FLASH_` lines are who gets the report and who hears about failures. **Never commit `.env` to Git**: add it to the project's `.gitignore` file (Chapter 26 shows how), and commit `.env.example`, with no real passwords in it, so a colleague knows which settings to fill in.
 
-The `python-dotenv` package reads the file:
+The `python-dotenv` package reads the file (`pip install python-dotenv` in your project's virtual environment, if it isn't there yet):
 
 ```python
 import os
@@ -257,7 +257,7 @@ found .env: True
 ```
 
 - **`load_dotenv(".env")`** reads the `.env` file in the current folder, adds each line to `os.environ`, and returns `True` if it found the file. It never overwrites a variable that is already set, so a server can set the real values another way and the same code still works.
-- **The second `print`** lists the setting *names* only. Never print the values: a log with a password in it is as bad as a script with one.
+- **The second `print`** lists the setting *names* only; `startswith` accepts a tuple of prefixes and is `True` if the name starts with any of them. Never print the values: a log with a password in it is as bad as a script with one.
 - **`os.environ["RIVERSTONE_DB"]`** fails loudly with a `KeyError` if the setting is missing, which is what you want; a report that quietly connects to the wrong database is worse.
 
 ### The chart
@@ -425,7 +425,8 @@ text/html
 image/png <flash-chart@riverstone>
 ```
 
-- **`message["Subject"] = …`** sets a header, the lines at the top of every email. `From` and `To` come from the `.env` settings, not the code.
+- **`html`** is a small test email: one line of text, the row of tiles from section 20.5, and the chart's `<img>` tag.
+- **`message = EmailMessage()`** starts an empty email. **`message["Subject"] = …`** sets a header, the lines at the top of every email. `From` and `To` come from the `.env` settings, not the code.
 - **`set_content(...)`** makes the plain-text part. Always set one: some clients, and most spam filters, look for it.
 - **`add_alternative(html, subtype="html")`** adds the HTML version and turns the message into `multipart/alternative`: "these parts say the same thing; show the best one you can".
 - **`message.get_payload()[1]`** is the second part, the HTML (the plain text is `[0]`). **`add_related(png, maintype="image", subtype="png", cid=…)`** attaches the chart *to the HTML part*, as a related image with the Content-ID the `<img src="cid:…">` tag points at. The angle brackets around the name are how Content-IDs are written in the email's headers; in the HTML you leave them off.
@@ -542,7 +543,7 @@ The honest progression: prove the value with your own mailbox for a week, then m
 
 ### Let the script work out the date
 
-A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its arguments from `sys.argv` by hand. The standard library's **`argparse`** module does the same job with names, defaults, and switches, and writes a `--help` message for free:
+A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its arguments from `sys.argv` by hand. The standard library's **`argparse`** module does the same job with names, defaults, and switches, and writes a `--help` message for free.
 
 ```python
 import argparse
@@ -584,13 +585,13 @@ For a script on a Windows machine or VM:
 
 ### cron
 
-On Linux or macOS, the schedule lives in a **crontab**, a text file of jobs, one per line. First find out which time zone the server's clock uses, because cron fires by that clock:
+On Linux or macOS, the schedule lives in a **crontab**, a text file of jobs, one per line. First find out which time zone the server's clock uses, because cron fires by that clock. On a Linux server:
 
 ```bash
 timedatectl
 ```
 
-Its `Time zone:` line says, for example, `Etc/UTC (UTC, +0000)`. On a UTC server, 07:00 in India is 01:30 UTC; India has no daylight saving, so that never shifts. Then open the crontab. `crontab -e` opens it in a text editor; if yours opens one you can't find the way out of, run `export EDITOR=nano` first, which picks **nano** (save with Ctrl+O and Enter, leave with Ctrl+X). Add this line, with the intended local time in a comment above it:
+Its `Time zone:` line says, for example, `Etc/UTC (UTC, +0000)`. (On a Mac, `date` prints the time with the zone's short name.) On a UTC server, 07:00 in India is 01:30 UTC; India has no daylight saving, so that never shifts. Then open the crontab. `crontab -e` opens it in a text editor; if yours opens one you can't find the way out of, run `export EDITOR=nano` first, which picks **nano** (save with Ctrl+O and Enter, leave with Ctrl+X). Add this line, with the intended local time in a comment above it:
 
 ```bash
 # m  h  dom mon dow  command            07:00 India time (01:30 UTC), Monday to Friday
@@ -614,7 +615,7 @@ If the server is a Red Hat or Fedora machine, its cron (called *cronie*) also ac
 
 ### Cloud schedulers
 
-GitHub Actions (`on: schedule`), Azure Functions timers, AWS EventBridge with Lambda, Google Cloud Scheduler, and the scheduler inside any orchestrator (Chapter 46) all do the same job without a machine you maintain. For a script that runs for a minute a day and needs a database, a small VM or a container on a schedule is usually simplest; for anything with dependencies, use the orchestrator. Each has its own setting for the time zone; most default to UTC.
+GitHub Actions (`on: schedule`), Azure Functions timers, AWS EventBridge with Lambda, Google Cloud Scheduler, and the scheduler inside any orchestrator (Chapter 46) all do the same job without a machine you maintain. For a script that runs for a minute a day and needs a database, a small VM or a container on a schedule is usually simplest; for anything with dependencies, use the orchestrator. Check each one's time-zone setting: GitHub Actions schedules, for example, always run in UTC.
 
 ### Time zones, the quiet bug
 
@@ -1086,7 +1087,8 @@ def main(argv=None) -> int:
 
 Block by block:
 
-- **The first three lines** read the command line (section 20.7), set the day (today in India unless one is given), and set up the log (screen and file, as above). **`load_dotenv(...)`** reads the `.env` file that sits next to the script (section 20.5).
+- **`def main(argv=None) -> int:`** `argv=None` means "read the real command line", but a test can pass a list, as in section 20.7; `-> int` is a note for human readers that the function returns a whole number (Python doesn't check it).
+- **The first three lines** read the command line (section 20.7), set the day (today in India unless one is given; `IST` is `ZoneInfo("Asia/Kolkata")`, set once at the top of the file), and set up the log (screen and file, as above). **`load_dotenv(Path(__file__).with_name(".env"))`** reads the `.env` file that sits next to the script (section 20.5): `__file__` is the script's own path, and `.with_name(".env")` is the file called `.env` in the same folder, so it works whatever folder the scheduler starts in.
 - **The run key.** When sending, it first checks `runs/sent_keys.txt`; if today's key is there, it logs that and stops with exit code 0. That is what makes a retry, or a second click, safe.
 - **`try:`** wraps everything that can go wrong. **`--wait-for-load`** makes it wait for the overnight load first (exercise 22 builds the `load_status` table it reads; without the switch, it trusts the clock).
 - **`load(...)`** runs the five queries: today's lines, the 14 days before, the 14 days ending today, the same day last year, and month to date.

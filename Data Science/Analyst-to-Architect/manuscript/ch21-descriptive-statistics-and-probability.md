@@ -8,9 +8,9 @@
 >
 > **Before you start:** Chapter 4 (averages, percentages, and probability by counting), Chapter 15 (histograms, box plots, and quartiles by hand), and Chapters 17 and 18 (Python and pandas). No mathematics beyond Chapter 4 is assumed. Section 21.0 shows how to read the few symbols this chapter uses, and every formula is written once in symbols and then explained in words.
 >
-> **Time needed:** 18–21 hours, spread over two to three weeks, in two halves: describing data (sections 21.0–21.4, about 8–9 hours) and probability and sampling (sections 21.5–21.9, about 10–12 hours). Each half ends with a short checkpoint.
+> **Time needed:** 20–23 hours, spread over three weeks, in two halves: describing data (sections 21.0 to 21.4, about 9 hours) and probability and sampling (sections 21.5 to 21.9, about 12 hours). Each half ends with a short checkpoint.
 >
-> **Tools:** Python 3.13 or 3.14 as installed in Chapter 17, with `pandas`, `numpy`, and `matplotlib` (Chapter 18) and `scipy`, which section 21.5 installs. The outputs shown were checked on Python 3.11 with pandas 3.0.6, numpy 2.4.6, and scipy 1.17.1. The spreadsheet steps use the functions from Chapters 10 and 11 plus a few new ones (`STDEV.S`, `NORM.DIST`, `BINOM.DIST`, `POISSON.DIST`), which work the same in Excel and Google Sheets.
+> **Tools:** Python 3.14 as installed in Chapter 17 (any version from 3.11 on runs every example), with `pandas`, `numpy`, and `matplotlib` (Chapter 18) and `scipy`, which section 21.5 installs. The outputs shown were checked on Python 3.11 with pandas 3.0.6, numpy 2.4.6, and scipy 1.17.1. The spreadsheet steps use the functions from Chapters 10 and 11 plus a few new ones (`STDEV.S`, `NORM.DIST`, `BINOM.DIST`, `POISSON.DIST`), which work the same in Excel and Google Sheets.
 >
 > **Practice data:** the full Riverstone dataset, plus `companion/ch21/delivery_times_2025.csv`: one row per delivered 2025 order, with its value, the branch that shipped it, the promised days, and the actual delivery time. Section 21.1 lists its eight columns. (Delivery times are invented for this chapter, because the ERP data has no delivery dates. They are simulated from a documented model, described in the companion folder's README; you never need to rebuild the file.)
 
@@ -690,7 +690,7 @@ A **distribution** describes how likely each value is. Knowing which one a measu
 
 ### Installing scipy
 
-The distributions live in **scipy**, a library of scientific functions; its `scipy.stats` part holds distributions and statistical tests. It isn't part of the packages installed so far. In a terminal, activate your project's virtual environment (Chapter 17, section 17.3), then install it:
+The distributions live in **scipy**, a library of scientific functions; its `scipy.stats` part holds distributions and statistical tests. It isn't part of the packages installed so far. In a terminal, activate the book's virtual environment (Chapter 17, section 17.0), then install it:
 
 ```bash
 python -m pip install scipy
@@ -1155,15 +1155,19 @@ print(f"population mean: ₹{population.mean():,.2f}")
 for n in (30, 200, 1000):
     sample_means = pd.Series([rng.choice(population, size=n, replace=False).mean() for _ in range(2000)])
     print(f"samples of {n:>4}: mean of means ₹{sample_means.mean():,.0f}, "
-          f"sd of means ₹{sample_means.std():,.0f} (formula ₹{population.std() / np.sqrt(n):,.0f}), "
-          f"90% between ₹{sample_means.quantile(0.05):,.0f} and ₹{sample_means.quantile(0.95):,.0f}")
+          f"sd of means ₹{sample_means.std():,.0f} (formula ₹{population.std() / np.sqrt(n):,.0f})")
+    print(f"                  90% of the means between ₹{sample_means.quantile(0.05):,.0f} "
+          f"and ₹{sample_means.quantile(0.95):,.0f}")
 ```
 
 ```
 population mean: ₹24,839.53
-samples of   30: mean of means ₹24,943, sd of means ₹3,250 (formula ₹3,327), 90% between ₹19,926 and ₹30,558
-samples of  200: mean of means ₹24,865, sd of means ₹1,267 (formula ₹1,288), 90% between ₹22,812 and ₹26,980
-samples of 1000: mean of means ₹24,837, sd of means ₹574 (formula ₹576), 90% between ₹23,899 and ₹25,785
+samples of   30: mean of means ₹24,943, sd of means ₹3,250 (formula ₹3,327)
+                  90% of the means between ₹19,926 and ₹30,558
+samples of  200: mean of means ₹24,865, sd of means ₹1,267 (formula ₹1,288)
+                  90% of the means between ₹22,812 and ₹26,980
+samples of 1000: mean of means ₹24,837, sd of means ₹574 (formula ₹576)
+                  90% of the means between ₹23,899 and ₹25,785
 ```
 
 How it works:
@@ -1171,7 +1175,7 @@ How it works:
 - `[... for _ in range(2000)]` is a list comprehension (Chapter 17): it draws a sample and takes its mean, 2,000 times, and collects the 2,000 means in a list. `_` is the usual name for a loop counter you don't use.
 - `pd.Series(...)` turns the list into a Series, so `.mean()`, `.std()`, and `.quantile()` work on it.
 - `sample_means.std()` is the spread of the 2,000 means. The "formula" value is the population's standard deviation divided by √*n*, explained below.
-- `.quantile(0.05)` and `.quantile(0.95)` bracket the middle 90% of the sample means.
+- `.quantile(0.05)` and `.quantile(0.95)` bracket the middle 90% of the sample means, printed on a second line for each sample size.
 
 Three things that output shows, and they're the whole of sampling theory in practice:
 
@@ -1223,7 +1227,7 @@ The standard error is the bridge to Chapter 22's confidence intervals: a sample 
 
 ## 21.9 Putting it together: profiling a measure
 
-A repeatable routine for describing any numeric column, which is the project in miniature. First the function, and one run of it:
+A repeatable routine for describing any numeric column is the project in miniature. It comes in two steps: a function that measures one column, and then a table that sets several columns side by side. Here is the function, run once on delivery days.
 
 ```python
 def profile(series, name):
@@ -1269,8 +1273,7 @@ Now profile three columns and set the results side by side:
 ```python
 profiles = pd.DataFrame([profile(deliveries["order_value"], "order value (₹)"),
                          profile(deliveries["delivery_days"], "delivery days"),
-                         profile(deliveries.loc[deliveries["branch"] == "Kolkata", "delivery_days"],
-                                 "Kolkata days")])
+                         profile(kolkata_days, "Kolkata days")])
 print(profiles.set_index("measure").T.to_string())
 ```
 
@@ -1289,7 +1292,7 @@ skew                1.27           3.13          1.70
 cv                  0.73           0.52          0.49
 ```
 
-- `pd.DataFrame([dict, dict, dict])` turns a list of dictionaries into a table: one row per dictionary, one column per key.
+- `pd.DataFrame([dict, dict, dict])` turns a list of dictionaries into a table: one row per dictionary, one column per key. `kolkata_days` is Kolkata's delivery-time column from section 21.2.
 - `.set_index("measure")` uses the measure names as row labels instead of 0, 1, 2.
 - `.T` **transposes** the table, swapping rows and columns, so each statistic is a row and each measure a column. Twelve statistics fit down a page far better than across it.
 - `.to_string()` prints every row in full. The counts in the `n` row show two decimals because, once flipped, each column holds one type of value, and a column of decimals shows its whole numbers as decimals too.
@@ -1354,7 +1357,7 @@ Six months later the tail had shortened and the promise held at 92% company-wide
 
 ### Tools you'll need
 
-- **Python 3.13 or 3.14** (Chapter 17) with `pandas`, `numpy`, `scipy` (section 21.5), and `matplotlib`. The outputs in this chapter were checked on Python 3.11, pandas 3.0.6, numpy 2.4.6, scipy 1.17.1, and matplotlib 3.10.8.
+- **Python 3.14** (Chapter 17; any version from 3.11 on works) with `pandas`, `numpy`, `scipy` (section 21.5), and `matplotlib`. The outputs in this chapter were checked on Python 3.11, pandas 3.0.6, numpy 2.4.6, scipy 1.17.1, and matplotlib 3.10.8.
 - **Spreadsheet equivalents** (Excel or Google Sheets): `AVERAGE`, `MEDIAN`, `MODE.SNGL`, `STDEV.S`/`STDEV.P`, `VAR.S`, `QUARTILE.INC`, `PERCENTILE.INC`/`.EXC`, `SKEW`, `KURT`, `NORM.DIST`, `NORM.INV`, `BINOM.DIST`, `POISSON.DIST`, `RAND`, and `RANDBETWEEN`. Excel's Analysis ToolPak adds Descriptive Statistics and Random Number Generation in one dialog.
 - **SQL (PostgreSQL):** `AVG`, `STDDEV_SAMP`, `STDDEV_POP`, `PERCENTILE_CONT`, and `PERCENTILE_DISC` (section 21.3; `PERCENTILE_CONT` first appeared in Chapter 15).
 - **Companion files (`companion/ch21/`):** `delivery_times_2025.csv` (45,040 delivered 2025 orders; its eight columns are listed in section 21.1) and a README describing how the delivery times were simulated. The delivery times are invented because Riverstone's ERP data has no delivery dates; everything else comes from the full dataset. The folder also holds the script that built the file; you never need to run it.
@@ -1510,7 +1513,7 @@ Use `companion/ch21/delivery_times_2025.csv` and the full dataset.
 
 **10.** Mumbai HO's promise stays at 5 days, so its share stays 90.8%. Bengaluru moves from 5 to 6 days (90.4% kept), Delhi from 6 to 8 (93.9%), and Kolkata from 7 to 11 (92.9%). Company-wide, 91.7% of orders would meet the new promises, against 81.8% today. The honest framing: the promise gets longer for three branches, and the share kept rises to a consistent 90% or more.
 
-**11.** 2,220 orders (4.9%) are above the company-wide fence of 8.25 days. By branch: Kolkata 1,130 (20.1% of its orders), Delhi 599 (5.5%), Bengaluru 258 (2.1%), and Mumbai HO 233 (1.5%). Kolkata has the most, both in number and as a share, which is what the fat tail in Figure 21.2 shows. (A fence set per branch would flag fewer Kolkata orders, because Kolkata's own IQR is wider.)
+**11.** 2,220 orders (4.9%) are above the company-wide fence of 8.25 days. By branch: Kolkata 1,130 (20.1% of its orders), Delhi 599 (5.5%), Bengaluru 258 (2.1%), and Mumbai HO 233 (1.5%). Kolkata has the most, both in number and as a share, which is what the fat tail in Figure 21.2 shows. (A fence set from Kolkata's own quartiles, 7.7 + 1.5 × 3.5 = 12.95 days, would flag only 207 of its orders, 3.7%, because Kolkata's own IQR is wider.)
 
 **12.** Delivery days (skew 3.13) is far more skewed than order value (1.27). The more skewed the measure, the more misleading a bare average is, and the more important percentiles become.
 
