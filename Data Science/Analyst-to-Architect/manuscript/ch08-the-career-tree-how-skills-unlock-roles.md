@@ -127,7 +127,7 @@ The tiers tell you roughly where a role sits. The skills matrix tells you exactl
 
 *Key: ● core · ○ useful · – not needed to get in. DA data analyst · BA business analyst · BI BI developer · AE analytics engineer · DS data scientist · MLE ML engineer · DE data engineer · AIE AI engineer · AUT automation analyst, RPA developer, or integration engineer · ARC data architect.*
 
-![A heatmap with 17 skills down the left and the ten roles across the top. Dark cells mark core skills, light cells mark useful skills, blank cells mark skills not needed to get in. SQL is dark or light for every role. The data architect column is the darkest overall. Machine learning is dark only for data scientist and ML engineer.](figures/fig8-2-skills-matrix.svg)
+![A heatmap with 17 skills down the left and the ten roles across the top, using the same abbreviations as the table. Dark cells with a filled dot mark core skills, mid-blue cells with a hollow dot mark useful skills, and a dash marks skills not needed to get in. SQL is dark or light for every role. The data architect column is the darkest overall. Machine learning is dark only for data scientist and ML engineer.](figures/fig8-2-skills-matrix.svg)
 
 *Figure 8.2 — The same matrix as a heatmap. Read down a column to see a role; read across a row to see which doors a skill helps open.*
 
