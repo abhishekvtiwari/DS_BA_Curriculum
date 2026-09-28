@@ -68,4 +68,10 @@ if [ -f "$C/ch14/sql/ch14_load_postgresql.sql" ]; then
   echo "riverstone_full and Chapter 14's tables loaded."
 fi
 
+# The read-only login the chapter checks use (e.g. checks/ch20_check.py: postgresql://book:book@localhost/riverstone_full).
+PG -d postgres -c "\"DO \$\$BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'book') THEN CREATE ROLE book LOGIN PASSWORD 'book'; END IF; END\$\$\""
+for DB in riverstone riverstone_2025 riverstone_full; do
+  PG -d $DB -c "\"GRANT CONNECT ON DATABASE $DB TO book; GRANT USAGE ON SCHEMA public TO book; GRANT SELECT ON ALL TABLES IN SCHEMA public TO book;\""
+done
+
 echo "PostgreSQL and MySQL practice databases loaded."
