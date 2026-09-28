@@ -129,7 +129,7 @@ Desktop is free and needs no account. The **Power BI Service**, where reports ar
 
 ### Licences, as of writing
 
-Licensing decides who can see what you build, so check the current rules before promising anything. At the time of writing (September 2026), Microsoft's published list prices are:
+Licensing decides who can see what you build, so check the current rules before promising anything. The table gives Microsoft's published list prices at the time of writing (September 2026).
 
 | Licence | Price (US list) | What it allows |
 |---|---|---|
@@ -157,7 +157,7 @@ Two practical consequences:
 | Ad-hoc data exploration by an analyst | SQL |
 | A document with commentary and exhibits | A written report (Chapter 20) |
 
-> **Watch out: Power BI is not a database.** It reads from sources and keeps a copy for speed. It's not where data should be corrected, and a model is not a substitute for a warehouse (Chapter 28 for modelling; Part 5, Chapter 49, for warehouses and lakehouses). If the fix belongs upstream, fix it upstream (Chapter 14, section 14.10).
+> **Watch out: Power BI is not a database.** It reads from sources and keeps a copy for speed. It's not where data should be corrected, and a model is not a substitute for a warehouse (Chapter 28 for modelling; Part 5, Chapter 49, for warehouses and lakehouses). If the fix belongs upstream, fix it upstream (Chapter 14, section 14.11).
 
 ---
 
@@ -719,7 +719,7 @@ How it works: `DATESINPERIOD` returns a run of dates, and has four arguments.
 
 January's rolling three months reach back into November and December 2024, which is why they're bigger than January alone.
 
-With Year = 2025, the matrix must read (₹):
+With Year = 2025, the matrix must read:
 
 | Month | Net Revenue | Revenue YTD | Revenue LY | Revenue YTD LY | YoY Growth % | Revenue 3M Rolling |
 |---|---|---|---|---|---|---|

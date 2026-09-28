@@ -1,127 +1,153 @@
 # Diagrams for Chapter 16 (Power BI). Run: python3 make_figs16.py
+# Every figure prints at the full text width (493.2 pt), so a font of s px on a canvas W px wide prints at
+# s * 493.2 / W pt. Canvases are 620 px wide and the smallest font is 9.2 px, which prints at 7.3 pt.
+# The numbers drawn come from riverstone_full (see checks/ch16_check.py).
 from make_figs import *
-GREEN="#2f7d6d"; PURPLE="#7a4fa0"; ORANGE="#c0662b"; GOLD="#b7791f"; RED="#b23b3b"; SOFT="#eef2f7"; LIGHT="#dfe5ec"
-def arrow(x1,y1,x2,y2,c=MUTED,sw=1.6,dash=None):
+GREEN="#2f7d6d"; PURPLE="#7a4fa0"; ORANGE="#c0662b"; GOLD="#b7791f"; RED="#b23b3b"; SOFT="#eef2f7"; GREY="#8a94a6"
+W=620; S=9.2; B=9.8   # canvas width; smallest and body font sizes (px)
+
+def arrow(x1,y1,x2,y2,c=MUTED,sw=1.4,dash=None):
     import math
-    a=math.atan2(y2-y1,x2-x1); s=7
+    a=math.atan2(y2-y1,x2-x1); s=6
     p1=(x2-s*math.cos(a-0.45),y2-s*math.sin(a-0.45)); p2=(x2-s*math.cos(a+0.45),y2-s*math.sin(a+0.45))
     return path(f"M{x1},{y1} L{x2},{y2}",stroke=c,sw=sw,dash=dash)+f'<path d="M{x2},{y2} L{p1[0]:.1f},{p1[1]:.1f} L{p2[0]:.1f},{p2[1]:.1f} Z" fill="{c}"/>'
-def card(x,y,w,h,title,c,lines=(),size=11.2,fill="#fff"):
-    o=[rect(x+3,y+4,w,h,fill=SOFT,rx=8),rect(x,y,w,h,fill=fill,stroke=c,sw=1.6,rx=8),
-       f'<path d="M{x},{y+8} a8,8 0 0 1 8,-8 H{x+w-8} a8,8 0 0 1 8,8 V{y+26} H{x} Z" fill="{c}"/>',
-       text(x+11,y+18,title,11.8,"#fff","bold",family=HEAD)]
-    for i,l in enumerate(lines): o.append(text(x+11,y+45+i*17,l,size,INK))
+
+def card(x,y,w,h,title,c,lines=(),size=B,mono=False,step=13.5):
+    o=[rect(x+2,y+3,w,h,fill=SOFT,rx=6),rect(x,y,w,h,fill="#fff",stroke=c,sw=1.4,rx=6),
+       f'<path d="M{x},{y+6} a6,6 0 0 1 6,-6 H{x+w-6} a6,6 0 0 1 6,6 V{y+21} H{x} Z" fill="{c}"/>',
+       text(x+8,y+15,title,10.2,"#fff","bold",family=HEAD)]
+    for i,l in enumerate(lines):   # leading spaces become an indent (SVG collapses spaces)
+        ind=(len(l)-len(l.lstrip()))*size*0.6
+        o.append(text(x+8+ind,y+36+i*step,l.lstrip(),size,INK,family=MONO if mono else None))
     return "".join(o)
 
 def f1():  # the pieces of Power BI
-    o=[text(30,32,"The pieces of Power BI, and where each one runs",14.5,INK,"bold",family=HEAD)]
-    o.append(card(30,60,250,150,"Power BI Desktop (Windows, free)",ACC,["Connect and transform (Power Query)","Model tables and relationships","Write DAX measures","Design report pages","Saves one .pbix file"],10.8))
-    o.append(card(330,60,250,150,"Power BI Service (browser)",GREEN,["Workspace holds the content","Semantic model (the data + DAX)","Reports and dashboards","Scheduled refresh, apps, sharing","Row-level security applied"],10.8))
-    o.append(card(630,60,230,150,"Readers",PURPLE,["Browser or mobile app","An app or a shared link","Licence needed to view","Export to Excel or PDF","Subscriptions by email"],10.8))
-    o.append(arrow(284,120,326,120)); o.append(text(288,112,"publish",10.5,MUTED))
-    o.append(arrow(584,120,626,120)); o.append(text(590,112,"share",10.5,MUTED))
-    o.append(card(30,250,250,120,"Your data sources",GOLD,["riverstone_full (PostgreSQL/MySQL)","CSV, Excel, SharePoint","Cloud services (APIs)"],10.8))
-    o.append(card(330,250,250,120,"On-premises data gateway",ORANGE,["Only for data inside the network","Installed on a server that","can reach the database"],10.8))
-    o.append(arrow(155,246,155,214)); o.append(text(160,232,"import or query",10.5,MUTED))
-    o.append(arrow(330,310,286,310,ORANGE)); o.append(arrow(455,246,455,214,ORANGE)); o.append(text(462,232,"scheduled refresh",10.5,MUTED))
-    o.append(text(30,395,"Desktop builds it; the Service runs it on a schedule and shares it. Nothing you build is visible to anyone until you publish.",11.5,MUTED))
-    return svg(890,412,"".join(o))
+    o=[text(10,20,"The pieces of Power BI, and where each one runs",12,INK,"bold",family=HEAD)]
+    o.append(card(10,34,170,104,"Power BI Desktop",ACC,["Windows, free","Power Query: get, clean","Model and relationships","DAX measures, pages","Saved as one .pbix file"]))
+    o.append(card(225,34,170,104,"Power BI Service",GREEN,["In the browser","Workspaces hold content","Semantic model: data + DAX","Refresh, apps, sharing","Row-level security"]))
+    o.append(card(440,34,170,104,"Readers",PURPLE,["Browser or mobile app","An app or a shared link","A licence to view","Export to Excel or PDF","Email subscriptions"]))
+    o.append(arrow(182,84,221,84)); o.append(text(201,78,"publish",S,MUTED,anchor="middle"))
+    o.append(arrow(397,84,436,84)); o.append(text(416,78,"share",S,MUTED,anchor="middle"))
+    o.append(card(10,190,170,64,"Your data sources",GOLD,["riverstone_full database","CSV, Excel, SharePoint"]))
+    o.append(card(225,190,170,64,"On-premises gateway",ORANGE,["For data inside the network","Runs on a server there"]))
+    o.append(arrow(95,188,95,142)); o.append(text(101,168,"import",S,MUTED))
+    o.append(arrow(310,188,310,142,ORANGE)); o.append(text(316,168,"scheduled refresh",S,MUTED))
+    o.append(arrow(223,222,184,222,ORANGE)); o.append(text(203,215,"reads",S,MUTED,anchor="middle"))
+    return svg(W,266,"".join(o))
 
 def f2():  # star schema
-    o=[text(30,32,"Riverstone's star schema in Power BI",14.5,INK,"bold",family=HEAD)]
-    fact=["order_item_id","order_id  →  (degenerate)","customer_id","product_id","sales_rep_id","order_date","quantity, unit_price,","discount_pct","209,006 rows"]
-    o.append(card(340,150,250,200,"FACT  Sales",ACC,fact,10.6))
-    o.append(card(40,60,230,120,"DIM  Date",GOLD,["date (key)  ·  1,096 rows","year, quarter, month no.,","month name, is_weekend","Marked as date table"],10.4))
-    o.append(card(660,60,230,120,"DIM  Customer",GREEN,["customer_id (key)","customer_name, city, region,","segment, signup_date","5,027 rows"],10.4))
-    o.append(card(40,330,230,110,"DIM  Product",GREEN,["product_id (key)","product_name, category,","unit_price, unit_cost  ·  8 rows"],10.4))
-    o.append(card(660,330,230,110,"DIM  Employee",GREEN,["employee_id (key)","employee_name, job_title,","manager  ·  16 rows"],10.4))
-    o.append(card(340,430,250,90,"FACT  Targets",PURPLE,["target_month (→ Date)","target_revenue  ·  36 rows"],10.4))
-    for (x1,y1,x2,y2) in [(272,140,338,205),(658,140,592,205),(272,360,338,300),(658,360,592,300),(465,428,465,352)]:
-        o.append(arrow(x1,y1,x2,y2,MUTED,1.5))
-    o.append(text(285,150,"1 → ∗",10.5,MUTED)); o.append(text(610,150,"1 → ∗",10.5,MUTED))
-    o.append(text(285,352,"1 → ∗",10.5,MUTED)); o.append(text(610,352,"1 → ∗",10.5,MUTED)); o.append(text(478,400,"1 → ∗",10.5,MUTED))
-    o.append(text(30,548,"One row per order line in the fact table; one row per thing in each dimension. Filters flow from the dimensions down into the facts,",11.5,MUTED))
-    o.append(text(30,566,"which is why every table joins to Date rather than to each other. Both fact tables use the Date dimension, at different grains.",11.5,MUTED))
-    return svg(920,584,"".join(o))
+    o=[text(10,20,"Riverstone's star schema in Power BI",12,INK,"bold",family=HEAD)]
+    o.append(card(222,36,176,128,"FACT  Sales",ACC,["order_id, customer_id","product_id, sales_rep_id","order_date, status","quantity","net_revenue, product_cost","200,381 order lines"]))
+    o.append(card(10,106,170,78,"DIM  Date",GOLD,["Date (key) · 1,096 rows","Year, Quarter, Month,","Financial Year · marked"]))
+    o.append(card(440,36,170,78,"DIM  Customer",GREEN,["customer_id (key)","Customer, City, Segment,","Region · 5,027 rows"]))
+    o.append(card(440,132,170,64,"DIM  Product",GREEN,["product_id (key)","Product, unit_cost · 8 rows"]))
+    o.append(card(440,214,170,64,"DIM  Employee",GREEN,["employee_id (key)","Employee · 16 rows"]))
+    o.append(card(222,214,176,64,"FACT  Targets",PURPLE,["target_month, target_revenue","36 rows, one per month"]))
+    for (x1,y1,x2,y2,lx,ly) in [(182,130,219,112,184,112),(182,160,219,236,186,212),(438,75,401,90,404,72),(438,152,401,152,406,146),(438,236,401,160,400,244)]:
+        o.append(arrow(x1,y1,x2,y2,MUTED,1.3)); o.append(text(lx,ly,"1 → ∗",S,MUTED))
+    return svg(W,290,"".join(o))
 
 def f3():  # filter context
-    o=[text(30,32,"Where a measure's filters come from",14.5,INK,"bold",family=HEAD)]
-    o.append(rect(30,60,300,190,fill="#fff",stroke=RULE,rx=8))
-    o.append(text(46,84,"A cell in a visual",12.5,INK,"bold"))
-    rows=[("Rows: Segment = Wholesale",ACC),("Columns: Year = 2025",ACC),("Slicer: Region = West",ACC),("Page filter: Status ≠ Cancelled",ACC)]
-    for i,(t,c) in enumerate(rows):
-        o.append(rect(46,102+i*32,268,24,fill=SOFT,stroke=c,sw=1,rx=4)); o.append(text(56,118+i*32,t,10.8,INK))
-    o.append(text(46,238,"Together: the filter context",11.5,MUTED,style="italic"))
-    o.append(arrow(334,155,392,155)); o.append(text(336,146,"applied to",10.5,MUTED))
-    o.append(card(400,80,320,150,"The measure",GREEN,["Net Revenue =","  SUMX(Sales,","    Sales[quantity] * Sales[unit_price]","    * (1 - Sales[discount_pct] / 100))","","Evaluated once per cell"],10.4))
-    o.append(arrow(724,155,782,155)); o.append(rect(790,120,160,70,fill=GREEN,rx=8)); o.append(text(870,152,"₹8.5 crore",14,"#fff","bold",anchor="middle"))
-    o.append(text(870,174,"one number",10.5,"#fff",anchor="middle"))
-    o.append(rect(30,282,920,120,fill="#fff",stroke=PURPLE,sw=1.6,rx=8)); o.append(rect(30,282,8,120,fill=PURPLE))
-    o.append(text(52,308,"CALCULATE changes the filter context before the measure runs",12.8,INK,"bold"))
-    o.append(text(52,334,"CALCULATE([Net Revenue], Customer[segment] = \"Retail\")",11.2,INK,family=MONO))
-    o.append(text(52,356,"replaces the Segment filter  ·  REMOVEFILTERS() clears it  ·  KEEPFILTERS() adds to it instead of replacing",11,MUTED))
-    o.append(text(52,378,"CALCULATE([Net Revenue], DATESYTD(Date[date])) replaces the date filter with \"year so far\"",11,MUTED))
-    return svg(980,420,"".join(o))
+    o=[text(10,20,"Where a measure's filters come from",12,INK,"bold",family=HEAD)]
+    o.append(rect(10,34,196,132,fill="#fff",stroke=RULE,rx=6))
+    o.append(text(20,52,"A cell in a visual",10.5,INK,"bold"))
+    for i,t in enumerate(["Rows: Segment = Wholesale","Columns: Year = 2025","Slicer: Region = West"]):
+        o.append(rect(20,62+i*28,176,21,fill=SOFT,stroke=ACC,sw=1,rx=4)); o.append(text(28,76.5+i*28,t,B,INK))
+    o.append(text(20,156,"Together: the filter context",B,MUTED,style="italic"))
+    o.append(arrow(208,100,244,100)); o.append(text(226,93,"applied to",S,MUTED,anchor="middle"))
+    o.append(card(248,52,196,96,"The measure",GREEN,["Net Revenue =","  SUM ( Sales[net_revenue] )","","Evaluated once per cell"],size=S,step=13))
+    o.append(arrow(446,100,480,100))
+    o.append(rect(484,66,126,68,fill=GREEN,rx=6)); o.append(text(547,96,"₹10.5 crore",13,"#fff","bold",anchor="middle"))
+    o.append(text(547,116,"one number",B,"#fff",anchor="middle"))
+    o.append(rect(10,182,600,112,fill="#fff",stroke=PURPLE,sw=1.4,rx=6)); o.append(rect(10,182,6,112,fill=PURPLE))
+    o.append(text(26,202,"CALCULATE changes the filter context before the measure runs",10.5,INK,"bold"))
+    o.append(text(26,222,"CALCULATE ( [Net Revenue], Customer[Segment] = \"Retail\" )",S,INK,family=MONO))
+    o.append(text(26,238,"replaces the Segment filter · REMOVEFILTERS clears it · KEEPFILTERS adds to it instead",B,MUTED))
+    o.append(text(26,262,"CALCULATE ( [Net Revenue], DATESYTD ( 'Date'[Date] ) )",S,INK,family=MONO))
+    o.append(text(26,278,"replaces the date filter with \"the year so far\"",B,MUTED))
+    return svg(W,306,"".join(o))
+
+REV25=[8.52,7.86,10.10,9.52,8.72,5.20,4.00,7.18,11.17,18.06,15.60,8.73]   # ₹ crore, 2025 by month
+TGT25=[7.74,7.00,10.81,9.69,8.59,5.04,3.65,7.61,11.83,19.62,15.90,9.24]
 
 def f4():  # report page wireframe
-    o=[text(30,30,"The monthly pack as one report page",14.5,INK,"bold",family=HEAD)]
-    o.append(rect(30,50,900,470,fill="#fff",stroke=RULE,rx=8))
-    o.append(rect(30,50,900,52,fill=INK,rx=8)); o.append(rect(30,90,900,12,fill=INK))
-    o.append(text(48,82,"Riverstone sales — December 2025",15,"#fff","bold",family=HEAD))
-    o.append(text(700,74,"Slicers:  Year  ·  Region  ·  Segment",11,"#cbd5e1"))
-    kpis=[("Net revenue","₹114.7 cr","+27.0% vs LY",GREEN),("% of target","98.3%","−₹2.0 cr",ORANGE),("Gross margin","27.5%","+2.8 pts",GREEN),("Orders","46,356","AOV ₹24,736",ACC)]
+    o=[text(10,20,"The monthly pack as one report page",12,INK,"bold",family=HEAD)]
+    o.append(rect(10,30,600,352,fill="#fff",stroke=RULE,rx=6))
+    o.append(rect(10,30,600,34,fill=INK,rx=6)); o.append(rect(10,56,600,8,fill=INK))
+    o.append(text(22,52,"Riverstone sales — 2025",12,"#fff","bold",family=HEAD))
+    o.append(text(598,51,"Slicers: Year · Region · Segment",S,"#cbd5e1",anchor="end"))
+    kpis=[("Net revenue","₹114.7 cr","+27.0% vs 2024",GREEN),("% of target","98.3%","gap −₹2.0 cr",ORANGE),("Gross margin","27.5%","+2.8 pts vs 2024",GREEN),("Orders","46,356","AOV ₹24,736",ACC)]
     for i,(t,v,s,c) in enumerate(kpis):
-        x=48+i*218
-        o.append(rect(x,118,200,74,fill=SOFT,stroke=c,sw=1.4,rx=6))
-        o.append(text(x+12,138,t,10.8,MUTED)); o.append(text(x+12,163,v,17,INK,"bold",family=HEAD)); o.append(text(x+12,182,s,10.5,c))
-    o.append(rect(48,208,560,180,fill="#fff",stroke=RULE,rx=6)); o.append(text(60,230,"Revenue and target by month (line + dashed target)",11.5,INK,"bold"))
-    o.append(path("M70,360 L110,350 L150,330 L190,336 L230,346 L270,370 L310,376 L350,352 L390,320 L430,270 L470,292 L510,344",stroke=ACC,sw=2.4))
-    o.append(path("M70,352 L110,346 L150,322 L190,330 L230,342 L270,368 L310,368 L350,344 L390,312 L430,258 L470,286 L510,336",stroke=MUTED,sw=1.3,dash="5 4"))
-    o.append(rect(624,208,290,180,fill="#fff",stroke=RULE,rx=6)); o.append(text(636,230,"Revenue by region (sorted bars)",11.5,INK,"bold"))
-    for i,(n,w) in enumerate([("West",250),("South",208),("North",182),("East",93),("City missing",15)]):
-        y=246+i*27; o.append(rect(636,y,w,17,fill=ACC if n!="City missing" else "#b8c0cc",rx=3)); o.append(text(636+w+6,y+13,n,10,MUTED))
-    o.append(rect(48,404,560,100,fill="#fff",stroke=RULE,rx=6)); o.append(text(60,426,"Top products and segments (bar + matrix)",11.5,INK,"bold"))
-    for i in range(4):
-        o.append(rect(60,436+i*16,300-i*55,10,fill=GOLD,rx=2))
-    o.append(rect(624,404,290,100,fill="#fff",stroke=RULE,rx=6)); o.append(text(636,426,"Customers needing attention",11.5,INK,"bold"))
-    o.append(text(636,448,"drill-through → customer detail page",10.5,MUTED)); o.append(text(636,468,"tooltip page on hover",10.5,MUTED))
-    o.append(text(636,488,"bookmarks: revenue ⇄ margin view",10.5,MUTED))
-    o.append(text(30,540,"Four cards answer \"how are we doing?\" in one line; the visuals below answer \"why?\". Everything else lives on drill-through pages.",11.5,MUTED))
-    return svg(960,558,"".join(o))
+        x=22+i*146
+        o.append(rect(x,74,136,58,fill=SOFT,stroke=c,sw=1.2,rx=5))
+        o.append(text(x+8,88,t,S,MUTED)); o.append(text(x+8,108,v,13,INK,"bold",family=HEAD)); o.append(text(x+8,124,s,S,INK))
+    # line chart: revenue (solid) and target (dashed), ₹ crore by month
+    o.append(rect(22,142,344,138,fill="#fff",stroke=RULE,rx=5)); o.append(text(30,158,"Revenue and target by month, ₹ crore",B,INK,"bold"))
+    x0,y0,dx,k=46,262,24,3.8
+    o.append(path(f"M{x0},{y0} H{x0+11*dx+6}",stroke=RULE,sw=1))
+    for v in (5,10,15,20):
+        o.append(text(x0-6,y0-v*k+3,str(v),S,MUTED,anchor="end"))
+    rev=" ".join(f"{'M' if i==0 else 'L'}{x0+i*dx},{y0-v*k:.1f}" for i,v in enumerate(REV25))
+    tgt=" ".join(f"{'M' if i==0 else 'L'}{x0+i*dx},{y0-v*k:.1f}" for i,v in enumerate(TGT25))
+    o.append(path(tgt,stroke=MUTED,sw=1.2,dash="4 3")); o.append(path(rev,stroke=ACC,sw=2))
+    for i,m in enumerate("JFMAMJJASOND"):
+        o.append(text(x0+i*dx,y0+12,m,S,MUTED,anchor="middle"))
+    o.append(path("M300,190 H318",stroke=ACC,sw=2)); o.append(text(322,193,"revenue",S,INK))
+    o.append(path("M300,206 H318",stroke=MUTED,sw=1.2,dash="4 3")); o.append(text(322,209,"target",S,INK))
+    # region bars: labels in their own column, bars sized to fit the panel
+    o.append(rect(376,142,222,138,fill="#fff",stroke=RULE,rx=5)); o.append(text(384,158,"Revenue by region, ₹ crore",B,INK,"bold"))
+    for i,(n,v) in enumerate([("West",38.4),("South",31.9),("North",27.9),("East",14.2),("City missing",2.3)]):
+        y=170+i*21
+        o.append(text(452,y+11,n,S,INK,anchor="end"))
+        w=v*2.9
+        o.append(rect(458,y+1,w,13,fill=ACC if n!="City missing" else GREY,rx=2)); o.append(text(462+w,y+11,f"{v}",S,MUTED))
+    # products and drill-through panels
+    o.append(rect(22,290,344,82,fill="#fff",stroke=RULE,rx=5)); o.append(text(30,306,"Top products, share of revenue",B,INK,"bold"))
+    for i,(n,v) in enumerate([("Storage Box 25L",20.2),("Food Container Set",18.7),("Storage Box 10L",17.1)]):
+        y=314+i*18
+        o.append(text(128,y+11,n,S,INK,anchor="end")); o.append(rect(134,y+1,v*9,12,fill=GOLD,rx=2)); o.append(text(138+v*9,y+11,f"{v}%",S,MUTED))
+    o.append(rect(376,290,222,82,fill="#fff",stroke=RULE,rx=5)); o.append(text(384,306,"Behind the page",B,INK,"bold"))
+    for i,t in enumerate(["Drill-through: customer detail","Tooltip page on hover","Bookmarks: revenue ⇄ margin"]):
+        o.append(text(384,324+i*16,"• "+t,S,MUTED))
+    return svg(W,392,"".join(o))
 
 def f5():  # publish, refresh, secure
-    o=[text(30,32,"From a .pbix file to a report the branches trust",14.5,INK,"bold",family=HEAD)]
-    steps=[("1  Build",ACC,["Desktop: Power Query,","model, DAX, pages","Test with the roles you","defined (View as)"]),
-           ("2  Publish",GREEN,["Publish to a workspace","Semantic model + report","land in the Service"]),
-           ("3  Refresh",ORANGE,["Set credentials","Schedule (8/day Pro,","48/day PPU)","Gateway for on-prem data"]),
-           ("4  Secure",PURPLE,["Roles: East sees East","Members mapped to roles","Test as a real user"]),
-           ("5  Deliver",GOLD,["Publish an app","Or share the report","Subscriptions, alerts","Usage metrics"])]
+    o=[text(10,20,"From a .pbix file to a report the branches trust",12,INK,"bold",family=HEAD)]
+    steps=[("1  Build",ACC,["In Desktop:","Power Query,","model, DAX,","pages; test","with View as"]),
+           ("2  Publish",GREEN,["To a shared","workspace;","model and","report land in","the Service"]),
+           ("3  Refresh",ORANGE,["Credentials,","a schedule","(8 a day Pro,","48 PPU); a","gateway if needed"]),
+           ("4  Secure",PURPLE,["Roles in the","model; map","people to","roles; Test","as role"]),
+           ("5  Deliver",GOLD,["Publish an","app, or share","the report;","subscriptions,","usage metrics"])]
     for i,(t,c,lines) in enumerate(steps):
-        x=30+i*182
-        o.append(card(x,66,166,150,t,c,lines,10.2))
-        if i<4: o.append(arrow(x+168,140,x+178,140))
-    o.append(rect(30,240,910,96,fill="#fff",stroke=RULE,rx=8))
-    o.append(text(46,266,"What breaks most often",12.5,INK,"bold"))
-    items=[("Refresh fails: credentials or gateway",RED),("Numbers differ: filters, not DAX",ORANGE),("Viewers can't open it: licence",PURPLE),("Slow report: too many visuals",ACC)]
-    for i,(t,c) in enumerate(items):
-        x=46+i*228; o.append(rect(x,282,8,36,fill=c)); o.append(text(x+16,298,t.split(':')[0]+":",11,INK,"bold")); o.append(text(x+16,314,t.split(': ')[1],10.6,MUTED))
-    return svg(970,352,"".join(o))
+        x=10+i*122
+        o.append(card(x,34,110,106,t,c,lines,size=S,step=13))
+        if i<4: o.append(arrow(x+111,87,x+120,87))
+    o.append(rect(10,156,600,86,fill="#fff",stroke=RULE,rx=6))
+    o.append(text(22,174,"What breaks most often",10.5,INK,"bold"))
+    items=[("Refresh fails:","credentials or the gateway",RED),("Numbers differ:","filters, not DAX",ORANGE),
+           ("Viewers can't open it:","a licence is missing",PURPLE),("The report is slow:","too many visuals",ACC)]
+    for i,(a,b,c) in enumerate(items):
+        x=22+(i%2)*296; y=184+(i//2)*28
+        o.append(rect(x,y,5,24,fill=c)); o.append(text(x+12,y+10,a,B,INK,"bold")); o.append(text(x+12,y+22,b,S,MUTED))
+    return svg(W,252,"".join(o))
 
 def f6():  # RLS
-    o=[text(30,32,"Row-level security: one report, four views",14.5,INK,"bold",family=HEAD)]
-    o.append(card(30,66,260,140,"Role \"Region manager\"",PURPLE,["Table: Customer","DAX rule:","[region] = LOOKUPVALUE(","  UserRegion[region],","  UserRegion[email],","  USERPRINCIPALNAME())"],10.2))
-    o.append(card(330,66,250,140,"UserRegion (a small table)",ACC,["arjun@…  →  South","pooja@…  →  West and East","sandeep@…  →  North","anita@…  →  (no role: sees all)"],10.2))
-    o.append(arrow(294,136,326,136))
-    o.append(text(30,236,"What each person sees when they open the same report (2025 net revenue):",12,INK,"bold"))
-    rows=[("Anita Rao (no role)","₹114.7 cr","all 4,599 customers",GREEN),("Pooja Desai (West + East)","₹52.6 cr","West ₹38.4 cr + East ₹14.2 cr",ACC),
-          ("Arjun Nair (South)","₹31.9 cr","1,289 customers",ACC),("Sandeep Gill (North)","₹27.9 cr","1,127 customers",ACC)]
-    for i,(who,v,d,c) in enumerate(rows):
-        y=256+i*38
-        o.append(rect(30,y,900,30,fill="#fff",stroke=RULE,rx=5)); o.append(rect(30,y,7,30,fill=c))
-        o.append(text(50,y+20,who,11.5,INK,"bold")); o.append(text(320,y+20,v,11.5,c,"bold",family=MONO)); o.append(text(460,y+20,d,11,MUTED))
-    o.append(text(30,432,"₹2.3 crore of 2025 revenue belongs to customers with no city, so it has no region: it appears only in the unfiltered view.",11.3,MUTED))
-    o.append(text(30,450,"Rules filter the dimension; the filter flows to the facts. Security lives in the semantic model, not in the report pages.",11.3,MUTED))
-    return svg(960,468,"".join(o))
+    o=[text(10,20,"Row-level security: one report, four views",12,INK,"bold",family=HEAD)]
+    o.append(card(10,34,262,126,"Role \"Region manager\" on Customer",PURPLE,
+                  ["Customer[Region]","  IN CALCULATETABLE (","    VALUES ( UserRegion[region] ),","    UserRegion[email]","      = USERPRINCIPALNAME () )"],size=S,mono=True,step=14))
+    o.append(text(18,154,"Leaders: role \"All regions\", rule TRUE ()",S,PURPLE,"bold"))
+    o.append(card(316,34,294,126,"UserRegion (a small hidden table)",ACC,
+                  ["pooja.desai@…    →  West","pooja.desai@…    →  East","arjun.nair@…     →  South","sandeep.gill@…   →  North","Anita Rao: the All regions role"],size=S,step=15))
+    o.append(arrow(314,97,276,97)); o.append(text(295,90,"reads",S,MUTED,anchor="middle"))
+    o.append(text(10,184,"What each person sees in the same report (2025 net revenue):",10.5,INK,"bold"))
+    rows=[("Anita Rao (All regions)","₹114.7 cr","all 4,599 customers"),("Pooja Desai (West + East)","₹52.6 cr","West ₹38.4 cr + East ₹14.2 cr"),
+          ("Arjun Nair (South)","₹31.9 cr","1,289 customers"),("Sandeep Gill (North)","₹27.9 cr","1,127 customers")]
+    for i,(who,v,d) in enumerate(rows):
+        y=194+i*28
+        o.append(rect(10,y,600,23,fill="#fff",stroke=RULE,rx=4)); o.append(rect(10,y,5,23,fill=GREEN if i==0 else ACC))
+        o.append(text(24,y+15.5,who,B,INK,"bold")); o.append(text(236,y+15.5,v,B,INK,"bold",family=MONO)); o.append(text(330,y+15.5,d,B,MUTED))
+    o.append(text(10,322,"₹2.3 crore from customers with no city has no region: only the All regions role sees it.",B,MUTED))
+    return svg(W,334,"".join(o))
 
 if __name__ == "__main__":
     for n,f in [("fig16-1-power-bi-pieces.svg",f1),("fig16-2-star-schema.svg",f2),("fig16-3-filter-context.svg",f3),
