@@ -20,6 +20,7 @@ Fixed or verified: all 27 content rows and all 6 visual rows. Reader's Journey: 
   orders stated explicitly.
 - **Polish.** Magic IDs looked up (13.19), `b.*`, simple CASE, INTERVAL and `::date` explained (13.23, 13.16, 13.17),
   cancelled orders in "latest order" (13.21), Tools list trimmed (13.24, 13.25), the Appendix G leftover gone (13.26).
+- **Link back to spreadsheets (11.17, from Ch 11).** The §13.3 Spreadsheet link box names Chapter 11's pivot **Show Values As** (% of Grand Total, Running Total In) as the idea window functions put into SQL.
 - **Figures.** All four were redrawn on 720 px canvases, with the smallest text at 7.2 pt (it was 5.2–5.6 pt). The frame
   labels were corrected, the table border was closed, and the island IDs are now printed, not shown by colour only.
   Rupee amounts use lakh grouping.
