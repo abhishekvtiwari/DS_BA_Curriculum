@@ -333,7 +333,7 @@ ORDER BY rows DESC;
 (18 rows)
 ```
 
-`'[' || status || ']'` joins text with `||` (Chapter 12, section 12.16), and `LENGTH` counts characters (section 12.8). Eighteen values for a field with four real statuses. `Delivered`, `Pending`, and `Shipped` each appear twice with the same capitals: one version has a trailing space, which the brackets and the extra character in `len` give away. `Dlvd` and `Cxl` are abbreviations, and `Canceled` is the American spelling. A report that filters `status = 'Cancelled'` would miss 115 cancelled lines.
+`'[' || status || ']'` joins text with `||`, and `LENGTH` counts characters (both Chapter 12, section 12.8; section 12.16 shows why MySQL joins text with `CONCAT` instead). Eighteen values for a field with four real statuses. `Delivered`, `Pending`, and `Shipped` each appear twice with the same capitals: one version has a trailing space, which the brackets and the extra character in `len` give away. `Dlvd` and `Cxl` are abbreviations, and `Canceled` is the American spelling. A report that filters `status = 'Cancelled'` would miss 115 cancelled lines.
 
 **Blanks.** Count empty values per column:
 

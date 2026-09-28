@@ -527,7 +527,7 @@ __all__ = ["main"]
 
 ### `pyproject.toml`, and TOML in one minute
 
-`pyproject.toml` is written in **TOML**, a format for settings files that is easier to read than JSON. Six rules cover everything in this file:
+`pyproject.toml` is written in **TOML**, a format for settings files that is easier to read than JSON. Six rules cover everything in this file.
 
 > **TOML in one minute.**
 > - `[project]` on its own line starts a **section**; everything below it, up to the next header, belongs to it.
@@ -2099,6 +2099,7 @@ riverstone_report.errors.CrmApiError: http://127.0.0.1:8029/leads returned 503
 ```
 
 - **`requests.Session()`** is an object that keeps one network connection open across requests and remembers settings. **`session.headers["X-API-Key"] = "demo-key"`** stores the key once; every request through the session sends it.
+- **`params={"page": page, "page_size": 10}`** becomes the part of the address after `?`, as in Chapter 18.
 - **`timeout=(3.05, 10.0)`**: give up if connecting takes more than about 3 seconds, or if the server goes silent for 10 once connected. Every network call in production code needs a timeout (Chapter 18).
 - **`CrmApiError`** is the package's own exception (section 29.8), so the caller can catch it with the report's other failures.
 
@@ -2183,6 +2184,19 @@ for attempt in (1, 2, 3):
 
 - **`2 ** (attempt - 1)`** is 1, 2, 4 (`**` is "to the power of"), so `base` is 0.5, 1.0, 2.0.
 - **`rng.uniform(0, base / 2)`** is a random decimal number between 0 and half the base; **`random.Random(29)`** is a generator started from the seed 29, so it gives the same numbers every run.
+
+What happens if you change the seed? The jitter changes, but every wait stays between the base and one and a half times it:
+
+```python
+rng = random.Random(30)
+print([round(base + rng.uniform(0, base / 2), 3) for base in (0.5, 1.0, 2.0)])
+```
+
+```
+[0.635, 1.145, 2.03]
+```
+
+The list comprehension (Chapter 17, section 17.6) runs the same calculation for each base. `round(..., 3)` dropped the last zero of 2.030.
 
 ### Step 4: respect `Retry-After`
 
@@ -2796,7 +2810,7 @@ root.addHandler(console)
 root.addHandler(logfile)
 ```
 
-This replaces `logging.basicConfig(...)` in `main`. A common mistake is setting only the handlers' levels: the logger's own level (default `WARNING`) is checked first, so `DEBUG` messages would never reach the file.
+`encoding="utf-8"` lets the file hold `₹`, as in Chapter 20. This replaces `logging.basicConfig(...)` in `main`. A common mistake is setting only the handlers' levels: the logger's own level (default `WARNING`) is checked first, so `DEBUG` messages would never reach the file.
 
 **7.**
 
@@ -2875,7 +2889,7 @@ except BaseException:
     raise
 ```
 
-`except BaseException:` rather than `except Exception:` because the clean-up must also happen when someone presses Ctrl+C, which raises `KeyboardInterrupt`, a `BaseException` but not an `Exception`; `raise` on its own then re-raises the same exception, so nothing is hidden. If the program crashes or is stopped halfway, a direct write leaves a damaged workbook under the real name, and anyone opening it (or an email job attaching it) gets a broken file. Writing to a temporary file and then replacing the final file means the real name only ever points to a complete report. `os.replace` works as a single step when both files are in the same folder, which is why the temporary file is created in `path.parent`.
+**`tempfile.mkstemp(suffix=".xlsx", dir=path.parent)`** creates an empty temporary file with that ending, in the report's own folder, and returns an open file number and the file's name; **`os.close(fd)`** closes it so pandas can write to it; **`temp_path.unlink(missing_ok=True)`** deletes it, without an error if it's already gone. `except BaseException:` rather than `except Exception:` because the clean-up must also happen when someone presses Ctrl+C, which raises `KeyboardInterrupt`, a `BaseException` but not an `Exception`; `raise` on its own then re-raises the same exception, so nothing is hidden. If the program crashes or is stopped halfway, a direct write leaves a damaged workbook under the real name, and anyone opening it (or an email job attaching it) gets a broken file. Writing to a temporary file and then replacing the final file means the real name only ever points to a complete report. `os.replace` works as a single step when both files are in the same folder, which is why the temporary file is created in `path.parent`.
 
 **12.** Four 500s for page 2 exhaust all four attempts, so the client raises `CrmApiError` after waiting three times: about 0.5, 1, and 2 seconds plus jitter, between 3.5 and 5.25 seconds in total. Page 1's 20 leads are fetched first, but because `iter_leads` is consumed by `list(...)`, the caller gets the exception, not a partial list:
 

@@ -517,7 +517,7 @@ The box plots show what a bar chart of averages would hide: Retail and Hospitali
 
 A **scatter plot** places each record at the position of two numeric values, one on each axis. It answers "do these two measures move together?", and it's the chart most likely to reveal something a summary number hides.
 
-The usual summary number for a relationship is the **correlation**: a number from −1 to +1 that says how closely two measures follow a straight line together. +1 is a perfect rising line, 0 is no straight-line pattern, and −1 is a perfect falling line. In a spreadsheet, `=CORREL(range1, range2)` returns it, with the two measures in two ranges of the same length. Chapter 21 shows how it's calculated and where it misleads; the next example shows the first warning.
+The usual summary number for a relationship is the **correlation**: a number from −1 to +1 that says how closely two measures follow a straight line together. +1 is a perfect rising line, 0 is no straight-line pattern, and −1 is a perfect falling line. In a spreadsheet, `=CORREL(range1, range2)` returns it, with the two measures in two ranges of the same length. Chapter 22, section 22.5, shows how it's calculated and where it misleads; the next example shows the first warning.
 
 ### Why you must look: Anscombe's quartet
 
@@ -937,7 +937,7 @@ Most of this chapter's SQL runs unchanged in MySQL 8.0: the segment shares in se
 
 <!-- db: riverstone_full -->
 
-**`FILTER` and `EXTRACT` (section 15.4).** MySQL has no `FILTER` clause. Use `SUM(CASE WHEN … THEN … END)`, the form Chapter 13, section 13.8, showed; `MONTH()` and `YEAR()` replace `EXTRACT`:
+**`FILTER` and `EXTRACT` (section 15.4).** MySQL has no `FILTER` clause. Use `SUM(CASE WHEN … THEN … END)`, the form Chapter 13, section 13.9, showed; `MONTH()` and `YEAR()` replace `EXTRACT`:
 
 ```mysql
 SELECT MONTH(order_date) AS month,

@@ -10,7 +10,7 @@
 >
 > **Time needed:** 18–22 hours, spread over three weeks, in four sittings: sections 32.1–32.5 (setup, sources, staging, marts, the first build: 5–6 hours); sections 32.6–32.9 (materializations, tests, docs, snapshots: 4–5 hours); sections 32.10–32.13 (incremental models, macros, linting, CI: 4–5 hours); and the project (5–6 hours).
 >
-> **Tools:** dbt Core 1.12 with the Postgres adapter, PostgreSQL 16, Git, and SQLFluff. Everything runs locally; no dbt Cloud account is needed. This chapter uses PostgreSQL only: dbt talks to MySQL through a community adapter, and the book's examples don't use it.
+> **Tools:** dbt Core 1.12 with the Postgres adapter, PostgreSQL 16, Git, and SQLFluff. Everything runs locally; no dbt Cloud account is needed. This chapter uses PostgreSQL only: dbt reaches MySQL only through a community adapter (`dbt-mysql`, at version 1.7.0 on PyPI in September 2026, well behind dbt Core), so the examples don't use it.
 >
 > **Practice data:** the `riverstone_2025` database from Chapter 13, with Chapter 28's additions, plus `riverstone_perf` from Chapter 28 for the incremental example. The finished project is in the companion folder as `ch32/riverstone_dbt`, and the chapter builds it from nothing.
 

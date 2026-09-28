@@ -58,7 +58,7 @@ This chapter uses two versions of Riverstone's data, and each section says which
 | `calendar_months` | one month of 2025 | listing every month, even months with no sales (Pattern 5) |
 | `calendar_days` | one day of 2025 | the same for days (exercise 16) |
 
-To set it up, create a database called `riverstone_2025` and run `riverstone_2025_setup.sql` from the companion files (Appendix E), exactly as you did in section 12.3. Check it: `SELECT COUNT(*) FROM orders;` should return `175`, which counts every order, including the two that were cancelled. (Using MySQL? Run `riverstone_2025_setup_mysql.sql` instead; it creates the database for you. Section 13.9 covers the rest.)
+If you loaded `riverstone_2025` in section 12.3 ("Optional: the one-year database"), you're ready; otherwise load it now, as described there: create a database called `riverstone_2025` and run `riverstone_2025_setup.sql` from the companion files (Appendix E). Check it: `SELECT COUNT(*) FROM orders;` should return `175`, which counts every order, including the two that were cancelled. (Using MySQL? Run `riverstone_2025_setup_mysql.sql` instead; it creates the database for you. Section 13.9 covers the rest.) Then, connected to `riverstone_2025`, run `calendar_tables_postgresql.sql` from the Chapter 13 companion folder (MySQL: `calendar_tables_mysql.sql`): it adds the two calendar tables, and `SELECT COUNT(*) FROM calendar_days;` should return `365`.
 
 > **Tool note.** In DBeaver each database is a separate connection. Make sure the editor you're typing in is connected to the right one; the name appears in the editor's toolbar. Running a 2025 query against the mini database is the most common "why doesn't this work?" moment in this chapter.
 
@@ -192,7 +192,7 @@ ORDER BY total_due DESC;
 The result is identical to Chapter 12's, but the query now reads like the method you'd explain to a colleague:
 
 1. **`payments_per_invoice`**: add up payments per invoice (this is the fan-out fix, now with a name).
-2. **`invoice_balances`**: work out what's still owed on each invoice, and how many days past due it is. `COALESCE(p.paid, 0)` treats an invoice with no payments as paid zero (section 12.6), and `DATE '2026-03-31' - i.due_date` counts the days from the due date to 31 March 2026, the mini database's "today" (section 12.8).
+2. **`invoice_balances`**: work out what's still owed on each invoice, and how many days past due it is. `COALESCE(p.paid, 0)` treats an invoice with no payments as paid zero (section 12.7), and `DATE '2026-03-31' - i.due_date` counts the days from the due date to 31 March 2026, the mini database's "today" (section 12.8).
 3. **`open_invoices`**: keep invoices with a balance, and attach the customer's name. `b.*` means *every column of `invoice_balances`* (the alias `b` followed by `.*`); `c.customer_name` then adds one column from `customers`.
 4. **Final `SELECT`**: spread balances into ageing columns.
 
@@ -573,7 +573,7 @@ ORDER BY units_sold DESC, product_name;
 
 How it works:
 
-- **The `units` step starts from `products` and `LEFT JOIN`s the sales.** That keeps the Garden Chair, which sold nothing (section 12.10), and `COALESCE` turns its missing sum (NULL) into 0 (section 12.6). Without them the tie example would have five rows, and the chair would silently vanish from the ranking.
+- **The `units` step starts from `products` and `LEFT JOIN`s the sales.** That keeps the Garden Chair, which sold nothing (section 12.10), and `COALESCE` turns its missing sum (NULL) into 0 (section 12.7). Without them the tie example would have five rows, and the chair would silently vanish from the ranking.
 - **`ROW_NUMBER()`** gives every row a different number, even on a tie. Which of the tied rows gets 3 and which gets 4 is up to you: that's why `product_name` is added to its `ORDER BY` as a **tie-breaker**. Without one, the database may choose differently tomorrow, and your report changes for no reason.
 - **`RANK()`** gives tied rows the same rank, then **skips**: 3, 3, 5. It's how a merit list or a race works: two students tie for third place, and the next student is fifth, because four students scored higher.
 - **`DENSE_RANK()`** gives tied rows the same rank **without skipping**: 3, 3, 4. Use it when you want "the top three distinct sales levels".
@@ -1973,8 +1973,8 @@ Notice that the table's middle column is a list of *patterns*, not queries. That
 
 ### Tools you'll need
 
-- **PostgreSQL** and **DBeaver**, as in Chapter 12. Every feature in this chapter is standard SQL except `generate_series`, `FILTER`, and the `::date` shorthand, which are flagged where they appear.
-- **MySQL 8.0 or later** (optional). Every window function, CTE, and view in this chapter works there; section 13.9 lists the few spellings that change. Companion files: `riverstone_2025_setup_mysql.sql` and `ch13_queries_mysql.sql`.
+- **PostgreSQL** and **DBeaver**, as in Chapter 12. Every query in this chapter was run on PostgreSQL 16. Every feature in this chapter is standard SQL except `generate_series`, `FILTER`, and the `::date` shorthand, which are flagged where they appear.
+- **MySQL** (optional). Every window function, CTE, and view in this chapter works there, and every query was run on MySQL 8.0; section 13.9 lists the few spellings that change. Companion files: `riverstone_2025_setup_mysql.sql` and `ch13_queries_mysql.sql`.
 - **A SQL formatter.** Long CTE queries are only readable if they're consistently laid out. DBeaver's *Format SQL* command is a good start.
 - **A folder for your pattern library.** Keep one `.sql` file per pattern in a folder, each with a comment at the top saying what question it answers. (Chapter 26 puts the folder under version control.)
 
@@ -2009,7 +2009,7 @@ Notice that the table's middle column is a list of *patterns*, not queries. That
 - **`LAG`/`LEAD`** read the previous/next row: month-over-month change, days between orders.
 - **Running totals** use `SUM() OVER (ORDER BY … ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`; **moving averages** use `AVG() OVER (… ROWS BETWEEN n PRECEDING AND CURRENT ROW)`. Write frames explicitly: the default `RANGE` frame groups ties.
 - The **pattern library**: top N per group, Pareto/ABC, deduplication, funnels, date spines, at-risk customers, cohort retention, gaps and islands, pivots, and data-quality checks.
-- Everything here works in **MySQL 8.0 and later**: change the date spellings, replace `generate_series` with a join to a calendar table and `FILTER` with `SUM(CASE …)`, and avoid reserved words such as `rank` as column names.
+- Everything here works in **MySQL** too (every query was run on MySQL 8.0): change the date spellings, replace `generate_series` with a join to a calendar table and `FILTER` with `SUM(CASE …)`, and avoid reserved words such as `rank` as column names.
 - Great analysis is recognizing the pattern, respecting the grain, handling ties and gaps, and reconciling to a number you trust.
 
 ---

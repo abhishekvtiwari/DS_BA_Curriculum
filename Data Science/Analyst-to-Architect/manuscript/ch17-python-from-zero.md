@@ -1848,7 +1848,7 @@ Python ships with a large **standard library**: modules that need no installatio
 | `re` | Regular expressions (Chapter 14's patterns) |
 | `math` | Rounding, logs, floors |
 | `os`, `sys` | The environment, a script's arguments, exit codes |
-| `logging` | Messages from a script that runs unattended (Chapter 20) |
+| `logging` | Messages from a script that runs unattended (Chapter 18) |
 | `zipfile`, `shutil` | Archives and file copying |
 
 ### Dates
@@ -1952,12 +1952,12 @@ print(round(statistics.stdev(values), 2))
 | `openpyxl`, `xlsxwriter` | Reading and writing Excel files | 18 |
 | `requests` | Calling APIs | 18 |
 | `SQLAlchemy`, `psycopg`, `mysql-connector-python` | Talking to databases | 18 |
-| `python-dotenv` | Keeping credentials out of code | 20 |
+| `python-dotenv` | Keeping credentials out of code | 18 |
 | `jupyterlab` | Notebooks | this chapter |
 
 Before installing something you found online, check that it's maintained (recent releases, open issues answered), that the name is spelled exactly right (typo-squatting, publishing a harmful package under a near-miss name, is a real attack), and that it goes into your project's virtual environment rather than the computer's own Python.
 
-> **Watch out: don't paste credentials into code.** Database passwords and API keys belong in **environment variables** (named settings that live in the terminal session or the operating system, outside your code) or in a `.env` file that is never shared (Chapters 20 and 26). A password in a script is a password in every copy of that script, forever.
+> **Watch out: don't paste credentials into code.** Database passwords and API keys belong in **environment variables** (named settings that live in the terminal session or the operating system, outside your code) or in a `.env` file that is never shared (Chapters 18 and 26). A password in a script is a password in every copy of that script, forever.
 
 ---
 
@@ -2279,7 +2279,7 @@ What makes it a script rather than a pile of code:
 - **Arguments** from `sys.argv`, with a sensible default. Nothing is tied to your laptop.
 - **An exit code:** `0` for success, non-zero for failure.
 
-A script that runs unattended at 6 a.m. should also write a **log**, timestamped messages saved for later, instead of printing to a screen nobody watches. Chapter 20 does that with the `logging` module, and adds proper command-line options with `argparse`.
+A script that runs unattended at 6 a.m. should also write a **log**, timestamped messages saved for later, instead of printing to a screen nobody watches. Chapter 18 does that with the `logging` module, and adds proper command-line options with `argparse`; Chapter 20 puts such a script on a schedule.
 
 > **Tool note: style, so other people can read it.** Python's style guide, **PEP 8**, is worth ten minutes: four-space indents, `snake_case` names, spaces around operators, lines under about 100 characters, imports at the top. Don't memorize it: install a **formatter** (`ruff format` or `black`, which rewrite the layout for you) and a **linter** (`ruff`, which points out likely mistakes), and let them do it. Most teams run them automatically, and consistent code is code you can read at speed.
 
@@ -2587,9 +2587,9 @@ Use `work/ch17/` and the standard library only. Run everything; the point is the
 
 ## Where this leads
 
-- **Chapter 18, Python for Analysts:** pandas replaces most of the loops in this chapter with whole-table operations, and adds Excel, SQL, APIs, and charts.
+- **Chapter 18, Python for Analysts:** pandas replaces most of the loops in this chapter with whole-table operations, and adds Excel, SQL, APIs, charts, and scripts with logging and command-line options.
 - **Chapter 19, Spreadsheet Automation:** the same programming ideas in VBA and Apps Script, for work that has to stay inside a spreadsheet.
-- **Chapter 20, Automating Reports & Delivering Insights:** scheduling scripts, sending email, handling failure, and logging properly, with command-line options from `argparse`.
+- **Chapter 20, Automating Reports & Delivering Insights:** scheduling scripts, sending email, handling failure, and keeping a log file of every run.
 - **Chapter 21 and 22:** statistics, with simulations written in Python.
 - **Chapter 26, Git:** version control for the scripts you're now writing, and the terminal in more depth.
 - **Chapter 30, Python as Software, Not Scripts:** modules, packaging, testing, and type hints, once scripts grow up.

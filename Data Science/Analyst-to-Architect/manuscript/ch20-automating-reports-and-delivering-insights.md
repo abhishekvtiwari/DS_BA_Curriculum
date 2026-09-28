@@ -543,7 +543,7 @@ The honest progression: prove the value with your own mailbox for a week, then m
 
 ### Let the script work out the date
 
-A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its one argument from `sys.argv` by hand, which is fine for one. For anything more, the standard library's **`argparse`** module does the job with names, defaults, and switches, and writes a `--help` message for free.
+A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 18's monthly report (section 18.15) already reads its command line with **`argparse`**: `ArgumentParser`, a positional argument, an option written with `--`, `parse_args()`, and a free `--help` message. The Flash needs two things that script didn't: an argument that can be left out, and an on/off switch.
 
 ```python
 import argparse
@@ -565,7 +565,7 @@ for command_line in (["--send"], ["2025-12-18"]):
 ['2025-12-18'] → send: False | day given: 2025-12-18 | used today's date: False
 ```
 
-- **`argparse.ArgumentParser()`** creates the parser. Each **`add_argument`** declares one thing the command line may contain. A plain name like `"day"` is a *positional* argument, taken from its place in the command; a name starting with `--` is an *option*, typed by name.
+- **`argparse.ArgumentParser()`** and **`add_argument`** work as in Chapter 18: `"day"` is a *positional* argument, taken from its place in the command, and `--send` is an *option*, typed by name.
 - **`nargs="?"`** makes `day` optional: zero or one value. **`default=None`** is what it holds when it's left out.
 - **`--send`** with **`action="store_true"`** is a switch: `True` if it's typed, `False` if not. Sending is off unless you ask, so a test run can never email anyone by accident.
 - **`parser.parse_args(command_line)`** normally reads the real command line; handing it a list lets you try both cases in a notebook. `["--send"]` is what the scheduler will run; `["2025-12-18"]` is a person rerunning an old day.
@@ -871,7 +871,7 @@ A pattern that works well in practice: **Python does the data work and writes a 
 
 ### Checks that can stop it
 
-Chapter 18's monthly report ran five checks before writing anything. The Flash does the same with the day's data. The recent median comes from the 14 days before the report's day, worked out from `day` so the same code works on any date:
+Chapter 18's monthly report ran six checks before writing anything. The Flash does the same with the day's data. The recent median comes from the 14 days before the report's day, worked out from `day` so the same code works on any date:
 
 ```python
 def checks(lines, day, previous_days):
@@ -948,7 +948,7 @@ print(f"₹{float(month_to_date['net_revenue'].iloc[0]):,.0f}")
 
 ### Logging and run history
 
-`print()` is fine while you're watching. A job that runs at 7 a.m. has nobody watching its screen, so it writes a **log** instead: short messages, each with a level and a time, saved for later. Python's `logging` module does this, and gives you levels, timestamps, and the option to write to a file instead of the screen, all without changing the code that calls it. The smallest version:
+Chapter 18's monthly report (section 18.15) already writes a **log** with Python's `logging` module: a named logger from `getLogger`, one `basicConfig` call that sets the level and the line format, and messages such as `log.info("loading %s", month)`. The Flash uses the same pieces and adds three things: showing the log inside a notebook, sending it to a file as well as the screen, and dating each line in the file. First the same setup, made visible in a notebook:
 
 ```python
 import logging, sys
@@ -967,10 +967,10 @@ WARNING 3 rows could not be read
 the report itself
 ```
 
-- **`logging.getLogger("flash")`** gives you a named **logger**. You write through it at one of four levels: `log.debug(...)` for detail, `log.info(...)` for normal progress, `log.warning(...)` for something odd but not fatal, `log.error(...)` for a failure.
-- **`basicConfig(...)`** sets up logging once, at the start of the program. **`level=logging.INFO`** shows INFO and above and hides DEBUG, which is why the first line never appears. **`format=`** is the layout of each line: `%(levelname)s` is the level's name and `%(message)s` the message; `%(asctime)s`, the date and time, comes in below.
+- **`logging.getLogger("flash")`** is the Flash's named **logger**, and the four levels are Chapter 18's: `log.debug(...)` for detail, `log.info(...)` for normal progress, `log.warning(...)` for something odd but not fatal, `log.error(...)` for a failure.
+- **`basicConfig(...)`** with **`level=logging.INFO`** shows INFO and above and hides DEBUG, which is why the first line never appears. This **`format=`** leaves out Chapter 18's `%(asctime)s`; the file below brings it back.
 - **`stream=sys.stdout`**: every program has two output streams, **standard output** (stdout), where `print` writes, and **standard error** (stderr), meant for messages about the run. Logging writes to stderr unless told otherwise, which keeps log lines apart from the report's own output; a notebook needs stdout here for the lines to appear in its output. **`force=True`** replaces any logging set up earlier, which a notebook may already have done (without it, `basicConfig` can quietly do nothing).
-- **`%s` in a message** is filled in from the values after it: `log.info("loaded %s lines", 213)`. Use this rather than an f-string in log calls, so the text is only built if the line is actually written.
+- **`%s` in a message** is filled in from the values after it, as in Chapter 18: `log.info("loaded %s lines", 213)`.
 
 A scheduled job needs its log in two places: on the screen while you test, and in a **log file**, so that next month you can read what happened this morning. Each place a log line goes is a **handler**, and each handler has its own format:
 

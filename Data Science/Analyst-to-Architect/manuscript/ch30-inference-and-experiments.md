@@ -46,7 +46,7 @@ Three things ruin this, and all three are ordinary human behavior: stopping the 
 > **What's new since Chapter 22.** Chapter 22 taught the ideas on small, tidy examples. This chapter uses them on a real-sized website test, and adds the tools a working analyst needs on top.
 >
 > - **Recap, kept short, with pointers back:** standard errors and confidence intervals (section 22.1), p-values, chi-square and the two-proportion z-test (section 22.2), A/B test design and sample size (section 22.3), peeking and multiple comparisons (section 22.4), and fitting a line (section 22.10).
-> - **New here:** the unit of analysis; effect sizes (Cohen's d, Cramér's V, Cohen's h); ANOVA and Tukey's test; the sample-size formula checked against statsmodels; a whole test analysed end to end; the sample-ratio check; guardrail metrics; novelty; regression with several variables and categories; and logistic regression with odds ratios.
+> - **New here:** the unit of analysis; effect sizes (Cohen's d, Cramér's V, Cohen's h); ANOVA and Tukey's test; the sample-size formula checked against statsmodels; a whole test analyzed end to end; the sample-ratio check; guardrail metrics; novelty; regression with several variables and categories; and logistic regression with odds ratios.
 
 ---
 
@@ -249,7 +249,7 @@ print(f"40 sessions: mean {sample.mean():.1f} s, 95% CI {low:.1f} to {high:.1f} 
 
 - `.sample(40, random_state=30)` picks 40 rows at random; `random_state=30` fixes the draw so you get the same 40 (Chapter 21, section 21.8).
 - `stats.sem(sample)` is the **s**tandard **e**rror of the **m**ean, *s* ÷ √*n*, in one call. It uses *n* − 1 by default.
-- `stats.t.interval(0.95, df=..., loc=..., scale=...)` returns the two ends: the confidence level, the degrees of freedom (40 − 1 = 39), the centre (`loc`, the sample mean), and the standard error (`scale`), exactly as in section 22.1. `low, high = ...` unpacks the two ends into two names.
+- `stats.t.interval(0.95, df=..., loc=..., scale=...)` returns the two ends: the confidence level, the degrees of freedom (40 − 1 = 39), the center (`loc`, the sample mean), and the standard error (`scale`), exactly as in section 22.1. `low, high = ...` unpacks the two ends into two names.
 
 Notice that this interval, 47.8 to 80.2 seconds, does not contain 96.17 seconds, the mean of all 214,528 sessions. That can happen: 95% intervals miss 1 time in 20. With skewed data like this it happens more often in small samples, because a sample of 40 rarely includes the few very long visits that pull the mean up (the longest session lasts 4,300 seconds). Section 30.3 comes back to skewed data; for measures like this, prefer larger samples, or the bootstrap from section 22.2.
 
@@ -484,6 +484,9 @@ enquired: n = 7,711, mean = 173.9 s
 browsed:  n = 206,817, mean = 93.3 s
 Cohen's d = 0.51
 ```
+
+- The two `.loc` lines split the sessions' `duration_seconds` by `enquiry_submitted`: 1 for sessions that enquired, 0 for the rest.
+- `d` is the Cohen's d formula from the first cell, applied to the two groups.
 
 Sessions that end in an enquiry last nearly twice as long, and a d of 0.51 is a medium effect by the table's rough reading: a real difference, and one you could see on a chart.
 
@@ -834,6 +837,23 @@ total needed: 49,909 visitors
 
 24,955 and 24,977 differ by 22 visitors because h works on the arcsine scale; either rounds to 25,000 per group.
 
+**What happens if you change it.** Before running the next cell, predict: if the smallest lift worth detecting halves, from 0.5 points to 0.25, what happens to the sample size?
+
+```python
+for small_lift in (0.0025, 0.005, 0.01):
+    h = proportion_effectsize(baseline + small_lift, baseline)
+    n_needed = NormalIndPower().solve_power(effect_size=h, alpha=0.05, power=0.80)
+    print(f"MDE {100 * small_lift:.2f} points: {n_needed:>9,.0f} visitors per group")
+```
+
+```
+MDE 0.25 points:    97,002 visitors per group
+MDE 0.50 points:    24,955 visitors per group
+MDE 1.00 points:     6,582 visitors per group
+```
+
+Halving the MDE roughly quadruples the sample, because the effect is squared in the formula's denominator; doubling it cuts the sample to about a quarter. That's why the MDE is the most expensive line in any test plan, and why it has to come from the business.
+
 At about 3,400 new visitors a day, half in each group, reaching 25,000 per group takes a fortnight. Which is exactly how the fortnight in section 30.1 was chosen: **the duration came from the arithmetic, not from the calendar.**
 
 ![A rising curve showing power against visitors per group for a 0.5 percentage point effect on a 3.9% baseline: 24% power at 5,000 per group, 80% at 25,000, and 98% at 50,000](figures/fig30-2-power-curve.svg)
@@ -863,7 +883,7 @@ power at 25,000 per group: 0.80
 - `np.arange(1_000, 60_001, 1_000)` makes the sample sizes 1,000, 2,000, … 60,000. The stop value, 60,001, is left out, as with `range`, so 60,000 is the last.
 - `.power(effect_size=..., nobs1=ns, alpha=0.05)` is the other direction: given the effect and a sample size, what's the power? Because `ns` is an array, it returns sixty powers, one per sample size.
 - `power[ns == 5_000]` picks the power where the sample size is 5,000 (a Boolean mask, section 18.1), and `[0]` takes the single value out of the array.
-- `plt.plot` draws the curve, and `plt.axhline(0.8, linestyle="--")` a dashed line at 80%, as in section 22.10. Figure 30.2 is the same chart, labelled.
+- `plt.plot` draws the curve, and `plt.axhline(0.8, linestyle="--")` a dashed line at 80%, as in section 22.10. Figure 30.2 is the same chart, labeled.
 
 Two more things the same machinery answers.
 
@@ -1080,7 +1100,7 @@ def two_proportion_summary(k_a: int, n_a: int, k_b: int, n_b: int) -> dict:
     return {"diff": diff, "ci_low": diff - 1.96 * se, "ci_high": diff + 1.96 * se, "p_value": p_value}
 ```
 
-It's Step 3's lines, with the type hints of section 29.6: four whole numbers in, a dictionary out. The notebook can now import it and use it for any test:
+It's Step 3's lines, with the type hints of section 29.6: four whole numbers in (`k_a` and `n_a`, group A's enquirers and visitors, then the same for group B), a dictionary out, with the difference, the two ends of its interval, and the p-value. The notebook can now import it and use it for any test:
 
 ```python
 from ab_summary import two_proportion_summary
@@ -1109,7 +1129,7 @@ def test_enquiry_form_matches_the_book():
     assert result["p_value"] == pytest.approx(0.0026, abs=0.0001)
 ```
 
-`pytest.approx(0.0055, abs=0.0001)` means "equal to 0.0055, give or take 0.0001" (section 29.7 used `approx` without `abs`, which allows a tiny relative difference instead). Run it from the terminal:
+As in section 29.7, pytest runs every function whose name starts with `test_`, and each `assert` line must be true for the test to pass. `pytest.approx(0.0055, abs=0.0001)` means "equal to 0.0055, give or take 0.0001" (section 29.7 used `approx` without `abs`, which allows a tiny relative difference instead). Run it from the terminal:
 
 <!-- run: none -->
 ```
@@ -1119,7 +1139,7 @@ $ uv run pytest -q
 1 passed in 2.80s
 ```
 
-If someone later "tidies" the function and breaks it, this test fails before the wrong number reaches a report. It's Chapter 29's reconciliation test, applied to statistics.
+`uv run pytest` runs pytest inside the project's environment, and `-q` (quiet) prints one character per test: the single dot is the one test, passing. If someone later "tidies" the function and breaks it, this test fails before the wrong number reaches a report. It's Chapter 29's reconciliation test, applied to statistics.
 
 ### Step 4: guardrails
 
@@ -1145,7 +1165,7 @@ variant_b  3.130     1.136      22764.70
 enquiry value, variant_b vs control: Mann-Whitney p = 0.952
 ```
 
-- `guard` averages each visitor's pages and sessions within each version, and takes the median enquiry value. The median skips the empty values of visitors who didn't enquire.
+- `guard` averages each visitor's pages and sessions within each version, and `median_value` takes the median enquiry value. The median skips the empty values of visitors who didn't enquire.
 - `dropna(subset=["value"])` keeps only the visitors with an enquiry value (section 18.10). Enquiry values are heavily skewed (section 30.3), so they are compared with the Mann-Whitney test from section 22.2, which uses ranks, not the values themselves.
 
 Pages viewed and sessions per visitor are unchanged, and the enquiry values are indistinguishable, so the extra enquiries show no sign of being worse. The guardrail that matters most, how many of these enquiries become orders, can't be answered for weeks, and the write-up should say so rather than implying the question is closed.
@@ -1247,7 +1267,7 @@ after Bonferroni:          0
 after Benjamini-Hochberg:  0
 ```
 
-- The loop runs twenty t-tests on pairs of identical groups and keeps each p-value in the list `pvalues`.
+- The loop runs twenty t-tests on pairs of identical groups, 3,000 values each from `rng.normal(100, 15, 3_000)`, and `.append` keeps each p-value in the list `pvalues`.
 - `sum(p < 0.05 for p in pvalues)` counts the p-values below 0.05: each comparison is True or False, and True counts as 1.
 - `multipletests(pvalues, alpha=0.05, method="bonferroni")` returns several things; the first, `[0]`, is a True/False array saying which tests are still significant after the correction, and `.sum()` counts them. `method="fdr_bh"` is Benjamini-Hochberg.
 
@@ -1586,7 +1606,7 @@ The analysis is done in an hour. The write-up is what people act on, and it need
 >
 > Guardrails: pages viewed, sessions per visitor, and the size of the enquiries are unchanged, so the extra enquiries don't look worse on the face of it. We can't yet say how many became orders; I'll report that in six weeks.
 >
-> **Caveat:** Safari visitors were split 53/47 rather than 50/50, a tagging bug in the assignment script. Excluding Safari does not change the direction or significance of the result, but the bug should be fixed before the next test.
+> **Caveat:** Safari visitors were split 53/47 rather than 50/50, a tagging bug in the assignment script. Excluding Safari does not change the direction or significance of the result (+0.58 points, p = 0.008), but the bug should be fixed before the next test.
 >
 > **Recommendation:** ship the shorter form, keep the phone-number field optional, and review order conversion in six weeks. If enquiry-to-order rate drops by more than a fifth, we should revisit.
 
@@ -1595,9 +1615,9 @@ Notice what it doesn't do: it doesn't say "statistically significant" without a 
 | Instead of | Write |
 |---|---|
 | "The test was significant (p < 0.05)" | "4.45% against 3.90%: +0.55 points, 95% CI 0.19 to 0.91" |
-| "Enquiries rose 14%" | "+14% relative, which is 35 enquiries a month at current traffic" |
+| "Enquiries rose 14%" | "+14% relative, which is about 560 extra enquiries a month at current traffic (interval roughly 190 to 920)" |
 | "No difference between the forms" | "No difference we could detect; a gap smaller than 0.5 points would not have shown up in this test" |
-| "Tablet users loved it (+20%)" | "Segments moved in the same direction; the test wasn't powered for individual devices" |
+| "Tablet users loved it (+35%)" | "Segments moved in the same direction; the test wasn't powered for individual devices" |
 
 ---
 
@@ -1612,7 +1632,7 @@ Notice what it doesn't do: it doesn't say "statistically significant" without a 
 | Peeking and stopping at the first good day | False positives several times the stated rate (25% in section 30.10) | Fixed end date, or a sequential method agreed in advance |
 | Choosing the winning metric afterwards | Something always wins | One primary metric, written down; guardrails are not winners |
 | Testing many segments and reporting the best | "Tablet users loved it" | Segments are exploratory; power was for the whole test |
-| Ignoring novelty | A five-day test reads four times better than the truth | Two whole weeks minimum, then re-check later |
+| Ignoring novelty | A one-week test reads half as good again as the fortnight (+22% against +14%), and more than four times week two (+5%) | Two whole weeks minimum, then re-check later |
 | Letting one huge value decide a revenue test | Result flips when one row moves groups | Use rates, winsorize or take medians, and say so in advance |
 | Mean comparisons on heavy-tailed data | A t-test on data where the mean is meaningless | Median tests, logs, or capped values |
 | Post-hoc power calculations | "We had 12% power" used as an excuse | Power before the test, from a business-chosen effect |
@@ -1632,8 +1652,8 @@ Meera opens the plan the three of them signed on 30 January. It says: two full w
 
 Two weeks later the result is +14%, not +36%, with an interval of +5% to +23%. Three things had made Wednesday's number what it was:
 
-- **Two days of data.** 7,592 visitors, about a sixth of the planned sample. At that size the test had a fair chance of detecting only differences of about 1.5 percentage points or more, so anything it did detect was bound to look enormous.
-- **Novelty.** The first days of any change draw disproportionate attention; week one's lift was 24% against week two's 5%.
+- **Two days of data.** 7,592 visitors, about a sixth of the planned sample. At that size, about 3,800 per group, the test had a fair chance (80% power) of detecting only differences of about 1.3 percentage points or more, so anything it did detect was bound to look enormous.
+- **Novelty.** The first days of any change draw disproportionate attention; week one's lift was 22% against week two's 5%.
 - **Peeking.** The agency had checked daily since the test started. Section 30.10's simulation puts the false-positive rate for that habit at about 25%, not 5%.
 
 The ending is the good kind: the form really is better, and Riverstone shipped it. But the decision rested on a number two and a half times too large, from a test that had a one-in-four chance of "winning" on noise alone, and it nearly cost the company the rest of the fortnight's data and the Safari bug that the final check uncovered.
@@ -1652,11 +1672,11 @@ Notice that the discipline was not statistical skill. It was a page written befo
 
 Versions used for this chapter, checked in September 2026:
 
-- **Python 3.12.3**, **pandas 3.0.2**, **numpy 2.4.4**, **scipy 1.17.1**, **statsmodels 0.15.0**. Install them with `uv add pandas scipy statsmodels` (Chapter 29).
+- **Python 3.14.7** in the chapter's uv project, with **pandas 3.0.6**, **numpy 2.5.3**, **scipy 1.18.1**, **statsmodels 0.15.0**, and **matplotlib 3.11.2**; every output was also checked on Python 3.11.15 with numpy 2.4.6, scipy 1.17.1, and matplotlib 3.10.8, with identical results. Section 30.1 installs them with `uv add`.
 - **scipy.stats** for t-tests, chi-square, ANOVA, and distributions. **statsmodels** for proportion tests, power and sample size, multiple-testing corrections, Tukey, and regression with readable summaries.
 - **PostgreSQL** to hold the website data if you'd rather query it in SQL: `web_data/load_postgresql.sql` builds `riverstone_web`.
 - **An experiment platform** (Optimizely, VWO, GrowthBook, Statsig, or a warehouse-native setup) is what companies use to assign visitors and compute results. They automate the arithmetic here, including sample-ratio checks; they do not decide your metric, your MDE, or your stopping rule.
-- **Companion files** in `ch30/`: `generate_riverstone_web.py` (the dataset, seed 30) and `ch30_check.py` (checks the chapter's numbers).
+- **Companion files** in `ch30/`: `generate_riverstone_web.py` (the dataset, seed 30), `ab_summary.py` (section 30.9's tested function), and `test_ab_summary.py` (its test).
 
 > **Tool note: Bayesian A/B testing.** Some teams report *"a 93% chance the variant is better, and a 7% chance it's worse by more than 0.2 points"* instead of a p-value. That's the Bayesian framing: it starts from a prior belief, updates it with the data, and produces a probability distribution for the effect. It's popular because its sentences match how people think, and because stopping early is less damaging when the method expects it. It needs a prior, and a prior is a judgment that has to be defensible. The design work in section 30.8 is identical either way: metric, randomization, guardrails, duration, decision rule.
 
@@ -1681,7 +1701,7 @@ Versions used for this chapter, checked in September 2026:
 
 - Redo the analysis with a Bayesian two-proportion model and compare the sentences you'd say.
 - Estimate how long the test would need to run to detect a 0.2 percentage point effect, and decide whether that test is worth running at all.
-- Analyze the test excluding Safari visitors, and report whether the conclusion changes.
+- Before reading section 30.10, analyze the test excluding Safari visitors yourself, and report whether the conclusion changes.
 - Turn the analysis into a tested package (Chapter 29) with the reconciliation numbers as tests.
 
 ---
@@ -1703,7 +1723,7 @@ Versions used for this chapter, checked in September 2026:
 
 ## Key terms
 
-inference · population · sample · standard error · confidence interval · t-distribution · proportion · unit of analysis · hypothesis test · null hypothesis · p-value · Type I error · Type II error · Welch's t-test · Mann-Whitney U · effect size · Cohen's d · relative lift · absolute difference · odds ratio · Cramér's V · two-proportion test · chi-square test of independence · expected counts · Fisher's exact test · ANOVA · F-statistic · post-hoc test · Tukey HSD · familywise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · statistical power · alpha · beta · minimum detectable effect · sample size calculation · A/B test · control · variant · randomization unit · guardrail metric · primary metric · stopping rule · decision rule · sample-ratio mismatch · peeking · sequential testing · novelty effect · winsorizing · linear regression for inference · logistic regression · log-odds · Bayesian A/B testing · prior
+inference · population · sample · standard error · confidence interval · t-distribution · proportion · unit of analysis · hypothesis test · null hypothesis · p-value · Type I error · Type II error · Welch's t-test · Mann-Whitney U · effect size · Cohen's d · relative lift · absolute difference · odds ratio · Cramér's V · two-proportion test · chi-square test of independence · expected counts · Fisher's exact test · ANOVA · F-statistic · post-hoc test · Tukey HSD · family-wise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · statistical power · alpha · beta · minimum detectable effect · sample size calculation · A/B test · control · variant · randomization unit · guardrail metric · primary metric · stopping rule · decision rule · sample-ratio mismatch · goodness-of-fit test · peeking · sequential testing · novelty effect · winsorizing · Cohen's h · pooled standard error · linear regression for inference · formula (statsmodels) · reference category · treatment coding · logistic regression · odds · log-odds · Bayesian A/B testing · prior
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -1740,7 +1760,7 @@ Work in `companion/ch30`, with the data built by `generate_riverstone_web.py`. P
 5. Test whether the enquiry rate differs between the `email` and `organic` channels. Report z, p, the difference, and its interval.
 6. Run a chi-square test of device against enquiry, and compute Cramér's V. What does it tell you that the chi-square alone doesn't?
 7. Riverstone wants to detect a 0.3 percentage point improvement on a 3.9% baseline. How many visitors per group, at 80% power? How long would that take at 3,400 new visitors a day?
-8. Re-analyze the A/B test excluding Safari visitors. Does the conclusion change? Report both results side by side.
+8. Section 30.10 re-analyzed the test without any Safari visitors. Exclude only *mobile* Safari visitors instead, and compare. Does the split look clean, and does the conclusion change?
 9. Compute the test's result per week, and say which week you'd quote to the board and why.
 10. Compare enquiry *values* between the two variants with a t-test and with Mann-Whitney. Explain why they disagree, or why they agree.
 
@@ -1761,8 +1781,6 @@ Work in `companion/ch30`, with the data built by `generate_riverstone_web.py`. P
 ---
 
 ## Answers
-
-*(In the finished book these move to Appendix G.)*
 
 **1.**
 
@@ -1787,16 +1805,15 @@ They agree to four decimals: with 214,528 rows the t-distribution is indistingui
 **2.**
 
 ```python
-device = (visitors.merge(sessions.drop_duplicates("visitor_id")[["visitor_id", "device"]], on="visitor_id")
-                  .groupby("device")["enquired"].agg(["sum", "count"]))
-device["rate"] = device["sum"] / device["count"]
-device["se"] = np.sqrt(device["rate"] * (1 - device["rate"]) / device["count"])
-device["low"] = device["rate"] - 1.96 * device["se"]
-device["high"] = device["rate"] + 1.96 * device["se"]
-print(device.round(4).to_string())
+by_device = by_visitor.groupby("device")["enquired"].agg(["sum", "count"])
+by_device["rate"] = by_device["sum"] / by_device["count"]
+by_device["se"] = np.sqrt(by_device["rate"] * (1 - by_device["rate"]) / by_device["count"])
+by_device["low"] = by_device["rate"] - 1.96 * by_device["se"]
+by_device["high"] = by_device["rate"] + 1.96 * by_device["se"]
+print(by_device.round(4).to_string())
 
-stat, p = proportions_ztest([device.loc["mobile", "sum"], device.loc["desktop", "sum"]],
-                            [device.loc["mobile", "count"], device.loc["desktop", "count"]])
+stat, p = proportions_ztest([by_device.loc["mobile", "sum"], by_device.loc["desktop", "sum"]],
+                            [by_device.loc["mobile", "count"], by_device.loc["desktop", "count"]])
 print(f"mobile vs desktop: z = {stat:.2f}, p = {p:.3e}")
 ```
 
@@ -1828,7 +1845,7 @@ n =  2,000: mean   96.7 s, CI   91.0 to  102.4, width  11.4 s
 n = 20,000: mean   97.2 s, CI   95.6 to   98.9, width   3.3 s
 ```
 
-Each tenfold increase in data shrinks the width by roughly √10 ≈ 3.2 times: 25.8 seconds, then 11.4, then 3.3. The first step falls a little short of the rule because a 200-row sample is itself a lottery, which is the whole reason small samples are treated with suspicion.
+Each tenfold increase in data shrinks the width by roughly √10 ≈ 3.2 times: 25.8 seconds, then 11.4, then 3.3. The first step falls a little short of the rule because a 200-row sample is itself a lottery, which is the whole reason small samples are treated with suspicion. Notice too that the n = 200 interval, 69.6 to 95.4 seconds, misses the full-data mean of 96.17: the same skew as in section 30.2, where small samples rarely include the few very long visits.
 
 **5.**
 
@@ -1853,9 +1870,7 @@ Email converts about 2.2 percentage points better than organic search, and the i
 **6.**
 
 ```python
-device_table = pd.crosstab(
-    visitors.merge(sessions.drop_duplicates("visitor_id")[["visitor_id", "device"]], on="visitor_id")["device"],
-    visitors.merge(sessions.drop_duplicates("visitor_id")[["visitor_id", "device"]], on="visitor_id")["enquired"])
+device_table = pd.crosstab(by_visitor["device"], by_visitor["enquired"])
 chi2, p, dof, expected = stats.chi2_contingency(device_table)
 v = np.sqrt(chi2 / (device_table.to_numpy().sum() * (min(device_table.shape) - 1)))
 print(device_table)
@@ -1894,40 +1909,45 @@ Detecting 0.3 points instead of 0.5 takes nearly three times the visitors and ab
 **8.**
 
 ```python
-no_safari = test_sessions.loc[test_sessions["browser"] != "Safari"]
-per_visitor_ns = (no_safari.groupby(["variant", "visitor_id"])["enquiry_submitted"].max().reset_index())
-g = per_visitor_ns.groupby("variant")["enquiry_submitted"].agg(["sum", "count"])
-z, p = proportions_ztest(g["sum"].to_numpy()[::-1], g["count"].to_numpy()[::-1])
-rate = g["sum"] / g["count"]
-print(g.assign(rate=rate.round(4)).to_string())
-print(f"difference {100 * (rate['variant_b'] - rate['control']):+.2f} pp, z = {z:.2f}, p = {p:.4f}")
-print(f"split: {100 * g.loc['control', 'count'] / g['count'].sum():.2f}% control")
+with_both = per_visitor.merge(first[["visitor_id", "device", "browser"]], on="visitor_id")
+mobile_safari = (with_both["browser"] == "Safari") & (with_both["device"] == "mobile")
+g2 = with_both.loc[~mobile_safari].groupby("variant")["enquired"].agg(["sum", "count"])
+r2 = two_proportion_summary(g2.loc["control", "sum"], g2.loc["control", "count"],
+                            g2.loc["variant_b", "sum"], g2.loc["variant_b", "count"])
+print(f"without mobile Safari: {100 * r2['diff']:+.2f} pp (95% CI {100 * r2['ci_low']:+.2f} to {100 * r2['ci_high']:+.2f}), p = {r2['p_value']:.4f}")
+print(f"split: {100 * g2.loc['control', 'count'] / g2['count'].sum():.2f}% control, SRM p = {stats.chisquare(g2['count'].to_numpy())[1]:.2f}")
+safari = with_both.loc[with_both["browser"] == "Safari"]
+print(pd.crosstab(safari["device"], safari["variant"]))
 ```
 
 ```
-           sum  count    rate
-variant
-control    679  16900  0.0402
-variant_b  780  16958  0.0460
-difference +0.58 pp, z = 2.64, p = 0.0084
-split: 49.91% control
+without mobile Safari: +0.56 pp (95% CI +0.16 to +0.97), p = 0.0068
+split: 50.20% control, SRM p = 0.44
+variant  control  variant_b
+device
+desktop     1390       1250
+mobile      4883       4249
+tablet       863        793
 ```
 
-Without Safari the split is even and the conclusion holds: same direction, similar size, still significant. That's the sentence the write-up needs, because "we found a bug" and "the result survives it" are two different facts and the reader deserves both.
+`~mobile_safari` means "not mobile Safari" for each row (section 18.4). The conclusion doesn't change: +0.56 points against section 30.10's +0.58, both clearly above zero. But the split only *looks* clean. The crosstab shows Safari's imbalance on desktop too (1,390 against 1,250), so the bug is in Safari, not in phones; removing mobile Safari just dilutes what's left until the overall check can't see it. An even overall split doesn't prove a clean test. Exclude every Safari visitor, as section 30.10 did, and report both results.
 
 **9.**
 
 ```python
-weekly = test_sessions.groupby(["week", "variant"])["enquiry_submitted"].mean().unstack()
-weekly["lift_pct"] = 100 * (weekly["variant_b"] - weekly["control"]) / weekly["control"]
-print(weekly.round(4).to_string())
+for week, rows in by_week.groupby("week"):
+    g = rows.groupby("variant")["enquired"].agg(["sum", "count"])
+    r = two_proportion_summary(g.loc["control", "sum"], g.loc["control", "count"],
+                               g.loc["variant_b", "sum"], g.loc["variant_b", "count"])
+    print(f"{week}: {100 * r['diff']:+.2f} pp (95% CI {100 * r['ci_low']:+.2f} to {100 * r['ci_high']:+.2f}), p = {r['p_value']:.3f}")
 ```
 
 ```
-KeyError: 'week'
+week 1: +0.88 pp (95% CI +0.37 to +1.38), p = 0.001
+week 2: +0.19 pp (95% CI -0.32 to +0.70), p = 0.468
 ```
 
-Neither week alone: quote the fortnight, +14%, and mention that week one ran hotter because the form was new. A board deck showing week one's 24% would be repeating the agency's mistake with better arithmetic.
+Each week's visitors come from section 30.10's `by_week`, one row per visitor, counted in the week of their first session. Neither week alone: quote the fortnight, +14%, and mention that week one ran hotter because the form was new. Week two's interval includes zero on its own, which is what a smaller sample and a fading novelty look like together. A board deck showing week one's 22% would be repeating the agency's mistake with better arithmetic.
 
 **10.**
 
@@ -1984,14 +2004,22 @@ for _ in range(500):
 pvalues = np.array(pvalues)
 print(f"below 0.05: {(pvalues < 0.05).mean():.1%}   below 0.10: {(pvalues < 0.10).mean():.1%}")
 print(f"below 0.50: {(pvalues < 0.50).mean():.1%}   below 0.90: {(pvalues < 0.90).mean():.1%}")
+counts_per_bar, _ = np.histogram(pvalues, bins=20, range=(0, 1))
+print("p-values per bar of width 0.05:", counts_per_bar)
+
+plt.hist(pvalues, bins=20, range=(0, 1))
+plt.xlabel("p-value")
+plt.ylabel("tests")
+plt.show()
 ```
 
 ```
 below 0.05: 6.0%   below 0.10: 11.2%
 below 0.50: 49.0%   below 0.90: 90.6%
+p-values per bar of width 0.05: [30 26 28 23 22 25 18 31 17 25 26 30 27 31 18 28 27 21 27 20]
 ```
 
-When nothing is different, p-values are spread evenly between 0 and 1: about 5% below 0.05, half below 0.5. A histogram of them should look flat. That's what "a 5% false-positive rate" means, and running A/A tests like this is how teams check that their experiment platform is honest before trusting it with real ones.
+When nothing is different, p-values are spread evenly between 0 and 1: about 5% below 0.05, half below 0.5. `np.histogram(pvalues, bins=20, range=(0, 1))` counts them in twenty bars of width 0.05 between 0 and 1, and returns the counts and the bar edges (kept in `_`); `plt.hist` with the same `bins` and `range` draws those bars: about 25 per bar, and the histogram is flat, apart from chance. That's what "a 5% false-positive rate" means, and running A/A tests like this is how teams check that their experiment platform is honest before trusting it with real ones.
 
 **13.**
 
@@ -2019,11 +2047,11 @@ C(region)[T.South]                                  1.036  0.885  1.212  0.659
 C(region)[T.West]                                   1.006  0.867  1.167  0.936
 ```
 
-The variant, device, and channel coefficients keep their intervals away from 1; region's don't, which matches section 30.6's ANOVA finding that regions behave alike. For marketing: mobile visitors convert at around 0.7 times the odds of desktop ones, and paid traffic at about two thirds the odds of direct traffic (the reference category), so the mobile form and the paid landing pages are where the next tests belong.
+The variant, device, and channel coefficients keep their intervals away from 1; region's don't: region doesn't predict enquiring once the others are in the model (and section 30.6 found no regional difference in visit length either). For marketing: mobile visitors convert at around 0.7 times the odds of desktop ones, and paid traffic at about two thirds the odds of direct traffic (the reference category), so the mobile form and the paid landing pages are where the next tests belong.
 
 **14.** Four variants means three comparisons against control, so the error rate needs handling and the sample grows:
 
-- Test all four against one control with a **Bonferroni-corrected alpha** of 0.05 / 3 = 0.0167 for the comparisons, or use Dunnett's test, designed for many-versus-one.
+- Test all four against one control with a **Bonferroni-corrected alpha** of 0.05 / 3 = 0.0167 for the comparisons, or use Dunnett's test (not covered here), which is designed for many-versus-one.
 - The stricter alpha costs sample: at 0.0167 and 80% power for a 0.5-point effect, each group needs about 33,000 visitors rather than 25,000, and there are four groups instead of two.
 - Four groups of 33,000 is 133,000 visitors; at 3,400 new visitors a day that's about **six weeks**, long enough that the site, the season, and the traffic mix will all have moved.
 - The honest recommendation is usually: test the one or two variants with a real hypothesis behind them, not four because the tool allows it. If all four must run, agree in advance which comparison is primary.
@@ -2036,13 +2064,16 @@ The variant, device, and channel coefficients keep their intervals away from 1; 
 
 **18.** Ship on the evidence you have, and put the six-week check in the plan as a commitment with a threshold attached: *"We'll review enquiry-to-order rate on 31 March; if it has dropped by more than a fifth, we revert."* Two supporting moves: track a faster proxy in the meantime (whether the sales team can reach the enquirer, which is known within days), and keep the old form available so reverting is a configuration change rather than a project.
 
+**Checkpoint (end of the second sitting, section 30.7).** (1) The two rates are 0.06 and 0.07, so p̄ = 0.065 and p̄(1 − p̄) = 0.065 × 0.935 = 0.06078; *n* = 2 × 2.802² × 0.06078 ÷ 0.01² = 2 × 7.851 × 0.06078 ÷ 0.0001 = **about 9,540 visitors per group**. (2) `NormalIndPower().solve_power(effect_size=proportion_effectsize(0.07, 0.06), alpha=0.05, power=0.80)` gives **9,527**; the small gap is the arcsine scale again. (3) Two groups need about 19,050 email visitors. Email brings 7% of 3,400 a day, about 238, so the test takes about 80 days: **eleven to twelve weeks**. That's a long test for a landing page, and a reason to ask whether a 1-point lift is really the smallest one worth knowing about.
+
 ---
 
 ## Where this leads
 
 - **Chapter 31, Causal Inference Without Experiments,** answers the same questions when you can't randomize: difference-in-differences, matching, and regression discontinuity.
 - **Chapter 22, Statistics Without Fooling Yourself,** is the intuition this chapter computes; reread its correlation-and-causation section after this one.
-- **Chapter 42, Digital & Web Analytics,** uses the same website data for funnels, attribution, and cohorts.
+- **Chapter 37, Supervised Learning Algorithms,** uses regression to *predict*, where this chapter used it to explain.
+- **Chapter 75, Product Sense, Metrics, Case Studies & Guesstimates,** is about choosing and diagnosing metrics like the ones in this chapter's plan.
 - **Chapter 29, Python as Software, Not Scripts,** is how an analysis like this becomes a repeatable, tested pipeline instead of a notebook nobody can rerun.
-- **Chapter 55, Machine Learning in Production,** runs experiments on models, where the treatment is a model version and the guardrails are latency and fairness.
+- **Chapter 56, MLOps: Making Models Survive Production,** runs experiments on models, where the treatment is a model version and the guardrails are latency and fairness.
 - **Chapter 73, Statistics, Probability & Experimentation Bank,** has about 70 interview questions, including three A/B test debugging cases built on exactly the faults in section 30.10.
