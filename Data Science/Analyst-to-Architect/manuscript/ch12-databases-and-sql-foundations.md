@@ -195,17 +195,17 @@ Now read the diagram out loud as sentences. If a sentence sounds wrong for the b
 
 ### One real order, spread across five tables
 
-The diagram is abstract. Figure 12.2 makes it concrete. On the left is order 5001 the way Sharma Hardware's purchasing manager sees it: a single order slip. On the right is where each piece of that slip actually lives in the database.
-
-![Order 5001 as a slip and as rows in five tables](figures/fig12-2-one-order-many-tables.svg)
-
-*Figure 12.2 — One order slip, five tables. Each band on the slip is labelled with the table it's stored in, and drawn in that table's color.*
+The diagram is abstract. Figure 12.2, below, makes it concrete. On the left is order 5001 the way Sharma Hardware's purchasing manager sees it: a single order slip. On the right is where each piece of that slip actually lives in the database.
 
 Three things to notice:
 
 1. **Nothing is typed twice.** The slip shows the customer's name, but the `orders` row stores only `customer_id = 1`. The name lives once, in `customers`. If Sharma Hardware renames itself, every past and future order shows the new name automatically.
 2. **The slip is a join.** Rebuilding it means combining five tables on their keys. By section 12.10 you'll write that query yourself.
 3. **Calculated values aren't stored.** The line values (₹9,000 and ₹5,700) and the total (₹14,700) appear nowhere in the tables. They're calculated from quantity, price, and discount whenever someone asks. A stored total is a second copy of the truth that can drift out of date, for example when someone corrects a discount but forgets the total. (Invoices are the one deliberate exception: a tax invoice is a legal document, so `invoices.amount` records exactly what was billed.)
+
+![Order 5001 as a slip and as rows in five tables](figures/fig12-2-one-order-many-tables.svg)
+
+*Figure 12.2 — One order slip, five tables. Each band on the slip is labelled with the table it's stored in, and drawn in that table's color.*
 
 ### The data
 
@@ -645,7 +645,9 @@ FROM products;
 
 You can use the usual arithmetic operators: `+`, `-`, `*`, `/`.
 
-> **Watch out: integer division.** In PostgreSQL and SQL Server, dividing one whole number by another throws away the remainder. When you need a decimal answer, make one side a decimal:
+> **Watch out: integer division.** In PostgreSQL and SQL Server, dividing one whole number by another throws away the remainder. When you need a decimal answer, make one side a decimal.
+
+Compare the two:
 
 ```sql
 SELECT 7 / 2   AS whole_numbers,
@@ -1787,7 +1789,9 @@ This pattern is called an **anti-join**. It's the SQL version of Chapter 11's Po
 
 - **`RIGHT JOIN`** is a left join viewed from the other side: it keeps every row of the *right* table. `A RIGHT JOIN B` gives the same rows as `B LEFT JOIN A`. Most analysts simply write left joins and list the "keep everything" table first; it reads more naturally.
 - **`FULL OUTER JOIN`** keeps every row from *both* tables, with NULLs wherever either side lacks a match. It's the tool for **reconciliation**: comparing the sales system's list of invoices with the finance system's, and showing what's missing on either side. (MySQL doesn't support it directly; section 12.16 shows how.)
-- **`CROSS JOIN`** has no matching condition. It pairs **every row with every row**. With 8 customers and 6 products, you get 8 × 6 = 48 pairs:
+- **`CROSS JOIN`** has no matching condition. It pairs **every row with every row**, as the next two queries show.
+
+With 8 customers and 6 products, a cross join gives 8 × 6 = 48 pairs:
 
 ```sql
 SELECT c.customer_name, p.product_name
@@ -1959,8 +1963,6 @@ SELECT o.order_id,
        e.employee_name AS sales_rep,
        p.product_name,
        oi.quantity,
-       oi.unit_price,
-       oi.discount_pct,
        ROUND(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100), 2) AS line_value
 FROM orders AS o
 JOIN      customers   AS c  ON o.customer_id  = c.customer_id
@@ -1972,14 +1974,14 @@ ORDER BY p.product_id;
 ```
 
 ```
- order_id |  customer_name  |   sales_rep   |  product_name   | quantity | unit_price | discount_pct | line_value
-----------+-----------------+---------------+-----------------+----------+------------+--------------+------------
-     5001 | Sharma Hardware | Neha Kulkarni | Storage Box 10L |       20 |     450.00 |         0.00 |    9000.00
-     5001 | Sharma Hardware | Neha Kulkarni | Water Bottle 1L |       50 |     120.00 |         5.00 |    5700.00
+ order_id |  customer_name  |   sales_rep   |  product_name   | quantity | line_value
+----------+-----------------+---------------+-----------------+----------+------------
+     5001 | Sharma Hardware | Neha Kulkarni | Storage Box 10L |       20 |    9000.00
+     5001 | Sharma Hardware | Neha Kulkarni | Water Bottle 1L |       50 |    5700.00
 (2 rows)
 ```
 
-Two rows, one per line on the slip, with ₹9,000 and ₹5,700 calculated, not stored, exactly as Figure 12.2 showed. The sales rep is joined with a **left** join because order 5008 has no rep: for that order an inner join would drop the whole slip. Add `o.order_date`, `o.status`, and `c.city` to the `SELECT` and you have every piece of the paper slip.
+Two rows, one per line on the slip, with ₹9,000 and ₹5,700 calculated, not stored, exactly as Figure 12.2 showed. The sales rep is joined with a **left** join because order 5008 has no rep: for that order an inner join would drop the whole slip. Add `o.order_date`, `o.status`, `c.city`, `oi.unit_price`, and `oi.discount_pct` to the `SELECT` and you have every piece of the paper slip.
 
 ### Real-life example: revenue is not profit
 
@@ -4525,7 +4527,9 @@ That's often convenient: a user who types "mumbai" in a search box still finds M
 
 - **A query that works in MySQL can silently return nothing when moved to PostgreSQL**, Snowflake, or most other warehouses. When a company migrates its reports, this is one of the first things to break.
 - **Duplicate checks behave differently.** In MySQL, `GROUP BY email` treats `Ravi@Example.com` and `ravi@example.com` as one group, and a `UNIQUE` column won't accept both. In PostgreSQL they're two.
-- **When you really need an exact match** in MySQL, such as for case-sensitive codes, ask for a binary comparison. `COLLATE utf8mb4_bin` compares the stored characters exactly:
+- **When you really need an exact match** in MySQL, such as for case-sensitive codes or passwords, ask for a binary comparison, shown below.
+
+`COLLATE utf8mb4_bin` compares the stored characters exactly:
 
 ```mysql
 SELECT COUNT(*) AS delivered_orders
@@ -4541,7 +4545,7 @@ WHERE status COLLATE utf8mb4_bin = 'delivered';
 +------------------+
 ```
 
-  Zero, like PostgreSQL.
+Zero, like PostgreSQL.
 
 **Portable habit:** match the stored capitalization exactly, or write `LOWER(status) = 'delivered'`, which gives the same answer in every database.
 
