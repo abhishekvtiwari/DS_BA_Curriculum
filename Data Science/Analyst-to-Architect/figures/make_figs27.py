@@ -142,12 +142,13 @@ def fig_not_survive():
     y = 4
     for title, sub, bars, note, notec in panels:
         nl = fit(note, PW - 2 * LBL, 9.5, "bold")
-        ph = 30 + len(bars) * RH + 8 + len(nl) * 13 + 6
+        ph = 44 + len(bars) * RH + 8 + len(nl) * 13 + 6
         o.append(rect(x0, y, PW, ph, fill="#fff", stroke=RULE, sw=1.2, rx=7))
         o.append(text(x0 + LBL, y + 18, title, 11, INK, "bold"))
         o.append(text(x0 + LBL + width(title, 11, "bold") + 8, y + 18, sub, 9.5, MUTED, style="italic"))
-        o.append(text(x0 + BX - 8, y + 18, "customers", 9, MUTED, anchor="end"))
-        by = y + 28
+        o.append(text(x0 + BX - 8, y + 34, "customers", 9, MUTED, anchor="end"))
+        o.append(text(x0 + BX, y + 34, "average orders per customer", 9, MUTED))
+        by = y + 42
         for k, (label, n, val, col) in enumerate(bars):
             yy = by + k * RH
             ln = BMAX * val / MAXV
@@ -160,7 +161,7 @@ def fig_not_survive():
         o.append(path(f"M{x0+LBL},{ny} H{x0+PW-LBL}", stroke=RULE, sw=1, dash="3 3"))
         o.append(lines_at(x0 + LBL, ny + 14, nl, 9.5, notec, 13, "bold"))
         y += ph + 8
-    foot = fit("Average orders per customer, 2025; bars share one scale, from 0 to 18 orders. "
+    foot = fit("Customers' 2025 orders; the bars share one scale, from 0 to 18 orders. "
                "Deeper discounts do not buy more orders. Panel 1 is what a portfolio shows when the "
                "analyst stops one query early.", W - 2 * x0, 9.5)
     o.append(lines_at(x0, y + 10, foot, 9.5, MUTED, 13))

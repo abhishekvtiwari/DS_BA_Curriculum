@@ -6,13 +6,13 @@
 >
 > **You will learn to:** take one business question all the way from a database to a memo, using only what Part 2 taught · write down the cleaning decisions you made, and measure whether they changed the answer · find the check that turns a flattering result into an honest one, and report both · wrap the analysis in a function so it can be re-run and argued with · specify a one-page dashboard that serves a single decision · write the memo, including the part that says what you did not find · recognize selective reporting in your own portfolio, which is where it is most tempting · assemble three projects into a portfolio a hiring manager will actually open · tell the story of a project in two minutes and in ten · judge for yourself whether you are ready to apply.
 >
-> **Before you start:** all of Part 2. This chapter teaches almost nothing new. It uses Chapters 12 and 13 (SQL), 14 (cleaning), 17 and 18 (Python), 15 and 16 (visualization and Power BI), 20 (automation), 21 and 22 (statistics), 23 (metrics), 24 and 25 (requirements and stakeholders), and 26 (the repository this all lives in).
+> **Before you start:** all of Part 2. This chapter adds no new tools and one new SQL function, `NTILE` (section 27.4). What is new is method: how to record and measure your own decisions, how to test a headline before believing it, and how to present work honestly. It uses Chapters 12 and 13 (SQL), 14 (cleaning), 17 and 18 (Python), 15 and 16 (visualization and Power BI), 20 (automation), 21 and 22 (statistics), 23 (metrics), 24 and 25 (requirements and stakeholders), and 26 (the repository this all lives in).
 >
-> **Time needed:** 8–12 hours for the project, spread over a week. The reading is about an hour.
+> **Time needed:** reading and running the worked project, 2–3 hours. Your own portfolio, 20–30 hours over one to two weeks (the deep project alone, 8–12 hours).
 >
-> **Tools:** PostgreSQL or MySQL, Python with pandas, Power BI Desktop or any BI tool, Git. Nothing new.
+> **Tools:** PostgreSQL or MySQL in DBeaver (Chapter 12), Python with pandas (Chapters 17 and 18) and SciPy (Chapter 21), Power BI Desktop or any BI tool (Chapter 16), Git (Chapter 26). Nothing new to install. The outputs were checked on PostgreSQL 16 and MySQL 8, and on Python 3.11 with pandas 3.0.6 and SciPy 1.17.1 (any Python from 3.11 on runs every example, as Chapter 17 said).
 >
-> **Practice data:** `riverstone_full`, the three-year database from Chapter 14 onward: 5,027 customer records, 116,194 orders, 209,006 order lines, 2023 to 2025. Every number and every output in this chapter was produced by running the query or the script shown, on PostgreSQL 16 and Python 3.11.
+> **Practice data:** `riverstone_full`, the three-year database you loaded in Chapter 14: 5,027 customer records, 116,194 orders, 209,006 order lines, 2023 to 2025. The queries read its `orders`, `order_items`, `customers` and `products` tables, whose statuses are already the four clean values (Delivered, Shipped, Pending, Cancelled); the messy spellings Chapter 14 cleaned were in the branch export, not in these tables. The 48 duplicate customer records are still in `customers`, and section 27.3 deals with them using Chapter 14's `clean_customers` table. The Python reads the same tables from the CSV files in `companion/full/`. Every number and every output in this chapter was produced by running the query or the script shown.
 
 ---
 
@@ -78,13 +78,15 @@ That last row is the one people skip, and it is the row that stops a project spr
 
 ![Six stages from SQL to memo, each showing what it produced in this project and which chapters taught it, with the check stage marked as the one most often skipped](figures/fig27-1-the-analyst-arc.svg)
 
-*Figure 27.1 — The arc is not new. The order is the lesson, and stage 3 is the one that decides whether the project is honest.*
+*Figure 27.1 — The tools are not new. The order is the lesson, and stage 3 is the one that decides whether the project is honest.*
 
 ---
 
 ## 27.2 SQL: the headline (a recap, not a re-teach)
 
-Chapter 13 taught every piece of this query. Nothing here is new; the point is the order things happen in.
+Chapters 12 and 13 taught every piece of these queries; the point is the order things happen in.
+
+<!-- db: riverstone_full -->
 
 Start with the background question, because a claim about discounting should begin by checking whether discounting has moved at all:
 
@@ -111,7 +113,19 @@ GROUP  BY year ORDER BY year;
 (3 rows)
 ```
 
+**How it works:**
+
+- **`EXTRACT(YEAR FROM o.order_date)`** takes the year out of each order date (Chapter 12, section 12.8). `EXTRACT` returns a decimal number type, and **`::int`** is PostgreSQL's cast (the shorthand from the same section) to a whole number, so `year` is an ordinary integer. `GROUP BY year` then makes one row per year.
+- **`oi.quantity * oi.unit_price`** is a line's list value, before any discount, and **`oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)`** is its net value, after the discount. `SUM` adds each one up over the whole year.
+- **`1 - net / list`** is the share of list value given away: the year's discount, weighted by money. `100 *` turns the share into a percentage and `ROUND(..., 2)` keeps two decimals. The next query explains why it is weighted by money rather than averaged.
+- **The margin** is (net revenue − product cost) ÷ net revenue. Product cost is `oi.quantity * p.unit_cost`, which is why the query joins `products`. `ROUND(..., 1)` keeps one decimal.
+- **`WHERE o.status <> 'Cancelled'`** leaves out cancelled orders, which were never sales.
+
 Company-wide discounting has not moved in three years: 3.49%, 3.43%, 3.51%. Worth knowing before anybody claims discounting is "getting out of hand", and it takes one query.
+
+Margin, on the other hand, rose from 21.1% to 27.5% while discounts stood still. A reader will ask why, so look before you answer: the `products` table holds one unit cost per product, today's, and the query applies it to every year, while the prices on the order lines rose from year to year. Part of that rise may be the measurement, not the business. It is a question for the finance team, and it stays out of this project's scope.
+
+> **MySQL.** Write `YEAR(o.order_date)` in place of `EXTRACT(YEAR FROM o.order_date)::int`. Every other query in this chapter runs on MySQL 8 unchanged, except the `::int` casts in section 27.3, which become `CAST(customer_code AS SIGNED)`.
 
 Now the question itself. One row per customer for 2025, then the two groups compared:
 
@@ -148,12 +162,13 @@ ORDER  BY discount_band;
 **How it works, and why it is built this way:**
 
 - **The CTE computes the customer's own discount rate**, rather than averaging the discount percentages on their lines. Averaging percentages weights a ₹2,000 line the same as a ₹200,000 one. Dividing total net revenue by total list revenue weights by money, which is what the question means.
-- **`COUNT(DISTINCT o.order_id)`** is necessary because the join to `order_items` puts a customer's order on the table once per line. This is Chapter 13's fan-out trap, and it is the single most common way this query goes wrong.
-- **The `WHERE` clause uses a half-open date range**, `>= 2025-01-01` and `< 2026-01-01`, rather than `BETWEEN`. Chapter 13 section 13.4 explains why: `BETWEEN` on a timestamp column silently drops the last day.
+- **`COUNT(DISTINCT o.order_id)`** is necessary because the join to `order_items` puts a customer's order on the table once per line. This is the fan-out trap of Chapter 12, section 12.10, and it is the single most common way this query goes wrong.
+- **The `WHERE` clause uses a half-open date range**, `>= 2025-01-01` and `< 2026-01-01`, rather than `BETWEEN`. Chapter 12 section 12.6 explains why: `BETWEEN` on a timestamp column silently drops the last day.
+- **`CASE WHEN ... >= 5 THEN '5% or deeper' ELSE 'under 5%' END`** puts each customer into one of two bands by their own discount rate (Chapter 12, section 12.8), and `GROUP BY discount_band` makes one row per band. `ROUND(AVG(orders), 1)` and `ROUND(AVG(net_revenue))` give the band's average orders and average revenue per customer, to one decimal and to the rupee.
 - **`status <> 'Cancelled'`** is a business rule, not a technical one, and it is the first entry in the decision log below.
 - **`>= 5`** is a line the analyst chose. Remember that. It becomes important in section 27.5.
 
-**The headline, in one sentence:** customers on discounts of 5% or deeper placed 14.8 orders in 2025 and were worth ₹459,662 each, against 9.3 orders and ₹212,765 for everyone else. That is 59% more orders and more than double the revenue.
+**The headline, in one sentence:** customers on discounts of 5% or deeper placed 14.8 orders in 2025 and were worth ₹4,59,662 each, against 9.3 orders and ₹2,12,765 for everyone else. That is 59% more orders and more than double the revenue.
 
 If this were a portfolio project written by most people, that sentence would be the finding, the chart would show those two bars, and the project would be finished. Hold on to it. It is wrong, and section 27.4 is where it comes apart.
 

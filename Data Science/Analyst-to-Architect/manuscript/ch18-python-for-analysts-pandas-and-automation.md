@@ -2674,7 +2674,7 @@ exit code: 0
 
 ### The finished file, run from the terminal
 
-`monthly_report.py` in the companion folder is these pieces in one file. Open it in VS Code. It starts with a docstring and the imports, then the two queries and the six functions exactly as above, and ends with the lines that make it a command:
+`monthly_report.py` in the companion folder is these pieces in one file. Open it in VS Code. It starts with a docstring and the imports, then the two queries and the six functions exactly as above, and it ends with four lines that make it a command. Here are the beginning and the end, with the middle left out.
 
 <!-- run: none -->
 ```python

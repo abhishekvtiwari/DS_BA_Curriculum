@@ -1,7 +1,7 @@
 """Does a deeper discount buy Riverstone more orders? One year, one answer."""
 import pandas as pd
 
-DATA = "."
+DATA = "../full"
 
 
 def customer_year(year=2025, segment=None, min_orders=1):
