@@ -76,18 +76,31 @@ Plus the **visual standard** (see `review/briefs/VISUAL_BRIEF.md`):
   - Git in Ch 26, with a new §26.0 "The terminal in 20 minutes".
 
   **Chapter 6 becomes tool-free.**
-- **D1:** Power BI (Ch 16) stays before Python (Ch 17–18). Ch 16 must not assume pandas.
+- **Reading order (Abhishek, 28 Sep): follow `planning/chapter-map.md`.**
+  - Part II reads 10, 11, 19, 12, 13, 17, 18, 14, 15, 16, 20, then 21–27.
+  - Part III reads 28, 34, 29, 32, 33, 30, 31.
+  - Where a finding, or a decision below, assumes a different order, hold it (`Open`, reason in `notes`) and list it under "Questions for Abhishek". Don't guess.
+  - The affected findings are listed in `review/reading-order-conflicts.md`.
+- **D1 (in question):** "Power BI (Ch 16) stays before Python (Ch 17–18). Ch 16 must not assume pandas." This contradicts the chapter-map order, which puts Python before Ch 14–16. It is not applied until Abhishek answers.
 - **D2:** Ch 34 is split. Terminal essentials move to Ch 26 §26.0; Linux and networking stay in Ch 34.
 - **D3:** regression basics become a new final section of Ch 22.
 - **D6:** Chapter 6 is split, with no renumbering.
   - A new **unnumbered front section, "How to Use This Book"**, goes before Chapter 1 (4–6 pages). It covers how each chapter is laid out, how to read the code cells and their outputs, the four exercise groups and the answers, how the parts climb, a rough sense of time (pointing to Ch 6), and where the companion files are. It takes old §6.9 (chapter anatomy, exercises) and adds the rest new.
   - **Chapter 6 keeps its number and becomes "Planning Your Learning"**: the honest hours table, the weekly rhythm, a tool timeline (no installs), learning with AI assistants, reading documentation, and a project to plan your route and first 90 days.
   - Also update the Part 0 contents, Ch 5's "Where this leads" and Ch 9's references to Ch 6. The spec is Chapter 6 of `review/part-0-and-I/fix-instructions-DRAFT-parked.md`.
-- Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. A one-page NumPy basics section goes in Ch 18.
+- **In question:** Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. The chapter map says pandas in Ch 14/15 is legitimate, because Python comes first. Not applied until Abhishek answers.
+- A one-page NumPy basics section goes in Ch 18.
 - Part 0 and Part I findings are approved (status `Approved` in the CSV).
 - **Version rule:** where a chapter exists in several versions, the latest is final. Ch 12's final version is Draft v4 (96 pages, 19–23 h, expanded §12.13). The Blueprint files are out of scope.
 
 ## 4. What you may fix: the approval gate
+
+**In force since 28 Sep 2026:**
+- **Global rules:** A1 is ticked and A3 is not. All themes T1–T14 and V1–V12 are Approve.
+- **Structural decisions:** D2–D7 are Approve.
+- **Option picks:** strictly the recommended option, else (a).
+- **Reader's Journey rows:** approved.
+- **Exception:** rows that assume the sequence-map reading order are held `Open` (see §3).
 
 Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Global rule A1:** every row becomes `Approved` unless its theme (section B) or its row (section E) says Reject, Defer or Modify.

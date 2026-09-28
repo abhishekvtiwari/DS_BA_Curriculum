@@ -5,13 +5,15 @@ Claude Code reads this file before every fix session and copies your decisions i
 
 Allowed words in the **Decision** column: **Approve** · **Modify** (write what to do in Notes) · **Reject** · **Defer** (later edition).
 
+> **Approved by Abhishek on 28 Sep 2026, in the Claude Code session ("This message is my approval").** This file records that message. Where it differs from the earlier draft, the message wins: no A3, V12 Approve, option picks strictly by "recommended, else (a)", reading order = `planning/chapter-map.md`, Reader's Journey rows approved.
+
 ## A. Global rule
 
 Tick **A1 or A2** by putting an `x` in the brackets, like `- [x]`. Tick **A3** as well if you want it.
 
 - [x] **A1.** Approve every finding as written, except themes or rows I mark below. *(fastest)*
 - [ ] **A2.** Approve only the themes I mark Approve below; everything else waits for a row-by-row decision.
-- [x] **A3.** Also show me every **High** finding one by one before it is fixed (Claude Code lists them per part in the pull request for me to tick).
+- [ ] **A3.** Also show me every **High** finding one by one before it is fixed (Claude Code lists them per part in the pull request for me to tick).
 
 ## B. Themes (one decision covers every matching row)
 
@@ -42,7 +44,7 @@ Tick **A1 or A2** by putting an `x` in the brackets, like `- [x]`. Tick **A3** a
 | V9 | Two-digit list numbers clipped: widen list indent | Approve | One CSS change (wider list indent). |
 | V10 | Tables: no-wrap for code/IDs, right-aligned numbers, keep short tables together, fix white-on-white headers | Approve | CSS for tables (no mid-token wraps, right-aligned numbers, keep short tables together, header contrast). |
 | V11 | Rendering: escape $, render formulas properly, lint Markdown/HTML, font with ₹ | Approve | Escape $, render formulas, font with ₹; mostly build and CSS fixes. |
-| V12 | Scale/resolution: Ch 19 at 100%, screenshots at 2×, rasters ≥ 300 ppi | Modify | Approve for figures drawn by scripts (re-render at ≥ 300 ppi) and Ch 19 scale. Screenshots of Excel / Power BI / VBA cannot be retaken in the fix environment (no Windows apps): leave those rows Open and list them for you to recapture at 2×. |
+| V12 | Scale/resolution: Ch 19 at 100%, screenshots at 2×, rasters ≥ 300 ppi | Approve | Approved by Abhishek (28 Sep). Screenshots that can't be retaken in the fix environment (Excel, Power BI, VBA on Windows) are listed in the part PR for recapture. |
 
 ## C. Structural decisions
 
@@ -50,7 +52,7 @@ Tick **A1 or A2** by putting an `x` in the brackets, like `- [x]`. Tick **A3** a
 |---|---|---|---|---|
 | D1 | Book structure changes already approved (25 Sep): just-in-time tool setup, Ch 6 tool-free, Power BI (Ch 16) before Python, Ch 34 split (terminal essentials → Ch 26 §26.0), regression basics = new last section of Ch 22, Python in Ch 14/15 moves to Ch 18 | Already approved | Approve |  |
 | D2 | Part VIII renumbering (72A→73 … 82→84, Closing → 85) and stable question codes (SQL-001, DSA-001…) — details in `review/content/ch72A.md`, row 72A.2 | Renumber + stable codes | Approve | Renumber 72A→73 … 82→84, Closing → 85, plus stable question codes (SQL-001…). Done last (final pass) so only one renumbering touches the book; stable codes make future moves safe. |
-| D3 | Riverstone fact sheet: one timeline for Meera (Ch 1 vs Ch 83), one loaded hourly rate (₹300 or ₹1,200), one exchange rate, one warehouse story (DuckDB vs Postgres+Delta) | Claude Code drafts `review/riverstone-facts.md` for you to approve before Part II fixes | Approve | I draft `review/riverstone-facts.md` as its own PR; no T10 row is fixed until you merge it. My suggested defaults to put in it: Meera joins as a sales coordinator (Ch 1) and the Ch 83 span is shortened to fit the dated data (83.1); loaded hourly rate ₹300 (66.5, see D below); Flash sent by 07:30 IST after the 06:30 Dagster run (60.3). Exchange rate and warehouse story (DuckDB vs Postgres+Delta) I will propose in the fact sheet from what the chapters say, with the evidence, for you to pick. |
+| D3 | Riverstone fact sheet: one timeline for Meera (Ch 1 vs Ch 83), one loaded hourly rate (₹300 or ₹1,200), one exchange rate, one warehouse story (DuckDB vs Postgres+Delta) | Claude Code drafts `review/riverstone-facts.md` for you to approve before Part II fixes | Approve | Abhishek, 28 Sep: Claude Code drafts `review/riverstone-facts.md` (people, timeline, hourly rate, exchange rate, systems, warehouse story, datasets, flash time) and checks every chapter against it. Abhishek approves it before Part II. |
 | D4 | Order of work | Style fixes for the whole book first, then Part 0 → Closing, one pull request per part | Approve | Style fixes are shared (template/CSS), so doing them once first avoids re-doing every part. Riverstone fact sheet PR before Part II content. |
 | D5 | Output format of fixed chapters | Same format as your current sources, rebuilt to PDF | Approve | Keep Markdown + the existing pandoc/Chromium pipeline; the setup PR shows it rebuilds Ch 12 identical to the reviewed v4. |
 | D6 | Chapter 6 structure: study-guide material must come before Chapter 1 | Abhishek's decision, 28 Sep | Approve | New unnumbered front section "How to Use This Book" before Chapter 1 (4–6 pp: chapter anatomy from old §6.9, reading code cells and outputs, the four exercise groups and answers, how the parts climb, rough time pointing to Ch 6, companion files). Chapter 6 keeps its number, renamed "Planning Your Learning" (honest hours table, weekly rhythm, tool timeline with no installs, AI assistants, reading documentation, project: plan your route and first 90 days). No renumbering. Also update the Part 0 contents, Ch 5 "Where this leads", Ch 9's references to Ch 6, and the Part 0/I fix instructions. Done in the Part 0 + I build. |
@@ -63,11 +65,11 @@ These 34 findings offer options (a)/(b). **If you leave a row blank, Claude Code
 | Finding | Ch | The question | Your choice | Notes |
 |---|---|---|---|---|
 | V12.27 | 12 | The cover says "Chapter 12" with no full stop; the p. 3 heading and contents say "Chapter 12.". | "Chapter 12." with the full stop, everywhere | Matches the H1 of all 85 manuscript files and the contents; only the cover template changes (V1). |
-| 14.15 | 14 | Contradicts the table just above it: product 105 (Industrial Crate; ₹1,400 in §14.11 step 9) had a pre-Q4… | (b) | Keeps the crate example; states the real maximum (65) and makes the overall-vs-per-product rule explicit. No product swap, so fewer knock-on edits. |
+| 14.15 | 14 | Contradicts the table just above it: product 105 (Industrial Crate; ₹1,400 in §14.11 step 9) had a pre-Q4… | (a) | No option is marked recommended, so (a) per the rule: name a product whose history reaches 85–90, and make the overall-vs-per-product rule explicit. |
 | 16.5 | 16 | The reader is never told how to build Sales. Raw tables are imported; the text then says "use the view idea"… | Recommended: import the sales_lines view as Sales | One path with every click; reuses the Ch 13 view the reader already built. Keep the CSV route as the alternative the finding describes. |
 | 17.30 | 17 | This contradicts itself twice. A duplicate of a ~400-row file would have ~400 rows, not 1,900, and the… | The finding's version (412-row duplicate, ₹1.4 crore) | Only story that is internally consistent; change both sentences. |
 | 18.23 | 18 | The fact that bins include the right edge (25,000 is "medium", 50,000 is "large") is not stated. Ch 19's VBA… | right=False, Ch 16, 18, 19 agree | Matches "≥ 50,000 is very large" and Ch 19's VBA; counts recomputed by code. |
-| 19.8 | 19 | The VBA editor is ANSI and can't hold "₹". It turns into "?" when typed or imported from a .bas file, so the… | ChrW(8377) & Format(...); international grouping | ChrW is the only way to get ₹ from VBA. Grouping follows the book-wide choice below (international, as in "₹4,335,471"). |
+| 19.8 | 19 | The VBA editor is ANSI and can't hold "₹". It turns into "?" when typed or imported from a .bas file, so the… | ChrW(8377) & Format(...); Indian lakh grouping | The fix is the only one offered. Grouping follows 67.9's recommendation (Indian lakh grouping book-wide), for consistency. |
 | 22.9 | 22 | Inconsistent and untested. (a) §22.3 says the email test "should have named revenue per recipient if the goal… | Option A (open rate is primary) | Keeps the recommendation and the chapter's logic; no new statistics needed at this point. |
 | 23.8 | 23 | Inconsistent with the chapter's own figures. §23.4 says receivables rose by only ₹45.9 lakh. Opening… | (a) | Changes less (the finding says so); adds a small quarterly table computed by code; §23.4's cash-flow numbers stay intact. |
 | 24.5 | 24 | The requester is inconsistent: the worked arc and memo say Anita asked; the real-world story says Vikram… | Vikram raises the ask; memo to Vikram, cc Anita | Matches Ch 3 roles (Vikram = Sales Manager, Anita = Sales Head, decision-maker). |
@@ -80,17 +82,17 @@ These 34 findings offer options (a)/(b). **If you leave a row blank, Claude Code
 | 52.22 | 52 | The role can only be assumed by ECS tasks. The chapter deploys to Kubernetes (§52.3, and CI's kubectl), which… | ECS Fargate throughout | Follows §52.8's own recommendation; the trust policy is already correct for it. |
 | 56.2 | 56 | Contradiction. In Ch 53, 97.5% recall is the 0.01 threshold, but the packaged defect_v1 has threshold 0.1 and… | Recommended: plant manager chose 0.1 (95%) | No re-runs needed; one explanatory sentence in 56.3. |
 | 56.16 | 56 | Three vs four layers. The figure has four rows, the (broken) table has three with output and outcome merged,… | Keep three layers, third has two streams | Matches the text, glance, recap and "You've got it"; only the figure changes. |
-| V57.9 | 57 | Prose uses ₹ (₹4.74, ₹1,000, ₹0.08), while figures and code output use "Rs" (Fig 57.2 "Rs 23.62"; outputs "Rs… | ₹ in figures; explain once that code prints "Rs" | Figures are redrawn anyway (V3); code output stays real (ASCII "Rs" in printed output), with one sentence explaining why. |
-| V58.9 | 58 | Prose uses ₹ (₹100,000, ₹13,380), while figures and code output use "Rs" (Fig 58.1 "over Rs 100,000"; Fig… | Same as V57.9 | Same convention in both chapters. |
+| V57.9 | 57 | Prose uses ₹ (₹4.74, ₹1,000, ₹0.08), while figures and code output use "Rs" (Fig 57.2 "Rs 23.62"; outputs "Rs… | ₹ in figures and in printed code output | No option is marked, so (a) per the rule: one convention (₹) for printed output and figures. Code is changed to print ₹ and re-run. |
+| V58.9 | 58 | Prose uses ₹ (₹100,000, ₹13,380), while figures and code output use "Rs" (Fig 58.1 "over Rs 100,000"; Fig… | ₹ in figures | No option is marked; (a) per the rule, and the same convention as V57.9. |
 | 59.1 | 59 | Only Cases 1 and 9 are Riverstone's. Case 7 is "Customer support automation at a subscription business … A… | (A) | Keeps the honest composite label; no numbers are invented or re-measured. (B) would be a larger rewrite. |
 | 59.12 | 59 | Every other chapter has exercises; this one tells the reader to spend an afternoon on a mapping it never… | Add the Practice section as specified | The only option given; every other chapter has exercises. |
 | 60.3 | 60 | Three different Flash timings in the book. Ch 20: Flash at 07:30 IST, after an overnight ERP load (L559,… | Flash by 07:30 IST after the 06:30 Dagster run | Suggested by the finding; matches Ch 20 and Ch 46; Ch 61 becomes "as of 06:35". |
 | 63.1 | 63 | The duplicate count contradicts itself in five places. Figure: 4. §63.8 text: two branches, near-identical… | Option A (two pairs, keep 4) | Totals stay 24, so no ripple into the other categories or figures. |
 | 66.3 | 66 | Contradiction. §66.2 scores Governance & security 3.4, second-highest; the weakest are Data-driven culture… | (a) split the governance dimension | Keeps the governance/catalog hire and Ch 67's story; only the scorecard gains a row. |
 | 66.5 | 66 | Ch 20 gives only 325 hours/yr, and Ch 63's ROI table values the same saving at ~₹3.9 lakh (₹1,200/hr loaded… | ₹300/hour loaded rate, book-wide | Keeps Ch 66's "45%" story and Ch 67's board speech; only Ch 63's "~₹3.9 lakh" changes to "~₹97,500". Recorded in the fact sheet (D3). |
-| 67.9 | 67 | Inherits Ch 66's numbers, which depend on the unresolved hourly-rate conflict with Ch 63 (Ch 66 review 66.5:… | Follow 66.5 (₹300); international grouping | With ₹300 the figures stay; grouping follows the book-wide choice (see V67.7). |
-| V67.7 | 67 | "₹2,03,775" and "₹4,56,168" use Indian lakh grouping. The same numbers print as "₹203,775" and "₹456,168" in… | International grouping (₹203,775) book-wide | The book's dominant style and the reconciled anchors use it (₹4,335,471; ₹439,823.50); lakh/crore stay as words in prose where already used. |
-| 72.3 | 72 | These need material the book never teaches (0 hits in Ch 17/18/29/33): mutable default arguments, shallow vs… | (a) teach in Ch 17/18/29; (b) only for Q72-011 and Q72-004 if (a) grows too big | Tests should only cover taught material; the finding lists exactly where each topic fits. |
+| 67.9 | 67 | Inherits Ch 66's numbers, which depend on the unresolved hourly-rate conflict with Ch 63 (Ch 66 review 66.5:… | Follow 66.5 (₹300); Indian lakh grouping (₹2,03,775) book-wide | Recommended by the finding: "Indian lakh grouping suits an Indian audience". See the question in the setup PR about the scale of this change. |
+| V67.7 | 67 | "₹2,03,775" and "₹4,56,168" use Indian lakh grouping. The same numbers print as "₹203,775" and "₹456,168" in… | Indian lakh grouping book-wide | No option is marked; follows 67.9's recommendation so the book has one convention. |
+| 72.3 | 72 | These need material the book never teaches (0 hits in Ch 17/18/29/33): mutable default arguments, shallow vs… | (a) teach each topic in Ch 17/18/29 | Option (a) per the rule. |
 | 73.4 | 73 | Never taught anywhere in the book (0 mentions in Ch 21/22/30/31 or elsewhere). "Learn it in: Chapter 21 or… | (a) box in Ch 21 | Recommended; Ch 21's complement rule is the exact tool the birthday problem needs. |
 | 76B.11 | 76B | These are asked but never taught. Ch 25 §25.8 teaches Given/When/Then without the name "Gherkin"; Ch 26… | (a) teach in Ch 24/25/26 | Recommended; three short additions cover all six terms. |
 | 80.2 | 80 | Contradicts the book. By Ch 60 §60.5 ("by early 2026, Riverstone has built a warehouse and orchestrator (Part… | (a) reframe as history | Keeps the model answer, adds a self-check against Ch 60; recommended. |
@@ -103,4 +105,6 @@ List any single finding you want handled differently from its theme:
 
 | Finding | Decision | Notes |
 |---|---|---|
-| RJ-* (Reader's Journey rows) | Approve under A1 | The setup PR adds the 130 Reader's Journey findings (new ones as rows, duplicates noted against their originals). A1 covers them like any other row. If you would rather hold them, change this to Defer. |
+| RJ-* (Reader's Journey rows) | Approve | Abhishek, 28 Sep. The 64 new RJ rows are approved; the 66 duplicates are recorded against their originals and not added twice. |
+| Reading order | chapter-map.md | Abhishek, 28 Sep: follow `planning/chapter-map.md`. Findings that assume a different order are held `Open` and listed under "Questions for Abhishek"; nothing is guessed. |
+| Any finding that assumes the sequence-map order | Open (held) | Listed in `review/reading-order-conflicts.md` and in the setup PR. |
