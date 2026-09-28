@@ -56,9 +56,9 @@ Chapter 1 (section 1.2) introduced the ladder from data to insight. Business que
 
 | Kind | The question | Riverstone example | What it needs |
 |---|---|---|---|
-| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing (Chapters 10–13) |
+| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing |
 | **Diagnostic** | Why did it happen? | *Why did March fall 80.3% from February?* | Breaking down, comparing, testing hypotheses (this chapter) |
-| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models (Chapters 36 and 40) |
+| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models |
 | **Prescriptive** | What should we do? | *Should sales offer a discount to customers who didn't reorder?* | Options, criteria, and judgment (section 5.8) |
 
 Most requests arrive as descriptive questions but are really diagnostic or prescriptive underneath. *"What was March revenue?"* usually means *"Is March a problem, and what should we do about it?"* Answering only the surface question is the most common way to do correct work that doesn't help.
@@ -180,9 +180,11 @@ Here is the question from section 5.2, answered with an issue tree. All the numb
 | February 2026 | 5 | ₹32,340 | ₹161,700 |
 | March 2026 | 2 | ₹15,900 | ₹31,800 |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Both parts fell. How much of the ₹129,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹161,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹129,900.
 
-> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't. Chapter 23 shows more careful ways to break down a change in a KPI.
+> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't.
 
 **Step 2. Fewer orders: which customers?** Five customers had orders invoiced in February: Sharma Hardware, Metro Mart, Coastal Foods, Sunrise Caterers, and Northgate Distributors. In March, only Sharma Hardware and Green Leaf Hotels were invoiced. Metro Mart ordered in March, but its order is still pending. So three customers ordered in February and not at all in March: **Coastal Foods, Sunrise Caterers, and Northgate Distributors**.
 
@@ -204,6 +206,8 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 | Green Leaf Hotels | yes | ₹0 | ₹0 |
 | Metro Mart | yes (pending) | ₹0 | ₹0 |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Every customer with an overdue balance placed no order in March, and no customer who ordered in March had anything overdue. The three customers from step 2 owe ₹82,510 between them, all of it overdue.
 
 That's a striking pattern, and it's exactly the moment to slow down. It doesn't say *which way* the connection runs, or whether there is one. A customer short of cash might stop ordering until it pays. A customer unhappy with a delivery might both withhold payment and stop ordering, so a single cause would explain both (section 5.6). Or, with seven customers, it could be coincidence. One detail points to a specific question: Northgate's February order still shows *Shipped*, not *Delivered*. If the crates never arrived, Northgate isn't a late payer; it's a customer waiting for its goods.
@@ -215,8 +219,6 @@ This branch ends as a **hypothesis to test outside the data**: a phone call to e
 **What to tell Anita.** A good answer is short, ranked, and honest about confidence:
 
 > *"March billed revenue was ₹31,800, down 80.3% from February. About three-quarters of the fall is fewer orders: Coastal Foods, Sunrise Caterers, and Northgate didn't reorder in March, and February's two wholesale orders alone were 67.5% of that month. Metro Mart's ₹26,220 order is still pending; shipping it brings March to ₹58,020. All three customers who didn't reorder have overdue balances (₹82,510 in total), and Northgate's order still shows as not delivered. I'd call all three this week, starting with Northgate, before offering any discounts. I can't tell yet whether March is seasonally slow; that needs last year's data."*
-
-> **SQL link.** Every number in this walk-through is a short query on the mini database (Chapter 12); Chapter 13's month-over-month and customer patterns do the same at scale.
 
 ---
 
@@ -238,6 +240,8 @@ Here are statements from Riverstone's Monday sales review, sorted:
 | "Northgate will pay next week." | assumption | Write it down, give it an owner, and check it by a date. |
 | "Northgate is a difficult customer." | opinion | Ask what experience it's based on; check the delivery status first. |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Businesses run on opinions and assumptions, because there's never time to check everything. The danger is when they're **presented as facts**, or an old assumption quietly becomes "what we know". List your assumptions in one place, so anyone can challenge them.
 
 ---
@@ -258,7 +262,7 @@ Chapter 4 (section 4.10) covered number tricks. This section is about the reason
 - **A common cause: C causes both.** In section 5.4, overdue balances and missing reorders went together. A delivery problem could cause both: the customer won't pay for goods it hasn't received, and won't reorder either. Chasing payment harder would then make things worse.
 - **Selection: the cases were chosen in a way that creates the pattern.** *"Customers who attend our trade fair order more."* Maybe the ones who attend were already the most engaged customers.
 
-And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance, and Chapters 30 and 31 cover how to test cause and effect properly, with experiments and without them.
+And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance.
 
 > **Watch out: your own analysis is a claim too.** The five questions apply to what you're about to send. The note to Anita in section 5.4 states a measured fact ("about three-quarters of the fall is fewer orders") and a recommendation ("I'd call them"), but it's careful not to say "customers stopped ordering *because* they owe us money".
 
@@ -278,6 +282,8 @@ A **cognitive bias** is a predictable way in which people's judgment drifts from
 | **Small numbers**: trusting patterns from very few cases | "All the customers who owe us stopped ordering" is based on four customers | Give the counts; call it a hypothesis until more cases agree (Chapter 4, section 4.8) |
 | **The analyst's own bias**: wanting an interesting finding | A clean story about overdue balances is more exciting than "one big order made February unusual", so it's tempting to lead with it | State the ordinary explanation first if it's the bigger one |
 
+*Source for the Riverstone numbers: Mini database (Jan–Mar 2026).*
+
 The last row matters most. Analysts are rewarded for insights, so there's a pull toward the surprising story; a good reputation rests on being right, which often means reporting the ordinary explanation clearly.
 
 ---
@@ -295,6 +301,8 @@ Analysis exists to help someone decide. Data rarely decides by itself; it narrow
 | **Reversibility** | How costly is it to be wrong? | A call is cheap and can't do much harm. A discount sets a price expectation that's hard to take back. A hold could lose a customer whose goods never arrived. |
 | **Recommendation and confidence** | What should we do, and how sure are we? | B this week; decide on C or D after the calls. Medium confidence: the pattern is clear, but it's four customers and the cause is unknown. |
 | **What would change my mind** | Which new fact would change the recommendation? | If customers say price is the reason and their balances are paid, reconsider C. If goods weren't delivered, fix the delivery before anything else. |
+
+*Source: Mini database (Jan–Mar 2026).*
 
 Three principles sit behind the table:
 
@@ -335,7 +343,7 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 
 **3. The tests.** All from the one-year database.
 
-- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times (Chapter 13). There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
+- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times. There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
 - **Missed and slow.** **8 of the 30 (26.7%) were never contacted at all.** The other 22 waited an average of **9.7 days** for a first contact. One referral, Tulip Mart, has been waiting since 23 September, 99 days.
 - **Lost after contact.** 6 of the 22 contacted leads were won (27.3%). Of the leads contacted within a week, 3 of 8 were won; of those contacted later, 3 of 14. That fits "faster is better", but with numbers this small it's a hypothesis, not a finding.
 - **Capacity.** If the team were overloaded, the executives handling the most customer orders should miss the most leads. The data says the opposite:
@@ -346,6 +354,8 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 | Rahul Mehta | 53 | 10 | 3 | 10.9 |
 | Neha Kulkarni | 46 | 15 | 5 | 9.8 |
 
+*Source: One-year database (2025 CRM leads).*
+
 Farah, with the most orders, missed none of her leads. Neha, with the fewest orders, was assigned half of all leads, including 9 of the 14 website enquiries, and missed 5. Website leads were the most often missed: 5 of 14 were never contacted.
 
 **4. Checking herself.** The CRM doesn't record time spent on visits, calls, or complaints, so orders aren't the whole workload. And reading the table as "Neha is the problem" would be unfair: she got as many leads as Rahul and Farah combined, including most website enquiries. The pattern points at **how leads are routed and followed up**, not at a person.
@@ -354,7 +364,7 @@ Farah, with the most orders, missed none of her leads. Neha, with the fewest ord
 
 > *"The data doesn't support hiring for lead volume: 30 real enquiries came in last year (the CRM's 43 includes duplicates), fewer than one a month per executive. The problem is follow-up: 8 enquiries were never contacted and the rest waited almost 10 days on average. Missed leads are concentrated among website enquiries and in the largest lead list, not with the busiest executive. I'd (1) call the 8 uncontacted leads this week, starting with the Tulip Mart referral, (2) spread website leads evenly, (3) set a two-working-day rule for first contact with a daily reminder, and (4) fix the duplicate website submissions. What would change my mind: if leads grow sharply, or if response times are still slow after a quarter of the new routing, a hire is worth revisiting. The CRM doesn't record time spent, so I can't rule out that the team is busy with work outside orders and leads."*
 
-Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (Chapter 20 does exactly that).
+Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (you'll build that reminder yourself later in the book).
 
 The request was a solution ("hire"). Meera turned it into a question about a cause, tested each branch, avoided blaming one person, stated what she couldn't see, and recommended cheap, reversible steps first, with a clear condition for revisiting the expensive one.
 
@@ -470,20 +480,19 @@ descriptive question · diagnostic question · predictive question · prescripti
 
 ## Where this leads
 
-- **Chapter 6, Setting Up to Learn,** installs the tools you'll use to test hypotheses, and helps you build a study plan.
+- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
 - **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
 - **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
 - **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
 - **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
 - **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
 - **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
+- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
 - **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
 
 ---
 
 ## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** (a) Descriptive. (b) Prescriptive. (c) Diagnostic. (d) Predictive. (e) Descriptive.
 

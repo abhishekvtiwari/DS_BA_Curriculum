@@ -20,7 +20,7 @@
 
 Every job in this book, from a junior analyst's first report to an architect's design for a whole company, is built on one raw material: **data**. Tools change every few years. Spreadsheets gave way to databases, databases to cloud warehouses, and now AI assistants can write the formulas for you. The raw material stays the same.
 
-That's why this chapter comes before any tool. People who skip it can learn the buttons in Excel or the words in SQL and still produce reports that are confidently wrong: an "average" of PIN codes, a customer counted twice because their name was typed in capitals, a sales total that silently left out every blank row. These mistakes aren't about software. They come from not asking basic questions about the data first: *What does each value mean? What kind of value is it? What calculations does it allow? Where did it come from? Can I trust it?*
+That's why this chapter comes before any tool. People who skip it can learn the buttons in Excel or the words in SQL, the language for asking a database questions, and still produce reports that are confidently wrong: an "average" of PIN codes, a customer counted twice because their name was typed in capitals, a sales total that silently left out every blank row. These mistakes aren't about software. They come from not asking basic questions about the data first: *What does each value mean? What kind of value is it? What calculations does it allow? Where did it come from? Can I trust it?*
 
 By the end of this chapter you'll ask those questions automatically. It's a small habit, and it's the one that experienced analysts are quietly relying on every time they say, "Wait, that number doesn't look right."
 
@@ -38,6 +38,24 @@ Picture the owner of a small grocery shop in your neighborhood. Next to the till
 Now notice two more things about the notebook. First, the owner writes every line **the same way**: date first, then name, then items, then amount. That consistent layout is what makes adding things up possible. Second, some lines are hard to use: a smudged amount, a name written as "Joshi aunty" one day and "Mrs. Joshi" the next. That's a **data quality** problem, and every business, from this shop to the largest bank, has the same problem at a bigger scale.
 
 Everything in this chapter is a version of that notebook.
+
+> **Meet Riverstone.** Riverstone Supplies is the fictional company you'll follow through this book. It makes and sells plastic storage boxes, kitchenware, industrial crates and a small range of furniture to shops, hotels and wholesalers. It has two plants, at Taloja and Chakan, and one warehouse, at Bhiwandi.
+>
+> You'll practise on two of its datasets:
+>
+> - **The mini database:** 12 orders from January to March 2026, small enough to check by eye. Chapters 1–5 and 12 use it.
+> - **The one-year database:** all of 2025, 173 orders plus 2 that were cancelled. You'll use it from Chapter 4 onward.
+>
+> Every table and figure of Riverstone numbers says which of the two it comes from. These are the people you'll meet:
+>
+> | Who | Role | First met in |
+> |---|---|---|
+> | Meera Iyer | sales coordinator | Chapter 1 |
+> | Anita Rao | Sales Head | Chapter 1 |
+> | Vikram Singh | Sales Manager | Chapter 3 |
+> | Neha Kulkarni, Rahul Mehta, Farah Khan | sales executives | Chapters 1–2 |
+> | Suresh Menon | Finance Manager | Chapter 3 |
+> | Imran | ran sales operations before Meera joined | Chapter 2 |
 
 ---
 
@@ -79,26 +97,26 @@ People often use *data* and *information* as if they mean the same thing. In dat
 | **Knowledge** | an understanding of patterns and causes | Why did it happen? |
 | **Insight** | a conclusion that points to an action | So what should we do? |
 
-Here's the ladder with real numbers from **Riverstone Supplies**, a fictional company that sells storage boxes, kitchenware, and industrial crates to shops, hotels, and wholesalers across India. You'll use its data throughout the book.
+Here's the ladder with real numbers from Riverstone's mini database.
 
 ![The ladder from data to insight, with Riverstone's first quarter](figures/fig1-1-data-to-insight.svg)
 
-*Figure 1.1 — The same twelve orders at four levels of usefulness.*
+*Figure 1.1 — The same twelve orders at four levels of usefulness. Mini database (Jan–Mar 2026).*
 
 - **Data.** Riverstone's system holds twelve orders from January to March 2026. Each has an order number, a customer, a date, and a status such as *Delivered*, *Shipped*, or *Pending*. On their own, twelve rows tell a manager nothing.
-- **Information.** Add up the value of delivered and shipped orders for each month: January ₹104,210, February ₹161,700, March ₹31,800. Now there's a clear message: March fell by 80% compared with February.
+- **Information.** Add up the value of delivered and shipped orders for each month: January ₹1,04,210, February ₹1,61,700, March ₹31,800. Now there's a clear message: March fell by 80% compared with February.
 - **Knowledge.** Look closer and you learn *why*. Most of Riverstone's revenue comes from a few big wholesale orders, and none were placed in March. One more March order, worth ₹26,220, exists but is still *Pending*, so it isn't counted yet.
 - **Insight.** So March is not the collapse the headline number suggests. The useful actions are to ship the pending order before the quarter closes, and to call the big wholesale buyers this week to find out why they haven't reordered.
 
 Notice what made each step possible. Information needed a **question** ("how much did we sell each month?") and a **rule** ("count only delivered and shipped orders"). Knowledge needed a closer look at **detail and context**. Insight needed **judgment about the business**. Tools help most with the first step; your value as an analyst grows as you climb.
 
-> **Watch out: a number is not an insight.** "March revenue: ₹31,800" is information. Reports that stop there leave the reader to guess what it means, and people often guess wrong. Chapter 24 shows how to write the "so what" that turns a number into a decision.
+> **Watch out: a number is not an insight.** "March revenue: ₹31,800" is information. Reports that stop there leave the reader to guess what it means, and people often guess wrong. Add the "why" and the "so what" before you send it.
 
 ---
 
 ## 1.3 Records, fields, and datasets
 
-Data becomes easy to use when it's arranged in a **table**: a grid of rows and columns. Almost every tool in this book, from spreadsheets to databases to Python, works with tables.
+Data becomes easy to use when it's arranged in a **table**: a grid of rows and columns. Almost every tool in this book, from spreadsheets to databases to Python, a programming language, works with tables.
 
 Here's a receipt from a neighborhood store, and the same receipt as a table.
 
@@ -115,7 +133,7 @@ The vocabulary:
 
 Two ideas from this small example will stay with you for the whole book.
 
-**1. Decide what one row means.** In Figure 1.2, one row is one *item* on a bill, not one *bill*. That's why `bill_no`, `bill_date`, and `paid_by` are repeated on all five rows: each row needs to stand on its own. The level of detail one row represents is called the **grain** of a table. When two people disagree about a number, they're very often counting at different grains: "5 sales" (items) versus "1 sale" (bill). Chapter 12 shows how getting the grain wrong makes totals double-count.
+**1. Decide what one row means.** In Figure 1.2, one row is one *item* on a bill, not one *bill*. That's why `bill_no`, `bill_date`, and `paid_by` are repeated on all five rows: each row needs to stand on its own. The level of detail one row represents is called the **grain** of a table. When two people disagree about a number, they're very often counting at different grains: "5 sales" (items) versus "1 sale" (bill).
 
 **2. Store the ingredients, calculate the results.** The receipt prints a total of ₹1,092, but the table has no "total" row. You can always calculate it: 165 + 540 + 112 + 135 + 140 = ₹1,092. A total typed in as a row would get added in again by anyone who sums the column, and it would be wrong the moment someone corrected a line. Keep the detailed facts; calculate summaries when you need them.
 
@@ -147,7 +165,7 @@ Getting the type right matters more than beginners expect.
 
 **Missing values.** Sometimes a value simply wasn't recorded. A blank is not the same as zero: a blank "discount" might mean *no discount* or *nobody wrote it down*. Databases use a special marker, **NULL**, for "unknown", and Chapter 12 shows how it trips up calculations. For now, whenever you see a blank, ask: **does this mean zero, "not applicable", or "unknown"?**
 
-> **Watch out: the type you see isn't always the type that's stored.** A spreadsheet can *show* `14-09-2026` while storing it as text, and then refuse to sort or group it by month. Chapter 10 shows how to check what a cell really contains.
+> **Watch out: the type you see isn't always the type that's stored.** A spreadsheet can *show* `14-09-2026` while storing it as text, and then refuse to sort or group it by month.
 
 ---
 
@@ -174,13 +192,13 @@ Money is technically discrete (you can't pay a fraction of a paisa), but because
 | `paid_by` | qualitative | — |
 | `bill_no` | qualitative (it's a label, not an amount) | — |
 
-This isn't just labeling. It decides which **chart** fits (a bar chart for categories, a histogram for continuous amounts, Chapter 15) and which **summary** makes sense (a count of each payment method, but an average of prices).
+This isn't just labeling. It decides which **chart** fits (a bar chart for categories, a histogram for continuous amounts) and which **summary** makes sense (a count of each payment method, but an average of prices).
 
 ---
 
 ## 1.6 Levels of measurement: which math is allowed
 
-Not all numbers support the same calculations. A useful way to think about this is the four **levels of measurement**, described by the psychologist S. S. Stevens in the 1940s and still taught in every statistics course. Each level allows everything the level above it allows, plus something new.
+Not all numbers support the same calculations. A useful way to think about this is the four **levels of measurement**, described by the psychologist S. S. Stevens in the 1940s and still taught in every statistics course. Each level can do everything the level before it can, plus something new.
 
 ![The four levels of measurement and the calculations each allows](figures/fig1-3-levels-of-measurement.svg)
 
@@ -207,11 +225,11 @@ Riverstone asks customers to rate two delivery partners from 1 (very poor) to 5 
 
 Check the means by hand: 15 ÷ 5 = 3.0, and 17 ÷ 5 = 3.4. ✓
 
-On the mean, Rapid Wheels looks slightly better. But look at the ratings themselves. Swift Movers is consistently average. Rapid Wheels delights most customers and badly fails two out of five, which, for a supplier delivering to hotels, might mean a banquet with no plates. The mean treats the gap between 1 and 5 as four equal steps, which a rating scale doesn't promise. For ordinal data, the **median** and the **count in each category** ("two of five customers gave a 1") are more honest summaries. Chapter 21 goes deeper into choosing averages.
+On the mean, Rapid Wheels looks slightly better. But look at the ratings themselves. Swift Movers is consistently average. Rapid Wheels delights most customers and badly fails two out of five, which, for a supplier delivering to hotels, might mean a banquet with no plates. The mean treats the gap between 1 and 5 as four equal steps, which a rating scale doesn't promise. For ordinal data, the **median** and the **count in each category** ("two of five customers gave a 1") are more honest summaries.
 
 ### Worked example 2: twice as hot?
 
-Riverstone's warehouse was 20 °C in the morning and 40 °C in the afternoon. A report says, "The warehouse was twice as hot in the afternoon." It wasn't. Celsius has no true zero, so ratios don't work. Temperature *does* have a true zero on the Kelvin scale, which scientists use (0 K is absolute zero). Converting: 20 °C is 293.15 K and 40 °C is 313.15 K, and 313.15 ÷ 293.15 = 1.068. In real terms the afternoon was about 7% hotter, not 100%. The accurate sentence is simpler anyway: *"The temperature rose by 20 degrees."*
+Riverstone's warehouse was 20 °C in the morning and 40 °C in the afternoon. A report says it was "twice as hot". It wasn't: 0 °C isn't "no heat", so Celsius numbers can't be divided like that. The honest sentence is *"the temperature rose by 20 degrees"*.
 
 ### Worked example 3: dates
 
@@ -227,21 +245,21 @@ The last way to describe data is by its **shape**: how organized it is when you 
 
 ![One order as a table, as JSON, and as an email](figures/fig1-4-three-shapes-of-data.svg)
 
-*Figure 1.4 — Same facts, three shapes. The less structure, the more work before you can count anything.*
+*Figure 1.4 — Same facts, three shapes. The less structure, the more work before you can count anything. Mini database (Jan–Mar 2026), order 5001.*
 
 **Structured data** fits a fixed layout of rows and columns, where every row has the same fields and every column has one type. Sales tables, bank statements, attendance registers, and stock lists are structured. It's the easiest to add up, sort, filter, and combine, and it's what spreadsheets and databases are built for. Much of a data analyst's day is spent with structured data.
 
-**Semi-structured data** has labels that travel with the values, but no fixed table layout. The most common format is **JSON** (say "jay-son"), which websites and apps use to send data to each other. In the middle panel of Figure 1.4, every value has a name (`"qty": 20`), and the `items` list can hold one item or fifty. Two orders don't have to have exactly the same fields. Other examples are XML files and the logs that apps write. Semi-structured data is easy for computers to read, and usually needs a step of **flattening** into tables before analysis. Chapter 2 introduces these formats, and Chapter 18 shows how to flatten them in Python.
+**Semi-structured data** has labels that travel with the values, but no fixed table layout. The most common format is **JSON** (say "jay-son"), which websites and apps use to send data to each other. In the middle panel of Figure 1.4, every value has a name (`"qty": 20`), and the `items` list can hold one item or fifty. Two orders don't have to have exactly the same fields. Other examples are XML files and the logs that apps write. Semi-structured data is easy for computers to read, and usually needs a step of **flattening** into tables before analysis. Chapter 2 introduces these formats.
 
-**Unstructured data** has no predefined layout at all. The meaning is in the words, pixels, or sounds: emails, WhatsApp messages, PDF contracts, product photos, call recordings, customer reviews. A person can read Rakesh's email in Figure 1.4 and understand the order instantly. A computer has to work out that "the 10L storage boxes" means product 101, and that "the rates you quoted" means ₹450 and ₹120. Most of the information inside organizations is unstructured, and for a long time most of it went unused. Modern AI tools, which you'll meet in Part VI, have made it much easier to pull structured facts out of unstructured text, and that's one of the big changes in data work in recent years.
+**Unstructured data** has no predefined layout at all. The meaning is in the words, pixels, or sounds: emails, WhatsApp messages, PDF contracts, product photos, call recordings, customer reviews. A person can read Rakesh's email in Figure 1.4 and understand the order instantly. A computer has to work out that "the 10L storage boxes" means product 101, and that "the rates you quoted" means ₹450 and ₹120. Most of the information inside organizations is unstructured, and for a long time most of it went unused. Modern AI tools have made it much easier to pull structured facts out of unstructured text, and that's one of the big changes in data work in recent years.
 
-| Shape | Examples | Where you'll work with it |
-|---|---|---|
-| Structured | spreadsheets, database tables, CSV files | Chapters 10–13 and most of Part II |
-| Semi-structured | JSON, XML, app and website logs | Chapters 2, 18, and Part V |
-| Unstructured | emails, PDFs, images, audio, free-text reviews | Chapters 41, 55, and 58 |
+| Shape | Examples |
+|---|---|
+| Structured | spreadsheets, database tables, CSV files |
+| Semi-structured | JSON, XML, app and website logs |
+| Unstructured | emails, PDFs, images, audio, free-text reviews |
 
-> **Real-life example: the order that arrives by email.** In many companies, including plenty of manufacturers and distributors, customers still send orders by email or WhatsApp, and someone re-types them into the billing system. Each re-typing is a chance for a mistake: 50 bottles becomes 500, or the discount is missed. Turning that unstructured message into a structured order automatically is a classic automation project, and you'll build one in Chapter 58.
+> **Real-life example: the order that arrives by email.** In many companies, including plenty of manufacturers and distributors, customers still send orders by email or WhatsApp, and someone re-types them into the billing system. Each re-typing is a chance for a mistake: 50 bottles becomes 500, or the discount is missed. Turning that unstructured message into a structured order automatically is a classic automation project.
 
 ---
 
@@ -277,7 +295,7 @@ Every piece of data was created by someone or something. Knowing the source tell
 
 | Source | How it's created | Examples | Typical problems |
 |---|---|---|---|
-| **People** | typed, written, selected, or spoken | order forms, surveys, a salesperson updating a CRM, the shop owner's notebook | typos, blanks, inconsistent spelling, fields filled in "just to get past the screen" |
+| **People** | typed, written, selected, or spoken | order forms, surveys, a salesperson updating a CRM (the sales team's contact system), the shop owner's notebook | typos, blanks, inconsistent spelling, fields filled in "just to get past the screen" |
 | **Machines and sensors** | measured automatically | step counters, temperature sensors on a production line, GPS in delivery vans, electricity meters | faulty or drifting sensors, gaps when a device goes offline, huge volumes |
 | **Business systems** | recorded as a side effect of doing work | billing software, a website's shopping cart, a bank's payment system, attendance swipes | only as good as the process around them; changes when the system is upgraded |
 | **Outside sources** | collected by someone else | government statistics, weather data, market prices, data bought from partners | different definitions, delays, unclear collection methods |
@@ -330,7 +348,7 @@ There are at least six problems, one or more for every dimension except timeline
 
 Now try a simple question: **how many customers are in Mumbai?** A computer that matches the exact text "Mumbai" finds **one**: Sharma Hardware. ("mumbai" has a small *m*, "Bombay" is different text, and the third row's "Mumbai" has a trailing space.) The real answer is **three different customers**: Sharma Hardware, Metro Mart, and Western Logistics. And for Sunrise Caterers, the honest answer is "unknown".
 
-Nothing in that table looks dramatic. Each problem is one small slip by a busy person. Together they turn a simple question into a wrong answer, and nobody sees an error message. **This is why analysts check data before they trust it.** Chapter 14 teaches how to find and fix these problems at scale, and Chapter 47 shows how data teams catch them automatically before a report goes out.
+Nothing in that table looks dramatic. Each problem is one small slip by a busy person. Together they turn a simple question into a wrong answer, and nobody sees an error message. **This is why analysts check data before they trust it.**
 
 ---
 
@@ -379,7 +397,7 @@ Look at what Anita received: a number she can use, the reason it differs from th
 - **Excel or Google Sheets** (optional). Chapter 10 teaches both from the beginning. If you already have either, use it for the project; Google Sheets is free with a Google account.
 - **Your phone.** It's full of data about you: steps, screen time, photos, payments. It's the most convenient practice dataset you own.
 
-Chapter 6 walks you through installing everything else the book uses.
+Each tool is installed in the chapter that first uses it; Chapter 6 shows when.
 
 ---
 
@@ -477,7 +495,7 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 2. Label each statement as data, information, knowledge, or insight:
    (a) "Order 5012 was placed on 15 March and is Pending."
    (b) "We should give customers who haven't ordered in 60 days a call before the festive season."
-   (c) "Riverstone sold ₹161,700 in February."
+   (c) "Riverstone sold ₹1,61,700 in February."
    (d) "Hotels order less during the monsoon, because fewer events are held."
 3. Give the data type (number, text, date/time, or true/false) of each: an Aadhaar-style ID number, a delivery date, the weight of a parcel, whether an invoice is paid, a customer's PIN code, the number of items in a cart.
 
@@ -526,16 +544,17 @@ data · datum · information · knowledge · insight · DIKW · table · row / r
 - **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
 - **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
 - **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
-- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, then in databases.
-- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale.
-- **Chapter 21, Descriptive Statistics & Probability,** explains which averages and charts suit each level of measurement.
+- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
+- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
+- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
+- **Chapter 18** flattens semi-structured data such as JSON into tables.
+- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
+- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
 - **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
 
 ---
 
 ## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** (a) Yes: it's recorded information about trains and times. (b) No, not until it's recorded, for example as an audio file or written music. (c) Yes: a recorded count. (d) No, until you write it in a to-do list or set a reminder; then it's a recorded note. (e) Yes: it's recorded, even though it's handwritten and unstructured, which makes it harder to use.
 

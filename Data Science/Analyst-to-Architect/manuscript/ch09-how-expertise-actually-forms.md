@@ -64,7 +64,7 @@ Now divide by the hours you can *really* give each week, not the hours you wish 
 | 6 | 34 ÷ 6 = 5.7 to 43 ÷ 6 = 7.2 weeks |
 | 10 | 34 ÷ 10 = 3.4 to 43 ÷ 10 = 4.3 weeks |
 
-At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part II has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar.
+At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part II has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
 
 > **Watch out: chapter hours are not fluency hours.** Finishing Chapters 12 and 13 means you can write the queries they teach. Being quick and confident on a messy real dataset takes more: many more questions, answered on data you didn't design. Plan for the chapter hours, then plan for practice beyond them. Section 9.4 shows how to make those hours count.
 
@@ -74,7 +74,7 @@ At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapter
 
 ## 9.2 Why the long timeline is good news
 
-Here's the reframe that makes the long timeline an advantage instead of a punishment. It's kept from the first edition of this book, because it's still true.
+Here's the reframe that makes the long timeline an advantage instead of a punishment.
 
 **Because it's slow, it's defensible.** A skill anyone can pick up in a weekend, everyone picks up in a weekend, and it earns no premium. The very thing that makes this career demanding is what makes it valuable. The years are the moat around your work.
 
@@ -112,7 +112,7 @@ The idea of **deliberate practice** comes from research on expert performers, mo
 
 It has five features.
 
-- **A specific goal.** Not "do some SQL", but "write a query that keeps customers who have never ordered".
+- **A specific goal.** Not "do some SQL", but "work out, by hand, which customers in a list of 20 have never ordered".
 - **Difficulty slightly beyond your current ability.** Hard enough that you might fail, not so hard that you can't tell why.
 - **Full attention,** for a limited time. Short, focused sessions beat long, distracted ones.
 - **Immediate feedback.** You find out quickly whether you were right, and *why* you weren't.
@@ -120,7 +120,7 @@ It has five features.
 
 **Naive practice** is the opposite: doing what's comfortable, without a goal or feedback, and counting the hours.
 
-![A comparison table with six rows. Goal: naive practice is "do some SQL tonight"; deliberate practice is "write a LEFT JOIN that keeps never-ordered customers". Difficulty: what already feels comfortable, versus slightly beyond what you can do unaided. Attention: half-watching a video with the phone nearby, versus full focus for a short fixed block. Feedback: none, or "it ran so it's right", versus comparing with a known answer and finding why it differs. Repetition: move on after one success, versus redo it tomorrow without looking and vary it. Record: nothing written down, versus a log of what was hard and what to try next.](figures/fig9-2-naive-vs-deliberate-practice.svg)
+![A comparison table with six rows. Goal: naive practice is "do some SQL tonight"; deliberate practice is "build a monthly total of your spending log and check it against the sum of every row". Difficulty: what already feels comfortable, versus slightly beyond what you can do unaided. Attention: half-watching a video with the phone nearby, versus full focus for a short fixed block. Feedback: none, or "it ran so it's right", versus comparing with a known answer and finding why it differs. Repetition: move on after one success, versus redo it tomorrow without looking and vary it. Record: nothing written down, versus a log of what was hard and what to try next.](figures/fig9-2-naive-vs-deliberate-practice.svg)
 
 *Figure 9.2 — Naive and deliberate practice. The hours can be identical; what you do in them is not.*
 
@@ -184,7 +184,7 @@ A strong piece reads like a short piece of real work, not a tour of a tool. It f
 | Stage | Pieces worth building | From chapters |
 |---|---|---|
 | Foundations | A classified personal dataset; a process map of a real workflow | 1, 3, 7 |
-| Analyst core | A cleaned dataset with a data-quality note; a SQL analysis answering three business questions; a dashboard; one automated report | 12–20, 27 |
+| Analyst core | A cleaned dataset with a data-quality note; a SQL analysis answering three business questions; a dashboard; one automated report | 12, 13, 14, 16, 20, 27 |
 | Advanced analytics | A tested dbt project; an A/B test analysis | 30, 32 |
 | Science or engineering | An end-to-end model with honest evaluation, or a monitored pipeline | 44, 46–47 |
 | Architecture | A design document with decision records | 60, 63 |
@@ -193,7 +193,7 @@ A strong piece reads like a short piece of real work, not a tour of a tool. It f
 
 - **Quality over count.** Three pieces that each answer a real question beat ten tutorial copies.
 - **Use realistic or public data,** never your employer's confidential data. The Riverstone datasets, public government data, and your own records (anonymized) are all fine.
-- **Put it where people can open it in one click:** a GitHub repository with a clear README, a shared folder, or a simple web page. Chapter 26 covers Git and GitHub.
+- **Put it where people can open it in one click:** a GitHub repository with a clear README, a shared folder, or a simple web page.
 - **Keep the write-up short,** and make the first paragraph readable by a manager who never opens the code.
 - **Update it as you climb.** Retire early pieces when better ones replace them.
 
@@ -228,7 +228,7 @@ People say yes to questions that respect their time. A good request for help has
 4. **What you expected,** and why.
 5. **A small example** someone can reproduce, with invented or public data.
 
-Compare *"My SQL join isn't working, please help"* with *"I'm trying to list every customer, including those with no orders. I used a LEFT JOIN with `WHERE o.status <> 'Cancelled'`, and customers with no orders disappear. I expected them to stay with blank order columns. Here are two small tables that show it."* The second question is often answered in minutes, and writing it frequently reveals the answer before you send it. (Chapter 12, section 12.10, explains this exact trap.)
+Compare *"My totals are wrong, please help"* with *"I'm totalling my spending log by category. My Food total is ₹1,230, but when I add the Food receipts by hand I get ₹1,380. I expected them to match. Here are the eight Food rows."* The second question is often answered in minutes, and writing it frequently reveals the answer before you send it.
 
 ### Finding a mentor
 
@@ -246,7 +246,7 @@ A **mentor** is someone further along the path who gives you occasional guidance
 
 ## 9.7 Handling plateaus
 
-Almost everyone who learns a difficult skill hits **plateaus**: stretches where effort continues and visible progress stops. The first edition of this book saved this topic for its closing chapter. It's here now, because you'll meet your first plateau long before the end of the book.
+Almost everyone who learns a difficult skill hits **plateaus**: stretches where effort continues and visible progress stops. This section comes early on purpose: you'll meet your first plateau long before the end of the book.
 
 ### What a plateau looks like in data
 
@@ -257,17 +257,17 @@ Farah Khan, the Riverstone sales executive from Chapter 8, kept a simple log whi
 | **Practice minutes** | 180 | 200 | 210 | 220 | 240 | 260 | 270 | 240 | 240 | 250 | 240 | 250 |
 | **Weekly check (of 10)** | 3 | 4 | 5 | 6 | 6 | 6 | 6 | 6 | 7 | 8 | 8 | 9 |
 
-![A combined chart for weeks 1 to 12. Grey bars show practice minutes per week, rising from 180 to 270 by week 7, then around 240 to 250. A blue line shows the weekly check score out of 10: 3, 4, 5, 6, then flat at 6 for weeks 4 to 8, then 7, 8, 8, 9. Weeks 4 to 8 are shaded and labeled: plateau, score stuck at 6 for five weeks. A note under week 8 says: from week 8, harder problems on her own questions, reviewed weekly.](figures/fig9-4-practice-log-plateau.svg)
+![A combined chart for weeks 1 to 12, with its two scales named at the top: bars for practice minutes per week, a line for the weekly check score out of 10. The bars rise from 180 minutes to 270 by week 7, then sit around 240 to 250. The line reads 3, 4, 5, 6, then stays at 6 through weeks 5 to 8, then 7, 8, 8, 9. Weeks 5 to 8 are shaded and labeled: plateau, weeks 5 to 8, score stuck at 6. A note under week 8 says: from week 8, harder problems on her own questions, reviewed weekly.](figures/fig9-4-practice-log-plateau.svg)
 
 *Figure 9.4 — Farah's practice log. During the plateau she practiced more, not less. The score moved again only when she changed how she practiced.*
 
 **Reading it.**
 
-- In weeks 1–4, Farah practiced 810 minutes in total, and her score rose from 3 to 6.
-- In weeks 4–8, she practiced 1,230 minutes, and her score didn't move. She responded the way most people do: she practiced *more*. Her weekly minutes rose from 220 in week 4 to 270 in week 7, an increase of 22.7%, with no gain.
-- In week 8, she changed *what* she practiced (the story in "In the real world" explains how). In weeks 9–12, she practiced 980 minutes, fewer than in the plateau weeks, and her score rose from 6 to 9.
+- In weeks 1–4, Farah practiced 810 minutes (180 + 200 + 210 + 220), and her score rose from 3 to 6.
+- In weeks 5–8, she practiced 1,010 minutes (240 + 260 + 270 + 240), and her score didn't move. She responded the way most people do: she practiced *more*, from 220 minutes in week 4 to 270 in week 7, an increase of 22.7% (50 ÷ 220), with no gain.
+- In week 8, she changed *what* she practiced (the story in "In the real world" explains how). In weeks 9–12, she practiced 980 minutes (240 + 250 + 240 + 250), slightly less than in the plateau, and her score rose from 6 to 9.
 
-Over the 12 weeks, she practiced 2,800 minutes, about 46.7 hours: slightly more than the 34–43 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
+Over the 12 weeks, she practiced 2,800 minutes (810 + 1,010 + 980), about 46.7 hours (2,800 ÷ 60): slightly more than the 34–43 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
 
 > **Simplification note.** Farah's log is fictional and deliberately tidy, to make the pattern clear. Real logs are noisier: a bad week, a holiday, a harder check. Look for a flat stretch over several weeks, not a single low score.
 
@@ -341,19 +341,19 @@ Farah opened the sheet. Meera looked at the minutes column, then at the problems
 
 "You're not bad at SQL," Meera said. "You've become very good at these exercises. You know the answers. Your check has new problems, and that's where you're stuck."
 
-She asked Farah to solve one of the week-7 check problems aloud. Farah got halfway and stopped: the problem needed customers with *no* orders, and her join kept dropping them. Meera recognized it immediately; she'd tripped over the same thing when she started. "Every one you missed last week has the same shape, doesn't it?"
+She asked Farah to solve one of the week-7 check problems aloud. Farah got halfway and stopped: the problem needed customers with *no* orders, and her answers kept leaving out customers who had never ordered. Meera recognized it immediately; she'd tripped over the same thing when she started. "Every one you missed last week has the same shape, doesn't it?"
 
-Farah checked her mistakes list. Eight of the twelve problems she'd got wrong in weeks 5 to 7 involved customers or products that didn't appear in another table. It wasn't a plateau in SQL. It was one idea, the difference between an inner and a left join and where the filter goes, that she'd been working around instead of learning.
+Farah checked her mistakes list. Eight of the twelve problems she'd got wrong in weeks 5 to 7 involved customers or products that didn't appear in another table. It wasn't a plateau in SQL. It was one idea, how to keep the rows that have no match in the other table, that she'd been working around instead of learning.
 
 They changed three things.
 
 - **Harder, real problems.** Instead of repeating chapter exercises, Farah wrote five questions a week about her own customers, the kind Anita actually asked, and answered them on the practice data.
-- **One missing idea, fixed properly.** She went back to Chapter 12, section 12.10, rebuilt its LEFT JOIN examples without looking, and did its trap examples until she could predict every result.
+- **One missing idea, fixed properly.** She went back to the section that teaches it, rebuilt that section's examples without looking, and did its trap examples until she could predict every result. (Chapter 12, section 12.10, teaches this exact idea.)
 - **Weekly feedback.** Every Friday, she showed Meera one query and explained it aloud, in the ten minutes before they started on the at-risk list.
 
-She also cut her minutes back. The late nights stopped.
+She kept her minutes about the same, but the late nights stopped.
 
-Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was 7. Week 10 was 8. By week 12 she scored 9, having practiced fewer minutes in weeks 9 to 12 than during the plateau. And one of her "own questions" (*which hospitality customers ordered before last year's wedding season but not this year?*) turned into the first portfolio piece she was proud of, written up on one page with the check and the decision.
+Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was 7. Week 10 was 8. By week 12 she scored 9, having practiced slightly fewer minutes in weeks 9 to 12 than during the plateau. And one of her "own questions" (*which hospitality customers ordered before last year's wedding season but not this year?*) turned into the first portfolio piece she was proud of, written up on one page with the check and the decision.
 
 **What made this work.**
 
@@ -370,7 +370,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 - **A weekly check:** a fixed set of new problems at a steady difficulty. The exercises in later chapters, used for the first time, work well; don't reuse problems you've already practiced.
 - **A place for your portfolio:** a GitHub account (Chapter 26 shows how to use it), a shared folder, or a simple free web page.
 - **A timer,** for short focused practice blocks.
-- **Companion files:** none for this chapter. Farah's log is listed in `checks/ch09_check.py` and `figures/make_figs09.py` if you'd like to chart your own the same way.
+- **Companion file:** practice_log_template.xlsx, with Farah's 12 weeks already filled in and a chart that updates as you add your own weeks.
 
 ---
 
@@ -452,7 +452,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 ### Stretch
 
 9. A learner's weekly check scores over ten weeks are 4, 5, 5, 6, 6, 6, 6, 5, 6, 6, while their practice minutes rose every week. Describe what the log shows, list two likely causes from section 9.7, and propose three specific changes.
-10. Design one week of deliberate practice (five 40-minute sessions) for someone who has finished Chapter 13 and struggles with window functions. For each session, give the goal, the method, and the source of feedback.
+10. Design one week of deliberate practice (five 40-minute sessions) for someone who has finished Chapter 4 and struggles with percentage points versus percent change. For each session, give the goal, the method, and the source of feedback.
 11. A friend says: *"Deliberate practice only explains a small share of performance in professions, so practice doesn't matter for data jobs."* Using section 9.4, explain what's wrong with that conclusion, and what the research does suggest.
 
 ### Think about it (no calculation needed)
@@ -474,8 +474,8 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 ## Where this leads
 
 - **Part II, The Analyst (Chapters 10–27),** is where you'll use this chapter first. Start your practice log with Chapter 10.
-- **Chapter 6, Setting Up to Learn,** covers your study setup, a sample 6-month analyst plan, and learning with AI assistants without letting them think for you.
-- **Chapter 12, section 12.10,** teaches the LEFT JOIN trap that stalled Farah.
+- **Chapter 6, Planning Your Learning,** turns this chapter's timeline into hours and weeks for your own plan, and covers learning with AI assistants without letting them think for you.
+- **Chapter 12, section 12.10,** teaches how to keep the rows that have no match in another table, the idea that stalled Farah.
 - **Chapter 26** covers Git and GitHub, where your portfolio can live; **Chapter 27** turns your projects into a finished analyst portfolio.
 - **Chapter 83, The Long Game,** returns to learning over a whole career, including the plateaus of later years.
 - **Part VIII, Chapter 68, How Data Hiring Works,** shows how portfolios are read in hiring, and **Chapter 81** helps you turn your projects and plateaus into strong behavioral interview answers.
@@ -484,11 +484,9 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
 **1.** **Study** produces knowledge (understanding the concepts). **Projects** produce skill (being able to do the work on real, messy data). **Feedback and time** produce judgment (knowing which approach to use, and when it will mislead).
 
-**2.** Sample answers; any specific, checkable goal is acceptable. (a) *"Build a pivot table of Riverstone revenue by month and category, and reconcile its grand total to the total in the source data."* (b) *"Write three queries that keep customers with no orders, predicting each result before running it."* (c) *"Build a one-page Power BI report with revenue by month and a slicer by segment, from the Chapter 16 dataset, in 60 minutes."* The common weak answer names a topic ("learn LEFT JOINs") instead of a task with a checkable result.
+**2.** Sample answers; any specific, checkable goal is acceptable. (a) *"Build a pivot table of Riverstone revenue by month and category, and reconcile its grand total to the total in the source data."* (b) *"Answer three questions about customers with no orders on the practice data, predicting each result first."* (c) *"Build a one-page Power BI report with revenue by month and a slicer by segment, from the Chapter 16 dataset, in 60 minutes."* The common weak answer names a topic ("learn pivot tables") instead of a task with a checkable result.
 
 **3.** (a) Naive: rereading feels productive but doesn't test recall or give feedback. (b) Deliberate: a specific prediction with immediate feedback when the result differs. (c) Naive: divided attention and no feedback. (d) Deliberate: retrieval (rebuilding from memory) with feedback (compare with the worked example).
 
@@ -498,13 +496,13 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 **6.** From 3 to 9 is an increase of 6 points: (9 ÷ 3 − 1) × 100 = **200%**. Her rising minutes in weeks 5–7 (240, 260, 270) aren't evidence of bad work: she was putting in *more* effort. The log shows that the *kind* of practice had stopped working (she was repeating familiar exercises and working around one missing idea), not that she wasn't trying. The common wrong reading is that a plateau means low effort.
 
-**7.** A sample answer: *"(Goal) I'm building a pivot table in Google Sheets that totals revenue by month. (Attempt) I selected A1:F200 and added Month as rows and Revenue as values, summarized by SUM. (Result) The March total is ₹48,200, but adding the March rows by hand gives ₹52,700. (Expectation) I expected the two to match. (Example) Here's a copy of the sheet with invented data, 12 rows, that shows the same difference."* Writing this often reveals the cause, for example rows outside the selected range or revenue stored as text in some rows.
+**7.** A sample answer: *"(Goal) I'm building a pivot table in Google Sheets that totals revenue by month. (Attempt) I selected the data down to row 200 and added Month as rows and Revenue as values, summarized by SUM. (Result) The March total is ₹48,200, but adding the March rows by hand gives ₹52,700. (Expectation) I expected the two to match. (Example) Here's a copy of the sheet with invented data, 12 rows, that shows the same difference."* Writing this often reveals the cause, for example rows outside the selected range or revenue stored as text in some rows.
 
 **8.** Sample outline. **Question:** which products sell best to hospitality customers, and should promotion change? **Data:** Riverstone one-year database (fictional), orders and products for 2025, hospitality segment only; note it excludes returns and tax. **Approach:** revenue and quantity by product for hospitality customers, compared with all customers; share of hospitality revenue per product. **Result:** one table of products ranked by hospitality revenue, with each product's share compared with its share overall. **Check:** hospitality product revenues add up to total hospitality revenue; one order hand-checked. **Decision:** promote the products where hospitality's share is high but sales are still small, and stop promoting products hospitality customers rarely buy. **Next:** repeat by quarter to see seasonality, and send it to the hospitality sales executive monthly. Any outline with all seven parts, a check, and a decision is acceptable; the analysis itself is built in Part II.
 
 **9.** The log shows a **plateau**: scores rose from 4 to 6 by week 4, then stayed at 5–6 for six weeks while practice minutes kept rising. Likely causes: practice has become **comfortable** (repeating problems already mastered), or a **missing underlying idea** is blocking a family of problems; tool-hopping or fatigue are also possible. Three changes: (1) review the mistakes list and look for a shared cause, then rebuild that section's examples without looking; (2) replace repeated exercises with new, harder problems, ideally the learner's own real questions; (3) get outside feedback, for example solving one problem aloud for a peer each week, and reduce minutes if fatigue is part of it.
 
-**10.** Sample week (any design with specific goals, deliberate methods, and a feedback source is acceptable). **Monday:** goal: explain `PARTITION BY` versus `GROUP BY`; method: write a one-paragraph explanation from memory, then check against section 13.3; feedback: the chapter text. **Tuesday:** goal: predict the output of three window queries before running them; method: predict, then run; feedback: the real output. **Wednesday:** goal: rebuild the running-total example from its question alone; method: rebuild without looking; feedback: compare with the chapter's result. **Thursday:** goal: solve two new window problems on a different table; method: vary the problem; feedback: exercise answers. **Friday:** goal: explain one solution aloud to a peer or record it; method: explain it; feedback: the peer's questions, and a note of anything you couldn't explain.
+**10.** Sample week (any design with specific goals, deliberate methods, and a feedback source is acceptable). **Monday:** goal: explain the difference between a percentage-point change and a percent change in one paragraph; method: write it from memory, then check against section 4.2; feedback: the chapter text. **Tuesday:** goal: for five pairs of rates (for example, a market share that rises from 40% to 50%), write down both changes before working them out; method: predict, then calculate (50 − 40 = 10 points; 10 ÷ 40 = a 25% rise); feedback: the calculator. **Wednesday:** goal: rebuild section 4.2's worked example from its question alone; method: rebuild without looking; feedback: compare with the chapter's result. **Thursday:** goal: find three news sentences that report a change in a rate (an interest rate, an unemployment rate, a market share) and rewrite each one with both the points and the percent change; method: vary the problem; feedback: a study partner checks the arithmetic. **Friday:** goal: explain aloud why a loan rate going from 8% to 9% is a rise of 1 point but a 12.5% increase (1 ÷ 8) in the interest you pay; method: explain it to a peer or record it; feedback: the peer's questions, and a note of anything you couldn't explain.
 
 **11.** The friend misreads the finding. The meta-analysis measured how much of the *differences between people* was explained by the *amount* of deliberate practice they reported; a small share in professions doesn't mean practice is unimportant. Everyone in those professions had already practiced a great deal, which shrinks the differences practice can explain, and on-the-job learning is hard to measure as "deliberate practice". The research suggests that practice matters and its quality matters most, and that in professional work other things also matter: working on real problems, getting real feedback, and learning from experienced people. That's why the three ingredients include projects and feedback, not practice alone.
 

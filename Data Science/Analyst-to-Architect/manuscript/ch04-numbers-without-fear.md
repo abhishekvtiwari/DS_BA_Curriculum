@@ -10,9 +10,9 @@
 >
 > **Time needed:** 4–5 hours, including the exercises and the project.
 >
-> **Tools:** a calculator (your phone's is fine), a pen, and a notebook. A spreadsheet is optional; the *Spreadsheet link* notes show each calculation in Excel and Google Sheets.
+> **Tools:** a calculator with a power key (your phone's, turned sideways), a pen, and a notebook.
 >
-> **Practice data:** Riverstone's 2025 sales from the one-year database: monthly revenue, targets, and margins, and 173 orders. The companion workbook `numbers_practice.xlsx` (Appendix E) holds the same numbers with every formula from this chapter. Every number was checked by script.
+> **Practice data:** Riverstone's 2025 sales from the one-year database: monthly revenue, targets, and margins, and 173 orders. Every number was checked by script.
 
 ---
 
@@ -86,8 +86,6 @@ Two consequences come up all the time:
 - **Recovering from a fall needs a bigger rise.** After a 50% fall, you need a 100% rise to get back. After a 20% fall, you need 25%.
 - **Discounts stack by multiplying.** A 10% trade discount followed by an extra 5% for early payment is 0.90 × 0.95 = 0.855 of the price, a total of **14.5%** off, not 15%.
 
-> **Spreadsheet link.** In Excel and Google Sheets, with the old value in B2 and the new value in C2: percent change is `=(C2-B2)/B2`, formatted as a percentage. A list price from a discounted price in B2 is `=B2/(1-12%)`. The `monthly` sheet of `numbers_practice.xlsx` calculates every month's percent change this way.
-
 ---
 
 ## 4.2 Percentage points and percent change
@@ -107,7 +105,9 @@ Here are three more from Riverstone's data:
 |---|---|---|---|---|
 | Gross margin, January → February 2025 | 29.2% | 26.0% | −3.1 points | −10.8% |
 | Revenue as % of target, August → September 2025 | 102.9% | 146.9% | +44.0 points | +42.8% |
-| Win rate, clean leads → duplicated leads (Chapter 13) | 20.0% | 14.0% | −6.0 points | −30.2% |
+| Win rate, each enquiry counted once → duplicate enquiries counted too | 20.0% | 14.0% | −6.0 points | −30.2% |
+
+*Source: One-year database (2025).*
 
 (The first row shows −3.1 points, not 29.2 − 26.0 = 3.2, because it's calculated from the unrounded margins, 29.18% and 26.04%. Section 4.6 is about exactly this kind of rounding.)
 
@@ -130,6 +130,8 @@ Here are Riverstone's three customer segments in 2025:
 | Hospitality | ₹1,144,039 | 59 | 9 | ₹127,115 | ₹19,390 |
 | **Total** | **₹4,335,471** | **173** | **23** | **₹188,499** | **₹25,061** |
 
+*Source: One-year database (2025).*
+
 Hospitality has the most customers and ties for the most orders, but the least revenue. Which segment is "biggest" depends entirely on the denominator you pick:
 
 - **By customers:** Hospitality (9).
@@ -140,7 +142,7 @@ Rates also make different-sized periods comparable. ₹4,335,471 in a year is ab
 
 A **share** (or proportion) is a ratio where the part is inside the whole, like Sharma Hardware's 11.6%. Shares of a whole add up to 100%. Ratios between separate groups, like 2.23 times, don't add up to anything.
 
-> **Try it.** Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (Chapter 3). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
+> **Try it.** Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (Chapter 3; mini database, Jan–Mar 2026). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
 
 ---
 
@@ -148,7 +150,7 @@ A **share** (or proportion) is a ratio where the part is inside the whole, like 
 
 ### Month-over-month growth
 
-Here is Riverstone's revenue for every month of 2025, with the percent change from the month before. (Chapter 13 calculates this same table in SQL.)
+Here is Riverstone's revenue for every month of 2025, with the percent change from the month before.
 
 | Month | Revenue | Change from previous month |
 |---|---|---|
@@ -166,6 +168,8 @@ Here is Riverstone's revenue for every month of 2025, with the percent change fr
 | December | ₹439,824 | −30.6% |
 | **Year** | **₹4,335,471** | |
 
+*Source: One-year database (2025). Monthly figures are rounded to the rupee, so they add to ₹4,335,473 (₹202,640 + ₹253,664 + ₹278,008 + ₹210,282 + ₹329,359 + ₹186,928 + ₹232,692 + ₹329,282 + ₹558,315 + ₹681,071 + ₹633,408 + ₹439,824); the exact annual total is ₹4,335,471.*
+
 The monthly changes swing wildly, from −43.2% to +69.6%. Most of that is the calendar: monsoon months are slow and the festive season is busy. Month-over-month percentages exaggerate seasonal patterns, which is why businesses with more than a year of data also compare each month with the same month last year.
 
 ### The average of growth rates is a trap
@@ -182,11 +186,11 @@ The right question is: *what single, steady monthly rate would take ₹202,640 t
 
 ₹439,824 ÷ ₹202,640 = 2.17. The eleventh root of 2.17 is 1.073. So the compound monthly growth rate is **7.3%**. Grow ₹202,640 by 7.3% eleven times and you land exactly on December.
 
+"The eleventh root" sounds hard, but a root only undoes a power. 1.073 multiplied by itself 11 times gives 2.17, so 1.073 is the "eleventh root" of 2.17. You never work it out by hand: type `2.17`, press the power key (xʸ), then `(1 ÷ 11)`.
+
 ![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to 782,621](figures/fig4-2-average-growth-vs-compound.svg)
 
-*Figure 4.2 — The average of the monthly changes (red) overshoots December by ₹342,797. The compound rate (green) connects the real start and end.*
-
-"The eleventh root" sounds hard. You won't do it by hand; any calculator with a power key does it as `2.17 ^ (1/11)`, and the spreadsheet functions are below.
+*Figure 4.2 — The 13.1% path, built from the average of the monthly changes, overshoots December by ₹342,797. The 7.3% compound path connects the real start and end.*
 
 > **Watch out: start and end points drive compound growth.** The compound rate only uses the first and last values. From June (₹186,928, the lowest month) to October (₹681,071, the highest), revenue grew **264.3%**, a number that's true and tells you almost nothing about the year. Always ask why a growth figure starts and ends where it does.
 
@@ -212,8 +216,6 @@ Two tempting shortcuts both get the plan wrong:
 
 - **Splitting the gap evenly.** ₹6,000,000 − ₹4,335,471 = ₹1,664,529, or ₹554,843 a year. That's 12.8% of 2025's revenue, but a fixed rupee amount is a smaller percentage each year, so it isn't a growth rate at all.
 - **Rounding down to a nice number.** 10% a year for three years reaches ₹5,770,512, which is ₹229,488 short. Over several years, one percentage point matters.
-
-> **Spreadsheet link.** Compound growth in both Excel and Google Sheets: `=(end/start)^(1/periods)-1`, or the built-in `=RRI(periods, start, end)`. `=RRI(3, 4335471, 6000000)` returns 0.1144, and `=RRI(11, 202640, 439824)` returns 0.0730. The plain average of monthly changes is `=AVERAGE(F3:F13)` on the `monthly` sheet, which returns the misleading 0.1307.
 
 ---
 ## 4.5 Averages: mean, median, mode, and weighted
@@ -247,8 +249,6 @@ The result: only **70 of the 173 orders (40.5%)** are above the "average" order.
 | Categories (products, payment methods, segments) | mode | the only average that works for nominal data (Chapter 1) |
 | Ratings and ranks (ordinal data) | median, plus the count in each category | the gaps between ratings aren't equal (Chapter 1) |
 
-Chapter 21 adds measures of spread, like percentiles and the standard deviation, which tell you how far values stray from the average.
-
 ### Weighted averages
 
 *"What's Riverstone's average discount?"*
@@ -270,8 +270,6 @@ The monthly business review pack often shows a row of monthly averages. Averagin
 
 The busy months (September to November, with 18 to 21 orders each and high order values) count the same as quiet January with 8 orders. To combine averages, go back to the totals: add up all the revenue, add up all the orders, then divide.
 
-> **Spreadsheet link.** `=AVERAGE(B2:B174)` and `=MEDIAN(B2:B174)` on the `orders` sheet give ₹25,061 and ₹21,375; `=COUNTIF(B2:B174,">"&E1)` counts the 70 orders above the mean. A weighted average is `=SUMPRODUCT(values, weights)/SUM(weights)`, which is how the `discounts` sheet gets 4.69%. The functions have the same names in Excel and Google Sheets.
-
 ---
 
 ## 4.6 Rounding and significant figures
@@ -288,6 +286,8 @@ Riverstone's 2025 revenue by segment, rounded to whole percentages:
 | Retail | 34% | 34.3% |
 | Hospitality | 26% | 26.4% |
 | **Total** | **99%** | **100.0%** |
+
+*Source: One-year database (2025).*
 
 Nothing is missing. The unrounded shares are 39.27%, 34.34%, and 26.39%, and each one rounded down a little. Rounding to one decimal happens to fix it here, but not always: the same thing can happen at any precision (exercise 8). You have three honest options: show one more decimal place, add a note ("shares may not add to 100% because of rounding"), or leave it and expect the question. Never quietly change one number to force the total, because then the table no longer matches the data.
 
@@ -353,7 +353,7 @@ It's easier to work out the chance that *none* is cancelled and subtract from 1.
 
 ### Chaining stages
 
-Chapter 13's sales funnel took 30 unique leads to 22 contacted, 14 quoted, and 6 won. Each step has its own rate: 22 of 30 (73.3%), 14 of 22 (63.6%), and 6 of 14 (42.9%). The chance that a new lead is eventually won is the rates multiplied: 0.733 × 0.636 × 0.429 = **0.200**, or 20%, which matches 6 of 30. ✓
+Riverstone's 2025 sales funnel took 30 unique leads to 22 contacted, 14 quoted, and 6 won. Each step has its own rate: 22 of 30 (73.3%), 14 of 22 (63.6%), and 6 of 14 (42.9%). The chance that a new lead is eventually won is the rates multiplied: 0.733 × 0.636 × 0.429 = **0.200**, or 20%, which matches 6 of 30. ✓
 
 That makes planning concrete. To win 10 new customers at a 20% win rate, the sales team needs about 10 ÷ 0.20 = **50 leads**. To win more with the same number of leads, improve the weakest step.
 
@@ -365,7 +365,7 @@ Of the 173 orders, 16 were worth more than ₹50,000, and 10 of those came from 
 - Chance a **wholesale** order is over ₹50,000: 10 ÷ 55 = **18.2%**. This is a **conditional probability**: the chance of one thing *given* another. The denominator shrinks to wholesale orders only.
 - Chance a large order is **from wholesale**: 10 ÷ 16 = **62.5%**.
 
-The last two sound alike and differ by a factor of more than three, because the denominators differ. Mixing them up is one of the most common errors in medicine, law, and business alike: "most large orders are wholesale" is not the same as "most wholesale orders are large". Chapter 21 treats conditional probability and Bayes' rule properly.
+The last two sound alike and differ by a factor of more than three, because the denominators differ. Mixing them up is one of the most common errors in medicine, law, and business alike: "most large orders are wholesale" is not the same as "most wholesale orders are large".
 
 ---
 
@@ -377,21 +377,21 @@ The **order of magnitude** of a number is its rough size in powers of ten: thous
 
 Indian business writing uses lakhs and crores; international writing uses thousands, millions, and billions. You'll switch between them constantly.
 
-| Indian | Digits | International |
-|---|---|---|
-| 1 lakh | 100,000 | 100 thousand |
-| 10 lakh | 1,000,000 | 1 million |
-| 1 crore (100 lakh) | 10,000,000 | 10 million |
-| 100 crore | 1,000,000,000 | 1 billion |
+| Indian | Written the Indian way | Written the international way | International |
+|---|---|---|---|
+| 1 lakh | 1,00,000 | 100,000 | 100 thousand |
+| 10 lakh | 10,00,000 | 1,000,000 | 1 million |
+| 1 crore (100 lakh) | 1,00,00,000 | 10,000,000 | 10 million |
+| 100 crore | 1,00,00,00,000 | 1,000,000,000 | 1 billion |
 
-Riverstone's 2025 revenue in the one-year database, ₹4,335,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupees with international grouping (₹4,335,471), and mentions lakhs now and then for readers who think in them.
+The Indian way puts a comma after the thousands and then after every two digits; the international way puts one after every three. Riverstone's 2025 revenue in the one-year database, ₹4,335,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupee amounts the Indian way, as you've just seen. Numbers that aren't money, such as counts of orders or units, keep the international grouping.
 
 ### Sanity checks: does the number fit?
 
 When a number arrives, check it against another number you already trust. Two examples from Riverstone:
 
-- **Revenue per day.** ₹43 lakh a year is about ₹11,878 a day. Separately, 3.3 orders a week at ₹25,061 each is about ₹11,911 a day. Two different routes land within ₹50 of each other, so both numbers are probably sound.
-- **Units from revenue.** October's revenue was ₹681,071, and the year's average price was ₹458 a unit. So October probably shipped about 681,071 ÷ 457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
+- **Revenue per day.** ₹43 lakh a year is about ₹11,878 a day. Separately, 173 orders ÷ 52 weeks ÷ 7 days × ₹25,061 an order is about ₹11,911 a day. (Keep 173 ÷ 52 = 3.327 orders a week unrounded: rounded to 3.3, it gives ₹11,814, the drift section 4.6 warns about.) Two different routes land within ₹50 of each other, so both numbers are probably sound.
+- **Units from revenue.** October's revenue was ₹681,071, and the year's average price was ₹458 a unit. So October probably shipped about ₹681,071 ÷ ₹457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
 
 ### Estimating from nothing
 
@@ -402,7 +402,7 @@ Sometimes there's no data yet: *"Is it worth building a report for this?"* or, i
 3. Multiply, and round the answer to one or two significant figures.
 4. Sanity-check the answer against anything you know, and say which assumption matters most.
 
-Being close matters less than being clear. A reader can replace a bad assumption; they can't fix reasoning they can't see. Chapter 75 has worked guesstimates for interviews.
+Being close matters less than being clear. A reader can replace a bad assumption; they can't fix reasoning they can't see.
 
 ---
 
@@ -435,7 +435,7 @@ A good habit is to rewrite a headline number into a plain sentence with both num
 | Adding percentages that apply one after another | "50% + 20% off = 70% off" | Multiply what remains: 0.5 × 0.8 = 0.4, so 60% off |
 | Reversing a percentage by adding it back | list price from a discounted price comes out too low | Divide by (1 − discount) |
 | Saying "percent" for a change in a percentage | "margin fell 3.9%" when it fell 3.9 points | Use points for the difference; give before and after |
-| Averaging growth rates that compound | typical monthly growth of 13.1% when the steady rate is 7.3% | Use (end ÷ start)^(1/periods) − 1, or `RRI` |
+| Averaging growth rates that compound | typical monthly growth of 13.1% when the steady rate is 7.3% | Use (end ÷ start)^(1/periods) − 1 |
 | Quoting growth between hand-picked months | "up 264%" from the slowest to the busiest month | Compare like with like: full years, or same month last year |
 | Reporting only the mean for skewed data | most orders feel "below average" | Report the median too |
 | Averaging averages | ₹24,243 instead of ₹25,061 | Go back to the totals and divide once |
@@ -476,9 +476,8 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ## Tools
 
-- **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (`xʸ` or `^`) for compound growth.
-- **A spreadsheet** (optional). Excel and Google Sheets both have every function used here: `AVERAGE`, `MEDIAN`, `MODE`, `SUMPRODUCT`, `ROUND`, `COUNTIF`, and `RRI`. Chapter 10 teaches them from the beginning.
-- **The companion workbook** `numbers_practice.xlsx` (Appendix E). Its `monthly`, `orders`, `discounts`, and `segments` sheets hold the 2025 numbers from this chapter with the formulas already in place, so you can check every figure and try your own. It was generated from the one-year database, and its formulas were recalculated and compared with this chapter's numbers.
+- **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (xʸ or ^) for compound growth.
+- **A pen and a notebook.** Write each calculation out in full, with its units, so you can check it later. When spreadsheets arrive in Chapter 10, you'll redo this chapter's numbers there.
 
 ---
 
@@ -551,7 +550,7 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 ### Warm-up
 
 1. Calculate: (a) a 5% discount on an order worth ₹14,550; (b) what percentage ₹26,220 is of ₹58,020 (order 5012's share of March 2026 bookings, Chapter 3); (c) the price of a ₹780 Storage Box 25L after 8% off.
-2. From Chapter 13's quarterly table: Kitchen revenue was ₹133,888 in the first quarter of 2025 and ₹461,146 in the fourth; Industrial was ₹275,450 in the third quarter and ₹292,040 in the fourth. Calculate each percent change.
+2. From Riverstone's 2025 revenue by quarter and category (one-year database): Kitchen revenue was ₹133,888 in the first quarter of 2025 and ₹461,146 in the fourth; Industrial was ₹275,450 in the third quarter and ₹292,040 in the fourth. Calculate each percent change.
 3. Wholesale's share of revenue was 39.3% in 2025. If it's 42.0% next year, what's the change in percentage points, and what's the percent change? Write one correct sentence for each.
 4. The 11 non-cancelled orders in the mini database (first quarter of 2026) were worth: ₹14,700, ₹73,260, ₹16,250, ₹14,550, ₹14,640, ₹32,625, ₹23,325, ₹76,560, ₹20,100, ₹11,700, ₹26,220. Find the mean, the median, and the mode. Which better describes a typical order, and why?
 
@@ -588,7 +587,7 @@ percentage · percent of · share / proportion · percent change · reverse perc
 ## Where this leads
 
 - **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
-- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, `SUMPRODUCT`, pivot tables of shares and averages.
+- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
 - **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
 - **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
 - **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
@@ -599,8 +598,6 @@ percentage · percent of · share / proportion · percent change · reverse perc
 ---
 
 ## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** (a) 0.05 × ₹14,550 = **₹727.50**. (b) ₹26,220 ÷ ₹58,020 = 0.452, so **45.2%**. (c) ₹780 × 0.92 = **₹717.60**.
 
@@ -630,4 +627,4 @@ percentage · percent of · share / proportion · percent change · reverse perc
 
 **14.** A cumulative line rises whenever a month's revenue is positive, so a month that fell sharply (like December 2025, down 30.6%) still shows as the line going up, only less steeply. Put a monthly bar chart next to it (starting at zero), ideally with each month's target or the same month last year, so a bad month is visible as a short bar.
 
-**15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads (Chapter 13) raises the win rate without any change in selling.
+**15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads raises the win rate without any change in selling.

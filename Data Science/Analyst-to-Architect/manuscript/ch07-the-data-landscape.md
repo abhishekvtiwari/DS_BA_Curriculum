@@ -12,7 +12,7 @@
 >
 > **Tools:** a pen and paper, or any free drawing tool for the project. No software to install.
 >
-> **Practice data:** one short query on the Riverstone one-year database (`riverstone_2025`), shown so you can see what an analyst's answer looks like. You don't need to run it yet; Chapter 12 teaches every line. Every result and number shown is real.
+> **Practice data:** one result from the Riverstone one-year database (2025), so you can see what an analyst's answer looks like. Every number shown is real.
 
 ---
 
@@ -83,7 +83,7 @@ A few terms in that table will be new. A **dashboard** is a screen of charts and
 
 ### The one skill every role shares
 
-Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part II teaches it at full depth in Chapters 12 and 13, and why nothing you learn there goes to waste, whichever branch you climb.
+Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part II teaches it at full depth, and why nothing you learn there goes to waste, whichever branch you climb.
 
 > **Watch out: titles lie, outputs don't.** A "data scientist" at one company builds dashboards all day; a "business analyst" at another writes Python pipelines. Before you decide a job is (or isn't) for you, read what the person will *produce* each week. Chapter 8 shows how to decode a job description line by line.
 
@@ -120,7 +120,7 @@ The track has three common roles, and the lines between them are blurry.
 
 - An **automation analyst** finds manual, repeated work in business processes and automates it, often with spreadsheet automation (macros, VBA, Office Scripts, Google Apps Script), low-code tools such as Power Automate or n8n, and Python scripts. The role often grows out of an analyst or operations job.
 - An **RPA developer** builds software "robots" that click through screens the way a person would. **RPA** stands for robotic process automation. It's the right tool when an old system has no other way in, and the wrong tool when a proper connection exists, because a robot breaks whenever the screen changes.
-- An **integration engineer** connects systems directly, usually through APIs (Chapter 2), so data flows between them: new orders from the website into the ERP, payment status from finance into the CRM, a risk flag from the data warehouse back into the sales team's tools. Writing data from the warehouse back into business systems is called **reverse ETL** or **data activation**, and Chapter 51 teaches it.
+- An **integration engineer** connects systems directly, usually through APIs (Chapter 2), so data flows between them: new orders from the website into the ERP, payment status from finance into the CRM, a risk flag from the data warehouse back into the sales team's tools. Writing data from the warehouse back into business systems is called **reverse ETL** or **data activation**.
 
 Here's what makes this track different from the others: **every data role includes some automation.** The analyst schedules a refreshable report instead of rebuilding it. The BI developer sets up a dashboard subscription. The data engineer's whole job is automated pipelines. The ML engineer automates retraining. The architect decides which automations the company should build, own, and eventually retire. The automation roles specialize in it, but nobody in data is exempt.
 
@@ -130,7 +130,7 @@ Take a simple example. Riverstone's **Daily Sales Flash**, a one-page summary of
 
 *Figure 7.3 — The flow from source to action, with the roles that automate each stage. The red row is what the same flow looks like when people do it by hand.*
 
-> **Real-life example: the report nobody owns.** Many companies run an important report on a macro written years ago by someone who has since left. It works until the source file's columns change, and then it fails quietly or, worse, produces wrong numbers that look right. Automating a report is only half the job. Someone has to own it, monitor it, and know what to do when it breaks. Chapter 63 covers that governance at the architect level.
+> **Real-life example: the report nobody owns.** Many companies run an important report on a macro written years ago by someone who has since left. It works until the source file's columns change, and then it fails quietly or, worse, produces wrong numbers that look right. Automating a report is only half the job. Someone has to own it, monitor it, and know what to do when it breaks.
 
 ---
 
@@ -157,7 +157,7 @@ In a **hub-and-spoke** (sometimes called **federated**) structure, a central hub
 | **Career growth for data people** | Clear; you learn from other data people | Harder; your manager may not understand your work | Clearer, through the hub's community and standards |
 | **Typical failure** | The bottleneck: "the data team never gets to our request" | "Why do sales and finance report different revenue?" | Nobody is sure who owns a definition |
 
-No structure is right for every company. Small companies often start with one or two data people who behave like a tiny central team. As departments grow, analysts get hired into them, and inconsistent numbers start to hurt. Many companies then move toward hub-and-spoke to keep local speed while fixing definitions centrally. Chapter 66 goes deeper into building and structuring data teams.
+No structure is right for every company. Small companies often start with one or two data people who behave like a tiny central team. As departments grow, analysts get hired into them, and inconsistent numbers start to hurt. Many companies then move toward hub-and-spoke to keep local speed while fixing definitions centrally.
 
 > **Try it.** Think of a company you know, or your college's administration. Where do the people who make reports sit? Which of the three structures is it closest to, and which typical failure have you heard people complain about?
 
@@ -167,7 +167,7 @@ No structure is right for every company. Small companies often start with one or
 
 Roles make the most sense in motion. So let's follow a single business request through all ten of them.
 
-> **Simplification note.** Riverstone is a mid-sized company, and in real life one or two people would cover most of these roles. To see each role clearly, imagine a larger version of Riverstone with one specialist in every seat. The data in step 2 is the real one-year database; the later steps describe what each role would build, and the chapters named teach you to build it.
+> **Simplification note.** Riverstone is a mid-sized company, and in real life one or two people would cover most of these roles. To see each role clearly, imagine a larger version of Riverstone with one specialist in every seat. The data in step 2 is the real one-year database; the later steps describe what each role would build, and "Where this leads" names the chapters that teach you to build it.
 
 It's the year-end review, and Anita Rao, the Sales Head, says:
 
@@ -181,103 +181,56 @@ The answers become a short requirement: **"List every customer with no non-cance
 
 ### Step 2: The data analyst answers it
 
-The data analyst writes a query against the one-year database. You don't need to read SQL yet; look at the shape of the question in the code, then at the answer.
+The data analyst turns the requirement into a method before touching the data. In plain words, it has four steps:
 
-<!-- db: riverstone_2025 -->
+1. Start from every customer, including those who never ordered.
+2. For each one, find the latest order that wasn't cancelled.
+3. Count the days from that date to 31 December.
+4. Keep those over 60 days, or with no order at all.
 
-```sql
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                     AS last_order_date,
-       DATE '2025-12-31' - MAX(o.order_date) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < DATE '2025-11-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date NULLS FIRST;
-```
+Run against the one-year database, the method gives five customers.
 
-```
-   customer_name   |   segment   | last_order_date | days_since_last_order
--------------------+-------------+-----------------+-----------------------
- Home Plus         | Retail      |                 |
- City Needs Store  | Retail      | 2025-03-22      |                   284
- Sunrise Caterers  | Hospitality | 2025-06-10      |                   204
- Om Sai Provisions | Retail      | 2025-07-22      |                   162
- Tasty Tiffins     | Hospitality | 2025-10-26      |                    66
-(5 rows)
-```
+| Customer | Segment | Latest order that wasn't cancelled | Days since that order |
+|---|---|---|---|
+| Home Plus | Retail | none | none |
+| City Needs Store | Retail | 22 March 2025 | 284 |
+| Sunrise Caterers | Hospitality | 10 June 2025 | 204 |
+| Om Sai Provisions | Retail | 22 July 2025 | 162 |
+| Tasty Tiffins | Hospitality | 26 October 2025 | 66 |
 
-**How it works, in plain words.**
+*One-year database (2025). The customer with no order comes first, then the longest silence.*
 
-- The query starts from every customer, then looks up each one's orders, ignoring cancelled ones.
-- For each customer, it finds the latest order date, and counts the days from that date to 31 December 2025.
-- It keeps only customers whose latest order was before 1 November, plus customers with no orders at all.
-- The blank dates are Home Plus: it signed up on 18 June 2025 and has never ordered, so there's no date to show.
+Home Plus signed up on 18 June 2025 and has never ordered, so there's no date to count from. That's exactly the customer step 1 of the method is there to keep.
 
 **Check one row by hand.** Tasty Tiffins last ordered on 26 October 2025. From 26 to 31 October is 5 days, November has 30, and December has 31: 5 + 30 + 31 = 66 days. ✓
 
-A good analyst doesn't stop at the list. Looking closer, City Needs Store and Tasty Tiffins have placed only two orders each, so it's hard to call them "regulars". Sunrise Caterers and Om Sai Provisions placed four orders each, roughly every five to six weeks, and then went silent. Together those two brought in ₹114,072.50 of revenue in 2025, about 2.6% of Riverstone's ₹4,335,471 for the year.
+A good analyst doesn't stop at the list. Looking closer, City Needs Store and Tasty Tiffins have placed only two orders each, so it's hard to call them "regulars". Sunrise Caterers and Om Sai Provisions placed four orders each, roughly every five to six weeks, and then went silent. Together those two brought in ₹1,14,072.50 of revenue in 2025, about 2.6% of Riverstone's ₹43,35,471 for the year.
 
 **What to tell Anita.** Five customers haven't ordered in 60 days. Two of them, Sunrise Caterers and Om Sai Provisions, used to order regularly, so they're the most urgent calls: find out what went wrong. Home Plus signed up in June and never ordered: a lead that was never converted. The other two ordered only twice, so they may be occasional buyers.
 
-> **SQL link.** Chapter 12 teaches every clause in this query and includes a version of it on the mini database (section 12.15). Chapter 13 improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
-
-> **Dialect note.** The same question in MySQL needs two changes: `DATEDIFF` instead of subtracting dates, and a manual sort to put the blank dates first, because MySQL has no `NULLS FIRST`. The result is the same five customers.
-
-<!-- db: riverstone_2025 -->
-
-```mysql
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                         AS last_order_date,
-       DATEDIFF('2025-12-31', MAX(o.order_date)) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < '2025-11-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NOT NULL, last_order_date;
-```
-
-```
-+-------------------+-------------+-----------------+-----------------------+
-| customer_name     | segment     | last_order_date | days_since_last_order |
-+-------------------+-------------+-----------------+-----------------------+
-| Home Plus         | Retail      | NULL            |                  NULL |
-| City Needs Store  | Retail      | 2025-03-22      |                   284 |
-| Sunrise Caterers  | Hospitality | 2025-06-10      |                   204 |
-| Om Sai Provisions | Retail      | 2025-07-22      |                   162 |
-| Tasty Tiffins     | Hospitality | 2025-10-26      |                    66 |
-+-------------------+-------------+-----------------+-----------------------+
-```
+In Chapter 12 you'll write this yourself.
 
 ### Step 3: The BI developer makes it available every day
 
-Anita likes the answer and wants it every week without asking. The BI developer adds an "At-risk customers" page to the sales dashboard. It refreshes from the database each morning, each rep can filter it to their own customers, and Anita gets it by email every Monday through a dashboard subscription. The analyst no longer has to re-run the query by hand.
+Anita likes the answer and wants it every week without asking. The BI developer adds an "At-risk customers" page to the sales dashboard. It refreshes from the database each morning, each rep can filter it to their own customers, and Anita gets it by email every Monday through a dashboard subscription. The analyst no longer has to re-run the list by hand.
 
 ### Step 4: The analytics engineer makes the definition trustworthy
 
 A month later, finance mentions that *their* "inactive customers" report uses 90 days, not 60. The customer-support team uses a third rule. Three reports, three answers, and every meeting starts with an argument about whose number is right.
 
-The analytics engineer agrees one definition with sales and finance, writes it once as a tested, documented table (a `customer_activity` model, in the style of Chapter 32), and points every report at it. Tests run automatically: no customer can appear twice, every customer must have a status, and the total number of customers must match the source system. "Active customer" now means one thing everywhere.
+The analytics engineer agrees one definition with sales and finance, writes it once as a tested, documented table (a `customer_activity` model), and points every report at it. Tests run automatically: no customer can appear twice, every customer must have a status, and the total number of customers must match the source system. "Active customer" now means one thing everywhere.
 
-### Step 5: The data scientist asks what will happen next
+### Step 5: The data engineer makes sure the data arrives
+
+Before anyone can predict, the data has to be complete: payments from finance, tickets from the support desk, and sales activity from the CRM, as well as orders, all fresh by 6 a.m. The data engineer builds pipelines that pull data from each system every night, check it (did yesterday's orders arrive? are there duplicate payments?), and load it into the warehouse. If a check fails, the pipeline stops and alerts someone *before* a wrong number reaches a sales rep.
+
+### Step 6: The data scientist asks what will happen next
 
 The list tells Riverstone who *has* gone quiet. The data scientist asks a better question: *can we tell who is **about to** go quiet, while there's still time to help?* They look for early warning signs in the history: orders getting smaller, gaps getting longer, late payments, complaints to support. They build a model that gives each customer a risk score, and test it fairly against past data: does it beat the simple 60-day rule, or is it an expensive way to get the same list? If it does beat it, they suggest a fair test: call half the high-risk customers, leave the other half alone for a month, and compare what happens. That test is how you learn whether the calls work.
 
-### Step 6: The ML engineer keeps the model running
+### Step 7: The ML engineer keeps the model running
 
-A model in a notebook helps nobody on Monday morning. The ML engineer turns it into a service that scores every customer each night, logs every score, and raises an alarm if the model's accuracy starts to slip, for example if customer behavior changes after a price increase. They also set up a way to retrain it safely. Chapter 56 covers this work.
-
-### Step 7: The data engineer makes sure the data arrives
-
-The model needs more than orders. It needs payments from finance, tickets from the support desk, and sales activity from the CRM, all fresh by 6 a.m. The data engineer builds pipelines that pull data from each system every night, check it (did yesterday's orders arrive? are there duplicate payments?), and load it into the warehouse. If a check fails, the pipeline stops and alerts someone *before* a wrong risk score reaches a sales rep.
+A model in a notebook helps nobody on Monday morning. The ML engineer turns it into a service that scores every customer each night, logs every score, and raises an alarm if the model's accuracy starts to slip, for example if customer behavior changes after a price increase. They also set up a way to retrain it safely.
 
 ### Step 8: The automation or integration engineer puts it to work
 
@@ -285,15 +238,15 @@ A score sitting in a warehouse changes nothing. The integration engineer writes 
 
 ### Step 9: The AI engineer helps the rep prepare
 
-Before calling Sunrise Caterers, a rep wants to know the story: last orders, open invoices, recent complaints. The AI engineer builds an assistant that drafts a short call brief from Riverstone's own data. The design matters more than the demo: the assistant may only use facts it retrieved from the company's systems, it shows where each fact came from, the rep reads and approves the brief before using it, and the team tests it regularly for invented facts. Chapters 55 and 58 teach this.
+Before calling Sunrise Caterers, a rep wants to know the story: last orders, open invoices, recent complaints. The AI engineer builds an assistant that drafts a short call brief from Riverstone's own data. The design matters more than the demo: the assistant may only use facts it retrieved from the company's systems, it shows where each fact came from, the rep reads and approves the brief before using it, and the team tests it regularly for invented facts.
 
 ### Step 10: The data architect designs how it all fits
 
 Stand back and look at everything that now exists: pipelines, a warehouse, a shared definition, a model service, a dashboard, CRM tasks, emails, an AI assistant. The data architect decides how these pieces should fit together, so the company doesn't end up with a tangle of scripts nobody understands. Where does the risk score officially live? Who owns the definition of "active"? Should reps see only their own customers? What happens if the CRM write-back fails halfway? What does the whole thing cost each month, and is it worth it? The architect writes these decisions down, with the reasons, so the next person can understand them.
 
-![A data architect bar across the top: designs how the pieces fit, where the score lives, who owns each definition, who may see what, what it costs. Below it, four phases from left to right. 1, clarify and answer: business analyst turns the request into a clear question; data analyst finds the five quiet customers. 2, share and standardize: BI developer builds an at-risk page on the sales dashboard; analytics engineer builds one tested definition of active. 3, predict: data scientist predicts who will go quiet next; ML engineer scores every customer each night. 4, run and act: data engineer delivers fresh, checked data by 6 a.m.; integration engineer creates tasks in the CRM and a Monday email; AI engineer drafts a call brief the rep approves. A footer shows the start, Anita's question, and the end: every Monday each sales rep knows which customers to call and why.](figures/fig7-5-one-request-every-role.svg)
+![A data architect bar across the top: designs how the pieces fit, where the score lives, who owns each definition, who may see what, what it costs. Below it, five phases in order, top to bottom. 1, clarify and answer: business analyst turns the request into a clear question; data analyst finds the five quiet customers. 2, share and standardize: BI developer builds an at-risk page on the sales dashboard; analytics engineer builds one tested definition of active. 3, supply trusted data: data engineer delivers fresh, checked data by 6 a.m. 4, predict: data scientist predicts who will go quiet next; ML engineer scores every customer each night. 5, act: integration engineer creates tasks in the CRM and a Monday email; AI engineer drafts a call brief the rep approves. A footer shows the start, Anita's question, and the end: every Monday each sales rep knows which customers to call and why.](figures/fig7-5-one-request-every-role.svg)
 
-*Figure 7.5 — One request, every role. Notice that the order matters: prediction is worth building only after the question is clear, the data is trusted, and the definition is agreed.*
+*Figure 7.5 — One request, every role. Notice that the order matters: prediction is worth building only after the question is clear, the definition is agreed and the data is trusted.*
 
 ### What the walk-through shows
 
@@ -354,7 +307,7 @@ Locate yourself truthfully, and you'll see that the next step is usually closer 
 | Skipping the analyst core to reach a "higher" branch | Models and pipelines built on questions you can't frame or data you can't check | Build the trunk first: spreadsheets, SQL, business sense |
 | Treating automation as someone else's job | The same report takes you hours every week | Every role automates; start with refreshable reports and scheduled delivery (section 7.4) |
 | Automating a report without owning it | It fails silently when a source file changes, and nobody notices for weeks | Assign an owner, add a check, and write down what to do when it breaks |
-| Jumping to prediction before the basics work | A churn model nobody uses, while "active customer" still has three definitions | Clarify, answer, share, and standardize before you predict (section 7.6) |
+| Jumping to prediction before the basics work | A churn model nobody uses, while "active customer" still has three definitions | Clarify, answer, share, standardize, and supply trusted data before you predict (section 7.6) |
 | Believing one team structure is always best | Endless reorganizations, same complaints | Match the structure to the company's size and pain; know each structure's typical failure (section 7.5) |
 | Assuming AI assistants make core skills unnecessary | You can't tell when a drafted query is wrong | Learn to read and check the work; use assistants to go faster, not to replace understanding |
 | Pasting AI output into a report unchecked | A plausible number that doesn't reconcile to any known total | Hand-check a row and reconcile to a total before anything leaves your hands |
@@ -383,7 +336,7 @@ Then she listed the manual work she did every week: 40 minutes each morning on t
 
 Anita was quiet for a moment. "The conference speaker made it sound like step one."
 
-"For a company with millions of customers and a data platform, it might be," Meera said. "For us, it's step five."
+"For a company with millions of customers and a data platform, it might be," Meera said. "For us, it's step six."
 
 They rewrote the advertisement together. The title became *Data Analyst (Sales Analytics and Automation)*. The responsibilities listed the Monday at-risk list, a sales dashboard, agreed definitions with finance, and automating recurring reports. The skills section asked for SQL, Excel or Google Sheets, a BI tool, and "experience automating a recurring report, with any tool". Under *Nice to have*, Meera added "interest in forecasting and customer analytics", so the new hire could grow toward the role Anita had first imagined.
 
@@ -401,8 +354,7 @@ They rewrote the advertisement together. The title became *Data Analyst (Sales A
 This chapter needs no software. For the project you'll need:
 
 - **Pen and paper**, or a free diagram tool such as **diagrams.net** (also called draw.io) or **Excalidraw**, to draw your team map and a request's journey.
-- **A few job postings** from any job portal, for exercise 2 and the stretch goal. Save or print them; postings disappear.
-- **Companion file (optional):** `companion/mysql/ch07_queries_mysql.sql` holds the section 7.6 query in PostgreSQL and MySQL form, for readers who already have the practice databases loaded (Chapter 12, section 12.3, explains the setup).
+- **A few job postings** from any job portal, for the project's stretch goals. Save or print them; postings disappear.
 
 ---
 
@@ -458,7 +410,7 @@ This chapter needs no software. For the project you'll need:
 - The field grows like a **tree**: a shared trunk (foundations and the analyst core), a branch point (Part III), two peer branches (science and engineering), and a top where they rejoin (production AI and architecture).
 - The **automation and integration track** removes manual steps and connects systems, using spreadsheet automation, low-code flows, **RPA**, APIs, and **reverse ETL**. Every data role includes some automation.
 - Data teams are **centralized**, **embedded**, or **hub-and-spoke**; each trades consistency, business context, and speed differently, and each has a typical failure.
-- Following one request through every role shows the right order: clarify, answer, share, standardize, predict, then run and act, with the architect designing the whole.
+- Following one request through every role shows the right order: clarify, answer, share, standardize, supply trusted data, predict, then act, with the architect designing the whole.
 - **AI assistants** speed up tasks with a checkable answer; context, judgment, and accountability stay with you. You're responsible for every number you deliver.
 
 ---
@@ -473,7 +425,7 @@ This chapter needs no software. For the project you'll need:
 
 ### Core
 
-4. In the section 7.6 result, Home Plus has blank `last_order_date` and `days_since_last_order` values. What do the blanks mean, and why would it be a mistake to leave Home Plus off Anita's list?
+4. In the section 7.6 result, Home Plus shows "none" for both its latest order and its days since that order. What do those gaps mean, and why would it be a mistake to leave Home Plus off Anita's list?
 5. Check by hand that City Needs Store's `days_since_last_order` of 284 is correct. Its last order was on 22 March 2025, and "today" is 31 December 2025.
 6. Anita can make two calls this afternoon. From the five customers in section 7.6, which two should she call, and why? Use the order counts given in the analyst's notes.
 7. Meera spends 25 minutes each working day copying overdue invoices from the finance system into emails for sales reps. Assuming 250 working days a year, how many hours is that per year? About how many 40-hour working weeks? Which role's skills would remove this work, and name one way they might do it.
@@ -484,7 +436,7 @@ This chapter needs no software. For the project you'll need:
 ### Stretch
 
 11. Finance says "inactive" should mean *no non-cancelled order in 90 days, including customers who never ordered*. Using only the section 7.6 result, how many customers would be on finance's list, and which one drops off? Which role would fix the problem of two definitions, and how?
-12. An AI assistant drafts a query that returns *four* quiet customers under the 60-day rule, not five. Without running anything, give three likely reasons for the difference and say how you'd check each one.
+12. An AI assistant's list shows four quiet customers, not five. Without looking at any code, give three reasons the list could differ (for example, never-ordered customers dropped, cancelled orders counted as activity, a different "today"), and how you'd check each against the result table.
 13. Trace a new request through the roles: *"Our deliveries to Chennai keep arriving late. Why, and can we stop it?"* Name the roles you'd involve, in order, what each produces, and which roles you'd leave out for now, with reasons.
 
 ### Think about it (no query needed)
@@ -506,28 +458,27 @@ orientation · track · role · data analyst · business analyst · BI developer
 
 - **Chapter 8, The Career Tree: How Skills Unlock Roles,** turns this map into tiers in the book's part order, with a skills matrix per role, a day in the life of each role, how to decode a job description, the reader pathways table, and entry routes for freshers, career switchers, and internal moves.
 - **Chapter 9, How Expertise Actually Forms,** is honest about the timeline, and shows how to practice, build a portfolio, find feedback, and get through plateaus.
-- **Chapters 12 and 13** teach the SQL behind section 7.6's query, and the better "customer rhythm" version of the at-risk list.
+- **Chapter 12** teaches you to write section 7.6's four-step method as a query yourself, first on the mini database (section 12.15). **Chapter 13** improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
 - **Chapters 19 and 20** start the automation thread in earnest: spreadsheet automation, and reports delivered by email and on schedule. **Chapter 25** covers the business analyst track, including finding automation opportunities.
-- **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels. **Chapter 66** returns to building and structuring data teams.
+- The later steps of section 7.6 each have their own chapter: **Chapter 32** builds tested, shared definitions like the analytics engineer's; **Chapter 56** keeps models running, as the ML engineer does; **Chapters 55 and 58** build AI assistants with the safeguards in step 9.
+- **Chapter 51** teaches reverse ETL, and **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels; Chapter 63 also covers owning and governing every automation. **Chapter 66** returns to building and structuring data teams.
 - **Part VIII, Chapter 68, How Data Hiring Works,** explains the interview rounds for each of these roles. Every role in this chapter has matching question banks in Chapters 70–82.
 
 ---
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
-**1.** (a) Question 1, what happened: it describes last month. (b) Question 2, what will happen: it's a forecast. (c) Question 3, how data moves and gets put to work: it's an integration between two systems. (d) Question 4, how the whole system should be designed: shared IDs and ownership across systems are architecture decisions. e. Question 2, *why*: it asks whether the discount *caused* the increase, which needs an experiment or a careful causal analysis. The common wrong answer is Question 1, because it sounds like "what happened to orders". Describing that orders rose is Question 1; proving the discount caused it is Question 2.
+**1.** (a) Question 1, what happened: it describes last month. (b) Question 2, what will happen: it's a forecast. (c) Question 3, how data moves and gets put to work: it's an integration between two systems. (d) Question 4, how the whole system should be designed: shared IDs and ownership across systems are architecture decisions. (e) Question 2, *why*: it asks whether the discount *caused* the increase, which needs an experiment or a careful causal analysis. The common wrong answer is Question 1, because it sounds like "what happened to orders". Describing that orders rose is Question 1; proving the discount caused it is Question 2.
 
 **2.** (a) Priya is an **analytics engineer**: tested, shared definitions used by every report. (b) Arjun is an **integration engineer**: API connections and duplicate-safe loading. (c) Sana is a **business analyst**: process mapping and requirements. (d) Karthik is an **ML engineer**: keeping a model running, monitored, and retrained. Titles at their companies might be anything; the outputs tell you the role.
 
 **3.** It's an **embedded** (decentralized) structure. Expect the typical failure from the table in section 7.5: the departments' numbers disagree ("why does finance's revenue differ from sales'?"), and similar reports get built more than once.
 
-**4.** The blanks are NULLs: Home Plus has no non-cancelled orders at all, so there's no latest order date and nothing to count days from. Leaving it off would be a mistake because a customer who signed up and never ordered is the easiest kind to miss and often the easiest to win: someone showed interest and nobody followed up. That's why the business analyst's requirement in step 1 explicitly included never-ordered customers, and why the query keeps rows where the latest order date is missing.
+**4.** The gaps mean Home Plus has no non-cancelled orders at all, so there's no latest order date and nothing to count days from. They aren't zero, and they aren't a mistake: they mean "no value here". Leaving it off would be a mistake because a customer who signed up and never ordered is the easiest kind to miss and often the easiest to win: someone showed interest and nobody followed up. That's why the business analyst's requirement in step 1 explicitly included never-ordered customers, and why the analyst's method starts from every customer and keeps those with no order at all.
 
 **5.** From 22 March to 31 March is 9 days. April 30, May 31, June 30, July 31, August 31, September 30, October 31, November 30, December 31. Total: 9 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31 = 284 days. ✓ The common slip is counting 22 March itself, which gives 285; days *since* the last order start counting the day after it.
 
-**6.** **Sunrise Caterers and Om Sai Provisions.** Each placed four orders at a regular rhythm (roughly every five to six weeks) and then went silent for 204 and 162 days, so something has probably gone wrong, and they were worth ₹114,072.50 together in 2025. City Needs Store and Tasty Tiffins ordered only twice each, so their silence may be their normal pattern. Home Plus is worth a call too, but as a sales lead to convert rather than a customer to win back, so it can go to a sales executive. A reasonable alternative answer puts Home Plus second, if Anita's priority is new business; what matters is giving a reason.
+**6.** **Sunrise Caterers and Om Sai Provisions.** Each placed four orders at a regular rhythm (roughly every five to six weeks) and then went silent for 204 and 162 days, so something has probably gone wrong, and they were worth ₹1,14,072.50 together in 2025. City Needs Store and Tasty Tiffins ordered only twice each, so their silence may be their normal pattern. Home Plus is worth a call too, but as a sales lead to convert rather than a customer to win back, so it can go to a sales executive. A reasonable alternative answer puts Home Plus second, if Anita's priority is new business; what matters is giving a reason.
 
 **7.** 25 × 250 = 6,250 minutes per year. 6,250 ÷ 60 ≈ **104.2 hours**, and 104.2 ÷ 40 ≈ **2.6 working weeks**. This is **automation analyst** (or integration engineer) work, and an analyst who automates could do it too. Possible approaches: a query or saved report that lists overdue invoices by rep, delivered as a scheduled email with each rep's list in the email body (Chapter 20); or a low-code flow in Power Automate or n8n that runs every morning (Chapter 20); or, at a later stage, overdue flags pushed straight into the CRM as tasks (Chapter 51).
 
@@ -539,7 +490,7 @@ orientation · track · role · data analyst · business analyst · BI developer
 
 **11.** Finance's rule keeps customers with more than 90 days since their last order, plus never-ordered customers: Home Plus (never), City Needs Store (284), Sunrise Caterers (204), and Om Sai Provisions (162). That's **4 customers**. **Tasty Tiffins drops off**, at 66 days. An **analytics engineer** would fix the problem of two definitions: agree one definition (or two clearly named ones, such as "quiet 60" for sales follow-up and "inactive 90" for finance), build it once as a tested, documented table, and point every report at it. The wrong fix is to let each team keep its own hidden rule and argue in meetings.
 
-**12.** Likely reasons: (1) **Never-ordered customers were dropped.** An inner join, or a filter written as a plain `WHERE` condition on orders, removes Home Plus. Check: does Home Plus appear? (2) **Cancelled orders were counted as activity.** A customer whose only recent order was cancelled would look active. Check: look for cancelled orders after 1 November for the missing customer. (3) **A different cut-off date or comparison.** For example `<=` instead of `<`, a cut-off of 60 days from a different "today", or `CURRENT_DATE` instead of 31 December 2025. Check: compare the dates in the query with the requirement. In every case, reconcile: list the customers in both results and investigate the one that differs. Here, reason (1) is the most likely, because Home Plus is exactly the kind of row that inner joins silently lose.
+**12.** Likely reasons: (1) **Never-ordered customers were dropped.** The assistant started from orders instead of from every customer, so a customer with no orders never appears. Check: is Home Plus on its list? (2) **Cancelled orders were counted as activity.** A customer whose only recent order was cancelled would look active. Check: find which of the five is missing, then look for a cancelled order after 1 November for that customer. (3) **A different "today" or a different edge.** Counting from the day the assistant ran instead of 31 December 2025, or keeping "60 days or more" instead of "over 60 days", moves customers near the line. Check: is Tasty Tiffins, the closest to the line at 66 days, the one missing? Ask the assistant which date it counted from and which rule it kept. In every case, reconcile: put the two lists side by side and investigate the customer that differs. Here, reason (1) is the most likely, because a never-ordered customer like Home Plus is exactly the kind of row that's easy to lose without noticing.
 
 **13.** A sensible order: **Business analyst** first, to define "late" (against the promised date? by how many days?) and find who needs the answer. **Data analyst** next, to measure how often Chennai deliveries are late, compared with other cities, and by delivery partner, route, product, or day of the week, and to suggest the likely causes. **BI developer**, if it needs watching every week, to add an on-time delivery page to the operations dashboard. **Automation or integration engineer**, if delivery status has to be copied from the delivery partners' systems by hand, to connect those systems. Leave out the **data scientist** and **ML engineer** for now: prediction is premature until the cause is understood and the data is reliable; they might come in later to predict late deliveries before dispatch. The **data architect** isn't needed for one analysis, though they'd care if delivery data turned out to be missing from the platform. Other reasonable orders are fine if each step depends on the one before.
 

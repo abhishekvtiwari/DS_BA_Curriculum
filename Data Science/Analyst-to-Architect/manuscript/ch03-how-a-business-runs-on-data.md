@@ -80,13 +80,15 @@ Finance needs sales' orders to raise invoices. Production needs them to plan wha
 
 To see how departments depend on each other's data, follow one piece of business all the way through. This journey is called **order to cash**, or **lead to cash** when it includes winning the customer.
 
-Here is a real order from Riverstone's database: **order 5001**, from Sharma Hardware, a retail customer in Mumbai. You'll query these exact rows in Chapter 12. The order has two lines:
+Here is a real order from Riverstone's database: **order 5001**, from Sharma Hardware, a retail customer in Mumbai. The order has two lines:
 
 | Product | Quantity | List price | Discount | Line value |
 |---|---|---|---|---|
 | Storage Box 10L | 20 | ₹450 | 0% | ₹9,000 |
 | Water Bottle 1L | 50 | ₹120 | 5% | ₹5,700 |
 | **Total** | | | | **₹14,700** |
+
+*Source: Mini database (Jan–Mar 2026).*
 
 Check it by hand: 20 × ₹450 = ₹9,000. 50 × ₹120 = ₹6,000, less 5% is ₹5,700. ₹9,000 + ₹5,700 = ₹14,700. ✓ (As in the rest of this book, tax is left out to keep numbers simple.)
 
@@ -141,7 +143,7 @@ A **business system** is software a department uses for its daily work, storing 
 
 Riverstone's set-up is typical for a mid-sized manufacturer. This book names its systems by type, because the lessons don't depend on the brand:
 
-- **The ERP** holds customers, products, employees (as sales reps), orders, order lines, invoices, and payments, plus stock, production, and purchasing. People at Riverstone still call its invoicing module "the billing system"; that's where Imran exported his Friday file from in Chapter 2. **The mini database you'll use from Chapter 12 onward is a small copy of the ERP's sales tables.**
+- **The ERP** holds customers, products, employees (as sales reps), orders, order lines, invoices, and payments, plus stock, production, and purchasing. People at Riverstone still call its invoicing module "the billing system"; that's where Imran exported his Friday file from in Chapter 2. **The mini database behind this chapter's numbers is a small copy of the ERP's sales tables.**
 - **The CRM** holds leads, contacts, quotes, and the sales pipeline.
 - **The website** shows the catalog and feeds enquiries to the CRM (customers don't order online). **The support desk** records complaints and returns. **The HRMS** holds employees and payroll.
 - **Spreadsheets and email** fill every gap between them: quotes, the warehouse's stock sheet, the monthly report.
@@ -152,9 +154,9 @@ Riverstone has no POS, because it sells to businesses. But Sharma Hardware's POS
 
 Every important fact should have one official source, its **system of record** (or **source of truth**). At Riverstone, that's the ERP for orders and invoices, the CRM for leads, and the HRMS for employees. When the CRM and the ERP disagree about what Sharma Hardware bought, the ERP wins.
 
-The trouble is the gaps. Riverstone's CRM and ERP aren't connected: when a quote becomes an order, someone must mark the deal *Won* in the CRM, and a cancellation in the ERP never reaches the CRM unless someone remembers. Connecting systems so data flows between them automatically is **integration** (Chapters 45 and 51).
+The trouble is the gaps. Riverstone's CRM and ERP aren't connected: when a quote becomes an order, someone must mark the deal *Won* in the CRM, and a cancellation in the ERP never reaches the CRM unless someone remembers. Connecting systems so data flows between them automatically is **integration**.
 
-> **Spreadsheet link.** A spreadsheet can become a system of record by accident. If the warehouse's stock sheet is more current than the ERP, the sheet is now the source of truth for stock, with no access control or history (section 2.9).
+> **Watch out: a spreadsheet can become the system of record by accident.** If the warehouse's stock sheet is more current than the ERP, the sheet is now the source of truth for stock, with no access control or history (section 2.9).
 
 ---
 
@@ -172,7 +174,7 @@ A **report** summarizes many transactions to answer a question (*"How much did w
 | **Changes?** | should be corrected, not rewritten; a cancellation is a new status or a new record | changes whenever the data or the rules change |
 | **Example** | invoice 9001: ₹14,700, due 2026-02-05 | "January billings: ₹104,210" |
 
-Systems for transactions are tuned to write one record quickly and safely; reporting needs to read millions and add them up. That's why growing companies move reporting into a separate **data warehouse** (Chapter 49).
+Systems for transactions are tuned to write one record quickly and safely; reporting needs to read millions and add them up. That's why growing companies move reporting into a separate **data warehouse**.
 
 ### Three numbers called "sales"
 
@@ -190,6 +192,8 @@ Here are all three for Riverstone's first quarter of 2026:
 | February | ₹161,700 | ₹161,700 | ₹64,700 |
 | March | ₹58,020 | ₹31,800 | ₹132,550 |
 | **Quarter** | **₹335,930** | **₹297,710** | **₹197,250** |
+
+*Source: Mini database (Jan–Mar 2026).*
 
 ![Grouped bars for January, February, and March 2026 showing booked, billed, and collected amounts](figures/fig3-3-booked-billed-collected.svg)
 
@@ -210,7 +214,7 @@ And the quarter reconciles:
 
 > **Watch out: "sales" without a definition.** If you don't know which of the three is meant, ask. If you can't, give the name and rule with the number: *"Billed sales (invoices raised) in January: ₹104,210."* Otherwise two departments argue about who is wrong when both are right.
 
-> **Simplification note.** Accountants recognize **revenue** under formal accounting standards, which decide exactly when a sale counts. This book uses invoices as a stand-in for revenue, as Chapters 12 and 13 do. In a real company, ask finance which rule applies before publishing a revenue number; this is general information, not accounting advice.
+> **Simplification note.** Accountants recognize **revenue** under formal accounting standards, which decide exactly when a sale counts. This book uses invoices as a stand-in for revenue, as the rest of the book does. In a real company, ask finance which rule applies before publishing a revenue number; this is general information, not accounting advice.
 
 ### When a report runs matters too
 
@@ -237,6 +241,8 @@ Here are nine KPIs Riverstone's management could track, calculated for the first
 | **Overdue receivables** | unpaid amounts on invoices past their due date | ₹88,760 of ₹100,460 owed | Finance Manager |
 | **Average days to collect** | days from invoice to final payment, for fully paid invoices | 31.6 days | Finance Manager |
 | **Active customers** | customers with at least one non-cancelled order in the period | 7 of 8 | Sales Head |
+
+*Source: Mini database (Jan–Mar 2026).*
 
 Check two of them by hand. **Gross margin:** the products on invoiced orders cost Riverstone ₹230,450 to make, so the margin is ₹297,710 − ₹230,450 = ₹67,260, and ₹67,260 ÷ ₹297,710 = 22.6%. ✓ **Average days to collect:** five invoices are fully paid, taking 27, 51, 26, 33, and 21 days; they add up to 158, and 158 ÷ 5 = 31.6 days. ✓ (Invoice 9001, the one from Figure 3.2, is the 27.)
 
@@ -265,7 +271,7 @@ Together, those answers are a **KPI definition**: Chapter 1's data dictionary on
 
 Data changes nothing until someone uses it to decide, usually on **dashboards** and in **meetings**.
 
-A **dashboard** is a screen of a few KPIs and charts, usually refreshed automatically from the systems of record, that answers the questions its viewer asks every week (Chapters 15 and 16 build them).
+A **dashboard** is a screen of a few KPIs and charts, usually refreshed automatically from the systems of record, that answers the questions its viewer asks every week.
 
 Companies look at their numbers on a rhythm. Riverstone's is typical:
 
@@ -339,7 +345,7 @@ Then estimate *how many times a week, how many minutes each*. A list of manual s
 
 ### Not every manual step should be automated
 
-Anita approving a 12% discount is a judgment, and it should stay with a person; what can be automated is sending her the margin and payment data. And automating a broken process gives you a fast broken process: fix the process first. The book returns to each of Riverstone's manual steps: reports in Chapters 19 and 20, emailed orders in Chapter 58, disconnected systems in Chapters 45 and 51, and the full process map in Chapter 25.
+Anita approving a 12% discount is a judgment, and it should stay with a person; what can be automated is sending her the margin and payment data. And automating a broken process gives you a fast broken process: fix the process first. The book returns to each of Riverstone's manual steps later, and shows how to automate the ones that should be.
 
 > **Interview extra point.** When an interviewer asks, *"What were sales last month?"*, or gives you a case with a "revenue" figure, say which definition you're using (booked, billed, or collected) before you calculate. It shows in one sentence that you understand the business, not only the tools. Chapters 75 and 76 have practice questions.
 
@@ -379,6 +385,8 @@ Anita asks Meera Iyer to find out. Meera doesn't start by deciding who's wrong. 
 | 5003 | Patel Kitchenware | Delivered | ₹16,250 | yes | yes, 9003 |
 | 5004 | Green Leaf Hotels | Cancelled | ₹12,000 | yes | no |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 The CRM total is ₹116,210. The invoiced total is ₹104,210. The difference is exactly order 5004: Green Leaf Hotels cancelled its 100 water bottles in the ERP, and nobody updated the deal in the CRM, because the systems aren't connected.
 
 **3. Why no cash?** All three invoices had 30-day terms. The earliest, 9001, was due on 5 February. Sharma Hardware paid ₹14,700 yesterday, 2 February, three days early. Coastal Foods' due date is 9 February and Patel Kitchenware's is 14 February. Every invoice raised in January falls due in February, and no older invoices were waiting to be paid, so zero cash in January is exactly what 30-day terms predict.
@@ -400,7 +408,7 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 - **A notebook and pen.** Enough for every exercise, and the best way to draw your first process map.
 - **A spreadsheet** (Excel or Google Sheets, optional). Useful for the project's step table and time estimates. Chapter 10 teaches both from the beginning.
 - **A diagram tool** (optional). diagrams.net (also called draw.io) is free and runs in a browser; PowerPoint, Google Slides, and Google Drawings work too. Boxes and arrows are all you need.
-- **The Riverstone mini database.** Not needed yet; Chapter 6 installs it and Chapter 12 queries the orders, invoices, and payments you followed here.
+- **The Riverstone mini database.** Not needed yet; Chapter 12 installs it and queries the orders, invoices, and payments you followed here.
 
 ---
 
@@ -518,18 +526,17 @@ department · lead · quote / quotation · order · delivery challan / delivery 
 - **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
 - **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
 - **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
-- **Chapters 19 and 20** automate the monthly report: macros and Apps Script first, then scheduled email reports and alerts.
+- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
+- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
 - **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
 - **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
-- **Chapters 45 and 51** connect the systems: moving data from the ERP and CRM into a warehouse, and sending results back into them.
+- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
 - **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
 - **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
 
 ---
 
 ## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** (a) Warehouse and dispatch. (b) Purchasing. (c) HR (payroll). (d) Customer support. (e) Sales. (f) Production. (g) Marketing.
 
