@@ -1151,8 +1151,8 @@ Use `companion/ch23/financials_2025.md`, `monthly_revenue_2025.csv`, and the ful
 - **Level 2:** From the balance sheet, compute working capital, the current ratio, and liabilities-to-equity.
 - **Level 3:** From the balance sheet and the P&L, compute DIO, DSO, and DPO, then the cash conversion cycle.
 - **Level 4:** From the cash flow statement, explain in one sentence why cash rose by less than profit after tax.
-- **Level 5:** Using `monthly_revenue_2025.csv`, find the two consecutive months with the largest percentage fall in revenue, and compute it.
-- **Level 6:** Decompose that fall into customer, frequency, and AOV effects using the chain-linked method.
+- **Level 5:** Using `monthly_revenue_2025.csv`, find the two consecutive months with the largest percentage *rise* in revenue, and compute it.
+- **Level 6:** Decompose that rise into customer, frequency, and AOV effects using the chain-linked method.
 - **Level 7:** State Riverstone's retention rate, churn rate, and 5-year-capped LTV, and compare LTV:CAC against the 3:1 rule of thumb.
 - **Bonus:** Using the real leads data, after removing duplicates, compute the funnel conversion rate from "Contacted" to "Won" (not from "New").
 
@@ -1220,7 +1220,7 @@ Use `companion/ch23/`, `companion/full/`, and `companion/ch21/delivery_times_202
 10. Compute Riverstone's blended CAC and average ROAS from `marketing_2025.csv`. In which month was ROAS highest, and does that month's lead volume explain it?
 11. Compute the naive (1/churn) and 5-year-capped LTV, and the resulting LTV:CAC for each. Which would you present to a board, and why?
 12. Verify the KPI tree identity for 2025: active customers × orders per customer × AOV. Confirm it reconstructs the real revenue figure.
-13. Find the two consecutive months in 2025 with the largest *percentage* fall in revenue, and decompose it into customer, frequency, and AOV effects.
+13. The summer trough didn't end in June: revenue fell again from June to July 2025. Decompose the June → July fall into customer, frequency, and AOV effects, with the chain-linked method of section 23.11.
 14. For the change in exercise 13, check whether the segment mix shifted meaningfully between the two months.
 15. Compute inventory turns (COGS ÷ inventory, using the year-end inventory figure as a simple proxy for the average). What would doubling inventory turns imply about DIO?
 16. Using Chapter 21's delivery data, compute OTIF by branch and rank the branches. Propose one guardrail metric that would catch a branch gaming OTIF by relabelling status.
@@ -1272,9 +1272,9 @@ Use `companion/ch23/`, `companion/full/`, and `companion/ch21/delivery_times_202
 
 **12.** 4,599 × (46,356 ÷ 4,599) × (₹1,14,66,41,651.25 ÷ 46,356) = 4,599 × 10.08 × ₹24,735.56 = **₹1,14,66,41,651.25**, matching the real 2025 revenue exactly (the identity is definitional, so it always will, as long as AOV isn't rounded first).
 
-**13.** The largest percentage fall is **November → December** (−44.1%, from ₹15.60 crore to ₹8.73 crore), narrowly ahead of May→June (−40.4%). Decomposed: customer effect ≈ −₹1.26 crore, frequency effect ≈ −₹1.06 crore, AOV effect ≈ −₹4.55 crore, summing to the full −₹6.87 crore fall — AOV is again the dominant driver, at 66% of the decline.
+**13.** June ₹5.20 crore → July ₹4.00 crore, a fall of 23.0% (₹1.19 crore). Customers fell from 2,723 to 2,573, orders per customer from 1.190 to 1.173, and AOV from ₹16,040.89 to ₹13,263.12. Decomposed: customer effect ≈ −₹28.6 lakh, frequency effect ≈ −₹7.0 lakh, AOV effect ≈ −₹83.8 lakh, summing to the full −₹1.19 crore — AOV is again the dominant driver, at 70% of the decline.
 
-**14.** For November→December, segment order-share is nearly unchanged (Hospitality 27.5%→26.8%, Retail 50.5%→52.0%, Wholesale 22.0%→21.1%), so the AOV decline is again a broad, within-segment effect (the post-festive normalisation) rather than a shift toward smaller-spending segments.
+**14.** For June→July, segment order-share is almost unchanged (Hospitality 26.1%→26.5%, Retail 52.6%→52.5%, Wholesale 21.3%→21.0%), so the AOV decline is again a broad, within-segment effect (the deepening seasonal trough) rather than a shift toward smaller-spending segments.
 
 **15.** COGS ÷ inventory = 83,18,03,000 ÷ 12,53,40,178 ≈ **6.6 times a year**. Doubling turns to about 13.2 would imply DIO falling from 55 days to roughly 27.5 days — much less cash tied up in stock, but a higher risk of stockouts unless replenishment also gets faster.
 
@@ -1302,7 +1302,7 @@ Use `companion/ch23/`, `companion/full/`, and `companion/ch21/delivery_times_202
 
 **27.** First question: "what's your exact definition — formula, time window, and what's excluded?" Very often the discrepancy is entirely explained by one team using calendar year and the other trailing twelve months, or one excluding cancelled orders and the other not. Going forward: write the six-part definition once, in a shared location, with an owner, so the next disagreement takes five minutes instead of a meeting.
 
-**Timed challenge answers.** Level 1: gross margin 27.5%, EBIT margin 15.0%, net margin 10.5%. Level 2: working capital ₹12.60 crore, current ratio 1.58, liabilities-to-equity 0.91. Level 3: DIO = 12,53,40,178 ÷ 83,18,03,000 × 365 = 55.0; DSO = 13,19,42,327 ÷ 1,14,66,41,651 × 365 = 42.0; DPO = 8,65,98,668 ÷ 83,18,03,000 × 365 = 38.0; CCC = 55 + 42 − 38 = 59 days. Level 4: cash rose by less than PAT because ₹5.16 crore was spent on capex (investing) and ₹4.23 crore paid out as dividend (financing), outflows that don't appear in profit. Level 5: November→December, a fall from ₹15.60 crore to ₹8.73 crore, about 44.1% (the largest percentage fall of the year; May→June at −40.4% is a close second). Level 6: customer effect ≈ −₹1.26 crore, frequency effect ≈ −₹1.06 crore, AOV effect ≈ −₹4.55 crore, summing to the full −₹6.87 crore fall. Level 7: retention 93.3%, churn 6.7%, 5-year-capped LTV ≈ ₹2.17 lakh, LTV:CAC ≈ 26.6:1 — well above the 3:1 rule of thumb. Bonus: Contacted→Won using the deduplicated funnel (6 Won of 22 that reached Contacted) ≈ 27%.
+**Timed challenge answers.** Level 1: gross margin 27.5%, EBIT margin 15.0%, net margin 10.5%. Level 2: working capital ₹12.60 crore, current ratio 1.58, liabilities-to-equity 0.91. Level 3: DIO = 12,53,40,178 ÷ 83,18,03,000 × 365 = 55.0; DSO = 13,19,42,327 ÷ 1,14,66,41,651 × 365 = 42.0; DPO = 8,65,98,668 ÷ 83,18,03,000 × 365 = 38.0; CCC = 55 + 42 − 38 = 59 days. Level 4: cash rose by less than PAT because ₹5.16 crore was spent on capex (investing) and ₹4.23 crore paid out as dividend (financing), outflows that don't appear in profit. Level 5: July→August, a rise from ₹4.00 crore to ₹7.18 crore, about 79.5% (ahead of September→October at 61.7% and August→September at 55.5%). Level 6: customer effect ≈ +₹49.6 lakh, frequency effect ≈ +₹30.5 lakh, AOV effect ≈ +₹2.38 crore, summing to the full +₹3.18 crore rise; AOV is 75% of it. Level 7: retention 93.3%, churn 6.7%, 5-year-capped LTV ≈ ₹2.17 lakh, LTV:CAC ≈ 26.6:1 — well above the 3:1 rule of thumb. Bonus: Contacted→Won using the deduplicated funnel (6 Won of 22 that reached Contacted) ≈ 27%.
 
 ---
 
