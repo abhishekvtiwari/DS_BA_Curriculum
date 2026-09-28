@@ -82,7 +82,7 @@ How it works:
 - `A1`, the first thing in the brackets, is the cell to read. Whatever `A1` holds is what gets rounded.
 - `0`, after the comma, is how many decimal places to keep. `0` means a whole number.
 
-**What happens if you change it?** Click `A1`, type `2.4`, and press Enter. `B1` changes to **2** on its own. That's the whole idea of a spreadsheet formula: it recalculates the moment its inputs change. Keep this little test in mind: Python, which you meet in Chapter 17, rounds 2.5 to 2, and that chapter explains why tools can disagree.
+**What happens if you change it?** Click `A1`, type `2.4`, and press Enter. `B1` changes to **2** on its own. That's the whole idea of a spreadsheet formula: it recalculates the moment its inputs change. Keep this little test in mind: Python, which you meet in Chapter 17, rounds 2.5 to 2.
 
 ### Open the practice files
 
@@ -1415,6 +1415,7 @@ The check: the Data sheet's non-cancelled total is ₹43,35,471; difference **0*
 
 ## Recap
 
+- **Getting started is free:** Google Sheets or Excel for the web. A first formula, `=ROUND(A1,0)`, proves the app works and shows that formulas recalculate when their inputs change.
 - A **workbook** holds **sheets**; each **cell** has an **address**, and a block of cells is a **range**. Excel and Google Sheets share this model; their menus and a few features differ.
 - **What a cell shows isn't always what it contains.** Number formats round and dress up values; text can look like a number; dates are day counts. Check with the formula bar, `ISNUMBER`, `ISTEXT`, and `LEN`, and compare `COUNT` with `COUNTA`.
 - **CSV imports guess types.** Opening a day-first CSV with month-first settings turned 125 of Riverstone's 330 dates into wrong dates silently, left 195 as text, and stripped the zeros from every customer code. Import with column types set.

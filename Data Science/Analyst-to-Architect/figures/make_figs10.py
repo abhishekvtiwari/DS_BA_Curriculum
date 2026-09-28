@@ -64,12 +64,12 @@ def fig_anatomy():
 # ---------- Figure 10.2: what you see vs what the cell contains ----------
 def fig_value_display():
     o=[]
-    rows=[("A7","32,063","32062.5","Number","A format rounds the display; formulas use 32062.5",ORANGE),
-          ("A5","2025-01-02","45659","Number (a date)","A date is a day count, shown as a date",GREEN),
+    rows=[("A7","32,063","32062.5","Number","The display is rounded; formulas use 32062.5",ORANGE),
+          ("A5","2025-01-02","45659","Number (date)","A date is a day count, shown as a date",GREEN),
           ("A8","0005","0005","Text","A code: as text it keeps its leading zeros",PURPLE),
           ("A4","2900","2900␣","Text","A trailing space: SUM skips it, LEN says 5",RED)]
     o.append(text(40,18,"You see",11.5,INK,"bold",family=HEAD)); o.append(text(170,18,"The cell contains",11.5,INK,"bold",family=HEAD))
-    o.append(text(300,18,"Type",11.5,INK,"bold",family=HEAD)); o.append(text(400,18,"Why it matters",11.5,INK,"bold",family=HEAD))
+    o.append(text(300,18,"Type",11.5,INK,"bold",family=HEAD)); o.append(text(412,18,"Why it matters",11.5,INK,"bold",family=HEAD))
     for i,(addr,see,real,typ,why,c) in enumerate(rows):
         y=28+i*44
         o.append(text(8,y+20,addr,10.5,MUTED,"bold",family=MONO))
@@ -79,7 +79,7 @@ def fig_value_display():
         o.append(arrow(150,y+15,166,y+15))
         o.append(rect(170,y,118,30,fill="#f6f9fc",stroke=c,sw=1.4,rx=4)); o.append(text(178,y+20,real,12.5,c,"bold",family=MONO))
         o.append(text(300,y+20,typ,11,INK,"bold"))
-        o.append(text(400,y+20,why,10.5,INK))
+        o.append(text(412,y+20,why,10.5,INK))
     o.append(text(8,214,"Check with the formula bar, =ISNUMBER(A2), =ISTEXT(A2), and =LEN(A2). Numbers align right; text aligns left.",10.5,MUTED))
     return svg(W,224,"".join(o))
 
