@@ -240,7 +240,7 @@ JOBS['ch06'] = lambda: build('ch06-setting-up-to-learn.md', 'Ch06-Setting-Up-to-
 JOBS['part0'] = lambda: build('part0-first-principles.md', 'Part0-First-Principles-Data-from-Zero', 'break-h1',
       'Analyst to Architect — Part 0: First Principles', 'Analyst to Architect · Part 0 · First Principles: Data from Zero',
       dict(KICKER='Analyst to Architect · Part 0', TITLE='First Principles:<br>Data from Zero',
-           SUB='Chapters 1–6: what data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and setting up to learn.',
+           SUB='Chapters 1–6: what data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and planning your learning.',
            DOC='Approved chapters · Version 1', META='17 September 2026<br>6 chapters · about 50,000 words · 23 figures · 88 exercises with answers'), 1)
 
 JOBS['part1'] = lambda: build('part1-the-map.md', 'Part1-The-Map', 'break-h1',
