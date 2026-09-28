@@ -209,12 +209,16 @@ Sub VariableDemo()
     isFinal = True
     orderDate = DateSerial(2025, 12, 31)
 
-    Debug.Print branch & ": " & Format(rowCount, "#,##0") & " rows, " & Format(netRevenue, "#,##0.00")
+    Debug.Print branch & ": " & Format(rowCount, "#,##0") & " rows, " & _
+                Format(netRevenue, "#,##0.00")
     Debug.Print "Final? " & isFinal & "; period ends " & Format(orderDate, "dd mmm yyyy")
 End Sub
 ```
 
-<<OUT:VariableDemo>>
+```
+Mumbai HO: 25,832 rows, 423,872,808.00
+Final? True; period ends 31 Dec 2025
+```
 
 - **`Dim branch As String`** makes a variable called `branch` that holds text. The next four lines do the same for a whole number, a decimal number, a true/false value, and a date.
 - **`branch = "Mumbai HO"`** puts a value into the variable. The `=` here means "store", not "is equal to".
@@ -282,7 +286,11 @@ Sub TestCheckTarget()
 End Sub
 ```
 
-<<OUT:TestCheckTarget>>
+```
+Above target
+Close: 95.0%
+Below target by 20
+```
 
 Notice there are **no brackets** around `105, 100`. That's VBA's rule: when you call a `Sub`, list the values after its name without brackets; when you use a `Function`'s answer (below), put them in brackets. The same works for section 19.2's `FormatSalesSheet`: type `FormatSalesSheet ThisWorkbook.Worksheets("Master")` in the Immediate window, and the Master sheet gets a bold, frozen header.
 
@@ -313,7 +321,13 @@ Sub TestBandBySize()
 End Sub
 ```
 
-<<OUT:TestBandBySize>>
+```
+50000 is very large
+49999.995 is large
+25000 is large
+12000 is medium
+9999.5 is small
+```
 
 - **`Select Case value`** names the value to test once; each **`Case`** below is one possibility, checked from the top, and only the first that fits runs.
 - **`Case Is >= 50000`**: `Is` stands for the value being tested, so this reads "value is at least 50,000".
@@ -350,7 +364,16 @@ Sub LoopDemo()
 End Sub
 ```
 
-<<OUT:LoopDemo>>
+```
+row 1
+row 2
+row 3
+row 4
+row 5
+sheet: Master
+sheet: Scratch
+total 12,025,947.25 over 994 rows
+```
 
 - **`Dim i As Long, ws As Worksheet, total As Double`** declares three variables on one line, separated by commas. A `Double` starts at 0.
 - **`For i = 1 To 5` … `Next i`** runs the lines between five times, with `i` = 1, 2, 3, 4, 5. Use it when you know how many times (rows 2 to the last row).
@@ -381,7 +404,13 @@ Sub ArrayDemo()
 End Sub
 ```
 
-<<OUT:ArrayDemo>>
+```
+0: Mumbai HO
+1: Bengaluru
+2: Delhi
+3: Kolkata
+120000000 False
+```
 
 - **`Array(…)`** builds a list, and **`branches(i)`** reads item number `i`. The first item is number **0**, not 1: VBA counts positions in an `Array` from zero, which is why the output starts `0: Mumbai HO`.
 - **`LBound`** and **`UBound`** give the first and last position numbers (0 and 3 here), so the loop fits the list whatever its length.
@@ -404,7 +433,10 @@ Sub UseIt()
 End Sub
 ```
 
-<<OUT:UseIt>>
+```
+45 at 430, 5% off: 18382.5
+10 at 290, no discount: 2900
+```
 
 - **`_`** at the end of a line (a space, then an underscore) says "this statement continues on the next line". It keeps long lines readable.
 - **`Function NetLine(…) As Double`**: a `Function` returns a value, and `As Double` after the brackets says what type. It returns it **by assigning to its own name**: `NetLine = …`.
@@ -432,7 +464,10 @@ Sub ByRefDemo()
 End Sub
 ```
 
-<<OUT:ByRefDemo>>
+```
+after DoubleCopy: 5
+after DoubleIt: 10
+```
 
 `DoubleCopy` doubled its own copy and left `x` alone; `DoubleIt` changed `x` itself. Write `ByVal` unless you really want the procedure to change the caller's variable, which is rare. (By reference also means the types must match exactly: passing a `Variant` to `DoubleIt` stops with "ByRef argument type mismatch".)
 
@@ -464,11 +499,14 @@ Sub ObjectBasics()
     ws.Range("A1").Value = "order_item_id"
     ws.Cells(2, 1).Value = 184000                  ' Cells(row, column): easier in loops
     rng.Font.Bold = True
-    Debug.Print ws.Name & " | " & ws.Cells(1, 1).Value & " | " & ws.Cells(2, 1).Value & " | " & rng.Address
+    Debug.Print ws.Name & " | " & ws.Cells(1, 1).Value & " | " & _
+                ws.Cells(2, 1).Value & " | " & rng.Address
 End Sub
 ```
 
-<<OUT:ObjectBasics>>
+```
+Scratch | order_item_id | 184000 | $A$1:$K$1
+```
 
 - **`ThisWorkbook`** is the workbook the code is stored in, whichever workbook happens to be in front of the user.
 - **`wb.Worksheets("Scratch")`** picks a sheet by its name. `Worksheets(1)` would pick the first sheet, whichever that is today, so names are safer.
@@ -490,7 +528,7 @@ Sub RangeToolkit()
     Debug.Print "last row " & lastRow & ", last column " & lastCol
 
     Dim data As Range
-    Set data = ws.Range(ws.Cells(2, 1), ws.Cells(lastRow, lastCol))   ' the data without the header
+    Set data = ws.Range(ws.Cells(2, 1), ws.Cells(lastRow, lastCol))   ' data, no header
     Debug.Print data.Address & " holds " & data.Rows.Count & " rows"
     Debug.Print "the block around A1 is " & ws.Range("A1").CurrentRegion.Address
 
@@ -502,7 +540,11 @@ Sub RangeToolkit()
 End Sub
 ```
 
-<<OUT:RangeToolkit>>
+```
+last row 995, last column 11
+$A$2:$K$995 holds 994 rows
+the block around A1 is $A$1:$K$995
+```
 
 - **`ws.Cells(ws.Rows.Count, "A").End(xlUp).Row`** is the most useful line in VBA. `ws.Rows.Count` is the number of the sheet's last row (1,048,576); `Cells(…, "A")` is that cell in column A; `.End(xlUp)` is "press Ctrl+Up from there"; and `.Row` is the row number where it lands. It finds the last row whatever the size of this month's file.
 - **`.End(xlToLeft).Column`** does the same along row 1, from the far right, and gives the last column number: 11 is column K.
@@ -593,14 +635,15 @@ Sub ConsolidateBranchFiles()
             lastCol = srcWs.Cells(1, srcWs.Columns.Count).End(xlToLeft).Column
             Debug.Print fileName & ": " & (lastRow - 1) & " rows"
 
-            If nextRow = 1 Then                        ' copy the header once, from the first file
+            If nextRow = 1 Then                        ' the header once, from the first file
                 srcWs.Range(srcWs.Cells(1, 1), srcWs.Cells(1, lastCol)).Copy master.Cells(1, 1)
                 master.Cells(1, lastCol + 1).Value = "source_file"
                 nextRow = 2
             End If
 
             If lastRow >= 2 Then
-                srcWs.Range(srcWs.Cells(2, 1), srcWs.Cells(lastRow, lastCol)).Copy master.Cells(nextRow, 1)
+                srcWs.Range(srcWs.Cells(2, 1), srcWs.Cells(lastRow, lastCol)).Copy _
+                    master.Cells(nextRow, 1)
                 master.Range(master.Cells(nextRow, lastCol + 1), _
                              master.Cells(nextRow + lastRow - 2, lastCol + 1)).Value = fileName
                 nextRow = nextRow + lastRow - 1
@@ -609,23 +652,37 @@ Sub ConsolidateBranchFiles()
             src.Close SaveChanges:=False
             filesRead = filesRead + 1
         End If
-        fileName = Dir                                  ' Dir with no argument returns the next file
+        fileName = Dir                                  ' no argument: the next file
     Loop
 
     Application.DisplayAlerts = True
     Application.ScreenUpdating = True
 
-    If filesRead <> EXPECTED_FILES Then                 ' fail loudly: never total the wrong files
+    If filesRead <> EXPECTED_FILES Then                 ' fail loudly: wrong set of files
         Err.Raise 513, "ConsolidateBranchFiles", _
                   "Expected " & EXPECTED_FILES & " files, read " & filesRead
     End If
-    MsgBox filesRead & " files consolidated, " & Format(nextRow - 2, "#,##0") & " data rows.", vbInformation
+    MsgBox filesRead & " files consolidated, " & Format(nextRow - 2, "#,##0") & " data rows.", _
+           vbInformation
 End Sub
 ```
 
 The Immediate window lists each file as it's read. Windows returns the names in alphabetical order:
 
-<<OUT:Consolidate>>
+```
+Riverstone_Bengaluru_2025-10.xlsx: 2631 rows
+Riverstone_Bengaluru_2025-11.xlsx: 2481 rows
+Riverstone_Bengaluru_2025-12.xlsx: 2073 rows
+Riverstone_Delhi_2025-10.xlsx: 2211 rows
+Riverstone_Delhi_2025-11.xlsx: 2220 rows
+Riverstone_Delhi_2025-12.xlsx: 1843 rows
+Riverstone_Kolkata_2025-10.xlsx: 1117 rows
+Riverstone_Kolkata_2025-11.xlsx: 1099 rows
+Riverstone_Kolkata_2025-12.xlsx: 994 rows
+Riverstone_Mumbai_HO_2025-10.xlsx: 3297 rows
+Riverstone_Mumbai_HO_2025-11.xlsx: 3167 rows
+Riverstone_Mumbai_HO_2025-12.xlsx: 2699 rows
+```
 
 Then a message box says **12 files consolidated, 25,832 data rows.** with an information icon.
 
@@ -665,7 +722,7 @@ Sub CleanMaster()
     statusMap("shipped") = "Shipped"
     statusMap("pending") = "Pending"
 
-    ws.Columns(4).NumberFormat = "@"                     ' column D holds text, so codes keep their zeros
+    ws.Columns(4).NumberFormat = "@"                     ' column D as Text: codes keep zeros
     For r = 2 To lastRow
         raw = LCase(Trim(ws.Cells(r, 9).Value))          ' column I = status
         If statusMap.Exists(raw) Then
@@ -674,13 +731,15 @@ Sub CleanMaster()
             ws.Cells(r, 9).Interior.Color = RGB(255, 235, 200)   ' flag, don't guess
             unmapped = unmapped + 1
         End If
-        ws.Cells(r, 4).Value = Format(ws.Cells(r, 4).Value, "0000")   ' customer_code as four digits
+        ws.Cells(r, 4).Value = Format(ws.Cells(r, 4).Value, "0000")   ' four-digit customer_code
     Next r
     Debug.Print (lastRow - 1) & " rows cleaned, " & unmapped & " statuses not in the map"
 End Sub
 ```
 
-<<OUT:CleanMaster>>
+```
+25832 rows cleaned, 0 statuses not in the map
+```
 
 - **`LCase(Trim(…))`** removes spaces at both ends and lower-cases the text, like `TRIM` and `LOWER` in Chapter 10, so `" Delivered "` and `"DELIVERED"` both become `delivered` before the lookup.
 - **`statusMap.Exists(raw)`**: if the cleaned value is a known spelling, the standard name replaces it; if not, the cell is coloured and counted instead of guessed. On these files every status is already standard, so the count is 0; the check is how you find the day a branch starts writing something new.
@@ -702,7 +761,7 @@ Sub BuildSummaryPivot()
     Application.DisplayAlerts = False                    ' no "delete this sheet?" question
     On Error Resume Next                                 ' the sheet may not exist yet...
     ThisWorkbook.Worksheets("Summary").Delete
-    On Error GoTo 0                                      ' ...from here, errors stop the macro again
+    On Error GoTo 0                                      ' ...now errors stop the macro again
     Application.DisplayAlerts = True
     Set pvtWs = ThisWorkbook.Worksheets.Add
     pvtWs.Name = "Summary"
@@ -710,7 +769,8 @@ Sub BuildSummaryPivot()
     Set cache = ThisWorkbook.PivotCaches.Create( _
         SourceType:=xlDatabase, _
         SourceData:=ws.Range(ws.Cells(1, 1), ws.Cells(lastRow, lastCol)))
-    Set pvt = cache.CreatePivotTable(TableDestination:=pvtWs.Range("A3"), TableName:="SalesPivot")
+    Set pvt = cache.CreatePivotTable(TableDestination:=pvtWs.Range("A3"), _
+                                     TableName:="SalesPivot")
 
     With pvt
         .PivotFields("source_file").Orientation = xlRowField
@@ -785,7 +845,7 @@ Sub EmailSummary(ByVal pdfPath As String, ByVal netRevenue As Double, ByVal rowC
 
     Set outlookApp = CreateObject("Outlook.Application")     ' late binding: no reference needed
     Set mail = outlookApp.CreateItem(0)                      ' 0 = olMailItem, a new email
-    rupee = ChrW(8377)                                       ' the rupee sign, by its Unicode number
+    rupee = ChrW(8377)                                       ' the rupee sign, by Unicode number
 
     ' 1. the greeting
     bodyHtml = "<p>Good morning,</p>" & _
@@ -795,14 +855,17 @@ Sub EmailSummary(ByVal pdfPath As String, ByVal netRevenue As Double, ByVal rowC
     bodyHtml = bodyHtml & _
         "<table style='border-collapse:collapse;font-family:Segoe UI,Arial;font-size:13px'>" & _
         "<tr><td style='padding:4px 12px;color:#5b6475'>Net revenue (non-cancelled)</td>" & _
-        "<td style='padding:4px 12px;font-weight:bold'>" & rupee & Format(netRevenue, "#,##0.00") & "</td></tr>" & _
+        "<td style='padding:4px 12px;font-weight:bold'>" & _
+        rupee & Format(netRevenue, "#,##0.00") & "</td></tr>" & _
         "<tr><td style='padding:4px 12px;color:#5b6475'>Order lines consolidated</td>" & _
-        "<td style='padding:4px 12px;font-weight:bold'>" & Format(rowCount, "#,##0") & "</td></tr>" & _
+        "<td style='padding:4px 12px;font-weight:bold'>" & _
+        Format(rowCount, "#,##0") & "</td></tr>" & _
         "</table>"
 
     ' 3. the footer
     bodyHtml = bodyHtml & _
-        "<p style='color:#5b6475;font-size:12px'>Generated automatically from the twelve branch files on " & _
+        "<p style='color:#5b6475;font-size:12px'>" & _
+        "Generated automatically from the twelve branch files on " & _
         Format(Now, "dd mmm yyyy HH:mm") & ".</p>"
 
     With mail
@@ -810,7 +873,7 @@ Sub EmailSummary(ByVal pdfPath As String, ByVal netRevenue As Double, ByVal rowC
         .Subject = "Riverstone Q4 2025 sales summary"
         .HTMLBody = bodyHtml
         .Attachments.Add pdfPath
-        .Display                      ' .Send sends it immediately; .Display lets a human look first
+        .Display                      ' .Send sends at once; .Display lets a human look first
     End With
 End Sub
 ```
@@ -857,7 +920,12 @@ Sub TestRebate()
 End Sub
 ```
 
-<<OUT:TestRebate>>
+```
+1,80,000 -> 0
+2,50,000 -> 1
+3,99,999 -> 1
+4,00,000 -> 2
+```
 
 **`Public`** makes the function visible outside its module, which is what lets Excel find it. Put it in a normal module and it appears in Excel as `=REBATEPCT(B2)`: type `=REBATEPCT(250000)` in a cell and it shows 1. UDFs are a good way to give the business one blessed version of a rule, instead of the same nested `IF` copied into forty workbooks. (Chapter 11's `LAMBDA` does a similar job without VBA, in Excel versions that have it.)
 
@@ -870,7 +938,8 @@ For a macro that needs a choice ("which month?"), start with the built-in dialog
 ```vb
 Sub AskForMonth()
     Dim answer As String
-    answer = InputBox("Which month? (YYYY-MM)", "Riverstone consolidation", Format(Date, "yyyy-mm"))
+    answer = InputBox("Which month? (YYYY-MM)", "Riverstone consolidation", _
+                      Format(Date, "yyyy-mm"))
     If answer = "" Then Exit Sub                  ' the user pressed Cancel
     If Not answer Like "####-##" Then
         MsgBox "Please use the format 2025-12.", vbExclamation
@@ -935,7 +1004,8 @@ Sub RunConsolidation()
 
     Set ws = ThisWorkbook.Worksheets("Master")
     rowCount = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row - 1
-    netRevenue = Application.WorksheetFunction.SumIfs(ws.Range("K:K"), ws.Range("I:I"), "<>Cancelled")
+    netRevenue = Application.WorksheetFunction.SumIfs(ws.Range("K:K"), _
+                                                      ws.Range("I:I"), "<>Cancelled")
     pdfPath = SaveSummaryAsPdf()
     EmailSummary pdfPath, netRevenue, rowCount ' reached only if every step above worked
     LogLine "sent: " & rowCount & " rows, net revenue " & Format(netRevenue, "0.00")
@@ -991,7 +1061,9 @@ End Sub
 
 After a successful run, the last line of `macro_log.txt` reads like this (with your own date and time):
 
-<<OUT:LogLine>>
+```
+2026-09-28 18:20:51 sent: 25832 rows, net revenue 423872808.00
+```
 
 ---
 
@@ -1155,7 +1227,9 @@ function main(workbook: ExcelScript.Workbook) {
 
 Run on the consolidated Master sheet (25,832 data rows plus the header, 12 columns), the script's output pane shows:
 
-<<OUT:os_format>>
+```
+formatted 25833 rows, 12 columns
+```
 
 - **`function main(workbook: ExcelScript.Workbook)`**: every Office Script starts in a function called `main`, and Excel hands it the open workbook as its argument.
 - **`workbook.getWorksheet("Master")`** is `ThisWorkbook.Worksheets("Master")`. If there's no such sheet, it gives back **`undefined`** ("nothing") instead of stopping, so **`if (!sheet)`** checks for that, logs a message, and **`return`**s.
@@ -1172,7 +1246,7 @@ function main(workbook: ExcelScript.Workbook) {
   const sheet = workbook.getWorksheet("Master");
   if (!sheet) { console.log("No Master sheet"); return; }
   const rowCount = sheet.getUsedRange().getRowCount();
-  const statusRange = sheet.getRangeByIndexes(1, 8, rowCount - 1, 1);  // from I2 down, one column
+  const statusRange = sheet.getRangeByIndexes(1, 8, rowCount - 1, 1);  // I2 down, one column
   const values = statusRange.getValues();              // one read: a grid, one row per cell
 
   const map: { [key: string]: string } = {
@@ -1191,7 +1265,9 @@ function main(workbook: ExcelScript.Workbook) {
 }
 ```
 
-<<OUT:os_clean>>
+```
+25832 rows, 0 unmapped statuses
+```
 
 - **`getRangeByIndexes(1, 8, rowCount - 1, 1)`** starts at row 1 and column 8, counting from 0, which is cell **I2**, and takes every data row of that one column.
 - **`getValues()`** reads the block into a grid; **`values[r][0]`** is row `r`, column 0 of the grid, and **`values.length`** is its number of rows.
@@ -1229,7 +1305,9 @@ function formatMaster() {
 
 Choose `formatMaster` in the editor's toolbar and click **Run**. The first time, Google asks you to authorize the script to edit your spreadsheets. Then the **Execution log** shows (without its time stamps):
 
-<<OUT:gs_format>>
+```
+formatted 25833 rows and 12 columns
+```
 
 - **`SpreadsheetApp.getActive()`** is the spreadsheet the script belongs to (`ThisWorkbook`), and **`.getSheetByName('Master')`** picks the sheet. JavaScript accepts single or double quotes for text.
 - **`getLastRow()`** and **`getLastColumn()`** give the last filled row and column, like the VBA last-row line.
@@ -1265,7 +1343,9 @@ function cleanStatuses() {
 }
 ```
 
-<<OUT:gs_clean>>
+```
+25832 rows cleaned, 0 unmapped
+```
 
 Two ways of counting sit side by side here. **`sheet.getRange(2, 9, …)`** counts rows and columns **from 1**, like the sheet (row 2, column 9 = I2), but the grid that **`getValues()`** returns counts **from 0**: its first row is `values[0]`. Office Scripts' `getRangeByIndexes(1, 8, …)` counts from 0 for the same cell. When a column comes out one place wrong, this is usually why. As in Office Scripts, the script writes back only column I, so nothing else is re-read and changed.
 
@@ -1340,7 +1420,7 @@ function escapeHtml(text) {
 
 ```javascript
 function onFormSubmit(e) {
-  const answers = e.namedValues;                     // {'Email address': ['x@y.com'], 'Company': [...], ...}
+  const answers = e.namedValues;          // {'Email address': ['x@y.com'], 'Company': [...], ...}
   const email = answers['Email address'][0];
   const company = answers['Company'][0];
   const product = answers['Product'][0];
@@ -1348,12 +1428,16 @@ function onFormSubmit(e) {
 
   const html = `
     <p>Dear ${escapeHtml(company)},</p>
-    <p>Thank you for your enquiry. We have logged it and a sales executive will reply within one working day.</p>
+    <p>Thank you for your enquiry. We have logged it and a sales executive will reply
+       within one working day.</p>
     <table style="border-collapse:collapse;font-family:Arial;font-size:13px">
-      <tr><td style="padding:4px 12px;color:#5b6475">Product</td><td style="padding:4px 12px"><b>${escapeHtml(product)}</b></td></tr>
-      <tr><td style="padding:4px 12px;color:#5b6475">Quantity</td><td style="padding:4px 12px"><b>${escapeHtml(quantity)}</b></td></tr>
+      <tr><td style="padding:4px 12px;color:#5b6475">Product</td>
+          <td style="padding:4px 12px"><b>${escapeHtml(product)}</b></td></tr>
+      <tr><td style="padding:4px 12px;color:#5b6475">Quantity</td>
+          <td style="padding:4px 12px"><b>${escapeHtml(quantity)}</b></td></tr>
     </table>
-    <p style="color:#5b6475;font-size:12px">Riverstone Supplies · this is an automatic acknowledgement.</p>`;
+    <p style="color:#5b6475;font-size:12px">
+      Riverstone Supplies · this is an automatic acknowledgement.</p>`;
 
   MailApp.sendEmail({
     to: email,
@@ -1444,7 +1528,8 @@ function buildSummaryHtml(count, totals) {
           <th style="text-align:right;padding:4px 12px">Units</th></tr>
       ${tableRows}
     </table>
-    <p style="color:#5b6475;font-size:12px">Sent automatically by the Riverstone enquiries sheet.</p>`;
+    <p style="color:#5b6475;font-size:12px">
+      Sent automatically by the Riverstone enquiries sheet.</p>`;
 }
 ```
 
@@ -1479,7 +1564,20 @@ function sendDailySummary() {
 
 Run at 9 a.m. on Monday 5 January 2026, after Friday's summary went out at 9 a.m. on 2 January, the sheet holds the three enquiries from Friday afternoon, Saturday and early Monday, and the log shows:
 
-<<OUT:gs_summary>>
+```
+3 enquiries in the sheet
+3 arrived since the last summary
+{"Industrial Crate":30,"Storage Box 25L":100}
+```
+
+The fourth log entry is the email's HTML. In the sales team's inbox it shows as the heading **Enquiries since the last summary: 3** above this table, then the grey footer line:
+
+| Product | Units |
+|---|---:|
+| Industrial Crate | 30 |
+| Storage Box 25L | 100 |
+
+`LAST_SUMMARY` now holds Monday 9 a.m., so Tuesday's summary picks up the three enquiries that came in later on Monday (Storage Box 25L 120, Lunch Box Set 300, Industrial Crate 45). Run on a Saturday, the function stops at its first check and sends nothing.
 
 To run it every morning: **Triggers → Add Trigger**, choose `sendDailySummary`, event source **Time-driven**, **Day timer**, **9am to 10am**. Google picks a moment within that hour.
 
@@ -1489,7 +1587,8 @@ Chapter 2 introduced **APIs**: a program sends a **request** to a web address an
 
 ```javascript
 function fetchOpenEnquiries() {
-  const token = PropertiesService.getScriptProperties().getProperty('CRM_TOKEN');  // not in the code
+  const token = PropertiesService.getScriptProperties()
+                                 .getProperty('CRM_TOKEN');    // not in the code
   const response = UrlFetchApp.fetch('https://crm.example.com/api/v1/enquiries?status=open', {
     method: 'get',
     headers: { Authorization: 'Bearer ' + token },
@@ -1497,13 +1596,14 @@ function fetchOpenEnquiries() {
   });
 
   if (response.getResponseCode() !== 200) {
-    throw new Error('CRM returned ' + response.getResponseCode() + ': ' + response.getContentText().slice(0, 200));
+    throw new Error('CRM returned ' + response.getResponseCode() + ': ' +
+                    response.getContentText().slice(0, 200));
   }
 
   const data = JSON.parse(response.getContentText());
   const rows = data.results.map(r => [r.id, r.company, r.product, r.quantity, r.created_at]);
   const sheet = SpreadsheetApp.getActive().getSheetByName('CRM');
-  sheet.getRange(2, 1, sheet.getMaxRows() - 1, 5).clearContent();   // remove the last run's rows
+  sheet.getRange(2, 1, sheet.getMaxRows() - 1, 5).clearContent();   // clear the last run
   if (rows.length === 0) {
     Logger.log('no open enquiries');
     return;
@@ -1778,7 +1878,7 @@ Use `companion/ch19/branch_files/` and `expected_results.md`.
 15. Build a pivot table of net revenue by `source_file` and `status` in VBA.
 16. Export the summary sheet to PDF with a file name that includes today's date, in landscape, fitted to one page wide.
 17. Write the email procedure with `.Display`, including an HTML body with the headline numbers. What would you change before switching to `.Send`?
-18. Write `REBATEPCT` as a UDF and check it on 180,000, 250,000, 399,999, and 400,000.
+18. Write `REBATEPCT` as a UDF and check it on 1,80,000, 2,50,000, 3,99,999, and 4,00,000.
 19. Add error handling to your main procedure that restores `ScreenUpdating` and `Calculation`, logs the error, and prevents the email.
 20. Time your cleaning loop with `Timer`, then rewrite it with an array read and write. What's the difference on 25,832 rows?
 21. Write the Apps Script version of the cleaning step for a Google Sheets copy of `Master`, using one `getValues()` and one `setValues()`.
