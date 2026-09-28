@@ -45,12 +45,16 @@ if [ -f "$C/ch28/ch28_2025_addons.sql" ]; then
   cp "$C/ch28/ch28_2025_addons.sql" "$C/ch28/ch28_star_schema.sql" /tmp/ && chmod 644 /tmp/ch28_*.sql
   PG -d riverstone_2025 -f /tmp/ch28_2025_addons.sql
   PG -d riverstone_2025 -f /tmp/ch28_star_schema.sql
+  if [ -f "$C/mysql/ch28_2025_addons_mysql.sql" ]; then
+    mysql -uroot riverstone_2025 < "$C/mysql/ch28_2025_addons_mysql.sql"      # staff, parts, bom_lines for MySQL
+  fi
   echo "Chapter 28 add-ons and star schema loaded into riverstone_2025."
 fi
 
 # riverstone_perf (Chapter 28's volume dataset, about 200 MB) is NOT loaded here: generate it with
 #   cd companion/ch28 && python3 generate_riverstone_perf.py
 #   createdb riverstone_perf && psql -d riverstone_perf -f perf_data/load_postgresql.sql
+#   psql -d riverstone_perf -c 'ALTER DATABASE riverstone_perf SET max_parallel_workers_per_gather = 0;'   # the book's plans assume it
 # riverstone_full (three years, Chapters 14 onward), then Chapter 14's staging, mapping and clean tables.
 PG -d postgres -c "\"DROP DATABASE IF EXISTS riverstone_full\"" >/dev/null 2>&1 || true
 PG -d postgres -c "\"CREATE DATABASE riverstone_full\""
