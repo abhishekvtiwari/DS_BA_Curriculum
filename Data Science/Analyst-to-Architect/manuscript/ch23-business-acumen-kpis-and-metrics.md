@@ -40,7 +40,7 @@ A **metric** is a number you've decided to watch, the way the shopkeeper watches
 
 ## 23.1 How a business makes money: the cash cycle
 
-Every business that makes or trades goods runs the same cycle: it turns cash into stock, stock into a sale, and a sale back into cash. Riverstone buys plastic granules and packaging, turns them into boxes and crates at its two plants, holds them in the warehouse, sells them, and waits to be paid. Analysts who understand this cycle ask better questions than analysts who only understand the tables.
+Every business that makes or trades goods runs the same cycle: it turns cash into stock, stock into a sale, and a sale back into cash. Riverstone buys raw materials and packaging, turns them into boxes, crates and kitchenware at its two plants, holds them in the warehouse, sells them, and waits to be paid. Analysts who understand this cycle ask better questions than analysts who only understand the tables.
 
 Chapter 3 followed one order from enquiry to cash, and named the money customers still owe **receivables**. The cycle below is the same journey, measured in days for the whole company at once. Three waits make it up:
 
@@ -71,7 +71,7 @@ Finance speaks its own language. These are the words this chapter uses; each get
 | Word | Plain meaning | Riverstone example |
 |---|---|---|
 | **Revenue** (net sales) | What customers are charged for what was sold, after discounts | ₹114.66 crore of non-cancelled 2025 orders |
-| **COGS** (cost of goods sold) | What the goods that were sold cost to make or buy | Granules, packaging and factory costs of those boxes |
+| **COGS** (cost of goods sold) | What the goods that were sold cost to make or buy | Materials, packaging and factory costs of those boxes |
 | **Expense** | Any other cost of running the business; **opex** (operating expenses) is the total | Freight, salaries, rent, marketing |
 | **Depreciation** | Spreading the cost of a long-lived asset over its useful years, as a yearly expense | A ₹50 lakh moulding machine expected to last 10 years costs ₹5 lakh a year |
 | **Amortisation** | The same idea for assets you can't touch | A software licence bought for five years |
@@ -142,7 +142,8 @@ opex = selling_dist + marketing + admin + depreciation
 ebit = gross_profit - opex
 interest = 10_319_775
 pbt = ebit - interest        # profit before tax
-tax = round(pbt * 0.25)      # modelled at a flat 25% of profit, a simplification for this invented P&L
+# tax modelled at a flat 25% of profit, a simplification for this invented P&L
+tax = round(pbt * 0.25)
 pat = pbt - tax              # profit after tax
 print(f"opex ₹{opex:,}   EBIT ₹{ebit:,}   tax ₹{tax:,}   PAT ₹{pat:,}")
 ```
@@ -249,9 +250,12 @@ Equity is worked out as assets − liabilities, so the check is bound to pass he
 Three ratios read the balance sheet's health:
 
 ```python
-print(f"working capital       = current assets − current liabilities = ₹{current_assets - current_liabilities:,}")
-print(f"current ratio         = current assets ÷ current liabilities = {current_assets / current_liabilities:.2f}")
-print(f"liabilities-to-equity = total liabilities ÷ equity = {total_liabilities / equity:.2f}")
+working_capital = current_assets - current_liabilities
+current_ratio = current_assets / current_liabilities
+liabilities_to_equity = total_liabilities / equity
+print(f"working capital       = current assets − current liabilities = ₹{working_capital:,}")
+print(f"current ratio         = current assets ÷ current liabilities = {current_ratio:.2f}")
+print(f"liabilities-to-equity = total liabilities ÷ equity = {liabilities_to_equity:.2f}")
 ```
 
 ```
@@ -274,10 +278,10 @@ Why an analyst should care: **receivables and inventory are analyst territory.**
 
 Now the numbers in Figure 23.1 can be worked out. Each "days" measure compares a balance-sheet amount with a year's flow:
 
-> **DIO = inventory ÷ COGS × 365**
-> **DSO = receivables ÷ revenue × 365**
-> **DPO = payables ÷ COGS × 365**
-> **CCC = DIO + DSO − DPO**
+> - **DIO = inventory ÷ COGS × 365**
+> - **DSO = receivables ÷ revenue × 365**
+> - **DPO = payables ÷ COGS × 365**
+> - **CCC = DIO + DSO − DPO**
 >
 > *Inventory, receivables, payables:* year-end balance-sheet amounts. *COGS, revenue:* the year's P&L totals. *365:* days in the year.
 
@@ -297,11 +301,13 @@ dio = inventory / cogs * 365
 dso = receivables / revenue * 365
 dpo = payables / cogs * 365
 ccc = dio + dso - dpo
-print(f"DIO {dio:.1f}   DSO {dso:.1f}   DPO {dpo:.1f}   operating cycle {dio + dso:.1f}   CCC {ccc:.1f} days")
+print(f"DIO {dio:.1f}   DSO {dso:.1f}   DPO {dpo:.1f} days")
+print(f"operating cycle {dio + dso:.1f} days   CCC {ccc:.1f} days")
 ```
 
 ```
-DIO 55.0   DSO 42.0   DPO 38.0   operating cycle 97.0   CCC 59.0 days
+DIO 55.0   DSO 42.0   DPO 38.0 days
+operating cycle 97.0 days   CCC 59.0 days
 ```
 
 ---
@@ -405,6 +411,7 @@ Lost          4
 Name: count, dtype: int64
 ```
 
+- **`.head()`** shows the first five rows, and **`value_counts()`** counts each stage (Chapter 18).
 - `hist` has one row per lead per stage reached, with the date it got there (`entered_at`). Lead 2 reached New, then Contacted, then Quoted.
 - The counts say 43 leads were New. But Chapter 13 (Pattern 3) found that 13 of those rows are the same enquiry submitted again from the website. Count them before counting anything else.
 
@@ -471,7 +478,8 @@ new_dates = new_dates.rename(columns={"entered_at": "created"})
 cycle = won_dates.merge(new_dates, on="lead_id")
 cycle["days"] = (cycle["won_at"] - cycle["created"]).dt.days
 print(cycle)
-print(f"won deals {len(cycle)}   mean {cycle['days'].mean():.1f} days   median {cycle['days'].median():.1f} days")
+print(f"won deals {len(cycle)}   mean {cycle['days'].mean():.1f} days", end="   ")
+print(f"median {cycle['days'].median():.1f} days")
 ```
 
 ```
@@ -488,6 +496,7 @@ won deals 6   mean 25.5 days   median 24.0 days
 - **`.rename(columns={...})`** gives the two date columns different names, so they don't clash after the join.
 - **`merge(..., on="lead_id")`** lines each Won date up with the same lead's New date (Chapter 18).
 - Subtracting two dates gives a time difference; **`.dt.days`** turns it into whole days.
+- **`end="   "`** makes `print` finish with three spaces instead of a new line, so the next `print` continues the same line. It keeps each line of code short.
 - With only six won deals, 25.5 days is **indicative**, not a firm figure (Chapter 22): one more slow deal would move it a lot.
 
 Last, where the real enquiries came from:
@@ -658,7 +667,8 @@ items = pd.read_parquet("../full/order_items.parquet")
 orders = pd.read_parquet("../full/orders.parquet")
 lines = items.merge(orders, on="order_id")
 lines["net_revenue"] = lines["quantity"] * lines["unit_price"] * (1 - lines["discount_pct"] / 100)
-print(len(lines), "order lines, from", lines["order_date"].min().date(), "to", lines["order_date"].max().date())
+first_day, last_day = lines["order_date"].min().date(), lines["order_date"].max().date()
+print(len(lines), "order lines, from", first_day, "to", last_day)
 ```
 
 ```
@@ -666,14 +676,16 @@ print(len(lines), "order lines, from", lines["order_date"].min().date(), "to", l
 ```
 
 - The merge gives each order line its order's date, status and customer. `net_revenue` is quantity × price, less the discount, as in Chapter 18.
+- **`.min()`** and **`.max()`** find the earliest and latest order dates; **`.date()`** drops the time of day, which is always midnight here.
 - The data runs from 2023 to the end of 2025, so every year needs **both** a start and an end date.
 
 Now the two years' non-cancelled sales, each with a start date and an end date:
 
 ```python
 not_cancelled = lines[lines["status"] != "Cancelled"]
-in_2024 = (not_cancelled["order_date"] >= "2024-01-01") & (not_cancelled["order_date"] < "2025-01-01")
-in_2025 = (not_cancelled["order_date"] >= "2025-01-01") & (not_cancelled["order_date"] < "2026-01-01")
+dates = not_cancelled["order_date"]
+in_2024 = (dates >= "2024-01-01") & (dates < "2025-01-01")
+in_2025 = (dates >= "2025-01-01") & (dates < "2026-01-01")
 sales_2024 = not_cancelled[in_2024]
 sales_2025 = not_cancelled[in_2025]
 print(len(sales_2024), "lines in 2024;", len(sales_2025), "lines in 2025")
@@ -684,6 +696,7 @@ print(len(sales_2024), "lines in 2024;", len(sales_2025), "lines in 2025")
 ```
 
 - Each year is **`>=` its first day and `<` the next year's first day**. That catches every moment of 31 December, whether dates carry times or not, and would keep any 2026 rows out if the file grew.
+- `dates` is just a short name for the date column, so the two mask lines stay readable.
 - The two masks `in_2024` and `in_2025` are Boolean Series (Chapter 18), combined with `&`.
 
 Sets of customers answer the retention questions directly (Chapter 17: `&` is "in both", `-` is "in the first but not the second"):
@@ -715,7 +728,8 @@ new_sales = sales_2025[sales_2025["customer_id"].isin(new)]
 revenue_per_new = new_sales.groupby("customer_id")["net_revenue"].sum()
 print(revenue_per_new.head(3))
 first_year_revenue = revenue_per_new.mean()
-print(f"average first-year revenue, {len(revenue_per_new):,} new customers: ₹{first_year_revenue:,.0f}")
+print(f"average first-year revenue of {len(revenue_per_new):,} new customers:", end=" ")
+print(f"₹{first_year_revenue:,.0f}")
 ```
 
 ```
@@ -724,7 +738,7 @@ customer_id
 6     47673.75
 7    353088.50
 Name: net_revenue, dtype: float64
-average first-year revenue, 772 new customers: ₹157,617
+average first-year revenue of 772 new customers: ₹157,617
 ```
 
 Now lifetime value and its comparison with CAC. CAC comes from the marketing file in section 23.6, not typed in:
@@ -829,9 +843,9 @@ Riverstone's revenue fell from ₹8.72 crore in May 2025 to ₹5.20 crore in Jun
 
 Write C for customers, F for orders per customer, and A for average order value, with 0 for May and 1 for June. Revenue is C × F × A. Change one factor at a time, in order, keeping the ones already changed at their June value:
 
-> **Customer effect** = (C₁ − C₀) × F₀ × A₀
-> **Frequency effect** = C₁ × (F₁ − F₀) × A₀
-> **AOV effect** = C₁ × F₁ × (A₁ − A₀)
+> - **Customer effect** = (C₁ − C₀) × F₀ × A₀
+> - **Frequency effect** = C₁ × (F₁ − F₀) × A₀
+> - **AOV effect** = C₁ × F₁ × (A₁ − A₀)
 
 Add the three and the terms cancel, leaving C₁F₁A₁ − C₀F₀A₀: June's revenue minus May's, exactly. Work the first one by hand, with May's F₀ = 3,658 ÷ 2,885 = 1.268 orders per customer and A₀ = ₹23,851.71:
 
@@ -842,14 +856,20 @@ Now all three in Python, from the monthly file:
 ```python
 monthly = pd.read_csv("monthly_revenue_2025.csv", index_col="month")
 may, jun = monthly.loc["2025-05"], monthly.loc["2025-06"]
-c0, f0, a0 = int(may["customers"]), may["orders"] / may["customers"], may["net_revenue"] / may["orders"]
-c1, f1, a1 = int(jun["customers"]), jun["orders"] / jun["customers"], jun["net_revenue"] / jun["orders"]
+c0 = int(may["customers"])                  # C: customers
+f0 = may["orders"] / c0                     # F: orders per customer
+a0 = may["net_revenue"] / may["orders"]     # A: average order value
+c1 = int(jun["customers"])
+f1 = jun["orders"] / c1
+a1 = jun["net_revenue"] / jun["orders"]
 
 customer_effect = (c1 - c0) * f0 * a0
 frequency_effect = c1 * (f1 - f0) * a0
 aov_effect = c1 * f1 * (a1 - a0)
-print(f"May:  {c0:,} customers × {f0:.3f} orders/cust × ₹{a0:,.2f} AOV = ₹{may['net_revenue']:,.0f}")
-print(f"June: {c1:,} customers × {f1:.3f} orders/cust × ₹{a1:,.2f} AOV = ₹{jun['net_revenue']:,.0f}")
+print(f"May:  {c0:,} customers × {f0:.3f} orders/cust × ₹{a0:,.2f} AOV", end=" ")
+print(f"= ₹{may['net_revenue']:,.0f}")
+print(f"June: {c1:,} customers × {f1:.3f} orders/cust × ₹{a1:,.2f} AOV", end=" ")
+print(f"= ₹{jun['net_revenue']:,.0f}")
 print(f"\nEffect of fewer customers:        ₹{customer_effect:,.0f}")
 print(f"Effect of fewer orders/customer:  ₹{frequency_effect:,.0f}")
 print(f"Effect of lower average order:    ₹{aov_effect:,.0f}")
@@ -868,6 +888,7 @@ Sum of effects:                   ₹-35,277,085
 Actual change:                    ₹-35,277,085
 ```
 
+- The six lines set C, F and A for May (`0`) and June (`1`), exactly as in the formulas above.
 - **`index_col="month"`** makes the month the row label, so **`monthly.loc["2025-05"]`** picks May's row by name (Chapter 18). Each of `may` and `jun` is then one row, read by column name. Because the row mixes whole numbers and decimals, pandas stores them all as decimals; **`int()`** turns the customer count back into a whole number (Chapter 17), so it prints as 2,885 rather than 2,885.0.
 
 ![A chain-linked bridge from May 2025's ₹8.72 crore down through three effects to June's ₹5.20 crore: fewer customers minus ₹0.49 crore, fewer orders per customer minus ₹0.51 crore, and lower average order value minus ₹2.53 crore, the largest bar](figures/fig23-4-root-cause.svg)
@@ -880,7 +901,8 @@ This is a **chain-linked (sequential) decomposition**: each effect is measured h
 aov_first = c0 * f0 * (a1 - a0)
 frequency_second = c0 * (f1 - f0) * a1
 customer_last = (c1 - c0) * f1 * a1
-print(f"AOV ₹{aov_first:,.0f}   frequency ₹{frequency_second:,.0f}   customers ₹{customer_last:,.0f}")
+print(f"AOV ₹{aov_first:,.0f}   frequency ₹{frequency_second:,.0f}", end="   ")
+print(f"customers ₹{customer_last:,.0f}")
 print(f"sum ₹{aov_first + frequency_second + customer_last:,.0f}")
 ```
 
@@ -910,6 +932,7 @@ order_date
 ```
 
 - `orders` is the order table read in section 23.9: one row per order, so these are shares of orders, not of order lines.
+- **`.dt.strftime("%Y-%m")`** writes each date as its year and month, like `2025-05` (Chapter 18), so all of May's orders share one label.
 - **`pd.crosstab(month, segment)`** counts orders for every month-and-segment pair (Chapter 21). **`normalize="index"`** turns each row's counts into shares of that row, so each month's row sums to 1 (100% after `* 100`).
 
 Each segment kept almost exactly its May share of orders (no segment moved by more than a point), so this wasn't "we sold to smaller customers".

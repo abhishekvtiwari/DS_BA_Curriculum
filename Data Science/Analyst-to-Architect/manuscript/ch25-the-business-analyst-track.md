@@ -308,7 +308,7 @@ ORDER BY verdict, customer_name;
 
 **What if you change it?** Change `r.order_days < 4` to `r.order_days < 2`, so that two days of orders count as a rhythm, and run it again. The list shrinks to six rows. City Needs Store and Prime Wholesale join the at-risk list, four accounts drop to "on rhythm", and only Home Plus is still too new. Prime Wholesale's "usual gap" of 11 days is one gap, which is not a rhythm. That is why the minimum belongs in the requirement: it changes who gets a call.
 
-(Using MySQL? Replace both date subtractions with `DATEDIFF`, as section 13.9 showed: `DATEDIFF(order_date, LAG(order_date) OVER (…))` and `DATEDIFF(DATE '2025-12-31', MAX(order_date))`. Subtracting dates with `-` in MySQL runs without an error and gives wrong numbers.)
+(Using MySQL? Replace both date subtractions with `DATEDIFF`, as section 13.9 showed: `DATEDIFF(order_date, LAG(order_date) OVER (…))` and `DATEDIFF(DATE '2025-12-31', MAX(order_date))`. Subtracting dates with `-` in MySQL runs without an error and gives wrong numbers. MySQL prints `NULL` in Home Plus's empty cells.)
 
 ### A pipeline
 
@@ -445,7 +445,7 @@ Take step 8 of Chapter 3's order journey, the delivery. On order 5001 the truck 
 
 *Figure 25.4 — A gap analysis row is only finished when it produces a requirement.*
 
-The root-cause line is what separates a useful gap analysis from a complaint. Without it, Riverstone would have told the warehouse to scan faster, and the delivery date would still arrive days late, typed by hand from a piece of paper that had to travel back on the truck.
+FR-14 and NFR-09 take the next free numbers in this chapter's running list. The root-cause line is what separates a useful gap analysis from a complaint. Without it, Riverstone would have told the warehouse to scan faster, and the delivery date would still arrive days late, typed by hand from a piece of paper that had to travel back on the truck.
 
 **Ranking the gaps.** One analysis produces ten of these and you cannot do ten. Score each on what it saves and what it costs. One simple method, which you can reproduce:
 
@@ -453,9 +453,11 @@ The root-cause line is what separates a useful gap analysis from a complaint. Wi
 
 | Gap | People affected | Time saved per month | Error risk removed | Build effort | Score | Rank |
 |---|---|---|---|---|---|---|
-| Order re-keyed from email (step 4) | sales, 4 people | ~17 hours | wrong quantity, wrong code, lost discount: high | large | 17 × 3 ÷ 3 = 17 | 1 |
-| Delivery recorded at the door (step 8) | warehouse, 1 person | ~8 hours | missing delivery dates, orders stuck as Shipped: medium | medium | 8 × 2 ÷ 2 = 8 | 2 |
-| Stock figures live, not daily (step 5) | sales, 4 people | ~6 hours | stock promised that is already sold: high | large | 6 × 3 ÷ 3 = 6 | 3 |
+| Order re-keyed from email (step 4) | sales, 4 people | ~17 hours | wrong quantity, wrong code, lost discount: high (3) | large (3) | 17 | 1 |
+| Delivery recorded at the door (step 8) | warehouse, 1 person | ~8 hours | missing delivery dates, orders stuck as Shipped: medium (2) | medium (2) | 8 | 2 |
+| Stock figures live, not daily (step 5) | sales, 4 people | ~6 hours | stock promised that is already sold: high (3) | large (3) | 6 | 3 |
+
+The scores: re-keying 17 × 3 ÷ 3 = 17; delivery 8 × 2 ÷ 2 = 8; stock 6 × 3 ÷ 3 = 6.
 
 The re-keying hours come from Chapter 3's illustration: 4 hours a week is about 17 a month. Re-keying ranks first even though its build effort is large, because customers send orders in many formats; Chapter 58 builds exactly that automation. The delivery gap from Figure 25.4 ranks second: it saves fewer hours, but it is what makes on-time delivery measurable at all. The score is a way to make the argument visible, not a replacement for it; if two scores are close, the conversation decides.
 
@@ -692,7 +694,7 @@ business analyst · elicitation · software development life cycle (SDLC) · wat
 1. In one sentence each, say what a business analyst, a data analyst, a data scientist, and a data engineer produce.
 2. Name the six phases of the SDLC in order.
 3. What does a swimlane diagram show that a plain flowchart does not, and why does that matter to someone who will later query the data?
-4. Classify each as business, functional, or non-functional: (a) the dashboard shall open in under five seconds; (b) Riverstone needs to reduce the time between shipping and invoicing; (c) when an order status changes to Shipped, the system shall raise the invoice; (d) one row shall be one order line.
+4. Classify each as business, functional, or non-functional: (a) the dashboard shall open in under five seconds; (b) Riverstone needs to know when every order was delivered, so that on-time delivery can be measured; (c) when the customer signs for a delivery, the system shall set the order's status to Delivered; (d) one row shall be one order line.
 
 ### Core
 
@@ -700,7 +702,7 @@ business analyst · elicitation · software development life cycle (SDLC) · wat
 6. Write a user story with four acceptance criteria for: *finance wants to know which invoices are overdue by more than thirty days.* One criterion must cover an edge case and one must be a reconciliation check.
 7. Write a full gap analysis row for step 5 of Chapter 3's order journey, the stock check where Neha phones the warehouse. Include a root cause that is not "the warehouse is slow to update".
 8. A stakeholder asks for "a dashboard like the one the other team has". Name three things that could go wrong if you write that down as the requirement, and the first question you would ask instead.
-9. Riverstone's finance assistant spends about forty minutes a day matching bank lines to invoices, five days a week, forty-eight weeks a year. Estimate the annual hours, and say what else you would need to know before recommending that it be automated.
+9. Riverstone's finance assistant spends about forty minutes a day matching bank lines to invoices, five days a week, fifty weeks a year (Chapter 3's working year). Estimate the annual hours, and say what else you would need to know before recommending that it be automated.
 10. For each of the four data products in section 25.6, write the one non-functional requirement you would refuse to ship without, and say why.
 
 ### Stretch
@@ -712,7 +714,7 @@ business analyst · elicitation · software development life cycle (SDLC) · wat
 ### Think about it (no calculation needed)
 
 14. The chapter says the as-is map is often the most valuable deliverable before any change is made. Why would that be true, and what does it suggest about how you should run the mapping session?
-15. Chapter 58 found an email-intake automation that was right 88% of the time and concluded it should not run unattended. What would you need to know about the other 12% before agreeing?
+15. An email-intake pipeline loads 88% of order emails straight through, with no person involved, and hands the other 12% to a person with a reason. Of the orders it loads on its own, 19% turn out to be wrong without anyone noticing. (Chapter 58 builds this pipeline.) What would you need to know before agreeing to run it unattended?
 
 ---
 
@@ -745,12 +747,14 @@ AC-2 and AC-3 are the edge cases; AC-4 is the reconciliation. A list that shows 
 > **To-be.** Stock figures in the ERP are current enough that a sales executive can trust them when confirming an order.
 > **Gap.** The ERP is not the system of record for stock. A spreadsheet is, and it is reconciled to the ERP once a day.
 > **Root cause.** Not that the warehouse is slow. The warehouse keeps a shadow system because the ERP's stock screen does not fit how they work, so they maintain their own and copy it over. Removing the copy step without fixing the reason the spreadsheet exists will produce a second workaround.
-> **Requirement.** FR-09: stock movements shall be recorded in the ERP at the point of picking, and the ERP shall be the system of record for available stock.
-> **Depends on.** A separate piece of work to find out why the warehouse prefers the spreadsheet, before FR-09 is built.
+> **Requirement.** FR-18: stock movements shall be recorded in the ERP at the point of picking, and the ERP shall be the system of record for available stock.
+> **Depends on.** A separate piece of work to find out why the warehouse prefers the spreadsheet, before FR-18 is built.
+
+FR-18 is the next free number after this chapter's FR-17. The **system of record** is the one system whose copy counts when two disagree (Chapter 3).
 
 **8.** Three risks: the other team's dashboard answers their question, not this stakeholder's; you inherit their metric definitions, which may not match yours, the problem Chapter 23 section 13 describes; and you will be judged against a thing that already exists rather than against the need. First question: "What decision would you make with it that you cannot make today?"
 
-**9.** Forty minutes a day, five days a week, is 200 minutes a week, about 3.33 hours. Over forty-eight weeks that is about 160 hours a year, roughly four working weeks. Before recommending automation you would want: what share of lines match cleanly today, because that decides how much of the 160 hours actually goes away; what the tolerance for a match should be; what the errors cost, including customers chased for money they have paid; who handles the exceptions once a machine handles the rest; and what it would cost to build.
+**9.** Forty minutes a day, five days a week, is 200 minutes a week, about 3.33 hours. Over fifty weeks that is 10,000 minutes, about 167 hours a year, a little over four working weeks of 40 hours. Before recommending automation you would want: what share of lines match cleanly today, because that decides how much of the 167 hours actually goes away; what the tolerance for a match should be; what the errors cost, including customers chased for money they have paid; who handles the exceptions once a machine handles the rest; and what it would cost to build.
 
 **10.** For example. **Dashboard:** reconciliation, because a dashboard whose numbers are not tied to a source the business trusts will be checked against a spreadsheet forever. **Pipeline:** timeliness with a named alert owner, because a pipeline that fails silently is worse than no pipeline. **Model:** the baseline it must beat, because without it "84% accurate" cannot be judged. **Metric:** that the definition is recorded once and referenced, because a definition that lives in a query gets reinvented by every new report.
 
@@ -763,7 +767,7 @@ AC-2 and AC-3 are the edge cases; AC-4 is the reconciliation. A list that shows 
 > **Alternative B, partial return of a discounted line:** at step 4 the discount is applied pro rata to the returned quantity, and the system shows the calculation before the assistant confirms.
 > **Postcondition:** a credit note exists, linked to the original invoice, and the customer's balance reflects it.
 
-**12.** For example: **BR**, Riverstone needs to know which accounts are likely to stop ordering, early enough to act. **FR-01**, produce for each active account a probability of no order in the next ninety days. **FR-02**, write the output weekly to a table carrying the score date and the model version. **FR-03**, carry with each score the three features that contributed most to it. **NFR-01**, the model shall beat the rule "no order in ninety days" on accounts held back from training, measured on the metric agreed in BR. **NFR-02**, no score shall be produced for an account with fewer than three historical orders. Without NFR-01 the vendor can deliver anything and call it a model; without NFR-02 you will get confident scores for accounts with no history.
+**12.** For example: **BR**, Riverstone needs to know which accounts are likely to stop ordering, early enough to act. **FR-01**, produce for each active account a probability of no order in the next ninety days. **FR-02**, write the output weekly to a table carrying the score date and the model version. **FR-03**, carry with each score the three features that contributed most to it. **NFR-01**, the model shall beat the rule "no order in ninety days" on accounts set aside and not used to build it, measured on the metric agreed in BR. **NFR-02**, no score shall be produced for an account with fewer than three historical orders. Without NFR-01 the vendor can deliver anything and call it a model; without NFR-02 you will get confident scores for accounts with no history.
 
 **13.** For example: "The build does what the specification says and the numbers reconcile, so this is not a defect." / "The specification is wrong, and that is on me: I never asked what you would do differently once you had it." / "What I am hearing is that the decision you need to make is which quiet account to spend time on, which needs a reason and a value, not a list of names." / "Give me two days to rewrite the requirement and come back with what that costs."
 
@@ -771,7 +775,7 @@ Owning it first is not politeness. It moves the meeting from blame to scope in o
 
 **14.** Because the people who run a process usually know only their own step and the two next to it, so the end-to-end picture is new information to everybody in the room, including the person who owns the process. It suggests you should run the session with the people who do the work rather than their managers, draw it roughly and in public so it invites correction, and expect the argument in the room to be more valuable than the diagram you leave with.
 
-**15.** What the 12% consists of, and how visible it is. Twelve percent that fails loudly, where the system says it could not read the email, is a manageable exception route. Twelve percent that fails quietly, where the system reads the email wrongly and books a plausible but incorrect order, is a different thing: it produces errors that look like data. You would also want to know the cost of one silent error, whether the failures cluster in one customer or format, and whether a person downstream would catch them.
+**15.** Mostly, what the 19% costs and who would notice it. The two numbers are different kinds of failure. The 12% handed to a person with a reason fail loudly: that is a manageable exception route, and it is the safe part. The 19% of loaded orders that are wrong fail quietly: the system read the email wrongly and booked a plausible but incorrect order, which produces errors that look like data. Before agreeing you would want the cost of one silent error, whether the errors cluster in one customer or email format (so that format could stay with a person), whether anyone downstream would catch them before the goods ship, and who will sample the automatic orders to watch the rate. An 88% straight-through rate on its own says nothing about any of that.
 
 ---
 

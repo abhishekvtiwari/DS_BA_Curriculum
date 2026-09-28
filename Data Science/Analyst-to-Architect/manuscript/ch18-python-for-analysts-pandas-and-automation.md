@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 17 (Python, the notebook, and the terminal from section 17.0), Chapters 12–13 (SQL and the `sales_lines` view), Chapter 14 (cleaning), Chapter 15 (chart choice and design), Chapter 16 (Power BI, whose measures pandas mirrors), and Chapters 10, 11, and 19 for the spreadsheet ideas pandas mirrors.
 >
-> **Time needed:** 35–40 hours, spread over four weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16, the project, and the timed challenge. Each week ends with a short checkpoint.
+> **Time needed:** 40–45 hours, spread over four weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16, the project, and the timed challenge. Each week ends with a short checkpoint.
 >
 > **Tools:** the Python, VS Code, and Jupyter you installed in Chapter 17 (section 17.0), in the book's virtual environment, with `pandas`, `numpy`, `pyarrow`, `matplotlib`, `seaborn`, `openpyxl`, `xlsxwriter`, `tabulate`, `SQLAlchemy`, a database driver (`psycopg[binary]` for PostgreSQL, `mysql-connector-python` for MySQL), `requests`, and `python-dotenv`. Section 18.1 gives the one install command.
 >
@@ -206,7 +206,7 @@ print(type(segments), type(segments["net_revenue"]))
 - **`pd.DataFrame({...})`** builds a table from a dictionary of equal-length lists. You'll use this to make tiny test tables throughout the chapter.
 - **The numbers on the left (0, 1, 2) are the index**, pandas' row labels. A new table gets 0, 1, 2, … automatically.
 - **`segments["net_revenue"]`**, one column, is a **Series**.
-- **`6.138331e+08`-style numbers** are **scientific notation**: `5.564365e+08` means 5.564365 × 10⁸, which is 556,436,500 to the seven digits shown. pandas switches to it when a column's numbers are large, which makes rupee totals hard to read.
+- **Numbers like `5.564365e+08`** are in **scientific notation**: 5.564365 × 10⁸, which is ₹55,64,36,500 to the seven digits shown. pandas switches to it when a column's numbers are large, which makes rupee totals hard to read.
 
 Tell pandas how to print, once, at the top of every notebook:
 
@@ -782,6 +782,22 @@ Name: count, dtype: int64
 - **`right=False`** makes each band include its **left** edge and exclude its right one, so exactly ₹25,000 is "large", the same rule as Chapter 19's `BandBySize`. Without it, `pd.cut` includes the right edge instead, and ₹25,000 would be "medium". Always check which edge a band tool includes.
 - **`.sort_index()`** lists the bands in their own order rather than by count. It's the nested `IF` or `IFS` of Chapter 11, for 209,006 rows at once.
 
+What happens if you change it? Before you run this, predict which band exactly ₹25,000 lands in each time:
+
+```python
+edges = pd.Series([9999.5, 10000, 25000, 50000])
+bands = ["small", "medium", "large", "very large"]
+print(pd.cut(edges, bins=[0, 10000, 25000, 50000, np.inf], labels=bands, right=False).tolist())
+print(pd.cut(edges, bins=[0, 10000, 25000, 50000, np.inf], labels=bands).tolist())
+```
+
+```
+['small', 'medium', 'large', 'very large']
+['small', 'small', 'medium', 'large']
+```
+
+With `right=False` each edge value starts the next band up; without it, each edge value ends the band below. Only values sitting exactly on an edge change band, which makes the mistake easy to miss.
+
 **Lookups with a dictionary.** Each order has a `sales_rep_id`; the names are in the employees table (Chapter 12; the full dataset has 16 people). Build a dictionary from it, then map:
 
 ```python
@@ -883,7 +899,7 @@ year
 2025 1,146,641,651.25   46356  83444       4599 13,741.45
 ```
 
-- **Named aggregation**, `new_name=("column", "function")`, is the clearest form: each output column says what it is and how it was made.
+- **Named aggregation**, `new_name=("column", "function")`, is the clearest form: each output column says what it is and how it was made. Here `orders` counts distinct order IDs, `lines` counts rows, and `avg_line` is the mean value of a line.
 - The brackets around the whole expression let it run over several lines, one step per line.
 - The functions you'll use: `sum`, `mean`, `median`, `min`, `max`, `count` (non-blank values), `size` (rows), `nunique`, `std`, and **`quantile`**, shown below.
 
@@ -1460,16 +1476,21 @@ repaired = parsed.isna()
 parsed = parsed.fillna(entered_ist.dt.normalize())
 print(repaired.sum(), "dates repaired from the entry timestamp")
 print(pd.DataFrame({"text": data.loc[repaired, "order_date"], "entered_utc": data.loc[repaired, "entered_at_utc"],
-                    "repaired": parsed[repaired].dt.date}).head(4))
+                    "repaired": parsed[repaired].dt.date}))
 ```
 
 ```
 9 dates repaired from the entry timestamp
-            text           entered_utc    repaired
-9128  31-09-2025  2025-10-28T13:53:00Z  2025-10-28
-9178  31-11-2025  2025-10-28T03:36:00Z  2025-10-28
-9182  32-10-2025  2025-10-28T05:23:00Z  2025-10-28
-9187  32-10-2025  2025-10-28T15:21:00Z  2025-10-28
+             text           entered_utc    repaired
+9128   31-09-2025  2025-10-28T13:53:00Z  2025-10-28
+9178   31-11-2025  2025-10-28T03:36:00Z  2025-10-28
+9182   32-10-2025  2025-10-28T05:23:00Z  2025-10-28
+9187   32-10-2025  2025-10-28T15:21:00Z  2025-10-28
+18221  31-11-2025  2025-11-28T16:35:00Z  2025-11-28
+18272  31-11-2025  2025-11-28T10:31:00Z  2025-11-28
+18323  32-10-2025  2025-11-30T04:59:00Z  2025-11-30
+25894  31-11-2025  2025-12-28T15:09:00Z  2025-12-28
+25903  31-09-2025  2025-12-28T07:13:00Z  2025-12-28
 ```
 
 - **`pd.to_datetime(..., utc=True)`** reads the text as a time **in UTC**.
@@ -1716,7 +1737,7 @@ Figure 18.1 shows the chart after the first step and when finished.
 
 ### Put the rules in a function
 
-Every chart needs the same styling lines. Write them once:
+Every chart needs the same styling lines, so write them once, as a function, and call it for every chart. The cell below defines `style_axes` and then uses it to draw 2025's revenue on its own, with a gridline behind the data this time.
 
 ```python
 INK, MUTED, ACC, LIGHT, GRAY = "#1d2330", "#5b6475", "#0f5c8c", "#dfe5ec", "#9aa3af"
@@ -1903,7 +1924,7 @@ print(monthly_table.shape)
 (12, 3)
 ```
 
-`.reset_index()` turns the group labels (region, month) back into ordinary columns, so they're written to the sheet as data.
+Both are the named aggregations of section 18.6: revenue summed and orders counted with `nunique`, one table by region (largest first) and one by month. `.reset_index()` turns the group labels (region, month) back into ordinary columns, so they're written to the sheet as data.
 
 **Step 1: the data.** An **`ExcelWriter`** is an open workbook that several tables can be written into, one sheet each:
 
@@ -2054,7 +2075,7 @@ print(engine.dialect.name)
 postgresql
 ```
 
-- **`load_dotenv()`** looks for a `.env` file in the current folder and copies its variables into the environment. A variable that's already set is left alone, so a scheduler or a colleague can set it another way.
+- **`load_dotenv()`** looks for a `.env` file in the current folder (and, if there's none, in the folders above it) and copies its variables into the environment. A variable that's already set is left alone, so a scheduler or a colleague can set it another way.
 - **`os.environ["RIVERSTONE_DB"]`** reads the variable, like a dictionary. If it isn't set, this stops with a `KeyError` naming it, which is the right error.
 - **`create_engine(url)`** from **SQLAlchemy** makes an **engine**: an object that knows how to reach the database and opens connections when pandas needs them. It doesn't connect yet.
 - **`engine.dialect.name`** confirms which kind of database it's for, without printing the password.
@@ -2122,7 +2143,7 @@ print(by_segment.head(3))
 2  Hospitality 2025-03-01 21,701,085.00     986
 ```
 
-Run this cell instead of the one above if your `RIVERSTONE_DB` points at MySQL; it returns the same 36 rows.
+`DATE_FORMAT(s.order_date, '%Y-%m-01')` writes each date as the first of its month, as text, and `CAST(... AS DATE)` turns that text back into a date, the MySQL route of Chapter 15, section 15.15. Run this cell instead of the one above if your `RIVERSTONE_DB` points at MySQL; it returns the same 36 rows.
 
 The habits behind the code:
 
@@ -2302,7 +2323,7 @@ print(round(rows.loc[rows["status"] != "Cancelled", "net_revenue"].sum(), 2))
 3477046.0
 ```
 
-**`pd.json_normalize(list_of_records)`** turns a list of JSON records into a DataFrame, one row per record. These records are flat, so `pd.DataFrame(all_rows)` would work too; `json_normalize` earns its name with **nested** JSON, where a record holds another record or a list: `record_path=` digs into a list inside each record, and `meta=` carries parent fields down to each row.
+**`pd.json_normalize(list_of_records)`** turns a list of JSON records into a DataFrame, one row per record. The next two lines are section 18.1's date and revenue steps; `rows.loc[rows["status"] != "Cancelled", "net_revenue"]` picks the revenue of the lines that weren't cancelled, ₹34,77,046 for 1 December. These records are flat, so `pd.DataFrame(all_rows)` would work too; `json_normalize` earns its name with **nested** JSON, where a record holds another record or a list: `record_path=` digs into a list inside each record, and `meta=` carries parent fields down to each row.
 
 ### Being polite, and surviving failures
 
@@ -2848,8 +2869,8 @@ Her own summary of the change: *"I used to produce the report. Now I own it."*
 
 ### Tools you'll need
 
-- **Python** and the book's virtual environment, as installed in Chapter 17 (section 17.0, which also sets the book's rule on Python versions). This chapter's code was run and checked on **Python 3.11** with **pandas 3.0.6**, **numpy 2.4.6**, **pyarrow 25.0.1**, **matplotlib 3.10.8**, **seaborn 0.13.2**, **openpyxl 3.1.5**, **xlsxwriter 3.2.9**, **tabulate 0.10.0**, **SQLAlchemy 2.1.1**, **psycopg 3.3.6**, **requests 2.33.1**, and **python-dotenv**, against PostgreSQL 16 and MySQL 8.
-- `pip install pandas numpy pyarrow matplotlib seaborn openpyxl xlsxwriter tabulate sqlalchemy "psycopg[binary]" requests python-dotenv` (add `mysql-connector-python` for MySQL).
+- **Python** and the book's virtual environment, as installed in Chapter 17 (section 17.0, which also sets the book's rule on Python versions). This chapter's code was run and checked on **Python 3.14.7** and **3.11.15**, with `pandas` 3.0.6, `numpy` 2.5.3 and 2.4.6, `pyarrow` 25.0.1, `matplotlib` 3.11.2 and 3.10.8, `seaborn` 0.13.2, `openpyxl` 3.1.5, `xlsxwriter` 3.2.9, `tabulate` 0.10.0, `SQLAlchemy` 2.1.1, `psycopg` 3.3.6, `mysql-connector-python` 26.7.0, `requests` 2.34.2 and 2.33.1, and `python-dotenv` 1.2.3, against PostgreSQL 16 and MySQL 8.
+- `python -m pip install pandas numpy pyarrow matplotlib seaborn openpyxl xlsxwriter tabulate sqlalchemy "psycopg[binary]" requests python-dotenv` (add `mysql-connector-python` for MySQL), as in section 18.1.
 - A database with `riverstone_full` loaded (Chapter 14), or the CSV and Parquet files in `companion/full/`.
 - **Companion files (`companion/ch18/`):** `api_demo.py` (the demonstration API of section 18.14), `api_response.json` (a saved page of its reply), `clean_orders_pandas.py` (section 18.10's cleaning as one script), and `monthly_report.py` (section 18.15's finished report). The chapter also reads `companion/full/`, `companion/ch14/orders_q4_2025_export.csv`, `companion/ch15/chart_data/`, `companion/ch16/city_region.csv`, and `companion/ch17/sales_exports/`. For instructors: `build_ch18_files.py` rebuilds `api_response.json`.
 - **Worth knowing about:** `ruff` (formatting and linting), `duckdb` and `polars` (section 18.16), and `great-expectations` or plain assertions for data checks (Chapter 47).
@@ -3079,7 +3100,7 @@ customer_id
 Name: gap_days, dtype: float64
 ```
 
-Of the customers with three or more 2025 orders, customers 2642, 4812, and 2076 wait longest between orders, about five months on average.
+`drop_duplicates("order_id")` keeps one row per order, and sorting by customer and date puts each customer's orders in time order. `groupby("customer_id")["order_date"].shift()` is each order's previous order date for the same customer, so subtracting gives the gap, and `.dt.days` turns it into a number of days. `counts` holds each customer's number of orders, and `gaps[counts[counts >= 3].index]` keeps the customers with at least three. Of those, customers 2642, 4812, and 2076 wait longest between orders, about five months on average.
 
 **31.** The function takes the chart area first, like `style_axes`. Figure 18.4 shows the result:
 
