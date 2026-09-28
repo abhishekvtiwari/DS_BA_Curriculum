@@ -16,7 +16,8 @@ def read_rows(path):
 def summarize(path):
     """Return one summary dictionary for a CSV export."""
     rows = read_rows(path)
-    values, bad = [], 0
+    values = []
+    bad = 0
     for row in rows:
         try:
             if row["status"] != "Cancelled":
@@ -33,6 +34,7 @@ def summarize(path):
 
 
 def main(folder):
+    """Print one line per CSV file in folder, then a total; return an exit code."""
     paths = sorted(Path(folder).glob("*.csv"))
     if not paths:
         print(f"No CSV files found in {folder}")

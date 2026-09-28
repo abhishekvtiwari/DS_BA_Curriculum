@@ -51,7 +51,7 @@ Most cleaning goes wrong in one of two ways: people fix problems in whatever ord
 
 ![Six connected stages: load as text, profile, fix, validate, reconcile, and document, each with Riverstone counts, and a loop from a failed check back to profiling](figures/fig14-1-cleaning-workflow.svg)
 
-*Figure 14.1 — The cleaning workflow applied to Riverstone's Q4 2025 order export. Every number comes from queries in this chapter.*
+*Figure 14.1 — The cleaning workflow applied to Riverstone's Q4 2025 order export. Every number comes from queries in this chapter. A failed check sends you back to profiling.*
 
 1. **Load as text.** Bring the raw data in without letting any tool guess types (Chapter 10, section 10.4). A staging table where every column is text accepts anything, so nothing is silently rejected or converted.
 2. **Profile.** Count rows, distinct values, blanks, patterns, and ranges for every column *before* changing anything. Write down what you find.
@@ -156,7 +156,7 @@ For each column:
 
 ### Patterns in ten minutes (regular expressions)
 
-Profiling asks questions such as "is this ID all digits?" and "what shape does this date have?". `LIKE` (Chapter 12, section 12.5) can't answer them: `%` matches any characters at all, so it can't say "digits only". The tool for the job is a **regular expression** (regex for short): a small pattern language for describing text. You need only nine pieces of it in this chapter:
+Profiling asks questions such as "is this ID all digits?" and "what shape does this date have?". `LIKE` (Chapter 12, section 12.6) can't answer them: `%` matches any characters at all, so it can't say "digits only". The tool for the job is a **regular expression** (regex for short): a small pattern language for describing text. You need only nine pieces of it in this chapter:
 
 | Piece | Means | Example | Matches |
 |---|---|---|---|
@@ -216,7 +216,7 @@ SELECT regexp_replace('05-11-2025', '[0-9]', '9')      AS first_only,
 (1 row)
 ```
 
-Without `'g'`, only the `0` became `9`. With it, every digit did, and what's left is the **shape** of the value: two digits, a dash, two digits, a dash, four digits. The profiling queries below use exactly this trick.
+The two columns show what happens if you change it: without `'g'`, only the `0` became `9`; with it, every digit did, and what's left is the **shape** of the value: two digits, a dash, two digits, a dash, four digits. The profiling queries below use exactly this trick.
 
 ```sql
 SELECT regexp_replace('Rs. 430', '^[^0-9]+', '') AS price_text;
@@ -270,7 +270,7 @@ ORDER BY rows DESC;
 (2 rows)
 ```
 
-How it works: `!~ '^[0-9]+$'` keeps IDs that are **not** all digits, and `OR order_item_id IS NULL` adds empty IDs, because a regex test on NULL gives NULL, not true (Chapter 12, section 12.6). Six rows contain the word `order_item_id`: the export repeats its **header row** every 4,000 lines, a leftover from a paginated report. One row has an empty ID: the **footer** (`Report generated 01-01-2026 02:00; rows: 25975`). The repeated header text `order_item_id` is itself one of the 25,833 "distinct IDs"; the footer's empty ID is NULL, which `COUNT(DISTINCT …)` skips. So there are 25,832 real IDs. Removing these 7 rows leaves 25,969 data rows, 137 more than the real IDs: candidates for duplicates (section 14.4).
+How it works: `!~ '^[0-9]+$'` keeps IDs that are **not** all digits, and `OR order_item_id IS NULL` adds empty IDs, because a regex test on NULL gives NULL, not true (Chapter 12, section 12.7). Six rows contain the word `order_item_id`: the export repeats its **header row** every 4,000 lines, a leftover from a paginated report. One row has an empty ID: the **footer** (`Report generated 01-01-2026 02:00; rows: 25975`). The repeated header text `order_item_id` is itself one of the 25,833 "distinct IDs"; the footer's empty ID is NULL, which `COUNT(DISTINCT …)` skips. So there are 25,832 real IDs. Removing these 7 rows leaves 25,969 data rows, 137 more than the real IDs: candidates for duplicates (section 14.4).
 
 > **Watch out: footers lie too.** The footer claims 25,975 rows. That count includes the six repeated headers and the duplicate rows, so it's the number of lines the export tool wrote, not the number of order lines. Never use a file's own summary line as your reconciliation total.
 
@@ -647,7 +647,7 @@ Each duplicate appears exactly twice, and both copies are identical in every col
 
 The CRM export has 5,027 customer records. Riverstone's customer team suspects some businesses were entered twice. An exact match on the name finds only 9 pairs: the other duplicates differ in capitals, spaces, or a legal suffix. The fix is a **match key**: a normalized version of the name used only for finding candidates.
 
-![Four boxes transforming BHARAT  Stores Agra Pvt Ltd step by step to bharat stores agra, then three bars comparing matching on the name key only (48 groups), name key plus city (46 groups), and exact name (9 groups)](figures/fig14-3-duplicate-match-keys.svg)
+![Four boxes transforming BHARAT  Stores Agra Pvt Ltd step by step (remove the legal suffix, collapse spaces, lower case) to bharat stores agra, then three bars comparing matching on the name key only (48 groups), name key plus city (46 groups), and exact name (9 groups)](figures/fig14-3-duplicate-match-keys.svg)
 
 *Figure 14.3 — A match key removes differences that don't matter (case, extra spaces, a legal suffix) so duplicates can be found. The choice of matching columns changes what you find.*
 
@@ -894,7 +894,7 @@ ORDER BY customers DESC, city;
 (15 rows)
 ```
 
-The two `NOT IN` subqueries (Chapter 12, section 12.12) do the filtering. The first drops any city that, lower-cased, is already one of the mapping table's clean names (such as `mumbai` or `MUMBAI`); the second drops any city written exactly as in the reference list. What's left is every value that is neither. The real blanks don't appear, because a NULL city fails both tests (Chapter 12, section 12.6). `hyderabad` is only a capitals problem, which the cleaning fixes by capitalizing each word; the rest need the mapping table.
+The two `NOT IN` subqueries (Chapter 12, section 12.12) do the filtering. The first drops any city that, lower-cased, is already one of the mapping table's clean names (such as `mumbai` or `MUMBAI`); the second drops any city written exactly as in the reference list. What's left is every value that is neither. The real blanks don't appear, because a NULL city fails both tests (Chapter 12, section 12.7). `hyderabad` is only a capitals problem, which the cleaning fixes by capitalizing each word; the rest need the mapping table.
 
 No function turns **Bombay** into **Mumbai**, **Madras** into **Chennai**, **Poona** into **Pune**, or **Vizag** into **Visakhapatnam**: those are old names and nicknames that only a person who knows India would map. **New Delhi** is a judgment call (it's a district within Delhi); Riverstone's sales regions treat it as Delhi, so the mapping follows the business rule and says so. After mapping, the CRM's 64 distinct city values become 39 real cities.
 
@@ -1189,7 +1189,7 @@ FROM (VALUES ('3', 'CTN'), ('30', 'PCS'), ('', 'PCS')) AS v(quantity, qty_unit);
 (3 rows)
 ```
 
-The `CASE` gives the multiplier: 10 for cartons, 1 for pieces. `NULLIF(…)::int` turns the text into a number first (section 14.2), so a blank quantity stays NULL: NULL times anything is NULL (Chapter 12, section 12.6), which is right, because a blank isn't zero. In a real business, the conversion factor belongs in the product master (a crate and a bottle don't come in the same carton size); here every Riverstone carton holds 10 pieces. (Spreadsheet equivalent: section 14.12, step 8.)
+The `CASE` gives the multiplier: 10 for cartons, 1 for pieces. `NULLIF(…)::int` turns the text into a number first (section 14.2), so a blank quantity stays NULL: NULL times anything is NULL (Chapter 12, section 12.7), which is right, because a blank isn't zero. In a real business, the conversion factor belongs in the product master (a crate and a bottle don't come in the same carton size); here every Riverstone carton holds 10 pieces. (Spreadsheet equivalent: section 14.12, step 8.)
 
 The same thinking applies to other units you'll meet: kilograms and tonnes, rupees and lakhs, percentages and fractions. Kolkata's spreadsheet upload records discounts as **fractions** (`0.05` for 5%). The rule "a discount above 0 and below 1 is a fraction" is safe here because Riverstone's real discounts are whole percentages; in data where 0.5% discounts exist, you'd need the source system's documentation instead. The rule in SQL:
 

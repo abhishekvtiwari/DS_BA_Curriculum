@@ -1,6 +1,6 @@
-// Analyst to Architect, Chapter 14, section 14.11 — Power Query (M) cleaning pipeline for orders_q4_2025_export.csv.
+// Analyst to Architect, Chapter 14, section 14.12 — Power Query (M) cleaning pipeline for orders_q4_2025_export.csv.
 // Paste into Excel: Data > Get Data > From Other Sources > Blank Query > Advanced Editor. Change FilePath.
-// Needs two helper queries loaded as connections: StatusMap and BranchMap (columns raw_value, clean_value; raw_value lower-case).
+// Needs two helper queries loaded as connections: StatusMap (status_map.csv plus the row cxl) and BranchMap (branch_map.csv, completed to 12 rows); columns raw_value, clean_value; raw_value lower-case.
 // Riverstone Supplies is fictional; every name and number is invented.
 let
     FilePath   = "C:\Riverstone\ch14\orders_q4_2025_export.csv",

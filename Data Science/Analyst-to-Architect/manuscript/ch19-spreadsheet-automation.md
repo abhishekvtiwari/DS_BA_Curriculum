@@ -1,4 +1,4 @@
-# Chapter 19. Spreadsheet Automation: Macros, VBA, Office Scripts & Google Apps Script
+# Chapter 19. Spreadsheet Automation: Macros, VBA, Office Scripts & Apps Script
 
 *Part 2 — The Analyst*
 
@@ -6,13 +6,13 @@
 >
 > **You will learn to:** decide when automating inside a spreadsheet is the right answer · record a macro, save a macro-enabled workbook, and handle macro security without turning it off · read recorded code and rewrite it properly · program from zero in VBA: variables, `If`, `Select Case`, loops, arrays, collections, `Sub` and `Function` · work with Excel's object model instead of clicking · build the everyday toolkit: last row, loop the sheets, consolidate a folder of files, clean, format, pivot, PDF · send an Outlook email with the report attached or in the body · write custom worksheet functions and a simple form · debug with breakpoints and the Immediate window, and handle errors on purpose · make a macro fast with arrays and screen updating · do the same work in **Office Scripts** (Excel on the web, TypeScript) and **Google Apps Script** (Sheets, JavaScript), including triggers, HTML email, and API calls · keep macros maintainable, and know when to move the job to Power Query, Python, or a pipeline.
 >
-> **Before you start:** Chapters 10 and 11 (spreadsheets, Power Query), Chapter 14 (cleaning), Chapter 15 (charts). **No programming experience is assumed:** section 19.4 teaches the basics from zero in VBA, so this chapter stands on its own before the Python block.
+> **Before you start:** Chapters 10 and 11 (spreadsheets, formulas, lookups, pivot tables, Power Query). **No programming experience is assumed:** this is the first chapter in the book where you write code, and section 19.4 teaches the basics from zero in VBA.
 >
-> **Time needed:** 20–25 hours, spread over three weeks.
+> **Time needed:** 25–30 hours, spread over three weeks: VBA (sections 19.1–19.10) 13–16 hours, Office Scripts and Apps Script (sections 19.11–19.14) 6–8 hours, and the project about 6 hours. Take sections 19.11–19.14 as a separate sitting.
 >
 > **Tools:** **Excel for Windows** (Microsoft 365 or 2016+) for VBA and Outlook automation; **Excel on the web** with a Microsoft 365 business plan for Office Scripts; a **Google account** for Sheets and Apps Script. Excel for Mac runs VBA but not the Outlook or Windows-specific parts.
 >
-> **Practice data:** `companion/ch19/branch_files/` — twelve workbooks (four branch sales offices × October, November, December 2025), built from Chapter 14's clean Q4 data, plus `_notes.txt` so your folder code has to filter by extension. `expected_results.md` lists every number a correct consolidation must produce. `enquiries_sample.csv` is the Google Form data for the Apps Script project.
+> **Practice data:** `companion/ch19/ch19_practice.xlsx`, a small workbook for your first macros (sections 19.2–19.5). `companion/ch19/branch_files/`: twelve workbooks (four branch sales offices × October, November, December 2025) built from Riverstone's Q4 2025 order lines, plus `_notes.txt` so your folder code has to filter by extension. `expected_results.md` lists every number a correct consolidation must produce. `enquiries_sample.csv` is the Google Form data for the Apps Script project.
 
 ---
 
@@ -83,7 +83,9 @@ Two things to know in a company setting:
 
 ## 19.2 Recording your first macro
 
-The recorder is the fastest way to learn the object model: do the thing, then read what Excel wrote.
+The recorder is the fastest way to learn the **object model**, Excel's names for the things you click (workbooks, sheets, cells; section 19.5): do the thing, then read what Excel wrote.
+
+**Set up your practice workbook first.** Open `companion/ch19/ch19_practice.xlsx`. It has two sheets: **Master**, a copy of one branch file (Kolkata, December 2025: a header row and 994 order lines in columns A to K), and **Scratch**, an empty sheet for experiments. Save it straight away with **File → Save As → Excel Macro-Enabled Workbook (\*.xlsm)** as `ch19_practice.xlsm`. Every macro in sections 19.2 to 19.5 runs in this workbook.
 
 1. **View → Macros → Record Macro** (or **Developer → Record Macro**; enable the Developer tab in **File → Options → Customize Ribbon**).
 2. Name it without spaces (`Format_Sales_Sheet`), optionally give it a shortcut, and choose where to store it:
@@ -133,7 +135,7 @@ Sub FormatSalesSheet(ws As Worksheet)
 End Sub
 ```
 
-Now it takes the sheet as an argument, touches only that sheet, and works whatever the width of the data. (`FreezePanes` is one of the few things that really does need a selection, which is worth knowing so you don't hunt for a cleaner way.)
+Now it takes the sheet as an argument, touches only that sheet, and works whatever the width of the data. (`FreezePanes` is one of the few things that really does need a selection, which is worth knowing so you don't hunt for a cleaner way.) A macro that takes an argument doesn't appear in the **Alt+F8** list, because Excel wouldn't know which sheet to give it; section 19.4 shows how to run it.
 
 > **Watch out: the recorder can't record everything.** Loops, conditions, folder handling, and error handling never appear in a recording, because you can't click them. The recorder teaches you object names; section 19.4 onward teaches you the rest.
 
@@ -145,7 +147,7 @@ Now it takes the sheet as an argument, touches only that sheet, and works whatev
 
 - **Project Explorer** (**Ctrl+R**): the tree of open workbooks, their sheets, `ThisWorkbook`, and **Modules**. Your code goes in a module (**Insert → Module**), not in a sheet, unless it's an event handler.
 - **Code window:** where you type. Two drop-downs at the top navigate objects and their events.
-- **Immediate window** (**Ctrl+G**): a REPL. `?ActiveSheet.Name` prints the answer; `Debug.Print` writes here.
+- **Immediate window** (**Ctrl+G**): a box where you type one line and see the answer at once. Type `?ActiveSheet.Name` and press **Enter**, and it prints the name of the sheet in front of you (`?` means "print"). `Debug.Print` in your code writes here too.
 - **Locals and Watch windows:** variable values while the code is paused.
 
 Set two options once, in **Tools → Options**:
