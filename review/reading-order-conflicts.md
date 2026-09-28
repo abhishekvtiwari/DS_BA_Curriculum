@@ -1,8 +1,19 @@
 # Reading order: where the two sources disagree
 
-Written for the setup PR, 28 September 2026. **Nothing here is resolved.** It lists the
-disagreements and the findings that depend on them, for Abhishek to decide. Until then, no fix whose
-verdict depends on the order is applied.
+Written for the setup PR, 28 September 2026.
+
+**Abhishek's answer (28 Sep): follow P, `planning/chapter-map.md`.** So the findings below that hold
+only under S, or whose fix wording assumes S, are **held `Open`** in `tracker/register.csv` (39
+rows, each with a note), and listed under "Questions for Abhishek". So are 17.31, 18.44 and 20.22,
+whose right number depends on renumbering. Findings valid under P are approved.
+
+Still open, because they follow from choosing P:
+- **D1 and the approved move of Python out of Ch 14/15** (`CLAUDE.md` §3) assume S. Under P, Python
+  (17–18) comes before 14–16, so pandas there is legitimate. They are marked "in question" and not
+  applied.
+- **Renumbering.** P says the coordinator renumbers Parts II and III at assembly (new numbers 12 =
+  old 19, 13 = old 12, …). D6 says no chapter numbers change. Are Parts II/III renumbered to match
+  the reading order, or do the numbers stay with the reading order differing from them?
 
 The two sources:
 

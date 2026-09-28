@@ -39,17 +39,16 @@ Verified by measurement, not by reading a manifest.
 
 *Updated 28 September 2026 by the setup PR.*
 
-### 1. `DECISIONS.md` has a draft awaiting approval. Yours, and it blocks everything.
+### 1. Decisions: approved 28 Sep 2026.
 
-Claude Code filled in a recommendation for every item in the "Draft decisions" pull request. Edit
-what you disagree with; merging it is the approval. Until then, only the 29 Part 0 and I rows
-already approved may be fixed.
+A1, all themes, D2–D7, and option picks by "recommended, else (a)" are recorded in `DECISIONS.md`
+and `CLAUDE.md` (Draft decisions PR). 3,783 rows are Approved; 39 are held `Open` (item 2).
 
-### 2. Reading order: two sources disagree. Yours.
+### 2. Reading order: chapter-map chosen; two follow-up questions.
 
-`planning/chapter-map.md` (17 Sep) and `review/sequence-map.md` (25 Sep) give different orders for
-Parts II and III, and 46 findings depend on which one holds. Everything is listed in
-[`review/reading-order-conflicts.md`](review/reading-order-conflicts.md) and asked in the setup PR.
+Abhishek chose `planning/chapter-map.md`. The 39 findings that assume the other order are held
+`Open`. Still to answer: D1 and the Ch 14/15 Python move (they assume the other order), and whether
+Parts II/III are renumbered. See [`review/reading-order-conflicts.md`](review/reading-order-conflicts.md).
 
 ### 3. Build: done, verified.
 
