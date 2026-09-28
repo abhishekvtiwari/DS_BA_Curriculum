@@ -12,7 +12,7 @@ Verified by measurement, not by reading a manifest.
 | Content review | All 85 chapters. `review/content/ch10.md` to `ch83.md`, plus `review/part-0-and-I/findings.md` for Chapters 1 to 9 |
 | Visual review | All 85 chapters, `review/visual/ch01.md` to `ch83.md` |
 | Visual snapshots | 762 PNGs. Every chapter has at least three; none has zero |
-| Register | `tracker/register.csv`, 3,758 rows. 501 High, 1,702 Medium, 1,553 Low. 2,534 content, 1,224 visual. 29 Approved |
+| Register | `tracker/register.csv`, 3,822 rows (3,758 from the review + 64 Reader's Journey). 2,534 content, 1,224 visual, 64 reader-journey. 29 Approved |
 | Chapter PDFs | 175. Every part has one per chapter, and all 85 match what the review read |
 | Manuscript | 87 Markdown files, `ch01` to `ch83` including `ch72a`, `ch76a`, `ch76b` |
 | Figures | 262 SVGs, 69 draw scripts. **All 254 image references in the chapters resolve to a real file** |
@@ -37,51 +37,38 @@ Verified by measurement, not by reading a manifest.
 
 ## Left, and who owns it
 
-### 1. `DECISIONS.md` is empty. Yours, and it blocks everything.
+*Updated 28 September 2026 by the setup PR.*
 
-Nothing is ticked: no global rule, no theme decision, no structural decision, no option pick. With no
-global rule ticked, `CLAUDE.md` section 4 requires the agent to stop. Until it is filled, 3,729 of
-3,758 rows stay `Open` and nothing can be fixed. The 29 Part 0 and I content rows are the exception.
+### 1. `DECISIONS.md` has a draft awaiting approval. Yours, and it blocks everything.
 
-Read `DECISIONS-BRIEFING.md` alongside it. Section B is 26 ticks.
+Claude Code filled in a recommendation for every item in the "Draft decisions" pull request. Edit
+what you disagree with; merging it is the approval. Until then, only the 29 Part 0 and I rows
+already approved may be fixed.
 
-### 2. No build has been run. Needs a machine with the toolchain.
+### 2. Reading order: two sources disagree. Yours.
 
-`pandoc`, a Chromium for Playwright, and `pdftoppm` are not installed on the machine this was set up
-on, so nothing here was rendered. The builder compiles, imports, and resolves all 85 chapters, but
-that is not the same as producing a PDF.
+`planning/chapter-map.md` (17 Sep) and `review/sequence-map.md` (25 Sep) give different orders for
+Parts II and III, and 46 findings depend on which one holds. Everything is listed in
+[`review/reading-order-conflicts.md`](review/reading-order-conflicts.md) and asked in the setup PR.
 
-The first session with the toolchain should build Ch 12, compare it against the 96-page v4, and
-correct `source/BUILD.md` if anything differs. Fonts are the risk worth watching: the cover asks for
-Poppins and Lora, and a missing face changes line breaks, which moves page numbers away from the ones
-the visual review cites.
+### 3. Build: done, verified.
 
-### 3. The `setup` pull request has not been opened.
+Ch 12 rebuilds with the same 96 pages as v4. All 85 chapters rebuild with the same page counts and
+identical body text. See [`source/BUILD.md`](source/BUILD.md). Install with
+`bash source/setup-toolchain.sh`.
 
-Bootstrap steps 1 and 2 are done and steps 3 and 4 are now done too, except the test build. Because
-`review/visual/snaps/` is no longer empty and no `kit-*.zip` was ever pushed, the trigger condition in
-`CLAUDE.md` section 0 reads as false, so a session may skip the section entirely. What remains there
-is the test build and the PR.
+### 4. Reader's Journey: merged, still unfinished at Part VIII.
 
-### 4. The Reader's Journey strand needs a decision, and is unfinished.
-
-`review/reader-journey/register-candidates.csv` holds its 130 findings, 53 High and 77 Medium, in the
-register's schema with `kind` set to `reader-journey`. Decide whether to append them or keep the
-strand separate. `register-candidates.md` shows the candidate theme for each and the 21 that matched
-none.
-
-It stops at Part VII, Chapter 67. Chapters 68 to 83 are unread in this strand, so its checks B and C
-are incomplete and the book's 764 to 980 hour claim is unverified. **The register itself covers all 85
-chapters, so the fix run is not blocked by this.**
-
-Its findings corroborate decisions you have already drafted. D3 asks for one Meera timeline and one
-loaded hourly rate; the strand found both independently, the timeline at RJ-S2-25 and the ₹300 against
-₹1,200 rate at RJ-S3-74.
+The 130 findings were reconciled into the register: 64 new rows, 66 duplicates recorded against their
+originals (see [`review/reader-journey/README.md`](review/reader-journey/README.md)). The strand
+still stops at Chapter 67, so its checks B and C and the 764 to 980 hour claim remain unverified. The
+register itself covers all 85 chapters, so the fix run is not blocked.
 
 ### 5. Five parts have no collated whole-part PDF.
 
 Parts 0, I, IV and VIII have one. Parts II, III, V, VI and VII do not, because only Parts 0 and I have
-collated markdown in `manuscript/`. Needs the toolchain, and it is cosmetic for the fix run.
+collated markdown in `manuscript/`. The toolchain can now build them once collated markdown exists.
+Cosmetic for the fix run.
 
 ## Noted, no action
 
@@ -98,8 +85,6 @@ collated markdown in `manuscript/`. Needs the toolchain, and it is cosmetic for 
 
 ## The order to start in
 
-1. Fill `DECISIONS.md`, using `DECISIONS-BRIEFING.md`. Nothing else can start.
-2. Install pandoc, `playwright install chromium`, and Poppler. Build Ch 12, check it against v4, correct `BUILD.md`.
-3. Open the `setup` pull request.
-4. Decide what happens to the Reader's Journey strand.
-5. Then the style pass, the Riverstone fact sheet, and the per-part pull requests, per `CLAUDE.md` section 5.
+1. Merge (or edit, then merge) the "Draft decisions" PR.
+2. Answer the reading-order questions in the setup PR, then merge it.
+3. Then the style pass, the Riverstone fact sheet, and the per-part pull requests, per `CLAUDE.md` section 5.
