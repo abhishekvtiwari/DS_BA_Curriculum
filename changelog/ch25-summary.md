@@ -1,7 +1,7 @@
 # Chapter 25, The Business Analyst Track: summary
 
 **Findings handled:** 18 content (25.1–25.18), 19 visual (V25.1–V25.19), and the Ch 25 part of three Reader's Journey rows (RJ-S3-23, RJ-S3-24, RJ-S2-7).
-**Result:** 30 Verified (content and visual rows checked in the rebuilt PDF or by the checks), 5 left Fixed from the style pass, 2 Open, 1 Approved with the remaining work elsewhere.
+**Result:** 36 Verified (all content and visual rows except those below, checked in the rebuilt PDF or by the checks), 2 Open (25.18, RJ-S3-24), 1 Approved with the remaining work elsewhere (RJ-S2-7). RJ-S3-23's Ch 25 half is Verified.
 
 ## What changed
 

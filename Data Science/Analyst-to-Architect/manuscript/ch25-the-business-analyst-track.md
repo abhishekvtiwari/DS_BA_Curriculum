@@ -735,8 +735,11 @@ business analyst · elicitation · software development life cycle (SDLC) · wat
 > **As a** finance assistant, **I want** a list of invoices overdue by more than thirty days, **so that** I can chase them before they age further.
 >
 > **AC-1** *Given* today's date, *when* the list is generated, *then* it includes every invoice whose due date is more than thirty days before today and whose outstanding amount is greater than zero.
+>
 > **AC-2** *Given* an invoice that has been part paid, *when* the list is generated, *then* it appears with its remaining balance, not its original total.
+>
 > **AC-3** *Given* an invoice raised against a cancelled order, *when* the list is generated, *then* it does not appear.
+>
 > **AC-4** *Given* the list is generated for a past month-end, *when* its total is compared with the ERP's receivables ageing for that date, *then* the two agree to the rupee.
 
 AC-2 and AC-3 are the edge cases; AC-4 is the reconciliation. A list that shows original totals for part-paid invoices is the classic version of this report being wrong.
@@ -761,8 +764,14 @@ FR-18 is the next free number after this chapter's FR-17. The **system of record
 **11.** For example:
 
 > **UC-07: Raise a credit note for a returned delivery**
-> **Actor:** finance assistant. **Precondition:** an invoiced order has a recorded return.
-> **Main flow:** 1. The assistant opens the return. 2. The system shows the original invoice and its lines. 3. The assistant selects the returned lines and quantities. 4. The system calculates the credit at the original prices and discounts and raises a credit note against the invoice. 5. The invoice's outstanding balance reduces by the credit.
+> **Actor:** finance assistant
+> **Precondition:** an invoiced order has a recorded return.
+> **Main flow:**
+> 1. The assistant opens the return.
+> 2. The system shows the original invoice and its lines.
+> 3. The assistant selects the returned lines and quantities.
+> 4. The system calculates the credit at the original prices and discounts and raises a credit note against the invoice.
+> 5. The invoice's outstanding balance reduces by the credit.
 > **Alternative A, invoice already paid in full:** at step 4 the system creates the credit as an unallocated balance on the customer's account and flags it for refund or offset.
 > **Alternative B, partial return of a discounted line:** at step 4 the discount is applied pro rata to the returned quantity, and the system shows the calculation before the assistant confirms.
 > **Postcondition:** a credit note exists, linked to the original invoice, and the customer's balance reflects it.
