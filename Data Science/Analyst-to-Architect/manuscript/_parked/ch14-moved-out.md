@@ -4,13 +4,15 @@ Not a reader-facing file and not built. Approved decision (CLAUDE.md §3, Abhish
 
 Every block below is **verbatim** from Ch 14 as it stood before the Part 2 build (commit `bd8a0f2`), labelled with its destination and a one-line note of what it depends on. The destination chapter's agent places it (rewritten only as far as its new home needs) and records that it landed.
 
-Labels: **→ Destination** (still to be placed).
+Labels: **→ Destination** (still to be placed) · **Landed** (placed in its chapter; kept here for the record).
 
 Shared context for all the Ch 18 blocks: the files are in `companion/ch14/` (`orders_q4_2025_export.csv`, `customers_crm_export.csv`, `clean_truth_orders_q4_2025.csv`, `clean_orders_pandas.py`, which writes `clean_order_lines_pandas.csv` and `dq_order_issues_pandas.csv`). Ch 18 already reads `../ch14/orders_q4_2025_export.csv` in §18.2 and §18.10, so the relative path `../ch14/` is the one to use from `companion/ch18`. The SQL numbers these blocks compare against (25,969 data rows, 137 duplicates, 25,832 lines, 37 logged issues, ₹423,561,010.50) are all in Ch 14 and still true. Rupee amounts in reader text use lakh grouping from the Part 2 build on: ₹42,35,61,010.50.
 
 ---
 
 ## 1. Old §14.13 "A first look at cleaning in pandas" (the whole section)
+
+**Landed** in Ch 18 §18.10, "Load as text, and profile" (Part 2/3 build).
 
 **→ Ch 18 §18.10 "Cleaning in pandas".** Depends on: pandas `read_csv` with `dtype=str` and `keep_default_na` (Ch 18 §18.2), `.str` methods and `value_counts()` (Ch 18 §18.3–18.5), `duplicated()`/`drop_duplicates()`, `pd.to_numeric`. Finding 14.2 asks Ch 18 to keep the four cells and their outputs and add line-by-line explanations (`dtype=str`, `keep_default_na`, `.str.fullmatch`, `duplicated()`, `value_counts()`, `pd.to_numeric`, `zfill`). The `<!-- py: reset -->` marker and the code run from `companion/ch14`; from `companion/ch18` the file names need `../ch14/`. The outputs were produced with pandas 3.0.2; re-run them in Ch 18's environment. The opening paragraph's "If you're reading in file order and haven't reached them yet, treat this section as a preview" no longer applies.
 
@@ -113,6 +115,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 
 ## 2. Old §14.3 table "Missing values in each tool": the pandas column
 
+**Landed** in Ch 18 §18.10, "Chapter 14's moves in pandas" (merged with the cleaning-verbs table) (Part 2/3 build).
+
 **→ Ch 18 §18.10, as a recap table** (finding 14.2 (2)). Depends on: `isna`, `replace`, `fillna`, `dropna`, `ffill` (Ch 18). The header said "pandas (section 14.11)", a wrong reference (finding 14.32, moot now). The Excel/Power Query and SQL columns stay in Ch 14.
 
 | Task | Excel / Power Query | SQL | pandas (section 14.11) |
@@ -126,6 +130,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 ---
 
 ## 3. pandas clauses cut from the body of Ch 14
+
+**Landed** in Ch 18 §18.10's table (`drop_duplicates`, `rapidfuzz`, outliers, `zfill`), §18.9 (`tz_convert`), §18.2 (`thousands`/`decimal`) and exercise 33 (the column-by-column comparison) (Part 2/3 build).
 
 **→ Ch 18 §18.10** (each is one clause of a sentence in Ch 14; Ch 14 keeps the rest of the sentence). Depends on: the pandas basics of Ch 18 §18.1–18.9; `rapidfuzz` is a third-party library (install with pip) that Ch 18 would introduce if it keeps the clause.
 
@@ -144,6 +150,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 
 ## 4. Tools and companion lines
 
+**Landed** in Ch 18's Chapter at a glance box and project Tools list, without version numbers (Part 2/3 build).
+
 **→ Ch 18 (its own Tools box and project Tools list).** Depends on nothing; RJ-S3-18 asks for one sentence on the book's Python version in Ch 17 §17.2 and the others to defer to it, so drop the version numbers when placing these.
 
 - Chapter at a glance, **Tools:** "…; Python 3.12 with pandas for section 14.13's preview."
@@ -155,6 +163,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 ---
 
 ## 5. Project and review lines
+
+**Landed** in Ch 18's Check yourself (Part 2/3 build).
 
 **→ Ch 18's project or exercises** (optional; they only make sense next to §18.10). Depends on: §18.10.
 
@@ -168,6 +178,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 
 ## 6. Exercise 23 and its answer
 
+**Landed** in Ch 18 as exercise 17 (Part 2/3 build).
+
 **→ Ch 18 exercises (Core).** Depends on: `.str.strip()`, `.str.lower()`, `.nunique()`/`value_counts()` (Ch 18 §18.3–18.5), and the file `../ch14/orders_q4_2025_export.csv` loaded with `dtype=str, keep_default_na=False`. Note that the answer counts distinct values after removing non-data rows (7 values); on the raw column the header text `order_item_id` would be an eighth.
 
 23. In pandas, normalize `status` with `.str.strip().str.lower()`. How many distinct values remain?
@@ -177,6 +189,8 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 ---
 
 ## 7. Stretch goal: rebuild the export with a new seed
+
+**Landed** in Ch 18 as exercise 32, using Ch 14's existing Q3 export instead of a new seed (Part 2/3 build).
 
 **→ Ch 18 exercises (Stretch)** (finding 14.23: "move the rebuild idea to Ch 18's exercises"). Depends on: running a Python script (Ch 17 §17.0), editing a constant in it, and `pandas`/`pyarrow` for `build_ch14_files.py`, which reads `../full/*.parquet`. Ch 14's stretch goal now uses a second pre-built export instead (`companion/ch14/orders_q3_2025_export.csv`, built by `build_ch14_q3_export.py`, seed 20250714).
 

@@ -475,7 +475,7 @@ print(q1_of(kolkata_days))
 ```
 
 - `deliveries.loc[condition, "delivery_days"]` (Chapter 18) keeps Kolkata's rows and only the delivery-time column.
-- `lambda s: s.quantile(0.25)` is a **lambda**: a function written in one line, with no name and no `def`. It reads "given a column `s`, return its 25th percentile". It does the same as `def q1_of(s): return s.quantile(0.25)` from Chapter 17.
+- `lambda s: s.quantile(0.25)` is a **lambda**, the one-line function with no name from Chapter 18 (section 18.6): "given a column `s`, return its 25th percentile".
 - `q1_of(kolkata_days)` calls it on Kolkata's column and gives the same 4.2 as the line above.
 
 Now hand `.agg` one function per measure, each under the name you want as its column:

@@ -71,8 +71,10 @@ def fig_power():
     o.append(rect(px(25000) - 5, py(p25) - 5, 10, 10, fill=GREEN, stroke=GREEN, rx=5))
     o.append(text(px(25000) + 10, py(p25) + 22, f"25,000 per group: {p25:.0%} power", 11, GREEN, "bold"))
     o.append(rect(px(5000) - 5, py(p5) - 5, 10, 10, fill=RED, stroke=RED, rx=5))
-    o.append(text(px(5000) + 12, py(p5) + 2, f"5,000 per group: {p5:.0%} power, so the", 11, RED))
-    o.append(text(px(5000) + 12, py(p5) + 16, "test misses this effect 3 times in 4", 11, RED))
+    o.append(path(f"M{px(5000) + 5},{py(p5) + 4} L{px(7000) - 3},{py(0.19) - 4}", stroke=RED, sw=1.2))
+    o.append(text(px(7000), py(0.19), f"5,000 per group: {p5:.0%} power,", 11, RED))
+    o.append(text(px(7000), py(0.19) + 14, "so the test misses this", 11, RED))
+    o.append(text(px(7000), py(0.19) + 28, "effect 3 times in 4", 11, RED))
     o.append(text(16, y0 + 60, "+0.5 percentage points on a 3.9% baseline, at the 5% level.", 10.5, MUTED))
     return svg(W, y0 + 72, "".join(o))
 
@@ -90,9 +92,9 @@ def fig_design():
     y = 44
     for i, (when, title, detail, c) in enumerate(steps):
         if i == 4:
-            o.append(path(f"M16,{y + 2} H{W - 16}", stroke=INK, sw=1.6, dash="7,4"))
-            o.append(text(W - 16, y - 2, "▲ above the line: written down before any visitor is randomized", 10.5, INK, "bold", anchor="end"))
-            y += 12
+            o.append(text(W - 16, y + 6, "▲ above the line: written down before any visitor is randomized", 10.5, INK, "bold", anchor="end"))
+            o.append(path(f"M16,{y + 13} H{W - 16}", stroke=INK, sw=1.6, dash="7,4"))
+            y += 22
         o.append(rect(16, y, 70, 30, fill=ROWALT, stroke=RULE, rx=5))
         o.append(text(51, y + 20, when, 10.5, MUTED, "bold", anchor="middle"))
         o.append(rect(94, y, W - 110, 30, fill="#fff", stroke=c, sw=1.4, rx=5))

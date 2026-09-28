@@ -21,6 +21,8 @@ Chapter 15 now ends its Excel/Sheets section 15.14 without code and says in "Whe
 
 ## 1. §15.14 subsection "A first look at charts in code" (text, two code blocks, their outputs, and the closing explanation)
 
+**Landed** in Ch 18 §18.11 (the attainment cell, three drawing cells and Figure 18.1) (Part 2/3 build).
+
 **Destination:** → Ch 18 §18.11
 
 **Depends on:** pandas and matplotlib (Ch 17–18); run with the working folder `companion/ch15` so `chart_data/monthly_2023_2025.csv` is found; the second block uses `m25` from the first. `<!-- py: reset -->` is the verify_python marker. The last sentence names `figures/make_figs15.py`, a build script (finding 15.9): don't carry that name into reader text; if the figure code is wanted, publish it as `companion/ch18/chart_examples.ipynb` and reference that.
@@ -82,6 +84,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 
 ## 2. "Chapter at a glance": the Python items
 
+**Landed** in Ch 18's Chapter at a glance box (for the record) (Part 2/3 build).
+
 **Destination:** → Ch 18 §18.11 (for the record; Ch 18's own Tools line already lists Python)
 
 **Depends on:** nothing. Removed from Ch 15's "You will learn to" and Tools lines (finding 15.2). Original lines:
@@ -98,6 +102,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 ---
 
 ## 3. Project "Tools you'll need": Python and the build scripts
+
+**Landed** (Part 2/3 build): no build-script names in Ch 18; `chart_examples.ipynb` was not created, because the chapter's own cells are the code.
 
 **Destination:** → Ch 18 §18.11 / Ch 18 companion (finding 15.9 suggests `companion/ch18/chart_examples.ipynb`)
 
@@ -116,6 +122,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 
 ## 4. Project: step 4 wording and the Python stretch goal
 
+**Landed** in Ch 18's project stretch goal (rebuild the five redesigned charts with `style_axes`) (Part 2/3 build).
+
 **Destination:** → Ch 18 §18.11 exercises (stretch goal: "Rebuild all five redesigns in Python with one `style_chart(ax, title)` function")
 
 **Depends on:** the five redesigns of Ch 15's project (Figure 15.16, data in `companion/ch15/ch15_chart_data.xlsx` sheets `product_2025`, `margin_by_year`, `region_2025`, `rep_month_2025`, `region_month_2025`), matplotlib `Axes`. In Ch 15, step 4 now reads "in Excel or Google Sheets".
@@ -133,6 +141,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 
 ## 5. §15.9 Maps: "or Python"
 
+**Landed** as one sentence on maps in Ch 18 §18.11 (Part 2/3 build).
+
 **Destination:** → Ch 18 §18.11 (optional mention of map libraries); nothing else to place
 
 **Depends on:** nothing. Ch 15 now reads "BI tools such as Power BI (Chapter 16) are better."
@@ -148,6 +158,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 
 ## 6. "Check yourself": the code bullet
 
+**Landed** in Ch 18's Check yourself (Part 2/3 build).
+
 **Destination:** → Ch 18 "Check yourself" (e.g. "You can apply Chapter 15's chart rules in matplotlib")
 
 **Depends on:** Ch 18 §18.11. Ch 15 now reads "You can build all of this in Excel or Google Sheets."
@@ -162,6 +174,8 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 ---
 
 ## 7. Exercises: the Python route in the intro and in exercise 9
+
+**Landed** in Ch 18's exercises introduction and exercise 22 (box plots) (Part 2/3 build).
 
 **Destination:** → Ch 18 §18.11 exercises ("Redo Chapter 15's exercise 9 box plots with `ax.boxplot` or seaborn")
 
@@ -179,6 +193,8 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 ---
 
 ## 8. Exercise 22 (Stretch) and its answer
+
+**Landed** in Ch 18 as exercise 31 and its answer, with Figure 18.4; the signature is reconciled as `highlight_lines(ax, df, focus)` in both (Part 2/3 build).
 
 **Destination:** → Ch 18 §18.11 exercises and answers
 
@@ -209,6 +225,8 @@ Call it with `rep = pd.read_csv("chart_data/rep_month_2025.csv").set_index("mont
 ---
 
 ## 9. Answer 13: the pandas clause
+
+**Landed** in Ch 18 as exercise 23 (`.corr()` = 0.916) (Part 2/3 build).
 
 **Destination:** → Ch 18 §18.11 or §18.6 exercises ("check Chapter 15's correlation of 0.916 with `.corr()`")
 

@@ -247,7 +247,7 @@ print(f"40 sessions: mean {sample.mean():.1f} s, 95% CI {low:.1f} to {high:.1f} 
 40 sessions: mean 64.0 s, 95% CI 47.8 to 80.2 s
 ```
 
-- `.sample(40, random_state=30)` picks 40 rows at random; `random_state=30` fixes the draw so you get the same 40 (Chapter 21, section 21.8).
+- `.sample(40, random_state=30)` picks 40 rows at random; `random_state=30` fixes the draw so you get the same 40 (Chapter 21, section 21.5).
 - `stats.sem(sample)` is the **s**tandard **e**rror of the **m**ean, *s* ÷ √*n*, in one call. It uses *n* − 1 by default.
 - `stats.t.interval(0.95, df=..., loc=..., scale=...)` returns the two ends: the confidence level, the degrees of freedom (40 − 1 = 39), the center (`loc`, the sample mean), and the standard error (`scale`), exactly as in section 22.1. `low, high = ...` unpacks the two ends into two names.
 
@@ -255,7 +255,7 @@ Notice that this interval, 47.8 to 80.2 seconds, does not contain 96.17 seconds,
 
 Forty sessions give an interval tens of seconds wide; 214,528 give one a fraction of a second wide. **Precision costs data, and it costs it at the square root**: four times the data for twice the precision.
 
-![Four horizontal intervals, all centered on plus 0.55 percentage points: at 2,500 per group the interval spans minus 0.56 to plus 1.66 and crosses zero, at 10,000 it just touches zero, at 25,000 it runs 0.20 to 0.90, and at 100,000 it runs 0.37 to 0.73](figures/fig30-1-confidence-intervals.svg)
+![Four horizontal intervals, all centered on plus 0.55 percentage points: at 2,500 per group the interval spans minus 0.56 to plus 1.66 and crosses zero, at 10,000 it just touches zero, at 25,000 it runs 0.20 to 0.90, and at 100,000 it runs 0.38 to 0.73](figures/fig30-1-confidence-intervals.svg)
 
 *Figure 30.1 — The same measured lift, four sample sizes. Only the sample size changed, and with it what you may say.*
 
@@ -707,7 +707,7 @@ F = 2.57, p = 0.036
 - `*by_region` unpacks the list: `stats.f_oneway(*by_region)` is the same as writing `stats.f_oneway(east, north, south, west)`, each array as a separate argument, without knowing in advance how many groups there are.
 - The `groupby(...).agg(["count", "mean"])` lines print each group's size and mean, so you can see what the test is comparing.
 
-**Reading it:** the four regions behave the same: F is close to 1 and p = 0.12, so there's no evidence of any difference in how long visits last. The five channels do differ in pages viewed, at p = 0.036. Run the same test on sessions instead, and the channel p-value drops to 0.013: counting each visit as independent makes the evidence look stronger than it is, which is section 30.2's warning in action.
+**Reading it:** the four regions behave the same: F is small (1.9) and p = 0.12, so there's no evidence of any difference in how long visits last. The five channels do differ in pages viewed, at p = 0.036. Run the same test on sessions instead, and the channel p-value drops to 0.013: counting each visit as independent makes the evidence look stronger than it is, which is section 30.2's warning in action.
 
 ANOVA says *something* differs. To find out what, run a **post-hoc test** that corrects for the number of comparisons. **Tukey's test** (Tukey HSD, for "honestly significant difference") compares every pair of groups while holding the family-wise error rate at 5%:
 
@@ -781,7 +781,7 @@ Nothing differed, and yet results appeared. Run twenty tests at the 5% level and
 
 Section 22.3 used the full formula. Most calculators use a shorter version, which gives almost the same answer:
 
-> **The formula: sample size per group for two proportions (short version).** *n* = 2 × (z<sub>α/2</sub> + z<sub>β</sub>)² × p̄(1 − p̄) ÷ d²
+> **The formula: sample size per group for two proportions (short version).** *n* = 2 × (z<sub>α/2</sub> + z<sub>β</sub>)² × p̄(1 − p̄) ÷ d²
 >
 > - **z<sub>α/2</sub>** = 1.960, the multiplier for a two-sided test at 5%: `stats.norm.ppf(0.975)` (Chapter 21, section 21.5).
 > - **z<sub>β</sub>** = 0.842, the multiplier for 80% power: `stats.norm.ppf(0.80)`.
@@ -1038,7 +1038,7 @@ sample-ratio mismatch test: chi-square = 13.1, p = 0.00030
 ```
 
 - `.to_numpy()` turns the `visitors` column into a plain array of two counts, `observed[0]` for control and `observed[1]` for the variant.
-- `stats.chisquare(observed)` compares the observed counts with expected ones. With no `f_exp=` argument, it expects equal counts: 47,286 ÷ 2 = 23,643 each. That default is exactly right for a 50/50 design. For a 90/10 design you would pass `f_exp=[0.9 * total, 0.1 * total]`.
+- `stats.chisquare(observed)` compares the observed counts with expected ones. With no `f_exp=` argument, it expects equal counts: 47,286 ÷ 2 = 23,643 each. That default is exactly right for a 50/50 design. For a 90/10 design you would pass `f_exp=[0.9 * total, 0.1 * total]`, where `total` is the number of visitors in the test.
 - `:.3%` prints a proportion as a percentage with three decimals.
 
 By hand, as in section 22.2: (24,036 − 23,643)² ÷ 23,643 + (23,250 − 23,643)² ÷ 23,643 = 6.53 + 6.53 = **13.1** ✓.
@@ -1061,7 +1061,8 @@ print(f"absolute difference: {100 * diff:+.2f} percentage points")
 print(f"relative lift:       {100 * diff / p_control:+.1f}%")
 print(f"z = {z:.3f}, p = {p_value:.4f}")
 print(f"95% CI (absolute):   {100 * (diff - 1.96 * se):+.2f} to {100 * (diff + 1.96 * se):+.2f} pp")
-print(f"95% CI (relative):   {100 * (diff - 1.96 * se) / p_control:+.1f}% to {100 * (diff + 1.96 * se) / p_control:+.1f}%")
+low_rel, high_rel = (diff - 1.96 * se) / p_control, (diff + 1.96 * se) / p_control
+print(f"95% CI (relative):   {100 * low_rel:+.1f}% to {100 * high_rel:+.1f}%")
 ```
 
 ```
@@ -1079,7 +1080,7 @@ z = 3.009, p = 0.0026
 - `proportions_ztest([k[1], k[0]], [n[1], n[0]])` lists the variant first, so that a positive z means the variant is higher. As in section 30.5, the test uses the pooled standard error and the interval uses the unpooled one; here they are 0.001839 and 0.001841, the same for any practical purpose.
 - The relative interval divides both ends of the absolute interval by the control rate. That treats the control rate as known exactly, which it isn't quite. A more careful interval for a ratio, calculated on the log scale, gives +4.7% to +24.5%: the same story.
 
-The agency's "up 14%" is the middle of a range that runs from +4.9% to +23.4%. At Riverstone's traffic of about 3,400 new visitors a day, 0.55 percentage points is roughly 560 extra enquiries a month, and the interval's ends are about 190 and 920. Both ends are good news; the gap between them is the difference between hiring another person to handle enquiries and not. The range belongs in the report.
+The agency's "up 14%" is the middle of a range that runs from +4.9% to +23.4%. At Riverstone's traffic of about 3,400 new visitors a day, 0.55 percentage points is roughly 560 extra enquiries a month, and the interval's ends are about 200 and 930. Both ends are good news; the gap between them is the difference between hiring another person to handle enquiries and not. The range belongs in the report.
 
 ### Making it repeatable: a tested function
 
@@ -1200,14 +1201,23 @@ Every segment moves in the same direction, which is mildly reassuring. What you 
 
 ### Peeking
 
-Section 22.4 showed what peeking does to an email test. Here is the same trap in the shape of Riverstone's website test. Checking daily and stopping when p first drops below 0.05 sounds prudent. Simulate it on two groups that are identical by construction:
+Section 22.4 showed what peeking does to an email test. Here is the same trap in the shape of Riverstone's website test. Checking daily and stopping when p first drops below 0.05 sounds prudent. Simulate it on two groups that are identical by construction. First, the settings:
 
 ```python
 rng = np.random.default_rng(30)
 rate = 0.039
-peeks_that_won = 0
 trials = 200
+print(f"{trials} simulated tests, both groups at {rate:.1%}, one look a day for 14 days")
+```
 
+```
+200 simulated tests, both groups at 3.9%, one look a day for 14 days
+```
+
+`rate` is Riverstone's enquiry rate before the test, and `trials` is how many fortnights to simulate. Then the fortnights themselves:
+
+```python
+peeks_that_won = 0
 for _ in range(trials):
     a = rng.random(14_000) < rate          # two identical groups
     b = rng.random(14_000) < rate
@@ -1218,8 +1228,9 @@ for _ in range(trials):
             peeks_that_won += 1
             break
 
+share = peeks_that_won / trials
 print(f"{trials} tests where nothing was different")
-print(f"'significant' at some point while peeking: {peeks_that_won} ({peeks_that_won / trials:.1%})")
+print(f"'significant' at some point while peeking: {peeks_that_won} ({share:.1%})")
 print("expected at a single planned look: 5%")
 ```
 
@@ -1360,7 +1371,7 @@ Other          0    1141       0
 Safari      2640    9132    1656
 ```
 
-Two thirds of Safari visitors are on phones (9,132 of 13,428), and more than two in five mobile visitors use Safari. So Safari is the cause and mobile is a symptom: mobile's split is off because so much of mobile is Safari. That's a bug in the assignment script, not chance, and it's the kind of thing that only ever turns up because someone ran the check. Riverstone's options: fix the tag and rerun, or analyze only the browsers that split correctly and treat Safari separately. What you cannot do is ignore it, because the missing visitors may not be random.
+Two thirds of Safari visitors are on phones (9,132 of 13,428), and about two in five mobile visitors use Safari (9,132 of 22,690). So Safari is the cause and mobile is a symptom: mobile's split is off because so much of mobile is Safari. That's a bug in the assignment script, not chance, and it's the kind of thing that only ever turns up because someone ran the check. Riverstone's options: fix the tag and rerun, or analyze only the browsers that split correctly and treat Safari separately. What you cannot do is ignore it, because the missing visitors may not be random.
 
 So check whether the result survives without Safari, with the function from section 30.9:
 
@@ -1372,8 +1383,11 @@ print(g.assign(rate=(g["sum"] / g["count"]).round(4)))
 
 result = two_proportion_summary(g.loc["control", "sum"], g.loc["control", "count"],
                                 g.loc["variant_b", "sum"], g.loc["variant_b", "count"])
-print(f"difference {100 * result['diff']:+.2f} pp (95% CI {100 * result['ci_low']:+.2f} to {100 * result['ci_high']:+.2f}), p = {result['p_value']:.4f}")
-print(f"split: {100 * g.loc['control', 'count'] / g['count'].sum():.2f}% control, SRM p = {stats.chisquare(g['count'].to_numpy())[1]:.2f}")
+print(f"difference {100 * result['diff']:+.2f} pp, p = {result['p_value']:.4f}")
+print(f"95% CI {100 * result['ci_low']:+.2f} to {100 * result['ci_high']:+.2f} pp")
+share = g.loc["control", "count"] / g["count"].sum()
+srm_p = stats.chisquare(g["count"].to_numpy())[1]
+print(f"split: {share:.2%} control, SRM p = {srm_p:.2f}")
 ```
 
 ```
@@ -1381,13 +1395,14 @@ print(f"split: {100 * g.loc['control', 'count'] / g['count'].sum():.2f}% control
 variant
 control    679  16900  0.0402
 variant_b  780  16958  0.0460
-difference +0.58 pp (95% CI +0.15 to +1.01), p = 0.0084
+difference +0.58 pp, p = 0.0084
+95% CI +0.15 to +1.01 pp
 split: 49.91% control, SRM p = 0.75
 ```
 
 - `with_browser` adds each visitor's browser; `no_safari` keeps every other browser.
 - `g` counts enquirers and visitors per version, and `.assign(rate=...)` adds the rate for printing.
-- `two_proportion_summary(...)` is Step 3's arithmetic, now in one line; the last line repeats Step 2's check on the new split.
+- `two_proportion_summary(...)` is Step 3's arithmetic, now in one line; `share` and `srm_p` repeat Step 2's check on the new split.
 
 Without Safari the split is even and the conclusion holds: same direction, similar size, still significant. That's the sentence the write-up needs, because "we found a bug" and "the result survives it" are two different facts, and the reader deserves both.
 
@@ -1509,11 +1524,13 @@ R-squared: 0.045
 **R-squared** is section 22.10's R², the share of the variation the model explains. Compare the three models:
 
 ```python
-print(f"R-squared: pages only {m1.rsquared:.3f}, device only {m2.rsquared:.3f}, all three {linear.rsquared:.3f}")
+print(f"R-squared: pages only {m1.rsquared:.3f}, device only {m2.rsquared:.3f}")
+print(f"           all three {linear.rsquared:.3f}")
 ```
 
 ```
-R-squared: pages only 0.001, device only 0.044, all three 0.045
+R-squared: pages only 0.001, device only 0.044
+           all three 0.045
 ```
 
 `.rsquared` reads R² from a fitted model. Section 22.10's six customers gave 0.984; here the full model explains 4.5%. A low value is normal for behavioral data: people are not very predictable, and the question here is whether a difference exists, not whether we can forecast a visit.
@@ -1532,7 +1549,7 @@ One caution on this model. It uses sessions, not visitors, and visit lengths are
 
 ### Logistic regression: what moves the enquiry rate
 
-For a yes/no outcome, a straight line is the wrong shape. Fit `enquired` (0 or 1) with a line, and for some combinations of device and channel the line predicts rates below 0 or above 1, which no rate can be. **Logistic regression** fixes that by fitting a straight line to the *log of the odds* instead.
+For a yes/no outcome, a straight line is the wrong shape. Fit `enquired` (0 or 1) with a line, and nothing stops the line from predicting rates below 0 or above 1, which no rate can be. **Logistic regression** fixes that by fitting a straight line to the *log of the odds* instead.
 
 The **odds** of something are the chance it happens divided by the chance it doesn't. Work them out by hand from section 30.9:
 
@@ -1565,7 +1582,8 @@ dtype: float64
 Now with device and channel as well:
 
 ```python
-logit = smf.logit("enquired ~ C(variant, Treatment('control')) + C(device) + C(channel)", data=logit_data).fit(disp=False)
+formula = "enquired ~ C(variant, Treatment('control')) + C(device) + C(channel)"
+logit = smf.logit(formula, data=logit_data).fit(disp=False)
 odds = pd.DataFrame({"odds_ratio": np.exp(logit.params),
                      "ci_low": np.exp(logit.conf_int()[0]),
                      "ci_high": np.exp(logit.conf_int()[1]),
@@ -1585,6 +1603,7 @@ C(channel)[T.paid]                                  0.657   0.571    0.756  0.00
 C(channel)[T.referral]                              0.734   0.621    0.869  0.000
 ```
 
+- The formula is the one-variable model's, with `+ C(device) + C(channel)` added; it's kept in a variable, `formula`, only to keep the line short.
 - `logit.conf_int()` returns a small DataFrame of 95% intervals on the log-odds scale, with its two columns named `0` (lower end) and `1` (upper end); hence `[0]` and `[1]`. `np.exp` turns each end into an odds ratio. `logit.pvalues` holds each coefficient's p-value.
 - The **Intercept** is the odds for the reference visitor, control on desktop through a direct visit: 0.058. As a rate, that's 0.058 ÷ (1 + 0.058) = 5.5%.
 
@@ -1602,7 +1621,7 @@ The analysis is done in an hour. The write-up is what people act on, and it need
 
 > **Shorter enquiry form: recommend shipping, with one caveat**
 >
-> Over two weeks (2–15 February), 47,286 visitors were split between the current form and a shorter one. The shorter form produced **4.45% enquiries against 3.90%**, a rise of **0.55 percentage points** (95% CI 0.19 to 0.91), or **+14%** relative (95% CI +5% to +23%). At February's traffic that's roughly **560 extra enquiries a month** (the interval's ends are about 190 and 920).
+> Over two weeks (2–15 February), 47,286 visitors were split between the current form and a shorter one. The shorter form produced **4.45% enquiries against 3.90%**, a rise of **0.55 percentage points** (95% CI 0.19 to 0.91), or **+14%** relative (95% CI +5% to +23%). At February's traffic that's roughly **560 extra enquiries a month** (the interval's ends are about 200 and 930).
 >
 > Guardrails: pages viewed, sessions per visitor, and the size of the enquiries are unchanged, so the extra enquiries don't look worse on the face of it. We can't yet say how many became orders; I'll report that in six weeks.
 >
@@ -1615,7 +1634,7 @@ Notice what it doesn't do: it doesn't say "statistically significant" without a 
 | Instead of | Write |
 |---|---|
 | "The test was significant (p < 0.05)" | "4.45% against 3.90%: +0.55 points, 95% CI 0.19 to 0.91" |
-| "Enquiries rose 14%" | "+14% relative, which is about 560 extra enquiries a month at current traffic (interval roughly 190 to 920)" |
+| "Enquiries rose 14%" | "+14% relative, which is about 560 extra enquiries a month at current traffic (interval roughly 200 to 930)" |
 | "No difference between the forms" | "No difference we could detect; a gap smaller than 0.5 points would not have shown up in this test" |
 | "Tablet users loved it (+35%)" | "Segments moved in the same direction; the test wasn't powered for individual devices" |
 
@@ -1914,14 +1933,17 @@ mobile_safari = (with_both["browser"] == "Safari") & (with_both["device"] == "mo
 g2 = with_both.loc[~mobile_safari].groupby("variant")["enquired"].agg(["sum", "count"])
 r2 = two_proportion_summary(g2.loc["control", "sum"], g2.loc["control", "count"],
                             g2.loc["variant_b", "sum"], g2.loc["variant_b", "count"])
-print(f"without mobile Safari: {100 * r2['diff']:+.2f} pp (95% CI {100 * r2['ci_low']:+.2f} to {100 * r2['ci_high']:+.2f}), p = {r2['p_value']:.4f}")
-print(f"split: {100 * g2.loc['control', 'count'] / g2['count'].sum():.2f}% control, SRM p = {stats.chisquare(g2['count'].to_numpy())[1]:.2f}")
+print(f"without mobile Safari: {100 * r2['diff']:+.2f} pp, p = {r2['p_value']:.4f}")
+print(f"95% CI {100 * r2['ci_low']:+.2f} to {100 * r2['ci_high']:+.2f} pp")
+share = g2.loc["control", "count"] / g2["count"].sum()
+print(f"split: {share:.2%} control, SRM p = {stats.chisquare(g2['count'].to_numpy())[1]:.2f}")
 safari = with_both.loc[with_both["browser"] == "Safari"]
 print(pd.crosstab(safari["device"], safari["variant"]))
 ```
 
 ```
-without mobile Safari: +0.56 pp (95% CI +0.16 to +0.97), p = 0.0068
+without mobile Safari: +0.56 pp, p = 0.0068
+95% CI +0.16 to +0.97 pp
 split: 50.20% control, SRM p = 0.44
 variant  control  variant_b
 device
@@ -1939,12 +1961,15 @@ for week, rows in by_week.groupby("week"):
     g = rows.groupby("variant")["enquired"].agg(["sum", "count"])
     r = two_proportion_summary(g.loc["control", "sum"], g.loc["control", "count"],
                                g.loc["variant_b", "sum"], g.loc["variant_b", "count"])
-    print(f"{week}: {100 * r['diff']:+.2f} pp (95% CI {100 * r['ci_low']:+.2f} to {100 * r['ci_high']:+.2f}), p = {r['p_value']:.3f}")
+    print(f"{week}: {100 * r['diff']:+.2f} pp, p = {r['p_value']:.3f}")
+    print(f"        95% CI {100 * r['ci_low']:+.2f} to {100 * r['ci_high']:+.2f} pp")
 ```
 
 ```
-week 1: +0.88 pp (95% CI +0.37 to +1.38), p = 0.001
-week 2: +0.19 pp (95% CI -0.32 to +0.70), p = 0.468
+week 1: +0.88 pp, p = 0.001
+        95% CI +0.37 to +1.38 pp
+week 2: +0.19 pp, p = 0.468
+        95% CI -0.32 to +0.70 pp
 ```
 
 Each week's visitors come from section 30.10's `by_week`, one row per visitor, counted in the week of their first session. Neither week alone: quote the fortnight, +14%, and mention that week one ran hotter because the form was new. Week two's interval includes zero on its own, which is what a smaller sample and a fading novelty look like together. A board deck showing week one's 22% would be repeating the agency's mistake with better arithmetic.

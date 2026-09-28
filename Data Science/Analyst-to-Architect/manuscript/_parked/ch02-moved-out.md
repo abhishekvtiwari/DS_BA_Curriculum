@@ -6,6 +6,8 @@ Not a book chapter and not built. Each block below was removed from Chapter 2 by
 
 ## Block 1 → Ch 17 (Python from Zero), its section on numbers (fix 2.1, finding 0.5)
 
+**Landed** in Ch 17 §17.3 (0.1 + 0.2 and the exact `Decimal` version) (Part 2/3 build).
+
 Removed from Ch 2 §2.1 "How numbers are stored". In Ch 17 the result must be produced by a code cell the reader can see and run (`0.1 + 0.2`, then the exact-decimal version with `decimal.Decimal`), with the real output pasted and each line explained. Ch 2 now says it in plain words only.
 
 > Whole numbers are stored exactly, as binary. Numbers with decimals are trickier. Most programs store them in a format called **floating point**, which is fast but can only store most decimals *approximately*. Ask Python to add 0.1 and 0.2:
@@ -71,6 +73,8 @@ Removed from Ch 2 §2.7 "The cloud". Ch 2 now keeps two sentences and names SaaS
 ---
 
 ## Block 4 → Ch 18 §18.14 (Calling an API) (fix 2.9, finding 0.6)
+
+**Landed** in Ch 18 §18.14 (its status-code table; the demo-API wording became Ch 18's own `api_demo.py`) (Part 2/3 build).
 
 Removed from Ch 2 §2.8's status-code table. Ch 2 keeps 200, 401, 404, 429 and 500, and the "first digit" rule.
 

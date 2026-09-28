@@ -4,7 +4,7 @@ import numpy as np, pandas as pd, pathlib, sys
 from scipy import stats
 from statsmodels.stats.power import NormalIndPower
 from statsmodels.stats.proportion import proportion_effectsize, proportions_ztest
-P = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '/home/claude/book/companion/ch30') / 'web_data'
+P = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent / 'companion' / 'ch30') / 'web_data'
 ok = 0
 def check(label, got, want, tol=0.0):
     global ok
@@ -53,4 +53,27 @@ lift_early = 100 * ((ge.k['variant_b'] / ge.n['variant_b']) / (ge.k['control'] /
 check('early visitors', int(ge.n.sum()), 7592); check('early lift', round(lift_early), 36)
 check('bonferroni n', round(NormalIndPower().solve_power(
     effect_size=proportion_effectsize(0.044, 0.039), alpha=0.05 / 3, power=0.80)), 33286)
+# Numbers added or corrected in the September 2026 rewrite (findings 30.10-30.32).
+check('ratio largest to median enquiry', round(s.enquiry_value.max() / s.loc[s.enquiry_submitted == 1, 'enquiry_value'].median()), 193)
+check('srm one in N', round(1 / stats.chisquare(g.n.to_numpy())[1], -2), 3300)
+p = g.k.sum() / g.n.sum(); sep = np.sqrt(p * (1 - p) * (1 / g.n['control'] + 1 / g.n['variant_b']))
+check('pooled se', round(sep, 6), 0.001839); check('unpooled se', round(se, 6), 0.001841)
+lr = np.log(p2 / p1); sel = np.sqrt(1 / g.k['control'] - 1 / g.n['control'] + 1 / g.k['variant_b'] - 1 / g.n['variant_b'])
+check('log-ratio CI low', round(100 * (np.exp(lr - 1.96 * sel) - 1), 1), 4.7); check('log-ratio CI high', round(100 * (np.exp(lr + 1.96 * sel) - 1), 1), 24.5)
+check('enquiries a month, low end', round((diff - 1.96 * se) * 3400 * 30, -1), 200)
+check('enquiries a month, high end', round((diff + 1.96 * se) * 3400 * 30, -1), 930)
+pv = t.groupby(['variant', 'visitor_id']).enquiry_submitted.max().rename('enquired').reset_index()
+dev = pv.merge(first[['visitor_id', 'device']], on='visitor_id').groupby(['device', 'variant']).enquired.mean().unstack()
+check('tablet lift %', round(100 * (dev.loc['tablet', 'variant_b'] / dev.loc['tablet', 'control'] - 1)), 35)
+wk = first.assign(week=np.where(first.started_at < '2026-02-09', 1, 2))
+wr = pv.merge(wk[['visitor_id', 'week']], on='visitor_id').groupby(['week', 'variant']).enquired.mean().unstack()
+lift = 100 * (wr.variant_b / wr.control - 1)
+check('week 1 lift', round(lift[1]), 22); check('week 2 lift', round(lift[2]), 5)
+h = NormalIndPower().solve_power(nobs1=(3912 + 3680) / 2, alpha=0.05, power=0.80)
+from scipy.optimize import brentq
+mde = brentq(lambda q: 2 * np.arcsin(np.sqrt(q)) - 2 * np.arcsin(np.sqrt(0.039)) - h, 0.039, 0.2) - 0.039
+check('early-test MDE pp', round(100 * mde, 1), 1.3)
+saf = pd.crosstab(first.browser, first.device)
+check('share of Safari on mobile', round(saf.loc['Safari', 'mobile'] / saf.loc['Safari'].sum(), 2), 0.68)
+check('email share of visitors', round(100 * (v.index.isin(s.loc[s.channel == 'email', 'visitor_id'])).mean()), 7)
 print(f'ch30_check.py: {ok} checks passed')
