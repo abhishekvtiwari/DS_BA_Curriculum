@@ -279,6 +279,12 @@ JOBS['ch83'] = lambda: build('ch83-the-long-game.md', 'Ch83-The-Long-Game', '',
            SUB='What the book actually costs in hours, the pace that survives a bad month, how to choose your own summit, and the four plateaus that arrive after the first job.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>The hours are computed from the book\u2019s own chapter estimates'), 2)
 
+JOBS['front'] = lambda: build('front-how-to-use-this-book.md', 'Front-How-to-Use-This-Book', '',
+      'How to Use This Book', 'Analyst to Architect · How to Use This Book',
+      dict(KICKER='Analyst to Architect', TITLE='How to Use<br>This Book',
+           SUB='How each chapter works, how to read the code and its output, the exercises and answers, how the parts climb, and where the companion files are.',
+           DOC='', META=''), 2)
+
 # ---------------------------------------------------------------------------
 # Generic builder.
 #
