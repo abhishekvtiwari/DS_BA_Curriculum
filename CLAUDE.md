@@ -79,6 +79,10 @@ Plus the **visual standard** (see `review/briefs/VISUAL_BRIEF.md`):
 - **D1:** Power BI (Ch 16) stays before Python (Ch 17–18). Ch 16 must not assume pandas.
 - **D2:** Ch 34 is split. Terminal essentials move to Ch 26 §26.0; Linux and networking stay in Ch 34.
 - **D3:** regression basics become a new final section of Ch 22.
+- **D6:** Chapter 6 is split, with no renumbering.
+  - A new **unnumbered front section, "How to Use This Book"**, goes before Chapter 1 (4–6 pages). It covers how each chapter is laid out, how to read the code cells and their outputs, the four exercise groups and the answers, how the parts climb, a rough sense of time (pointing to Ch 6), and where the companion files are. It takes old §6.9 (chapter anatomy, exercises) and adds the rest new.
+  - **Chapter 6 keeps its number and becomes "Planning Your Learning"**: the honest hours table, the weekly rhythm, a tool timeline (no installs), learning with AI assistants, reading documentation, and a project to plan your route and first 90 days.
+  - Also update the Part 0 contents, Ch 5's "Where this leads" and Ch 9's references to Ch 6. The spec is Chapter 6 of `review/part-0-and-I/fix-instructions-DRAFT-parked.md`.
 - Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. A one-page NumPy basics section goes in Ch 18.
 - Part 0 and Part I findings are approved (status `Approved` in the CSV).
 - **Version rule:** where a chapter exists in several versions, the latest is final. Ch 12's final version is Draft v4 (96 pages, 19–23 h, expanded §12.13). The Blueprint files are out of scope.
@@ -93,15 +97,28 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Section D (option picks):** use Abhishek's choice. If it's blank, use the option the finding marks as recommended, or option (a) if none is marked. Write which option you used in the changelog.
 - **Never fix a row that is `Open`, `Rejected` or `Deferred`.** If `DECISIONS.md` has no global rule ticked, stop and ask in the PR.
 
-## 5. Order of work
+## 5. Working mode and order of work (Abhishek, 28 Sep 2026: the standing rule)
 
-1. **Style pass (whole book, one PR `style-pass`):**
-   - shared template and CSS fixes (themes V1, V2, V7, V8, V9, V10, V11, V12);
+**The book is built one part at a time, end to end.**
+- **Trigger:** when Abhishek says **"Build Part X"**, work through every chapter of that part in reading order. For each chapter, apply all approved fixes, re-run all code, redraw the figures, and rebuild and check every page (section 6). Then go straight to the next chapter **without stopping to ask**.
+- **Stop only for a true blocker:** a missing source, or a build that won't run. Collect every other question under **"Questions for Abhishek"** in the part's PR and carry on. A finding that can't be applied without an answer stays `Open`, with the reason in `notes`.
+- **Commit and push as you go on long runs**, so no work is lost. Don't ask Abhishek anything until the part is finished.
+- **When the part is finished, deliver one package** (section 7):
+  - the whole part as a **single PDF** in `fixed/Part-X/`;
+  - a **one-page summary per chapter** (what changed, and what was skipped and why);
+  - **one pull request**.
+
+  Abhishek reviews once and merges.
+
+Order:
+
+1. **Whole-book layout pass (once, before any part; one PR `style-pass`):**
+   - themes **V1–V12**: shared template and CSS fixes, plus the figure fixes (V3–V6) that the figure scripts can make without touching chapter text;
    - rebuild every chapter;
    - run `review/briefs/prescan.py` on each rebuilt PDF, then spot-render and compare with the snapshots;
    - mark the fixed visual rows `Fixed`.
 2. **Riverstone fact sheet (D3):** draft `review/riverstone-facts.md` from the chapters and the findings under theme T10. Cover people and roles, the timeline, systems, rates, datasets, file names and the flash time. Open it as a PR for Abhishek to approve before Part II content work starts.
-3. **Content, part by part, one PR per part:** Part 0 → I → II → … → VIII → Closing. Branch name `part-II`, etc. Within a part, go chapter by chapter in order.
+3. **Content, part by part, one PR per part, in this order: Part 0 + Part I together** (branch `part-0-I`, which includes D6), then II, III, IV, V, VI, VII, VIII, Closing (branch `part-II`, etc.). Within a part, go chapter by chapter in reading order. Findings that depend on the Part II/III reading-order question (`review/reading-order-conflicts.md`) stay `Open` until Abhishek answers it.
 4. **Final pass:** book-wide cross-references (T8), then the Time needed tables in Ch 6, 9 and 83 recomputed from one source (T12), then renumbering (D2) if approved.
 
 ## 6. How to fix one chapter
@@ -124,8 +141,10 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 7. Write `changelog/chNN.md`, with one line per finding: `ID · what changed · where (section/page) · option used if any`. Add before/after page crops for High visual findings to `changelog/img/`.
 8. Run `python tracker/make_tracker.py` and commit the source, CSV, `TRACKER.md` and changelog **together**. Commit message: `Ch NN: fix <n> findings (<ids range>)`.
 
-## 7. Pull request for a part
+## 7. The package for a part: one PDF, one summary per chapter, one pull request
 
+- **One PDF for the whole part** in `fixed/Part-X/` (e.g. `fixed/Part-II/Part-II-The-Analyst.pdf`), built from the fixed chapters. Chapter PDFs can sit beside it.
+- **One page per chapter**, `changelog/chNN-summary.md`: what changed, what was skipped and why, and the option picks used. The line-by-line `changelog/chNN.md` stays as the detailed record.
 - **Title:** `Part II fixes: Ch 10–27 (<n> findings)`.
 - **Body:**
   - a summary table per chapter (fixed / verified / skipped with reason);
@@ -144,4 +163,4 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Every chapter must still build** after each commit.
 - **Bigger scope needs a comment.** If a fix needs changes in another chapter (cross-refs, moved sections), make them in the same PR and note them in both changelogs. Moves across parts (e.g. Ch 14 Python → Ch 18) are done in the later part's PR, with a placeholder note in the earlier part's changelog.
 - **Keep the tracker true.** `TRACKER.md` must always match the CSV. Statuses allowed: Open, Approved, Modify, Rejected, Deferred, Fixed, Verified.
-- **Ask when unsure.** Put the question in the PR description under "Questions for Abhishek" rather than guessing.
+- **Ask when unsure, but don't pause.** Put the question in the PR description under "Questions for Abhishek" rather than guessing, and keep working on everything else (section 5).
