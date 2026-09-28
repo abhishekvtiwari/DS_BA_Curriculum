@@ -187,7 +187,7 @@ def fig_joins():
 
 
 def fig_fanout():
-    W, Hc = 640, 400
+    W, Hc = 640, 352
     Z = 10.5                            # min_px(640) = 9.2 px
     o = []
     o.append(text(20, 22, "✗ What goes wrong: join first, then add up", 13.5, RED, "bold", family=HEAD))
@@ -201,14 +201,14 @@ def fig_fanout():
     t, _, _ = grid(20, 250, "payments summed per invoice", ["invoice_id", "paid"], [["9002", "73260.00"]], [78, 72], Z, color=GREEN); o.append(t)
     t, _, yy = grid(360, 250, "after the JOIN (1 row)", ["invoice_id", "invoice_amt", "paid"], [["9002", "73260.00", "73260.00"]], [78, 86, 72], Z, color=GREEN, rowfill=["#e2f3ee"]); o.append(t)
     o.append(path("M180,271 H350", stroke=GREEN, sw=2)); o.append(f'<path d="M350,266 l7,5 l-7,5 z" fill="{GREEN}"/>')
-    o.append(text(20, 340, "One row per invoice, so the totals are correct  ✓", 11.5, GREEN, "bold"))
-    o.append(text(20, 358, "Rule: bring every table to the same grain (one row per invoice here) before joining.", Z, MUTED))
+    o.append(text(20, 318, "One row per invoice, so the totals are correct  ✓", 11.5, GREEN, "bold"))
+    o.append(text(20, 336, "Rule: bring every table to the same grain (one row per invoice here) before joining.", Z, MUTED))
     return svg(W, Hc, "".join(o))
 
 
 # ---------- Figure 12.5: written order versus running order ----------
 def fig_order():
-    W, Hc = 640, 330
+    W, Hc = 640, 346
     Z = 10.5                            # min_px(640) = 9.2 px
     o = []
     written = ["SELECT", "FROM", "JOIN", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT"]
@@ -237,9 +237,9 @@ def fig_order():
         elif row == 0:
             yb = y + bh + 17; xa = 20 + bw / 2
             o.append(path(f"M{x+bw/2},{y+bh+2} V{yb} H{xa} V{y+bh+34-6}", sw=2)); o.append(f'<path d="M{xa-5},{y+bh+34-6} l5,6 l5,-6 z" fill="{ACC}"/>')
-    o.append(rect(20, 270, 600, 48, fill="#fff4d6", stroke="#e2c46b", rx=5))
-    o.append(text(30, 289, "This is why WHERE can't use COUNT(*) or a SELECT alias (step 2 runs before", Z, INK))
-    o.append(text(30, 306, "steps 3 and 5), and why ORDER BY can use an alias (step 7 runs after step 5).", Z, INK))
+    o.append(rect(20, 288, 600, 48, fill="#fff4d6", stroke="#e2c46b", rx=5))
+    o.append(text(30, 307, "This is why WHERE can't use COUNT(*) or a SELECT alias (step 2 runs before", Z, INK))
+    o.append(text(30, 324, "steps 3 and 5), and why ORDER BY can use an alias (step 7 runs after step 5).", Z, INK))
     return svg(W, Hc, "".join(o))
 
 

@@ -855,7 +855,7 @@ Why a table instead of a long `CASE` expression or nested `IF`s?
 
 - **It's data, not code.** A business user can review and extend it. When a new spelling appears next quarter, someone adds a row; nobody edits a query.
 - **It's reusable.** The same `map_city` fixes cities in the CRM export, the order export, and next year's supplier list.
-- **It makes unmapped values visible.** With a `LEFT JOIN`, a value that isn't in the table becomes NULL, and a validation rule (section 14.9) can count and list them.
+- **It makes unmapped values visible.** With a `LEFT JOIN`, a value that isn't in the table becomes NULL, and a validation rule (section 14.10) can count and list them.
 
 > **Watch out: a CASE with ELSE hides new spellings.** `CASE … WHEN 'dlvd' THEN 'Delivered' ELSE status END` passes any unknown value through unchanged, so a new spelling such as `Deliverd` quietly becomes a fifth status. Map with a `LEFT JOIN` and **fail loudly** when the result is NULL.
 
@@ -1121,7 +1121,7 @@ How it works: the staging table stores IDs as text and the clean table as number
 
 September has 30 days, November has 30, and no month has 32. Only the day and month are impossible, and several don't even match the entry month, so the whole exported date is untrustworthy. Riverstone's ERP team confirmed that orders are always entered on the order date (in Indian time), so the entry date is a reliable repair. The repair is logged (section 14.11), not hidden.
 
-> **Watch out: a date that parses isn't necessarily right.** `05-11-2025` parsed as day-first is a valid date, and so is the same text parsed month-first. Only knowledge of the source tells you which format a system writes. Check parsed dates against an independent clue: the entry timestamp, the order ID sequence, or the export's date range. Here, every repaired and parsed date falls inside Q4 2025, and a validation rule in section 14.9 confirms it.
+> **Watch out: a date that parses isn't necessarily right.** `05-11-2025` parsed as day-first is a valid date, and so is the same text parsed month-first. Only knowledge of the source tells you which format a system writes. Check parsed dates against an independent clue: the entry timestamp, the order ID sequence, or the export's date range. Here, every repaired and parsed date falls inside Q4 2025, and a validation rule in section 14.10 confirms it.
 
 (Spreadsheet equivalent: section 14.12, step 7, which also shows the worksheet trap with impossible dates.)
 
@@ -1297,7 +1297,227 @@ LEFT JOIN customers c ON LPAD(c.customer_id::text, 4, '0') = LPAD(TRIM(s.custome
 
 ---
 
-## 14.9 Validation rules: checks that must return zero
+## 14.9 The whole pipeline in SQL
+
+Sections 14.2 to 14.8 took the export apart one problem at a time. The cleaning script, `companion/ch14/sql/ch14_clean_postgresql.sql`, puts every fix together and builds three tables: `clean_order_lines` (one clean row per order line), `dq_order_issues` (the repaired and quarantined lines), and `clean_customers`. This section reads the script from top to bottom. If you ran it while following along in section 14.4, you've already built the tables; running it again rebuilds them from the staging tables, because its first statement is `DROP TABLE IF EXISTS clean_order_lines, dq_order_issues, clean_customers;` (Chapter 12, section 12.13).
+
+### The order lines, step by step
+
+The main statement is one `CREATE TABLE … AS SELECT` (Chapter 12, section 12.13) whose `SELECT` is a chain of CTEs (Chapter 13, section 13.2): each step reads the one before it, and each step does one job from the workflow. Before the whole statement, check the first two steps on their own; they only remove rows, so they're easy to count:
+
+```sql
+WITH data_rows AS (
+  SELECT * FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$'
+), deduped AS (
+  SELECT DISTINCT * FROM data_rows
+)
+SELECT (SELECT COUNT(*) FROM stg_orders_raw) AS loaded,
+       (SELECT COUNT(*) FROM data_rows)      AS data_rows,
+       (SELECT COUNT(*) FROM deduped)        AS deduped;
+```
+
+```
+ loaded | data_rows | deduped 
+--------+-----------+---------
+  25976 |     25969 |   25832
+(1 row)
+```
+
+Step 1 (`data_rows`) keeps the rows whose ID is all digits: the 7 non-data rows go (section 14.2). Step 2 (`deduped`) keeps one copy of each identical row: 137 more go (section 14.4). Each count in the final `SELECT` is a small subquery that counts one step. From here on no row is removed; the later steps only add and convert columns. Here is the whole statement as the script has it:
+
+```sql
+CREATE TABLE clean_order_lines AS
+WITH data_rows AS (                          -- 1. drop repeated headers and the footer
+  SELECT * FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$'
+), deduped AS (                              -- 2. keep one copy of each exported line
+  SELECT DISTINCT * FROM data_rows
+), parts AS (                                -- 3. split each date format; entry time in IST
+  SELECT d.*,
+    CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 7, 4)::int
+         WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 1, 4)::int END AS y,
+    CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 4, 2)::int
+         WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 6, 2)::int END AS m,
+    CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 1, 2)::int
+         WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 9, 2)::int END AS dd,
+    entered_at_utc::timestamptz AT TIME ZONE 'Asia/Kolkata' AS entered_at_ist
+  FROM deduped d
+), typed AS (                                -- 4. build and check the date
+  SELECT p.*,
+    CASE WHEN order_date ~ '^\d{5}$' THEN DATE '1899-12-30' + order_date::int
+         WHEN y IS NOT NULL AND m BETWEEN 1 AND 12 AND dd >= 1
+              AND EXTRACT(MONTH FROM make_date(y, m, 1) + (dd - 1)) = m
+         THEN make_date(y, m, 1) + (dd - 1) END AS parsed_date,
+    regexp_replace(regexp_replace(unit_price, '^[^0-9]+', ''), ',', '', 'g')::numeric AS price
+  FROM parts p
+)
+SELECT                                       -- 5. the finished columns
+  order_item_id::int                                   AS order_item_id,
+  order_id::int                                        AS order_id,
+  COALESCE(parsed_date, entered_at_ist::date)          AS order_date,
+  (parsed_date IS NULL)                                AS date_repaired,
+  LPAD(TRIM(customer_code), 4, '0')                    AS customer_code,
+  COALESCE(NULLIF(product_id, '')::int,
+           CASE price WHEN 430 THEN 101 WHEN 750 THEN 102 WHEN 115 THEN 103
+                      WHEN 620 THEN 104 WHEN 1400 THEN 105 WHEN 1150 THEN 106
+                      WHEN 380 THEN 107 WHEN 290 THEN 108 END) AS product_id,
+  (product_id IS NULL OR product_id = '')              AS product_repaired,
+  NULLIF(quantity, '')::int * CASE WHEN qty_unit = 'CTN' THEN 10 ELSE 1 END AS quantity,
+  price                                                AS unit_price,
+  CASE WHEN discount_pct::numeric > 0 AND discount_pct::numeric < 1
+       THEN discount_pct::numeric * 100
+       ELSE discount_pct::numeric END                  AS discount_pct,
+  ms.clean_value                                       AS status,
+  NULLIF(TRIM(sales_rep), '')                          AS sales_rep,
+  mb.clean_value                                       AS branch,
+  entered_at_ist
+FROM typed t
+LEFT JOIN map_status ms ON ms.raw_value = LOWER(TRIM(t.status))
+LEFT JOIN map_branch mb ON mb.raw_value = LOWER(TRIM(t.branch));
+```
+
+```
+SELECT 25832
+```
+
+DBeaver reports the same as *Updated Rows: 25832*: the new table has one row per order line. How it works, step by step:
+
+| Step | What it does | Taught in |
+|---|---|---|
+| 1 `data_rows` | keeps rows whose ID is all digits | 14.2 |
+| 2 `deduped` | `SELECT DISTINCT *` keeps one copy of each identical row | 14.4 |
+| 3 `parts` | splits each date format into `y`, `m`, `dd`; converts the entry time to IST as `entered_at_ist` | 14.7 |
+| 4 `typed` | builds `parsed_date` and tests that the month survives; converts `unit_price` text to the number `price` | 14.7 |
+| 5 final `SELECT` | one line per finished column, described below | 14.3–14.8 |
+
+In step 5, each line is one rule you've already met:
+
+- `order_item_id::int` and `order_id::int` store the IDs as numbers from now on.
+- `COALESCE(parsed_date, entered_at_ist::date)` uses the parsed date when there is one and otherwise the entry date in IST (section 14.7). `(parsed_date IS NULL) AS date_repaired` is a condition used as a column: it stores true for the 9 lines whose date was repaired and false for the rest, so the repair stays visible.
+- `LPAD(TRIM(customer_code), 4, '0')` restores the leading zeros (section 14.8).
+- The `product_id` line repairs a blank product from its price (section 14.3). `NULLIF(product_id, '')::int` is the product when there is one; when it's NULL, `COALESCE` takes the `CASE`. This `CASE` is the short form: `CASE price WHEN 430 THEN 101 …` compares `price` with each value in turn, the same as writing `CASE WHEN price = 430 THEN 101 …`. `(product_id IS NULL OR product_id = '') AS product_repaired` marks the 8 repaired lines.
+- The quantity line converts cartons to pieces, and the discount line converts fractions to percentages (section 14.7). `price` is the currency-stripped price from step 4.
+- `ms.clean_value` and `mb.clean_value` come from the two `LEFT JOIN`s at the bottom: the mapping tables for status and branch (section 14.5).
+- `NULLIF(TRIM(sales_rep), '')` removes trailing spaces and turns a blank rep into NULL, so a missing rep is kept and can be labelled later (section 14.3).
+
+Check the result with the counts the earlier sections predicted:
+
+```sql
+SELECT COUNT(*)                                        AS lines,
+       COUNT(*) FILTER (WHERE date_repaired)           AS dates_repaired,
+       COUNT(*) FILTER (WHERE product_repaired)        AS products_repaired,
+       COUNT(*) FILTER (WHERE quantity IS NULL)        AS no_quantity,
+       COUNT(*) FILTER (WHERE status IS NULL OR branch IS NULL) AS unmapped
+FROM clean_order_lines;
+```
+
+```
+ lines | dates_repaired | products_repaired | no_quantity | unmapped 
+-------+----------------+-------------------+-------------+----------
+ 25832 |              9 |                 8 |          14 |        0
+(1 row)
+```
+
+25,832 lines; 9 dates and 8 products repaired; 14 lines still without a quantity (they'll be quarantined next); and no status or branch that the mapping tables didn't know.
+
+Now the question from section 14.3 can be answered: is a missing sales rep a problem of one branch, or of all of them?
+
+```sql
+SELECT branch,
+       COUNT(*) AS lines,
+       COUNT(*) FILTER (WHERE sales_rep IS NULL) AS no_rep,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE sales_rep IS NULL) / COUNT(*), 1) AS pct
+FROM clean_order_lines
+GROUP BY branch
+ORDER BY branch;
+```
+
+```
+  branch   | lines | no_rep | pct 
+-----------+-------+--------+-----
+ Bengaluru |  7185 |    220 | 3.1
+ Delhi     |  6274 |    213 | 3.4
+ Kolkata   |  3210 |     91 | 2.8
+ Mumbai HO |  9163 |    288 | 3.1
+(4 rows)
+```
+
+`100.0 * … / COUNT(*)` gives the share as a percentage (the `.0` keeps the division from dropping the decimals), and `ROUND(…, 1)` keeps one decimal place. About 3% of lines have no rep in every branch. That looks like a steady process gap (orders entered without assigning a rep), not a problem concentrated in one place. A rep-level report can still be produced, with an "(unassigned)" row; a branch head asking "why is my team's number low?" can see that the gap is the same everywhere.
+
+### The issues table
+
+The second statement lists every line that was repaired or needs a decision, one row per line and issue:
+
+```sql
+CREATE TABLE dq_order_issues AS
+SELECT order_item_id, 'quantity missing' AS issue, 'quarantined' AS action
+FROM clean_order_lines WHERE quantity IS NULL
+UNION ALL
+SELECT order_item_id, 'quantity above historical maximum', 'quarantined'
+FROM clean_order_lines
+WHERE quantity > (SELECT MAX(oi.quantity) FROM order_items oi JOIN orders o USING (order_id)
+                  WHERE o.order_date < '2025-10-01')
+UNION ALL
+SELECT order_item_id, 'impossible or unreadable date', 'repaired from entry time (IST)'
+FROM clean_order_lines WHERE date_repaired
+UNION ALL
+SELECT order_item_id, 'product_id missing', 'repaired from unit price'
+FROM clean_order_lines WHERE product_repaired;
+```
+
+```
+SELECT 37
+```
+
+It stacks four lists with `UNION ALL` (Chapter 12, section 12.12). Each `SELECT` picks the lines with one issue and writes the issue and the action taken as fixed text. The second list is the outlier rule from section 14.6: the subquery finds the largest quantity ever sold before Q4 (90), and any line above it is quarantined. Section 14.11 reads this table as the cleaning log.
+
+### The customers
+
+The third statement cleans the CRM export:
+
+```sql
+CREATE TABLE clean_customers AS
+WITH typed AS (
+  SELECT LPAD(TRIM(s.customer_code), 4, '0')                      AS customer_code,
+         TRIM(regexp_replace(s.customer_name, '\s+', ' ', 'g'))   AS customer_name,
+         CASE WHEN mc.raw_value IS NOT NULL THEN mc.clean_value
+              WHEN TRIM(s.city) = '' THEN NULL
+              ELSE INITCAP(TRIM(s.city)) END                      AS city,
+         mg.clean_value                                           AS segment,
+         NULLIF(TRIM(s.email), '')                                AS email,
+         CASE WHEN s.signup_date ~ '^\d{4}-\d{2}-\d{2}$' THEN to_date(s.signup_date, 'YYYY-MM-DD')
+              WHEN s.signup_date ~ '^\d{2}/\d{2}/\d{4}$' THEN to_date(s.signup_date, 'DD/MM/YYYY')
+         END                                                      AS signup_date
+  FROM stg_customers_raw s
+  LEFT JOIN map_city mc    ON mc.raw_value = LOWER(TRIM(s.city))
+  LEFT JOIN map_segment mg ON mg.raw_value = LOWER(TRIM(s.segment))
+)
+SELECT t.*,
+       (email IS NOT NULL AND email !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$') AS email_invalid,
+       (signup_date > DATE '2025-12-31')                              AS signup_in_future,
+       LOWER(regexp_replace(regexp_replace(customer_name,
+             '\s+(pvt\.?\s*ltd\.?|private limited)$', '', 'i'), '\s+', ' ', 'g')) AS match_key
+FROM typed t;
+```
+
+```
+SELECT 5027
+```
+
+How it works:
+
+- `customer_name`: every run of spaces squeezed to one, then trimmed.
+- `city`: the `LEFT JOIN` to `map_city` looks up the normalized city (section 14.5). If the city is in the map, the mapped value wins, and that includes the placeholders `n/a`, `-`, `unknown`, and `null`, which map to NULL (section 14.3). A blank becomes NULL. Anything else is kept, with `INITCAP`, which capitalizes the first letter of each word: `hyderabad` becomes `Hyderabad`.
+- `segment`: the same lookup in `map_segment`.
+- `signup_date`: the two date formats of the CRM export, each read with `to_date(text, format)`, which turns text into a date using the pattern you give it (`YYYY-MM-DD` or `DD/MM/YYYY`). The regex test first makes sure the text has that shape.
+- `email_invalid` is true when an email is present but doesn't match `^[^@\s]+@[^@\s]+\.[^@\s]+$`. Read it with the table from section 14.2: from the start, one or more characters that are neither `@` nor a space (`[^@\s]+`), then `@`, then more of the same, then a real full stop (`\.`), then more of the same, to the end. Roughly: something@something.something. It catches `accounts.saffronkitchenware.example.com` (no `@`). It's a sanity check, not full email validation: `a@b.c` passes it.
+- `signup_in_future` is true for a signup after the last day of the data, 31 December 2025.
+- `match_key` is the three-step key from section 14.4, built for every customer.
+
+Validation (section 14.10) counts how many customers fail each of these checks. The MySQL version of the script, `ch14_clean_mysql.sql`, builds the same three tables; section 14.13 shows where its spelling differs.
+
+---
+
+## 14.10 Validation rules: checks that must return zero
 
 A **validation rule** is a test that every row of clean data must pass. Written as a query or formula that counts failures, each rule should return **0**. Rules turn "I think it's clean" into "these eight statements are true", and they run again, unchanged, on next quarter's file.
 
@@ -1305,14 +1525,33 @@ A **validation rule** is a test that every row of clean data must pass. Written 
 
 ```sql
 SELECT * FROM (
-  SELECT 'status not mapped' AS rule, COUNT(*) AS failures FROM clean_order_lines WHERE status IS NULL
-  UNION ALL SELECT 'branch not mapped', COUNT(*) FROM clean_order_lines WHERE branch IS NULL
-  UNION ALL SELECT 'date outside Q4 2025', COUNT(*) FROM clean_order_lines WHERE order_date NOT BETWEEN '2025-10-01' AND '2025-12-31'
-  UNION ALL SELECT 'unknown customer', COUNT(*) FROM clean_order_lines c WHERE NOT EXISTS (SELECT 1 FROM customers x WHERE LPAD(x.customer_id::text,4,'0') = c.customer_code)
-  UNION ALL SELECT 'unknown product', COUNT(*) FROM clean_order_lines c WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.product_id = c.product_id)
-  UNION ALL SELECT 'price differs from list price', COUNT(*) FROM clean_order_lines c JOIN products p USING (product_id) WHERE c.unit_price <> p.unit_price
-  UNION ALL SELECT 'discount outside 0-15', COUNT(*) FROM clean_order_lines WHERE discount_pct NOT BETWEEN 0 AND 15
-  UNION ALL SELECT 'quantity missing or above 90', COUNT(*) FROM clean_order_lines WHERE quantity IS NULL OR quantity > 90
+  SELECT 'status not mapped' AS rule, COUNT(*) AS failures
+  FROM clean_order_lines WHERE status IS NULL
+  UNION ALL
+  SELECT 'branch not mapped', COUNT(*)
+  FROM clean_order_lines WHERE branch IS NULL
+  UNION ALL
+  SELECT 'date outside Q4 2025', COUNT(*)
+  FROM clean_order_lines WHERE order_date NOT BETWEEN '2025-10-01' AND '2025-12-31'
+  UNION ALL
+  SELECT 'unknown customer', COUNT(*)
+  FROM clean_order_lines c
+  WHERE NOT EXISTS (SELECT 1 FROM customers x
+                    WHERE LPAD(x.customer_id::text, 4, '0') = c.customer_code)
+  UNION ALL
+  SELECT 'unknown product', COUNT(*)
+  FROM clean_order_lines c
+  WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.product_id = c.product_id)
+  UNION ALL
+  SELECT 'price differs from list price', COUNT(*)
+  FROM clean_order_lines c JOIN products p USING (product_id)
+  WHERE c.unit_price <> p.unit_price
+  UNION ALL
+  SELECT 'discount outside 0-15', COUNT(*)
+  FROM clean_order_lines WHERE discount_pct NOT BETWEEN 0 AND 15
+  UNION ALL
+  SELECT 'quantity missing or above 90', COUNT(*)
+  FROM clean_order_lines WHERE quantity IS NULL OR quantity > 90
 ) AS checks
 ORDER BY failures DESC, rule;
 ```
@@ -1331,7 +1570,7 @@ ORDER BY failures DESC, rule;
 (8 rows)
 ```
 
-(Wrapping the `UNION ALL` in a subquery lets one `ORDER BY` sort all the rules; without it, the rows can come back in any order.) Seven rules pass. The eighth fails on exactly the 20 lines already quarantined: 14 missing quantities and 6 above the historical maximum. A rule that fails on known, logged rows is fine; a rule that fails on rows you can't explain stops the process.
+How it works: each rule is a small `SELECT` that writes the rule's name as fixed text and counts the rows that break it, and `UNION ALL` stacks the eight answers (Chapter 12, section 12.12). `NOT EXISTS (SELECT 1 …)` is true when the subquery finds no matching row: no customer with that code, or no product with that ID. (Wrapping the `UNION ALL` in a subquery lets one `ORDER BY` sort all the rules; without it, the rows can come back in any order.) Seven rules pass. The eighth fails on exactly the 20 lines already quarantined: 14 missing quantities and 6 above the historical maximum. A rule that fails on known, logged rows is fine; a rule that fails on rows you can't explain stops the process.
 
 Notice what the rules protect against:
 
@@ -1345,19 +1584,22 @@ Notice what the rules protect against:
 | Type | Question | Example |
 |---|---|---|
 | **Not null** | Is a required value present? | `order_id IS NOT NULL` |
-| **Type and format** | Does the value have the right shape? | `customer_code` is four digits; email matches `^[^@\s]+@[^@\s]+\.[^@\s]+$` |
+| **Type and format** | Does the value have the right shape? | `customer_code` is four digits; email matches `^[^@\s]+@[^@\s]+\.[^@\s]+$` (read in section 14.9) |
 | **Allowed values** | Is it one of the permitted categories? | status in (Delivered, Shipped, Pending, Cancelled) |
 | **Range** | Is it within possible limits? | discount 0–15; order date not in the future |
 | **Uniqueness** | Does each key appear once? | `order_item_id` unique |
 | **Referential** | Does the code exist in its master list? | customer, product, sales rep |
 | **Cross-field** | Are related fields consistent? | a Cancelled order has no delivery date; `signup_date <= first order date` |
-| **Reconciliation** | Do totals agree with an independent source? | lines and revenue match the ERP (section 14.10) |
+| **Reconciliation** | Do totals agree with an independent source? | lines and revenue match the ERP (section 14.11) |
 
 The customer export shows several of these on one query:
 
 ```sql
-SELECT COUNT(*) AS customers, COUNT(*) FILTER (WHERE city IS NULL) AS city_missing, COUNT(*) FILTER (WHERE email IS NULL) AS email_missing,
-       COUNT(*) FILTER (WHERE email_invalid) AS email_invalid, COUNT(*) FILTER (WHERE signup_in_future) AS signup_in_future
+SELECT COUNT(*)                                AS customers,
+       COUNT(*) FILTER (WHERE city IS NULL)    AS city_missing,
+       COUNT(*) FILTER (WHERE email IS NULL)   AS email_missing,
+       COUNT(*) FILTER (WHERE email_invalid)   AS email_invalid,
+       COUNT(*) FILTER (WHERE signup_in_future) AS signup_in_future
 FROM clean_customers;
 ```
 
@@ -1368,19 +1610,15 @@ FROM clean_customers;
 (1 row)
 ```
 
-The 58 invalid emails (such as `accounts.saffronkitchenware.example.com`, with no `@`) and 5 signup dates in the 2060s (`2060-05-03` and similar) can't be repaired from the export. They go to the CRM owner as a list, exactly like Chapter 1's Western Logistics signing up in 2062.
+`email_invalid` and `signup_in_future` are the true/false columns built in section 14.9, so `FILTER (WHERE email_invalid)` counts the rows where it's true. The 58 invalid emails (such as `accounts.saffronkitchenware.example.com`, with no `@`) and 5 signup dates in the 2060s (`2060-05-03` and similar) can't be repaired from the export. They go to the CRM owner as a list, exactly like Chapter 1's Western Logistics signing up in 2062.
 
-### Validation in Excel and Power Query
-
-- **Data validation** (Chapter 10, section 10.12) prevents bad entries in sheets people type into.
-- **A checks sheet**: one row per rule, a `COUNTIFS` or `SUMPRODUCT` formula that counts failures, and conditional formatting that turns any non-zero count red. `=COUNTIFS(Clean[status],"<>Delivered",Clean[status],"<>Shipped",Clean[status],"<>Pending",Clean[status],"<>Cancelled")` counts status failures.
-- **Power Query:** a conditional column per rule, or a separate "checks" query that references the clean query, filters the failures, and loads its row count. Loading failures to their own sheet makes them impossible to ignore.
+(Spreadsheet equivalent: a checks sheet, section 14.12.)
 
 > **Tool note: validation as a pipeline stage.** In data engineering, rules like these run automatically every time data loads, and a failure stops the pipeline or alerts the owner. Tools such as dbt tests and Great Expectations exist for exactly that; Chapter 47 covers them. The rules are the same ones you write here.
 
 ---
 
-## 14.10 Reconciling and documenting every decision
+## 14.11 Reconciling and documenting every decision
 
 ### Reconcile the clean table to the source
 
@@ -1388,8 +1626,11 @@ Validation proves the data follows the rules. **Reconciliation** proves it match
 
 ```sql
 SELECT COUNT(*) AS lines_in_both,
-       SUM(CASE WHEN c.quantity = oi.quantity AND c.unit_price = oi.unit_price AND c.discount_pct = oi.discount_pct THEN 1 ELSE 0 END) AS lines_identical
-FROM clean_order_lines c JOIN order_items oi USING (order_item_id);
+       SUM(CASE WHEN c.quantity = oi.quantity
+                 AND c.unit_price = oi.unit_price
+                 AND c.discount_pct = oi.discount_pct THEN 1 ELSE 0 END) AS lines_identical
+FROM clean_order_lines c
+JOIN order_items oi USING (order_item_id);
 ```
 
 ```
@@ -1399,7 +1640,77 @@ FROM clean_order_lines c JOIN order_items oi USING (order_item_id);
 (1 row)
 ```
 
-All 25,832 cleaned lines exist in the ERP, and 25,812 are identical in quantity, price, and discount. The other 20 are precisely the quarantined lines (a missing or impossible quantity). The companion check `checks/ch14_compare_clean.py` goes further and compares every column of every line, including dates, codes, statuses, branches, and reps: zero mismatches, for the PostgreSQL, MySQL, and pandas versions alike.
+The inner join keeps the lines found in both tables, and the `CASE` inside `SUM` counts a line as 1 when all three numbers agree (conditional aggregation, Chapter 12, section 12.9). All 25,832 cleaned lines exist in the ERP, and 25,812 are identical in quantity, price, and discount. The other 20 should be the quarantined lines (a missing or impossible quantity).
+
+The order-line table in the ERP has no branch, rep, or customer code, so for a check of **every** column, compare with `truth_order_lines`, the correct clean table the load script loaded. `EXCEPT` (Chapter 12, section 12.12) returns the rows of the first query that don't appear, identical in every column, in the second. First count them:
+
+```sql
+SELECT COUNT(*) AS lines_that_differ
+FROM (SELECT order_item_id, order_date, customer_code, product_id, quantity,
+             unit_price, discount_pct, status, branch, sales_rep
+      FROM clean_order_lines
+      EXCEPT
+      SELECT order_item_id, order_date, customer_code, product_id, quantity,
+             unit_price, discount_pct, status, branch, sales_rep
+      FROM truth_order_lines) d;
+```
+
+```
+ lines_that_differ 
+-------------------
+                20
+(1 row)
+```
+
+Twenty lines differ in some column. Which, and why? Put the same `EXCEPT` in a CTE, and join it to the truth and to the issues table:
+
+```sql
+WITH differs AS (
+  SELECT order_item_id, order_date, customer_code, product_id, quantity,
+         unit_price, discount_pct, status, branch, sales_rep
+  FROM clean_order_lines
+  EXCEPT
+  SELECT order_item_id, order_date, customer_code, product_id, quantity,
+         unit_price, discount_pct, status, branch, sales_rep
+  FROM truth_order_lines
+)
+SELECT d.order_item_id,
+       d.quantity AS clean_quantity,
+       t.quantity AS true_quantity,
+       q.issue
+FROM differs d
+JOIN truth_order_lines t USING (order_item_id)
+LEFT JOIN dq_order_issues q ON q.order_item_id = d.order_item_id AND q.action = 'quarantined'
+ORDER BY q.issue, d.order_item_id;
+```
+
+```
+ order_item_id | clean_quantity | true_quantity |               issue               
+---------------+----------------+---------------+-----------------------------------
+        187761 |            700 |            70 | quantity above historical maximum
+        191340 |            400 |            40 | quantity above historical maximum
+        200981 |            450 |            45 | quantity above historical maximum
+        205978 |            350 |            35 | quantity above historical maximum
+        206224 |            450 |            45 | quantity above historical maximum
+        209166 |            100 |            10 | quantity above historical maximum
+        184041 |                |            40 | quantity missing
+        185421 |                |            30 | quantity missing
+        189629 |                |            30 | quantity missing
+        191262 |                |            20 | quantity missing
+        200075 |                |            15 | quantity missing
+        200735 |                |            35 | quantity missing
+        200921 |                |            40 | quantity missing
+        201671 |                |            35 | quantity missing
+        201964 |                |            10 | quantity missing
+        204006 |                |            50 | quantity missing
+        204329 |                |            30 | quantity missing
+        204511 |                |            30 | quantity missing
+        206043 |                |            35 | quantity missing
+        207679 |                |            30 | quantity missing
+(20 rows)
+```
+
+Every line that differs is a quarantined line, and nothing else differs in any column: dates, codes, products, prices, discounts, statuses, branches, and reps all match for the other 25,812. The truth also confirms the suspicion from section 14.6: each "impossible" quantity is exactly ten times the real one. The companion file `sql/ch14_compare_clean.sql` holds the `EXCEPT` query, and it runs unchanged in MySQL 8.0.31 or later.
 
 Then reconcile the number that matters:
 
@@ -1462,7 +1773,7 @@ A log like this does three jobs: it lets a manager approve the decisions, it let
 
 ---
 
-## 14.11 The whole pipeline in Excel and Power Query
+## 14.12 The whole pipeline in Excel and Power Query
 
 SQL isn't the only way to build a repeatable cleaning pipeline. Power Query records the same steps, and next quarter's export is one **Refresh** (Chapter 11, section 11.7). Here's the order-export pipeline as applied steps. The companion file `companion/ch14/clean_orders.pq` holds the full M code; paste it into **Data → Get Data → From Other Sources → Blank Query → Advanced Editor** and change the file path.
 
@@ -1493,7 +1804,7 @@ Then add a **Checks** sheet: the row count of `CleanOrders` (25,832), the count 
 
 ---
 
-## 14.12 Running this chapter in MySQL
+## 14.13 Running this chapter in MySQL
 
 The companion scripts `ch14_load_mysql.sql` and `ch14_clean_mysql.sql` build the same tables in MySQL 8.0, and the cleaned result is identical line for line. The differences are worth knowing.
 
@@ -1519,7 +1830,7 @@ FROM stg_orders_raw WHERE order_item_id REGEXP '^[0-9]+$' GROUP BY 1 ORDER BY `r
 +--------------+-------+
 ```
 
-(`rows` is a reserved word in MySQL 8, so it needs backticks; Chapter 13, section 13.8.)
+(`rows` is a reserved word in MySQL 8, so it needs backticks; Chapter 13, section 13.9.)
 
 **The case-insensitive trap.** The same status profile as section 14.2 gives a different answer:
 
@@ -1591,103 +1902,6 @@ The same ₹423,561,010.50 as PostgreSQL.
 | Case-sensitive grouping | default | `GROUP BY BINARY col` |
 | Empty CSV field | NULL (unquoted) | empty string |
 | Join by similarity | `pg_trgm`: `similarity(a, b)` | no built-in; `SOUNDEX` is crude |
-
----
-
-## 14.13 A first look at cleaning in pandas
-
-Python is taught in its own block: Chapter 17 covers the language from zero and Chapter 18 covers **pandas**, the library for working with tables in Python. If you're reading in file order and haven't reached them yet, treat this section as a preview and come back to it afterwards. This preview shows that the method (load as text, profile, fix, validate, reconcile) is the same in Python, and that a script is as repeatable as a query. The code runs from `companion/ch14`; `clean_orders_pandas.py` holds the complete pipeline.
-
-<!-- py: reset -->
-```python
-import pandas as pd
-raw = pd.read_csv("orders_q4_2025_export.csv", dtype=str, keep_default_na=False)
-print(raw.shape)
-```
-
-```
-(25976, 13)
-```
-
-`dtype=str` loads every column as text and `keep_default_na=False` keeps empty fields as empty strings instead of guessing: the staging-table idea in one line. The file has 25,976 rows and 13 columns.
-
-```python
-data = raw[raw["order_item_id"].str.fullmatch(r"\d+")]
-print(len(data), "data rows;", data.duplicated().sum(), "exact duplicates")
-data = data.drop_duplicates()
-print(data["order_date"].str.replace(r"\d", "9", regex=True).value_counts())
-```
-
-```
-25969 data rows; 137 exact duplicates
-order_date
-99-99-9999    20782
-9999-99-99     3210
-99/99/9999     1800
-99999            40
-Name: count, dtype: int64
-```
-
-The same seven non-data rows and 137 duplicates as SQL. The pattern counts are smaller than section 14.2's because the duplicates are already gone.
-
-```python
-print(data["status"].str.strip().str.lower().value_counts())
-```
-
-```
-status
-delivered    21744
-pending       1166
-shipped       1138
-cancelled     1034
-dlvd           690
-cxl             32
-canceled        28
-Name: count, dtype: int64
-```
-
-Normalizing with `.str.strip().str.lower()` leaves the seven spellings a mapping table must handle.
-
-```python
-price = pd.to_numeric(data["unit_price"].str.replace(r"^[^0-9]+", "", regex=True).str.replace(",", ""))
-print(price.value_counts().sort_index())
-```
-
-```
-unit_price
-115.0     3606
-290.0     5082
-380.0     3583
-430.0     4985
-620.0     3575
-750.0     3621
-1400.0    1380
-Name: count, dtype: int64
-```
-
-Every converted price is one of Riverstone's seven list prices for the products sold in Q4 (no garden chairs sell in winter), which is a validation rule passed.
-
-```python
-print(data["customer_code"].str.len().value_counts().sort_index())
-print(data["customer_code"].str.zfill(4).str.len().value_counts())
-```
-
-```
-customer_code
-2       40
-3      493
-4    25299
-Name: count, dtype: int64
-customer_code
-4    25832
-Name: count, dtype: int64
-```
-
-`zfill(4)` pads with zeros on the left, like `LPAD`. After padding, every code has four characters.
-
-Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 37 logged issues and ₹423,561,010.50 as SQL, and writes `clean_order_lines_pandas.csv` and `dq_order_issues_pandas.csv`.
-
-> **Tool note.** Tested with Python 3.12 and pandas 3.0.2. pandas 2.x gives the same results; in versions before 2.0, `value_counts()` prints its header differently.
 
 ---
 
@@ -1804,7 +2018,7 @@ What made the difference:
 3. **Build the cleaning pipeline** in steps: non-data rows, duplicates, types, categories (with mapping tables), keys, units, dates and time zones, repairs, and quarantine. Every step is code or recorded steps, never manual edits.
 4. **Write at least eight validation rules** that return failure counts, and run them.
 5. **Reconcile.** For the order export, compare with `riverstone_full` (or `clean_truth_orders_q4_2025.csv`) using `checks/ch14_compare_clean.py`. Explain every remaining difference.
-6. **Keep a cleaning log** with the columns from section 14.10.
+6. **Keep a cleaning log** with the columns from section 14.11.
 7. **Write the data-quality report (one page):**
    - What was received (files, rows, period) and what one clean row represents.
    - The six dimensions from Chapter 1 (accuracy, completeness, consistency, validity, uniqueness, timeliness): a line each with the main finding and a count.

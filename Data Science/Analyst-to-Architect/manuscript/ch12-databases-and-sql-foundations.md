@@ -33,7 +33,7 @@
 
 Here is a small, career-defining truth: **the data does not come to you. You go to the data.** And the language you go in is SQL.
 
-In Chapters 10 and 11 you worked with spreadsheets, where the data sits right in front of you and you can see every cell. That works well for thousands of rows. But the sales records of even a mid-sized company run to millions of rows, spread across dozens of connected tables, updated every minute by many people and systems at once. No spreadsheet can hold that, and no human can scroll through it. That data lives in a **database**, and SQL is how you ask the database questions.
+In Chapters 10 and 11 you worked with spreadsheets, where the data sits right in front of you and you can see every cell. That works well for thousands of rows. But the sales records of even a mid-sized company run to millions of rows, spread across dozens of connected tables, updated every minute by many people and systems at once. No spreadsheet can hold that, and no human can scroll through it. That data lives in a **database**, and SQL is how you ask the database questions. If you tried Google Sheets' `QUERY` function in Chapter 11, some of this chapter will feel familiar: its `select`, `where`, and `group by` are a small language similar to SQL.
 
 SQL is the single highest-leverage skill in this book. It is the one skill shared by every role on the map from Chapter 7: analysts, business analysts, data scientists, data engineers, and architects all write SQL, often every day. It has been one of the most requested skills in data job listings for decades, and it has outlived hundreds of newer tools. And it is learnable. The core that covers most real work fits in this chapter.
 
@@ -199,7 +199,7 @@ The diagram is abstract. Figure 12.2 makes it concrete. On the left is order 500
 
 ![Order 5001 as a slip and as rows in five tables](figures/fig12-2-one-order-many-tables.svg)
 
-*Figure 12.2 — One order slip, five tables. Each colored band on the slip is stored in the table of the same color.*
+*Figure 12.2 — One order slip, five tables. Each band on the slip is labelled with the table it's stored in, and drawn in that table's color.*
 
 Three things to notice:
 
@@ -493,7 +493,7 @@ On `riverstone_2025`, `SELECT COUNT(*) FROM orders;` returns `175`. Exercise 30 
 > 5. If a statement fails, DBeaver shows the database's error message where the grid would be. Read it: it usually names the problem and the line.
 > 6. Keep several queries in one editor by ending each with `;` and leaving a blank line between them. *Ctrl+Enter* then runs only the one your cursor is in.
 
-> **Can't install software on your computer?** A Chromebook, or a locked work laptop, can stop you here. On a work laptop, ask your IT team: PostgreSQL and DBeaver are commonly approved for learning, and exercise 32 shows how to ask. Meanwhile, online SQL playgrounds let you paste a setup script and practice in a browser; most offer both PostgreSQL and MySQL. Installation steps and screens change over time; Appendix B keeps current, step-by-step instructions for both databases.
+> **Can't install software on your computer?** A Chromebook, or a locked work laptop, can stop you here. On a work laptop, ask your IT team: PostgreSQL and DBeaver are commonly approved for learning, and exercise 33 shows how to ask. Meanwhile, online SQL playgrounds let you paste a setup script and practice in a browser; most offer both PostgreSQL and MySQL. Installation steps and screens change over time; Appendix B keeps current, step-by-step instructions for both databases.
 
 > **Try it.** Before reading on, run `SELECT * FROM products;` (the `*` means "every column"; section 12.4 explains it). You should see six rows, one per product. If you installed both databases, run it in both.
 
@@ -1165,7 +1165,7 @@ ORDER BY unit_price;
 
 Business questions are full of time: *this month*, *last quarter*, *same period last year*. Two PostgreSQL functions do most of the work:
 
-- `EXTRACT(part FROM date)` pulls out one part: `YEAR`, `MONTH`, `DAY`, `DOW` (day of week).
+- `EXTRACT(part FROM date)` pulls out one part: `YEAR`, `QUARTER`, `MONTH`, `DAY`, `DOW` (day of week).
 - `DATE_TRUNC('month', date)` rounds a date *down* to the start of its month (or `'week'`, `'quarter'`, `'year'`). This is the standard way to group by month.
 
 ```sql
@@ -1515,7 +1515,9 @@ ORDER BY num_orders DESC, status;
 (4 rows)
 ```
 
-Picture what the database does: it sorts the twelve orders into piles by status, then counts each pile. If you built pivot tables in Chapter 11, this is the same idea: `GROUP BY` is the pivot table's "Rows" area, and the aggregate is its "Values" area.
+Picture what the database does: it sorts the twelve orders into piles by status, then counts each pile.
+
+> **Back to Chapter 11: the pivot table.** A pivot table and a `GROUP BY` query are the same idea. The pivot's **Filters** area is `WHERE`, its **Rows** area is `GROUP BY`, and its **Values** area is the aggregate (`SUM`, `COUNT`). Its **Columns** area is one `SUM(CASE …)` column per value, which you'll meet later in this section. Exercise 32 rebuilds Chapter 11's first pivot in SQL.
 
 The same works for money. Summing lines per order:
 
@@ -1779,7 +1781,7 @@ WHERE oi.order_item_id IS NULL;
 (1 row)
 ```
 
-This pattern is called an **anti-join**. Test the `IS NULL` on a column that can *never* be NULL in a real match, such as the right table's primary key, so you're only catching the rows that found no partner.
+This pattern is called an **anti-join**. It's the SQL version of Chapter 11's Power Query **Left Anti** merge, which found Home Plus, the one customer with no 2025 sales. Test the `IS NULL` on a column that can *never* be NULL in a real match, such as the right table's primary key, so you're only catching the rows that found no partner.
 
 ### RIGHT JOIN, FULL OUTER JOIN, and CROSS JOIN
 
@@ -3931,6 +3933,8 @@ For the lab, Steps 1–11 were enough. For production, the checklist is the skil
 
 ### Cheat sheet: building and changing, PostgreSQL vs MySQL
 
+Entries that start with a backslash (`\c`, `\l`, `\dt`, `\d`, `\copy`) work only in PostgreSQL's command-line client, `psql`, which you'll be able to use after Chapter 26; everything else runs in DBeaver.
+
 | Task | PostgreSQL | MySQL |
 |---|---|---|
 | Create a database | `CREATE DATABASE db;` | `CREATE DATABASE db;` (`IF NOT EXISTS` allowed) |
@@ -4890,7 +4894,8 @@ Use the `riverstone_lab` database. If you've already dropped it, create it again
 
 30. *(PostgreSQL, then MySQL; needs the one-year database from section 12.3.)* Chapter 7, section 7.6, asked for every customer with no non-cancelled order in the 60 days up to 31 December 2025, including customers who have never ordered. On `riverstone_2025`, write the query, starting from Question 1 in section 12.15. Predict first: Chapter 7 found 5 customers, with Tasty Tiffins at 66 days. Then write the MySQL version (section 12.16).
 31. Using the rounding Watch out in section 12.8, predict each result, then run it to check: (a) PostgreSQL `SELECT ROUND(4.5);` (b) PostgreSQL `SELECT ROUND(4.5::double precision);` (c) MySQL `SELECT ROUND(45E-1);` Explain each.
-32. Write a short, specific request to your IT team asking permission to install PostgreSQL and DBeaver on a work laptop for learning. Say what each tool is for, what data you will and won't connect to, and ask them one question.
+32. *(Needs the one-year database.)* Chapter 11, section 11.5, built its first pivot table on the 2025 sales: `segment` in Rows, the quarters in Columns, net revenue in Values, and `status` in Filters with Cancelled cleared. On `riverstone_2025`, write the same table in SQL, one row per segment and one column per quarter plus a total. Check your numbers against Figure 11.3.
+33. Write a short, specific request to your IT team asking permission to install PostgreSQL and DBeaver on a work laptop for learning. Say what each tool is for, what data you will and won't connect to, and ask them one question.
 
 ---
 
@@ -5604,7 +5609,41 @@ SELECT ROUND(45E-1) AS approximate;
 
 (a) `5`: `4.5` is `numeric`, and PostgreSQL breaks ties away from zero. (b) `4`: as `double precision`, the usual rule is round half to even, and 4 is even. (c) `4`: `45E-1` (45 × 10⁻¹, which is 4.5) is written in scientific notation, which makes it an approximate value, so on most systems MySQL rounds it to the nearest even number. A spreadsheet's `=ROUND(4.5,0)` would give 5, like (a).
 
-**32.** One good version: *"Hello, I'd like permission to install two free tools on my work laptop for learning data analysis: PostgreSQL (a database, used to practice SQL on sample data) and DBeaver Community (an app for writing SQL). I'll only use practice datasets from a textbook, and I won't connect them to any company system or customer data without your approval. Could you tell me whether there's an approved way to connect to company data later, if my manager asks for reports?"* A good request names each tool and its purpose, promises what you won't do, and asks one clear question.
+**32.** A derived table first works out each line's quarter and revenue (the pivot's source rows, with the Filters condition as `WHERE`); the outer query groups by segment (Rows) and spreads the quarters into columns with conditional aggregation (Columns and Values):
+
+<!-- db: riverstone_2025 -->
+```sql
+SELECT segment,
+       ROUND(SUM(CASE WHEN qtr = 1 THEN line_revenue ELSE 0 END), 2) AS q1,
+       ROUND(SUM(CASE WHEN qtr = 2 THEN line_revenue ELSE 0 END), 2) AS q2,
+       ROUND(SUM(CASE WHEN qtr = 3 THEN line_revenue ELSE 0 END), 2) AS q3,
+       ROUND(SUM(CASE WHEN qtr = 4 THEN line_revenue ELSE 0 END), 2) AS q4,
+       ROUND(SUM(line_revenue), 2)                                  AS grand_total
+FROM (
+    SELECT c.segment,
+           EXTRACT(QUARTER FROM o.order_date)                  AS qtr,
+           oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100) AS line_revenue
+    FROM order_items AS oi
+    JOIN orders    AS o ON oi.order_id   = o.order_id
+    JOIN customers AS c ON o.customer_id = c.customer_id
+    WHERE o.status <> 'Cancelled'
+) AS lines
+GROUP BY segment
+ORDER BY segment;
+```
+
+```
+   segment   |    q1     |    q2     |    q3     |    q4     | grand_total
+-------------+-----------+-----------+-----------+-----------+-------------
+ Hospitality | 149040.00 | 252170.00 | 307277.50 | 435551.25 |  1144038.75
+ Retail      | 394327.50 | 198473.75 | 333972.50 | 562000.00 |  1488773.75
+ Wholesale   | 190944.00 | 275924.50 | 479039.00 | 756751.00 |  1702658.50
+(3 rows)
+```
+
+Every cell matches Figure 11.3, for example Wholesale's Q4 of ₹7,56,751 and its total of ₹17,02,658.50. ✓ `EXTRACT(QUARTER FROM …)` gives 1 to 4, the same as Chapter 11's `quarter` column. The pivot's Grand Total row is the same query without `segment` and without `GROUP BY`: one row, ₹43,35,471.
+
+**33.** One good version: *"Hello, I'd like permission to install two free tools on my work laptop for learning data analysis: PostgreSQL (a database, used to practice SQL on sample data) and DBeaver Community (an app for writing SQL). I'll only use practice datasets from a textbook, and I won't connect them to any company system or customer data without your approval. Could you tell me whether there's an approved way to connect to company data later, if my manager asks for reports?"* A good request names each tool and its purpose, promises what you won't do, and asks one clear question.
 
 ---
 
