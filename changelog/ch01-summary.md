@@ -8,6 +8,8 @@
 - The Appendix G production note is deleted. The Tools line on Chapter 6 now follows D6: "Each tool is installed in the chapter that first uses it; Chapter 6 shows when."
 - Rupees use lakh grouping: ₹1,04,210 and ₹1,61,700 (§1.2, Figure 1.1, exercise 2).
 - Dataset labels are on Figures 1.1 and 1.4.
+- Kavya's spending log is set as a normal table, so it no longer wraps (V1.1).
+- Not verified: the inline date `14-09-2026` still breaks at a hyphen (V1.12). That is a builder rule, not a source fix.
 - All four figures are redrawn on 700–720 px canvases, with every text ≥ 7 pt. Figure 1.2 stacks the receipt above the table; Figure 1.4 puts the structured panel on top.
 
 **Skipped, and why**
