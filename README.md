@@ -3,8 +3,9 @@
 This repo holds the review of *Analyst to Architect* (3,758 findings), the book's source files, and the work of fixing them. Claude Code does the fixing and follows [`CLAUDE.md`](CLAUDE.md).
 
 - **See progress:** [TRACKER.md](TRACKER.md)
-- **Record decisions:** [DECISIONS.md](DECISIONS.md) (edit on github.com, works from a phone)
+- **Record decisions:** [DECISIONS.md](DECISIONS.md) (edit on github.com, works from a phone), with [DECISIONS-BRIEFING.md](DECISIONS-BRIEFING.md) beside it: what each of the 26 themes covers, how many rows it touches, and two examples
 - **Review status and agreed process:** [REVIEW-STATUS.md](REVIEW-STATUS.md)
+- **What still blocks a clean run:** [REVIEW-GAPS.md](REVIEW-GAPS.md)
 - **Review a part:** open its pull request, read the summary, check the PDFs in `fixed/`, then merge.
 
 ## How the work flows
@@ -19,6 +20,7 @@ This repo holds the review of *Analyst to Architect* (3,758 findings), the book'
 | Folder | Contents |
 |---|---|
 | `review/` | All findings: content review per chapter, visual review per chapter with 762 snapshots, sequence map, briefs |
+| `review/reader-journey/` | A third review strand, read in reading order through two readers. **Not in the register**, and unfinished at Part VIII. See its README |
 | `tracker/` | `register.csv` (the live list of findings with status) and the script that builds `TRACKER.md` |
 | `source/` | Where the kit expects the book's build inputs. **Read [`source/SOURCES-LOCATION.md`](source/SOURCES-LOCATION.md) first:** the sources are already in this repo, under `Data Science/`, not unpacked into `source/` |
 | `fixed/` | Rebuilt PDFs, one folder per part |
