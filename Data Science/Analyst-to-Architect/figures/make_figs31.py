@@ -65,7 +65,7 @@ def fig_parallel():
     o.append(text(px(CHANGE) - 6, y1 - 12, "1 Oct 2025: prices rise 6% in North", 11, RED, "bold", anchor="end"))
     o.append(path("M" + " L".join(f"{px(i):.1f},{py(v):.1f}" for i, v in enumerate(others)), stroke=ACC, sw=2.4, dash="7,4"))
     o.append(path("M" + " L".join(f"{px(i):.1f},{py(v):.1f}" for i, v in enumerate(north)), stroke=PURPLE, sw=2.4))
-    o.append(text(px(1), py(others[1]) - 12, "other regions, average (dashed)", 11, ACC, "bold"))
+    o.append(text(px(1), py(7.97), "other regions, average (dashed)", 11, ACC, "bold"))
     o.append(text(px(1), py(north[1]) + 22, "North (solid)", 11, PURPLE, "bold"))
     o.append(text(20, y0 + 46, "Before the change the gap between the lines wanders without a clear direction; after it, North sits lower.", 11, MUTED))
     o.append(text(20, y0 + 64, f"Difference-in-differences: {pct(np.exp(eff) - 1)} (95% CI {pct(np.exp(lo) - 1)} to {pct(np.exp(hi) - 1)}). "
@@ -107,8 +107,8 @@ def fig_synth():
     o.append(path("M" + " L".join(f"{px(i):.1f},{py(v):.1f}" for i, v in enumerate(synth)), stroke=ACC, sw=2.4, dash="7,4"))
     o.append(path("M" + " L".join(f"{px(i):.1f},{py(v):.1f}" for i, v in enumerate(north)), stroke=PURPLE, sw=2.4))
     o.append(text(px(1), py(north[1]) + 26, "North, real (solid)", 11, PURPLE, "bold"))
-    o.append(text(px(1), py(synth[1]) - 34, "synthetic North (dashed) =", 11, ACC, "bold"))
-    o.append(text(px(1), py(synth[1]) - 19, f"{w['West']:.2f} West + {w['South']:.2f} South + {w['East']:.2f} East", 11, ACC, "bold"))
+    o.append(text(px(1), py(7.835), "synthetic North (dashed) =", 11, ACC, "bold"))
+    o.append(text(px(1), py(7.835) + 15, f"{w['West']:.2f} West + {w['South']:.2f} South + {w['East']:.2f} East", 11, ACC, "bold"))
     o.append(text(20, y0 + 46, f"Weights chosen to track North for the fifteen months before October 2025 (root mean squared error {rmse:.3f}).", 11, MUTED))
     o.append(text(20, y0 + 64, f"Average gap in the shaded months: {pct(np.exp(gap_after) - 1)}, against a true effect of {MINUS}8%.", 11, INK))
     return svg(W, y0 + 80, "".join(o))
@@ -138,7 +138,7 @@ def fig_balance():
     rows = balance_rows()
     o = [text(20, 26, "Matching is only worth something if it balanced the groups", 13, INK, "bold", family=HEAD)]
     x0, x1 = 190, 670; lo, hi = -0.2, 0.8
-    top, bottom = 62, 238
+    top, bottom = 62, 252
     def px(v): return x0 + (v - lo) / (hi - lo) * (x1 - x0)
     o.append(rect(px(-0.1), top, px(0.1) - px(-0.1), bottom - top, fill=FKBG, stroke="none"))
     o.append(text(px(0.1) + 6, top + 12, "|SMD| under 0.1: balanced", 10.5, GREEN, "bold"))
@@ -174,7 +174,7 @@ def fig_rd():
     wide["band"] = np.floor(wide["centred"] * 2) / 2                   # [a, a + 0.5), like right=False
     pts = wide[wide["band"] < 5].groupby("band")["repeat_within_90_days"].mean()
     o = [text(20, 26, "Free delivery at ₹25,000: the estimate is the size of the step", 13, INK, "bold", family=HEAD)]
-    x0, x1, y0, y1 = 70, 680, 282, 62
+    x0, x1, y0, y1 = 70, 650, 282, 62
     vlo, vhi = 0.2, 0.55
     def px(c): return x0 + (c + 5) / 10 * (x1 - x0)
     def py(p): return y0 - (p - vlo) / (vhi - vlo) * (y0 - y1)

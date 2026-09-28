@@ -462,7 +462,8 @@ First, a table with one row per month: North's log orders, the other regions' av
 
 ```python
 monthly = (panel.assign(side=np.where(panel["treated"] == 1, "North", "Others"))
-                .pivot_table(index="month", columns="side", values="log_orders", aggfunc="mean"))
+                .pivot_table(index="month", columns="side", values="log_orders",
+                             aggfunc="mean"))
 monthly["gap"] = monthly["North"] - monthly["Others"]
 print(monthly.round(3).head(3).to_string())
 ```
@@ -543,7 +544,7 @@ A stricter look tracks the gap over time rather than averaging the whole period.
 
 ```python
 monthly["rel"] = ((monthly.index.year - 2025) * 12 + monthly.index.month - 10)
-baseline = monthly.loc[monthly["rel"] < 0, "gap"].mean()          # the whole pre-change period
+baseline = monthly.loc[monthly["rel"] < 0, "gap"].mean()     # all 15 pre-change months
 monthly["quarter"] = np.floor(monthly["rel"] / 3).astype(int)
 view = (monthly.groupby("quarter")["gap"].mean() - baseline).round(3)
 for quarter, value in view.items():
@@ -817,8 +818,9 @@ Section 30.11 used logistic regression to read odds ratios. Here it is used for 
 The model uses only things known **before** the program started: 2024 revenue, 2024 growth, tenure, and segment (Common mistakes and exercise 16 say why that matters). Fit it and look at its coefficients:
 
 ```python
-score_model = smf.logit("in_qbr_program ~ log_2024 + growth_2024 + years_as_customer + C(segment)",
-                        data=qbr).fit(disp=False)
+score_model = smf.logit(
+    "in_qbr_program ~ log_2024 + growth_2024 + years_as_customer + C(segment)",
+    data=qbr).fit(disp=False)
 print(score_model.params.round(4).to_string())
 ```
 
@@ -838,15 +840,19 @@ Now work the first account by hand: a Retail account with ₹10,15,758 of 2024 r
 ```python
 first = qbr.iloc[0]
 b = score_model.params
-z = (b["Intercept"] + b["C(segment)[T.Retail]"] + b["log_2024"] * first["log_2024"]
-     + b["growth_2024"] * first["growth_2024"] + b["years_as_customer"] * first["years_as_customer"])
+z = (b["Intercept"] + b["C(segment)[T.Retail]"]
+     + b["log_2024"] * first["log_2024"]
+     + b["growth_2024"] * first["growth_2024"]
+     + b["years_as_customer"] * first["years_as_customer"])
 p = 1 / (1 + np.exp(-z))
-print(f"account {first['customer_id']}: log_2024 = {first['log_2024']:.4f}, z = {z:.4f}, p = {p:.4f}")
+print(f"account {first['customer_id']}: log_2024 = {first['log_2024']:.4f}")
+print(f"z = {z:.4f}, p = {p:.4f}")
 print(f"the model's predict gives: {score_model.predict(qbr.iloc[[0]]).iloc[0]:.4f}")
 ```
 
 ```
-account 1: log_2024 = 13.8311, z = -0.6851, p = 0.3351
+account 1: log_2024 = 13.8311
+z = -0.6851, p = 0.3351
 the model's predict gives: 0.3351
 ```
 
@@ -935,14 +941,14 @@ for row in ordered.itertuples():
         pairs.append((row.customer_id, best))
         del available[best]                               # without replacement
 print(f"matched pairs: {len(pairs)} of {len(participants)} participants")
-print(f"unmatched participants: {len(participants) - len(pairs)} (no close enough comparison existed)")
+print(f"unmatched: {len(participants) - len(pairs)} (no close enough comparison existed)")
 for participant_id, control_id in pairs[:3]:
     print(f"  participant {participant_id} <-> control {control_id}")
 ```
 
 ```
 matched pairs: 64 of 68 participants
-unmatched participants: 4 (no close enough comparison existed)
+unmatched: 4 (no close enough comparison existed)
   participant 67 <-> control 133
   participant 126 <-> control 112
   participant 239 <-> control 187
@@ -976,7 +982,7 @@ in_qbr_program
 
 ### Check balance before believing anything
 
-Matching is only worth something if the matched groups now look alike on everything you matched on. The usual measure is the **standardized mean difference** (SMD), the same idea as section 30.4's Cohen's d:
+Matching is only worth something if the matched groups now look alike on everything you matched on. The usual measure is the **standardized mean difference** (SMD), the same idea as section 30.4's Cohen's d.
 
 > **SMD = (mean₁ − mean₀) ÷ √((s₁² + s₀²) ÷ 2)**
 >
@@ -1027,7 +1033,8 @@ Two variables are borderline: tenure is still 0.106, just over the rule, and 202
 ```python
 for label, data in (("before matching", qbr), ("after matching", matched)):
     print(label)
-    print(pd.crosstab(data["in_qbr_program"], data["segment"], normalize="index").round(3).to_string())
+    shares = pd.crosstab(data["in_qbr_program"], data["segment"], normalize="index")
+    print(shares.round(3).to_string())
 ```
 
 ```
@@ -1056,8 +1063,9 @@ Two corrections: the difference in log 2025 revenue within the matched sample, a
 ```python
 matched_means = matched.groupby("in_qbr_program")["log_2025"].mean()
 matched_effect = matched_means[1] - matched_means[0]
-model = smf.ols("log_2025 ~ in_qbr_program + log_2024 + growth_2024 + years_as_customer + C(segment)",
-                data=qbr).fit()
+formula = ("log_2025 ~ in_qbr_program + log_2024 + growth_2024"
+           " + years_as_customer + C(segment)")
+model = smf.ols(formula, data=qbr).fit()
 adjusted = model.params["in_qbr_program"]
 ci = model.conf_int().loc["in_qbr_program"]
 
@@ -1076,7 +1084,7 @@ true effect:            +7.0%
 ```
 
 - `matched_means` and `matched_effect` repeat the two-step difference above, inside the matched sample only.
-- The regression's x's are the program dummy and the four things known before the program; `C(segment)` adds segment as a category. Its `in_qbr_program` coefficient is the gap between participants and non-participants **holding the others fixed**, and `conf_int()` gives its interval, as in section 31.3.
+- `formula` is written as two pieces of text side by side, which Python joins into one, so the line stays short. The regression's x's are the program dummy and the four things known before the program; `C(segment)` adds segment as a category. Its `in_qbr_program` coefficient is the gap between participants and non-participants **holding the others fixed**, and `conf_int()` gives its interval, as in section 31.3.
 - Everything is in logs, so each estimate is converted with exp(d) − 1.
 
 Both corrections land near the truth, and both are a world away from the naive +75%. Note what made this work: every variable that drove selection (size, growth, tenure) was **measured and available**. That is the assumption matching rests on, and it has a name.
@@ -1094,7 +1102,7 @@ Comparing all orders above the threshold with all orders below it is hopeless: b
 The number that decides which side of the rule an order falls on, here the order value, is called the **running variable**. Measure it from the cut-off, in thousands of rupees, so that 0 means exactly ₹25,000:
 
 ```python
-orders["centred"] = (orders["order_value"] - 25_000) / 1000     # ₹ thousands from the cut-off
+orders["centred"] = (orders["order_value"] - 25_000) / 1000   # ₹000 from the cut-off
 wide = orders[orders["centred"].abs() <= 5]
 below = wide[wide["centred"] < 0]["repeat_within_90_days"]
 above = wide[wide["centred"] >= 0]["repeat_within_90_days"]
@@ -1119,7 +1127,8 @@ raw gap: +11.0 points
 The raw gap overstates things, because the chance of reordering rises with order value anyway. RD fits a line on each side and measures the **jump at the cut-off**, not the level. One regression does both lines, using an interaction as in section 31.3:
 
 ```python
-rd = smf.ols("repeat_within_90_days ~ free_delivery + centred + free_delivery:centred", data=wide).fit()
+rd = smf.ols("repeat_within_90_days ~ free_delivery + centred + free_delivery:centred",
+             data=wide).fit()
 print(rd.params.round(4).to_string())
 ```
 
@@ -1285,7 +1294,8 @@ naive_pct = 100 * (np.exp(gap) - 1)
 adjusted_pct = 100 * (np.exp(adjusted) - 1)
 print(f"quarterly reviews, unadjusted: {naive_pct:+.1f}%")
 print(f"after controlling for size, growth, tenure and segment: {adjusted_pct:+.1f}%")
-print(f"share of the naive gap that was selection: {100 * (1 - adjusted_pct / naive_pct):.0f}%")
+share = 100 * (1 - adjusted_pct / naive_pct)
+print(f"share of the naive gap that was selection: {share:.0f}%")
 ```
 
 ```
@@ -1298,9 +1308,12 @@ Most of the apparent effect was selection. Now measure how strong the variables 
 
 ```python
 formulas = {
-    "all four": "log_2025 ~ in_qbr_program + log_2024 + growth_2024 + years_as_customer + C(segment)",
-    "without prior size": "log_2025 ~ in_qbr_program + growth_2024 + years_as_customer + C(segment)",
-    "without 2024 growth": "log_2025 ~ in_qbr_program + log_2024 + years_as_customer + C(segment)",
+    "all four":
+        "log_2025 ~ in_qbr_program + log_2024 + growth_2024 + years_as_customer + C(segment)",
+    "without prior size":
+        "log_2025 ~ in_qbr_program + growth_2024 + years_as_customer + C(segment)",
+    "without 2024 growth":
+        "log_2025 ~ in_qbr_program + log_2024 + years_as_customer + C(segment)",
 }
 for label, formula in formulas.items():
     estimate = smf.ols(formula, data=qbr).fit().params["in_qbr_program"]
@@ -1532,7 +1545,8 @@ Volume fell about 7%, and revenue is close to flat. If only the price had change
 **3.**
 
 ```python
-by_group = qbr.groupby("in_qbr_program")[["revenue_2024", "growth_2024", "years_as_customer"]].mean()
+columns = ["revenue_2024", "growth_2024", "years_as_customer"]
+by_group = qbr.groupby("in_qbr_program")[columns].mean()
 print(by_group.round(3).to_string())
 ratio = by_group.loc[1, "revenue_2024"] / by_group.loc[0, "revenue_2024"]
 print(f"ratio of average 2024 revenue: {ratio:.2f}x")
@@ -1554,8 +1568,10 @@ Participants were already 1.6 times the size of non-participants *before* the pr
 near = orders[orders["centred"].abs() <= 0.5]
 print(f"orders within ₹500 of the cut-off: {len(near):,}")
 print(f"share with free delivery: {near['free_delivery'].mean():.3f}")
-print(f"reorder rate below: {near.loc[near['free_delivery'] == 0, 'repeat_within_90_days'].mean():.3f}")
-print(f"reorder rate above: {near.loc[near['free_delivery'] == 1, 'repeat_within_90_days'].mean():.3f}")
+rate_below = near.loc[near["free_delivery"] == 0, "repeat_within_90_days"].mean()
+rate_above = near.loc[near["free_delivery"] == 1, "repeat_within_90_days"].mean()
+print(f"reorder rate below: {rate_below:.3f}")
+print(f"reorder rate above: {rate_above:.3f}")
 ```
 
 ```
@@ -1593,7 +1609,8 @@ The estimate moves by a couple of points depending on the comparison group, and 
 ```python
 placebo_data = panel[panel["month"] < "2025-10-01"].copy()
 placebo_data["fake_after"] = (placebo_data["month"] >= "2025-01-01").astype(int)
-placebo = smf.ols("log_orders ~ treated:fake_after + C(region) + C(month)", data=placebo_data).fit()
+placebo = smf.ols("log_orders ~ treated:fake_after + C(region) + C(month)",
+                  data=placebo_data).fit()
 effect = placebo.params["treated:fake_after"]
 low, high = placebo.conf_int().loc["treated:fake_after"]
 print(f"placebo effect: {100 * (np.exp(effect) - 1):+.1f}%  "
@@ -1634,7 +1651,8 @@ long = pd.concat([
     qbr.assign(year=2024, log_revenue=qbr["log_2024"]),
     qbr.assign(year=2025, log_revenue=qbr["log_2025"])])
 long["after"] = (long["year"] == 2025).astype(int)
-did_qbr = smf.ols("log_revenue ~ in_qbr_program:after + C(customer_id) + C(year)", data=long).fit()
+did_qbr = smf.ols("log_revenue ~ in_qbr_program:after + C(customer_id) + C(year)",
+                  data=long).fit()
 effect = did_qbr.params["in_qbr_program:after"]
 print(f"DiD estimate: {100 * (np.exp(effect) - 1):+.1f}%")
 print(f"matching:     {100 * (np.exp(matched_effect) - 1):+.1f}%")
@@ -1712,8 +1730,9 @@ In a formula, `I(...)` means "compute this inside the formula": `I(centred ** 2)
 def synthetic_gap(target):
     donors = [r for r in ["West", "South", "East", "North"] if r != target]
     pre = wide_panel[wide_panel.index < "2025-10-01"]
-    fit = minimize(lambda w: float(np.mean((pre[target].to_numpy() - pre[donors].to_numpy() @ w) ** 2)),
-                   np.repeat(1 / 3, 3), bounds=[(0, 1)] * 3,
+    def loss(w):
+        return float(np.mean((pre[target].to_numpy() - pre[donors].to_numpy() @ w) ** 2))
+    fit = minimize(loss, np.repeat(1 / 3, 3), bounds=[(0, 1)] * 3,
                    constraints=[{"type": "eq", "fun": lambda w: w.sum() - 1}], method="SLSQP")
     blend = wide_panel[donors].to_numpy() @ fit.x
     after = wide_panel.index >= "2025-10-01"
@@ -1766,7 +1785,8 @@ The mix of segments and regions is nearly identical either side of the cut-off. 
 
 ```python
 panel["t"] = ((panel["month"].dt.year - 2024) * 12 + panel["month"].dt.month)
-trend = smf.ols("log_orders ~ treated:is_after + C(region) + C(month) + treated:t", data=panel).fit()
+trend = smf.ols("log_orders ~ treated:is_after + C(region) + C(month) + treated:t",
+                data=panel).fit()
 effect = trend.params["treated:is_after"]
 low, high = trend.conf_int().loc["treated:is_after"]
 print(f"with a North-specific trend: {100 * (np.exp(effect) - 1):+.1f}% "
