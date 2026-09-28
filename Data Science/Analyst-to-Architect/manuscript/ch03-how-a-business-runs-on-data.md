@@ -195,7 +195,7 @@ Here are all three for Riverstone's first quarter of 2026:
 
 *Source: Mini database (Jan–Mar 2026).*
 
-![Grouped bars for January, February, and March 2026 showing booked, billed, and collected amounts](figures/fig3-3-booked-billed-collected.svg)
+![Labelled horizontal bars for January, February, and March 2026 showing booked, billed, and collected amounts](figures/fig3-3-booked-billed-collected.svg)
 
 *Figure 3.3 — Same company, same quarter, three honest answers to "what were sales?"*
 
@@ -263,7 +263,7 @@ Together, those answers are a **KPI definition**: Chapter 1's data dictionary on
 
 ### Leading and lagging
 
-**Lagging indicators**, like collections and gross margin, report what already happened: accurate, but too late to change. **Leading indicators**, like new leads, quotes, and bookings, move first: less certain, but early enough to act on. In Figure 3.2, steps on the left lead and steps on the right lag. A sales head who watches only collections learns about a bad quarter three months late.
+**Lagging indicators**, like collections and gross margin, report what already happened: accurate, but too late to change. **Leading indicators**, like new leads, quotes, and bookings, move first: less certain, but early enough to act on. In Figure 3.2, the early steps lead and the late steps lag. A sales head who watches only collections learns about a bad quarter three months late.
 
 ---
 
@@ -304,7 +304,7 @@ Anita needed margin and payment data from finance and order history from the ERP
 
 Go back to Figure 3.2 and ask one question at every step: *did a person copy, re-type, check, or carry data by hand here?* Figure 3.4 marks the answers.
 
-![The same ten steps of order 5001, with six steps highlighted in red where a person copies, re-types, or checks data by hand](figures/fig3-4-where-manual-work-hides.svg)
+![The same ten steps of order 5001, with six steps outlined and marked with an exclamation badge where a person copies, re-types, or checks data by hand](figures/fig3-4-where-manual-work-hides.svg)
 
 *Figure 3.4 — Six of the ten steps depend on someone moving data by hand.*
 
@@ -431,7 +431,7 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 
 **Step 3. Draw it.** Boxes for steps, arrows for handovers, the record written under each box, as in Figure 3.2.
 
-**Step 4. Mark the manual work.** Ask the five questions from section 3.7 at every step. Mark each manual handover in red, as in Figure 3.4.
+**Step 4. Mark the manual work.** Ask the five questions from section 3.7 at every step. Mark each manual handover with a symbol, as Figure 3.4 does with "!".
 
 **Step 5. Put a number on it:** hours per month for each manual step, with your assumptions.
 

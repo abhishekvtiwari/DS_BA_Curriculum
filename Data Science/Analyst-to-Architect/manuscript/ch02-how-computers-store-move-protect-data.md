@@ -12,7 +12,7 @@
 >
 > **Tools:** any computer. For the project: a spreadsheet program (Excel or Google Sheets) and a plain-text editor (Notepad on Windows, TextEdit on a Mac, or any code editor).
 >
-> **Practice data:** four Riverstone orders saved in five formats, and a demonstration API, both in the companion files (Appendix E). Every file size, output, and timing in this chapter comes from running those files.
+> **Practice data:** four Riverstone orders from the mini database (Jan–Mar 2026), saved in five formats in the companion files (Appendix E), and the replies of a small demonstration API. Every file size and every reply in this chapter is real.
 
 ---
 
@@ -96,17 +96,7 @@ And `Café` becomes `CafÃ©`. If you've ever seen `Ã©` or `â€™` in a rep
 
 ### How numbers are stored
 
-Whole numbers are stored exactly, as binary. Numbers with decimals are trickier. Most programs store them in a format called **floating point**, which is fast but can only store most decimals *approximately*. Ask Python to add 0.1 and 0.2:
-
-```
-0.30000000000000004
-```
-
-The tiny error is invisible in most charts, but it's why `0.1 + 0.2 = 0.3` can come out as *false* in a program, and why financial systems store money in exact decimal types instead (you'll meet `NUMERIC` in Chapter 12). Asked to add the same numbers as exact decimals, Python gives `0.3`.
-
-### How pictures and sound are stored
-
-A digital photo is a grid of tiny dots called **pixels**. Each pixel stores three numbers, for how much red, green, and blue light it has, usually one byte each. A 12-megapixel phone photo has 12 million pixels, so before compression it takes 12,000,000 × 3 = **36 MB**. The file on your phone is usually only a few megabytes, because it has been **compressed** (section 2.5). Sound is stored in a similar way: thousands of measurements of the sound wave every second.
+Whole numbers are stored exactly, as binary. Numbers with decimals are trickier. Most software stores decimals approximately, in a format called **floating point**, which is fast. Add 0.1 and 0.2 in many programs and the true stored answer is 0.30000000000000004, a hair more than 0.3. That's why systems that handle money store it in an exact decimal type.
 
 So text, numbers, photos, music, and video are all, in the end, long rows of 0s and 1s. What makes them different is the **agreement** about how to read those bits: the encoding or format.
 
@@ -122,16 +112,9 @@ Because data sizes range from a few bytes to many billions, we use prefixes, jus
 
 *Figure 2.1 — Each step is a thousand times bigger. The examples are typical sizes, not fixed rules.*
 
-A few sizes worth remembering: a page of plain English text is about 2–3 KB; a phone photo is typically a few MB; an hour of HD video is typically a few GB; and Riverstone's test file of 500,000 sales lines, which you'll meet in section 2.5, is 24 MB as a CSV.
+A few sizes worth remembering: a page of plain English text is about 2–3 KB; a phone photo is typically a few MB; and an hour of HD video is typically a few GB.
 
-### Why your 1 TB drive shows 931 GB
-
-There are two ways to count, and both are in use:
-
-- **Decimal (the SI standard):** 1 KB = 1,000 bytes, 1 MB = 1,000,000 bytes, 1 GB = 1,000,000,000 bytes. Drive makers and most network speeds use this.
-- **Binary:** 1 "KB" = 1,024 bytes (2¹⁰), 1 "MB" = 1,024 × 1,024 bytes, and so on. Windows, and some older software, count this way.
-
-The binary units have their own proper names, **KiB, MiB, GiB** (kibibyte, mebibyte, gibibyte), though few people use them in conversation. The difference grows with size. A drive sold as 1 TB holds 1,000,000,000,000 bytes. Divide by 1,024³ (the binary gigabyte) and you get **931.3**, which is the "GB" Windows displays. No space is missing; it's the same number of bytes counted in a different unit.
+> **Watch out: why your 1 TB drive shows 931 GB.** A drive sold as 1 TB holds a trillion bytes. Windows divides by 1,024 at each step instead of 1,000, so it shows about 931 GB. Nothing is missing.
 
 ### Bits for speed, bytes for size
 
@@ -144,7 +127,7 @@ Internet speeds are quoted in **megabits per second (Mbps)**, with a small *b*. 
 
 ### Size limits you'll actually hit
 
-- **Excel** holds at most **1,048,576 rows** and **16,384 columns** per sheet. Long before that, a large workbook becomes slow to open and save. A dataset with millions of rows belongs in a database (Chapter 12) or a format such as Parquet (section 2.5).
+- **Excel** holds at most **1,048,576 rows** and **16,384 columns** per sheet. Long before that, a large workbook becomes slow to open and save. A dataset with millions of rows belongs in a database (section 2.6) or a format such as Parquet (section 2.5).
 - **Email attachments** are usually limited to a few tens of megabytes, which is one reason teams share large files by link instead.
 - **Cloud storage plans, phone storage, and laptop drives** are all limited, and duplicate copies of large files (`report_v1`, `report_v2`, `report_final`…) fill them quickly.
 
@@ -213,15 +196,17 @@ Report final (2).xlsx                 2026-02-28_monthly_sales_report.xlsx
 Report FINAL v3 use this one.xlsx     2026-03-31_monthly_sales_report.xlsx
 ```
 
-The right-hand names follow four habits: **a date first, written year-month-day**, so files sort in time order automatically (Chapter 1); **the same pattern every time**; **lower-case words joined with underscores or hyphens**, which avoids problems in code and web links; and **no words like "final"**, which are always eventually wrong. If you need versions, use the version history in Google Drive, OneDrive, or SharePoint, or, for queries and code, Git (Chapter 26).
+The right-hand names follow four habits: **a date first, written year-month-day**, so files sort in time order automatically (Chapter 1); **the same pattern every time**; **lower-case words joined with underscores or hyphens**, which avoids problems in code and web links; and **no words like "final"**, which are always eventually wrong. If you need versions, use the version history in Google Drive, OneDrive, or SharePoint (section 2.9), or, for queries and code, a version-control tool called Git.
 
 ---
 
-## 2.5 Data file formats: the same data, packed six ways
+## 2.5 Data file formats: the same data, packed five ways
 
-Riverstone's sales coordinator exports four February orders. Here is exactly the same data saved in five data formats. Look at what each one looks like inside; the differences explain when to use each.
+Riverstone's sales coordinator exports four February orders. Here is exactly the same data saved in five formats (and a note on PDF). Look at what each one looks like inside; the differences explain when to use each.
 
 ### CSV: a table as plain text
+
+*Mini database (Jan–Mar 2026): orders 5006 to 5009.*
 
 ```
 order_id,customer_name,order_date,status,sales_rep,net_revenue,delivery_note
@@ -237,7 +222,7 @@ Look closely and you'll find three of CSV's limits:
 
 1. **Commas inside values need quotes.** Northgate's delivery note contains a comma, so it's wrapped in double quotes. Without them, a program would see an extra column.
 2. **A blank is just nothing.** Order 5008's missing sales rep is two commas in a row. CSV can't tell "unknown", "not applicable", and an empty text value apart (Chapter 1).
-3. **There are no types.** Everything in a CSV is text. When a program reads this file back, `2026-02-06` arrives as text, not a date, unless the program guesses or you tell it. Reading it back with Python's pandas library, `order_date` comes back as text while `net_revenue` is guessed to be a number.
+3. **There are no types.** Everything in a CSV is text. When a program reads this file back, `2026-02-06` arrives as text, not a date, unless the program guesses or you tell it.
 
 > **Watch out: opening a CSV in Excel changes it.** When Excel opens a CSV directly, it guesses a type for every value, and some guesses silently change your data: product codes like `00451` lose their leading zeros and become `451`; long ID numbers turn into `4.52E+13`; codes like `3-4` or `1/2` can become dates. If you then save, the damage is written back into the file. Instead, use *Data → From Text/CSV* (Excel) or *File → Import* (Google Sheets), and set code and ID columns to **Text** before loading. If `₹` or accented names appear garbled, choose **UTF-8** as the file's encoding in that same import window (section 2.1).
 
@@ -301,51 +286,35 @@ That structure lets a workbook hold far more than a CSV: several sheets, real da
 
 ### PDF: made for reading, not for data
 
-A **PDF** fixes exactly how a document looks on screen and on paper, which makes it ideal for invoices, contracts, and reports people read. It's poor for data: a table in a PDF is stored as text placed at positions on a page, not as rows and columns, so copying it into a spreadsheet often scrambles the columns. When someone offers you data "as a PDF", ask whether the CSV or Excel export behind it exists. (When it doesn't, Chapter 58 shows how AI tools can extract tables from documents, with checks.)
+A **PDF** fixes exactly how a document looks on screen and on paper, which makes it ideal for invoices, contracts, and reports people read. It's poor for data: a table in a PDF is stored as text placed at positions on a page, not as rows and columns, so copying it into a spreadsheet often scrambles the columns. When someone offers you data "as a PDF", ask whether the CSV or Excel export behind it exists.
 
 ### Parquet: built for large-scale analysis
 
-**Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms (Part V). You can't read it as text: the file begins with the four letters `PAR1`, and the rest is compressed binary data. What makes it special is how it's laid out.
+**Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms. You can't read it as text: it's compressed binary data.
 
 ![Row storage in CSV compared with column storage in Parquet](figures/fig2-2-row-vs-column-storage.svg)
 
-*Figure 2.2 — CSV stores data row by row; Parquet stores it column by column.*
+*Figure 2.2 — CSV stores data row by row; Parquet stores it column by column. The four sales lines are an example, not from either Riverstone database.*
 
-A CSV stores **row by row**: order 1's date, customer, product, quantity; then order 2's. Parquet stores **column by column**: all the dates together, then all the customers, then all the quantities. Two big benefits follow. To total the quantity column, a program reads only that column and skips the rest. And values in one column are similar to each other (a column of dates, a column of product IDs), so they **compress** very well. Parquet also stores each column's **type**, so dates come back as dates.
-
-For four orders, Parquet's advantages are invisible: the file is **4,872 bytes**, bigger than the CSV, because of the information it stores about its own structure. Its advantages appear at scale.
-
-### The same test at scale
-
-To see the differences properly, the same 500,000 sales lines, with 8 columns, were saved in each format and read back with Python on a small two-processor cloud computer:
-
-| Format | File size | Time to read everything | Time to read one column |
-|---|---|---|---|
-| CSV | 24.1 MB | 0.23 s | 0.10 s |
-| CSV, compressed with gzip | 4.7 MB | — | — |
-| JSON | 82.6 MB | 1.43 s | — |
-| Excel (.xlsx) | 18.3 MB | 31.4 s | — |
-| **Parquet** | **4.3 MB** | **0.02 s** | **0.003 s** |
-
-Exact times depend on the computer, but the pattern holds everywhere. **Parquet was the smallest file, and about ten times faster than CSV to read in full.** Excel took more than a hundred times longer than CSV to read, because every cell has to be unpacked from zipped XML. JSON was the largest, because it repeats all eight column names on every one of the 500,000 rows.
+A CSV stores data **row by row**; Parquet stores it **column by column**, so a program that totals one column reads only that column, and similar values sitting together **compress** very well. Parquet also stores each column's **type**, so dates come back as dates. For four orders its advantages are invisible (the file is **4,872 bytes**, bigger than the CSV, because it also describes its own structure); they appear when a file holds millions of rows.
 
 ### Compression
 
-**Compression** makes files smaller by writing repeated patterns more efficiently. Zipping the CSV cut it from 24.1 MB to 4.7 MB, because a column like `status` repeats the same few words half a million times. There are two kinds:
+**Compression** makes files smaller by writing repeated patterns more efficiently. There are two kinds:
 
 - **Lossless** compression (ZIP, gzip, and the compression inside Parquet and `.xlsx`) gives back **exactly** the original bytes when you unpack it. Data files must only ever use lossless compression.
-- **Lossy** compression (JPEG photos, MP3 music, most video) throws away detail people are unlikely to notice. It's fine for a photo, and unacceptable for a sales ledger.
+- **Lossy** compression (JPEG photos, MP3 music, most video) throws away detail people won't notice: that's how photos and music are made so small. It's fine for a photo, and unacceptable for a sales ledger.
 
 ### Choosing a format
 
-| Format | People can read it as text? | Keeps types? | Size | Opens in Excel? | Best for |
-|---|---|---|---|---|---|
-| **CSV** | yes | no | small | yes (import carefully) | moving tables between systems; simple exports |
-| **Excel** | no (needs Excel or similar) | yes | medium | yes | files people will read, filter, and work in |
-| **JSON** | yes | partly | large | with Power Query | apps and APIs; nested records |
-| **XML** | yes | partly | large | with Power Query | older systems, e-invoicing, Office internals |
-| **PDF** | no | no | varies | no | documents for reading and printing |
-| **Parquet** | no | yes | smallest | no (Power BI and Python can read it) | large datasets for analysis |
+| Format | People can read it as text? | Keeps types? | Size | Best for |
+|---|---|---|---|---|
+| **CSV** | yes | no | small | moving tables between systems; simple exports |
+| **Excel** | no (needs Excel or similar) | yes | medium | files people will read, filter, and work in |
+| **JSON** | yes | partly | large | apps and APIs; nested records |
+| **XML** | yes | partly | large | older systems, e-invoicing, Office internals |
+| **PDF** | no | no | varies | documents for reading and printing |
+| **Parquet** | no | yes | smallest | large datasets for analysis |
 
 > **Real-life example: why the data team asks for "the raw export".** A manager sends a PDF of last quarter's sales, laid out beautifully. To analyze it, the analyst has to copy 40 pages of tables by hand or with a converter, and check every row. The same data exported from the billing system as CSV takes ten seconds to load. The rule most data teams follow: **PDF and formatted Excel for people who read; CSV, JSON, or Parquet for machines that process.**
 
@@ -365,7 +334,7 @@ A **database** is software built to avoid those problems. It keeps data in **tab
 
 Most business databases run as a **database server**: a program on a computer, usually in a data center or the cloud, that other programs connect to over the network. (A few, like SQLite, which runs inside many phone apps, store the whole database in a single file.) Underneath, a database still saves its data in files on storage; you just never touch those files directly.
 
-This one page is only a preview. **Chapter 12** teaches databases and SQL properly, from creating your first table onward.
+This one page is only a preview; later chapters teach databases and SQL properly, from creating your first table onward.
 
 ---
 
@@ -383,21 +352,13 @@ The **internet** is a worldwide network of networks that carries data between cl
 - **DNS** (Domain Name System). People remember names like `riverstone.example`, not numbers. DNS works like a phone book, turning a name into an IP address before your request is sent.
 - **HTTP and HTTPS.** These are the rules for how a browser or program asks a web server for something and gets a reply. **HTTPS** is the secure version: everything sent is **encrypted**, so people along the route can't read or change it. The padlock icon in a browser means the connection uses HTTPS. It does *not* mean the website itself is trustworthy.
 
-Data on the internet travels in small **packets**, each finding its own route, then reassembled at the other end. You never see that, but it's why a large file arrives in pieces and why a slow connection affects everything at once.
-
 ### The cloud
 
 "The cloud" sounds mysterious. It's simpler than it sounds: **the cloud is computers in someone else's data center that you rent over the internet**, instead of buying and running your own. The largest providers include Amazon Web Services (AWS), Microsoft Azure, and Google Cloud.
 
-Businesses rent at three levels, depending on how much they want to manage themselves:
+Companies rent anything from bare computers to finished applications like Gmail or a CRM. The finished-application kind is called **SaaS**, software as a service, and it's the kind you'll meet first at work.
 
-| Level | You rent… | You still manage… | Examples |
-|---|---|---|---|
-| **IaaS** (infrastructure as a service) | virtual computers, storage, and networks | the operating system, software, and data | a virtual server to run your own database |
-| **PaaS** (platform as a service) | a ready-to-use platform, such as a managed database | your data and how you use it | a cloud PostgreSQL service that handles backups and updates for you |
-| **SaaS** (software as a service) | a finished application, used through a browser | your data and your settings | Gmail, Google Drive, Microsoft 365, CRM and accounting software |
-
-Why companies move to the cloud: they **pay for what they use** instead of buying servers upfront, they can **grow or shrink** in minutes, and the provider handles power, hardware failures, and much of the security. The trade-offs: bills that grow quietly if nobody watches them (Chapter 65), dependence on one provider, and questions about **where the data is physically stored**. Many companies, and some laws, require certain data to stay in a particular country, so cloud services let customers choose a **region** for their data.
+Why companies move to the cloud: they **pay for what they use** instead of buying servers upfront, they can **grow or shrink** in minutes, and the provider handles power, hardware failures, and much of the security. The trade-offs: bills that grow quietly if nobody watches them, dependence on one provider, and questions about **where the data is physically stored**. Many companies, and some laws, require certain data to stay in a particular country, so cloud services let customers choose a region for their data.
 
 ---
 
@@ -413,7 +374,7 @@ The restaurant analogy is the classic one. You don't walk into the kitchen and t
 
 ### A real request and response
 
-The companion files include a tiny demonstration API for Riverstone that runs on your own computer (Appendix E). A **request** asks for one order by its address, and includes an **API key**, a secret code that proves the caller is allowed in. Here's the full reply to a request for order 5009, sent with the `curl` command-line tool:
+Riverstone has a small demonstration API that serves orders from the mini database (Jan–Mar 2026). A **request** asks for one order by its address, and includes an **API key**, a secret code that proves the caller is allowed in. Here's the full reply the demonstration API sends back when a program asks for order 5009:
 
 ```
 HTTP/1.0 200 OK
@@ -468,22 +429,19 @@ The first digit tells you who's responsible: **2** means it worked, **4** means 
 | Code | Meaning | What to do |
 |---|---|---|
 | `200 OK` | it worked | read the body |
-| `201 Created` | a new record was created | note the new record's ID |
-| `400 Bad Request` | the request is malformed | check what you sent |
 | `401 Unauthorized` | no valid key or login | check the API key |
-| `403 Forbidden` | you're recognized, but not allowed to do this | ask for the right permission |
 | `404 Not Found` | no such record or address | check the ID and the address |
 | `429 Too Many Requests` | you've hit the API's **rate limit** | slow down and retry later |
 | `500 Internal Server Error` | the server failed | retry later; tell the API's owner if it persists |
 
 ### Why APIs matter to data people
 
-Most modern business software, including CRMs, accounting tools, payment gateways, e-commerce platforms, and ad platforms, offers an API. That's what makes automation possible: a script can pull yesterday's invoices every morning without anyone logging in and clicking *Export*, and a dashboard can refresh itself. You'll call real APIs from Python in Chapter 18, automate reports with them in Chapter 20, and design how whole systems exchange data in Chapter 51.
+Most modern business software, including CRMs, accounting tools, payment gateways, e-commerce platforms, and ad platforms, offers an API. That's what makes automation possible: a script can pull yesterday's invoices every morning without anyone logging in and clicking *Export*, and a dashboard can refresh itself.
 
 Two more terms you'll hear:
 
 - A **webhook** is an API in reverse. Instead of your program asking "anything new?" every five minutes, the other system calls *your* address the moment something happens, such as "payment received".
-- **API keys are passwords.** Anyone who has the key can do whatever the key allows. Never paste one into a spreadsheet, a shared document, a chat, or code you publish online. Chapter 20 shows how to store them safely.
+- **API keys are passwords.** Anyone who has the key can do whatever the key allows. Never paste one into a spreadsheet, a shared document, a chat, or code you publish online.
 
 ---
 
@@ -513,7 +471,7 @@ Most data breaches start with a person, not a clever technical attack: a reused 
 
 ### Access: the principle of least privilege
 
-**Give each person and program only the access they need, and nothing more.** An analyst who builds sales reports needs to *read* the sales tables, not change them, and doesn't need salary data at all. That's why, as Chapter 12 mentions, many companies give analysts **read-only** accounts. Least privilege limits the damage from a mistake or a stolen password.
+**Give each person and program only the access they need, and nothing more.** An analyst who builds sales reports needs to *read* the sales tables, not change them, and doesn't need salary data at all. That's why many companies give analysts **read-only** accounts. Least privilege limits the damage from a mistake or a stolen password.
 
 ### Encryption
 
@@ -524,17 +482,14 @@ Most data breaches start with a person, not a clever technical attack: a reused 
 
 ### Integrity checks: fingerprints for files
 
-How do you know a file hasn't been changed, even by one character? Computers calculate a **hash**: a fixed-length "fingerprint" of the data. The same data always gives the same hash, and the smallest change gives a completely different one. Here are the SHA-256 hashes of two payment instructions that differ only in the order of two digits:
+How do you know a file hasn't been changed, even by one character? Computers calculate a **hash**, a "fingerprint" of the data: the same data always gives the same fingerprint, and the smallest change gives a completely different one. Here are the first 12 characters of the fingerprints of two payment lines that differ only in the order of two digits:
 
 ```
-Text:    Pay Rs 14,700 to Riverstone Supplies
-SHA-256: f4251ff3fb7191f7e79677f3b1871db06c0935c3cc08164496995f1f909f6f71
-
-Text:    Pay Rs 17,400 to Riverstone Supplies
-SHA-256: 9d2f842c50110e140abd578e7e8460d1f6f2bbca7eba341ce1e5bee43566d0fa
+Pay Rs 14,700 to Riverstone Supplies    f4251ff3fb71…
+Pay Rs 17,400 to Riverstone Supplies    9d2f842c5011…
 ```
 
-Nothing about the second fingerprint resembles the first. Software uses hashes to check that downloads arrived undamaged, that backups match the original, and that passwords are stored safely (systems store a hash of your password, not the password itself). Data pipelines use them to detect whether a file has changed since yesterday (Chapter 45).
+Software uses hashes to check that downloads arrived undamaged, that backups match the original, and that passwords are stored safely (systems store a hash of your password, not the password itself).
 
 ### Backups and versions
 
@@ -549,7 +504,7 @@ Two points people often miss:
 - **Syncing is not backing up.** Cloud storage such as Google Drive or OneDrive **copies every change** to every device, including deleting a file or saving over it with a mistake. Version history and a recycle bin help, but only for a limited time. A true backup is a separate copy that your everyday mistakes don't touch.
 - **Test your restore.** Many organizations discover their backups were incomplete only on the day they need them.
 
-**Version history** is backup's everyday cousin. Google Drive, OneDrive, and SharePoint keep earlier versions of a file, so you can see who changed what and roll back a bad edit. Use it instead of saving `report_v7_FINAL.xlsx`. For SQL queries and code, Git does the same job more precisely (Chapter 26).
+**Version history** is backup's everyday cousin. Google Drive, OneDrive, and SharePoint keep earlier versions of a file, so you can see who changed what and roll back a bad edit. Use it instead of saving `report_v7_FINAL.xlsx`. For SQL queries and code, Git does the same job more precisely.
 
 ### Personal data
 
@@ -594,7 +549,7 @@ Riverstone's fix used nothing more advanced than this chapter:
 - History moved out of the workbook into a **database**, and the report kept only the latest weeks, so it opened in seconds.
 - Every company laptop was **encrypted**, customer phone numbers were removed from reports that didn't need them, and the IT team set up **tested 3-2-1 backups**.
 
-None of those changes required a data engineer. They required someone who understood files, formats, APIs, and basic security well enough to notice what was wrong. Chapter 20 takes this exact report and automates it end to end.
+None of those changes required a data engineer. They required someone who understood files, formats, APIs, and basic security well enough to notice what was wrong. Later in the book you'll automate a report of exactly this kind, Riverstone's Daily Sales Flash, end to end.
 
 ---
 
@@ -603,7 +558,7 @@ None of those changes required a data engineer. They required someone who unders
 - **A plain-text editor.** Notepad (Windows), TextEdit in plain-text mode (Mac), or a free code editor such as Visual Studio Code. Opening a CSV or JSON file in a text editor shows you what's really inside, without a spreadsheet's guesses.
 - **Excel or Google Sheets**, for the project. Learn the *import* routes (*Data → From Text/CSV* in Excel; *File → Import* in Google Sheets), not just double-clicking.
 - **A password manager and an authenticator app.** Set them up for your own accounts this week.
-- **The companion files** (Appendix E): `orders_feb_2026` in `.csv`, `.xlsx`, `.json`, `.xml`, and `.parquet`; and `api_demo.py`, the demonstration API used in section 2.8, which you'll run yourself in Chapter 18.
+- **The companion files** (Appendix E): `orders_feb_2026` in five formats, for the project.
 
 ---
 
@@ -655,7 +610,7 @@ None of those changes required a data engineer. They required someone who unders
 - Files have **paths** and **extensions**. Name them date-first, never "final", and watch for hidden extensions.
 - **CSV** is universal but has no types; **Excel** is for people; **JSON** and **XML** carry labeled data between systems; **PDF** is for reading; **Parquet** is compact, typed, and fast for large-scale analysis. Import CSVs carefully.
 - **Databases** let many people use data at once, with rules and SQL.
-- A **server** answers a **client's** requests over the **internet**; **HTTPS** encrypts the connection; the **cloud** is rented computers and services (IaaS, PaaS, SaaS).
+- A **server** answers a **client's** requests over the **internet**; **HTTPS** encrypts the connection; the **cloud** is rented computers and services, up to finished applications (**SaaS**).
 - An **API** is the waiter between programs: a request goes in, a response with a **status code** and usually JSON comes back. API keys are passwords.
 - Protect **confidentiality, integrity, and availability**: unique passwords, MFA, least privilege, encryption, hashes, tested **3-2-1 backups**, version history, careful handling of personal data, and reporting mistakes immediately.
 
@@ -677,13 +632,13 @@ None of those changes required a data engineer. They required someone who unders
 7. This line comes from a CSV file with seven columns. What's wrong with it, and how should it be written?
    `5010,Green Leaf Hotels,2026-03-03,Delivered,Farah Khan,20100.00,Leave at reception, back gate`
 8. A script calls Riverstone's API and gets these replies on different days: `401`, `404`, `429`, `503`. For each, say whether the problem is probably on the script's side or the server's, and what you'd do.
-9. Section 2.9 shows two SHA-256 hashes. A colleague sends you a backup file and its hash. You calculate the hash of the file you received and get a different value. What does that tell you, and what doesn't it tell you?
+9. Section 2.9 shows the hashes of two payment lines. A colleague sends you a backup file and its hash. You calculate the hash of the file you received and get a different value. What does that tell you, and what doesn't it tell you?
 
 ### Stretch
 
 10. Kavya keeps her only copy of her spending logs in a Google Drive folder that syncs to her laptop. Does her setup meet the 3-2-1 rule? Describe one thing that could lose her data anyway, and a change that would fix it.
 11. Riverstone's new product codes look like `00731`. Describe exactly how a code can lose its leading zeros between the billing system's CSV export and the price lookup in a workbook, and give two ways to prevent it.
-12. A 12-megapixel photo is 36 MB before compression, but the file on the phone is 3 MB. Could a sales ledger be compressed the same way? Explain using the terms lossless and lossy.
+12. Why must a sales ledger only ever be compressed losslessly? Give one example of what lossy compression would do to it.
 
 ### Think about it (no calculation needed)
 
@@ -695,7 +650,7 @@ None of those changes required a data engineer. They required someone who unders
 
 ## Key terms
 
-bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · pixel · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · KiB / MiB / GiB · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · columnar storage · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · packet · cloud · IaaS · PaaS · SaaS · region · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · SHA-256 · ransomware · backup · 3-2-1 rule · sync · version history · personal data
+bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -705,23 +660,23 @@ bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (
 
 - **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
 - **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
-- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill.
-- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs.
-- **Chapter 20** automates the Friday report from this chapter, including storing API keys safely.
-- **Part V (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale; **Chapter 64** covers security, privacy, and governance in depth.
+- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
+- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
+- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
+- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
+- **Chapter 26** uses Git to keep versions of queries and code.
+- **Part V (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
 - **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
 
 ---
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
-**1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Using binary units instead, the answers would be 3,584 MiB, about 244 MiB, and 2,048 GiB. Either is acceptable if you say which you used.)
+**1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Counting in steps of 1,024 instead, as Windows does, the answers would be 3,584, about 244, and 2,048. Either is acceptable if you say which you used.)
 
 **2.** `Riverstone` is 10 plain English letters: **10 bytes**. `₹500` is **6 bytes**: 3 for `₹` and 1 for each digit.
 
-**3.** Nothing is wrong. The maker counts 512 GB as 512,000,000,000 bytes, while Windows divides by 1,024³ and shows about 476.8 "GB", which is really GiB; it's the same storage measured in a different unit.
+**3.** Nothing is wrong. The maker counts 512 GB as 512,000,000,000 bytes, while Windows divides by 1,024 at each step (1,024 × 1,024 × 1,024) and shows about 476.8 GB; it's the same storage counted a different way.
 
 **4.** `2026-03-31_stock.csv`: a CSV table as plain text; a spreadsheet or text editor. `invoice_9007.pdf`: a PDF document; a PDF reader or browser. `po_template.xlsm`: an Excel workbook that can contain macros; Excel (be careful enabling macros from unknown senders). `export.json`: JSON data; a text editor, code editor, or a program that reads JSON. `setup.exe`: a Windows program that runs when opened; only open it if you trust exactly where it came from.
 
@@ -740,7 +695,7 @@ bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (
 
 **11.** The billing system writes `00731` correctly into the CSV as text. When someone **double-clicks** the CSV, Excel guesses that `00731` is a number and stores **731**. If the file is saved, the damage is written back. The price list still says `00731`, so a lookup for `731` finds nothing. Prevention: (1) import the CSV with *Data → From Text/CSV* and set the product code column to **Text** before loading; (2) better still, get the data from the source system through a connection or an API that keeps the column's type, so no one opens the raw CSV at all. (Adding a letter prefix to codes, such as `P00731`, also prevents it, but changing codes is a business decision.)
 
-**12.** Only with **lossless** compression. A photo can use **lossy** compression (JPEG) because discarding tiny details people won't notice doesn't matter. A sales ledger can't lose a single digit, so it must use lossless compression, such as ZIP, which restores exactly the original bytes. Ledgers compress very well anyway, because columns such as status, product, and customer repeat the same values many times: the 24.1 MB CSV in section 2.5 zipped to 4.7 MB with nothing lost.
+**12.** A sales ledger can't lose a single digit: every amount, date, and code must come back exactly as it was written, so only **lossless** compression, such as ZIP, which restores exactly the original bytes, is safe. **Lossy** compression throws detail away, which is fine for a photo but not for data. On a ledger it might, for example, round ₹14,640.00 to ₹14,600 or turn product code `00731` into something close but different, and nobody could get the original values back. Ledgers compress well losslessly anyway, because columns such as status, product, and customer repeat the same values many times.
 
 **13.** Risks: (1) nobody can tell who made a change or deleted a record, so mistakes and misuse can't be traced; (2) when someone leaves the team, they still know the password, and removing their access means changing it for everyone; (3) anyone who can read the chat, on any device, including a lost phone, can log in; and a single leaked password exposes the whole CRM. Better: one account per person, with permissions matched to each role (least privilege), MFA switched on, and access removed promptly when people leave.
 

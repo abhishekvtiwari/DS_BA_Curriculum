@@ -188,7 +188,7 @@ The right question is: *what single, steady monthly rate would take ₹202,640 t
 
 "The eleventh root" sounds hard, but a root only undoes a power. 1.073 multiplied by itself 11 times gives 2.17, so 1.073 is the "eleventh root" of 2.17. You never work it out by hand: type `2.17`, press the power key (xʸ), then `(1 ÷ 11)`.
 
-![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to 782,621](figures/fig4-2-average-growth-vs-compound.svg)
+![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to ₹782,621](figures/fig4-2-average-growth-vs-compound.svg)
 
 *Figure 4.2 — The 13.1% path, built from the average of the monthly changes, overshoots December by ₹342,797. The 7.3% compound path connects the real start and end.*
 
@@ -232,7 +232,7 @@ Riverstone received 173 orders in 2025 (not counting the two that were cancelled
 - **Median:** sort the 173 order values; the 87th is **₹21,375**.
 - **Mode:** order values are almost never exactly equal, so the mode of the values themselves is useless here. The mode is useful for categories and repeated counts instead: the most commonly ordered product is the Storage Box 10L (on 76 order lines), the most common quantity on a line is 15, and the most common discount is 0% (140 of 326 lines).
 
-![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to 100,278; the median line at 21,375 sits left of the mean line at 25,061](figures/fig4-3-order-values-mean-vs-median.svg)
+![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to ₹100,278; the median line at ₹21,375 sits left of the mean line at ₹25,061](figures/fig4-3-order-values-mean-vs-median.svg)
 
 *Figure 4.3 — Most orders are small; a few large ones stretch the tail to the right and pull the mean above the median.*
 

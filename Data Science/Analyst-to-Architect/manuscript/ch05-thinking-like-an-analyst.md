@@ -150,7 +150,7 @@ The branches of a good tree are **MECE** (pronounced "mee-see"): **mutually excl
 
 ![Two ways to split Riverstone's eight customers: "big, in Mumbai, new in 2026" overlaps and leaves Patel Kitchenware out; "retail, wholesale, hospitality" puts every customer in exactly one group](figures/fig5-3-mece-bad-and-good-splits.svg)
 
-*Figure 5.3 — The left split double-counts two customers and misses one. The right split is MECE.*
+*Figure 5.3 — The top split double-counts two customers and misses one. The bottom split is MECE.*
 
 In Figure 5.3, splitting customers into "big", "in Mumbai", and "new in 2026" puts Metro Mart and Northgate in two groups each and Patel Kitchenware in none, so group totals won't match the company's revenue, and a conclusion like "the problem is new customers" might really be about Mumbai. Split by segment instead, and every customer sits in exactly one group.
 
