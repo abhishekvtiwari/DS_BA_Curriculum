@@ -226,19 +226,18 @@ import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 
-found = load_dotenv()          # read .env in this folder into os.environ
+found = load_dotenv(".env")    # read the .env file in this folder into os.environ
 print("found .env:", found)
 print(sorted(name for name in os.environ if name.startswith(("RIVERSTONE_", "SMTP_", "FLASH_"))))
 engine = create_engine(os.environ["RIVERSTONE_DB"])
 ```
 
 ```
-found .env: False
-[]
-KeyError: 'RIVERSTONE_DB'
+found .env: True
+['FLASH_FAILURE_TO', 'FLASH_TO', 'RIVERSTONE_DB', 'SMTP_HOST', 'SMTP_PASSWORD', 'SMTP_PORT', 'SMTP_USER']
 ```
 
-- **`load_dotenv()`** looks for `.env` in the current folder, adds each line to `os.environ`, and returns `True` if it found the file. It never overwrites a variable that is already set, so a server can set the real values another way and the same code still works.
+- **`load_dotenv(".env")`** reads the `.env` file in the current folder, adds each line to `os.environ`, and returns `True` if it found the file. It never overwrites a variable that is already set, so a server can set the real values another way and the same code still works.
 - **The second `print`** lists the setting *names* only. Never print the values: a log with a password in it is as bad as a script with one.
 - **`os.environ["RIVERSTONE_DB"]`** fails loudly with a `KeyError` if the setting is missing, which is what you want; a report that quietly connects to the wrong database is worse.
 
@@ -267,7 +266,22 @@ print(trend[["order_date", "lakh"]].round(1).to_string(index=False))
 ```
 
 ```
-NameError: name 'engine' is not defined
+14 days
+order_date  lakh
+2025-12-05  29.4
+2025-12-06  33.5
+2025-12-07  37.8
+2025-12-08  30.0
+2025-12-09  24.9
+2025-12-10  31.3
+2025-12-11  31.4
+2025-12-12  32.8
+2025-12-13  33.2
+2025-12-14  35.9
+2025-12-15  30.6
+2025-12-16  33.5
+2025-12-17  36.0
+2025-12-18  25.1
 ```
 
 - **`day - timedelta(days=13)`** is 5 December: with `BETWEEN`, which includes both ends, that is 14 days ending on the 18th. The dates are passed as parameters (`:start`, `:day`), never pasted into the SQL (Chapter 18, section 18.13).
@@ -309,7 +323,7 @@ print(type(png).__name__, len(png), "bytes, starting", png[:8])
 ```
 
 ```
-NameError: name 'trend' is not defined
+bytes 31983 bytes, starting b'\x89PNG\r\n\x1a\n'
 ```
 
 - **`style_axes`** is Chapter 18's function (section 18.11), copied in, with a smaller title font so the title fits a 620-pixel image.
@@ -344,7 +358,8 @@ print(preview_tag[:70] + " …")
 ```
 
 ```
-NameError: name 'png' is not defined
+31983 bytes became 42644 characters of text
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA04AAAFmCAYAAA …
 ```
 
 - **`base64.b64encode(png)`** returns the encoded text still as bytes; **`.decode("ascii")`** turns it into an ordinary string. It comes out about a third longer than the picture.
@@ -402,7 +417,12 @@ for part in message.walk():
 ```
 
 ```
-KeyError: 'SMTP_USER'
+flash@riverstone.example → you@riverstone.example
+multipart/alternative 
+text/plain 
+multipart/related 
+text/html 
+image/png <flash-chart@riverstone>
 ```
 
 - **`message["Subject"] = …`** sets a header, the lines at the top of every email. `From` and `To` come from the `.env` settings, not the code.
@@ -433,7 +453,8 @@ print([part.get_content_type() for part in message.walk()])
 ```
 
 ```
-NameError: name 'trend' is not defined
+text/csv 324 bytes
+['multipart/mixed', 'multipart/alternative', 'text/plain', 'multipart/related', 'text/html', 'image/png', 'text/csv']
 ```
 
 - **`mimetypes.guess_type(path)`** returns two things, the type and the file's compression (`None` here); `kind, _ =` keeps the first and ignores the second. For a `.xlsx` workbook it would be the long `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`; for a file type it doesn't know, it returns `None`, and the finished script falls back to `application/octet-stream` ("some bytes").
@@ -545,7 +566,7 @@ For a script on a Windows machine or VM:
 1. **Task Scheduler → Create Task** (not "Basic Task": you need the extra options).
 2. **General:** run whether the user is logged on or not; use a service account; tick "Run with highest privileges" only if you truly need it.
 3. **Triggers:** weekly, Monday to Friday, at 07:00, so the Flash is in inboxes by 07:30. The time is the machine's own local time, so check which time zone the VM is set to before you trust it: cloud VMs are often set to UTC.
-4. **Actions:** program `C:\riverstone\.venv\Scripts\python.exe`, arguments `daily_flash.py --send`, and **Start in** `C:\riverstone`, the script's folder. The most common cause of "it works when I run it, not when it's scheduled" is a missing working folder; here it would also mean the script can't find its `.env`.
+4. **Actions:** program `C:\riverstone\.venv\Scripts\python.exe`, arguments `daily_flash.py --send`, and **Start in** `C:\riverstone`, the script's folder. The most common cause of "it works when I run it, not when it's scheduled" is a missing working folder; it also decides where the log and the preview files are written.
 5. **Settings:** "Stop the task if it runs longer than 1 hour", and "If the task fails, restart every 10 minutes, up to 3 times". Retries are safe only once the job is idempotent (section 20.11): a rerun must not send a second email. Microsoft's reference says only that the task is restarted "if the task fails", and a script that starts, runs, and exits with an error code may not count as a failed task, so the Flash also does its own waiting for the data (section 20.11) rather than relying on this setting.
 
 ### cron
@@ -570,11 +591,11 @@ Its `Time zone:` line says, for example, `Etc/UTC (UTC, +0000)`. On a UTC server
 | `30 1 * * 1-5` | Minute 30, hour 1, any day of the month, any month, weekdays 1–5 (Monday to Friday). `0 7 * * *` would be 07:00 every day; `*/15 * * * *` every fifteen minutes |
 | `cd /opt/riverstone &&` | Go to the script's folder, and run the rest only if that worked (`&&`) |
 | `/opt/riverstone/.venv/bin/python` | The project's own Python, by its full path. cron runs with a minimal environment: no `PATH` you're used to and no virtual environment switched on, so give full paths |
-| `daily_flash.py --send` | No date: the script works out today in India itself, and reads its `.env` from the folder it's run in |
+| `daily_flash.py --send` | No date: the script works out today in India itself, and reads the `.env` file that sits next to it |
 | `>> logs/cron.log` | Add (`>>`) anything the job prints to the end of this file, instead of losing it; `>` would overwrite the file each time |
 | `2>&1` | Send error output (stream 2) to the same place as normal output (stream 1), so a crash is in the log too |
 
-Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv()` reads the file. Chapter 26 teaches `&&`, `>>`, and `2>&1` properly.
+Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv` reads the file. Chapter 26 teaches `&&`, `>>`, and `2>&1` properly.
 
 If the server is a Red Hat or Fedora machine, its cron (called *cronie*) also accepts a line `CRON_TZ=Asia/Kolkata` at the top of the crontab, and then the times below it are India time: `0 7 * * 1-5`. The cron on Ubuntu and Debian doesn't support this; there, the job runs by the server's clock, as above.
 
@@ -663,7 +684,16 @@ print("\nexceptions:", len(low), "→", low["product_name"].tolist())
 ```
 
 ```
-NameError: name 'engine' is not defined
+      product_name  quantity
+  Industrial Crate       345
+   Storage Box 25L       575
+   Water Bottle 1L       600
+     Lunch Box Set       790
+Food Container Set       855
+   Storage Box 10L      1005
+     Stackable Bin      1240
+
+exceptions: 1 → ['Industrial Crate']
 ```
 
 One product falls below the line, so the email carries one exception box. On a day when nothing does, the email says so in green rather than showing an empty table: **silence is ambiguous, and an empty box looks like a bug.**
@@ -694,7 +724,15 @@ print(compare.to_string(index=False))
 ```
 
 ```
-NameError: name 'engine' is not defined
+607 product-days of history
+      product_name  quantity    p10  below_p10
+  Industrial Crate       345  267.0      False
+   Storage Box 25L       575  922.5       True
+   Water Bottle 1L       600  991.0       True
+     Lunch Box Set       790  811.0       True
+Food Container Set       855  987.0       True
+   Storage Box 10L      1005 1232.0       True
+     Stackable Bin      1240 1266.0       True
 ```
 
 - **The query** adds up each product's units per day, for the 90 days before today (19 September to 17 December), so today can't influence its own threshold.
@@ -851,7 +889,10 @@ for name, passed, detail in checks(lines, day, previous):
 ```
 
 ```
-NameError: name 'engine' is not defined
+PASS  rows returned  (213 lines)
+PASS  all rows are today's  (2025-12-18)
+PASS  no missing revenue  (0 missing)
+PASS  revenue within 60% of recent median  (₹2,511,819 vs median ₹3,209,520)
 ```
 
 - **Each check is a tuple** of a name, `True` or `False`, and a detail for the log, so one loop can print them all and one line can ask whether all passed.
@@ -867,7 +908,10 @@ for name, passed, detail in checks(lines, date(2026, 1, 1), previous):
 ```
 
 ```
-NameError: name 'engine' is not defined
+FAIL  rows returned  (0 lines)
+PASS  all rows are today's  (2026-01-01)
+PASS  no missing revenue  (0 missing)
+FAIL  revenue within 60% of recent median  (₹0 vs median ₹2,932,108)
 ```
 
 Two checks pass with nothing to check. `.all()` on an empty column is `True`, because there is no row that breaks the rule; that is why "rows returned" must come first. The row check and the median check fail, and either is enough to stop the email. A check that fails is not a disaster; a check that doesn't exist is. The rule: **if a check fails, nothing is sent, and a person is told.**
@@ -883,7 +927,7 @@ print(f"₹{float(month_to_date['net_revenue'].iloc[0]):,.0f}")
 ```
 
 ```
-NameError: name 'engine' is not defined
+₹57,069,985
 ```
 
 `DATE_TRUNC('month', …)` cuts a date back to the 1st of its month (Chapter 13); `CAST(:day AS date)` tells PostgreSQL the parameter is a date. MySQL has no `DATE_TRUNC`: write `order_date >= DATE_FORMAT(:day, '%Y-%m-01')` instead. The finished script avoids both by working out the 1st of the month in Python, `day.replace(day=1)`, which works on any database. Don't reuse the 14-day window for month to date: it gives the right answer only by accident, on the 14th.
@@ -909,7 +953,8 @@ log.warning("%s product(s) below %s units", len(low), 500)
 ```
 
 ```
-NameError: name 'engine' is not defined
+INFO loaded 213 lines for 2025-12-18
+WARNING 1 product(s) below 500 units
 ```
 
 - **`StreamHandler(sys.stdout)`** writes to the screen. In a notebook that has to be `sys.stdout` for you to see it; in the script, `StreamHandler()` with no argument writes to *stderr*, which keeps log lines apart from the report's own output, as Chapter 17 said.
@@ -926,7 +971,8 @@ for line in last_two:
 ```
 
 ```
-
+INFO loaded 213 lines for 2025-12-18
+WARNING 1 product(s) below 500 units
 ```
 
 Write a log line per run with the numbers that matter: rows read, total, exceptions raised, recipients, seconds taken. Then a run that produces a strange number can be explained a month later. Keeping the log in a table (a `run_history` table, or a sheet) also gives you the previous-run comparison for the checks.
@@ -962,7 +1008,7 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     day = date.fromisoformat(args.day) if args.day else datetime.now(IST).date()
     setup_logging()
-    load_dotenv()                                        # .env in this folder -> os.environ
+    load_dotenv(Path(__file__).with_name(".env"))        # the .env next to this file -> os.environ
     run_key = f"flash_{day}"
     if args.send and already_sent(run_key):
         log.info("%s already sent; nothing to do", run_key)
@@ -1024,7 +1070,7 @@ def main(argv=None) -> int:
 
 Block by block:
 
-- **The first three lines** read the command line (section 20.7), set the day (today in India unless one is given), and set up the log (screen and file, as above). **`load_dotenv()`** reads `.env` (section 20.5).
+- **The first three lines** read the command line (section 20.7), set the day (today in India unless one is given), and set up the log (screen and file, as above). **`load_dotenv(...)`** reads the `.env` file that sits next to the script (section 20.5).
 - **The run key.** When sending, it first checks `runs/sent_keys.txt`; if today's key is there, it logs that and stops with exit code 0. That is what makes a retry, or a second click, safe.
 - **`try:`** wraps everything that can go wrong. **`--wait-for-load`** makes it wait for the overnight load first (exercise 22 builds the `load_status` table it reads; without the switch, it trusts the clock).
 - **`load(...)`** runs the five queries: today's lines, the 14 days before, the 14 days ending today, the same day last year, and month to date.

@@ -325,7 +325,7 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     day = date.fromisoformat(args.day) if args.day else datetime.now(IST).date()
     setup_logging()
-    load_dotenv()                                        # .env in this folder -> os.environ
+    load_dotenv(Path(__file__).with_name(".env"))        # the .env next to this file -> os.environ
     run_key = f"flash_{day}"
     if args.send and already_sent(run_key):
         log.info("%s already sent; nothing to do", run_key)

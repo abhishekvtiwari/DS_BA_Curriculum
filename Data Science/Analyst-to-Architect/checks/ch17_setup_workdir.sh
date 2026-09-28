@@ -9,13 +9,16 @@ set -euo pipefail
 BOOK="$(cd "$(dirname "$0")/.." && pwd)"
 PY314="${1:-$(ls /root/.local/share/uv/python/cpython-3.14*/bin/python3 2>/dev/null | head -1)}"
 ROOT=/home/meera/analyst-to-architect
-if [ -e "$ROOT" ]; then echo "$ROOT already exists; remove it yourself first if you want a fresh copy"; exit 1; fi
+if [ -e "$ROOT" ]; then mv "$ROOT" "/tmp/ch17-workdir-old.$(date +%s)"; echo "moved the previous copy aside"; fi
 mkdir -p "$ROOT/companion" "$ROOT/work" "$ROOT/notes"
 for dest in "$ROOT/companion/ch17" "$ROOT/work/ch17"; do
   mkdir -p "$dest"
   (cd "$BOOK/companion/ch17" && cp -r check_setup.py products.json targets_2025.csv broken_export.csv sales_exports "$dest/")
 done
-cp "$BOOK/companion/ch17/summarize_exports.py" "$ROOT/companion/ch17/"   # the reader writes their own in work/ch17 (section 17.12)
+cp "$BOOK/companion/ch17/summarize_exports.py" "$ROOT/companion/ch17/"
+# Files the reader writes in work/ch17 by section 17.12 (checks/ch17_check.py confirms they match the chapter):
+cp "$BOOK/companion/ch17/summarize_exports.py" "$ROOT/work/ch17/"
+printf 'import sys\nprint(sys.argv)\n' > "$ROOT/work/ch17/show_args.py"
 # The book's environment, as section 17.0 builds it (so later sessions find JupyterLab installed)
 "$PY314" -m venv "$ROOT/.venv"
 "$ROOT/.venv/bin/python" -m pip install -q jupyterlab
