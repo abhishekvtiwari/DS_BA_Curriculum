@@ -125,7 +125,7 @@ Output filenames are pinned to the released ones through the `NAMES` table.
 | All 85 chapters build | Yes, in about 6 minutes |
 | Page counts | 85 of 85 the same as the released PDFs (2,455 pages) |
 | Body text (all pages but covers) | 2,370 of 2,370 pages identical, footers included |
-| Body pixels at 40 dpi | See the setup PR for the final number after the Poppins Bold Italic fix (before it: 1 page, 8 pixels, Ch 35 p. 19) |
+| Body pixels at 40 dpi | **2,370 of 2,370 pages identical** (with the font set above; before Poppins Bold Italic was added, one page, Ch 35 p. 19, differed by 8 pixels) |
 
 **So the page numbers in `review/visual/` point at the same content in a rebuilt PDF.**
 
