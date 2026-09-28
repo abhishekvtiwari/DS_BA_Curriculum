@@ -35,6 +35,10 @@ mysql -uroot < "$C/mysql/riverstone_setup_mysql.sql"
 mysql -uroot < "$C/mysql/riverstone_2025_setup_mysql.sql"
 mysql -uroot riverstone < /tmp/rs_view.sql
 mysql -uroot riverstone_2025 < /tmp/rs_view.sql
+# Chapter 13's calendar tables (calendar_months, calendar_days) in the one-year database.
+cp "$C/ch13/calendar_tables_postgresql.sql" "$C/ch13/calendar_tables_mysql.sql" /tmp/ && chmod 644 /tmp/calendar_tables_*.sql
+PG -d riverstone_2025 -f /tmp/calendar_tables_postgresql.sql
+mysql -uroot riverstone_2025 < /tmp/calendar_tables_mysql.sql
 # Chapter 28 add-ons: the HRMS staff table, the bill of materials, the ERP audit log and the dw star schema.
 # Skipped without complaint if the Part III companion files aren't present.
 if [ -f "$C/ch28/ch28_2025_addons.sql" ]; then
