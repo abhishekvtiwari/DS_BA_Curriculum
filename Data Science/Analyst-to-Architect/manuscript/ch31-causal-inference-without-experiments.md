@@ -1,6 +1,6 @@
 # Chapter 31. Causal Inference Without Experiments
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -422,6 +422,7 @@ Both corrections land near the truth, and both are a world away from the naive +
 > **Watch out: matching only fixes what you measured.** The assumption is **no unmeasured confounding**: nothing you left out of the score influenced both joining and the outcome. Here it holds by construction, because the data was generated that way. In real life, the sales team's judgment about which accounts "had potential" is exactly the kind of unmeasured variable that ruins it. That's why matching is weaker evidence than a threshold rule or an experiment, and why sensitivity analysis (section 31.9) matters.
 
 ---
+
 ## 31.6 Regression discontinuity: let the rule do the randomizing
 
 Riverstone gives free delivery on orders of ₹25,000 or more (Chapter 3). Does it bring customers back?
@@ -668,7 +669,8 @@ Four sentences, in this order:
 > **Interview extra point.** Asked *"how would you measure something you can't A/B test?"*, name the method, then immediately name its assumption and the check: *"difference-in-differences, assuming parallel trends, which I'd test on the pre-period and show as a chart."* Chapter 69's method calls this pattern claim-plus-check, and it separates people who have read about these methods from people who have used them.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -707,7 +709,11 @@ The decision is not "the price rise failed". It is to hold the new prices, and t
 
 ---
 
-## Tools
+## Project: measure the regional price change
+
+**Goal:** a causal estimate you can defend in a meeting, with its assumption stated and checked.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -716,12 +722,6 @@ Versions used for this chapter, checked in September 2026:
 - **scipy.optimize** for the synthetic control weights.
 - **Worth knowing about:** `linearmodels` (panel models and two-stage least squares), `DoWhy` and `EconML` (causal graphs, sensitivity analysis, and heterogeneous effects), and `CausalImpact` (a Bayesian time-series version of the synthetic-control idea). They automate the arithmetic, not the argument.
 - **Companion files** in `ch31/`: `generate_ch31_data.py` (all three datasets, seed 31, with the true effects in its header) and `ch31_check.py` (checks the chapter's numbers).
-
----
-
-## The project: measure the regional price change
-
-**Goal:** a causal estimate you can defend in a meeting, with its assumption stated and checked.
 
 **Option A: your own data.** Any change that hit one group and not another, at a known date: a price change, a new opening hour, a policy in one branch, a product that shipped to one country first. Work on a copy, and keep customer data out of anything you share.
 
@@ -749,22 +749,6 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I state the counterfactual in words before choosing a method.
-- [ ] I can explain why before-and-after and treated-versus-untreated usually mislead, with an example.
-- [ ] I can compute DiD as a table and as a regression, and say what the fixed effects absorb.
-- [ ] I check parallel trends and show the chart, and I know what to do when they aren't parallel.
-- [ ] I can fit a propensity model, match with a caliper, and report balance before and after.
-- [ ] I know that matching assumes no unmeasured confounding, and I say so.
-- [ ] I can spot a threshold rule in a business process and use it for regression discontinuity, including the bunching check.
-- [ ] I understand that an RD estimate is local to the cut-off.
-- [ ] I can build a synthetic control and judge it by its pre-change fit.
-- [ ] I can state the three requirements for an instrument and explain why exclusion is usually the weak one.
-- [ ] Every causal claim I write carries its assumption and what would change my mind.
-
----
-
 ## Recap
 
 - A causal claim compares the world that happened with a **counterfactual** that didn't. Every method here is a way of building a stand-in for it.
@@ -780,7 +764,31 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+causal claim · counterfactual · confounding · selection · treated and untreated groups · before-and-after · difference-in-differences · two-by-two table · fixed effects · clustered standard errors · parallel trends · event study · placebo test · matching · propensity score · caliper · matching without replacement · balance · standardized mean difference · overlap (common support) · no unmeasured confounding · regression discontinuity · running variable · cut-off · bandwidth · local effect · bunching · manipulation check · synthetic control · donor pool · pre-change fit · interference between units · instrumental variable · relevance · exclusion restriction · independence · two-stage least squares · sensitivity analysis
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I state the counterfactual in words before choosing a method.
+- [ ] I can explain why before-and-after and treated-versus-untreated usually mislead, with an example.
+- [ ] I can compute DiD as a table and as a regression, and say what the fixed effects absorb.
+- [ ] I check parallel trends and show the chart, and I know what to do when they aren't parallel.
+- [ ] I can fit a propensity model, match with a caliper, and report balance before and after.
+- [ ] I know that matching assumes no unmeasured confounding, and I say so.
+- [ ] I can spot a threshold rule in a business process and use it for regression discontinuity, including the bunching check.
+- [ ] I understand that an RD estimate is local to the cut-off.
+- [ ] I can build a synthetic control and judge it by its pre-change fit.
+- [ ] I can state the three requirements for an instrument and explain why exclusion is usually the weak one.
+- [ ] Every causal claim I write carries its assumption and what would change my mind.
+
+---
+
+## Exercises
 
 Work in `companion/ch31`, with the data built by `generate_ch31_data.py`. Predict each answer before running it.
 
@@ -816,26 +824,7 @@ Work in `companion/ch31`, with the data built by `generate_ch31_data.py`. Predic
 
 ---
 
-## Key terms
-
-causal claim · counterfactual · confounding · selection · treated and untreated groups · before-and-after · difference-in-differences · two-by-two table · fixed effects · clustered standard errors · parallel trends · event study · placebo test · matching · propensity score · caliper · matching without replacement · balance · standardized mean difference · overlap (common support) · no unmeasured confounding · regression discontinuity · running variable · cut-off · bandwidth · local effect · bunching · manipulation check · synthetic control · donor pool · pre-change fit · interference between units · instrumental variable · relevance · exclusion restriction · independence · two-stage least squares · sensitivity analysis
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 30, Inference & Experiments,** is the method to reach for whenever randomizing is possible; this chapter is what you do when it isn't.
-- **Chapter 22, Statistics Without Fooling Yourself,** is the intuition behind the warnings here.
-- **Chapter 43, Pricing & Revenue Analytics,** applies these methods to price changes, discounts, and elasticity.
-- **Chapter 19, Regression & Forecasting,** shares the machinery: the difference is entirely in what you claim from it.
-- **Chapter 55, Machine Learning in Production,** needs causal thinking to tell "the model is good" from "the model was given the easy cases".
-- **Chapter 73, Statistics, Probability & Experimentation Bank,** has causal-inference questions, including three "you can't A/B test this" cases.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1135,3 +1124,14 @@ The effect shrinks to −4.8% and its interval now crosses zero. Don't read that
 **17.** Any rule with a sharp edge: free shipping above a value, a discount tier at a volume, a credit check above an order size, a bonus for hitting a monthly target, an SLA that applies above a ticket priority. Bunching is likely wherever the person affected can see the threshold and control the number: sales reps write orders at exactly the discount tier, expense claims come in just under the approval limit, and salespeople hit their target by a rupee in the last week of the month. If the histogram spikes at the edge, the rule is being gamed, and that spike is itself worth reporting to the business.
 
 **18.** Almost always, when the decision is soon and reversible. A DiD that takes an afternoon and gives ±3 points is worth more than a perfect experiment that reports after the decision is made. The reverse holds when the decision is expensive, hard to undo, or repeated: a pricing policy for every region, a system everyone will use for five years. The practical answer is usually both: measure what you can now with the weaker method, and design the experiment for the next change, which is exactly what Riverstone did after the price rise.
+
+---
+
+## Where this leads
+
+- **Chapter 30, Inference & Experiments,** is the method to reach for whenever randomizing is possible; this chapter is what you do when it isn't.
+- **Chapter 22, Statistics Without Fooling Yourself,** is the intuition behind the warnings here.
+- **Chapter 43, Pricing & Revenue Analytics,** applies these methods to price changes, discounts, and elasticity.
+- **Chapter 19, Regression & Forecasting,** shares the machinery: the difference is entirely in what you claim from it.
+- **Chapter 55, Machine Learning in Production,** needs causal thinking to tell "the model is good" from "the model was given the easy cases".
+- **Chapter 73, Statistics, Probability & Experimentation Bank,** has causal-inference questions, including three "you can't A/B test this" cases.

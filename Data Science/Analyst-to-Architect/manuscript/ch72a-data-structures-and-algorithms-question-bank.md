@@ -1,8 +1,8 @@
 # Chapter 72A. Data Structures & Algorithms Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
-> **A note on this chapter's numbering.** This chapter doesn't exist in the original 15-chapter Part VIII plan. It was added after the author identified a real gap: no chapter in Chapters 68–82 covers classic data structures and algorithms (DSA), the round many Data Engineer, ML Engineer, and some Data Scientist interviews include, distinct from Chapter 72's Python-and-pandas focus or Chapter 74's *machine learning* algorithms. It's numbered **72A**, sitting between Chapter 72 (Python & pandas) and Chapter 73 (Statistics), as a placeholder; **the coordinator should renumber it into the main sequence at final assembly**, the same way the project already handles question-ID renumbering. Every cross-reference in this chapter uses "72A" so it's easy to find and fix in one pass later.
+> **A note on this chapter's numbering.** This chapter doesn't exist in the original 15-chapter Part 8 plan. It was added after the author identified a real gap: no chapter in Chapters 68–82 covers classic data structures and algorithms (DSA), the round many Data Engineer, ML Engineer, and some Data Scientist interviews include, distinct from Chapter 72's Python-and-pandas focus or Chapter 74's *machine learning* algorithms. It's numbered **72A**, sitting between Chapter 72 (Python & pandas) and Chapter 73 (Statistics), as a placeholder; **the coordinator should renumber it into the main sequence at final assembly**, the same way the project already handles question-ID renumbering. Every cross-reference in this chapter uses "72A" so it's easy to find and fix in one pass later.
 >
 > **You will learn to:** answer the core DSA questions that come up in data-role interviews, sized appropriately, not a full software-engineer-level gauntlet · reason about time and space complexity (Big-O) out loud · implement and explain the handful of data structures and patterns that actually recur: hash maps, linked lists, trees, basic graphs, sorting, two-pointer and sliding-window patterns, and simple recursion/memoization.
 >
@@ -553,7 +553,7 @@ is_valid_parens("({[)]}")   # -> False (verified: closes in the wrong order)
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -577,15 +577,13 @@ The follow-up wasn't really about algorithms at all, it was about whether Karan'
 
 ---
 
-## Tools
-
-**Python** (already covered in Chapter 72), no additional installation. `collections.deque` for BFS queues, `heapq` for the Kth-largest pattern, `collections.Counter` for frequency counting. Practice platforms like LeetCode or HackerRank are useful for volume practice, though the questions in this bank are deliberately sized for data-role interviews, not the hardest tier those platforms offer.
-
----
-
-## The project
+## Project
 
 **Goal:** implement, verify, and explain your own version of the highest-value patterns from this chapter.
+
+### Tools you'll need
+
+**Python** (already covered in Chapter 72), no additional installation. `collections.deque` for BFS queues, `heapq` for the Kth-largest pattern, `collections.Counter` for frequency counting. Practice platforms like LeetCode or HackerRank are useful for volume practice, though the questions in this bank are deliberately sized for data-role interviews, not the hardest tier those platforms offer.
 
 1. Implement Two Sum, a sliding-window maximum, and a stack-based bracket validator, each with your own test cases, run and checked, not just written.
 2. Time a nested-loop O(n²) approach against a hash-based O(n) approach on a real array of at least 5,000 elements, the way Q72A-002 did, and report the actual speedup you measure.
@@ -594,15 +592,15 @@ The follow-up wasn't really about algorithms at all, it was about whether Karan'
 
 ---
 
-## Final-week revision list
-
-Q72A-001, Q72A-002, Q72A-007, Q72A-008, Q72A-009, Q72A-014, Q72A-018, Q72A-020, Q72A-021, Q72A-025, Q72A-026, Q72A-027, Q72A-028, Q72A-030.
-
----
-
 ## Key terms
 
 Big-O notation · time complexity · space complexity · O(1)/O(log n)/O(n)/O(n log n)/O(n²)/O(2ⁿ) · amortized complexity · hash map / set · two-pointer pattern · sliding-window pattern · recursion · base case · memoization · dynamic programming (top-down / bottom-up) · merge sort · binary search · stable sort · linked list · fast/slow pointers (Floyd's cycle detection) · binary search tree (BST) · in-order/pre-order/post-order traversal · breadth-first search (BFS) · depth-first search (DFS) · level-order traversal · stack (LIFO) · queue (FIFO)
+
+---
+
+## Final-week revision list
+
+Q72A-001, Q72A-002, Q72A-007, Q72A-008, Q72A-009, Q72A-014, Q72A-018, Q72A-020, Q72A-021, Q72A-025, Q72A-026, Q72A-027, Q72A-028, Q72A-030.
 
 ---
 

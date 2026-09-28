@@ -59,6 +59,9 @@
     for (const s of lines) if (/:\s*$/.test(s.textContent)) s.classList.add('colon');   // don't break after "def f():"
   }
 
+  // ---- short inline code never breaks at a hyphen or dot ("2026-03-" / "05", V1.12, V2.11)
+  for (const c of document.querySelectorAll('code')) if (!c.closest('pre') && c.textContent.length <= 24) c.classList.add('nowrap');
+
   // ---- V10: tables. Right-align numeric columns, keep short tables whole, no wraps in short code.
   const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
   for (const table of document.querySelectorAll('table')) {
@@ -73,7 +76,9 @@
       }
     }
     for (const cd of table.querySelectorAll('td code, th code')) if (cd.textContent.length <= 24) cd.classList.add('nowrap');
-    if (table.getBoundingClientRect().height < PAGE_H * 0.4) table.classList.add('keep');
+    // short tables stay whole; a longer one may split (its header row repeats), so a table that
+    // opens a stage doesn't leave half a page empty before it (D8)
+    if (table.getBoundingClientRect().height < PAGE_H * 0.25) table.classList.add('keep');
   }
 
   // ---- V7: keep headings, short lead-ins and answer numbers with what follows.
@@ -84,6 +89,20 @@
   const isCaption = e => e && e.tagName === 'P' && e.children.length === 1 && e.firstElementChild.tagName === 'EM' && e.textContent.trim() === e.firstElementChild.textContent.trim();
   const withCaption = els => { const last = els[els.length - 1]; if (isFig(last) && isCaption(last.nextElementSibling)) els.push(last.nextElementSibling); return els; };
   const wrap = els => { const d = document.createElement('div'); d.className = 'keep-together'; els[0].before(d); els.forEach(e => d.appendChild(e)); report.kept++; };
+  // a list whose last item ends in ":" introduces the block after it: move that item into a list of
+  // its own (same bullets, same numbering) and keep it with the block
+  for (const l of [...document.querySelectorAll('ul, ol')]) {
+    const last = l.lastElementChild, n = l.nextElementSibling;
+    if (!last || l.closest('nav') || !/[:：]\s*$/.test(last.textContent) || !n || !/^(PRE|TABLE|BLOCKQUOTE)$/.test(n.tagName)) continue;
+    if (h(last) + h(n) > PAGE_H * KEEP) continue;
+    const tail = document.createElement(l.tagName);
+    tail.className = l.className + ' list-tail';
+    if (l.tagName === 'OL') tail.start = (l.start || 1) + l.children.length - 1;
+    l.after(tail); tail.appendChild(last);
+    if (!l.children.length) l.remove();
+    wrap([tail, n]);
+  }
+
   // headings: take the heading, an optional lead-in paragraph, and the first block after it
   for (const hd of [...document.querySelectorAll('h2, h3, h4')]) {
     if (!hd.parentElement || hd.closest('nav')) continue;

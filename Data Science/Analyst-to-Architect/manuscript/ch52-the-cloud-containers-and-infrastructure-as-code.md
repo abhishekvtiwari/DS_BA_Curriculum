@@ -1,6 +1,6 @@
 # Chapter 52. The Cloud, Containers & Infrastructure as Code
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -20,7 +20,7 @@
 
 Chapter 46 built a pipeline. Chapter 51 gave it something worth writing to. Right now, both of them exist only as files on your computer, running when you happen to type a command. Getting them to run reliably, on a schedule, reachable by the right people and nobody else, without your laptop being involved at all, is a different problem, and it's the one this chapter solves.
 
-It's also where a great deal of a data engineer's actual working life happens. Job descriptions ask for "cloud experience" and "containers" more often than they ask for any single analytics tool, not because the cloud is more important than the data, but because nothing you've built in Part V runs anywhere real until it's deployed properly. This chapter takes Riverstone's pipeline from "works on my machine" to "works, reliably, on infrastructure someone else can also understand," using the same rigor the rest of this book has applied to data: nothing asserted that hasn't been checked.
+It's also where a great deal of a data engineer's actual working life happens. Job descriptions ask for "cloud experience" and "containers" more often than they ask for any single analytics tool, not because the cloud is more important than the data, but because nothing you've built in Part 5 runs anywhere real until it's deployed properly. This chapter takes Riverstone's pipeline from "works on my machine" to "works, reliably, on infrastructure someone else can also understand," using the same rigor the rest of this book has applied to data: nothing asserted that hasn't been checked.
 
 ---
 
@@ -644,7 +644,7 @@ For Riverstone today, a single managed container service, running on the schedul
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -683,18 +683,16 @@ At the retrospective, the engineer made the point himself before anyone else nee
 
 ---
 
-## Tools
+## Project: deploy Riverstone's pipeline
+
+**Goal:** a complete, reviewed deployment package for the Chapter 46 pipeline: container, orchestration manifest, infrastructure as code, and a CI/CD workflow, validated as far as this book's tools allow, with an honest runbook for what remains to actually deploy it.
+
+### Tools you'll need
 
 - **Python 3.12** with `pyyaml`, `python-hcl2`, and `dockerfile-parse` for the validation shown in this chapter (`pip install pyyaml python-hcl2 dockerfile-parse`).
 - **The Chapter 52 companion folder** (`companion/ch52/`): `pipeline_image/` (Dockerfile, requirements.txt, docker-compose.yml), `k8s/pipeline-deployment.yaml`, `terraform/main.tf`, `.github_workflows/deploy.yml`, `simulate_workflow.py`, `networking_math.py`, `cost_estimate.py`.
 - **For real use, when you have the services:** Docker Desktop or Docker Engine; `kubectl` and a cluster (a local one via kind or minikube is enough to learn on); Terraform CLI with a real cloud account; a GitHub repository for Actions to run in.
 - **Versions used for the checks shown:** Python 3.12.3, PyYAML 6.0.3.
-
----
-
-## The project: deploy Riverstone's pipeline
-
-**Goal:** a complete, reviewed deployment package for the Chapter 46 pipeline: container, orchestration manifest, infrastructure as code, and a CI/CD workflow, validated as far as this book's tools allow, with an honest runbook for what remains to actually deploy it.
 
 **Option A: Riverstone.** Extend the companion files.
 
@@ -719,22 +717,6 @@ At the retrospective, the engineer made the point himself before anyone else nee
 
 ---
 
-## You've got it when…
-
-- [ ] You can explain regions, availability zones, and the shared responsibility model in your own words.
-- [ ] You can design an IAM policy that grants the narrowest access a task needs.
-- [ ] You can compute how many usable addresses a given CIDR range provides, and split a VPC into subnets by hand.
-- [ ] You can explain why containers solve "it works on my machine", and the difference between an image and a container.
-- [ ] You can write a Dockerfile ordered for caching, running as a non-root user.
-- [ ] You can read a Kubernetes Deployment and Service and say what each field does.
-- [ ] You can explain what Terraform's state file is for, and why you always read a plan before applying it.
-- [ ] You can trace exactly which jobs in a CI/CD workflow run for a given event, using its actual trigger and `if` conditions.
-- [ ] You can name where a secret should live at every layer, from a laptop to production.
-- [ ] You can estimate the cost difference between always-on and scheduled compute.
-- [ ] You can recommend a deployment target for a company of a given size, and say when Kubernetes earns its complexity.
-
----
-
 ## Recap
 
 - **Regions and availability zones** are about geography and independence; spread anything critical across at least two zones.
@@ -750,7 +732,31 @@ At the retrospective, the engineer made the point himself before anyone else nee
 
 ---
 
-## Practice exercises
+## Key terms
+
+region · availability zone · shared responsibility model · IAM (identity and access management) · least privilege · role · VPC (virtual private cloud) · subnet · CIDR notation · security group · container · image · Dockerfile · layer · build cache · Docker Compose · Kubernetes · Pod · Deployment · replica · Service · Secret (Kubernetes) · namespace · resource requests and limits · readiness probe · Infrastructure as Code (IaC) · Terraform · provider · state file · plan · apply · CI/CD · continuous integration · continuous deployment · GitHub Actions · workflow trigger · job · secrets manager · serverless · managed container service
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can explain regions, availability zones, and the shared responsibility model in your own words.
+- [ ] You can design an IAM policy that grants the narrowest access a task needs.
+- [ ] You can compute how many usable addresses a given CIDR range provides, and split a VPC into subnets by hand.
+- [ ] You can explain why containers solve "it works on my machine", and the difference between an image and a container.
+- [ ] You can write a Dockerfile ordered for caching, running as a non-root user.
+- [ ] You can read a Kubernetes Deployment and Service and say what each field does.
+- [ ] You can explain what Terraform's state file is for, and why you always read a plan before applying it.
+- [ ] You can trace exactly which jobs in a CI/CD workflow run for a given event, using its actual trigger and `if` conditions.
+- [ ] You can name where a secret should live at every layer, from a laptop to production.
+- [ ] You can estimate the cost difference between always-on and scheduled compute.
+- [ ] You can recommend a deployment target for a company of a given size, and say when Kubernetes earns its complexity.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -780,25 +786,7 @@ At the retrospective, the engineer made the point himself before anyone else nee
 
 ---
 
-## Key terms
-
-region · availability zone · shared responsibility model · IAM (identity and access management) · least privilege · role · VPC (virtual private cloud) · subnet · CIDR notation · security group · container · image · Dockerfile · layer · build cache · Docker Compose · Kubernetes · Pod · Deployment · replica · Service · Secret (Kubernetes) · namespace · resource requests and limits · readiness probe · Infrastructure as Code (IaC) · Terraform · provider · state file · plan · apply · CI/CD · continuous integration · continuous deployment · GitHub Actions · workflow trigger · job · secrets manager · serverless · managed container service
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 62, The Economics of Data Platforms,** and **Chapter 65, FinOps,** return to cost management at the level of an entire organization's cloud spend.
-- **Chapter 64, Security, Privacy, Governance & Responsible AI,** builds on the shared responsibility model and least-privilege access from section 52.1.
-- **Chapter 46**'s pipeline, **Chapter 47**'s checks, **Chapter 49**'s storage, **Chapter 50**'s streaming jobs, and **Chapter 51**'s syncs are all things this chapter's infrastructure would actually run.
-- **Chapter 63, Designing Automation & Integration Architecture,** returns to choosing deployment targets at the whole-company scale this chapter's section 52.8 only began.
-- **Part VIII:** cloud, containers, and deployment questions appear in the data engineering interview chapters, and system design cases in Chapter 77 routinely ask how you'd deploy and operate exactly what this chapter builds.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -829,3 +817,13 @@ region · availability zone · shared responsibility model · IAM (identity and 
 **13.** A book that quietly presents fabricated output as if it were real teaches the reader a false picture of what actually happens when code runs, which is far worse than a gap honestly marked, because the reader has no way to know which parts to distrust. Chapter 46 marked its `run_failure_sensor` and Airflow examples as not executed, and Chapter 50 did the same for its Kafka client code, precisely so a reader building on this book's examples knows exactly which parts have been proven to work as shown and which are correct-looking illustrations still needing their own testing in a real environment. Once a single fabricated output is discovered, a reader reasonably starts doubting every other output in the book, even the ones that were genuinely verified, which destroys far more trust than the honest gap ever would.
 
 **14.** Three things from this chapter argue against waiting. First, **habits formed on a small bill are the habits that scale**: a team that never learns to distinguish always-on from scheduled compute, or to read a cost estimate before deploying, doesn't suddenly develop that discipline when the bill crosses some threshold, they carry the same unexamined choices into a much larger number. Second, the **24-times cost difference** in section 52.7 between always-on and scheduled compute is a *ratio*, not an absolute; it applies exactly as much at Riverstone's current scale as it will at ten times the scale, and the sooner the right default is in place, the more total waste is avoided across the company's whole future, not just today's few dollars. Third, cost estimation is itself a skill, exactly like the reconciliation habits Chapter 47 taught for data: the point of estimating early isn't the money saved on a small bill, it's building the muscle of noticing *when something has stopped being small*, which only works if you've been checking all along, not starting the habit the day the number becomes alarming.
+
+---
+
+## Where this leads
+
+- **Chapter 62, The Economics of Data Platforms,** and **Chapter 65, FinOps,** return to cost management at the level of an entire organization's cloud spend.
+- **Chapter 64, Security, Privacy, Governance & Responsible AI,** builds on the shared responsibility model and least-privilege access from section 52.1.
+- **Chapter 46**'s pipeline, **Chapter 47**'s checks, **Chapter 49**'s storage, **Chapter 50**'s streaming jobs, and **Chapter 51**'s syncs are all things this chapter's infrastructure would actually run.
+- **Chapter 63, Designing Automation & Integration Architecture,** returns to choosing deployment targets at the whole-company scale this chapter's section 52.8 only began.
+- **Part 8:** cloud, containers, and deployment questions appear in the data engineering interview chapters, and system design cases in Chapter 77 routinely ask how you'd deploy and operate exactly what this chapter builds.

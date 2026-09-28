@@ -1,6 +1,6 @@
 # Chapter 37. Supervised Learning Algorithms
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 35 (loss, gradients, likelihood, entropy) and Chapter 36 (splits, cross-validation, leakage, pipelines, baselines). This chapter reuses Chapter 36's pipeline and lead-scoring data.
 >
-> **Time needed:** 14–18 hours over two to three weeks. It's the longest chapter in Part IV; take it one algorithm at a time.
+> **Time needed:** 14–18 hours over two to three weeks. It's the longest chapter in Part 4; take it one algorithm at a time.
 >
 > **Tools:** Python 3 with scikit-learn, plus three free gradient-boosting libraries (XGBoost, LightGBM, CatBoost) and Optuna for tuning. Everything runs on a laptop CPU; the slowest block takes about a minute.
 >
@@ -1391,7 +1391,7 @@ Why the opposite of the churn result? The leads data's signal is mostly **additi
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1434,7 +1434,11 @@ Vikram cancels the renewal request. Two months later, Meera does use an open-sou
 
 ---
 
-## Tools
+## Project: lead scoring, baseline vs boosting
+
+**Goal:** a documented, fair comparison of algorithms on one problem, ending in a justified choice. Section 37.12 ran the core comparison for leads; the project extends it and makes it yours.
+
+### Tools you'll need
 
 - **scikit-learn** (tested on 1.8.0; the current release at the time of writing is 1.9.1): `LinearRegression`, `RidgeCV`, `LassoCV`, `ElasticNetCV`, `LogisticRegression`, `KNeighborsClassifier`, `GaussianNB`, `DecisionTreeClassifier` and `export_text`, `RandomForestClassifier`, `HistGradientBoostingClassifier`, `SVC`, `learning_curve`, `RandomizedSearchCV`.
 - **XGBoost** 3.4.1, **LightGBM** 4.7.0, **CatBoost** 1.2.10, installed with `pip install xgboost lightgbm catboost`. All are free and open source; versions move quickly, so check each project's documentation for the current parameter names.
@@ -1443,12 +1447,6 @@ Vikram cancels the renewal request. Two months later, Meera does use an open-sou
 - **statsmodels** for regression with confidence intervals and p-values (Chapter 22).
 - Everything ran on one CPU core, Python 3.12.3, on 17 September 2026. The slowest step, 25 rounds of 5-fold random search, took under a minute.
 - **Companion files:** `companion/generate_riverstone_accounts.py` (seed 20237) builds `companion/accounts/accounts.csv`; `companion/ch37/lead_data.py` rebuilds Chapter 36's lead table. Run the chapter's code from `companion/ch37/`. Data spec: `planning/data/riverstone-accounts.md`.
-
----
-
-## The project: lead scoring, baseline vs boosting
-
-**Goal:** a documented, fair comparison of algorithms on one problem, ending in a justified choice. Section 37.12 ran the core comparison for leads; the project extends it and makes it yours.
 
 **Option A: your own data.** Any classification or regression problem you set up with Chapter 36's workflow.
 
@@ -1474,22 +1472,6 @@ Vikram cancels the renewal request. Two months later, Meera does use an open-sou
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain, in two sentences each, how linear regression, logistic regression, k-NN, Naive Bayes, trees, random forests, gradient boosting, and SVMs make a prediction.
-- [ ] I can read a regression coefficient and an odds ratio in plain language, and I know why correlated features make them unreliable.
-- [ ] I know what ridge, lasso, and elastic net penalize, why features must be scaled for them, and that smaller C means stronger regularization.
-- [ ] I can compute a sigmoid probability, a Naive Bayes posterior, and a Gini split by hand.
-- [ ] I can recognize an overfitting tree from its training and validation scores.
-- [ ] I can explain why averaging trees (forest) and chaining trees (boosting) both beat a single tree.
-- [ ] I know the main settings of gradient boosting and what each controls.
-- [ ] I handle class imbalance in SVMs and know when an algorithm needs scaling.
-- [ ] I can read learning curves and say whether a model suffers from bias or variance, and what to do about each.
-- [ ] I tune with random search or Optuna inside cross-validation, and I treat differences smaller than the fold spread as noise.
-- [ ] I compare complex models with baselines and with simple models that have good features, and I can defend choosing the simpler one.
-
----
-
 ## Recap
 
 - **Linear regression** fits a weighted sum by least squares; interpret coefficients carefully (scaling, multicollinearity, noise, not causes).
@@ -1507,7 +1489,31 @@ Vikram cancels the renewal request. Two months later, Meera does use an open-sou
 
 ---
 
-## Practice exercises
+## Key terms
+
+supervised learning · regression · classification · linear regression · least squares · intercept · coefficient · R² (coefficient of determination) · mean absolute error (MAE) · log-log model · dummy variable trap · multicollinearity · residual · regularization · penalty · alpha (α) · ridge regression (L2) · lasso (L1) · elastic net · feature selection · logistic regression · log-odds · sigmoid · odds ratio · C (inverse regularization) · k-nearest neighbors · curse of dimensionality · Naive Bayes · Bayes' rule · prior · likelihood · posterior · conditional independence · decision tree · node · leaf · split · Gini impurity · entropy · max_depth · min_samples_leaf · random forest · bagging · bootstrap sample · feature importance · gradient boosting · residual fitting · stump · learning rate · XGBoost · LightGBM · CatBoost · support vector machine · margin · support vector · kernel · RBF kernel · class weight · bias · variance · underfitting · overfitting · learning curve · validation curve · hyperparameter · grid search · random search · Bayesian optimization · Optuna · AutoML · stacking · early stopping
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain, in two sentences each, how linear regression, logistic regression, k-NN, Naive Bayes, trees, random forests, gradient boosting, and SVMs make a prediction.
+- [ ] I can read a regression coefficient and an odds ratio in plain language, and I know why correlated features make them unreliable.
+- [ ] I know what ridge, lasso, and elastic net penalize, why features must be scaled for them, and that smaller C means stronger regularization.
+- [ ] I can compute a sigmoid probability, a Naive Bayes posterior, and a Gini split by hand.
+- [ ] I can recognize an overfitting tree from its training and validation scores.
+- [ ] I can explain why averaging trees (forest) and chaining trees (boosting) both beat a single tree.
+- [ ] I know the main settings of gradient boosting and what each controls.
+- [ ] I handle class imbalance in SVMs and know when an algorithm needs scaling.
+- [ ] I can read learning curves and say whether a model suffers from bias or variance, and what to do about each.
+- [ ] I tune with random search or Optuna inside cross-validation, and I treat differences smaller than the fold spread as noise.
+- [ ] I compare complex models with baselines and with simple models that have good features, and I can defend choosing the simpler one.
+
+---
+
+## Exercises
 
 Code exercises run from `companion/ch37/` after the chapter's code (they use `train_acc`, `valid_acc`, `rest`, `test_acc`, `CATS`, `NUMS`, `clf_pipeline`, `clf_report`, `reg_pipeline`, `reg_train`, `reg_test`, `folds`, and the other names defined above). Predict each result before running it.
 
@@ -1541,27 +1547,7 @@ Code exercises run from `companion/ch37/` after the chapter's code (they use `tr
 
 ---
 
-## Key terms
-
-supervised learning · regression · classification · linear regression · least squares · intercept · coefficient · R² (coefficient of determination) · mean absolute error (MAE) · log-log model · dummy variable trap · multicollinearity · residual · regularization · penalty · alpha (α) · ridge regression (L2) · lasso (L1) · elastic net · feature selection · logistic regression · log-odds · sigmoid · odds ratio · C (inverse regularization) · k-nearest neighbors · curse of dimensionality · Naive Bayes · Bayes' rule · prior · likelihood · posterior · conditional independence · decision tree · node · leaf · split · Gini impurity · entropy · max_depth · min_samples_leaf · random forest · bagging · bootstrap sample · feature importance · gradient boosting · residual fitting · stump · learning rate · XGBoost · LightGBM · CatBoost · support vector machine · margin · support vector · kernel · RBF kernel · class weight · bias · variance · underfitting · overfitting · learning curve · validation curve · hyperparameter · grid search · random search · Bayesian optimization · Optuna · AutoML · stacking · early stopping
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 38, Unsupervised Learning,** segments the same accounts without a target, using distance and PCA.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** turns churn and lead scores into decisions with cost-based thresholds, handles imbalance with class weights and resampling, checks calibration, explains predictions with SHAP and partial dependence, and checks fairness.
-- **Chapter 40, Time Series & Forecasting,** uses gradient boosting with lag features for demand forecasting.
-- **Chapter 41, NLP Foundations,** uses Naive Bayes and logistic regression on text.
-- **Chapter 43, A First Look at Deep Learning,** takes logistic regression's weighted sum and sigmoid, and stacks them into a neural network.
-- **Chapter 22** (statistical inference) and **Chapter 31** (causal inference) cover confidence intervals for coefficients and estimating causes.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers every algorithm here, bias and variance, regularization, and tuning with graded answers. "Explain gradient boosting to a non-technical person" and "random forest vs gradient boosting" are among the most common questions in data science interviews.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1818,3 +1804,14 @@ The interval, 0.009 to 0.053, **excludes zero** (p = 0.006), even though the gen
 
 **16.** (1) **Drift** (Chapter 36): customers' behavior changed, for example a new competitor makes even long-standing accounts leave, so patterns learned from 2024 don't hold. (2) **Variance**: last year's evaluation was on too few accounts and was lucky; the model was never as good as it looked. (3) **A new kind of bias**: the business changed (a new product line, a pricing change) in a way the features don't capture, so the model is now too simple for the new situation. A fourth possibility is a **pipeline problem**: a feature changed meaning or started arriving empty. Check that first; it's the most common and the easiest to fix.
 
+---
+
+## Where this leads
+
+- **Chapter 38, Unsupervised Learning,** segments the same accounts without a target, using distance and PCA.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** turns churn and lead scores into decisions with cost-based thresholds, handles imbalance with class weights and resampling, checks calibration, explains predictions with SHAP and partial dependence, and checks fairness.
+- **Chapter 40, Time Series & Forecasting,** uses gradient boosting with lag features for demand forecasting.
+- **Chapter 41, NLP Foundations,** uses Naive Bayes and logistic regression on text.
+- **Chapter 43, A First Look at Deep Learning,** takes logistic regression's weighted sum and sigmoid, and stacks them into a neural network.
+- **Chapter 22** (statistical inference) and **Chapter 31** (causal inference) cover confidence intervals for coefficients and estimating causes.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers every algorithm here, bias and variance, regularization, and tuning with graded answers. "Explain gradient boosting to a non-technical person" and "random forest vs gradient boosting" are among the most common questions in data science interviews.

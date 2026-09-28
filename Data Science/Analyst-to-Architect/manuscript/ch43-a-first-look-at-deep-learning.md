@@ -1,6 +1,6 @@
 # Chapter 43. A First Look at Deep Learning
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -669,7 +669,7 @@ The pattern across this book has been consistent: try the simplest thing that co
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -696,19 +696,17 @@ The point of this story isn't that deep learning is overhyped; this chapter's ow
 
 ---
 
-## Tools
+## Project: a tabular network and an image classifier, evaluated honestly
+
+**Goal:** hands-on practice building, training, and — most importantly — fairly evaluating two small neural networks, one on tabular data and one on images.
+
+### Tools you'll need
 
 - **PyTorch** 2.14.0 (`pip install torch`; CPU-only build works fine for everything in this chapter): `nn.Linear`, `nn.Conv2d`, `nn.ReLU`, `nn.Tanh`, `nn.Sigmoid`, `nn.Sequential`, `nn.BCELoss`, `nn.BCEWithLogitsLoss`, `nn.CrossEntropyLoss`, `torch.optim.SGD`, `torch.optim.Adam`, and `.backward()` for automatic differentiation.
-- **scikit-learn** 1.8.0: `load_digits` (a small, built-in image dataset — no download needed), plus the same pipeline, splitting, and evaluation tools used throughout Part IV.
+- **scikit-learn** 1.8.0: `load_digits` (a small, built-in image dataset — no download needed), plus the same pipeline, splitting, and evaluation tools used throughout Part 4.
 - Not used here but worth knowing: **torchvision** (real pretrained image models, needing an internet connection to download weights), **Keras/TensorFlow** (an alternative to PyTorch with a similar feature set), **Weights & Biases** or **TensorBoard** (tracking training runs, essential once experiments multiply).
 - Everything in this chapter ran on one CPU core, Python 3.12.3, on 18 September 2026, in well under a minute total.
 - **Companion files:** this chapter needs no new dataset; `companion/accounts/accounts.csv` (Chapter 37) and scikit-learn's bundled digits dataset are both already available. Run the chapter's code from `companion/ch43/`.
-
----
-
-## The project: a tabular network and an image classifier, evaluated honestly
-
-**Goal:** hands-on practice building, training, and — most importantly — fairly evaluating two small neural networks, one on tabular data and one on images.
 
 **Steps:**
 
@@ -729,20 +727,6 @@ The point of this story isn't that deep learning is overhyped; this chapter's ow
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain that a single neuron is exactly Chapter 37's logistic regression, with an activation function.
-- [ ] I can explain why one neuron cannot solve every classification problem, using XOR as a concrete example.
-- [ ] I can compute a small network's forward pass by hand and match it exactly in code.
-- [ ] I understand backpropagation as the chain rule, applied automatically, and I've verified it against a numerical gradient at least once.
-- [ ] I never assume a neural network beats gradient boosting on tabular data without testing it.
-- [ ] I can explain, in plain terms, what a convolution does to an image.
-- [ ] I evaluate an image classifier (or any model) with a proper held-out test, not training accuracy.
-- [ ] I know that transfer learning's value depends entirely on what the base model was trained on, and I check rather than assume it helps.
-- [ ] I judge every deep learning claim against the same baseline discipline as every other method in this book.
-
----
-
 ## Recap
 
 - A **neuron** is a weighted sum plus a bias, passed through an **activation function** — exactly Chapter 37's logistic regression when the activation is sigmoid.
@@ -756,7 +740,29 @@ The point of this story isn't that deep learning is overhyped; this chapter's ow
 
 ---
 
-## Practice exercises
+## Key terms
+
+neuron · activation function · sigmoid · ReLU (rectified linear unit) · vanishing gradient · layer · hidden layer · neural network · weight · bias · forward pass · XOR problem · decision boundary · backpropagation · chain rule · autograd · numerical gradient check · `BCELoss` / `BCEWithLogitsLoss` · epoch · convolution · kernel (filter) · convolutional neural network (CNN) · pooling · feature map · transfer learning · base task · pretrained model · frozen layers · fine-tuning · from-scratch training
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain that a single neuron is exactly Chapter 37's logistic regression, with an activation function.
+- [ ] I can explain why one neuron cannot solve every classification problem, using XOR as a concrete example.
+- [ ] I can compute a small network's forward pass by hand and match it exactly in code.
+- [ ] I understand backpropagation as the chain rule, applied automatically, and I've verified it against a numerical gradient at least once.
+- [ ] I never assume a neural network beats gradient boosting on tabular data without testing it.
+- [ ] I can explain, in plain terms, what a convolution does to an image.
+- [ ] I evaluate an image classifier (or any model) with a proper held-out test, not training accuracy.
+- [ ] I know that transfer learning's value depends entirely on what the base model was trained on, and I check rather than assume it helps.
+- [ ] I judge every deep learning claim against the same baseline discipline as every other method in this book.
+
+---
+
+## Exercises
 
 Code exercises run from `companion/ch43/` after the chapter's code (they use `X_train`, `y_train`, `X_valid`, `y_valid`, `network`, `base_model`, `SmallCNN`, `small_training_set`, `Xn_test_t`, `yn_test_t`, and the rest). Predict each answer before running it.
 
@@ -790,26 +796,7 @@ Code exercises run from `companion/ch43/` after the chapter's code (they use `X_
 
 ---
 
-## Key terms
-
-neuron · activation function · sigmoid · ReLU (rectified linear unit) · vanishing gradient · layer · hidden layer · neural network · weight · bias · forward pass · XOR problem · decision boundary · backpropagation · chain rule · autograd · numerical gradient check · `BCELoss` / `BCEWithLogitsLoss` · epoch · convolution · kernel (filter) · convolutional neural network (CNN) · pooling · feature map · transfer learning · base task · pretrained model · frozen layers · fine-tuning · from-scratch training
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 37, Supervised Learning Algorithms,** is this chapter's constant point of comparison: logistic regression and gradient boosting, both still very much in play.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** governs how any deep learning result should be judged, unchanged.
-- **Chapter 41, NLP Foundations,** previewed learned representations with word embeddings; Chapter 54 scales that idea up enormously.
-- **Chapter 53, Deep Learning in Practice** (later in the book), goes further into architectures, regularization, and training at scale.
-- **Chapter 54, Generative AI & Large Language Models,** is where transfer learning's real power shows up: models pretrained on vastly larger, richer data than anything in this chapter.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers backpropagation, activation functions, why XOR needs a hidden layer, and "when would you use deep learning versus a simpler model?" — one of the most common questions in applied ML interviews, and one this chapter now lets you answer with evidence.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1134,3 +1121,13 @@ The manually written gradient descent loop (w=3.102, b=6.382) lands close to bot
 
 **16.** "What was the base model actually trained on, and how similar is that data to product-defect photos?" This chapter's own experiment showed transfer learning's value depends entirely on how rich and relevant the base model's training data is — a base model trained on millions of *generic* photographs (cats, cars, landscapes) may transfer only partially to a specific industrial-defect task, and the only way to know is to test the vendor's actual model on a genuine held-out sample of Riverstone's own defect photos, exactly as Chapter 39 would insist for any other vendor model.
 
+---
+
+## Where this leads
+
+- **Chapter 37, Supervised Learning Algorithms,** is this chapter's constant point of comparison: logistic regression and gradient boosting, both still very much in play.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** governs how any deep learning result should be judged, unchanged.
+- **Chapter 41, NLP Foundations,** previewed learned representations with word embeddings; Chapter 54 scales that idea up enormously.
+- **Chapter 53, Deep Learning in Practice** (later in the book), goes further into architectures, regularization, and training at scale.
+- **Chapter 54, Generative AI & Large Language Models,** is where transfer learning's real power shows up: models pretrained on vastly larger, richer data than anything in this chapter.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers backpropagation, activation functions, why XOR needs a hidden layer, and "when would you use deep learning versus a simpler model?" — one of the most common questions in applied ML interviews, and one this chapter now lets you answer with evidence.

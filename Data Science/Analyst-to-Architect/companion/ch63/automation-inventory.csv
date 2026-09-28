@@ -3,7 +3,7 @@ Daily Sales Flash,scheduled script,Analytics team,4,1,1,full six layers,document
 Branch consolidation macro,spreadsheet macro,Data platform team,3,1,1,ingestion+warehouse+delivery compressed,documented,4min->9sec per run; Ch 19 rewrite
 PO-intake (assisted mode),AI agent + human confirmation,Automation team,5,3,2,full six layers,documented,Rs 198/day at 40 emails; Ch 58
 PO-intake (straight-through, rejected),AI agent,n/a - rejected,5,3,5,full six layers,rejected,19% silent error rate; Rs 13380/day hidden cost
-Dagster ingestion pipeline,orchestrated pipeline,Data platform team,5,5,3,sources+ingestion+warehouse,documented,Part V; platform-wide dependency
+Dagster ingestion pipeline,orchestrated pipeline,Data platform team,5,5,3,sources+ingestion+warehouse,documented,Part 5; platform-wide dependency
 CRM reverse-ETL sync,integration platform pattern,Data platform team,3,3,1,warehouse+delivery,documented,eventual consistency by design; Ch 51
 Support RAG assistant,AI agent,AI applications team,4,3,2,sources+semantic+delivery,documented,Ch 55; refuses rather than guesses
 Defect detection model service,AI agent + MLOps,AI applications team,4,4,3,sources+delivery+monitoring,documented,Ch 53/56; real-time inference

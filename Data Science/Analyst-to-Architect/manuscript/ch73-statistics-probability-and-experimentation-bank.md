@@ -1,6 +1,6 @@
 # Chapter 73. Statistics, Probability & Experimentation Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer probability puzzles that show up across every data role's interviews, and explain *why* the surprising answer is correct, not just what it is · reason correctly about distributions, p-values, and confidence intervals, including the ways almost everyone misinterprets them at first · design an A/B test's sample size before running it, and debug one that's already gone wrong · spot Simpson's paradox and correlation-masquerading-as-causation in real-looking data.
 >
@@ -489,7 +489,7 @@ expected counts under independence: [[105, 95], [105, 95]]
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -514,15 +514,13 @@ The fix took two days: a loading-performance bug, unrelated to pricing entirely.
 
 ---
 
-## Tools
-
-**Python** with **SciPy** (`scipy.stats`) and **statsmodels** (`statsmodels.stats.api`), both free, both used throughout this chapter for every simulation, test statistic, and sample-size calculation. **R** offers equivalent functionality (`prop.test`, `power.t.test`, `chisq.test`) and is common in some analytics teams; the underlying statistics are identical regardless of language. Everything in this chapter ran on Python 3.12, SciPy 1.17.1, statsmodels 0.15.0.
-
----
-
-## The project
+## Project
 
 **Goal:** run, not just read, this chapter's core demonstrations on your own numbers.
+
+### Tools you'll need
+
+**Python** with **SciPy** (`scipy.stats`) and **statsmodels** (`statsmodels.stats.api`), both free, both used throughout this chapter for every simulation, test statistic, and sample-size calculation. **R** offers equivalent functionality (`prop.test`, `power.t.test`, `chisq.test`) and is common in some analytics teams; the underlying statistics are identical regardless of language. Everything in this chapter ran on Python 3.12, SciPy 1.17.1, statsmodels 0.15.0.
 
 1. Compute Bayes' theorem for a real base-rate scenario from your own work (a fraud flag, a churn flag, a quality-control test) and see how far the "accuracy" number is from the true positive-predictive value.
 2. Run a real sample-size calculation for an A/B test you'd actually want to run, using your own baseline rate and a business-justified MDE.
@@ -532,15 +530,15 @@ The fix took two days: a loading-performance bug, unrelated to pricing entirely.
 
 ---
 
-## Final-week revision list
-
-Q73-001, Q73-002, Q73-003, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037.
-
----
-
 ## Key terms
 
 Bayes' theorem · base rate · conditional probability · Monty Hall problem · birthday problem · independent vs. mutually exclusive events · expected value · Binomial distribution · Poisson distribution · Central Limit Theorem · variance · standard deviation · Normal / log-normal distribution · heavy-tailed distribution · p-value · null hypothesis · Type I error · Type II error · statistical power · t-test vs. z-test · confidence interval · minimum detectable effect (MDE) · randomization · one-tailed vs. two-tailed test · holdout group · peeking (repeated significance testing) · Sample Ratio Mismatch (SRM) · novelty effect · multiple comparisons · Bonferroni correction · network effect (interference) · Simpson's paradox · confounder · partial correlation · selection bias · natural experiment
+
+---
+
+## Final-week revision list
+
+Q73-001, Q73-002, Q73-003, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037.
 
 ---
 

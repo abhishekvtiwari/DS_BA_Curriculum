@@ -1,6 +1,6 @@
 # Chapter 80. Architecture & Leadership Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **A scope note.** This chapter is for senior IC and architect-level interviews specifically, distinct from the Data Analyst/Data Scientist/Data Engineer focus of most of this part. Included on direct request; readers targeting DA/DS/DE roles exclusively can treat this as optional, forward-looking material for a later career stage.
 >
@@ -8,7 +8,7 @@
 >
 > **How this chapter is built.** Same format as Chapters 70–79: every core question leads with a **"Remember it as…"** hook, a one-line answer, a compact tier table. Rapid-fire sections are scan tables. Most of this chapter is judgment and trade-off reasoning rather than executable code; where a claim is computable (an ROI or unit-economics calculation), it's actually run and shown with real numbers.
 >
-> **Learn it in** pointers reference Chapters 61–67 of this book (Part VII: Architecture, Governance & Leadership) at chapter level, since this chat doesn't have their approved text to check exact section numbers against.
+> **Learn it in** pointers reference Chapters 61–67 of this book (Part 7: Architecture, Governance & Leadership) at chapter level, since this chat doesn't have their approved text to check exact section numbers against.
 
 ---
 
@@ -194,7 +194,7 @@ Payback period: 5.8 months
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -218,26 +218,18 @@ The interviewer's note: *"Turned one incident into a systemic finding, and built
 
 ---
 
-## Tools
-
-No software specific to this chapter. A whiteboard or diagramming tool for C4 diagrams and architecture sketches; a shared document for Architecture Decision Records; a spreadsheet for ROI and unit-economics calculations, the same skills Chapter 70 already covers.
-
----
-
-## The project
+## Project
 
 **Goal:** apply this chapter's frameworks to a real or hypothetical architecture decision.
+
+### Tools you'll need
+
+No software specific to this chapter. A whiteboard or diagramming tool for C4 diagrams and architecture sketches; a shared document for Architecture Decision Records; a spreadsheet for ROI and unit-economics calculations, the same skills Chapter 70 already covers.
 
 1. Write a one-page ADR for a real technical decision you've made or observed, including the context, options considered, and reasoning, not just the final choice.
 2. Calculate a real ROI/payback period for one automation or system you're familiar with, using Q80-016's method.
 3. Draft the business-risk-framed pushback you'd give for a real or hypothetical technical disagreement in your own context.
 4. Sketch a staged, three-stage architecture roadmap for a system you know, tied to specific growth triggers rather than a single end-state design.
-
----
-
-## Final-week revision list
-
-Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023.
 
 ---
 
@@ -247,9 +239,15 @@ CAP theorem · CP vs. AP · eventual consistency · single point of failure · h
 
 ---
 
+## Final-week revision list
+
+Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023.
+
+---
+
 ## Where this leads
 
 - **Chapter 69, The Extra-Points Method,** is the rubric and move set every answer above is written against.
 - **Chapter 77 and Chapter 78** already cover the technical single-point-of-failure and monitoring concepts this chapter's leadership scenarios examine at the organizational and governance level instead.
 - **Chapter 24's storytelling discipline** underlies this chapter's board-presentation and stakeholder-pushback questions.
-- **Chapters 61–67 of this book** (Part VII: Architecture, Governance & Leadership) teach every technique this bank draws on, in full; this chapter tests it, it doesn't re-teach it from scratch.
+- **Chapters 61–67 of this book** (Part 7: Architecture, Governance & Leadership) teach every technique this bank draws on, in full; this chapter tests it, it doesn't re-teach it from scratch.

@@ -1,19 +1,21 @@
 # Part 0 — First Principles: Data from Zero
 
-Part 0 starts from nothing. It assumes no technical knowledge, no math beyond school arithmetic, and no tools. By the end of it, you'll understand what data is, where it lives, how a business creates and uses it, how to work with numbers confidently, how to think through a business question, and you'll have every core tool installed and a plan to keep learning.
+Part 0 starts from nothing. It assumes no technical knowledge, no math beyond school arithmetic, and no tools. By the end of it, you'll understand what data is, where it lives, how a business creates and uses it, how to work with numbers confidently, how to think through a business question, and you'll have a plan for how and when you'll learn the rest.
 
 Every example uses **Riverstone Supplies**, the fictional manufacturer you'll follow through the whole book, and every number was checked against its practice databases.
+
+Before Chapter 1, read **How to Use This Book** at the front: it shows how each chapter is laid out, how to read the code and its output, and where the answers and companion files are.
 
 | Chapter | What you'll be able to do | Time needed |
 |---|---|---|
 | **1. What Is Data?** | tell data from information and insight; name types and levels of measurement; judge data quality | 3–4 hours |
-| **2. How Computers Store, Move and Protect Data** | work with files and formats from CSV to Parquet; explain databases, the cloud, and APIs; keep data safe | 4–5 hours |
+| **2. How Computers Store, Move and Protect Data** | work with files and formats from CSV to Parquet; explain databases, the cloud, and APIs; keep data safe | 3–4 hours |
 | **3. How a Business Runs on Data** | follow an order from enquiry to cash; tell bookings from billings from collections; define KPIs; find manual work | 3–4 hours |
 | **4. Numbers Without Fear** | calculate percentages, points, growth, and CAGR; choose the right average; read charts; estimate | 4–5 hours |
 | **5. Thinking Like an Analyst** | turn vague requests into precise questions; build issue trees; test hypotheses; spot bias; decide with data | 3–4 hours |
-| **6. Setting Up to Learn** | install and check the book's tools; read documentation; learn with AI assistants; plan your study | 3–4 hours |
+| **6. Planning Your Learning** | estimate your hours honestly; set a weekly rhythm; know which chapter brings each tool; read documentation; learn with AI assistants; plan your first 90 days | 2–3 hours |
 
-In total, allow 20–26 hours, including the exercises and projects. After Part 0, Part I (Chapters 7–9) shows the map of data careers, and Part II (Chapters 10–27) builds the analyst's toolkit.
+In total, allow 18–24 hours, including the exercises and projects. After Part 0, Part 1 (Chapters 7–9) shows the map of data careers, and Part 2 (Chapters 10–27) builds the analyst's toolkit.
 
 
 # Chapter 1. What Is Data?
@@ -36,7 +38,7 @@ In total, allow 20–26 hours, including the exercises and projects. After Part 
 
 Every job in this book, from a junior analyst's first report to an architect's design for a whole company, is built on one raw material: **data**. Tools change every few years. Spreadsheets gave way to databases, databases to cloud warehouses, and now AI assistants can write the formulas for you. The raw material stays the same.
 
-That's why this chapter comes before any tool. People who skip it can learn the buttons in Excel or the words in SQL and still produce reports that are confidently wrong: an "average" of PIN codes, a customer counted twice because their name was typed in capitals, a sales total that silently left out every blank row. These mistakes aren't about software. They come from not asking basic questions about the data first: *What does each value mean? What kind of value is it? What calculations does it allow? Where did it come from? Can I trust it?*
+That's why this chapter comes before any tool. People who skip it can learn the buttons in Excel or the words in SQL, the language for asking a database questions, and still produce reports that are confidently wrong: an "average" of PIN codes, a customer counted twice because their name was typed in capitals, a sales total that silently left out every blank row. These mistakes aren't about software. They come from not asking basic questions about the data first: *What does each value mean? What kind of value is it? What calculations does it allow? Where did it come from? Can I trust it?*
 
 By the end of this chapter you'll ask those questions automatically. It's a small habit, and it's the one that experienced analysts are quietly relying on every time they say, "Wait, that number doesn't look right."
 
@@ -54,6 +56,24 @@ Picture the owner of a small grocery shop in your neighborhood. Next to the till
 Now notice two more things about the notebook. First, the owner writes every line **the same way**: date first, then name, then items, then amount. That consistent layout is what makes adding things up possible. Second, some lines are hard to use: a smudged amount, a name written as "Joshi aunty" one day and "Mrs. Joshi" the next. That's a **data quality** problem, and every business, from this shop to the largest bank, has the same problem at a bigger scale.
 
 Everything in this chapter is a version of that notebook.
+
+> **Meet Riverstone.** Riverstone Supplies is the fictional company you'll follow through this book. It makes and sells plastic storage boxes, kitchenware, industrial crates, and a small range of furniture to shops, hotels, and wholesalers. It has two plants, at Taloja and Chakan, and one warehouse, at Bhiwandi.
+>
+> You'll practice on two of its datasets:
+>
+> - **The mini database:** 12 orders from January to March 2026, small enough to check by eye. Chapters 1–5 and 12 use it.
+> - **The one-year database:** all of 2025, 173 orders plus 2 that were cancelled. You'll use it from Chapter 4 onward.
+>
+> Every table and figure of Riverstone numbers says which of the two it comes from. These are the people you'll meet:
+>
+> | Who | Role | First met in |
+> |---|---|---|
+> | Meera Iyer | sales coordinator | Chapter 1 |
+> | Anita Rao | Sales Head | Chapter 1 |
+> | Vikram Singh | Sales Manager | Chapter 3 |
+> | Neha Kulkarni, Rahul Mehta, Farah Khan | sales executives | Chapters 1–2 |
+> | Suresh Menon | Finance Manager | Chapter 3 |
+> | Imran | ran sales operations before Meera joined | Chapter 2 |
 
 ---
 
@@ -95,26 +115,26 @@ People often use *data* and *information* as if they mean the same thing. In dat
 | **Knowledge** | an understanding of patterns and causes | Why did it happen? |
 | **Insight** | a conclusion that points to an action | So what should we do? |
 
-Here's the ladder with real numbers from **Riverstone Supplies**, a fictional company that sells storage boxes, kitchenware, and industrial crates to shops, hotels, and wholesalers across India. You'll use its data throughout the book.
+Here's the ladder with real numbers from Riverstone's mini database.
 
 ![The ladder from data to insight, with Riverstone's first quarter](figures/fig1-1-data-to-insight.svg)
 
-*Figure 1.1 — The same twelve orders at four levels of usefulness.*
+*Figure 1.1 — The same twelve orders at four levels of usefulness. Mini database (Jan–Mar 2026).*
 
 - **Data.** Riverstone's system holds twelve orders from January to March 2026. Each has an order number, a customer, a date, and a status such as *Delivered*, *Shipped*, or *Pending*. On their own, twelve rows tell a manager nothing.
-- **Information.** Add up the value of delivered and shipped orders for each month: January ₹104,210, February ₹161,700, March ₹31,800. Now there's a clear message: March fell by 80% compared with February.
+- **Information.** Add up the value of delivered and shipped orders for each month: January ₹1,04,210, February ₹1,61,700, March ₹31,800. Now there's a clear message: March fell by 80% compared with February.
 - **Knowledge.** Look closer and you learn *why*. Most of Riverstone's revenue comes from a few big wholesale orders, and none were placed in March. One more March order, worth ₹26,220, exists but is still *Pending*, so it isn't counted yet.
 - **Insight.** So March is not the collapse the headline number suggests. The useful actions are to ship the pending order before the quarter closes, and to call the big wholesale buyers this week to find out why they haven't reordered.
 
 Notice what made each step possible. Information needed a **question** ("how much did we sell each month?") and a **rule** ("count only delivered and shipped orders"). Knowledge needed a closer look at **detail and context**. Insight needed **judgment about the business**. Tools help most with the first step; your value as an analyst grows as you climb.
 
-> **Watch out: a number is not an insight.** "March revenue: ₹31,800" is information. Reports that stop there leave the reader to guess what it means, and people often guess wrong. Chapter 24 shows how to write the "so what" that turns a number into a decision.
+> **Watch out: a number is not an insight.** "March revenue: ₹31,800" is information. Reports that stop there leave the reader to guess what it means, and people often guess wrong. Add the "why" and the "so what" before you send it.
 
 ---
 
 ## 1.3 Records, fields, and datasets
 
-Data becomes easy to use when it's arranged in a **table**: a grid of rows and columns. Almost every tool in this book, from spreadsheets to databases to Python, works with tables.
+Data becomes easy to use when it's arranged in a **table**: a grid of rows and columns. Almost every tool in this book, from spreadsheets to databases to Python, a programming language, works with tables.
 
 Here's a receipt from a neighborhood store, and the same receipt as a table.
 
@@ -131,7 +151,7 @@ The vocabulary:
 
 Two ideas from this small example will stay with you for the whole book.
 
-**1. Decide what one row means.** In Figure 1.2, one row is one *item* on a bill, not one *bill*. That's why `bill_no`, `bill_date`, and `paid_by` are repeated on all five rows: each row needs to stand on its own. The level of detail one row represents is called the **grain** of a table. When two people disagree about a number, they're very often counting at different grains: "5 sales" (items) versus "1 sale" (bill). Chapter 12 shows how getting the grain wrong makes totals double-count.
+**1. Decide what one row means.** In Figure 1.2, one row is one *item* on a bill, not one *bill*. That's why `bill_no`, `bill_date`, and `paid_by` are repeated on all five rows: each row needs to stand on its own. The level of detail one row represents is called the **grain** of a table. When two people disagree about a number, they're very often counting at different grains: "5 sales" (items) versus "1 sale" (bill).
 
 **2. Store the ingredients, calculate the results.** The receipt prints a total of ₹1,092, but the table has no "total" row. You can always calculate it: 165 + 540 + 112 + 135 + 140 = ₹1,092. A total typed in as a row would get added in again by anyone who sums the column, and it would be wrong the moment someone corrected a line. Keep the detailed facts; calculate summaries when you need them.
 
@@ -163,7 +183,7 @@ Getting the type right matters more than beginners expect.
 
 **Missing values.** Sometimes a value simply wasn't recorded. A blank is not the same as zero: a blank "discount" might mean *no discount* or *nobody wrote it down*. Databases use a special marker, **NULL**, for "unknown", and Chapter 12 shows how it trips up calculations. For now, whenever you see a blank, ask: **does this mean zero, "not applicable", or "unknown"?**
 
-> **Watch out: the type you see isn't always the type that's stored.** A spreadsheet can *show* `14-09-2026` while storing it as text, and then refuse to sort or group it by month. Chapter 10 shows how to check what a cell really contains.
+> **Watch out: the type you see isn't always the type that's stored.** A spreadsheet can *show* `14-09-2026` while storing it as text, and then refuse to sort or group it by month.
 
 ---
 
@@ -190,13 +210,13 @@ Money is technically discrete (you can't pay a fraction of a paisa), but because
 | `paid_by` | qualitative | — |
 | `bill_no` | qualitative (it's a label, not an amount) | — |
 
-This isn't just labeling. It decides which **chart** fits (a bar chart for categories, a histogram for continuous amounts, Chapter 15) and which **summary** makes sense (a count of each payment method, but an average of prices).
+This isn't just labeling. It decides which **chart** fits (a bar chart for categories, a histogram for continuous amounts) and which **summary** makes sense (a count of each payment method, but an average of prices).
 
 ---
 
 ## 1.6 Levels of measurement: which math is allowed
 
-Not all numbers support the same calculations. A useful way to think about this is the four **levels of measurement**, described by the psychologist S. S. Stevens in the 1940s and still taught in every statistics course. Each level allows everything the level above it allows, plus something new.
+Not all numbers support the same calculations. A useful way to think about this is the four **levels of measurement**, described by the psychologist S. S. Stevens in the 1940s and still taught in every statistics course. Each level can do everything the level before it can, plus something new.
 
 ![The four levels of measurement and the calculations each allows](figures/fig1-3-levels-of-measurement.svg)
 
@@ -223,11 +243,11 @@ Riverstone asks customers to rate two delivery partners from 1 (very poor) to 5 
 
 Check the means by hand: 15 ÷ 5 = 3.0, and 17 ÷ 5 = 3.4. ✓
 
-On the mean, Rapid Wheels looks slightly better. But look at the ratings themselves. Swift Movers is consistently average. Rapid Wheels delights most customers and badly fails two out of five, which, for a supplier delivering to hotels, might mean a banquet with no plates. The mean treats the gap between 1 and 5 as four equal steps, which a rating scale doesn't promise. For ordinal data, the **median** and the **count in each category** ("two of five customers gave a 1") are more honest summaries. Chapter 21 goes deeper into choosing averages.
+On the mean, Rapid Wheels looks slightly better. But look at the ratings themselves. Swift Movers is consistently average. Rapid Wheels delights most customers and badly fails two out of five, which, for a supplier delivering to hotels, might mean a banquet with no plates. The mean treats the gap between 1 and 5 as four equal steps, which a rating scale doesn't promise. For ordinal data, the **median** and the **count in each category** ("two of five customers gave a 1") are more honest summaries.
 
 ### Worked example 2: twice as hot?
 
-Riverstone's warehouse was 20 °C in the morning and 40 °C in the afternoon. A report says, "The warehouse was twice as hot in the afternoon." It wasn't. Celsius has no true zero, so ratios don't work. Temperature *does* have a true zero on the Kelvin scale, which scientists use (0 K is absolute zero). Converting: 20 °C is 293.15 K and 40 °C is 313.15 K, and 313.15 ÷ 293.15 = 1.068. In real terms the afternoon was about 7% hotter, not 100%. The accurate sentence is simpler anyway: *"The temperature rose by 20 degrees."*
+Riverstone's warehouse was 20 °C in the morning and 40 °C in the afternoon. A report says it was "twice as hot". It wasn't: 0 °C isn't "no heat", so Celsius numbers can't be divided like that. The honest sentence is *"the temperature rose by 20 degrees"*.
 
 ### Worked example 3: dates
 
@@ -243,21 +263,21 @@ The last way to describe data is by its **shape**: how organized it is when you 
 
 ![One order as a table, as JSON, and as an email](figures/fig1-4-three-shapes-of-data.svg)
 
-*Figure 1.4 — Same facts, three shapes. The less structure, the more work before you can count anything.*
+*Figure 1.4 — Same facts, three shapes. The less structure, the more work before you can count anything. Mini database (Jan–Mar 2026), order 5001.*
 
 **Structured data** fits a fixed layout of rows and columns, where every row has the same fields and every column has one type. Sales tables, bank statements, attendance registers, and stock lists are structured. It's the easiest to add up, sort, filter, and combine, and it's what spreadsheets and databases are built for. Much of a data analyst's day is spent with structured data.
 
-**Semi-structured data** has labels that travel with the values, but no fixed table layout. The most common format is **JSON** (say "jay-son"), which websites and apps use to send data to each other. In the middle panel of Figure 1.4, every value has a name (`"qty": 20`), and the `items` list can hold one item or fifty. Two orders don't have to have exactly the same fields. Other examples are XML files and the logs that apps write. Semi-structured data is easy for computers to read, and usually needs a step of **flattening** into tables before analysis. Chapter 2 introduces these formats, and Chapter 18 shows how to flatten them in Python.
+**Semi-structured data** has labels that travel with the values, but no fixed table layout. The most common format is **JSON** (say "jay-son"), which websites and apps use to send data to each other. In the middle panel of Figure 1.4, every value has a name (`"qty": 20`), and the `items` list can hold one item or fifty. Two orders don't have to have exactly the same fields. Other examples are XML files and the logs that apps write. Semi-structured data is easy for computers to read, and usually needs a step of **flattening** into tables before analysis. Chapter 2 introduces these formats.
 
-**Unstructured data** has no predefined layout at all. The meaning is in the words, pixels, or sounds: emails, WhatsApp messages, PDF contracts, product photos, call recordings, customer reviews. A person can read Rakesh's email in Figure 1.4 and understand the order instantly. A computer has to work out that "the 10L storage boxes" means product 101, and that "the rates you quoted" means ₹450 and ₹120. Most of the information inside organizations is unstructured, and for a long time most of it went unused. Modern AI tools, which you'll meet in Part VI, have made it much easier to pull structured facts out of unstructured text, and that's one of the big changes in data work in recent years.
+**Unstructured data** has no predefined layout at all. The meaning is in the words, pixels, or sounds: emails, WhatsApp messages, PDF contracts, product photos, call recordings, customer reviews. A person can read Rakesh's email in Figure 1.4 and understand the order instantly. A computer has to work out that "the 10L storage boxes" means product 101, and that "the rates you quoted" means ₹450 and ₹120. Most of the information inside organizations is unstructured, and for a long time most of it went unused. Modern AI tools have made it much easier to pull structured facts out of unstructured text, and that's one of the big changes in data work in recent years.
 
-| Shape | Examples | Where you'll work with it |
-|---|---|---|
-| Structured | spreadsheets, database tables, CSV files | Chapters 10–13 and most of Part II |
-| Semi-structured | JSON, XML, app and website logs | Chapters 2, 18, and Part V |
-| Unstructured | emails, PDFs, images, audio, free-text reviews | Chapters 41, 55, and 58 |
+| Shape | Examples |
+|---|---|
+| Structured | spreadsheets, database tables, CSV files |
+| Semi-structured | JSON, XML, app and website logs |
+| Unstructured | emails, PDFs, images, audio, free-text reviews |
 
-> **Real-life example: the order that arrives by email.** In many companies, including plenty of manufacturers and distributors, customers still send orders by email or WhatsApp, and someone re-types them into the billing system. Each re-typing is a chance for a mistake: 50 bottles becomes 500, or the discount is missed. Turning that unstructured message into a structured order automatically is a classic automation project, and you'll build one in Chapter 58.
+> **Real-life example: the order that arrives by email.** In many companies, including plenty of manufacturers and distributors, customers still send orders by email or WhatsApp, and someone re-types them into the billing system. Each re-typing is a chance for a mistake: 50 bottles becomes 500, or the discount is missed. Turning that unstructured message into a structured order automatically is a classic automation project.
 
 ---
 
@@ -293,7 +313,7 @@ Every piece of data was created by someone or something. Knowing the source tell
 
 | Source | How it's created | Examples | Typical problems |
 |---|---|---|---|
-| **People** | typed, written, selected, or spoken | order forms, surveys, a salesperson updating a CRM, the shop owner's notebook | typos, blanks, inconsistent spelling, fields filled in "just to get past the screen" |
+| **People** | typed, written, selected, or spoken | order forms, surveys, a salesperson updating a CRM (the sales team's contact system), the shop owner's notebook | typos, blanks, inconsistent spelling, fields filled in "just to get past the screen" |
 | **Machines and sensors** | measured automatically | step counters, temperature sensors on a production line, GPS in delivery vans, electricity meters | faulty or drifting sensors, gaps when a device goes offline, huge volumes |
 | **Business systems** | recorded as a side effect of doing work | billing software, a website's shopping cart, a bank's payment system, attendance swipes | only as good as the process around them; changes when the system is upgraded |
 | **Outside sources** | collected by someone else | government statistics, weather data, market prices, data bought from partners | different definitions, delays, unclear collection methods |
@@ -346,11 +366,11 @@ There are at least six problems, one or more for every dimension except timeline
 
 Now try a simple question: **how many customers are in Mumbai?** A computer that matches the exact text "Mumbai" finds **one**: Sharma Hardware. ("mumbai" has a small *m*, "Bombay" is different text, and the third row's "Mumbai" has a trailing space.) The real answer is **three different customers**: Sharma Hardware, Metro Mart, and Western Logistics. And for Sunrise Caterers, the honest answer is "unknown".
 
-Nothing in that table looks dramatic. Each problem is one small slip by a busy person. Together they turn a simple question into a wrong answer, and nobody sees an error message. **This is why analysts check data before they trust it.** Chapter 14 teaches how to find and fix these problems at scale, and Chapter 47 shows how data teams catch them automatically before a report goes out.
+Nothing in that table looks dramatic. Each problem is one small slip by a busy person. Together they turn a simple question into a wrong answer, and nobody sees an error message. **This is why analysts check data before they trust it.**
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -389,19 +409,17 @@ Look at what Anita received: a number she can use, the reason it differs from th
 
 ---
 
-## Tools
+## Project: a week of your own spending
+
+**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise in this chapter. Sketching a table by hand is still one of the best ways to think about data.
 - **Excel or Google Sheets** (optional). Chapter 10 teaches both from the beginning. If you already have either, use it for the project; Google Sheets is free with a Google account.
 - **Your phone.** It's full of data about you: steps, screen time, photos, payments. It's the most convenient practice dataset you own.
 
-Chapter 6 walks you through installing everything else the book uses.
-
----
-
-## The project: a week of your own spending
-
-**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
+Each tool is installed in the chapter that first uses it; Chapter 6 shows when.
 
 **Step 1. Collect.** For seven days, record every payment you make: cash, card, and UPI. Write one row per payment with these columns:
 
@@ -418,18 +436,16 @@ Chapter 6 walks you through installing everything else the book uses.
 
 Here's how the first three days looked for Kavya, a college student in Mumbai:
 
-```
- date       | time  | item              | category      | amount_rs | payment_method | shop          | necessary
-------------+-------+-------------------+---------------+-----------+----------------+---------------+-----------
- 2026-09-07 | 08:40 | Tea and poha      | Food          |        60 | UPI            | Station stall | No
- 2026-09-07 | 09:15 | Metro card top-up | Transport     |       500 | UPI            | Metro station | Yes
- 2026-09-07 | 19:30 | Vegetables        | Groceries     |       240 | Cash           | Local market  | Yes
- 2026-09-08 | 13:05 | Lunch thali       | Food          |       180 | Card           | Canteen       | Yes
- 2026-09-08 | 21:10 | Movie ticket      | Entertainment |       350 | UPI            | Online        | No
- 2026-09-09 | 08:45 | Tea and poha      | Food          |        60 | UPI            | Station stall | No
- 2026-09-09 | 18:20 | Mobile recharge   | Bills         |       299 | UPI            | Online        | Yes
- 2026-09-09 | 20:00 | Auto rickshaw     | Transport     |        90 | Cash           | Street        | Yes
-```
+| `date` | `time` | `item` | `category` | `amount_rs` | `payment_method` | `shop` | `necessary` |
+|---|---|---|---|---|---|---|---|
+| 2026-09-07 | 08:40 | Tea and poha | Food | 60 | UPI | Station stall | No |
+| 2026-09-07 | 09:15 | Metro card top-up | Transport | 500 | UPI | Metro station | Yes |
+| 2026-09-07 | 19:30 | Vegetables | Groceries | 240 | Cash | Local market | Yes |
+| 2026-09-08 | 13:05 | Lunch thali | Food | 180 | Card | Canteen | Yes |
+| 2026-09-08 | 21:10 | Movie ticket | Entertainment | 350 | UPI | Online | No |
+| 2026-09-09 | 08:45 | Tea and poha | Food | 60 | UPI | Station stall | No |
+| 2026-09-09 | 18:20 | Mobile recharge | Bills | 299 | UPI | Online | Yes |
+| 2026-09-09 | 20:00 | Auto rickshaw | Transport | 90 | Cash | Street | Yes |
 
 **Step 2. Describe the dataset.** Write down:
 
@@ -456,20 +472,6 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
-- [ ] I can turn a receipt, register, or form into a table and state its grain.
-- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
-- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
-- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
-- [ ] I can tell structured, semi-structured, and unstructured data apart.
-- [ ] I can write a data dictionary for a small table.
-- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
-- [ ] I've logged a week of my own spending and turned it into one insight.
-
----
-
 ## Recap
 
 - **Data** is a recorded observation. **Information** is data organized to answer a question. **Knowledge** explains why. **Insight** points to an action. Analysts earn their value by climbing that ladder.
@@ -485,7 +487,29 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Practice exercises
+## Key terms
+
+data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
+- [ ] I can turn a receipt, register, or form into a table and state its grain.
+- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
+- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
+- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
+- [ ] I can tell structured, semi-structured, and unstructured data apart.
+- [ ] I can write a data dictionary for a small table.
+- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
+- [ ] I've logged a week of my own spending and turned it into one insight.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -493,7 +517,7 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 2. Label each statement as data, information, knowledge, or insight:
    (a) "Order 5012 was placed on 15 March and is Pending."
    (b) "We should give customers who haven't ordered in 60 days a call before the festive season."
-   (c) "Riverstone sold ₹161,700 in February."
+   (c) "Riverstone sold ₹1,61,700 in February."
    (d) "Hotels order less during the monsoon, because fewer events are held."
 3. Give the data type (number, text, date/time, or true/false) of each: an Aadhaar-style ID number, a delivery date, the weight of a parcel, whether an invoice is paid, a customer's PIN code, the number of items in a cart.
 
@@ -529,29 +553,7 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Key terms
-
-data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
-- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
-- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, then in databases.
-- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale.
-- **Chapter 21, Descriptive Statistics & Probability,** explains which averages and charts suit each level of measurement.
-- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
+## Answers
 
 **1.** (a) Yes: it's recorded information about trains and times. (b) No, not until it's recorded, for example as an audio file or written music. (c) Yes: a recorded count. (d) No, until you write it in a to-do list or set a reminder; then it's a recorded note. (e) Yes: it's recorded, even though it's handwritten and unstructured, which makes it harder to use.
 
@@ -595,20 +597,35 @@ The last row is the kind of detail that prevents arguments later: a blank `minut
 
 **13.** The blank could mean *no discount was given*, *a discount was given but not recorded*, or *the discount wasn't decided yet* (for example, pending approval). The treatment should be decided by the people who own the rule: usually finance, together with sales. The analyst's job is to raise the question, document the answer in the data dictionary, and apply it consistently in every report.
 
+---
+
+## Where this leads
+
+- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
+- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
+- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
+- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
+- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
+- **Chapter 18** flattens semi-structured data such as JSON into tables.
+- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
+- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
+- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
+
 
 # Chapter 2. How Computers Store, Move and Protect Data
 
 > **Chapter at a glance**
 >
-> **You will learn to:** explain how a computer stores letters, numbers, and pictures as bits and bytes · read file sizes from bytes to terabytes, and work out how long a download takes · tell memory from storage · work with files, folders, paths, and extensions without surprises · choose between CSV, Excel, JSON, XML, PDF, and Parquet for a job, and avoid each format's traps · explain what a database, a server, the internet, and the cloud are · describe what an API does and read its replies · protect data with good passwords, encryption, access rules, and backups.
+> **You will learn to:** explain how a computer stores letters and numbers as bits and bytes · read file sizes from bytes to terabytes, and work out how long a download takes · tell memory from storage · work with files, folders, paths, and extensions without surprises · choose between CSV, Excel, JSON, XML, PDF, and Parquet for a job, and avoid each format's traps · explain what a database, a server, the internet, and the cloud are · describe what an API does and read its replies · protect data with good passwords, encryption, access rules, and backups.
 >
 > **Before you start:** Chapter 1 (what data is: rows, columns, types, and quality).
 >
-> **Time needed:** 4–5 hours, including the exercises and the project.
+> **Time needed:** 3–4 hours, including the exercises and the project.
 >
 > **Tools:** any computer. For the project: a spreadsheet program (Excel or Google Sheets) and a plain-text editor (Notepad on Windows, TextEdit on a Mac, or any code editor).
 >
-> **Practice data:** four Riverstone orders saved in five formats, and a demonstration API, both in the companion files (Appendix E). Every file size, output, and timing in this chapter comes from running those files.
+> **Practice data:** four Riverstone orders from the mini database (Jan–Mar 2026), saved in five formats in the companion files (Appendix E), and the replies of a small demonstration API. Every file size and every reply in this chapter is real.
 
 ---
 
@@ -692,17 +709,7 @@ And `Café` becomes `CafÃ©`. If you've ever seen `Ã©` or `â€™` in a rep
 
 ### How numbers are stored
 
-Whole numbers are stored exactly, as binary. Numbers with decimals are trickier. Most programs store them in a format called **floating point**, which is fast but can only store most decimals *approximately*. Ask Python to add 0.1 and 0.2:
-
-```
-0.30000000000000004
-```
-
-The tiny error is invisible in most charts, but it's why `0.1 + 0.2 = 0.3` can come out as *false* in a program, and why financial systems store money in exact decimal types instead (you'll meet `NUMERIC` in Chapter 12). Asked to add the same numbers as exact decimals, Python gives `0.3`.
-
-### How pictures and sound are stored
-
-A digital photo is a grid of tiny dots called **pixels**. Each pixel stores three numbers, for how much red, green, and blue light it has, usually one byte each. A 12-megapixel phone photo has 12 million pixels, so before compression it takes 12,000,000 × 3 = **36 MB**. The file on your phone is usually only a few megabytes, because it has been **compressed** (section 2.5). Sound is stored in a similar way: thousands of measurements of the sound wave every second.
+Whole numbers are stored exactly, as binary. Numbers with decimals are trickier. Most software stores decimals approximately, in a format called **floating point**, which is fast. Add 0.1 and 0.2 in many programs and the true stored answer is 0.30000000000000004, a hair more than 0.3. That's why systems that handle money store it in an exact decimal type.
 
 So text, numbers, photos, music, and video are all, in the end, long rows of 0s and 1s. What makes them different is the **agreement** about how to read those bits: the encoding or format.
 
@@ -718,16 +725,9 @@ Because data sizes range from a few bytes to many billions, we use prefixes, jus
 
 *Figure 2.1 — Each step is a thousand times bigger. The examples are typical sizes, not fixed rules.*
 
-A few sizes worth remembering: a page of plain English text is about 2–3 KB; a phone photo is typically a few MB; an hour of HD video is typically a few GB; and Riverstone's test file of 500,000 sales lines, which you'll meet in section 2.5, is 24 MB as a CSV.
+A few sizes worth remembering: a page of plain English text is about 2–3 KB; a phone photo is typically a few MB; and an hour of HD video is typically a few GB.
 
-### Why your 1 TB drive shows 931 GB
-
-There are two ways to count, and both are in use:
-
-- **Decimal (the SI standard):** 1 KB = 1,000 bytes, 1 MB = 1,000,000 bytes, 1 GB = 1,000,000,000 bytes. Drive makers and most network speeds use this.
-- **Binary:** 1 "KB" = 1,024 bytes (2¹⁰), 1 "MB" = 1,024 × 1,024 bytes, and so on. Windows, and some older software, count this way.
-
-The binary units have their own proper names, **KiB, MiB, GiB** (kibibyte, mebibyte, gibibyte), though few people use them in conversation. The difference grows with size. A drive sold as 1 TB holds 1,000,000,000,000 bytes. Divide by 1,024³ (the binary gigabyte) and you get **931.3**, which is the "GB" Windows displays. No space is missing; it's the same number of bytes counted in a different unit.
+> **Watch out: why your 1 TB drive shows 931 GB.** A drive sold as 1 TB holds a trillion bytes. Windows divides by 1,024 at each step instead of 1,000, so it shows about 931 GB. Nothing is missing.
 
 ### Bits for speed, bytes for size
 
@@ -740,7 +740,7 @@ Internet speeds are quoted in **megabits per second (Mbps)**, with a small *b*. 
 
 ### Size limits you'll actually hit
 
-- **Excel** holds at most **1,048,576 rows** and **16,384 columns** per sheet. Long before that, a large workbook becomes slow to open and save. A dataset with millions of rows belongs in a database (Chapter 12) or a format such as Parquet (section 2.5).
+- **Excel** holds at most **1,048,576 rows** and **16,384 columns** per sheet. Long before that, a large workbook becomes slow to open and save. A dataset with millions of rows belongs in a database (section 2.6) or a format such as Parquet (section 2.5).
 - **Email attachments** are usually limited to a few tens of megabytes, which is one reason teams share large files by link instead.
 - **Cloud storage plans, phone storage, and laptop drives** are all limited, and duplicate copies of large files (`report_v1`, `report_v2`, `report_final`…) fill them quickly.
 
@@ -809,15 +809,17 @@ Report final (2).xlsx                 2026-02-28_monthly_sales_report.xlsx
 Report FINAL v3 use this one.xlsx     2026-03-31_monthly_sales_report.xlsx
 ```
 
-The right-hand names follow four habits: **a date first, written year-month-day**, so files sort in time order automatically (Chapter 1); **the same pattern every time**; **lower-case words joined with underscores or hyphens**, which avoids problems in code and web links; and **no words like "final"**, which are always eventually wrong. If you need versions, use the version history in Google Drive, OneDrive, or SharePoint, or, for queries and code, Git (Chapter 26).
+The right-hand names follow four habits: **a date first, written year-month-day**, so files sort in time order automatically (Chapter 1); **the same pattern every time**; **lower-case words joined with underscores or hyphens**, which avoids problems in code and web links; and **no words like "final"**, which are always eventually wrong. If you need versions, use the version history in Google Drive, OneDrive, or SharePoint (section 2.9), or, for queries and code, a version-control tool called Git.
 
 ---
 
-## 2.5 Data file formats: the same data, packed six ways
+## 2.5 Data file formats: the same data, packed five ways
 
-Riverstone's sales coordinator exports four February orders. Here is exactly the same data saved in five data formats. Look at what each one looks like inside; the differences explain when to use each.
+Riverstone's sales coordinator exports four February orders. Here is exactly the same data saved in five formats (and a note on PDF). Look at what each one looks like inside; the differences explain when to use each.
 
 ### CSV: a table as plain text
+
+*Mini database (Jan–Mar 2026): orders 5006 to 5009.*
 
 ```
 order_id,customer_name,order_date,status,sales_rep,net_revenue,delivery_note
@@ -833,7 +835,7 @@ Look closely and you'll find three of CSV's limits:
 
 1. **Commas inside values need quotes.** Northgate's delivery note contains a comma, so it's wrapped in double quotes. Without them, a program would see an extra column.
 2. **A blank is just nothing.** Order 5008's missing sales rep is two commas in a row. CSV can't tell "unknown", "not applicable", and an empty text value apart (Chapter 1).
-3. **There are no types.** Everything in a CSV is text. When a program reads this file back, `2026-02-06` arrives as text, not a date, unless the program guesses or you tell it. Reading it back with Python's pandas library, `order_date` comes back as text while `net_revenue` is guessed to be a number.
+3. **There are no types.** Everything in a CSV is text. When a program reads this file back, `2026-02-06` arrives as text, not a date, unless the program guesses or you tell it.
 
 > **Watch out: opening a CSV in Excel changes it.** When Excel opens a CSV directly, it guesses a type for every value, and some guesses silently change your data: product codes like `00451` lose their leading zeros and become `451`; long ID numbers turn into `4.52E+13`; codes like `3-4` or `1/2` can become dates. If you then save, the damage is written back into the file. Instead, use *Data → From Text/CSV* (Excel) or *File → Import* (Google Sheets), and set code and ID columns to **Text** before loading. If `₹` or accented names appear garbled, choose **UTF-8** as the file's encoding in that same import window (section 2.1).
 
@@ -897,51 +899,35 @@ That structure lets a workbook hold far more than a CSV: several sheets, real da
 
 ### PDF: made for reading, not for data
 
-A **PDF** fixes exactly how a document looks on screen and on paper, which makes it ideal for invoices, contracts, and reports people read. It's poor for data: a table in a PDF is stored as text placed at positions on a page, not as rows and columns, so copying it into a spreadsheet often scrambles the columns. When someone offers you data "as a PDF", ask whether the CSV or Excel export behind it exists. (When it doesn't, Chapter 58 shows how AI tools can extract tables from documents, with checks.)
+A **PDF** fixes exactly how a document looks on screen and on paper, which makes it ideal for invoices, contracts, and reports people read. It's poor for data: a table in a PDF is stored as text placed at positions on a page, not as rows and columns, so copying it into a spreadsheet often scrambles the columns. When someone offers you data "as a PDF", ask whether the CSV or Excel export behind it exists.
 
 ### Parquet: built for large-scale analysis
 
-**Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms (Part V). You can't read it as text: the file begins with the four letters `PAR1`, and the rest is compressed binary data. What makes it special is how it's laid out.
+**Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms. You can't read it as text: it's compressed binary data.
 
 ![Row storage in CSV compared with column storage in Parquet](figures/fig2-2-row-vs-column-storage.svg)
 
-*Figure 2.2 — CSV stores data row by row; Parquet stores it column by column.*
+*Figure 2.2 — CSV stores data row by row; Parquet stores it column by column. The four sales lines are an example, not from either Riverstone database.*
 
-A CSV stores **row by row**: order 1's date, customer, product, quantity; then order 2's. Parquet stores **column by column**: all the dates together, then all the customers, then all the quantities. Two big benefits follow. To total the quantity column, a program reads only that column and skips the rest. And values in one column are similar to each other (a column of dates, a column of product IDs), so they **compress** very well. Parquet also stores each column's **type**, so dates come back as dates.
-
-For four orders, Parquet's advantages are invisible: the file is **4,872 bytes**, bigger than the CSV, because of the information it stores about its own structure. Its advantages appear at scale.
-
-### The same test at scale
-
-To see the differences properly, the same 500,000 sales lines, with 8 columns, were saved in each format and read back with Python on a small two-processor cloud computer:
-
-| Format | File size | Time to read everything | Time to read one column |
-|---|---|---|---|
-| CSV | 24.1 MB | 0.23 s | 0.10 s |
-| CSV, compressed with gzip | 4.7 MB | — | — |
-| JSON | 82.6 MB | 1.43 s | — |
-| Excel (.xlsx) | 18.3 MB | 31.4 s | — |
-| **Parquet** | **4.3 MB** | **0.02 s** | **0.003 s** |
-
-Exact times depend on the computer, but the pattern holds everywhere. **Parquet was the smallest file, and about ten times faster than CSV to read in full.** Excel took more than a hundred times longer than CSV to read, because every cell has to be unpacked from zipped XML. JSON was the largest, because it repeats all eight column names on every one of the 500,000 rows.
+A CSV stores data **row by row**; Parquet stores it **column by column**, so a program that totals one column reads only that column, and similar values sitting together **compress** very well. Parquet also stores each column's **type**, so dates come back as dates. For four orders its advantages are invisible (the file is **4,872 bytes**, bigger than the CSV, because it also describes its own structure); they appear when a file holds millions of rows.
 
 ### Compression
 
-**Compression** makes files smaller by writing repeated patterns more efficiently. Zipping the CSV cut it from 24.1 MB to 4.7 MB, because a column like `status` repeats the same few words half a million times. There are two kinds:
+**Compression** makes files smaller by writing repeated patterns more efficiently. There are two kinds:
 
 - **Lossless** compression (ZIP, gzip, and the compression inside Parquet and `.xlsx`) gives back **exactly** the original bytes when you unpack it. Data files must only ever use lossless compression.
-- **Lossy** compression (JPEG photos, MP3 music, most video) throws away detail people are unlikely to notice. It's fine for a photo, and unacceptable for a sales ledger.
+- **Lossy** compression (JPEG photos, MP3 music, most video) throws away detail people won't notice: that's how photos and music are made so small. It's fine for a photo, and unacceptable for a sales ledger.
 
 ### Choosing a format
 
-| Format | People can read it as text? | Keeps types? | Size | Opens in Excel? | Best for |
-|---|---|---|---|---|---|
-| **CSV** | yes | no | small | yes (import carefully) | moving tables between systems; simple exports |
-| **Excel** | no (needs Excel or similar) | yes | medium | yes | files people will read, filter, and work in |
-| **JSON** | yes | partly | large | with Power Query | apps and APIs; nested records |
-| **XML** | yes | partly | large | with Power Query | older systems, e-invoicing, Office internals |
-| **PDF** | no | no | varies | no | documents for reading and printing |
-| **Parquet** | no | yes | smallest | no (Power BI and Python can read it) | large datasets for analysis |
+| Format | People can read it as text? | Keeps types? | Size | Best for |
+|---|---|---|---|---|
+| **CSV** | yes | no | small | moving tables between systems; simple exports |
+| **Excel** | no (needs Excel or similar) | yes | medium | files people will read, filter, and work in |
+| **JSON** | yes | partly | large | apps and APIs; nested records |
+| **XML** | yes | partly | large | older systems, e-invoicing, Office internals |
+| **PDF** | no | no | varies | documents for reading and printing |
+| **Parquet** | no | yes | smallest | large datasets for analysis |
 
 > **Real-life example: why the data team asks for "the raw export".** A manager sends a PDF of last quarter's sales, laid out beautifully. To analyze it, the analyst has to copy 40 pages of tables by hand or with a converter, and check every row. The same data exported from the billing system as CSV takes ten seconds to load. The rule most data teams follow: **PDF and formatted Excel for people who read; CSV, JSON, or Parquet for machines that process.**
 
@@ -961,7 +947,7 @@ A **database** is software built to avoid those problems. It keeps data in **tab
 
 Most business databases run as a **database server**: a program on a computer, usually in a data center or the cloud, that other programs connect to over the network. (A few, like SQLite, which runs inside many phone apps, store the whole database in a single file.) Underneath, a database still saves its data in files on storage; you just never touch those files directly.
 
-This one page is only a preview. **Chapter 12** teaches databases and SQL properly, from creating your first table onward.
+This one page is only a preview; later chapters teach databases and SQL properly, from creating your first table onward.
 
 ---
 
@@ -979,21 +965,13 @@ The **internet** is a worldwide network of networks that carries data between cl
 - **DNS** (Domain Name System). People remember names like `riverstone.example`, not numbers. DNS works like a phone book, turning a name into an IP address before your request is sent.
 - **HTTP and HTTPS.** These are the rules for how a browser or program asks a web server for something and gets a reply. **HTTPS** is the secure version: everything sent is **encrypted**, so people along the route can't read or change it. The padlock icon in a browser means the connection uses HTTPS. It does *not* mean the website itself is trustworthy.
 
-Data on the internet travels in small **packets**, each finding its own route, then reassembled at the other end. You never see that, but it's why a large file arrives in pieces and why a slow connection affects everything at once.
-
 ### The cloud
 
 "The cloud" sounds mysterious. It's simpler than it sounds: **the cloud is computers in someone else's data center that you rent over the internet**, instead of buying and running your own. The largest providers include Amazon Web Services (AWS), Microsoft Azure, and Google Cloud.
 
-Businesses rent at three levels, depending on how much they want to manage themselves:
+Companies rent anything from bare computers to finished applications like Gmail or a CRM. The finished-application kind is called **SaaS**, software as a service, and it's the kind you'll meet first at work.
 
-| Level | You rent… | You still manage… | Examples |
-|---|---|---|---|
-| **IaaS** (infrastructure as a service) | virtual computers, storage, and networks | the operating system, software, and data | a virtual server to run your own database |
-| **PaaS** (platform as a service) | a ready-to-use platform, such as a managed database | your data and how you use it | a cloud PostgreSQL service that handles backups and updates for you |
-| **SaaS** (software as a service) | a finished application, used through a browser | your data and your settings | Gmail, Google Drive, Microsoft 365, CRM and accounting software |
-
-Why companies move to the cloud: they **pay for what they use** instead of buying servers upfront, they can **grow or shrink** in minutes, and the provider handles power, hardware failures, and much of the security. The trade-offs: bills that grow quietly if nobody watches them (Chapter 65), dependence on one provider, and questions about **where the data is physically stored**. Many companies, and some laws, require certain data to stay in a particular country, so cloud services let customers choose a **region** for their data.
+Why companies move to the cloud: they **pay for what they use** instead of buying servers upfront, they can **grow or shrink** in minutes, and the provider handles power, hardware failures, and much of the security. The trade-offs: bills that grow quietly if nobody watches them, dependence on one provider, and questions about **where the data is physically stored**. Many companies, and some laws, require certain data to stay in a particular country, so cloud services let customers choose a region for their data.
 
 ---
 
@@ -1009,7 +987,7 @@ The restaurant analogy is the classic one. You don't walk into the kitchen and t
 
 ### A real request and response
 
-The companion files include a tiny demonstration API for Riverstone that runs on your own computer (Appendix E). A **request** asks for one order by its address, and includes an **API key**, a secret code that proves the caller is allowed in. Here's the full reply to a request for order 5009, sent with the `curl` command-line tool:
+Riverstone has a small demonstration API that serves orders from the mini database (Jan–Mar 2026). A **request** asks for one order by its address, and includes an **API key**, a secret code that proves the caller is allowed in. Here's the full reply the demonstration API sends back when a program asks for order 5009:
 
 ```
 HTTP/1.0 200 OK
@@ -1064,22 +1042,19 @@ The first digit tells you who's responsible: **2** means it worked, **4** means 
 | Code | Meaning | What to do |
 |---|---|---|
 | `200 OK` | it worked | read the body |
-| `201 Created` | a new record was created | note the new record's ID |
-| `400 Bad Request` | the request is malformed | check what you sent |
 | `401 Unauthorized` | no valid key or login | check the API key |
-| `403 Forbidden` | you're recognized, but not allowed to do this | ask for the right permission |
 | `404 Not Found` | no such record or address | check the ID and the address |
 | `429 Too Many Requests` | you've hit the API's **rate limit** | slow down and retry later |
 | `500 Internal Server Error` | the server failed | retry later; tell the API's owner if it persists |
 
 ### Why APIs matter to data people
 
-Most modern business software, including CRMs, accounting tools, payment gateways, e-commerce platforms, and ad platforms, offers an API. That's what makes automation possible: a script can pull yesterday's invoices every morning without anyone logging in and clicking *Export*, and a dashboard can refresh itself. You'll call real APIs from Python in Chapter 18, automate reports with them in Chapter 20, and design how whole systems exchange data in Chapter 51.
+Most modern business software, including CRMs, accounting tools, payment gateways, e-commerce platforms, and ad platforms, offers an API. That's what makes automation possible: a script can pull yesterday's invoices every morning without anyone logging in and clicking *Export*, and a dashboard can refresh itself.
 
 Two more terms you'll hear:
 
 - A **webhook** is an API in reverse. Instead of your program asking "anything new?" every five minutes, the other system calls *your* address the moment something happens, such as "payment received".
-- **API keys are passwords.** Anyone who has the key can do whatever the key allows. Never paste one into a spreadsheet, a shared document, a chat, or code you publish online. Chapter 20 shows how to store them safely.
+- **API keys are passwords.** Anyone who has the key can do whatever the key allows. Never paste one into a spreadsheet, a shared document, a chat, or code you publish online.
 
 ---
 
@@ -1099,7 +1074,9 @@ Every habit below protects one or more of the three.
 
 ### Accounts and passwords
 
-Most data breaches start with a person, not a clever technical attack: a reused password, a shared login, or a click on a fake email. The habits that prevent most of them:
+Most data breaches start with a person, not a clever technical attack: a reused password, a shared login, or a click on a fake email.
+
+The habits that prevent most of them:
 
 - **Long and unique.** A long passphrase is harder to guess than a short password full of symbols, and **every account needs a different one**. When one website is breached, attackers try the same email and password everywhere else.
 - **Use a password manager.** Nobody can remember fifty unique passphrases. A password manager remembers them, fills them in, and warns you about reused ones.
@@ -1109,7 +1086,7 @@ Most data breaches start with a person, not a clever technical attack: a reused 
 
 ### Access: the principle of least privilege
 
-**Give each person and program only the access they need, and nothing more.** An analyst who builds sales reports needs to *read* the sales tables, not change them, and doesn't need salary data at all. That's why, as Chapter 12 mentions, many companies give analysts **read-only** accounts. Least privilege limits the damage from a mistake or a stolen password.
+**Give each person and program only the access they need, and nothing more.** An analyst who builds sales reports needs to *read* the sales tables, not change them, and doesn't need salary data at all. That's why many companies give analysts **read-only** accounts. Least privilege limits the damage from a mistake or a stolen password.
 
 ### Encryption
 
@@ -1120,17 +1097,14 @@ Most data breaches start with a person, not a clever technical attack: a reused 
 
 ### Integrity checks: fingerprints for files
 
-How do you know a file hasn't been changed, even by one character? Computers calculate a **hash**: a fixed-length "fingerprint" of the data. The same data always gives the same hash, and the smallest change gives a completely different one. Here are the SHA-256 hashes of two payment instructions that differ only in the order of two digits:
+How do you know a file hasn't been changed, even by one character? Computers calculate a **hash**, a "fingerprint" of the data: the same data always gives the same fingerprint, and the smallest change gives a completely different one. Here are the first 12 characters of the fingerprints of two payment lines that differ only in the order of two digits:
 
 ```
-Text:    Pay Rs 14,700 to Riverstone Supplies
-SHA-256: f4251ff3fb7191f7e79677f3b1871db06c0935c3cc08164496995f1f909f6f71
-
-Text:    Pay Rs 17,400 to Riverstone Supplies
-SHA-256: 9d2f842c50110e140abd578e7e8460d1f6f2bbca7eba341ce1e5bee43566d0fa
+Pay Rs 14,700 to Riverstone Supplies    f4251ff3fb71…
+Pay Rs 17,400 to Riverstone Supplies    9d2f842c5011…
 ```
 
-Nothing about the second fingerprint resembles the first. Software uses hashes to check that downloads arrived undamaged, that backups match the original, and that passwords are stored safely (systems store a hash of your password, not the password itself). Data pipelines use them to detect whether a file has changed since yesterday (Chapter 45).
+Software uses hashes to check that downloads arrived undamaged, that backups match the original, and that passwords are stored safely (systems store a hash of your password, not the password itself).
 
 ### Backups and versions
 
@@ -1145,7 +1119,7 @@ Two points people often miss:
 - **Syncing is not backing up.** Cloud storage such as Google Drive or OneDrive **copies every change** to every device, including deleting a file or saving over it with a mistake. Version history and a recycle bin help, but only for a limited time. A true backup is a separate copy that your everyday mistakes don't touch.
 - **Test your restore.** Many organizations discover their backups were incomplete only on the day they need them.
 
-**Version history** is backup's everyday cousin. Google Drive, OneDrive, and SharePoint keep earlier versions of a file, so you can see who changed what and roll back a bad edit. Use it instead of saving `report_v7_FINAL.xlsx`. For SQL queries and code, Git does the same job more precisely (Chapter 26).
+**Version history** is backup's everyday cousin. Google Drive, OneDrive, and SharePoint keep earlier versions of a file, so you can see who changed what and roll back a bad edit. Use it instead of saving `report_v7_FINAL.xlsx`. For SQL queries and code, Git does the same job more precisely.
 
 ### Personal data
 
@@ -1155,7 +1129,7 @@ Some data is about **people**: names, phone numbers, addresses, ID numbers, heal
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1190,22 +1164,20 @@ Riverstone's fix used nothing more advanced than this chapter:
 - History moved out of the workbook into a **database**, and the report kept only the latest weeks, so it opened in seconds.
 - Every company laptop was **encrypted**, customer phone numbers were removed from reports that didn't need them, and the IT team set up **tested 3-2-1 backups**.
 
-None of those changes required a data engineer. They required someone who understood files, formats, APIs, and basic security well enough to notice what was wrong. Chapter 20 takes this exact report and automates it end to end.
+None of those changes required a data engineer. They required someone who understood files, formats, APIs, and basic security well enough to notice what was wrong. Later in the book you'll automate a report of exactly this kind, Riverstone's Daily Sales Flash, end to end.
 
 ---
 
-## Tools
+## Project: one dataset, five formats
+
+**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
+
+### Tools you'll need
 
 - **A plain-text editor.** Notepad (Windows), TextEdit in plain-text mode (Mac), or a free code editor such as Visual Studio Code. Opening a CSV or JSON file in a text editor shows you what's really inside, without a spreadsheet's guesses.
 - **Excel or Google Sheets**, for the project. Learn the *import* routes (*Data → From Text/CSV* in Excel; *File → Import* in Google Sheets), not just double-clicking.
 - **A password manager and an authenticator app.** Set them up for your own accounts this week.
-- **The companion files** (Appendix E): `orders_feb_2026` in `.csv`, `.xlsx`, `.json`, `.xml`, and `.parquet`; and `api_demo.py`, the demonstration API used in section 2.8, which you'll run yourself in Chapter 18.
-
----
-
-## The project: one dataset, five formats
-
-**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
+- **The companion files** (Appendix E): `orders_feb_2026` in five formats, for the project.
 
 **Option A:** use the companion files `orders_feb_2026.csv`, `.xlsx`, `.json`, and `.xml`.
 **Option B:** use your spending log from Chapter 1's project, and create the formats yourself: save it from your spreadsheet as `.xlsx` and as CSV (UTF-8), then type a JSON version of the first three rows by hand in a text editor, using section 2.5 as your model.
@@ -1228,7 +1200,29 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## You've got it when…
+## Recap
+
+- Computers store everything as **bits** (0s and 1s), grouped into **bytes**. Text is stored through an **encoding** such as **UTF-8**; the wrong encoding produces garbled characters. Decimals are usually stored approximately, which is why money needs exact types.
+- Sizes go **KB → MB → GB → TB → PB**, each 1,000 times the last (or 1,024 in some software). Speeds are in **bits**, sizes in **bytes**: divide Mbps by 8.
+- **Memory** is fast and temporary; **storage** is slower and permanent. Unsaved work lives only in memory.
+- Files have **paths** and **extensions**. Name them date-first, never "final", and watch for hidden extensions.
+- **CSV** is universal but has no types; **Excel** is for people; **JSON** and **XML** carry labeled data between systems; **PDF** is for reading; **Parquet** is compact, typed, and fast for large-scale analysis. Import CSVs carefully.
+- **Databases** let many people use data at once, with rules and SQL.
+- A **server** answers a **client's** requests over the **internet**; **HTTPS** encrypts the connection; the **cloud** is rented computers and services, up to finished applications (**SaaS**).
+- An **API** is the waiter between programs: a request goes in, a response with a **status code** and usually JSON comes back. API keys are passwords.
+- Protect **confidentiality, integrity, and availability**: unique passwords, MFA, least privilege, encryption, hashes, tested **3-2-1 backups**, version history, careful handling of personal data, and reporting mistakes immediately.
+
+---
+
+## Key terms
+
+bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can explain bits, bytes, and why `₹` takes more space than `R`.
 - [ ] I can convert between KB, MB, GB, and TB, and between Mbps and MB/s, and I know why a 1 TB drive shows 931 GB.
@@ -1243,21 +1237,7 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Recap
-
-- Computers store everything as **bits** (0s and 1s), grouped into **bytes**. Text is stored through an **encoding** such as **UTF-8**; the wrong encoding produces garbled characters. Decimals are usually stored approximately, which is why money needs exact types.
-- Sizes go **KB → MB → GB → TB → PB**, each 1,000 times the last (or 1,024 in some software). Speeds are in **bits**, sizes in **bytes**: divide Mbps by 8.
-- **Memory** is fast and temporary; **storage** is slower and permanent. Unsaved work lives only in memory.
-- Files have **paths** and **extensions**. Name them date-first, never "final", and watch for hidden extensions.
-- **CSV** is universal but has no types; **Excel** is for people; **JSON** and **XML** carry labeled data between systems; **PDF** is for reading; **Parquet** is compact, typed, and fast for large-scale analysis. Import CSVs carefully.
-- **Databases** let many people use data at once, with rules and SQL.
-- A **server** answers a **client's** requests over the **internet**; **HTTPS** encrypts the connection; the **cloud** is rented computers and services (IaaS, PaaS, SaaS).
-- An **API** is the waiter between programs: a request goes in, a response with a **status code** and usually JSON comes back. API keys are passwords.
-- Protect **confidentiality, integrity, and availability**: unique passwords, MFA, least privilege, encryption, hashes, tested **3-2-1 backups**, version history, careful handling of personal data, and reporting mistakes immediately.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -1273,13 +1253,13 @@ None of those changes required a data engineer. They required someone who unders
 7. This line comes from a CSV file with seven columns. What's wrong with it, and how should it be written?
    `5010,Green Leaf Hotels,2026-03-03,Delivered,Farah Khan,20100.00,Leave at reception, back gate`
 8. A script calls Riverstone's API and gets these replies on different days: `401`, `404`, `429`, `503`. For each, say whether the problem is probably on the script's side or the server's, and what you'd do.
-9. Section 2.9 shows two SHA-256 hashes. A colleague sends you a backup file and its hash. You calculate the hash of the file you received and get a different value. What does that tell you, and what doesn't it tell you?
+9. Section 2.9 shows the hashes of two payment lines. A colleague sends you a backup file and its hash. You calculate the hash of the file you received and get a different value. What does that tell you, and what doesn't it tell you?
 
 ### Stretch
 
 10. Kavya keeps her only copy of her spending logs in a Google Drive folder that syncs to her laptop. Does her setup meet the 3-2-1 rule? Describe one thing that could lose her data anyway, and a change that would fix it.
 11. Riverstone's new product codes look like `00731`. Describe exactly how a code can lose its leading zeros between the billing system's CSV export and the price lookup in a workbook, and give two ways to prevent it.
-12. A 12-megapixel photo is 36 MB before compression, but the file on the phone is 3 MB. Could a sales ledger be compressed the same way? Explain using the terms lossless and lossy.
+12. Why must a sales ledger only ever be compressed losslessly? Give one example of what lossy compression would do to it.
 
 ### Think about it (no calculation needed)
 
@@ -1289,35 +1269,13 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Key terms
+## Answers
 
-bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · pixel · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · KiB / MiB / GiB · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · columnar storage · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · packet · cloud · IaaS · PaaS · SaaS · region · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · SHA-256 · ransomware · backup · 3-2-1 rule · sync · version history · personal data
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
-- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
-- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill.
-- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs.
-- **Chapter 20** automates the Friday report from this chapter, including storing API keys safely.
-- **Part V (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale; **Chapter 64** covers security, privacy, and governance in depth.
-- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
-
-**1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Using binary units instead, the answers would be 3,584 MiB, about 244 MiB, and 2,048 GiB. Either is acceptable if you say which you used.)
+**1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Counting in steps of 1,024 instead, as Windows does, the answers would be 3,584, about 244, and 2,048. Either is acceptable if you say which you used.)
 
 **2.** `Riverstone` is 10 plain English letters: **10 bytes**. `₹500` is **6 bytes**: 3 for `₹` and 1 for each digit.
 
-**3.** Nothing is wrong. The maker counts 512 GB as 512,000,000,000 bytes, while Windows divides by 1,024³ and shows about 476.8 "GB", which is really GiB; it's the same storage measured in a different unit.
+**3.** Nothing is wrong. The maker counts 512 GB as 512,000,000,000 bytes, while Windows divides by 1,024 at each step (1,024 × 1,024 × 1,024) and shows about 476.8 GB; it's the same storage counted a different way.
 
 **4.** `2026-03-31_stock.csv`: a CSV table as plain text; a spreadsheet or text editor. `invoice_9007.pdf`: a PDF document; a PDF reader or browser. `po_template.xlsm`: an Excel workbook that can contain macros; Excel (be careful enabling macros from unknown senders). `export.json`: JSON data; a text editor, code editor, or a program that reads JSON. `setup.exe`: a Windows program that runs when opened; only open it if you trust exactly where it came from.
 
@@ -1336,13 +1294,27 @@ bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (
 
 **11.** The billing system writes `00731` correctly into the CSV as text. When someone **double-clicks** the CSV, Excel guesses that `00731` is a number and stores **731**. If the file is saved, the damage is written back. The price list still says `00731`, so a lookup for `731` finds nothing. Prevention: (1) import the CSV with *Data → From Text/CSV* and set the product code column to **Text** before loading; (2) better still, get the data from the source system through a connection or an API that keeps the column's type, so no one opens the raw CSV at all. (Adding a letter prefix to codes, such as `P00731`, also prevents it, but changing codes is a business decision.)
 
-**12.** Only with **lossless** compression. A photo can use **lossy** compression (JPEG) because discarding tiny details people won't notice doesn't matter. A sales ledger can't lose a single digit, so it must use lossless compression, such as ZIP, which restores exactly the original bytes. Ledgers compress very well anyway, because columns such as status, product, and customer repeat the same values many times: the 24.1 MB CSV in section 2.5 zipped to 4.7 MB with nothing lost.
+**12.** A sales ledger can't lose a single digit: every amount, date, and code must come back exactly as it was written, so only **lossless** compression, such as ZIP, which restores exactly the original bytes, is safe. **Lossy** compression throws detail away, which is fine for a photo but not for data. On a ledger it might, for example, round ₹14,640.00 to ₹14,600 or turn product code `00731` into something close but different, and nobody could get the original values back. Ledgers compress well losslessly anyway, because columns such as status, product, and customer repeat the same values many times.
 
 **13.** Risks: (1) nobody can tell who made a change or deleted a record, so mistakes and misuse can't be traced; (2) when someone leaves the team, they still know the password, and removing their access means changing it for everyone; (3) anyone who can read the chat, on any device, including a lost phone, can log in; and a single leaked password exposes the whole CRM. Better: one account per person, with permissions matched to each role (least privilege), MFA switched on, and access removed promptly when people leave.
 
 **14.** *Own server:* direct physical control of where the data is; can work on the office network even when the internet is down. *Cloud:* no hardware to buy or maintain, with backups, updates, and failover handled by the provider; easy to scale up as data grows, and reachable securely from anywhere. Useful questions include: *"What happens if our office server fails at 2 a.m., and who fixes it?"*, *"Are there rules about which country our customer data must stay in?"*, and *"What would the cloud cost each month at our size, compared with buying and running our own server?"*
 
 **15.** Check the **sender's real email address**, not just the display name; check whether the attachment is really a PDF, with extensions visible, because `Payment_Details.pdf.exe` is a program; notice the **pressure** ("urgent", "today", "cancelled"), a classic phishing sign; and **confirm by phone**, using a number you already have rather than one in the email, before opening the attachment or acting on it. If in doubt, report it to IT without opening it.
+
+---
+
+## Where this leads
+
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
+- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
+- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
+- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
+- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
+- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
+- **Chapter 26** uses Git to keep versions of queries and code.
+- **Part 5 (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
+- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
 
 
 # Chapter 3. How a Business Runs on Data
@@ -1367,7 +1339,7 @@ In Chapter 1 you learned what data is. In Chapter 2 you learned where it lives. 
 
 The short answer is that a company *is* a chain of people handing work to each other. A salesperson hands an order to the warehouse. The warehouse hands a delivery to finance. Finance hands a number to the managing director. Every handover leaves a record, and those records are the data you'll clean, query, chart, and model for the rest of your career.
 
-Analysts who understand this chain are far more useful than analysts who only know the tools. When a manager asks, *"What were sales last month?"*, the analyst who knows the chain asks one question back: *"Orders placed, invoices raised, or cash received?"* Those are three different numbers. At Riverstone Supplies in January 2026 they were ₹116,210, ₹104,210, and ₹0. By the end of this chapter you'll know exactly why, and you'll never again hand over a "sales" number without saying which one it is.
+Analysts who understand this chain are far more useful than analysts who only know the tools. When a manager asks, *"What were sales last month?"*, the analyst who knows the chain asks one question back: *"Orders placed, invoices raised, or cash received?"* Those are three different numbers. At Riverstone Supplies in January 2026 they were ₹1,16,210, ₹1,04,210, and ₹0. By the end of this chapter you'll know exactly why, and you'll never again hand over a "sales" number without saying which one it is.
 
 This chapter also starts the book's **automation** thread. Before you can automate anything, you have to see where people work by hand. Section 3.7 shows you how.
 
@@ -1425,13 +1397,15 @@ Finance needs sales' orders to raise invoices. Production needs them to plan wha
 
 To see how departments depend on each other's data, follow one piece of business all the way through. This journey is called **order to cash**, or **lead to cash** when it includes winning the customer.
 
-Here is a real order from Riverstone's database: **order 5001**, from Sharma Hardware, a retail customer in Mumbai. You'll query these exact rows in Chapter 12. The order has two lines:
+Here is a real order from Riverstone's database: **order 5001**, from Sharma Hardware, a retail customer in Mumbai. The order has two lines:
 
 | Product | Quantity | List price | Discount | Line value |
 |---|---|---|---|---|
 | Storage Box 10L | 20 | ₹450 | 0% | ₹9,000 |
 | Water Bottle 1L | 50 | ₹120 | 5% | ₹5,700 |
 | **Total** | | | | **₹14,700** |
+
+*Source: Mini database (Jan–Mar 2026).*
 
 Check it by hand: 20 × ₹450 = ₹9,000. 50 × ₹120 = ₹6,000, less 5% is ₹5,700. ₹9,000 + ₹5,700 = ₹14,700. ✓ (As in the rest of this book, tax is left out to keep numbers simple.)
 
@@ -1459,7 +1433,7 @@ The order row only says *who ordered what, when*. But it has a history before it
 
 **9. Payment (2 February 2026).** Sharma Hardware pays ₹14,700 by bank transfer. The bank statement shows a short reference, "SHARMA HW JAN". A finance assistant works out that it pays invoice 9001 and records **payment 1** against it.
 
-**10. Report (3 February 2026).** The team prepares the **January sales report**. Invoice 9001 is one of the three behind the line *"January: ₹104,210"*.
+**10. Report (3 February 2026).** The team prepares the **January sales report**. Invoice 9001 is one of the three behind the line *"January: ₹1,04,210"*.
 
 **It took a long time.** From enquiry to cash was 103 days. Once the order existed, things moved faster: order to invoice 1 day, invoice to payment 27 days, order to cash 28 days. Each gap comes from subtracting two dates recorded by two different departments.
 
@@ -1486,7 +1460,7 @@ A **business system** is software a department uses for its daily work, storing 
 
 Riverstone's set-up is typical for a mid-sized manufacturer. This book names its systems by type, because the lessons don't depend on the brand:
 
-- **The ERP** holds customers, products, employees (as sales reps), orders, order lines, invoices, and payments, plus stock, production, and purchasing. People at Riverstone still call its invoicing module "the billing system"; that's where Imran exported his Friday file from in Chapter 2. **The mini database you'll use from Chapter 12 onward is a small copy of the ERP's sales tables.**
+- **The ERP** holds customers, products, employees (as sales reps), orders, order lines, invoices, and payments, plus stock, production, and purchasing. People at Riverstone still call its invoicing module "the billing system"; that's where Imran exported his Friday file from in Chapter 2. **The mini database behind this chapter's numbers is a small copy of the ERP's sales tables.**
 - **The CRM** holds leads, contacts, quotes, and the sales pipeline.
 - **The website** shows the catalog and feeds enquiries to the CRM (customers don't order online). **The support desk** records complaints and returns. **The HRMS** holds employees and payroll.
 - **Spreadsheets and email** fill every gap between them: quotes, the warehouse's stock sheet, the monthly report.
@@ -1497,9 +1471,9 @@ Riverstone has no POS, because it sells to businesses. But Sharma Hardware's POS
 
 Every important fact should have one official source, its **system of record** (or **source of truth**). At Riverstone, that's the ERP for orders and invoices, the CRM for leads, and the HRMS for employees. When the CRM and the ERP disagree about what Sharma Hardware bought, the ERP wins.
 
-The trouble is the gaps. Riverstone's CRM and ERP aren't connected: when a quote becomes an order, someone must mark the deal *Won* in the CRM, and a cancellation in the ERP never reaches the CRM unless someone remembers. Connecting systems so data flows between them automatically is **integration** (Chapters 45 and 51).
+The trouble is the gaps. Riverstone's CRM and ERP aren't connected: when a quote becomes an order, someone must mark the deal *Won* in the CRM, and a cancellation in the ERP never reaches the CRM unless someone remembers. Connecting systems so data flows between them automatically is **integration**.
 
-> **Spreadsheet link.** A spreadsheet can become a system of record by accident. If the warehouse's stock sheet is more current than the ERP, the sheet is now the source of truth for stock, with no access control or history (section 2.9).
+> **Watch out: a spreadsheet can become the system of record by accident.** If the warehouse's stock sheet is more current than the ERP, the sheet is now the source of truth for stock, with no access control or history (section 2.9).
 
 ---
 
@@ -1515,9 +1489,9 @@ A **report** summarizes many transactions to answer a question (*"How much did w
 | **Grain** (Chapter 1) | one order, one invoice, one payment | one month, one customer, one product |
 | **Created** | by the business system, as work happens | by a person or a scheduled job, after the fact |
 | **Changes?** | should be corrected, not rewritten; a cancellation is a new status or a new record | changes whenever the data or the rules change |
-| **Example** | invoice 9001: ₹14,700, due 2026-02-05 | "January billings: ₹104,210" |
+| **Example** | invoice 9001: ₹14,700, due 2026-02-05 | "January billings: ₹1,04,210" |
 
-Systems for transactions are tuned to write one record quickly and safely; reporting needs to read millions and add them up. That's why growing companies move reporting into a separate **data warehouse** (Chapter 49).
+Systems for transactions are tuned to write one record quickly and safely; reporting needs to read millions and add them up. That's why growing companies move reporting into a separate **data warehouse**.
 
 ### Three numbers called "sales"
 
@@ -1531,31 +1505,33 @@ Here are all three for Riverstone's first quarter of 2026:
 
 | Month | Booked (orders placed) | Billed (invoiced) | Collected (cash in) |
 |---|---|---|---|
-| January | ₹116,210 | ₹104,210 | ₹0 |
-| February | ₹161,700 | ₹161,700 | ₹64,700 |
-| March | ₹58,020 | ₹31,800 | ₹132,550 |
-| **Quarter** | **₹335,930** | **₹297,710** | **₹197,250** |
+| January | ₹1,16,210 | ₹1,04,210 | ₹0 |
+| February | ₹1,61,700 | ₹1,61,700 | ₹64,700 |
+| March | ₹58,020 | ₹31,800 | ₹1,32,550 |
+| **Quarter** | **₹3,35,930** | **₹2,97,710** | **₹1,97,250** |
 
-![Grouped bars for January, February, and March 2026 showing booked, billed, and collected amounts](figures/fig3-3-booked-billed-collected.svg)
+*Source: Mini database (Jan–Mar 2026).*
+
+![Labelled horizontal bars for January, February, and March 2026 showing booked, billed, and collected amounts](figures/fig3-3-booked-billed-collected.svg)
 
 *Figure 3.3 — Same company, same quarter, three honest answers to "what were sales?"*
 
 Every gap traces to specific transactions:
 
-- **January booked ₹116,210 but billed ₹104,210.** The difference, ₹12,000, is order 5004 from Green Leaf Hotels: 100 water bottles, placed on 20 January and cancelled. Figure 3.3 and the table count bookings the way Riverstone's sales team reports them from the CRM, as every order placed, so the cancelled order is in. It was never shipped or invoiced.
+- **January booked ₹1,16,210 but billed ₹1,04,210.** The difference, ₹12,000, is order 5004 from Green Leaf Hotels: 100 water bottles, placed on 20 January and cancelled. Figure 3.3 and the table count bookings the way Riverstone's sales team reports them from the CRM, as every order placed, so the cancelled order is in. It was never shipped or invoiced.
 - **January collected ₹0.** Every January invoice had 30-day terms, so none was due until February. Sharma Hardware's ₹14,700 arrived on 2 February.
-- **February's three numbers.** All five February orders shipped and were invoiced in February, so bookings and billings match at ₹161,700. The ₹64,700 collected was for *January's* invoices: ₹14,700 from Sharma Hardware, ₹40,000 of Coastal Foods' ₹73,260, and ₹10,000 of Patel Kitchenware's ₹16,250.
+- **February's three numbers.** All five February orders shipped and were invoiced in February, so bookings and billings match at ₹1,61,700. The ₹64,700 collected was for *January's* invoices: ₹14,700 from Sharma Hardware, ₹40,000 of Coastal Foods' ₹73,260, and ₹10,000 of Patel Kitchenware's ₹16,250.
 - **March booked ₹58,020 but billed ₹31,800.** Order 5012 from Metro Mart, worth ₹26,220, is still *Pending* on 31 March: booked, not yet shipped, so not invoiced. ₹58,020 − ₹26,220 = ₹31,800. ✓
 - **March collected more than it billed**, mostly February's invoices being paid. Cash lags billings by about the payment terms.
 
 And the quarter reconciles:
 
-- Bookings ₹335,930 − cancelled ₹12,000 − pending ₹26,220 = billings ₹297,710. ✓
-- Billings ₹297,710 − collected ₹197,250 = **₹100,460 still owed by customers**, which finance calls **receivables** (or accounts receivable). ✓
+- Bookings ₹3,35,930 − cancelled ₹12,000 − pending ₹26,220 = billings ₹2,97,710. ✓
+- Billings ₹2,97,710 − collected ₹1,97,250 = **₹1,00,460 still owed by customers**, which finance calls **receivables** (or accounts receivable). ✓
 
-> **Watch out: "sales" without a definition.** If you don't know which of the three is meant, ask. If you can't, give the name and rule with the number: *"Billed sales (invoices raised) in January: ₹104,210."* Otherwise two departments argue about who is wrong when both are right.
+> **Watch out: "sales" without a definition.** If you don't know which of the three is meant, ask. If you can't, give the name and rule with the number: *"Billed sales (invoices raised) in January: ₹1,04,210."* Otherwise two departments argue about who is wrong when both are right.
 
-> **Simplification note.** Accountants recognize **revenue** under formal accounting standards, which decide exactly when a sale counts. This book uses invoices as a stand-in for revenue, as Chapters 12 and 13 do. In a real company, ask finance which rule applies before publishing a revenue number; this is general information, not accounting advice.
+> **Simplification note.** Accountants recognize **revenue** under formal accounting standards, which decide exactly when a sale counts. This book uses invoices as a stand-in for revenue, as the rest of the book does. In a real company, ask finance which rule applies before publishing a revenue number; this is general information, not accounting advice.
 
 ### When a report runs matters too
 
@@ -1573,21 +1549,23 @@ Here are nine KPIs Riverstone's management could track, calculated for the first
 
 | KPI | Definition | Q1 2026 | Owner |
 |---|---|---|---|
-| **Bookings** | value of orders placed, excluding cancelled orders | ₹323,930 (includes ₹26,220 pending) | Sales Head |
-| **Billings** | value of invoices raised | ₹297,710 | Finance Manager |
-| **Collections** | cash received from customers | ₹197,250 (66.3% of billings) | Finance Manager |
+| **Bookings** | value of orders placed, excluding cancelled orders | ₹3,23,930 (includes ₹26,220 pending) | Sales Head |
+| **Billings** | value of invoices raised | ₹2,97,710 | Finance Manager |
+| **Collections** | cash received from customers | ₹1,97,250 (66.3% of billings) | Finance Manager |
 | **Gross margin** | (billings − cost of the products sold) ÷ billings | 22.6% | Finance Manager |
 | **Average order value (AOV)** | billings ÷ number of invoiced orders | ₹29,771 | Sales Head |
 | **Cancellation rate** | cancelled orders ÷ all orders placed | 8.3% (1 of 12) | Sales Head |
-| **Overdue receivables** | unpaid amounts on invoices past their due date | ₹88,760 of ₹100,460 owed | Finance Manager |
+| **Overdue receivables** | unpaid amounts on invoices past their due date | ₹88,760 of ₹1,00,460 owed | Finance Manager |
 | **Average days to collect** | days from invoice to final payment, for fully paid invoices | 31.6 days | Finance Manager |
 | **Active customers** | customers with at least one non-cancelled order in the period | 7 of 8 | Sales Head |
 
-Check two of them by hand. **Gross margin:** the products on invoiced orders cost Riverstone ₹230,450 to make, so the margin is ₹297,710 − ₹230,450 = ₹67,260, and ₹67,260 ÷ ₹297,710 = 22.6%. ✓ **Average days to collect:** five invoices are fully paid, taking 27, 51, 26, 33, and 21 days; they add up to 158, and 158 ÷ 5 = 31.6 days. ✓ (Invoice 9001, the one from Figure 3.2, is the 27.)
+*Source: Mini database (Jan–Mar 2026).*
+
+Check two of them by hand. **Gross margin:** the products on invoiced orders cost Riverstone ₹2,30,450 to make, so the margin is ₹2,97,710 − ₹2,30,450 = ₹67,260, and ₹67,260 ÷ ₹2,97,710 = 22.6%. ✓ **Average days to collect:** five invoices are fully paid, taking 27, 51, 26, 33, and 21 days; they add up to 158, and 158 ÷ 5 = 31.6 days. ✓ (Invoice 9001, the one from Figure 3.2, is the 27.)
 
 ### A KPI needs a definition, not just a name
 
-"Average order value" sounds precise. It isn't. Divide bookings by orders and you get ₹323,930 ÷ 11 non-cancelled orders = ₹29,448. Divide billings by invoiced orders and you get ₹29,771. Both are reasonable; they're different KPIs with the same name. You've already met the same problem with bookings: the table in section 3.4 counts the cancelled order (₹335,930 for the quarter), and the KPI table above leaves it out (₹323,930). A usable KPI definition answers six questions:
+"Average order value" sounds precise. It isn't. Divide bookings by orders and you get ₹3,23,930 ÷ 11 non-cancelled orders = ₹29,448. Divide billings by invoiced orders and you get ₹29,771. Both are reasonable; they're different KPIs with the same name. You've already met the same problem with bookings: the table in section 3.4 counts the cancelled order (₹3,35,930 for the quarter), and the KPI table above leaves it out (₹3,23,930). A usable KPI definition answers six questions:
 
 1. **Formula:** exactly what's divided by what?
 2. **Inclusions and exclusions:** are cancelled orders in? Pending? Returns? Tax?
@@ -1602,7 +1580,7 @@ Together, those answers are a **KPI definition**: Chapter 1's data dictionary on
 
 ### Leading and lagging
 
-**Lagging indicators**, like collections and gross margin, report what already happened: accurate, but too late to change. **Leading indicators**, like new leads, quotes, and bookings, move first: less certain, but early enough to act on. In Figure 3.2, steps on the left lead and steps on the right lag. A sales head who watches only collections learns about a bad quarter three months late.
+**Lagging indicators**, like collections and gross margin, report what already happened: accurate, but too late to change. **Leading indicators**, like new leads, quotes, and bookings, move first: less certain, but early enough to act on. In Figure 3.2, the early steps lead and the late steps lag. A sales head who watches only collections learns about a bad quarter three months late.
 
 ---
 
@@ -1610,7 +1588,7 @@ Together, those answers are a **KPI definition**: Chapter 1's data dictionary on
 
 Data changes nothing until someone uses it to decide, usually on **dashboards** and in **meetings**.
 
-A **dashboard** is a screen of a few KPIs and charts, usually refreshed automatically from the systems of record, that answers the questions its viewer asks every week (Chapters 15 and 16 build them).
+A **dashboard** is a screen of a few KPIs and charts, usually refreshed automatically from the systems of record, that answers the questions its viewer asks every week.
 
 Companies look at their numbers on a rhythm. Riverstone's is typical:
 
@@ -1643,7 +1621,7 @@ Anita needed margin and payment data from finance and order history from the ERP
 
 Go back to Figure 3.2 and ask one question at every step: *did a person copy, re-type, check, or carry data by hand here?* Figure 3.4 marks the answers.
 
-![The same ten steps of order 5001, with six steps highlighted in red where a person copies, re-types, or checks data by hand](figures/fig3-4-where-manual-work-hides.svg)
+![The same ten steps of order 5001, with six steps outlined and marked with an exclamation badge where a person copies, re-types, or checks data by hand](figures/fig3-4-where-manual-work-hides.svg)
 
 *Figure 3.4 — Six of the ten steps depend on someone moving data by hand.*
 
@@ -1684,13 +1662,13 @@ Then estimate *how many times a week, how many minutes each*. A list of manual s
 
 ### Not every manual step should be automated
 
-Anita approving a 12% discount is a judgment, and it should stay with a person; what can be automated is sending her the margin and payment data. And automating a broken process gives you a fast broken process: fix the process first. The book returns to each of Riverstone's manual steps: reports in Chapters 19 and 20, emailed orders in Chapter 58, disconnected systems in Chapters 45 and 51, and the full process map in Chapter 25.
+Anita approving a 12% discount is a judgment, and it should stay with a person; what can be automated is sending her the margin and payment data. And automating a broken process gives you a fast broken process: fix the process first. The book returns to each of Riverstone's manual steps later, and shows how to automate the ones that should be.
 
 > **Interview extra point.** When an interviewer asks, *"What were sales last month?"*, or gives you a case with a "revenue" figure, say which definition you're using (booked, billed, or collected) before you calculate. It shows in one sentence that you understand the business, not only the tools. Chapters 75 and 76 have practice questions.
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1707,7 +1685,7 @@ Anita approving a 12% discount is a judgment, and it should stay with a person; 
 
 ## In the real world: three numbers for January
 
-It's Tuesday, 3 February 2026. The managing director's monthly business review is on Thursday, and two numbers for January have just reached the MD's inbox. Anita's weekly sales summary, pulled from the CRM's pipeline, says **January sales: ₹116,210**. Suresh Menon, the Finance Manager, sent his month-end report from the ERP: **January sales: ₹104,210**, and underneath it, **cash received in January: ₹0**.
+It's Tuesday, 3 February 2026. The managing director's monthly business review is on Thursday, and two numbers for January have just reached the MD's inbox. Anita's weekly sales summary, pulled from the CRM's pipeline, says **January sales: ₹1,16,210**. Suresh Menon, the Finance Manager, sent his month-end report from the ERP: **January sales: ₹1,04,210**, and underneath it, **cash received in January: ₹0**.
 
 The MD replies to both: *"Which one is right? And why did we collect nothing?"*
 
@@ -1724,15 +1702,17 @@ Anita asks Meera Iyer to find out. Meera doesn't start by deciding who's wrong. 
 | 5003 | Patel Kitchenware | Delivered | ₹16,250 | yes | yes, 9003 |
 | 5004 | Green Leaf Hotels | Cancelled | ₹12,000 | yes | no |
 
-The CRM total is ₹116,210. The invoiced total is ₹104,210. The difference is exactly order 5004: Green Leaf Hotels cancelled its 100 water bottles in the ERP, and nobody updated the deal in the CRM, because the systems aren't connected.
+*Source: Mini database (Jan–Mar 2026).*
+
+The CRM total is ₹1,16,210. The invoiced total is ₹1,04,210. The difference is exactly order 5004: Green Leaf Hotels cancelled its 100 water bottles in the ERP, and nobody updated the deal in the CRM, because the systems aren't connected.
 
 **3. Why no cash?** All three invoices had 30-day terms. The earliest, 9001, was due on 5 February. Sharma Hardware paid ₹14,700 yesterday, 2 February, three days early. Coastal Foods' due date is 9 February and Patel Kitchenware's is 14 February. Every invoice raised in January falls due in February, and no older invoices were waiting to be paid, so zero cash in January is exactly what 30-day terms predict.
 
-**4. Does it reconcile?** ₹116,210 − ₹12,000 = ₹104,210. ✓
+**4. Does it reconcile?** ₹1,16,210 − ₹12,000 = ₹1,04,210. ✓
 
 On Wednesday afternoon, Meera sends Anita and Suresh a half-page note:
 
-> *"Both reports are correct; they count different steps. **Booked** in January (orders placed, per the CRM): ₹116,210. **Billed** (invoices raised, per the ERP): ₹104,210. The ₹12,000 difference is Green Leaf Hotels' order 5004, cancelled in the ERP but still marked Won in the CRM; I've asked Neha's team to update it. **Collected**: ₹0, because January's invoices aren't due until 5–14 February; ₹14,700 has already arrived. Suggestion: the monthly pack shows all three lines with a one-line definition under each, and the ERP is the source for billed and collected."*
+> *"Both reports are correct; they count different steps. **Booked** in January (orders placed, per the CRM): ₹1,16,210. **Billed** (invoices raised, per the ERP): ₹1,04,210. The ₹12,000 difference is Green Leaf Hotels' order 5004, cancelled in the ERP but still marked Won in the CRM; I've asked Neha's team to update it. **Collected**: ₹0, because January's invoices aren't due until 5–14 February; ₹14,700 has already arrived. Suggestion: the monthly pack shows all three lines with a one-line definition under each, and the ERP is the source for billed and collected."*
 
 On Thursday the pack has three lines instead of one, and the meeting discusses what the numbers mean instead of which is true.
 
@@ -1740,18 +1720,16 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 
 ---
 
-## Tools
+## Project: map the data flow of one process
+
+**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise, and the best way to draw your first process map.
 - **A spreadsheet** (Excel or Google Sheets, optional). Useful for the project's step table and time estimates. Chapter 10 teaches both from the beginning.
 - **A diagram tool** (optional). diagrams.net (also called draw.io) is free and runs in a browser; PowerPoint, Google Slides, and Google Drawings work too. Boxes and arrows are all you need.
-- **The Riverstone mini database.** Not needed yet; Chapter 6 installs it and Chapter 12 queries the orders, invoices, and payments you followed here.
-
----
-
-## The project: map the data flow of one process
-
-**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
+- **The Riverstone mini database.** Not needed yet; Chapter 12 installs it and queries the orders, invoices, and payments you followed here.
 
 **Step 1. Choose a process** you can observe or ask about: an expense claim, a customer return, a monthly report, or outside work, how a local shop restocks or a clinic books appointments.
 
@@ -1768,7 +1746,7 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 
 **Step 3. Draw it.** Boxes for steps, arrows for handovers, the record written under each box, as in Figure 3.2.
 
-**Step 4. Mark the manual work.** Ask the five questions from section 3.7 at every step. Mark each manual handover in red, as in Figure 3.4.
+**Step 4. Mark the manual work.** Ask the five questions from section 3.7 at every step. Mark each manual handover with a symbol, as Figure 3.4 does with "!".
 
 **Step 5. Put a number on it:** hours per month for each manual step, with your assumptions.
 
@@ -1792,7 +1770,29 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## You've got it when…
+## Recap
+
+- A company is a chain of departments handing work to each other. **Every handover leaves data**, and data created in one department is almost always used in another.
+- **Lead to cash** follows one piece of business from enquiry to payment. Riverstone's order 5001 took ten steps: 103 days from enquiry to cash, 28 from order to cash.
+- **Business systems** record daily work: **ERP** (orders, stock, invoices, accounts), **CRM** (leads, quotes, deals), **HRMS** (employees, payroll), **POS** (shop sales), **e-commerce** (online orders), and **support desks** (tickets). Spreadsheets and email fill the gaps between them.
+- Each fact should have one **system of record**. Systems that aren't **integrated** drift apart.
+- A **transaction** records one event; a **report** summarizes many, using rules, at a point in time.
+- "Sales" can mean **bookings** (orders placed), **billings** (invoices raised), or **collections** (cash received). For Riverstone's January: ₹1,16,210, ₹1,04,210, and ₹0, all correct. Reconcile them with cancellations, pending orders, and payment terms.
+- A **KPI** is a chosen metric with a **definition**, an owner, a target, and a review. Pair KPIs so none can be gamed alone; watch **leading** as well as **lagging** indicators.
+- **Dashboards and meetings** turn data into decisions on a rhythm. **Decision rights** say who decides; the decider rarely holds the data.
+- **Manual work hides** in re-keying, copy-paste, emailed files, manual matching, and shadow systems. Find it with five questions, count it in hours, fix the process first, and keep judgment with people.
+
+---
+
+## Key terms
+
+department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can name the main departments of a company and one kind of data each creates.
 - [ ] I can walk through lead to cash for one order and say what record each step leaves, and in which system.
@@ -1805,21 +1805,7 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Recap
-
-- A company is a chain of departments handing work to each other. **Every handover leaves data**, and data created in one department is almost always used in another.
-- **Lead to cash** follows one piece of business from enquiry to payment. Riverstone's order 5001 took ten steps: 103 days from enquiry to cash, 28 from order to cash.
-- **Business systems** record daily work: **ERP** (orders, stock, invoices, accounts), **CRM** (leads, quotes, deals), **HRMS** (employees, payroll), **POS** (shop sales), **e-commerce** (online orders), and **support desks** (tickets). Spreadsheets and email fill the gaps between them.
-- Each fact should have one **system of record**. Systems that aren't **integrated** drift apart.
-- A **transaction** records one event; a **report** summarizes many, using rules, at a point in time.
-- "Sales" can mean **bookings** (orders placed), **billings** (invoices raised), or **collections** (cash received). For Riverstone's January: ₹116,210, ₹104,210, and ₹0, all correct. Reconcile them with cancellations, pending orders, and payment terms.
-- A **KPI** is a chosen metric with a **definition**, an owner, a target, and a review. Pair KPIs so none can be gamed alone; watch **leading** as well as **lagging** indicators.
-- **Dashboards and meetings** turn data into decisions on a rhythm. **Decision rights** say who decides; the decider rarely holds the data.
-- **Manual work hides** in re-keying, copy-paste, emailed files, manual matching, and shadow systems. Find it with five questions, count it in hours, fix the process first, and keep judgment with people.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -1850,31 +1836,7 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Key terms
-
-department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
-- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
-- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
-- **Chapters 19 and 20** automate the monthly report: macros and Apps Script first, then scheduled email reports and alerts.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
-- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
-- **Chapters 45 and 51** connect the systems: moving data from the ERP and CRM into a warehouse, and sending results back into them.
-- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
-- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
+## Answers
 
 **1.** (a) Warehouse and dispatch. (b) Purchasing. (c) HR (payroll). (d) Customer support. (e) Sales. (f) Production. (g) Marketing.
 
@@ -1884,7 +1846,7 @@ department · lead · quote / quotation · order · delivery challan / delivery 
 
 **4.** (a) Bookings. (b) Collections. (c) None: a quote isn't a sale. (d) Billings. (e) Bookings go down if you count bookings net of cancellations (the KPI definition in section 3.5); nothing is billed or collected. (f) None: it's a leading indicator, not a sale.
 
-**5.** Booked: ₹14,550 + ₹14,640 + ₹32,625 + ₹23,325 + ₹76,560 = **₹161,700**. Billed: all five were invoiced in February, so also **₹161,700**. Collected: ₹14,700 + ₹40,000 + ₹10,000 = **₹64,700**. Collections are lower because all three payments were for January's invoices; February's invoices have 30-day terms and weren't due until March.
+**5.** Booked: ₹14,550 + ₹14,640 + ₹32,625 + ₹23,325 + ₹76,560 = **₹1,61,700**. Billed: all five were invoiced in February, so also **₹1,61,700**. Collected: ₹14,700 + ₹40,000 + ₹10,000 = **₹64,700**. Collections are lower because all three payments were for January's invoices; February's invoices have 30-day terms and weren't due until March.
 
 **6.** Missing: which "sales" (booked, billed, or collected); whether cancellations, returns, and tax count; whether "compared" means rupees or percent; which date decides the month; the source system; the owner and target. One good rewrite:
 
@@ -1922,6 +1884,21 @@ When collections drop, you can ask which branch moved, and each branch has an ow
 
 **15.** People fill mandatory fields with anything that gets past the screen: "0", "NA", or a guess at turnover. The fields become full but untrustworthy, which is worse than blank (Chapter 1 lists this problem for data typed by people). Better: require only what's known at that stage (name, contact, interest), collect the rest later, use pick-lists, and offer an "unknown" option.
 
+---
+
+## Where this leads
+
+- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
+- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
+- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
+- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
+- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
+- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
+- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
+- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
+- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
+
 
 # Chapter 4. Numbers Without Fear
 
@@ -1933,9 +1910,9 @@ When collections drop, you can ask which branch moved, and each branch has an ow
 >
 > **Time needed:** 4–5 hours, including the exercises and the project.
 >
-> **Tools:** a calculator (your phone's is fine), a pen, and a notebook. A spreadsheet is optional; the *Spreadsheet link* notes show each calculation in Excel and Google Sheets.
+> **Tools:** a calculator with a power key (your phone's, turned sideways), a pen, and a notebook.
 >
-> **Practice data:** Riverstone's 2025 sales from the one-year database: monthly revenue, targets, and margins, and 173 orders. The companion workbook `numbers_practice.xlsx` (Appendix E) holds the same numbers with every formula from this chapter. Every number was checked by script.
+> **Practice data:** Riverstone's 2025 sales from the one-year database: monthly revenue, targets, and margins, and 173 orders. Every number was checked by script.
 
 ---
 
@@ -1980,13 +1957,13 @@ A **percentage** is a fraction out of 100. 12% means 12 out of every 100, or 0.1
 
 **2. What percentage one number is *of* another.** Divide the part by the whole.
 
-*"What share of 2025 revenue came from Sharma Hardware?"* ₹502,775 ÷ ₹4,335,471 = 0.116, or **11.6%**.
+*"What share of 2025 revenue came from Sharma Hardware?"* ₹5,02,775 ÷ ₹43,35,471 = 0.116, or **11.6%**.
 
 **3. Percent change.** The change, divided by the *starting* value:
 
 > percent change = (new − old) ÷ old
 
-*"How did November's revenue compare with October's?"* October was ₹681,071, November ₹633,408. (₹633,408 − ₹681,071) ÷ ₹681,071 = −0.070, or **−7.0%**.
+*"How did November's revenue compare with October's?"* October was ₹6,81,071, November ₹6,33,408. (₹6,33,408 − ₹6,81,071) ÷ ₹6,81,071 = −0.070, or **−7.0%**.
 
 ### Working backward
 
@@ -2009,8 +1986,6 @@ Two consequences come up all the time:
 - **Recovering from a fall needs a bigger rise.** After a 50% fall, you need a 100% rise to get back. After a 20% fall, you need 25%.
 - **Discounts stack by multiplying.** A 10% trade discount followed by an extra 5% for early payment is 0.90 × 0.95 = 0.855 of the price, a total of **14.5%** off, not 15%.
 
-> **Spreadsheet link.** In Excel and Google Sheets, with the old value in B2 and the new value in C2: percent change is `=(C2-B2)/B2`, formatted as a percentage. A list price from a discounted price in B2 is `=B2/(1-12%)`. The `monthly` sheet of `numbers_practice.xlsx` calculates every month's percent change this way.
-
 ---
 
 ## 4.2 Percentage points and percent change
@@ -2030,7 +2005,9 @@ Here are three more from Riverstone's data:
 |---|---|---|---|---|
 | Gross margin, January → February 2025 | 29.2% | 26.0% | −3.1 points | −10.8% |
 | Revenue as % of target, August → September 2025 | 102.9% | 146.9% | +44.0 points | +42.8% |
-| Win rate, clean leads → duplicated leads (Chapter 13) | 20.0% | 14.0% | −6.0 points | −30.2% |
+| Win rate, each enquiry counted once → duplicate enquiries counted too | 20.0% | 14.0% | −6.0 points | −30.2% |
+
+*Source: One-year database (2025).*
 
 (The first row shows −3.1 points, not 29.2 − 26.0 = 3.2, because it's calculated from the unrounded margins, 29.18% and 26.04%. Section 4.6 is about exactly this kind of rounding.)
 
@@ -2048,22 +2025,24 @@ Here are Riverstone's three customer segments in 2025:
 
 | Segment | Revenue | Orders | Customers | Revenue per customer | Average order value |
 |---|---|---|---|---|---|
-| Wholesale | ₹1,702,658 | 55 | 6 | ₹283,776 | ₹30,957 |
-| Retail | ₹1,488,774 | 59 | 8 | ₹186,097 | ₹25,233 |
-| Hospitality | ₹1,144,039 | 59 | 9 | ₹127,115 | ₹19,390 |
-| **Total** | **₹4,335,471** | **173** | **23** | **₹188,499** | **₹25,061** |
+| Wholesale | ₹17,02,658 | 55 | 6 | ₹2,83,776 | ₹30,957 |
+| Retail | ₹14,88,774 | 59 | 8 | ₹1,86,097 | ₹25,233 |
+| Hospitality | ₹11,44,039 | 59 | 9 | ₹1,27,115 | ₹19,390 |
+| **Total** | **₹43,35,471** | **173** | **23** | **₹1,88,499** | **₹25,061** |
+
+*Source: One-year database (2025).*
 
 Hospitality has the most customers and ties for the most orders, but the least revenue. Which segment is "biggest" depends entirely on the denominator you pick:
 
 - **By customers:** Hospitality (9).
-- **By revenue:** Wholesale (₹1,702,658).
-- **Per customer:** Wholesale again, and by a lot. A wholesale customer brings in ₹283,776 ÷ ₹127,115 = **2.23 times** as much as a hospitality customer.
+- **By revenue:** Wholesale (₹17,02,658).
+- **Per customer:** Wholesale again, and by a lot. A wholesale customer brings in ₹2,83,776 ÷ ₹1,27,115 = **2.23 times** as much as a hospitality customer.
 
-Rates also make different-sized periods comparable. ₹4,335,471 in a year is about **₹11,878 per day** (÷ 365), and 173 orders is about **3.3 orders per week** (÷ 52). Neither is a number anyone at Riverstone reports, but both are useful sanity checks: if someone claims a single ordinary day brought in ₹2 lakh, you know to ask what happened that day.
+Rates also make different-sized periods comparable. ₹43,35,471 in a year is about **₹11,878 per day** (÷ 365), and 173 orders is about **3.3 orders per week** (÷ 52). Neither is a number anyone at Riverstone reports, but both are useful sanity checks: if someone claims a single ordinary day brought in ₹2 lakh, you know to ask what happened that day.
 
 A **share** (or proportion) is a ratio where the part is inside the whole, like Sharma Hardware's 11.6%. Shares of a whole add up to 100%. Ratios between separate groups, like 2.23 times, don't add up to anything.
 
-> **Try it.** Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (Chapter 3). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
+> **Try it.** Riverstone collected ₹1,97,250 of ₹2,97,710 billed in the first quarter of 2026 (Chapter 3; mini database, Jan–Mar 2026). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
 
 ---
 
@@ -2071,23 +2050,25 @@ A **share** (or proportion) is a ratio where the part is inside the whole, like 
 
 ### Month-over-month growth
 
-Here is Riverstone's revenue for every month of 2025, with the percent change from the month before. (Chapter 13 calculates this same table in SQL.)
+Here is Riverstone's revenue for every month of 2025, with the percent change from the month before.
 
 | Month | Revenue | Change from previous month |
 |---|---|---|
-| January | ₹202,640 | |
-| February | ₹253,664 | +25.2% |
-| March | ₹278,008 | +9.6% |
-| April | ₹210,282 | −24.4% |
-| May | ₹329,359 | +56.6% |
-| June | ₹186,928 | −43.2% |
-| July | ₹232,692 | +24.5% |
-| August | ₹329,282 | +41.5% |
-| September | ₹558,315 | +69.6% |
-| October | ₹681,071 | +22.0% |
-| November | ₹633,408 | −7.0% |
-| December | ₹439,824 | −30.6% |
-| **Year** | **₹4,335,471** | |
+| January | ₹2,02,640 | |
+| February | ₹2,53,664 | +25.2% |
+| March | ₹2,78,008 | +9.6% |
+| April | ₹2,10,282 | −24.4% |
+| May | ₹3,29,359 | +56.6% |
+| June | ₹1,86,928 | −43.2% |
+| July | ₹2,32,692 | +24.5% |
+| August | ₹3,29,282 | +41.5% |
+| September | ₹5,58,315 | +69.6% |
+| October | ₹6,81,071 | +22.0% |
+| November | ₹6,33,408 | −7.0% |
+| December | ₹4,39,824 | −30.6% |
+| **Year** | **₹43,35,471** | |
+
+*Source: One-year database (2025). Monthly figures are rounded to the rupee, so they add to ₹43,35,473 (₹2,02,640 + ₹2,53,664 + ₹2,78,008 + ₹2,10,282 + ₹3,29,359 + ₹1,86,928 + ₹2,32,692 + ₹3,29,282 + ₹5,58,315 + ₹6,81,071 + ₹6,33,408 + ₹4,39,824); the exact annual total is ₹43,35,471.*
 
 The monthly changes swing wildly, from −43.2% to +69.6%. Most of that is the calendar: monsoon months are slow and the festive season is busy. Month-over-month percentages exaggerate seasonal patterns, which is why businesses with more than a year of data also compare each month with the same month last year.
 
@@ -2095,23 +2076,23 @@ The monthly changes swing wildly, from −43.2% to +69.6%. Most of that is the c
 
 *"What was the typical monthly growth in 2025?"*
 
-The tempting method is to average the eleven monthly changes. They add up to 143.8, and 143.8 ÷ 11 = **13.1%**. It sounds reasonable. It's wrong, and you can prove it: start with January's ₹202,640 and grow it by 13.1% eleven times. You get **₹782,621** for December. The real December was ₹439,824.
+The tempting method is to average the eleven monthly changes. They add up to 143.8, and 143.8 ÷ 11 = **13.1%**. It sounds reasonable. It's wrong, and you can prove it: start with January's ₹2,02,640 and grow it by 13.1% eleven times. You get **₹7,82,621** for December. The real December was ₹4,39,824.
 
 The problem is Figure 4.1 again. A +56.6% month and a −43.2% month don't cancel, because each is a percentage of a different base. Averaging percentages that compound on each other always overstates growth when the numbers bounce around.
 
-The right question is: *what single, steady monthly rate would take ₹202,640 to ₹439,824 in eleven steps?* That's the **compound growth rate**:
+The right question is: *what single, steady monthly rate would take ₹2,02,640 to ₹4,39,824 in eleven steps?* That's the **compound growth rate**:
 
 > compound growth rate = (end ÷ start)^(1 ÷ number of periods) − 1
 
-₹439,824 ÷ ₹202,640 = 2.17. The eleventh root of 2.17 is 1.073. So the compound monthly growth rate is **7.3%**. Grow ₹202,640 by 7.3% eleven times and you land exactly on December.
+₹4,39,824 ÷ ₹2,02,640 = 2.17. The eleventh root of 2.17 is 1.073. So the compound monthly growth rate is **7.3%**. Grow ₹2,02,640 by 7.3% eleven times and you land exactly on December.
 
-![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to 782,621](figures/fig4-2-average-growth-vs-compound.svg)
+"The eleventh root" sounds hard, but a root only undoes a power. 1.073 multiplied by itself 11 times gives 2.17, so 1.073 is the "eleventh root" of 2.17. You never work it out by hand: type `2.17`, press the power key (xʸ), then `(1 ÷ 11)`.
 
-*Figure 4.2 — The average of the monthly changes (red) overshoots December by ₹342,797. The compound rate (green) connects the real start and end.*
+![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to ₹7,82,621](figures/fig4-2-average-growth-vs-compound.svg)
 
-"The eleventh root" sounds hard. You won't do it by hand; any calculator with a power key does it as `2.17 ^ (1/11)`, and the spreadsheet functions are below.
+*Figure 4.2 — The 13.1% path, built from the average of the monthly changes, overshoots December by ₹3,42,797. The 7.3% compound path connects the real start and end.*
 
-> **Watch out: start and end points drive compound growth.** The compound rate only uses the first and last values. From June (₹186,928, the lowest month) to October (₹681,071, the highest), revenue grew **264.3%**, a number that's true and tells you almost nothing about the year. Always ask why a growth figure starts and ends where it does.
+> **Watch out: start and end points drive compound growth.** The compound rate only uses the first and last values. From June (₹1,86,928, the lowest month) to October (₹6,81,071, the highest), revenue grew **264.3%**, a number that's true and tells you almost nothing about the year. Always ask why a growth figure starts and ends where it does.
 
 ### Compounding
 
@@ -2123,22 +2104,21 @@ A handy shortcut is the **rule of 72**: a quantity growing at *r*% a year double
 
 **CAGR** (compound annual growth rate) is the compound growth rate when the periods are years. It's the standard way to describe growth over several years in company reports, investor decks, and interviews.
 
-*"Anita wants the business in the one-year database to reach ₹60 lakh (₹6,000,000) of revenue by 2028, three years after 2025's ₹4,335,471. What growth rate does she need each year?"*
+*"Anita wants the business in the one-year database to reach ₹60 lakh (₹60,00,000) of revenue by 2028, three years after 2025's ₹43,35,471. What growth rate does she need each year?"*
 
-1. Ratio of end to start: ₹6,000,000 ÷ ₹4,335,471 = 1.384.
+1. Ratio of end to start: ₹60,00,000 ÷ ₹43,35,471 = 1.384.
 2. Three years, so take the cube root: 1.384^(1/3) = 1.1144.
 3. Subtract 1: **CAGR = 11.4% a year.**
 
-Check it by growing forward: ₹4,335,471 × 1.1144 = ₹4,831,418 in 2026, ₹5,384,098 in 2027, and ₹6,000,000 in 2028. ✓
+Check it by growing forward: ₹43,35,471 × 1.1144 = ₹48,31,418 in 2026, ₹53,84,098 in 2027, and ₹60,00,000 in 2028. ✓
 
 Two tempting shortcuts both get the plan wrong:
 
-- **Splitting the gap evenly.** ₹6,000,000 − ₹4,335,471 = ₹1,664,529, or ₹554,843 a year. That's 12.8% of 2025's revenue, but a fixed rupee amount is a smaller percentage each year, so it isn't a growth rate at all.
-- **Rounding down to a nice number.** 10% a year for three years reaches ₹5,770,512, which is ₹229,488 short. Over several years, one percentage point matters.
-
-> **Spreadsheet link.** Compound growth in both Excel and Google Sheets: `=(end/start)^(1/periods)-1`, or the built-in `=RRI(periods, start, end)`. `=RRI(3, 4335471, 6000000)` returns 0.1144, and `=RRI(11, 202640, 439824)` returns 0.0730. The plain average of monthly changes is `=AVERAGE(F3:F13)` on the `monthly` sheet, which returns the misleading 0.1307.
+- **Splitting the gap evenly.** ₹60,00,000 − ₹43,35,471 = ₹16,64,529, or ₹5,54,843 a year. That's 12.8% of 2025's revenue, but a fixed rupee amount is a smaller percentage each year, so it isn't a growth rate at all.
+- **Rounding down to a nice number.** 10% a year for three years reaches ₹57,70,512, which is ₹2,29,488 short. Over several years, one percentage point matters.
 
 ---
+
 ## 4.5 Averages: mean, median, mode, and weighted
 
 An **average** is one number that stands for many. There are three common kinds, and Chapter 1 (section 1.6) showed that the level of measurement decides which ones make sense. This section shows how to choose between them for amounts, like order values, where all three are allowed.
@@ -2147,17 +2127,17 @@ An **average** is one number that stands for many. There are three common kinds,
 - The **median** is the middle value when the values are sorted. Half are below it, half above.
 - The **mode** is the most common value.
 
-Riverstone received 173 orders in 2025 (not counting the two that were cancelled), worth ₹4,335,471 in total.
+Riverstone received 173 orders in 2025 (not counting the two that were cancelled), worth ₹43,35,471 in total.
 
-- **Mean:** ₹4,335,471 ÷ 173 = **₹25,061**.
+- **Mean:** ₹43,35,471 ÷ 173 = **₹25,061**.
 - **Median:** sort the 173 order values; the 87th is **₹21,375**.
 - **Mode:** order values are almost never exactly equal, so the mode of the values themselves is useless here. The mode is useful for categories and repeated counts instead: the most commonly ordered product is the Storage Box 10L (on 76 order lines), the most common quantity on a line is 15, and the most common discount is 0% (140 of 326 lines).
 
-![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to 100,278; the median line at 21,375 sits left of the mean line at 25,061](figures/fig4-3-order-values-mean-vs-median.svg)
+![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to ₹1,00,278; the median line at ₹21,375 sits left of the mean line at ₹25,061](figures/fig4-3-order-values-mean-vs-median.svg)
 
 *Figure 4.3 — Most orders are small; a few large ones stretch the tail to the right and pull the mean above the median.*
 
-Why is the mean higher than the median? Look at Figure 4.3. Most orders are under ₹40,000, but a handful are much larger: the biggest five are ₹65,818, ₹68,875, ₹74,218, ₹82,250, and ₹100,278. Large values pull the mean toward them; they don't move the median at all, because the median only cares about which value is in the middle. Data with a long tail on the high side is called **right-skewed**, and it's everywhere in business: order values, salaries, house prices, time to resolve a ticket.
+Why is the mean higher than the median? Look at Figure 4.3. Most orders are under ₹40,000, but a handful are much larger: the biggest five are ₹65,818, ₹68,875, ₹74,218, ₹82,250, and ₹1,00,278. Large values pull the mean toward them; they don't move the median at all, because the median only cares about which value is in the middle. Data with a long tail on the high side is called **right-skewed**, and it's everywhere in business: order values, salaries, house prices, time to resolve a ticket.
 
 The result: only **70 of the 173 orders (40.5%)** are above the "average" order. If a sales executive is told the average order is ₹25,061, most of their orders will feel below average.
 
@@ -2170,8 +2150,6 @@ The result: only **70 of the 173 orders (40.5%)** are above the "average" order.
 | Categories (products, payment methods, segments) | mode | the only average that works for nominal data (Chapter 1) |
 | Ratings and ranks (ordinal data) | median, plus the count in each category | the gaps between ratings aren't equal (Chapter 1) |
 
-Chapter 21 adds measures of spread, like percentiles and the standard deviation, which tell you how far values stray from the average.
-
 ### Weighted averages
 
 *"What's Riverstone's average discount?"*
@@ -2180,20 +2158,18 @@ Every order line has a discount of 0%, 5%, 8%, 10%, or 12%. The simple average o
 
 > weighted average = sum of (value × weight) ÷ sum of weights
 
-Weighted by each line's value before discount, the average discount is **4.69%**. You can check it without a formula: the lines were worth ₹4,548,725 at list price and ₹4,335,471 after discounts, so discounts took ₹213,254, and ₹213,254 ÷ ₹4,548,725 = 4.69%. ✓ Larger lines tend to get larger discounts (5.3% on average for lines worth ₹20,000 or more, 3.8% for smaller ones), which is why the weighted figure is higher.
+Weighted by each line's value before discount, the average discount is **4.69%**. You can check it without a formula: the lines were worth ₹45,48,725 at list price and ₹43,35,471 after discounts, so discounts took ₹2,13,254, and ₹2,13,254 ÷ ₹45,48,725 = 4.69%. ✓ Larger lines tend to get larger discounts (5.3% on average for lines worth ₹20,000 or more, 3.8% for smaller ones), which is why the weighted figure is higher.
 
-The same trap appears with prices. Riverstone's four product categories sold at average net prices of ₹435 (Storage), ₹341 (Kitchen), ₹1,273 (Industrial), and ₹1,121 (Furniture) per unit. The simple average of those four prices is ₹793. But the company sold 9,475 units for ₹4,335,471, an average of **₹458 per unit**, because Storage and Kitchen sold thousands of units and Furniture sold 30. **An average of averages ignores how many items stand behind each one.**
+The same trap appears with prices. Riverstone's four product categories sold at average net prices of ₹435 (Storage), ₹341 (Kitchen), ₹1,273 (Industrial), and ₹1,121 (Furniture) per unit. The simple average of those four prices is ₹793. But the company sold 9,475 units for ₹43,35,471, an average of **₹458 per unit**, because Storage and Kitchen sold thousands of units and Furniture sold 30. **An average of averages ignores how many items stand behind each one.**
 
 ### The average of averages
 
 The monthly business review pack often shows a row of monthly averages. Averaging that row gives the wrong annual figure:
 
 - Average of the twelve monthly average order values: **₹24,243**.
-- Actual average order value for the year: ₹4,335,471 ÷ 173 orders = **₹25,061**.
+- Actual average order value for the year: ₹43,35,471 ÷ 173 orders = **₹25,061**.
 
 The busy months (September to November, with 18 to 21 orders each and high order values) count the same as quiet January with 8 orders. To combine averages, go back to the totals: add up all the revenue, add up all the orders, then divide.
-
-> **Spreadsheet link.** `=AVERAGE(B2:B174)` and `=MEDIAN(B2:B174)` on the `orders` sheet give ₹25,061 and ₹21,375; `=COUNTIF(B2:B174,">"&E1)` counts the 70 orders above the mean. A weighted average is `=SUMPRODUCT(values, weights)/SUM(weights)`, which is how the `discounts` sheet gets 4.69%. The functions have the same names in Excel and Google Sheets.
 
 ---
 
@@ -2212,6 +2188,8 @@ Riverstone's 2025 revenue by segment, rounded to whole percentages:
 | Hospitality | 26% | 26.4% |
 | **Total** | **99%** | **100.0%** |
 
+*Source: One-year database (2025).*
+
 Nothing is missing. The unrounded shares are 39.27%, 34.34%, and 26.39%, and each one rounded down a little. Rounding to one decimal happens to fix it here, but not always: the same thing can happen at any precision (exercise 8). You have three honest options: show one more decimal place, add a note ("shares may not add to 100% because of rounding"), or leave it and expect the question. Never quietly change one number to force the total, because then the table no longer matches the data.
 
 ### Round at the end, not in the middle
@@ -2220,7 +2198,7 @@ Rounding in the middle of a calculation carries the error forward. Section 4.2's
 
 ### Significant figures and false precision
 
-The **significant figures** of a number are the digits that carry meaning. ₹4,335,471 has seven. Does the reader need all seven? In a finance reconciliation, yes. In a meeting, "about ₹43 lakh" or "₹4.3 million" says the same thing and is easier to remember.
+The **significant figures** of a number are the digits that carry meaning. ₹43,35,471 has seven. Does the reader need all seven? In a finance reconciliation, yes. In a meeting, "about ₹43 lakh" or "₹4.3 million" says the same thing and is easier to remember.
 
 The opposite mistake is **false precision**: more digits than the data can support. *"Customers take an average of 31.6 days to pay"* (Chapter 3) is correct arithmetic from five invoices. With five invoices, "about a month" is more honest. The number of digits you write is a claim about how sure you are.
 
@@ -2236,7 +2214,7 @@ A rough guide for reports:
 
 Before you read any number in a table or chart, read the frame around it. Five checks catch most misreadings:
 
-1. **Units.** Rupees, thousands, lakhs, crores, or millions? Percent or percentage points? A column headed "Revenue (₹ lakh)" with a value of 43.4 means ₹4,340,000.
+1. **Units.** Rupees, thousands, lakhs, crores, or millions? Percent or percentage points? A column headed "Revenue (₹ lakh)" with a value of 43.4 means ₹43,40,000.
 2. **Period and cut-off.** A month, a quarter, year to date? Chapter 3 showed that the same report run on different dates gives different numbers.
 3. **Per-period or cumulative.** A **cumulative** (running total) line always goes up as long as the values are positive, even in a terrible month. December 2025's revenue fell 30.6%, but the year-to-date line still rose.
 4. **Definition.** Booked, billed, or collected? With or without cancellations? (Chapter 3.)
@@ -2276,7 +2254,7 @@ It's easier to work out the chance that *none* is cancelled and subtract from 1.
 
 ### Chaining stages
 
-Chapter 13's sales funnel took 30 unique leads to 22 contacted, 14 quoted, and 6 won. Each step has its own rate: 22 of 30 (73.3%), 14 of 22 (63.6%), and 6 of 14 (42.9%). The chance that a new lead is eventually won is the rates multiplied: 0.733 × 0.636 × 0.429 = **0.200**, or 20%, which matches 6 of 30. ✓
+Riverstone's 2025 sales funnel took 30 unique leads to 22 contacted, 14 quoted, and 6 won. Each step has its own rate: 22 of 30 (73.3%), 14 of 22 (63.6%), and 6 of 14 (42.9%). The chance that a new lead is eventually won is the rates multiplied: 0.733 × 0.636 × 0.429 = **0.200**, or 20%, which matches 6 of 30. ✓
 
 That makes planning concrete. To win 10 new customers at a 20% win rate, the sales team needs about 10 ÷ 0.20 = **50 leads**. To win more with the same number of leads, improve the weakest step.
 
@@ -2288,7 +2266,7 @@ Of the 173 orders, 16 were worth more than ₹50,000, and 10 of those came from 
 - Chance a **wholesale** order is over ₹50,000: 10 ÷ 55 = **18.2%**. This is a **conditional probability**: the chance of one thing *given* another. The denominator shrinks to wholesale orders only.
 - Chance a large order is **from wholesale**: 10 ÷ 16 = **62.5%**.
 
-The last two sound alike and differ by a factor of more than three, because the denominators differ. Mixing them up is one of the most common errors in medicine, law, and business alike: "most large orders are wholesale" is not the same as "most wholesale orders are large". Chapter 21 treats conditional probability and Bayes' rule properly.
+The last two sound alike and differ by a factor of more than three, because the denominators differ. Mixing them up is one of the most common errors in medicine, law, and business alike: "most large orders are wholesale" is not the same as "most wholesale orders are large".
 
 ---
 
@@ -2300,21 +2278,21 @@ The **order of magnitude** of a number is its rough size in powers of ten: thous
 
 Indian business writing uses lakhs and crores; international writing uses thousands, millions, and billions. You'll switch between them constantly.
 
-| Indian | Digits | International |
-|---|---|---|
-| 1 lakh | 100,000 | 100 thousand |
-| 10 lakh | 1,000,000 | 1 million |
-| 1 crore (100 lakh) | 10,000,000 | 10 million |
-| 100 crore | 1,000,000,000 | 1 billion |
+| Indian | Written the Indian way | Written the international way | International |
+|---|---|---|---|
+| 1 lakh | 1,00,000 | 100,000 | 100 thousand |
+| 10 lakh | 10,00,000 | 1,000,000 | 1 million |
+| 1 crore (100 lakh) | 1,00,00,000 | 10,000,000 | 10 million |
+| 100 crore | 1,00,00,00,000 | 1,000,000,000 | 1 billion |
 
-Riverstone's 2025 revenue in the one-year database, ₹4,335,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupees with international grouping (₹4,335,471), and mentions lakhs now and then for readers who think in them.
+The Indian way puts a comma after the thousands and then after every two digits; the international way puts one after every three. Riverstone's 2025 revenue in the one-year database, ₹43,35,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupee amounts the Indian way, as you've just seen. Numbers that aren't money, such as counts of orders or units, keep the international grouping.
 
 ### Sanity checks: does the number fit?
 
 When a number arrives, check it against another number you already trust. Two examples from Riverstone:
 
-- **Revenue per day.** ₹43 lakh a year is about ₹11,878 a day. Separately, 3.3 orders a week at ₹25,061 each is about ₹11,911 a day. Two different routes land within ₹50 of each other, so both numbers are probably sound.
-- **Units from revenue.** October's revenue was ₹681,071, and the year's average price was ₹458 a unit. So October probably shipped about 681,071 ÷ 457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
+- **Revenue per day.** ₹43 lakh a year is about ₹11,878 a day. Separately, 173 orders ÷ 52 weeks ÷ 7 days × ₹25,061 an order is about ₹11,911 a day. (Keep 173 ÷ 52 = 3.327 orders a week unrounded: rounded to 3.3, it gives ₹11,814, the drift section 4.6 warns about.) Two different routes land within ₹50 of each other, so both numbers are probably sound.
+- **Units from revenue.** October's revenue was ₹6,81,071, and the year's average price was ₹458 a unit. So October probably shipped about ₹6,81,071 ÷ ₹457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
 
 ### Estimating from nothing
 
@@ -2325,7 +2303,7 @@ Sometimes there's no data yet: *"Is it worth building a report for this?"* or, i
 3. Multiply, and round the answer to one or two significant figures.
 4. Sanity-check the answer against anything you know, and say which assumption matters most.
 
-Being close matters less than being clear. A reader can replace a bad assumption; they can't fix reasoning they can't see. Chapter 75 has worked guesstimates for interviews.
+Being close matters less than being clear. A reader can replace a bad assumption; they can't fix reasoning they can't see.
 
 ---
 
@@ -2351,14 +2329,15 @@ A good habit is to rewrite a headline number into a plain sentence with both num
 > **Interview extra point.** When a case interview gives you a growth figure or a percentage, restate it with its base and period before you use it: *"So revenue went from ₹20 lakh to ₹32 lakh over four years, which is about 12.5% a year compounded."* It shows you check numbers before trusting them, which is what interviewers for analyst roles are testing. Chapter 73 (statistics and probability) and Chapter 75 (metrics, case studies, and guesstimates) have practice questions.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
 | Adding percentages that apply one after another | "50% + 20% off = 70% off" | Multiply what remains: 0.5 × 0.8 = 0.4, so 60% off |
 | Reversing a percentage by adding it back | list price from a discounted price comes out too low | Divide by (1 − discount) |
 | Saying "percent" for a change in a percentage | "margin fell 3.9%" when it fell 3.9 points | Use points for the difference; give before and after |
-| Averaging growth rates that compound | typical monthly growth of 13.1% when the steady rate is 7.3% | Use (end ÷ start)^(1/periods) − 1, or `RRI` |
+| Averaging growth rates that compound | typical monthly growth of 13.1% when the steady rate is 7.3% | Use (end ÷ start)^(1/periods) − 1 |
 | Quoting growth between hand-picked months | "up 264%" from the slowest to the busiest month | Compare like with like: full years, or same month last year |
 | Reporting only the mean for skewed data | most orders feel "below average" | Report the median too |
 | Averaging averages | ₹24,243 instead of ₹25,061 | Go back to the totals and divide once |
@@ -2377,13 +2356,13 @@ It's the first week of January 2026. The managing director is presenting Riverst
 
 The draft slide has six claims. Meera takes them one at a time, and for each one asks: *of what, and compared with what?*
 
-**1. "2025 revenue up 117%."** Meera finds where it comes from: December's ₹439,824 against January's ₹202,640. That's true, but it compares two single months of a seasonal business, and it isn't "2025 revenue" at all. The slide has no 2024 figures to compare with, so it can't support any year-on-year growth claim. What the board can use: *full-year revenue ₹43.4 lakh (₹4,335,471), 102.3% of the annual target.*
+**1. "2025 revenue up 117%."** Meera finds where it comes from: December's ₹4,39,824 against January's ₹2,02,640. That's true, but it compares two single months of a seasonal business, and it isn't "2025 revenue" at all. The slide has no 2024 figures to compare with, so it can't support any year-on-year growth claim. What the board can use: *full-year revenue ₹43.4 lakh (₹43,35,471), 102.3% of the annual target.*
 
-**2. "Average monthly growth: 13.1%."** The average of the eleven monthly changes. Meera grows January by 13.1% eleven times and gets ₹782,621 for December, almost double the real figure. The compound rate is 7.3%, but she recommends dropping the line entirely: in a year that peaks in October and dips in the monsoon, a "monthly growth rate" describes nothing real.
+**2. "Average monthly growth: 13.1%."** The average of the eleven monthly changes. Meera grows January by 13.1% eleven times and gets ₹7,82,621 for December, almost double the real figure. The compound rate is 7.3%, but she recommends dropping the line entirely: in a year that peaks in October and dips in the monsoon, a "monthly growth rate" describes nothing real.
 
 **3. "Gross margin down 3.9% in November."** It was 27.9% in October and 24.0% in November: down 3.9 *points*, a 14.0% fall. More useful for a board: *full-year gross margin 26.2%; November was the lowest month.*
 
-**4. "Average order value: ₹24,243."** Meera recognizes the number from the monthly pack: it's the average of the twelve monthly averages. The real figure is ₹4,335,471 ÷ 173 = **₹25,061**. She adds the median, **₹21,375**, because the MD is likely to be asked what a typical order looks like.
+**4. "Average order value: ₹24,243."** Meera recognizes the number from the monthly pack: it's the average of the twelve monthly averages. The real figure is ₹43,35,471 ÷ 173 = **₹25,061**. She adds the median, **₹21,375**, because the MD is likely to be asked what a typical order looks like.
 
 **5. The segment pie chart: Wholesale 39%, Retail 34%, Hospitality 26%.** They add to 99%. A board member will notice. One decimal fixes it: 39.3%, 34.3%, 26.4%.
 
@@ -2397,17 +2376,14 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Tools
-
-- **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (`xʸ` or `^`) for compound growth.
-- **A spreadsheet** (optional). Excel and Google Sheets both have every function used here: `AVERAGE`, `MEDIAN`, `MODE`, `SUMPRODUCT`, `ROUND`, `COUNTIF`, and `RRI`. Chapter 10 teaches them from the beginning.
-- **The companion workbook** `numbers_practice.xlsx` (Appendix E). Its `monthly`, `orders`, `discounts`, and `segments` sheets hold the 2025 numbers from this chapter with the formulas already in place, so you can check every figure and try your own. It was generated from the one-year database, and its formulas were recalculated and compared with this chapter's numbers.
-
----
-
-## The project: check five statistics
+## Project: check five statistics
 
 **Goal:** take five numbers from the real world and check each one the way Meera checked the board slide.
+
+### Tools you'll need
+
+- **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (xʸ or ^) for compound growth.
+- **A pen and a notebook.** Write each calculation out in full, with its units, so you can check it later. When spreadsheets arrive in Chapter 10, you'll redo this chapter's numbers there.
 
 **Step 1. Collect five statistics.** Find them in news articles, company annual reports or investor presentations, advertisements, or presentations at your workplace. Aim for variety: at least one growth figure, one percentage or share, one average, one chart, and one comparison between two groups. Copy the exact wording and note the source and date.
 
@@ -2436,23 +2412,6 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## You've got it when…
-
-- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
-- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
-- [ ] I say "percentage points" for the difference between two percentages.
-- [ ] I ask what the denominator is before comparing ratios or rates.
-- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
-- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
-- [ ] I don't average averages.
-- [ ] I round only at the end, and I don't write more digits than the data supports.
-- [ ] I check a chart's units, period, and axis before reading its bars.
-- [ ] I can work out "at least one" and conditional probabilities by counting.
-- [ ] I sanity-check numbers by estimating them another way.
-- [ ] I've checked five real statistics and rewritten each one fairly.
-
----
-
 ## Recap
 
 - **Every percentage is a percentage of something.** Ask *of what?* and *compared with what?*
@@ -2469,12 +2428,37 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Practice exercises
+## Key terms
+
+percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
+- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
+- [ ] I say "percentage points" for the difference between two percentages.
+- [ ] I ask what the denominator is before comparing ratios or rates.
+- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
+- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
+- [ ] I don't average averages.
+- [ ] I round only at the end, and I don't write more digits than the data supports.
+- [ ] I check a chart's units, period, and axis before reading its bars.
+- [ ] I can work out "at least one" and conditional probabilities by counting.
+- [ ] I sanity-check numbers by estimating them another way.
+- [ ] I've checked five real statistics and rewritten each one fairly.
+
+---
+
+## Exercises
 
 ### Warm-up
 
 1. Calculate: (a) a 5% discount on an order worth ₹14,550; (b) what percentage ₹26,220 is of ₹58,020 (order 5012's share of March 2026 bookings, Chapter 3); (c) the price of a ₹780 Storage Box 25L after 8% off.
-2. From Chapter 13's quarterly table: Kitchen revenue was ₹133,888 in the first quarter of 2025 and ₹461,146 in the fourth; Industrial was ₹275,450 in the third quarter and ₹292,040 in the fourth. Calculate each percent change.
+2. From Riverstone's 2025 revenue by quarter and category (one-year database): Kitchen revenue was ₹1,33,888 in the first quarter of 2025 and ₹4,61,146 in the fourth; Industrial was ₹2,75,450 in the third quarter and ₹2,92,040 in the fourth. Calculate each percent change.
 3. Wholesale's share of revenue was 39.3% in 2025. If it's 42.0% next year, what's the change in percentage points, and what's the percent change? Write one correct sentence for each.
 4. The 11 non-cancelled orders in the mini database (first quarter of 2026) were worth: ₹14,700, ₹73,260, ₹16,250, ₹14,550, ₹14,640, ₹32,625, ₹23,325, ₹76,560, ₹20,100, ₹11,700, ₹26,220. Find the mean, the median, and the mode. Which better describes a typical order, and why?
 
@@ -2482,15 +2466,15 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 5. (a) Northgate paid ₹76,560 for an order after a 12% discount. What was the order worth at list price? (b) Riverstone raises a price by 8%, then gives a customer 8% off the new price. Is the customer paying more or less than before, and by what percent?
 6. A distributor's revenue grew from ₹25 lakh to ₹40 lakh over five years. (a) What was its CAGR? (b) Using the rule of 72, roughly how long would it take to double at that rate? (c) Why is "it grew 12% a year" (60% ÷ 5) wrong?
-7. Riverstone's 2025 gross margin by category was: Storage 26.9% on ₹2,297,974 of revenue; Kitchen 33.2% on ₹1,208,030; Industrial 13.6% on ₹795,830; Furniture 24.2% on ₹33,638. (a) What's the simple average of the four margins? (b) What's the margin weighted by revenue? (c) Which one is the company's gross margin, and why are they different?
+7. Riverstone's 2025 gross margin by category was: Storage 26.9% on ₹22,97,974 of revenue; Kitchen 33.2% on ₹12,08,030; Industrial 13.6% on ₹7,95,830; Furniture 24.2% on ₹33,638. (a) What's the simple average of the four margins? (b) What's the margin weighted by revenue? (c) Which one is the company's gross margin, and why are they different?
 8. The categories' shares of 2025 revenue, to one decimal place, are Storage 53.0%, Kitchen 27.9%, Industrial 18.4%, and Furniture 0.8%. A manager says the table is wrong. Explain what's happening and write the note you'd put under the table.
 9. Riverstone wins 20% of its unique leads. (a) How many leads does it need to win 15 new customers? (b) If three new leads arrive this week and each has a 20% chance of being won, what's the chance at least one is won? (c) What assumption does (b) make, and when might it be false?
 
 ### Stretch
 
-10. A local newspaper profile of Riverstone runs the headline *"Riverstone revenue soars 264%"*, based on June 2025 (₹186,928) and October 2025 (₹681,071). Explain in two sentences why the headline misleads, and write an honest replacement using numbers from this chapter.
-11. November 2025's revenue was ₹633,408. Using the year's average price of ₹458 per unit, estimate how many units Riverstone shipped in November. The database says 1,355. How far off is your estimate, in percent? Is that good enough for a sanity check, and why?
-12. In 2025, Riverstone received 29 orders worth ₹734,312 in the first quarter and 59 orders worth ₹1,754,302 in the fourth. (a) Calculate each quarter's average order value. (b) Calculate the average order value for the two quarters combined. (c) Explain why the average of your two answers in (a) isn't the answer to (b).
+10. A local newspaper profile of Riverstone runs the headline *"Riverstone revenue soars 264%"*, based on June 2025 (₹1,86,928) and October 2025 (₹6,81,071). Explain in two sentences why the headline misleads, and write an honest replacement using numbers from this chapter.
+11. November 2025's revenue was ₹6,33,408. Using the year's average price of ₹458 per unit, estimate how many units Riverstone shipped in November. The database says 1,355. How far off is your estimate, in percent? Is that good enough for a sanity check, and why?
+12. In 2025, Riverstone received 29 orders worth ₹7,34,312 in the first quarter and 59 orders worth ₹17,54,302 in the fourth. (a) Calculate each quarter's average order value. (b) Calculate the average order value for the two quarters combined. (c) Explain why the average of your two answers in (a) isn't the answer to (b).
 
 ### Think about it (no calculation needed)
 
@@ -2500,44 +2484,21 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Key terms
-
-percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
-- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, `SUMPRODUCT`, pivot tables of shares and averages.
-- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
-- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
-- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
-- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
+## Answers
 
 **1.** (a) 0.05 × ₹14,550 = **₹727.50**. (b) ₹26,220 ÷ ₹58,020 = 0.452, so **45.2%**. (c) ₹780 × 0.92 = **₹717.60**.
 
-**2.** Kitchen: (₹461,146 − ₹133,888) ÷ ₹133,888 = **+244.4%**; revenue more than tripled. Industrial: (₹292,040 − ₹275,450) ÷ ₹275,450 = **+6.0%**.
+**2.** Kitchen: (₹4,61,146 − ₹1,33,888) ÷ ₹1,33,888 = **+244.4%**; revenue more than tripled. Industrial: (₹2,92,040 − ₹2,75,450) ÷ ₹2,75,450 = **+6.0%**.
 
 **3.** 42.0 − 39.3 = **2.7 percentage points**: "Wholesale's share rose 2.7 points, from 39.3% to 42.0%." (42.0 − 39.3) ÷ 39.3 = **6.9%**: "Wholesale's share of revenue grew by 6.9%." The first is clearer for most readers.
 
-**4.** Total ₹323,930 ÷ 11 = **mean ₹29,448**. Sorted: ₹11,700, ₹14,550, ₹14,640, ₹14,700, ₹16,250, **₹20,100**, ₹23,325, ₹26,220, ₹32,625, ₹73,260, ₹76,560; the sixth value is the **median, ₹20,100**. No value repeats, so there's **no mode**. The median describes a typical order better: two large wholesale orders (₹73,260 and ₹76,560) pull the mean up, and 8 of the 11 orders are below it.
+**4.** Total ₹3,23,930 ÷ 11 = **mean ₹29,448**. Sorted: ₹11,700, ₹14,550, ₹14,640, ₹14,700, ₹16,250, **₹20,100**, ₹23,325, ₹26,220, ₹32,625, ₹73,260, ₹76,560; the sixth value is the **median, ₹20,100**. No value repeats, so there's **no mode**. The median describes a typical order better: two large wholesale orders (₹73,260 and ₹76,560) pull the mean up, and 8 of the 11 orders are below it.
 
 **5.** (a) ₹76,560 ÷ 0.88 = **₹87,000**. (Check: 12% of ₹87,000 is ₹10,440, and ₹87,000 − ₹10,440 = ₹76,560. ✓) (b) 1.08 × 0.92 = 0.9936. The customer pays **0.64% less** than the original price, because the 8% discount is taken from a bigger number than the 8% rise was.
 
 **6.** (a) ₹40 lakh ÷ ₹25 lakh = 1.6. 1.6^(1/5) = 1.0986, so the CAGR is **9.9% a year**. (b) 72 ÷ 9.9 ≈ **7.3 years** (the exact answer is 7.4). (c) 60% ÷ 5 = 12% ignores compounding: each year's growth is calculated on a bigger base, so a steady 9.9% a year is enough to add 60% in five years. Growing ₹25 lakh by 12% a year for five years would reach about ₹44 lakh, not ₹40 lakh.
 
-**7.** (a) (26.9 + 33.2 + 13.6 + 24.2) ÷ 4 = **24.5%**. (b) Weighted by revenue, the margin is **26.2%**: total revenue ₹4,335,471 minus total product cost ₹3,198,250, divided by revenue. (c) The weighted figure is the company's gross margin. The simple average gives tiny Furniture (under 1% of revenue) the same say as Storage (more than half), and it gives low-margin Industrial (18.4% of revenue) a quarter of the weight, which drags the simple average down.
+**7.** (a) (26.9 + 33.2 + 13.6 + 24.2) ÷ 4 = **24.5%**. (b) Weighted by revenue, the margin is **26.2%**: total revenue ₹43,35,471 minus total product cost ₹31,98,250, divided by revenue. (c) The weighted figure is the company's gross margin. The simple average gives tiny Furniture (under 1% of revenue) the same say as Storage (more than half), and it gives low-margin Industrial (18.4% of revenue) a quarter of the weight, which drags the simple average down.
 
 **8.** Nothing is wrong. The unrounded shares (53.00%, 27.86%, 18.36%, 0.78%) add up to 100%, but three of them rounded up, so the rounded shares add to 100.1%. Note: *"Shares are rounded to one decimal place and may not add to exactly 100%."* Don't adjust one share to force the total.
 
@@ -2545,15 +2506,28 @@ percentage · percent of · share / proportion · percent change · reverse perc
 
 **10.** It compares the slowest month with the busiest month of a seasonal business, so most of the "growth" is the calendar, and it says nothing about the year. A single-month comparison can't be called revenue growth for the company. Honest replacement: *"Riverstone's 2025 revenue was ₹43.4 lakh, 2.3% above its annual target, with a festive-season peak of ₹6.8 lakh in October."*
 
-**11.** ₹633,408 ÷ ₹458 ≈ **1,383 units** (using the unrounded ₹457.57, about 1,384). Against the actual 1,355, that's about **2.1% too high**. That's good enough: a sanity check is looking for errors of 10 times or 100 times, and an estimate within a few percent confirms the order of magnitude. Differences in the product mix explain the rest.
+**11.** ₹6,33,408 ÷ ₹458 ≈ **1,383 units** (using the unrounded ₹457.57, about 1,384). Against the actual 1,355, that's about **2.1% too high**. That's good enough: a sanity check is looking for errors of 10 times or 100 times, and an estimate within a few percent confirms the order of magnitude. Differences in the product mix explain the rest.
 
-**12.** (a) First quarter: ₹734,312 ÷ 29 = **₹25,321**. Fourth quarter: ₹1,754,302 ÷ 59 = **₹29,734**. (b) (₹734,312 + ₹1,754,302) ÷ (29 + 59) = ₹2,488,614 ÷ 88 = **₹28,280**. (c) The average of the two quarterly figures, ₹27,528, gives each quarter equal weight, but the fourth quarter had twice as many orders. The combined figure must come from the totals.
+**12.** (a) First quarter: ₹7,34,312 ÷ 29 = **₹25,321**. Fourth quarter: ₹17,54,302 ÷ 59 = **₹29,734**. (b) (₹7,34,312 + ₹17,54,302) ÷ (29 + 59) = ₹24,88,614 ÷ 88 = **₹28,280**. (c) The average of the two quarterly figures, ₹27,528, gives each quarter equal weight, but the fourth quarter had twice as many orders. The combined figure must come from the totals.
 
 **13.** Whether "average" is the mean or the median (a few very high salaries, such as senior leaders', pull the mean up); the median and the range; who is included (full-time only? contractors? leaders?); whether it's salary alone or includes bonuses and benefits; and the date and location. The median, with the number of employees, describes a typical employee far better.
 
 **14.** A cumulative line rises whenever a month's revenue is positive, so a month that fell sharply (like December 2025, down 30.6%) still shows as the line going up, only less steeply. Put a monthly bar chart next to it (starting at zero), ideally with each month's target or the same month last year, so a bad month is visible as a short bar.
 
-**15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads (Chapter 13) raises the win rate without any change in selling.
+**15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads raises the win rate without any change in selling.
+
+---
+
+## Where this leads
+
+- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
+- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
+- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
+- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
+- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
+- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
 
 
 # Chapter 5. Thinking Like an Analyst
@@ -2612,9 +2586,9 @@ Chapter 1 (section 1.2) introduced the ladder from data to insight. Business que
 
 | Kind | The question | Riverstone example | What it needs |
 |---|---|---|---|
-| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing (Chapters 10–13) |
+| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing |
 | **Diagnostic** | Why did it happen? | *Why did March fall 80.3% from February?* | Breaking down, comparing, testing hypotheses (this chapter) |
-| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models (Chapters 36 and 40) |
+| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models |
 | **Prescriptive** | What should we do? | *Should sales offer a discount to customers who didn't reorder?* | Options, criteria, and judgment (section 5.8) |
 
 Most requests arrive as descriptive questions but are really diagnostic or prescriptive underneath. *"What was March revenue?"* usually means *"Is March a problem, and what should we do about it?"* Answering only the surface question is the most common way to do correct work that doesn't help.
@@ -2696,6 +2670,7 @@ Some hypotheses can't be tested with the data you have. H5 needs March in earlie
 Every analysis in this book follows the loop in Figure 5.2, whether the test is a pivot table, a SQL query, or a machine learning model.
 
 ---
+
 ## 5.4 Breaking problems down: issue trees and MECE
 
 A list of six hypotheses is a start. But lists get long, overlap, and miss things. An **issue tree** organizes a question into branches, each branch into smaller branches, until every leaf is small enough to check with one piece of data.
@@ -2706,7 +2681,7 @@ The branches of a good tree are **MECE** (pronounced "mee-see"): **mutually excl
 
 ![Two ways to split Riverstone's eight customers: "big, in Mumbai, new in 2026" overlaps and leaves Patel Kitchenware out; "retail, wholesale, hospitality" puts every customer in exactly one group](figures/fig5-3-mece-bad-and-good-splits.svg)
 
-*Figure 5.3 — The left split double-counts two customers and misses one. The right split is MECE.*
+*Figure 5.3 — The top split double-counts two customers and misses one. The bottom split is MECE.*
 
 In Figure 5.3, splitting customers into "big", "in Mumbai", and "new in 2026" puts Metro Mart and Northgate in two groups each and Patel Kitchenware in none, so group totals won't match the company's revenue, and a conclusion like "the problem is new customers" might really be about Mumbai. Split by segment instead, and every customer sits in exactly one group.
 
@@ -2733,12 +2708,14 @@ Here is the question from section 5.2, answered with an issue tree. All the numb
 
 | | Invoiced orders | Average order value | Billed revenue |
 |---|---|---|---|
-| February 2026 | 5 | ₹32,340 | ₹161,700 |
+| February 2026 | 5 | ₹32,340 | ₹1,61,700 |
 | March 2026 | 2 | ₹15,900 | ₹31,800 |
 
-Both parts fell. How much of the ₹129,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹161,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹129,900.
+*Source: Mini database (Jan–Mar 2026).*
 
-> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't. Chapter 23 shows more careful ways to break down a change in a KPI.
+Both parts fell. How much of the ₹1,29,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹1,61,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹1,29,900.
+
+> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't.
 
 **Step 2. Fewer orders: which customers?** Five customers had orders invoiced in February: Sharma Hardware, Metro Mart, Coastal Foods, Sunrise Caterers, and Northgate Distributors. In March, only Sharma Hardware and Green Leaf Hotels were invoiced. Metro Mart ordered in March, but its order is still pending. So three customers ordered in February and not at all in March: **Coastal Foods, Sunrise Caterers, and Northgate Distributors**.
 
@@ -2746,7 +2723,7 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 
 **Step 3. Timing: is something stuck?** Order 5012 from Metro Mart, worth ₹26,220, was placed on 15 March and is still *Pending*. It's booked, not billed. With it, March would be ₹58,020, still 64.1% below February. **H3 is true but explains only a part.**
 
-**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹109,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
+**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹1,09,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
 
 **Step 5. Why didn't they reorder?** The ERP's orders can't answer "why", but the invoices and payments can add a clue. On 31 March:
 
@@ -2760,6 +2737,8 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 | Green Leaf Hotels | yes | ₹0 | ₹0 |
 | Metro Mart | yes (pending) | ₹0 | ₹0 |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Every customer with an overdue balance placed no order in March, and no customer who ordered in March had anything overdue. The three customers from step 2 owe ₹82,510 between them, all of it overdue.
 
 That's a striking pattern, and it's exactly the moment to slow down. It doesn't say *which way* the connection runs, or whether there is one. A customer short of cash might stop ordering until it pays. A customer unhappy with a delivery might both withhold payment and stop ordering, so a single cause would explain both (section 5.6). Or, with seven customers, it could be coincidence. One detail points to a specific question: Northgate's February order still shows *Shipped*, not *Delivered*. If the crates never arrived, Northgate isn't a late payer; it's a customer waiting for its goods.
@@ -2771,8 +2750,6 @@ This branch ends as a **hypothesis to test outside the data**: a phone call to e
 **What to tell Anita.** A good answer is short, ranked, and honest about confidence:
 
 > *"March billed revenue was ₹31,800, down 80.3% from February. About three-quarters of the fall is fewer orders: Coastal Foods, Sunrise Caterers, and Northgate didn't reorder in March, and February's two wholesale orders alone were 67.5% of that month. Metro Mart's ₹26,220 order is still pending; shipping it brings March to ₹58,020. All three customers who didn't reorder have overdue balances (₹82,510 in total), and Northgate's order still shows as not delivered. I'd call all three this week, starting with Northgate, before offering any discounts. I can't tell yet whether March is seasonally slow; that needs last year's data."*
-
-> **SQL link.** Every number in this walk-through is a short query on the mini database (Chapter 12); Chapter 13's month-over-month and customer patterns do the same at scale.
 
 ---
 
@@ -2794,6 +2771,8 @@ Here are statements from Riverstone's Monday sales review, sorted:
 | "Northgate will pay next week." | assumption | Write it down, give it an owner, and check it by a date. |
 | "Northgate is a difficult customer." | opinion | Ask what experience it's based on; check the delivery status first. |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Businesses run on opinions and assumptions, because there's never time to check everything. The danger is when they're **presented as facts**, or an old assumption quietly becomes "what we know". List your assumptions in one place, so anyone can challenge them.
 
 ---
@@ -2814,7 +2793,7 @@ Chapter 4 (section 4.10) covered number tricks. This section is about the reason
 - **A common cause: C causes both.** In section 5.4, overdue balances and missing reorders went together. A delivery problem could cause both: the customer won't pay for goods it hasn't received, and won't reorder either. Chasing payment harder would then make things worse.
 - **Selection: the cases were chosen in a way that creates the pattern.** *"Customers who attend our trade fair order more."* Maybe the ones who attend were already the most engaged customers.
 
-And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance, and Chapters 30 and 31 cover how to test cause and effect properly, with experiments and without them.
+And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance.
 
 > **Watch out: your own analysis is a claim too.** The five questions apply to what you're about to send. The note to Anita in section 5.4 states a measured fact ("about three-quarters of the fall is fewer orders") and a recommendation ("I'd call them"), but it's careful not to say "customers stopped ordering *because* they owe us money".
 
@@ -2827,12 +2806,14 @@ A **cognitive bias** is a predictable way in which people's judgment drifts from
 | Bias | What it looks like at Riverstone | Antidote |
 |---|---|---|
 | **Confirmation bias**: noticing evidence that fits what you already believe | Vikram is sure a competitor is undercutting prices, so he asks for lost deals that mention price, and not for the ones that don't | Write hypotheses first (section 5.3); look for evidence that would prove your favorite wrong |
-| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹161,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
+| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹1,61,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
 | **Regression to the mean**: an unusually high or low value tends to be followed by a more ordinary one | A month boosted by one big first order is likely to be followed by a lower month, even if nothing went wrong | Before explaining a change, ask whether the starting point was unusual |
 | **Survivorship bias**: studying only the cases that made it through | Studying won deals to learn "what works", without looking at the lost and never-contacted leads that went through the same steps | Always include the cases that dropped out |
 | **Availability and recency**: overweighting what's vivid or recent | One angry phone call from a customer on Friday becomes "customers are unhappy" on Monday | Count: how many complaints, out of how many customers, over what period? |
 | **Small numbers**: trusting patterns from very few cases | "All the customers who owe us stopped ordering" is based on four customers | Give the counts; call it a hypothesis until more cases agree (Chapter 4, section 4.8) |
 | **The analyst's own bias**: wanting an interesting finding | A clean story about overdue balances is more exciting than "one big order made February unusual", so it's tempting to lead with it | State the ordinary explanation first if it's the bigger one |
+
+*Source for the Riverstone numbers: Mini database (Jan–Mar 2026).*
 
 The last row matters most. Analysts are rewarded for insights, so there's a pull toward the surprising story; a good reputation rests on being right, which often means reporting the ordinary explanation clearly.
 
@@ -2852,6 +2833,8 @@ Analysis exists to help someone decide. Data rarely decides by itself; it narrow
 | **Recommendation and confidence** | What should we do, and how sure are we? | B this week; decide on C or D after the calls. Medium confidence: the pattern is clear, but it's four customers and the cause is unknown. |
 | **What would change my mind** | Which new fact would change the recommendation? | If customers say price is the reason and their balances are paid, reconsider C. If goods weren't delivered, fix the delivery before anything else. |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Three principles sit behind the table:
 
 - **Match the effort to the decision.** A reversible, cheap decision (a phone call) needs less evidence than an irreversible, expensive one (a price change or a hire).
@@ -2861,7 +2844,8 @@ Three principles sit behind the table:
 > **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank) have practice cases with model answers.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -2891,7 +2875,7 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 
 **3. The tests.** All from the one-year database.
 
-- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times (Chapter 13). There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
+- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times. There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
 - **Missed and slow.** **8 of the 30 (26.7%) were never contacted at all.** The other 22 waited an average of **9.7 days** for a first contact. One referral, Tulip Mart, has been waiting since 23 September, 99 days.
 - **Lost after contact.** 6 of the 22 contacted leads were won (27.3%). Of the leads contacted within a week, 3 of 8 were won; of those contacted later, 3 of 14. That fits "faster is better", but with numbers this small it's a hypothesis, not a finding.
 - **Capacity.** If the team were overloaded, the executives handling the most customer orders should miss the most leads. The data says the opposite:
@@ -2902,6 +2886,8 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 | Rahul Mehta | 53 | 10 | 3 | 10.9 |
 | Neha Kulkarni | 46 | 15 | 5 | 9.8 |
 
+*Source: One-year database (2025 CRM leads).*
+
 Farah, with the most orders, missed none of her leads. Neha, with the fewest orders, was assigned half of all leads, including 9 of the 14 website enquiries, and missed 5. Website leads were the most often missed: 5 of 14 were never contacted.
 
 **4. Checking herself.** The CRM doesn't record time spent on visits, calls, or complaints, so orders aren't the whole workload. And reading the table as "Neha is the problem" would be unfair: she got as many leads as Rahul and Farah combined, including most website enquiries. The pattern points at **how leads are routed and followed up**, not at a person.
@@ -2910,24 +2896,22 @@ Farah, with the most orders, missed none of her leads. Neha, with the fewest ord
 
 > *"The data doesn't support hiring for lead volume: 30 real enquiries came in last year (the CRM's 43 includes duplicates), fewer than one a month per executive. The problem is follow-up: 8 enquiries were never contacted and the rest waited almost 10 days on average. Missed leads are concentrated among website enquiries and in the largest lead list, not with the busiest executive. I'd (1) call the 8 uncontacted leads this week, starting with the Tulip Mart referral, (2) spread website leads evenly, (3) set a two-working-day rule for first contact with a daily reminder, and (4) fix the duplicate website submissions. What would change my mind: if leads grow sharply, or if response times are still slow after a quarter of the new routing, a hire is worth revisiting. The CRM doesn't record time spent, so I can't rule out that the team is busy with work outside orders and leads."*
 
-Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (Chapter 20 does exactly that).
+Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (you'll build that reminder yourself later in the book).
 
 The request was a solution ("hire"). Meera turned it into a question about a cause, tested each branch, avoided blaming one person, stated what she couldn't see, and recommended cheap, reversible steps first, with a clear condition for revisiting the expensive one.
 
 ---
 
-## Tools
+## Project: an issue tree for a real question
+
+**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
+
+### Tools you'll need
 
 - **Pen and paper, or a whiteboard.** Issue trees are fastest by hand. Draw the first version in five minutes; tidy it later.
 - **A spreadsheet or document** for the hypothesis log: one row per hypothesis, with the data needed, the result, and the status (supported, rejected, open).
 - **A diagram tool** (optional): diagrams.net, PowerPoint, or Google Slides for sharing a tree.
 - **SQL and spreadsheets** for the tests, from Chapter 10 onward. This chapter's numbers came from short queries on the Riverstone databases.
-
----
-
-## The project: an issue tree for a real question
-
-**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
 
 **Step 1. Choose a question** from your work, a local business, or your Chapter 4 project: turn one checked claim into an analyst's question. *"Sales up 40% in three years"* becomes *"Did the company's revenue grow faster than its market over those three years, and where did the growth come from?"*
 
@@ -2956,20 +2940,6 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## You've got it when…
-
-- [ ] I ask what an analysis is for before I start it.
-- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
-- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
-- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
-- [ ] I label statements as fact, opinion, or assumption.
-- [ ] I check claims for reverse causation, common causes, selection, and chance.
-- [ ] I can name the common biases and the habit that counters each one.
-- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
-- [ ] I've built an issue tree for a real question, with the data for every branch.
-
----
-
 ## Recap
 
 - Questions are **descriptive, diagnostic, predictive, or prescriptive**. Most requests are diagnostic or prescriptive underneath.
@@ -2985,7 +2955,29 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Practice exercises
+## Key terms
+
+descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I ask what an analysis is for before I start it.
+- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
+- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
+- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
+- [ ] I label statements as fact, opinion, or assumption.
+- [ ] I check claims for reverse causation, common causes, selection, and chance.
+- [ ] I can name the common biases and the habit that counters each one.
+- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
+- [ ] I've built an issue tree for a real question, with the data for every branch.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -2997,8 +2989,8 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 ### Core
 
 5. For the question *"Why did hospitality customers bring in less revenue in March 2026 than in February?"*, write three hypotheses that data could prove wrong, and for each, name the data you'd use. (Hospitality billed ₹23,325 in February and ₹20,100 in March in the mini database.)
-6. Billed revenue rose from ₹104,210 in January 2026 (3 invoiced orders) to ₹161,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
-7. Chapter 3 showed that Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
+6. Billed revenue rose from ₹1,04,210 in January 2026 (3 invoiced orders) to ₹1,61,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
+7. Chapter 3 showed that Riverstone collected ₹1,97,250 of ₹2,97,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
 8. Name the bias in each situation and suggest one habit that would counter it: (a) After one customer complains about a cracked crate, a manager says, "Our quality has slipped." (b) An analyst studies the five best customers to learn why customers stay. (c) Revenue drops after a record month, and the team spends a week looking for what went wrong. (d) A manager who wanted a new CRM highlights only the figures that make the old one look bad.
 9. A manager says: *"Customers with overdue balances order less. So chasing payments hurts sales, and finance should send fewer reminders."* Give three other explanations for the pattern, and describe what data would help decide between them.
 
@@ -3016,30 +3008,7 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Key terms
-
-descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 6, Setting Up to Learn,** installs the tools you'll use to test hypotheses, and helps you build a study plan.
-- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
-- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
-- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
-- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
-- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
+## Answers
 
 **1.** (a) Descriptive. (b) Prescriptive. (c) Diagnostic. (d) Predictive. (e) Descriptive.
 
@@ -3051,7 +3020,7 @@ descriptive question · diagnostic question · predictive question · prescripti
 
 **5.** Examples: (1) *Fewer hospitality customers ordered in March than in February.* Data: orders by customer and month (Sunrise Caterers ordered in February, Green Leaf Hotels in March). (2) *Hospitality customers who ordered placed smaller orders.* Data: order values by customer and month. (3) *The hospitality order that would have made the difference is still pending or was cancelled.* Data: order status for hospitality customers in March. Note that the gap is small (₹3,225) and each month has one order, so almost any difference is normal variation.
 
-**6.** (a) January: ₹104,210 ÷ 3 = **₹34,737**. February: ₹161,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹173,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
+**6.** (a) January: ₹1,04,210 ÷ 3 = **₹34,737**. February: ₹1,61,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹1,73,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
 
 **7.** One good tree:
 
@@ -3063,7 +3032,7 @@ descriptive question · diagnostic question · predictive question · prescripti
     - *Riverstone hasn't chased.* Data: reminder logs from finance.
   - **Paid but not recorded yet.** Data: bank statement lines not yet matched to invoices.
 
-The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹100,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
+The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹1,00,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
 
 **8.** (a) **Availability** (one vivid complaint). Habit: count complaints over a period, out of how many deliveries. (b) **Survivorship** (studying only customers who stayed). Habit: compare with customers who left. (c) **Regression to the mean** (after a record month, a lower one is normal). Habit: compare with the average and the same month last year before searching for a cause. (d) **Confirmation bias**. Habit: write down in advance what evidence would show the old CRM is fine, and look for it.
 
@@ -3081,407 +3050,93 @@ The first split (not yet due / overdue / paid but unrecorded) is MECE for the mo
 
 **15.** (1) **Are its numbers right?** Check the metric, definition, and figures against the database. (2) **Is it presenting hypotheses as facts?** Order tables can't tell you *why* customers behaved as they did. (3) **What has it left out?** Compare with your own issue tree: timing, mix, and the limits of the data. Chapter 26 covers working with AI assistants.
 
+---
 
-# Chapter 6. Setting Up to Learn
+## Where this leads
+
+- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
+- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
+- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
+- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
+- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
+- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
+- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
+
+
+# Chapter 6. Planning Your Learning
 
 > **Chapter at a glance**
 >
-> **You will learn to:** check whether your computer is ready, and what to do if it isn't · install the book's core tools in a sensible order, and confirm each one works · organize the companion files so you can always find them · use the keyboard, files, and terminal basics that save hours · read official documentation to settle a question for yourself · use AI assistants to learn faster without letting them do your thinking · build a study plan and a weekly habit you can keep · get the most from the exercises and answers.
+> **You will learn to:** estimate honestly how many hours this book takes, and turn them into weeks at your real pace · build a weekly rhythm you can keep, and recover from a missed week · check whether your computer is ready, and know which chapter brings each tool · read an official page to settle a question for yourself · use AI assistants to learn faster without letting them do your thinking · plan your route and your first 90 days.
 >
-> **Before you start:** Chapters 1–5. Chapter 2 (files, folders, extensions, and paths) is especially useful here.
+> **Before you start:** Chapters 1–5, and "How to Use This Book" at the front of the book.
 >
-> **Time needed:** 3–4 hours, most of it installing. Spread the installs over two or three sittings if you like.
+> **Time needed:** 2–3 hours, including the exercises and the project.
 >
-> **Tools:** the computer you'll study on, an internet connection, and permission to install software on it.
+> **Tools:** a notebook or a notes app, and a calendar. No software to install.
 >
-> **Practice data:** the Riverstone mini database (`riverstone_setup.sql`) and a small script, `check_setup.py`, both in the companion files (Appendix E). Every version, install method, and output in this chapter was checked against official sources or run, in September 2026.
+> **Practice data:** none; you plan with your own week.
 
 ---
 
 ## Why this matters
 
-From Chapter 10 onward, every chapter asks you to type, run, break, and fix things: formulas, queries, scripts, dashboards. Readers who set up properly before they need to get through those chapters in a fraction of the time, because a missing driver or a wrong Python version never interrupts them halfway through an exercise. Readers who skip setup often lose an evening to an installation problem and quietly stop.
+From Chapter 10 onward, every chapter asks you to type, run, break, and fix things: formulas, queries, scripts, dashboards. Each of those chapters installs the tool it needs at its start and checks it works with one small first step, so there's nothing to install today.
 
-This chapter also covers the other half of setting up: **you**. A plan you can keep, a weekly rhythm, a way to use AI assistants that helps you learn instead of replacing the learning, and the habit of checking the official documentation when two sources disagree. It all decides whether you finish.
+This chapter sets up the other half: **you**. An honest number of hours, a plan you can keep, a weekly rhythm, a way to use AI assistants that helps you learn instead of replacing the learning, and the habit of checking the official source when two sources disagree. It all decides whether you finish.
 
 ---
 
 ## In plain English
 
-Think of a kitchen before cooking a big meal. A good cook doesn't start chopping and then discover there's no gas in the cylinder. They check the stove, lay out the knives and pans, read the recipe once through, and put the spices within reach. Cooks call it *mise en place*: everything in its place.
+Think of a cook planning a week of meals. A good cook doesn't buy every utensil in the shop on Sunday and leave them in boxes. They decide what they'll cook each day, check how long each dish takes, and get each utensil when a recipe first calls for it.
 
-Setting up to learn is the same:
+Planning to learn is the same:
 
-- **The stove and utensils** are your computer and the tools: a spreadsheet, a database, Python, Power BI.
-- **The pantry** is the companion files: the Riverstone data you'll practice on.
-- **The recipe book** is this book, plus the official documentation for each tool, which is where you look when the recipe is unclear.
 - **The meal plan** is your study plan: what you'll cook this week, and when.
+- **The cooking times** are each chapter's *Time needed* line. Added up, they tell you honestly how long the whole menu takes.
+- **The utensils** are the tools: a spreadsheet, a database, Power BI, Python. You get each one when a recipe first needs it.
+- **The recipe book** is this book, plus the official documentation for each tool, which is where you look when the recipe is unclear.
 
-You don't need the most expensive equipment, only the right equipment, working, and in reach.
-
----
-
-## 6.1 The computer you need (and don't)
-
-You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to II runs comfortably on an ordinary laptop from the last five or six years.
-
-| | Enough to start | Comfortable |
-|---|---|---|
-| **Operating system** | Windows 10 or 11, or a recent macOS | Windows 11 or the latest macOS your Mac supports |
-| **Memory (RAM)** | 8 GB | 16 GB |
-| **Free disk space** | 20 GB | 50 GB or more |
-| **Screen** | a laptop screen | a second monitor, so the book or documentation sits next to your work |
-| **Internet** | enough to download installers | enough for video calls and cloud tools later |
-
-Three situations need a little planning:
-
-- **A Mac.** Everything in the book runs on a Mac except **Power BI Desktop**, which is Windows only. The usual answer in Microsoft's Q&A forums is to run Windows 11 in a virtual machine (for example, Parallels Desktop). The browser version of Power BI can view and interact with reports but can't build the data models Chapter 16 teaches, and it needs a work or school account. You can do everything else on your Mac and handle Chapter 16 separately.
-- **A Chromebook, tablet, or phone.** These can run Google Sheets, Excel for the web, and online SQL playgrounds, which is enough for Chapters 10, 11, and much of 12 and 13. They can't run Python properly, the databases, or Power BI Desktop. Plan to borrow or buy a laptop before Chapter 17.
-- **A work laptop you can't install software on.** Many companies lock their laptops, for good security reasons. Ask your IT team; learning tools like PostgreSQL, Python, and DBeaver are commonly approved. Some tools install without administrator rights: Microsoft's documentation notes that Power BI Desktop from the Microsoft Store doesn't need admin rights, and Python's install manager installs for your own user. The story later in this chapter shows one way through.
-
-> **Watch out: Windows 10.** Microsoft stopped regular security updates for Windows 10 in October 2025. It still runs every tool in this book, but a computer that no longer gets security updates is a risk when you start connecting to company data. If you can upgrade to Windows 11, do.
+You don't need every utensil on day one, only a plan, a rhythm, and the next recipe.
 
 ---
 
-## 6.2 Your toolkit at a glance
+## 6.1 How long it really takes
 
-![Five tool cards in the order the book first uses them: spreadsheets (Chapters 10–11, 19), databases with PostgreSQL, MySQL and DBeaver (Chapters 12–13, 14, 28), Power BI Desktop (Chapter 16, Windows only), Python with VS Code and Jupyter (Chapters 17–18, 20–22, Part IV), and Git (Chapter 26 onward)](figures/fig6-1-toolkit-at-a-glance.svg)
+Every chapter's *Time needed* line estimates its **study hours**: the reading, the exercises, and the project together. Adding up those lines for every teaching chapter gives the book's own answer to "how long will this take?":
 
-*Figure 6.1 — Five groups of tools cover the whole analyst path. Later parts add their own tools when you reach them.*
+| | Hours | 6 hours a week | 8 hours a week | 10 hours a week |
+|---|---|---|---|---|
+| Parts 0 and 1 (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
+| Part 2 (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
+| **Job-ready: Parts 0 to 2 (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
+| Parts 3 to 7 (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
+| **All of it (<span class="nobr">Chapters 1–67</span>)** | **<span class="nobr">762–978</span>** | **2.4 to 3.1 years** | **1.8 to 2.4 years** | **1.5 to 1.9 years** |
 
-| Tool | What it's for | First used | Cost | Runs on | Version at the time of writing |
-|---|---|---|---|---|---|
-| **Excel** or **Google Sheets** | spreadsheets | Chapter 10 | Excel for the web and Google Sheets are free with a Microsoft or Google account; desktop Excel needs a Microsoft 365 subscription | Windows, Mac, browser | always updated |
-| **PostgreSQL** | the book's main database | Chapter 12 | free | Windows, Mac, Linux | 18 (the current major version, supported until November 2030) |
-| **MySQL** Community Server | the second database | Chapter 12 | free | Windows, Mac, Linux | 9.7 LTS (8.4 LTS is also fine) |
-| **DBeaver** Community | the app you type SQL into | Chapter 12 | free | Windows, Mac, Linux | 26.2 |
-| **Power BI Desktop** | dashboards and data models | Chapter 16 | free (Microsoft describes the desktop app as free) | Windows only | updated monthly |
-| **Python** | programming for data | Chapter 17 | free | Windows, Mac, Linux | 3.13 or 3.14 |
-| **VS Code** | the editor for Python, SQL files, and notes | Chapter 17 | free | Windows, Mac, Linux | updated monthly |
-| **Git** | saving versions of your work | Chapter 26 | free | Windows, Mac, Linux | 2.55 |
+These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9).
 
-A few words on these choices. **Free tools only**, so nobody is locked out. **PostgreSQL and MySQL both**, because between them they cover most databases an analyst meets (Chapter 12 explains). **DBeaver**, because one app works with both databases. **Power BI**, because it's widely used and free to start with; Chapter 16 also translates the ideas to Tableau and Looker. **Python with VS Code**, because it's free, runs everywhere, and the same editor serves you from your first script to production code in Part V.
+**Read the bold job-ready row first.** Parts 0 to 2, the **job-ready path**, are what a first analyst job asks for. Parts 3 to 7 are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
 
-> **Simplification note: versions move.** Tools release new versions every few months. The book's examples were tested on PostgreSQL 16, MySQL 8.0, and Python 3.11 and 3.13, and use features that work the same way in the newer versions listed above. If a newer version than the table shows is available when you read this, install it. Appendix B keeps current instructions.
+**To turn the table into your own plan, divide.** Weeks = hours ÷ your hours a week. At 6 hours a week, the job-ready path is 317 ÷ 6 = 52.8, about 53 weeks, at the low end and 394 ÷ 6 = 65.7, about 66 weeks, at the high end: a year to fifteen months. Months are weeks × 12 ÷ 52, so 53 weeks is about 12 months and 66 weeks is about 15. The same arithmetic works for any number of hours; use the hours you really have, not the hours you wish you had.
 
----
+That's longer than many courses promise, and it's honest. A plan built on the real number survives a bad month; a plan built on a hopeful one fails in week three and takes your confidence with it.
 
-## 6.3 Installing, in order
-
-Install in this order. Each step ends with a check, so a problem shows up immediately, not three chapters later. Use the official website for every tool; download sites that repackage installers sometimes bundle unwanted software.
-
-### Step 1. A spreadsheet
-
-If you already have Excel through work or a Microsoft 365 subscription, you're done. If not, either works:
-
-- **Google Sheets**: sign in to a Google account and open Google Sheets in your browser.
-- **Excel for the web**: sign in with a free Microsoft account at Microsoft 365 on the web. Files are saved in OneDrive, which comes with 5 GB of free storage.
-
-**Check:** create a sheet, type `2.5` in A1 and `=ROUND(A1,0)` in B1. You should see `3`. (Section 6.6 explains why that's worth checking.)
-
-> **Tool note.** Microsoft ran a free *desktop* Excel editing preview in some markets until July 2026. It has ended: the free desktop apps now open and view files, and editing is free only in the web versions. Chapters 10 and 11 point out the few features that need desktop Excel.
-
-### Step 2. The databases and DBeaver
-
-Chapter 12, section 12.3, has full, tested steps for both databases and DBeaver on Windows, macOS, and Linux. You don't need to repeat them here; do them now, and come back. A summary:
-
-1. **Install PostgreSQL** from the official PostgreSQL website. On Windows, the page recommends the interactive installer by EDB, which also includes pgAdmin and StackBuilder (you won't need either). On a Mac, the same installer works, or Postgres.app, a small app that runs PostgreSQL from the menu bar. Choose the current version, and **write down the password** you set for the `postgres` user.
-2. **Install DBeaver Community.** It includes its own Java, so there's nothing else to install.
-3. **Install MySQL** (optional until Chapter 12's MySQL sections). Choose the current LTS release, and write down the `root` password.
-4. **Create the database and load the data**, as in section 12.3: `CREATE DATABASE riverstone;` in PostgreSQL, then run `riverstone_setup.sql`; in MySQL, run `riverstone_setup_mysql.sql`, which creates the database for you.
-
-**Check:** in DBeaver, connected to `riverstone`, run the same query in each database.
-
-```sql
-SELECT COUNT(*) FROM order_items;
-```
-
-```
- count
--------
-    19
-(1 row)
-```
-
-```mysql
-SELECT COUNT(*) FROM order_items;
-```
-
-```
-+----------+
-| COUNT(*) |
-+----------+
-|       19 |
-+----------+
-```
-
-Nineteen order lines: the same twelve orders you followed through Chapters 1 to 5. If you see an error instead, the troubleshooting notes in section 12.3 cover the common ones, including MySQL's "Public Key Retrieval is not allowed".
-
-### Step 3. Python and the analyst's packages
-
-**Install Python** from python.org:
-
-- **Windows:** python.org now recommends the **Python install manager**, available from the python.org downloads page or the Microsoft Store (they're the same tool). The older full installer is being retired. After installing, open a terminal (section 6.5) and run `py install 3.14` if it didn't install a version for you. The commands `python` and `py` then start Python.
-- **Mac:** download the macOS installer package from python.org and run it. When it finishes, open the new *Python 3.14* folder in *Applications* and double-click **Install Certificates.command**, which lets Python download packages securely. On a Mac, the command is `python3`.
-- **Linux:** use your distribution's packages or python.org's source; most distributions already include a recent Python 3.
-
-**Create a folder and a virtual environment for the book.** A **virtual environment** is a private copy of Python's package list for one project, so installing something for this book can't break anything else on your computer. Chapter 17 explains it properly; for now, follow the steps. In a terminal, go to your book folder (section 6.4) and run:
-
-```
-# Windows (PowerShell or Command Prompt)
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install pandas openpyxl matplotlib jupyterlab
-
-# macOS or Linux (Terminal)
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install pandas openpyxl matplotlib jupyterlab
-```
-
-When the environment is active, your terminal prompt starts with `(.venv)`. Each time you open a new terminal to work on the book, run the `activate` line again. If PowerShell refuses to run the activation script, the Python documentation's fix is to run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` once, or to use Command Prompt instead.
-
-**Check:** run the companion script `check_setup.py` from the `ch06` folder:
-
-```
-python check_setup.py
-```
-
-On a correctly set-up computer, it prints:
-
-```
-python       3.13.13  OK
-pandas       3.0.5    OK
-openpyxl     3.1.5    OK
-matplotlib   3.11.2   OK
-jupyterlab   4.6.3    OK
-All set.
-```
-
-Your version numbers may be newer; that's fine. If something is missing, the script says exactly what to run. Here's a real run on a computer where only one package had been installed:
-
-```
-python       3.11.15  OK
-pandas       -        MISSING: run  python -m pip install pandas
-openpyxl     3.1.5    OK
-matplotlib   -        MISSING: run  python -m pip install matplotlib
-jupyterlab   -        MISSING: run  python -m pip install jupyterlab
-Fix the lines above, then run this script again.
-```
-
-> **Watch out: "pip installed it, but Python can't find it."** This almost always means the package went into a different Python from the one running your script, often because the virtual environment wasn't active. Activate `.venv`, then install with `python -m pip install …` rather than plain `pip install …`, so the package goes into the Python you're actually using.
-
-### Step 4. VS Code
-
-**Install VS Code** from its official website. Open it, go to the *Extensions* view, and install two extensions published by Microsoft: **Python** and **Jupyter**. Then use *File → Open Folder* to open your book folder.
-
-**Check:** press `Ctrl+Shift+P` (`Cmd+Shift+P` on a Mac), type *Python: Select Interpreter*, and choose the one inside `.venv`. Create a file called `hello.py` containing `print("ready")`, and run it with the play button. The terminal at the bottom should print `ready`.
-
-### Step 5. Git
-
-- **Windows:** install **Git for Windows** from the official Git website, accepting the default options.
-- **Mac:** the Git website lists three ways; the simplest is to run `xcode-select --install` in Terminal, which installs Apple's command line tools, including Git. (Homebrew users can run `brew install git`.)
-- **Linux:** install the `git` package from your distribution.
-
-**Check:** in a terminal, run `git --version`. You'll see a version number such as `git version 2.55.0`. Chapter 26 teaches how to use it.
-
-### Step 6. Power BI Desktop (Windows)
-
-On Windows, install **Power BI Desktop** from the **Microsoft Store**. Microsoft recommends the Store version because it updates itself and doesn't need administrator rights. Microsoft lists at least 2 GB of free memory (4 GB or more recommended) and a screen of at least 1440×900. Signing in matters later, when you publish and share reports through the Power BI service (Chapter 16).
-
-On a Mac, skip this step for now, and decide before Chapter 16 whether to use a Windows virtual machine, a Windows computer at work or college, or to follow Chapter 16 by reading and doing its exercises on a borrowed machine.
-
-**Check:** open Power BI Desktop, close the welcome screen, and you should see an empty report canvas.
+**One more thing about Parts 0 and 1.** Each of their nine chapters has a project, and together they're more than a month's work if you do them all at once. Do three of them properly as you go: Chapter 1's spending log (it runs for a week while you read on), this chapter's plan, and Chapter 8's door plan. Start Chapter 9's learning system and carry it alongside the book for its twelve weeks. Come back to the others (Chapters 2, 3, 4, 5, and 7) in a review week. Their hours are already in the table, so doing them later doesn't change your total.
 
 ---
 
-## 6.4 The companion files and a folder that stays tidy
-
-The **companion files** (Appendix E) hold every dataset, script, and workbook the book uses. So far that includes:
-
-| Folder or file | What it is | Used in |
-|---|---|---|
-| `ch02/` | four orders as CSV, Excel, JSON, XML, and Parquet; `api_demo.py` | Chapter 2 |
-| `riverstone_setup.sql` and `mysql/riverstone_setup_mysql.sql` | the mini database (first quarter of 2026) | Chapters 12, 13, and many examples |
-| `riverstone_2025_setup.sql` and its MySQL twin | the one-year database (2025) | Chapter 13 onward |
-| `postgresql/ch12_lab_postgresql.sql`, `mysql/ch12_lab_mysql.sql`, `new_suppliers.csv` | the build-a-database lab | Chapter 12 |
-| `mysql/ch12_queries_mysql.sql`, `mysql/ch13_queries_mysql.sql` | every query in Chapters 12 and 13, tested in MySQL | Chapters 12, 13 |
-| `ch04/numbers_practice.xlsx` | the numbers workbook | Chapter 4 |
-| `ch06/check_setup.py` | the setup checker | this chapter |
-
-Later chapters add their own folders. Appendix E gives the address to download them from and lists every file.
-
-Set up one home for everything, and keep it that way:
-
-```
-analyst-to-architect/
-    companion/            the downloaded companion files, unchanged
-    work/
-        ch10/             your own files for each chapter
-        ch12/
-        ...
-    notes/                your study log, plans, and questions
-    .venv/                the Python environment from section 6.3
-```
-
-Two rules keep it useful. **Never edit the companion files themselves**: copy what you need into `work/` first, so you can always start again from a clean copy. And **name your files the way Chapter 2 (section 2.4) taught**: dates as year-month-day, lower-case words joined with hyphens or underscores, and no "final".
-
----
-
-## 6.5 Keyboard, files, and the terminal: the basics that save hours
-
-### Keyboard shortcuts worth learning this week
-
-| Action | Windows | Mac |
-|---|---|---|
-| Copy, cut, paste | `Ctrl+C`, `Ctrl+X`, `Ctrl+V` | `Cmd+C`, `Cmd+X`, `Cmd+V` |
-| Undo, redo | `Ctrl+Z`, `Ctrl+Y` | `Cmd+Z`, `Cmd+Shift+Z` |
-| Find in a page or file | `Ctrl+F` | `Cmd+F` |
-| Save | `Ctrl+S` | `Cmd+S` |
-| Switch between apps | `Alt+Tab` | `Cmd+Tab` |
-| Open the search for apps and files | `Windows` key, then type | `Cmd+Space`, then type |
-| Take a screenshot of part of the screen | `Windows+Shift+S` | `Cmd+Shift+4` |
-| Command palette in VS Code | `Ctrl+Shift+P` | `Cmd+Shift+P` |
-
-Chapters 10, 12, and 17 add the shortcuts for spreadsheets, DBeaver, and VS Code. Learn a few at a time: use one new shortcut deliberately for a week, until your hands do it on their own.
-
-### Files
-
-From Chapter 2, make sure you can: **show file extensions** (so `orders.csv` doesn't appear as plain `orders`); **find a file's full path** (Windows: hold `Shift`, right-click the file, *Copy as path*; Mac: select the file, then `Option+Cmd+C`); and **unzip** a download before opening what's inside it, because opening files directly from inside a zip is a common cause of "my changes disappeared".
-
-### The terminal
-
-A **terminal** is a window where you type commands instead of clicking. You'll use it for Python, Git, and later for much more (Chapter 34 teaches it properly). For now, four things are enough:
-
-| To do this | Type | Example |
-|---|---|---|
-| Open a terminal | Windows: search for *Terminal* or *PowerShell*. Mac: search for *Terminal*. In VS Code: *Terminal → New Terminal* (opens in your current folder). | |
-| See where you are | `pwd` (PowerShell, Mac, Linux); `cd` on its own in Command Prompt | |
-| Move into a folder | `cd` followed by the folder name | `cd analyst-to-architect` |
-| Run a Python script | `python` (Mac: `python3`) followed by the file name | `python check_setup.py` |
-
-The most common beginner error is running a command in the wrong folder, which gives *"No such file or directory"* or *"can't open file"*. When you see that, check where you are first.
-
----
-
-## 6.6 Reading documentation
-
-Every tool in this book has **official documentation**: the manual written by the people who make it. When a tutorial, a colleague, and an AI assistant disagree, the documentation settles it.
-
-### A real question: how does 2.5 round?
-
-Chapter 4 said to round at the end, not in the middle. Here's a follow-up question that sounds trivial: *what does rounding 2.5 to a whole number give?* The same question, in three of the book's tools.
-
-In PostgreSQL:
-
-```sql
-SELECT ROUND(2.5)                    AS exact_half,
-       ROUND(3.5)                    AS exact_three_half,
-       ROUND(2.5::double precision)  AS float_half,
-       ROUND(3.5::double precision)  AS float_three_half;
-```
-
-```
- exact_half | exact_three_half | float_half | float_three_half
-------------+------------------+------------+------------------
-          3 |                4 |          2 |                4
-(1 row)
-```
-
-In MySQL:
-
-```mysql
-SELECT ROUND(2.5)   AS exact_half,
-       ROUND(3.5)   AS exact_three_half,
-       ROUND(2.5E0) AS float_half,
-       ROUND(3.5E0) AS float_three_half;
-```
-
-```
-+------------+------------------+------------+------------------+
-| exact_half | exact_three_half | float_half | float_three_half |
-+------------+------------------+------------+------------------+
-|          3 |                4 |          2 |                4 |
-+------------+------------------+------------+------------------+
-```
-
-In Python:
-
-<!-- py: reset -->
-```python
-print(round(2.5), round(3.5), round(2.675, 2))
-```
-
-```
-2 4 2.67
-```
-
-And in a spreadsheet, `=ROUND(2.5,0)` gives `3` and `=ROUND(2.675,2)` gives `2.68`.
-
-So 2.5 rounds to 3 in some places and to 2 in others, and 2.675 rounds to 2.68 in a spreadsheet but 2.67 in Python. Who's right? This is exactly the kind of question to settle in the documentation, not by guessing:
-
-- **The PostgreSQL manual** (*Mathematical Functions and Operators*, `round`): *"For `numeric`, ties are broken by rounding away from zero. For `double precision`, the tie-breaking behavior is platform dependent, but 'round to nearest even' is the most common rule."* `2.5` typed on its own is `numeric`, so it goes to 3; converted to `double precision`, it goes to the even number, 2.
-- **The MySQL manual** (`ROUND()`): exact-value numbers round *"away from zero"*; for approximate-value numbers, *"the result depends on the C library"*, and on many systems that means *"round to nearest even"*. `2.5E0` is written in scientific notation, which makes it an approximate value.
-- **The Python documentation** (built-in `round`): *"if two multiples are equally close, rounding is done toward the even choice"*. And a note: *"`round(2.675, 2)` gives `2.67` instead of the expected `2.68`. This is not a bug"*: 2.675 can't be stored exactly as a floating-point number (Chapter 2, section 2.1), and the stored value is a hair below 2.675.
-
-Rounding halves to the nearest even number is called **banker's rounding**, or round-half-to-even. It's used because, over many values, rounding every half up nudges totals upward, while rounding to even balances out. Neither rule is wrong. What's wrong is not knowing which one your tool uses, and then wondering why a Python report and an Excel report differ by a rupee.
-
-### How to read a documentation page
-
-You don't read documentation front to back. You go in with a question and look for five things:
-
-1. **The signature**: the name and what goes in, such as `ROUND(number, num_digits)`.
-2. **The description**: what it returns, in one or two sentences. Read every word; the details (like "for `numeric`") are usually the point.
-3. **Examples**: run one yourself, exactly as written, before changing it.
-4. **Notes and warnings**: often in a box. This is where `round(2.675, 2)` was explained.
-5. **The version**: documentation sites usually cover several versions. Make sure you're reading the one you installed (for example, PostgreSQL's pages have a version switcher at the top).
-
-If the documentation doesn't answer it, try the tool's official forums, then a well-asked search.
-
----
-
-## 6.7 Learning with AI assistants without letting them think for you
-
-AI assistants can explain a concept five different ways, spot the typo in a query, and describe what an error message means. Used well, they make you learn faster. Used badly, they let you finish every exercise without learning anything, and you find out in an interview, or in your first week at work, when the assistant isn't the one being asked.
-
-### Rules that keep the learning yours
-
-1. **Try first.** Spend real effort on an exercise before asking for help: at least fifteen to twenty minutes, or until you can say exactly where you're stuck. The struggle is where the learning happens.
-2. **Ask for explanations, not answers.** *"Why does my query return 21 rows instead of 19?"* teaches you something. *"Write the query for exercise 14"* teaches you nothing.
-3. **Check everything against a source you trust.** Assistants can be fluent and wrong at the same time. Section 6.6's rounding question is a good test: ask an assistant how 2.5 rounds in Python, then check the documentation and run it yourself.
-4. **Never paste data you don't own.** Company data, customer names, invoices, and passwords don't belong in a chat with an outside service unless your employer has explicitly approved that tool for that data (Chapter 2, section 2.9, and Chapter 64 go deeper). Practice data like Riverstone's is fine.
-5. **Explain it back.** After the assistant helps, close the chat and explain the idea in your own words, or redo the exercise from a blank page. If you can't, you haven't learned it yet.
-6. **Use it as a tutor, not a crutch.** Good requests: *"Quiz me on percentage points versus percent change"*, *"Give me a harder version of this exercise"*, *"Explain this error message; don't fix it"*.
-
-Chapter 26 covers AI assistants at work, and Chapters 54 and 55 explain how they work and how to build with them.
-
----
-
-## 6.8 Building a study habit
+## 6.2 A weekly rhythm you can keep
 
 The book is long. The difference between finishing and stopping is rarely intelligence; it's a plan, a rhythm, and a way of keeping going after a missed week.
 
-### A sample six-month plan
+![A week of about 8 hours, one bar per day: Monday 1 hour reading a new section, Tuesday 1 hour of exercises, Wednesday 1 hour reading the next section, Thursday 1 hour of exercises, Friday 30 minutes of review from memory, Saturday 2.5 hours of project or lab work, and Sunday 1 hour redoing missed exercises and planning the next week](figures/fig6-1-weekly-rhythm.svg)
 
-![A six-month plan: month 1, Chapters 1–9; month 2, spreadsheets (Chapters 10–11); month 3, SQL (Chapters 12–13); month 4, cleaning, charts, and Power BI (Chapters 14–16); month 5, Python and statistics (Chapters 17–18, 21–22); month 6, automation, business skills, and the portfolio (Chapters 19–20, 23–27), with interview practice starting](figures/fig6-2-six-month-plan.svg)
+*Figure 6.1 — Short, regular sessions, one longer session for projects, and a review built into the week.*
 
-*Figure 6.2 — One way through the analyst path (Parts 0 to II) in six months, at about 8 hours a week.*
-
-Figure 6.2 is a sample, not a rule. It's ambitious: about 8 hours a week for 26 weeks. At 5 hours a week, stretch it to nine or ten months, and nothing is lost. A few choices behind it:
-
-- **Spreadsheets before SQL, SQL before Python.** Each builds on the last, and together they cover most day-to-day analyst work.
-- **Power BI in month 4**, once you can shape data, so the dashboards have something good to show.
-- **Automation (Chapters 19–20) after Python**, because Chapter 20 uses it.
-- **Interview practice in month 6, not at the end.** Answering questions from Part VIII (Chapters 68–71) while you build your portfolio shows you what to revise.
-- **Business analysts** can swap some Python time for Chapters 24 and 25, which cover requirements, stakeholders, and process mapping.
-
-### A weekly rhythm
-
-![A week of about 8 hours: one hour each on Monday to Thursday alternating reading and exercises, 30 minutes of review on Friday, 2.5 hours of project work on Saturday, and one hour on Sunday redoing missed exercises and planning](figures/fig6-3-weekly-rhythm.svg)
-
-*Figure 6.3 — Short, regular sessions, one longer session for projects, and a review built into the week.*
-
-Figure 6.3 adds up to 8 hours: 1 + 1 + 1 + 1 + 0.5 + 2.5 + 1. Three ideas are built into it:
+Figure 6.1 adds up to 8 hours: 1 + 1 + 1 + 1 + 0.5 + 2.5 + 1. Three ideas are built into it:
 
 - **Alternate reading and doing.** A section read on Monday gets practiced on Tuesday, while it's fresh but no longer in front of you.
 - **Review from memory.** On Friday, close the book and write down the chapter's key terms and main ideas before checking the recap. Pulling ideas out of your memory strengthens them far more than reading them again. Chapter 9 explains why this works and how expertise forms.
@@ -3493,215 +3148,249 @@ You will miss weeks. Everyone does. When it happens, don't try to catch up by do
 
 ---
 
-## 6.9 How to use the exercises and answers
+## 6.3 What you'll need, and when
 
-Every teaching chapter ends with practice exercises in four groups:
+### The computer
 
-| Group | What it's for | How to use it |
-|---|---|---|
-| **Warm-up** | checks you understood the basics | do them right after reading; they should take a few minutes each |
-| **Core** | the skills the chapter exists to teach | do all of them; this is where most of the learning happens |
-| **Stretch** | harder, closer to real work | do at least one; come back to the rest on a second pass |
-| **Think about it** | judgment, with no single right answer | write a short answer, then compare it with the model answer |
+You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to 2 runs comfortably on an ordinary laptop from the last five or six years: Windows 10 or 11, or a recent macOS; **8 GB of memory (RAM)** to start, 16 GB to be comfortable; 20 GB of free disk space, 50 GB or more to be comfortable; and an internet connection good enough to download software. A second monitor helps, so the book or the documentation sits next to your work, but a laptop screen is enough.
 
-The answers are at the end of each chapter in this draft and move to **Appendix G** in the finished book. To get the most from them:
+Three situations need a little planning:
 
-- **Write your answer before you look.** Even a partial answer. Reading an answer you haven't attempted feels like learning and isn't.
-- **Compare the reasoning, not only the number.** Many answers show a method or a check (like "✓ reconciles to the total"); copy the method.
-- **Mark the ones you got wrong or guessed**, and redo them on Sunday from a blank page.
-- **For code exercises, run your version.** If it gives the same result by a different route, that's often fine; if it gives a different result, find out why before moving on.
+- **A Mac.** Everything in the book runs on a Mac except **Power BI Desktop** and **Excel's Power Pivot**, a data-modelling feature of desktop Excel (Chapter 11, section 11.8), which are Windows only. The usual answer in Microsoft's Q&A forums is to run Windows 11 in a virtual machine, a program that runs Windows in a window on your Mac (for example, Parallels Desktop). The browser version of Power BI can view and interact with reports but can't build the data models Chapter 16 teaches, and it needs a work or school account. You can do everything else on your Mac and handle those two separately.
+- **A Chromebook, tablet, or phone.** These can run Google Sheets, Excel for the web, and online SQL practice sites, which is enough for the spreadsheet chapters and some early SQL practice. They can't run Python properly, the databases, or Power BI Desktop. Plan to borrow or buy a laptop before the Python chapters.
+- **A work laptop you can't install software on.** Many companies lock their laptops, for good security reasons. Ask your IT team; learning tools like PostgreSQL, Python, and DBeaver are commonly approved. Some tools can be installed without IT's help: Microsoft's documentation notes, for example, that Power BI Desktop from the Microsoft Store doesn't need administrator rights. The story later in this chapter shows one way through.
+
+> **Watch out: Windows 10.** Microsoft stopped regular security updates for Windows 10 in October 2025. It still runs every tool in this book, but a computer that no longer gets security updates is a risk when you start connecting to company data. If you can upgrade to Windows 11, do.
+
+### The tools, and when each arrives
+
+This is the book's **tool timeline**: which tool you'll need, and in which chapter you'll first need it.
+
+| Tool | First needed in | Cost | Runs on |
+|---|---|---|---|
+| A spreadsheet: Excel or Google Sheets | Chapter 10 | Free on the web | Windows, Mac, browser |
+| PostgreSQL and DBeaver (MySQL optional) | Chapter 12 | Free | Windows, Mac, Linux |
+| Power BI Desktop | Chapter 16 | Free | Windows only |
+| Python, VS Code, and Jupyter | Chapter 17 | Free | Windows, Mac, Linux |
+| Git | Chapter 26 | Free | Windows, Mac, Linux |
+
+You'll install each tool at the start of the chapter that first uses it, and check it works with one small first step. Appendix B gathers all the install steps in one place, for when you set up a second computer.
+
+Why wait? A tool installed months before you use it has usually been updated by the time you open it, and a problem is much easier to fix when the chapter in front of you explains what the tool is for. Installing in the chapter that needs it costs nothing and saves an evening.
+
+![Five tool cards along a line of chapters: a spreadsheet, Excel or Google Sheets, first needed in Chapter 10, on Windows, Mac or a browser; the databases, PostgreSQL and DBeaver with MySQL optional, in Chapter 12, on Windows, Mac or Linux; Power BI Desktop in Chapter 16, Windows only; Python with VS Code and Jupyter in Chapter 17, on Windows, Mac or Linux; and Git in Chapter 26, on Windows, Mac or Linux](figures/fig6-2-tool-timeline.svg)
+
+*Figure 6.2 — Five groups of tools cover the whole analyst path, each installed in the chapter that first needs it. Later parts add their own tools when you reach them.*
+
+A few words on these choices. **Free tools only**, so nobody is locked out. **PostgreSQL and MySQL both**, because between them they cover most databases an analyst meets. **DBeaver**, because one app works with both databases. **Power BI**, because it's widely used and free to start with. **Python with VS Code**, because it's free, runs everywhere, and the same editor serves you from your first script to production code.
 
 ---
 
-## Common mistakes and how to spot them
+## 6.4 Reading documentation
+
+Every tool in this book has **official documentation**: the manual written by the people who make it. When a tutorial, a colleague, and an AI assistant disagree, the documentation settles it. You'll use it in every tool chapter. You can practise the habit today, on a page you already have: the official page for your phone plan, or your bank's page of fees and charges.
+
+You don't read an official page front to back. You go in with a question and look for five things:
+
+1. **The exact rule**: the name of the thing you're asking about, and what it applies to. On a phone plan's page, that might be the line headed *Daily data*.
+2. **The description, every word**: what the rule says, in one or two sentences. Read every word; the small details are usually the point. "2 GB per day" and "2 GB per day, unused data does not carry forward" are different plans.
+3. **An example**: many pages show one, such as what happens on a day you use 2.5 GB. Work through it yourself before relying on it.
+4. **The exceptions**: often in a box, a footnote, or the small print at the bottom. This is where "except on international roaming" or "after the fair-usage limit, speed drops" lives.
+5. **The date or version**: official pages change, and old copies stay online. Check the "last updated" date or the plan's name and version, and make sure it's the one you're actually on.
+
+If the page doesn't answer it, try the organization's official help pages or support, then a well-asked search.
+
+Tools disagree with each other more often than you'd expect. For example, spreadsheets, databases, and Python don't all round a number that ends in exactly .5 the same way. Each tool's documentation says exactly which rule it uses, and you'll check it for yourself when you meet those tools.
+
+---
+
+## 6.5 Learning with AI assistants without letting them think for you
+
+AI assistants can explain a concept five different ways, spot the typo in a query, and describe what an error message means. Used well, they make you learn faster. Used badly, they let you finish every exercise without learning anything, and you find out in an interview, or in your first week at work, when the assistant isn't the one being asked.
+
+### Rules that keep the learning yours
+
+1. **Try first.** Spend real effort on an exercise before asking for help: at least fifteen to twenty minutes, or until you can say exactly where you're stuck. The struggle is where the learning happens.
+2. **Ask for explanations, not answers.** *"Why does my query return 21 rows instead of 19?"* teaches you something. *"Write the query for exercise 14"* teaches you nothing.
+3. **Check everything against a source you trust.** Assistants can be fluent and wrong at the same time. Section 6.4's method is how you check: find the official page and read the exact rule. A good test: ask an assistant what your phone plan does when you pass your daily data limit, then check the plan's own page.
+4. **Never paste data you don't own.** Company data, customer names, invoices, and passwords don't belong in a chat with an outside service unless your employer has explicitly approved that tool for that data (Chapter 2, section 2.9, goes deeper). Practice data like Riverstone's is fine.
+5. **Explain it back.** After the assistant helps, close the chat and explain the idea in your own words, or redo the exercise from a blank page. If you can't, you haven't learned it yet.
+6. **Use it as a tutor, not a crutch.** Good requests: *"Quiz me on percentage points versus percent change"*, *"Give me a harder version of this exercise"*, *"Explain this error message; don't fix it"*.
+
+---
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
-| Downloading installers from third-party sites | unwanted extra software; outdated versions | Use each tool's official website or the Microsoft Store |
-| Forgetting the database password | can't connect to PostgreSQL or MySQL | Write it down during installation, somewhere safe |
-| Installing packages without the virtual environment active | "pip installed it, but Python can't find it" | Activate `.venv`; use `python -m pip install …` |
-| Running commands in the wrong folder | "No such file or directory" | Check where you are (`pwd`) before running |
-| Trusting a tutorial or AI over the documentation | results that differ between tools, unexplained | Check the official documentation for the version you installed |
+| Planning with the hours you wish you had | behind by week three; the plan quietly abandoned | Plan with last week's real hours and section 6.1's table |
+| Doubling the hours to catch up after a missed week | a missed week becomes a missed month | Move the plan back a week, review once, start the next section |
+| Installing every tool now "to get it out of the way" | forgotten passwords and out-of-date versions by the time you need them | Install each tool at the start of the chapter that first uses it |
+| Trusting a tutorial or AI over the official source | answers that differ, unexplained | Check the official page, for the right date or version |
 | Letting an AI assistant do the exercises | you can follow solutions but can't write them | Try first; ask for explanations; redo from a blank page |
 | Reading answers before attempting exercises | answers "make sense" but skills don't stick | Write something first, always |
 
 ---
 
-## In the real world: Meera sets up
+## In the real world: Meera makes a plan
 
-Meera Iyer has done analyst work for months without the title: the customer counts in Chapter 1, the January reconciliation in Chapter 3, the board slide in Chapter 4. She wants to become an analyst properly, and she has two computers to do it with. Neither is ideal.
+Meera Iyer has done analyst work for months without the title: the customer counts in Chapter 1, the January reconciliation in Chapter 3, the board slide in Chapter 4. Along the way she has picked up some spreadsheet formulas and a little SQL on the job. Now she wants to go further: to learn it properly, from the ground up, and fill the gaps she knows are there. She has two computers to do it with. Neither is ideal.
 
 **Her work laptop** runs Windows 11 and is locked: she can't install software. **Her home laptop** is a MacBook Air from 2020 with 8 GB of memory.
 
-**1. Deciding what goes where.** She reads section 6.1 and makes a list. The Mac can run everything except Power BI Desktop. The work laptop is where Power BI would be most useful, since the company already uses Microsoft 365. So: the book's main setup goes on the Mac at home; Power BI Desktop goes on the work laptop, if IT agrees.
+**1. Which tool lives where.** She reads section 6.3 and makes a list. She doesn't install anything today; she decides which tools will live on which computer when she reaches them. The Mac can run everything except Power BI Desktop and Power Pivot. The work laptop is where Power BI would be most useful, since the company already uses Microsoft 365. So: the book's tools go on the Mac at home, each at the start of its chapter; Power BI Desktop goes on the work laptop, if IT agrees. She puts a reminder in her calendar to ask IT two weeks before she reaches Chapter 16, with the request already written: *"I'd like to install Power BI Desktop from the Microsoft Store for learning and for building sales reports. It doesn't need admin rights. I won't connect it to any company data without approval."*
 
-**2. The work laptop.** She emails IT with a short, specific request: *"I'd like to install Power BI Desktop from the Microsoft Store for learning and for building sales reports. It doesn't need admin rights. I won't connect it to any company data without approval."* IT approves the same week, and adds that she should use the company's Microsoft 365 account for sign-in when she's ready to share reports.
+**2. The 8 GB question.** 8 GB is enough to start. When the Mac slows down later, with a database app, an editor, twenty browser tabs, and a video call all open, the fix will cost nothing: close what she isn't using while studying.
 
-**3. The Mac.** She installs Postgres.app, DBeaver, MySQL, Python from python.org (remembering *Install Certificates.command*), VS Code with its Python and Jupyter extensions, and Git with `xcode-select --install`. She creates the `analyst-to-architect` folder, the `.venv`, and runs `check_setup.py`. It reports matplotlib missing: she had typed `matplotlab`. One command later: *All set.* In DBeaver, `SELECT COUNT(*) FROM order_items;` returns 19 in both databases.
+**3. The hours.** She has about 6 hours a week: an hour on three weekday evenings after work, and three hours on Sunday morning. Ninety days is about 13 weeks, so 6 × 13 = 78 hours. She adds up the *Time needed* lines from Chapter 7 onward, using the high end of each range so that one slow week doesn't break the plan:
 
-**4. The 8 GB question.** Her Mac slows down with DBeaver, VS Code, twenty browser tabs, and a video call all open. The fix costs nothing: close what she isn't using while studying.
+| Chapters | Hours (high end) | Running total |
+|---|---|---|
+| 7, 8 (with its project), and 9 | 3 + 7 + 3 = 13 | 13 |
+| 10 | 17 | 30 |
+| 11 | 30 | 60 |
+| the next chapter in the book's order | 18 of its hours | 78 |
 
-**5. The plan.** She has about 6 hours a week: an hour on three weekday evenings after work, and three hours on Sunday morning. At that pace, Figure 6.2 becomes a nine-month plan. She writes her first 90 days in `notes/plan.md`: Chapters 7 to 11 by the end of month 2, Chapters 12 and 13 in month 3. At work, she'll rebuild the January reconciliation from Chapter 3 in a spreadsheet as her month 2 practice project, using the practice data rather than company files, so nothing sensitive leaves the company's systems.
+She writes her first 90 days in `notes/plan.md`. By day 30, about 26 hours: Chapters 7 to 9 and most of Chapter 10. By day 60, about 51 hours: two-thirds of the way through Chapter 11. By day 90, 78 hours: Chapter 11 finished in week 10, and the next chapter under way. At the top of the plan she writes the whole path, from the job-ready row of section 6.1: 317 to 394 hours, which at 6 hours a week is 12 to 15 months. At work, she'll rebuild the January reconciliation from Chapter 3 in a spreadsheet as her month 2 practice project, using the practice data rather than company files, so nothing sensitive leaves the company's systems.
 
-**6. The AI rule.** She sets herself one rule, taped to the edge of her screen: *"Try for 20 minutes. Ask why, not what. Never paste Riverstone's real data."*
+**4. The AI rule.** She sets herself one rule, taped to the edge of her screen: *"Try for 20 minutes. Ask why, not what. Never paste Riverstone's real data."*
 
-She matched tools to computers, asked IT the right way, fixed the one problem the checker found, and wrote a plan for her real week, not an ideal one.
-
----
-
-## Tools
-
-- **The official websites** for each tool: PostgreSQL, MySQL, DBeaver, python.org, VS Code, Git, and Microsoft for Excel and Power BI. Appendix B lists the current download pages and install steps.
-- **`check_setup.py`** (companion files, `ch06/`): checks your Python version and the four packages. Tested on Python 3.11.15 and 3.13.13, with pandas 3.0.5, openpyxl 3.1.5, matplotlib 3.11.2, and JupyterLab 4.6.3.
-- **A notes file** (`notes/plan.md` and a study log): a plain text or Markdown file is enough.
+She matched tools to computers without installing anything yet, turned hours into dates with arithmetic, and wrote a plan for her real week, not an ideal one.
 
 ---
 
-## The project: set up, check, and plan your first 90 days
+## Project: plan your route and your first 90 days
 
-**Goal:** a working toolkit, verified, and a study plan you can keep.
+**Goal:** a study plan you can keep, built from arithmetic, not hope.
 
-**Step 1. Install and check.** Work through section 6.3. For each tool, record the version and the result of its check:
+### Tools you'll need
 
-| Tool | Version installed | Check | Result |
-|---|---|---|---|
-| Spreadsheet | | `=ROUND(2.5,0)` gives 3 | |
-| PostgreSQL + DBeaver | | `SELECT COUNT(*) FROM order_items;` gives 19 | |
-| MySQL (optional for now) | | the same query gives 19 | |
-| Python + packages | | `check_setup.py` prints *All set.* | |
-| VS Code | | `hello.py` prints `ready` | |
-| Git | | `git --version` prints a version | |
-| Power BI Desktop (Windows) | | opens to an empty report | |
+- **A notebook or a notes app** for your plan (`notes/plan.md`) and your study log. A plain text file is enough.
+- **A calendar**, paper or on your phone, for your study sessions as named appointments.
+- **Each chapter's *Time needed* line**, which is where the hours in section 6.1 come from.
 
-**Step 2. Organize.** Create the folder structure from section 6.4 and put the companion files in `companion/`.
+**Step 1. Count your hours.** Write down the hours you really studied, or could have studied, last week. Using section 6.1's table, work out how many weeks the job-ready path takes at that pace, and the month you expect to finish Part 2. Show your division.
 
-**Step 3. Test the documentation habit.** Pick one function you used in Chapter 4 (for example, `MEDIAN` or `RRI`) and find its official documentation page for your spreadsheet. Write down its signature, one example, and one note or warning.
+**Step 2. Put your rhythm in a calendar.** Adapt Figure 6.1 to your hours and your days, and put each session in your calendar as a named appointment for the next four weeks.
 
-**Step 4. Write your 90-day plan** in `notes/plan.md`:
+**Step 3. Set up your folder.** Create the `analyst-to-architect` folder described in "How to Use This Book", with `companion/`, `work/`, and `notes/` inside it, and download the companion files into `companion/` (Appendix E gives the address).
+
+**Step 4. Write your AI rule.** One or two lines, like Meera's, somewhere you'll see them.
+
+**Step 5. Read one official page.** Pick one rule that affects you (your phone plan's data limit, a bank fee) and find its official page. Write down the exact rule, one example, one exception, and the date or version (section 6.4).
+
+**Step 6. Match tools to chapters.** Using section 6.3, write which chapter you'll install each tool in, and on which computer.
+
+**Step 7. Write your 90-day plan** in `notes/plan.md`:
 
 - how many hours a week you can study, and on which days and times;
-- which chapters you'll finish by day 30, day 60, and day 90 (use Figure 6.2 and adjust for your hours);
+- which chapters you'll finish by day 30, day 60, and day 90, counted from the *Time needed* lines;
 - one practice project for each month, using practice data;
 - your rule for using AI assistants;
 - what you'll do when you miss a week.
 
-**Step 5. Start your study log** with today's entry.
+**Step 8. Start your study log** with today's entry.
 
-**Deliverable:** the completed check table, a screenshot of `check_setup.py` printing *All set.*, and your 90-day plan.
-
----
-
-## You've got it when…
-
-- [ ] I know whether my computer can run each tool, and I have a plan for any it can't.
-- [ ] Every core tool is installed from its official source, and each check passed.
-- [ ] `SELECT COUNT(*) FROM order_items;` returns 19 in the Riverstone database.
-- [ ] `check_setup.py` prints *All set.*
-- [ ] My companion files are in one place, unedited, with my own work in a separate folder.
-- [ ] I can open a terminal, see where I am, move into a folder, and run a script.
-- [ ] I can find and read the official documentation for a function in each tool.
-- [ ] I have rules for using AI assistants that keep the learning mine, and I never paste data I don't own.
-- [ ] I have a weekly rhythm and a written 90-day plan.
-- [ ] I attempt exercises before reading the answers.
+**Deliverable:** `notes/plan.md` with your hours calculation, your 90-day plan, your tool-and-computer list, and your AI rule; your calendar with the next four weeks booked; and your notes on one official page.
 
 ---
 
 ## Recap
 
-- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop is Windows only; Mac users can run Windows in a virtual machine. Chromebooks cover spreadsheets and online SQL, not Python or Power BI.
-- **The core toolkit is free:** a spreadsheet, PostgreSQL and MySQL with DBeaver, Power BI Desktop, Python with VS Code and Jupyter, and Git. Later parts add their own tools.
-- **Install in order, from official sources, and check each tool** before moving on. Chapter 12, section 12.3, has the full database steps.
-- **Use a virtual environment** for the book's Python packages, and install with `python -m pip install`. `check_setup.py` confirms your setup.
-- **Keep the companion files unedited** and your own work in a separate folder, with file names that sort and search well.
-- **A few shortcuts and four terminal commands** save hours over the course of the book.
-- **Documentation settles disagreements.** Rounding 2.5 gives 3 or 2 depending on the tool and the number type, and each tool's manual says exactly why.
+- **The book's hours are known.** Parts 0 to 2, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
+- **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
+- **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
+- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
+- **Each tool arrives in the chapter that first uses it:** a spreadsheet in Chapter 10, the databases in 12, Power BI in 16, Python in 17, and Git in 26. Nothing needs installing before then.
+- **Official sources settle disagreements.** Go in with a question and find the exact rule, every word, an example, the exceptions, and the date or version.
 - **AI assistants are tutors, not substitutes:** try first, ask why, check against sources, never paste data you don't own, and explain it back.
-- **A plan and a rhythm finish books.** About 8 hours a week covers the analyst path in six months; fewer hours stretch it, and a missed week moves the plan instead of doubling the load.
 - **Attempt every exercise before reading its answer**, and redo the ones you missed.
-
----
-
-## Practice exercises
-
-### Warm-up
-
-1. For each computer, say which of the book's core tools it can run, and what the owner should do about the rest: (a) a Windows 11 laptop with 8 GB of memory; (b) a MacBook with 16 GB of memory; (c) a Chromebook; (d) a locked-down work laptop running Windows 11.
-2. Match each check to the tool it confirms: (a) `git --version`; (b) `SELECT COUNT(*) FROM order_items;` returning 19; (c) `check_setup.py` printing *All set.*; (d) `=ROUND(2.5,0)` returning 3.
-3. A friend's terminal shows `python: can't open file 'check_setup.py': No such file or directory`. List two likely causes and how to check each.
-4. Sort these requests to an AI assistant into "helps you learn" or "does the learning for you", and rewrite the ones that don't help: (a) "Solve Chapter 4, exercise 6." (b) "Explain why averaging monthly growth rates overstates growth." (c) "My query returns 21 rows instead of 19. What kinds of mistake cause extra rows?" (d) "Write my 90-day plan."
-
-### Core
-
-5. After installing pandas, a script fails with `ModuleNotFoundError: No module named 'pandas'`. Explain the most likely reason, and write the two commands (for your operating system) that would fix it.
-6. Using the documentation quotes in section 6.6, predict the result of each, and explain your reasoning: (a) PostgreSQL `SELECT ROUND(4.5);` (b) PostgreSQL `SELECT ROUND(4.5::double precision);` (c) Python `round(4.5)` (d) a spreadsheet `=ROUND(4.5,0)` (e) MySQL `SELECT ROUND(45E-1);`
-7. A Python report and an Excel report of the same invoices show totals that differ by ₹1. Using section 6.6, give one possible explanation, and describe how you'd confirm it.
-8. You can study 5 hours a week. Adapt Figure 6.3's weekly rhythm to 5 hours, keeping reading, exercises, review, and project work. Then estimate how long the six-month plan in Figure 6.2 would take at that pace.
-9. Your company uses a customer list with names, phone numbers, and outstanding balances. You want an AI assistant's help writing a formula that flags overdue customers. Describe how you'd get the help without sharing the real data.
-
-### Stretch
-
-10. Write a short, specific request to your IT team asking permission to install PostgreSQL, DBeaver, and Python on a work laptop for learning. Include what each tool is for, what data you will and won't connect to, and one question for them.
-11. Find the official documentation page for Python's `round()` or PostgreSQL's `ROUND` for the version you installed. Write down its signature, one example you ran yourself, and one note or warning. Then find one tutorial or video that explains rounding, and say whether it matches the documentation.
-12. Draft your 90-day plan using the checklist in the project, with specific chapters for days 30, 60, and 90, and a plan for a missed week.
-
-### Think about it (no calculation needed)
-
-13. Why does this book recommend free tools, even though many companies use paid ones? What might you still need to learn on the job?
-14. A friend says, "I'll skip the exercises and read the answers; it's faster." What would you tell them, using section 6.9?
-15. When is it reasonable to ask an AI assistant for a complete answer, rather than an explanation? Give one example where it's fine and one where it isn't.
 
 ---
 
 ## Key terms
 
-operating system · RAM (memory) · virtual machine · installer · Microsoft Store · administrator (admin) rights · LTS (long-term support) · PostgreSQL · MySQL · DBeaver · Power BI Desktop · Python install manager · virtual environment · pip · package · VS Code · extension · Jupyter · Git · companion files · terminal · command · path · keyboard shortcut · official documentation · signature · banker's rounding (round half to even) · round half away from zero · floating-point number · AI assistant · study plan · study log · retrieval practice · warm-up, core, stretch exercises
+study hours · job-ready path · weekly rhythm · review from memory · study log · study plan · RAM (memory) · tool timeline · official documentation · AI assistant
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
 ---
 
-## Where this leads
+## Check yourself
 
-- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're setting up for lead, and which roles use which tools.
-- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.8: practice, review from memory, and feedback.
-- **Chapters 10 and 11** use your spreadsheet; **Chapters 12 and 13** use the databases and DBeaver you installed, starting with the Riverstone data you loaded.
-- **Chapter 16** uses Power BI Desktop; **Chapters 17 and 18** use Python, VS Code, and Jupyter, and explain virtual environments properly.
-- **Chapter 26** puts Git to work and covers AI assistants in a professional setting; **Chapter 34** teaches the command line in depth.
-- **Appendix B** keeps current install steps for every tool; **Appendix E** lists all companion files; **Appendix G** holds the answers.
-- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.
+- [ ] I know how many hours the job-ready path takes, and how many weeks that is at my real weekly hours.
+- [ ] My finish date comes from arithmetic, not hope.
+- [ ] I have a weekly rhythm in my calendar, and I know what I'll do when I miss a week.
+- [ ] I know whether my computer can run each tool, and I have a plan for any it can't.
+- [ ] I know which chapter I'll install each tool in.
+- [ ] I can find the exact rule, an example, the exceptions, and the date on an official page.
+- [ ] I have rules for using AI assistants that keep the learning mine, and I never paste data I don't own.
+- [ ] I have a written 90-day plan.
+- [ ] I attempt exercises before reading the answers.
 
 ---
 
-## Answers to practice exercises
+## Exercises
 
-*(In the finished book these move to Appendix G.)*
+### Warm-up
 
-**1.** (a) Everything, including Power BI Desktop; 8 GB is enough to start, and closing unused apps helps. (b) Everything except Power BI Desktop; for Chapter 16, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Google Sheets or Excel for the web, and online SQL playgrounds for practice; plan to use a laptop before Chapter 17 for Python, the databases, and Power BI. (d) Nothing until IT approves; ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for PostgreSQL, DBeaver, and Python, and meanwhile use a home computer or the web tools with practice data.
+1. For each computer, say which chapters you could do on it, and what the owner should do about the rest: (a) a Windows 11 laptop with 8 GB of memory; (b) a MacBook with 16 GB of memory; (c) a Chromebook; (d) a locked-down work laptop running Windows 11.
+2. Sort these requests to an AI assistant into "helps you learn" or "does the learning for you", and rewrite the ones that don't help: (a) "Solve Chapter 4, exercise 6." (b) "Explain why averaging monthly growth rates overstates growth." (c) "My query returns 21 rows instead of 19. What kinds of mistake cause extra rows?" (d) "Write my 90-day plan."
+3. Without looking back, name the chapter in which you'll install each of these: a spreadsheet, a database, Power BI Desktop, Python, and Git. Then check your answers against section 6.3.
 
-**2.** (a) Git. (b) The database and DBeaver (with the Riverstone data loaded). (c) Python and the four packages. (d) The spreadsheet.
+### Core
 
-**3.** (1) The terminal is in a different folder from the script: check with `pwd`, then `cd` into the `ch06` folder. (2) The file name is different, such as `check_setup.py.txt` because extensions are hidden, or the file is still inside a zip: show file extensions (Chapter 2) and unzip the download.
+4. You can study 5 hours a week. Adapt Figure 6.1's weekly rhythm to 5 hours, keeping reading, exercises, review, and project work. Then use section 6.1's table to estimate how long the job-ready path would take at that pace.
+5. Your company uses a customer list with names, phone numbers, and outstanding balances. You want an AI assistant's help writing a formula that flags overdue customers. Describe how you'd get the help without sharing the real data.
+6. Using the table in section 6.1 and the hours you really studied last week, write the month you expect to finish Part 2. Show your division.
+7. Find the official page for one rule that affects you (your phone plan's data limit, a bank fee) and write down the exact rule, one example, one exception, and the date or version.
 
-**4.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my draft 90-day plan and my available hours. What's unrealistic about it?"*
+### Stretch
 
-**5.** pandas was installed into a different Python from the one running the script, usually because the virtual environment wasn't active. On Windows: `.venv\Scripts\activate`, then `python -m pip install pandas`. On macOS or Linux: `source .venv/bin/activate`, then `python -m pip install pandas`. (Also make sure VS Code's selected interpreter is the one in `.venv`.)
+8. Write a first version of your 90-day plan using the checklist in the project, with specific chapters for days 30, 60, and 90, and a plan for a missed week.
+9. A friend plans to install all five groups of tools this weekend "to get it out of the way". Using section 6.3, give two reasons to wait, and one useful thing they could do this weekend instead.
 
-**6.** (a) `5`: `4.5` is `numeric`, and PostgreSQL breaks ties away from zero. (b) `4`: as `double precision`, the common rule is round half to even, and 4 is even. (c) `4`: Python rounds halves to the even choice. (d) `5`: spreadsheets round halves away from zero. (e) `4`: `45E-1` is an approximate value, so on most systems MySQL rounds to the nearest even number. (All five were run for this chapter, with exactly these results.)
+### Think about it (no calculation needed)
 
-**7.** The two tools may round halves differently: Python's `round()` rounds halves to even (and floating-point values like 2.675 are stored slightly below the half), while Excel's `ROUND` rounds halves away from zero. If each invoice is rounded before the totals are added, small differences can add up to a rupee. To confirm: find invoices whose unrounded values end in exactly .5 of the rounding unit, compare each line's rounded value in both reports, and check whether the differences add up to ₹1. The lasting fix is to agree on one rule and round at the end (Chapter 4).
+10. Why does this book recommend free tools, even though many companies use paid ones? What might you still need to learn on the job?
+11. A friend says, "I'll skip the exercises and read the answers; it's faster." What would you tell them, using "How to Use This Book"?
+12. When is it reasonable to ask an AI assistant for a complete answer, rather than an explanation? Give one example where it's fine and one where it isn't.
 
-**8.** One way: Monday 1 hour reading, Wednesday 1 hour exercises, Friday 30 minutes review from memory, Saturday 2 hours project, Sunday 30 minutes redoing missed exercises and planning: 1 + 1 + 0.5 + 2 + 0.5 = 5 hours. The six-month plan assumes about 8 hours a week for 26 weeks, roughly 208 hours; at 5 hours a week that's about 42 weeks, or around ten months.
+---
 
-**9.** Describe the structure, not the data: *"I have a table with columns `customer_name`, `due_date`, and `balance`. How do I flag rows where the due date is before today and the balance is above zero?"* Or build a small made-up sample (three fake customers with invented numbers) and share that. Test the formula on the fake data, then apply it to the real file on your own computer. If your company has approved an AI tool for internal data, follow its rules instead.
+## Answers
 
-**10.** One good version: *"Hello, I'd like permission to install three free tools on my work laptop for learning data analysis: PostgreSQL (a database, used to practice SQL on sample data), DBeaver Community (an app for writing SQL), and Python from python.org (for data analysis scripts). I'll only use practice datasets from a textbook, and I won't connect them to any company system or customer data without your approval. Could you tell me whether there's an approved way to connect to company data later, if my manager asks for reports?"*
+**1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and 1, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and 1 straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
 
-**11.** Answers vary. A complete answer includes the signature (for example, `round(number, ndigits=None)` in Python), an example the reader ran themselves, and the note about `round(2.675, 2)` or PostgreSQL's tie-breaking rule. Many tutorials say "Python rounds .5 up", which doesn't match the documentation; noticing that is the point of the exercise.
+**2.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my 90-day plan and my available hours. What's unrealistic about it?"*
 
-**12.** Answers vary. A good plan names specific hours ("Tuesday and Thursday, 8–9 p.m.; Saturday, 9–11 a.m."), specific chapters for each checkpoint, one project a month on practice data, an AI rule, and a concrete plan for a missed week ("move the plan back a week; do one review session; start the next section").
+**3.** A spreadsheet in Chapter 10; the databases (PostgreSQL and DBeaver, with MySQL optional) in Chapter 12; Power BI Desktop in Chapter 16; Python, with VS Code and Jupyter, in Chapter 17; Git in Chapter 26.
 
-**13.** Nobody is locked out by cost, and PostgreSQL, MySQL, Python, and Git are widely used at work anyway. The ideas transfer: most SQL runs elsewhere, and Power BI's concepts map to Tableau and Looker (Chapter 16). On the job you may still need to learn a company's warehouse, BI tool, data definitions, and security rules.
+**4.** One way: Monday 1 hour reading, Wednesday 1 hour exercises, Friday 30 minutes review from memory, Saturday 2 hours project, Sunday 30 minutes redoing missed exercises and planning: 1 + 1 + 0.5 + 2 + 0.5 = 5 hours. The job-ready path is 317–394 hours; 317 ÷ 5 = 63.4, about 63 weeks, and 394 ÷ 5 = 78.8, about 79 weeks. That's 63–79 weeks, or about 15 to 18 months (63 × 12 ÷ 52 = 14.5; 79 × 12 ÷ 52 = 18.2).
 
-**14.** Reading answers you haven't attempted feels like learning because the answers make sense, but it doesn't build the skill of producing them. The exercises are where most of the learning happens, especially the core group. Suggest a compromise: attempt every warm-up and core exercise, even partially, before reading its answer, and redo the missed ones at the end of the week.
+**5.** Describe the structure, not the data: *"I have a table with a customer name column, a due date column, and a balance column. How do I flag rows where the due date is before today and the balance is above zero?"* Or build a small made-up sample (three fake customers with invented numbers) and share that. Test the formula on the fake data, then apply it to the real file on your own computer. If your company has approved an AI tool for internal data, follow its rules instead.
 
-**15.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for DBeaver, or for a first draft of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.
+**6.** Answers vary. A worked example: last week you studied 5 hours, and you've finished Chapters 1 to 6. What's left is Chapters 7 to 9 (9–13 hours, from their *Time needed* lines) plus Part 2 (290–357 hours): 299–370 hours. 299 ÷ 5 = 59.8, about 60 weeks; 370 ÷ 5 = 74 weeks. In months, 60 × 12 ÷ 52 = 13.8 and 74 × 12 ÷ 52 = 17.1: about 14 to 17 months. If you start Chapter 7 in October, you'd finish Part 2 between December of the following year and March of the year after. A good answer shows the division and gives a range, not a single hopeful date.
+
+**7.** Answers vary. A complete answer names the rule exactly as the page does (for example, "Daily data: 2 GB"), gives one example worked from the page (what happens on a day you use 2.5 GB), quotes one exception or piece of small print (for example, that unused data doesn't carry forward, or that roaming is charged separately), and records the page's "last updated" date or the plan's name and version.
+
+**8.** Answers vary. A good plan names specific hours ("Tuesday and Thursday, 8–9 p.m.; Saturday, 9–11 a.m."), specific chapters for each checkpoint, counted from the *Time needed* lines as Meera did, one project a month on practice data, an AI rule, and a concrete plan for a missed week ("move the plan back a week; do one review session; start the next section").
+
+**9.** Reasons to wait: a tool installed months early has usually been updated by the time it's used, so the versions and the steps may no longer match; problems are much easier to fix when the chapter in front of you explains what the tool is for; and passwords set months before they're needed get forgotten. Something useful instead: work through this chapter's project (count the hours, book the sessions, set up the folder and download the companion files), and start Chapter 7.
+
+**10.** Nobody is locked out by cost, and PostgreSQL, MySQL, Python, and Git are widely used at work anyway. The ideas transfer: most SQL runs elsewhere, and Power BI's concepts map to other tools such as Tableau and Looker. On the job you may still need to learn a company's own data systems, its BI tool, its data definitions, and its security rules.
+
+**11.** Reading answers you haven't attempted feels like learning because the answers make sense, but it doesn't build the skill of producing them. The exercises are where most of the learning happens, especially the core group. Suggest a compromise: attempt every warm-up and core exercise, even partially, before reading its answer, and redo the missed ones at the end of the week.
+
+**12.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for an app you use, or for a first version of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.
+
+---
+
+## Where this leads
+
+- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're planning for lead, and which roles use which tools.
+- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.2 (practice, review from memory, and feedback), and why chapter hours are not fluency hours.
+- **The chapters that bring each tool:** Chapter 10 (a spreadsheet), Chapter 12 (the databases and DBeaver), Chapter 16 (Power BI Desktop), Chapter 17 (Python, VS Code, and Jupyter), and Chapter 26 (Git, and AI assistants in a professional setting). Each starts by installing its tool.
+- **Chapter 83, The Long Game,** returns to the same hours at the end of the book, and to the pace that survives a bad month.
+- **Appendix B** gathers every install step in one place.
+- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.

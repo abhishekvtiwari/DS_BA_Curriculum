@@ -1,6 +1,6 @@
 # Chapter 47. Data Quality, Observability & Contracts
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -741,7 +741,7 @@ A practical combination for a team Riverstone's size: **dbt tests** for the mode
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -791,18 +791,16 @@ At the next sales review, Anita asked whether the data was reliable now. "It fai
 
 ---
 
-## Tools
+## Project: quality, monitoring, and a contract for the Riverstone pipeline
+
+**Goal:** make the Chapter 46 pipeline trustworthy: nothing wrong gets published, staleness is noticed, one incident produces one useful alert, and the dispatch file has a contract that's checked automatically.
+
+### Tools you'll need
 
 - **Python 3.12** with `duckdb` and `psycopg2`; **PostgreSQL 16**; the **Chapter 47 companion folder** (`companion/ch47/`), which is Chapter 46's environment plus `reset_ch47.py`. Run Python from that folder.
 - **No data quality product needed:** every test in this chapter is SQL run from Python.
 - **Worth knowing about, for later:** dbt tests (Chapter 32), Great Expectations, Soda, Elementary, and the observability platforms in section 47.10.
 - **Versions used for the outputs shown:** Python 3.12.3, DuckDB 1.5.5, psycopg2 2.9.13, PostgreSQL 16.
-
----
-
-## The project: quality, monitoring, and a contract for the Riverstone pipeline
-
-**Goal:** make the Chapter 46 pipeline trustworthy: nothing wrong gets published, staleness is noticed, one incident produces one useful alert, and the dispatch file has a contract that's checked automatically.
 
 **Option A: Riverstone.** Extend your Chapter 46 pipeline.
 
@@ -829,7 +827,32 @@ At the next sales review, Anita asked whether the data was reliable now. "It fai
 
 ---
 
-## You've got it when…
+## Recap
+
+- Data quality has **dimensions**: accuracy, completeness, validity, uniqueness, consistency, and timeliness. Each becomes a test.
+- A **data test** is a query that returns the rows that break a rule; zero rows means it passed. dbt, Great Expectations, and Soda work this way underneath.
+- **Severity** decides what stops a pipeline. Warnings are for edges; errors are for numbers people act on. Tests nobody acts on should be fixed, downgraded, or deleted.
+- Tests belong at every layer: structure in **raw**, validity and consistency in **staging**, business rules and reconciliation in **mart**, and blocking checks **before delivery**.
+- **Break your tests on purpose.** A suite that has never failed hasn't been tested.
+- **Write–audit–publish** keeps failed data out of the tables people read; the same 5 January failure that left a wrong row in Chapter 46 now leaves the published table untouched.
+- **Observability** answers three questions: did it run, is it **fresh**, does its **volume** look normal. Stale data is the most common and least noticed incident.
+- **Unusual is not wrong.** Anomalies warn; only hard rules block.
+- **Lineage** tells you what a broken table affects, and where a wrong number could come from.
+- **Data contracts** state fields, rules, delivery, change notice, and what happens on a breach, and are checked in the pipeline. They apply to internal producers too.
+- **Incidents** follow detect, classify, contain, fix and verify, review. Tell users at containment, before the fix.
+- **Alert fatigue** hides real failures: one incident, one alert; route by owner; alert only what someone will act on.
+
+---
+
+## Key terms
+
+data quality dimensions (accuracy, completeness, validity, uniqueness, consistency, timeliness) · data test · failing rows · severity (error, warning) · raw, staging, mart layers · reconciliation · foreign key · self-healing load · dbt test · write–audit–publish (WAP) · audit schema · publish swap · blue/green tables · load status · observability · freshness · staleness limit · volume check · baseline · median · anomaly · lineage · column-level lineage · impact analysis · data contract · change notice · breach · data incident · severity levels (S1, S2, S3) · containment · blameless review · alert fatigue · alert grouping · runbook
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can name the six data quality dimensions and write a test for each on Riverstone data.
 - [ ] You can explain why a data test is "a query that returns the rows that break the rule".
@@ -848,24 +871,7 @@ At the next sales review, Anita asked whether the data was reliable now. "It fai
 
 ---
 
-## Recap
-
-- Data quality has **dimensions**: accuracy, completeness, validity, uniqueness, consistency, and timeliness. Each becomes a test.
-- A **data test** is a query that returns the rows that break a rule; zero rows means it passed. dbt, Great Expectations, and Soda work this way underneath.
-- **Severity** decides what stops a pipeline. Warnings are for edges; errors are for numbers people act on. Tests nobody acts on should be fixed, downgraded, or deleted.
-- Tests belong at every layer: structure in **raw**, validity and consistency in **staging**, business rules and reconciliation in **mart**, and blocking checks **before delivery**.
-- **Break your tests on purpose.** A suite that has never failed hasn't been tested.
-- **Write–audit–publish** keeps failed data out of the tables people read; the same 5 January failure that left a wrong row in Chapter 46 now leaves the published table untouched.
-- **Observability** answers three questions: did it run, is it **fresh**, does its **volume** look normal. Stale data is the most common and least noticed incident.
-- **Unusual is not wrong.** Anomalies warn; only hard rules block.
-- **Lineage** tells you what a broken table affects, and where a wrong number could come from.
-- **Data contracts** state fields, rules, delivery, change notice, and what happens on a breach, and are checked in the pipeline. They apply to internal producers too.
-- **Incidents** follow detect, classify, contain, fix and verify, review. Tell users at containment, before the fix.
-- **Alert fatigue** hides real failures: one incident, one alert; route by owner; alert only what someone will act on.
-
----
-
-## Practice exercises
+## Exercises
 
 Run `reset()` and re-run the setup and test blocks before each exercise that uses the companion environment.
 
@@ -897,27 +903,7 @@ Run `reset()` and re-run the setup and test blocks before each exercise that use
 
 ---
 
-## Key terms
-
-data quality dimensions (accuracy, completeness, validity, uniqueness, consistency, timeliness) · data test · failing rows · severity (error, warning) · raw, staging, mart layers · reconciliation · foreign key · self-healing load · dbt test · write–audit–publish (WAP) · audit schema · publish swap · blue/green tables · load status · observability · freshness · staleness limit · volume check · baseline · median · anomaly · lineage · column-level lineage · impact analysis · data contract · change notice · breach · data incident · severity levels (S1, S2, S3) · containment · blameless review · alert fatigue · alert grouping · runbook
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 48, Big Data & Distributed Compute,** scales the pipeline's heavy steps, where tests must run on far more data than fits in memory.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** provides the transactions, snapshots, and time travel that make publishing and rollback quick.
-- **Chapter 50, Streaming & Real-Time,** asks how to check data that never stops arriving.
-- **Chapter 51, Data Activation,** sends warehouse data into the CRM and ERP, where an S1 incident means wrong data in a business system, not only a wrong chart.
-- **Chapter 32** covers dbt models, tests, and documentation; **Chapter 14** covers the analyst-level version of this work.
-- **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers ownership, stewardship, and the governance that data contracts sit inside.
-- **Part VIII:** data quality and incident questions appear in the data engineering interview chapters, and "walk me through a wrong dashboard" is a standard system design question (Chapter 77).
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -980,3 +966,15 @@ It would **not** have caught the 5 January failure on its own: the Flash was bui
 **13.** A sample paragraph: *"The pipeline stops more often because we added checks that compare our numbers with the ERP before anything is published. When it stops, the old numbers stay up and you get a message telling you what's late and when to expect it. Before, the same problems still happened; we published them, and someone found out in a meeting. What I'd like to show you each month: how many times we stopped publication and why, how many wrong numbers reached anyone (the number I want at zero), and how long it took us to publish after a problem. If the first number is high and the second is zero, the system is working."* The key move is to reframe visible failures as caught failures, with metrics that separate the two.
 
 **14.** *A wrong number on time is worse* in most business settings: people act on it, decisions are made, and the error spreads into other systems and into trust, as the Chapter 46 story of duplicate emails showed. *No number is worse* when a decision must be made at a fixed time and a rough figure would be better than nothing, for example a dispatch cut-off, or where the absence itself misleads (a chart showing zero sales). The design that follows from the first view is this chapter's: block publication, keep the last good data, tell people, and fix. The design that follows from the second is to publish with an explicit, visible warning about what's missing or provisional, so people can decide for themselves. A good answer picks one and names the conditions where it would switch.
+
+---
+
+## Where this leads
+
+- **Chapter 48, Big Data & Distributed Compute,** scales the pipeline's heavy steps, where tests must run on far more data than fits in memory.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** provides the transactions, snapshots, and time travel that make publishing and rollback quick.
+- **Chapter 50, Streaming & Real-Time,** asks how to check data that never stops arriving.
+- **Chapter 51, Data Activation,** sends warehouse data into the CRM and ERP, where an S1 incident means wrong data in a business system, not only a wrong chart.
+- **Chapter 32** covers dbt models, tests, and documentation; **Chapter 14** covers the analyst-level version of this work.
+- **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers ownership, stewardship, and the governance that data contracts sit inside.
+- **Part 8:** data quality and incident questions appear in the data engineering interview chapters, and "walk me through a wrong dashboard" is a standard system design question (Chapter 77).

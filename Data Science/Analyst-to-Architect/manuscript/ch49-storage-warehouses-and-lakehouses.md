@@ -1,6 +1,6 @@
 # Chapter 49. Storage, Warehouses & Lakehouses
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -22,7 +22,7 @@ Chapter 48 ended with a story where the engine wasn't the problem: the storage l
 
 Storage decisions also outlive everything else. A tool can be swapped in a quarter. A format and layout, once a year of data is in it and forty reports read it, is what you live with. Getting it right means understanding four things that this chapter demonstrates rather than asserts: **how columnar files work**, **what ACID actually guarantees**, **what a table format adds to a folder of files**, and **what you're paying for in a warehouse**.
 
-This is also where Part V's promises land. Chapter 46 needed writes that replace a partition atomically. Chapter 47 needed to publish only after checks pass, and to roll back when something slips through. Both of those are storage features, and this chapter is where you get them.
+This is also where Part 5's promises land. Chapter 46 needed writes that replace a partition atomically. Chapter 47 needed to publish only after checks pass, and to roll back when something slips through. Both of those are storage features, and this chapter is where you get them.
 
 ---
 
@@ -54,7 +54,7 @@ A **lakehouse** is exactly this: cheap floor space (object storage) plus a stock
 | **Data lake** | Files in object storage, usually Parquet | Cheap, any format, any engine | Without discipline, a swamp: no transactions, no schema, no history |
 | **Lakehouse** | A lake plus a table format (Delta, Iceberg, Hudi) | Warehouse behavior on lake storage; many engines | More moving parts to understand |
 
-Riverstone's layout by the end of Part V is typical of a mid-sized company: orders and customers in the ERP's PostgreSQL (the system of record), a warehouse for analytics (raw, staging, mart), and the sensor archive as Parquet in object storage, exposed as a lakehouse table so it can be corrected, versioned, and read by whichever engine suits the job.
+Riverstone's layout by the end of Part 5 is typical of a mid-sized company: orders and customers in the ERP's PostgreSQL (the system of record), a warehouse for analytics (raw, staging, mart), and the sensor archive as Parquet in object storage, exposed as a lakehouse table so it can be corrected, versioned, and read by whichever engine suits the job.
 
 > **Watch out: "the warehouse" means two things.** In this book, Riverstone's physical warehouse at Bhiwandi Main stores crates; the data warehouse stores tables. The chapter names the physical one explicitly when it means crates.
 
@@ -447,7 +447,7 @@ For Riverstone, the honest answer is: keep orders in the warehouse (a few hundre
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -489,18 +489,16 @@ Six months later a similar correction was needed for a pressure sensor. It was o
 
 ---
 
-## Tools
+## Project: turn the sensor archive into a table
+
+**Goal:** convert the Chapter 48 archive into a versioned, correctable table, and prove the properties this chapter claims.
+
+### Tools you'll need
 
 - **Python 3.12** with `duckdb`, `pyarrow`, and `deltalake` (`pip install deltalake duckdb pyarrow`). No Spark, no JVM, no cloud account.
 - **The Chapter 49 companion folder** (`companion/ch49/`): `setup_ch49.py`, which rebuilds one day of the Chapter 48 sensor data as CSV, Parquet, and SQLite. Generate the Chapter 48 dataset first.
 - **Versions used for the outputs shown:** Python 3.12.3, deltalake 1.6.3, DuckDB 1.5.5, PyArrow 25.0.1.
 - **Worth knowing about:** Apache Iceberg (PyIceberg), Apache Hudi, and the warehouse products in section 49.7.
-
----
-
-## The project: turn the sensor archive into a table
-
-**Goal:** convert the Chapter 48 archive into a versioned, correctable table, and prove the properties this chapter claims.
 
 **Option A: Riverstone.** Use the sensor archive.
 
@@ -526,7 +524,29 @@ Six months later a similar correction was needed for a pressure sensor. It was o
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Row storage** suits running the business; **columnar** suits analyzing it. The same day of readings is 14.6 MB as CSV, 16.3 MB in a row store, and **1.3 MB as Parquet**.
+- Parquet's **row groups**, **column chunks**, **dictionary encoding**, and **statistics** are what let engines skip work; sort by the column people filter on so the statistics can help.
+- **ACID** means atomicity, consistency, isolation, durability. Plain files in a folder have none of them.
+- A **table format** (Delta, Iceberg, Hudi) adds a **transaction log** that lists the files making up each version. The log is the table: never edit files inside it by hand.
+- Table formats give **atomic partial overwrites**, **time travel**, **safe schema evolution**, and **compaction**. A correction to one machine moved its average from 196.0 °C to 197.5 °C as a single new version.
+- **Compaction** turned 24 files averaging 114 KB into 1 file of 529 KB with the same rows; target 128–512 MB files.
+- **Partition by what queries filter on** (usually date); don't over-partition; never partition by a high-cardinality id.
+- Warehouses **separate storage from compute**; bills are driven by compute time and data scanned, not by storage price.
+- The cheapest optimization is **not reading data you don't need**: a weekly report that scans a week instead of a year costs about fifty times less.
+
+---
+
+## Key terms
+
+row-oriented storage · columnar storage · Parquet · row group · column chunk · dictionary encoding · statistics (min/max) · compression (Snappy, zstd) · ACID (atomicity, consistency, isolation, durability) · transaction log · commit · version · table format · Delta Lake · Apache Iceberg · Apache Hudi · add and remove actions · time travel · vacuum · retention · schema evolution · schema merge · compaction (OPTIMIZE) · small files problem · partitioning · over-partitioning · hidden partitioning · liquid clustering · object storage · data lake · lakehouse · separation of storage and compute · data scanned · egress
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can name six places data can sit and say what each is good and bad at.
 - [ ] You can explain row versus columnar storage, and quote a real size comparison.
@@ -543,21 +563,7 @@ Six months later a similar correction was needed for a pressure sensor. It was o
 
 ---
 
-## Recap
-
-- **Row storage** suits running the business; **columnar** suits analyzing it. The same day of readings is 14.6 MB as CSV, 16.3 MB in a row store, and **1.3 MB as Parquet**.
-- Parquet's **row groups**, **column chunks**, **dictionary encoding**, and **statistics** are what let engines skip work; sort by the column people filter on so the statistics can help.
-- **ACID** means atomicity, consistency, isolation, durability. Plain files in a folder have none of them.
-- A **table format** (Delta, Iceberg, Hudi) adds a **transaction log** that lists the files making up each version. The log is the table: never edit files inside it by hand.
-- Table formats give **atomic partial overwrites**, **time travel**, **safe schema evolution**, and **compaction**. A correction to one machine moved its average from 196.0 °C to 197.5 °C as a single new version.
-- **Compaction** turned 24 files averaging 114 KB into 1 file of 529 KB with the same rows; target 128–512 MB files.
-- **Partition by what queries filter on** (usually date); don't over-partition; never partition by a high-cardinality id.
-- Warehouses **separate storage from compute**; bills are driven by compute time and data scanned, not by storage price.
-- The cheapest optimization is **not reading data you don't need**: a weekly report that scans a week instead of a year costs about fifty times less.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -587,26 +593,7 @@ Six months later a similar correction was needed for a pressure sensor. It was o
 
 ---
 
-## Key terms
-
-row-oriented storage · columnar storage · Parquet · row group · column chunk · dictionary encoding · statistics (min/max) · compression (Snappy, zstd) · ACID (atomicity, consistency, isolation, durability) · transaction log · commit · version · table format · Delta Lake · Apache Iceberg · Apache Hudi · add and remove actions · time travel · vacuum · retention · schema evolution · schema merge · compaction (OPTIMIZE) · small files problem · partitioning · over-partitioning · hidden partitioning · liquid clustering · object storage · data lake · lakehouse · separation of storage and compute · data scanned · egress
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 50, Streaming & Real-Time,** writes continuously into tables like these, which is where compaction and small files stop being theoretical.
-- **Chapter 51, Data Activation,** reads from the published tables to push data into business systems.
-- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers object storage, permissions, and cost management in practice.
-- **Chapter 47** gains its rollback: a failed publish can now be reversed by restoring a version.
-- **Chapter 63, Designing Automation & Integration Architecture,** and **Chapter 62** (the economics of data platforms) build on section 49.8.
-- **Part VIII:** storage and file format questions appear in the data engineering interview chapters, and layout design cases in Chapter 77.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -637,3 +624,14 @@ row-oriented storage · columnar storage · Parquet · row group · column chunk
 **13.** It means the folder of Parquet files isn't the table; the log is, and the log lists exactly which files belong to which version. Deleting a file the log still references doesn't save space in any useful sense: it makes the table unreadable, because a reader will look for a file that no longer exists. Adding a file by hand does nothing either, since no reader will see it. If space is the problem, the right tools are **compaction** (merge small files into large ones, as a new version) and **vacuum** (delete files no version within the retention window needs). Both are operations the table supports and records, so readers never break.
 
 **14.** Compression settings are visible, quick to change, and feel like engineering; scan volume is invisible unless someone measures it, and fixing it means changing layouts and rewriting queries, which touches other people's work. There's also an anchoring effect: storage bills come with a clear GB number, while compute bills are diffuse. What to measure first: **bytes scanned per query** (or slot/compute seconds), broken down by the top ten most frequent and most expensive queries, and how much of what they scan they actually use after filtering. That measurement almost always points at a missing filter, a wrong partition column, or `SELECT *`, each of which is worth more than any compression codec choice.
+
+---
+
+## Where this leads
+
+- **Chapter 50, Streaming & Real-Time,** writes continuously into tables like these, which is where compaction and small files stop being theoretical.
+- **Chapter 51, Data Activation,** reads from the published tables to push data into business systems.
+- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers object storage, permissions, and cost management in practice.
+- **Chapter 47** gains its rollback: a failed publish can now be reversed by restoring a version.
+- **Chapter 63, Designing Automation & Integration Architecture,** and **Chapter 62** (the economics of data platforms) build on section 49.8.
+- **Part 8:** storage and file format questions appear in the data engineering interview chapters, and layout design cases in Chapter 77.

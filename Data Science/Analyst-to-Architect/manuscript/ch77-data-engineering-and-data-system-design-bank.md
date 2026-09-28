@@ -1,12 +1,12 @@
 # Chapter 77. Data Engineering & Data System Design Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the pipeline, data-modeling, and system-design questions that come up in Data Engineer interviews · design a batch or streaming pipeline live, under time pressure, the way an interviewer actually wants · reason correctly about idempotency, partitioning, and schema evolution, not just define the terms · walk through a full system design case end to end, stating trade-offs out loud.
 >
 > **How this chapter is built.** Same format as Chapters 70–76: every core question leads with a **"Remember it as…"** hook, a one-line answer, a compact tier table. Rapid-fire sections are scan tables. **Every SQL claim in this chapter was run against live PostgreSQL 16** (the same Riverstone databases Chapter 71 uses); every DAG and dependency-resolution claim was run in real Python. Section order was planned before writing: pipeline fundamentals first, then modeling, then reliability (idempotency, failure handling), then orchestration and scale, then full system-design walk-throughs.
 >
-> **Learn it in** pointers reference Chapters 12–13 (SQL), 16 (the star-schema/DAX material Chapter 70 already draws on), and Part V of this book (data engineering proper) at chapter level, since this chat doesn't have Part V's approved text to check exact section numbers against.
+> **Learn it in** pointers reference Chapters 12–13 (SQL), 16 (the star-schema/DAX material Chapter 70 already draws on), and Part 5 of this book (data engineering proper) at chapter level, since this chat doesn't have Part 5's approved text to check exact section numbers against.
 
 ---
 
@@ -26,7 +26,7 @@
 
 **Likely follow-ups:** Name a scenario where ETL is still clearly the better choice today. What's reverse ETL, and how does it relate to either pattern?
 **Red flag:** treating the two as interchangeable synonyms.
-**Learn it in:** Part V (data engineering, this book).
+**Learn it in:** Part 5 (data engineering, this book).
 
 ### Q77-002 · Batch vs. streaming: how do you decide which a new pipeline actually needs?
 
@@ -42,7 +42,7 @@
 
 **Likely follow-ups:** What's micro-batching, and where does it sit between the two? How would you migrate an existing batch pipeline to streaming without a risky big-bang rewrite?
 **Red flag:** recommending streaming by default without asking what freshness the actual decision requires.
-**Learn it in:** Part V (this book).
+**Learn it in:** Part 5 (this book).
 
 ### Rapid-fire, 77.1
 
@@ -81,7 +81,7 @@ row count after running the same insert twice: 1   -- not 2
 
 **Likely follow-ups:** How would you make a multi-step pipeline (not just one insert) idempotent end to end? What's the difference between idempotency and exactly-once processing?
 **Red flag:** a fix that only prevents duplicates on a clean re-run, not one that's genuinely safe to retry after a partial failure mid-load.
-**Learn it in:** Part V (this book).
+**Learn it in:** Part 5 (this book).
 
 ### Q77-008 · What's the difference between "at-least-once," "at-most-once," and "exactly-once" delivery, and which is actually achievable?
 
@@ -97,7 +97,7 @@ row count after running the same insert twice: 1   -- not 2
 
 **Likely follow-ups:** Which would you choose for a financial transaction log, and why? What's a real system that claims exactly-once, and how does it actually achieve it under the hood?
 **Red flag:** treating "exactly-once" as a simple guarantee some systems just have and others don't, with no understanding of how it's actually achieved.
-**Learn it in:** Part V (this book).
+**Learn it in:** Part 5 (this book).
 
 ### Rapid-fire, 77.2
 
@@ -260,7 +260,7 @@ The query plan touches **only the January partition**, `events_2025_01`; the Feb
 
 **Likely follow-ups:** How would you decide the right threshold for a volume-anomaly check without too many false alarms? What's the difference between a data quality check and a schema validation check?
 **Red flag:** proposing manual, human-driven spot-checks as the primary quality control for an automated pipeline.
-**Learn it in:** Part V (this book), and Chapter 36, §36.7's missing-value discipline (the modeling-side cousin of the same "detect before you trust" habit).
+**Learn it in:** Part 5 (this book), and Chapter 36, §36.7's missing-value discipline (the modeling-side cousin of the same "detect before you trust" habit).
 
 ### Rapid-fire, 77.6
 
@@ -319,7 +319,7 @@ The query plan touches **only the January partition**, `events_2025_01`; the Feb
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -343,26 +343,18 @@ The interviewer's note: *"Didn't just describe the fix, explained the actual bli
 
 ---
 
-## Tools
-
-**PostgreSQL 16** and **Python**, the same environment Chapters 71 and 72A use; every SQL claim and every DAG/topological-sort claim in this chapter was run against them. In real production work: Airflow, Dagster, or Prefect for orchestration; Kafka or a managed equivalent for streaming; dbt for transformation; a cloud warehouse (Snowflake, BigQuery, Redshift) or lakehouse (Databricks) for storage and compute.
-
----
-
-## The project
+## Project
 
 **Goal:** apply this chapter's method to a real or realistic pipeline of your own.
+
+### Tools you'll need
+
+**PostgreSQL 16** and **Python**, the same environment Chapters 71 and 72A use; every SQL claim and every DAG/topological-sort claim in this chapter was run against them. In real production work: Airflow, Dagster, or Prefect for orchestration; Kafka or a managed equivalent for streaming; dbt for transformation; a cloud warehouse (Snowflake, BigQuery, Redshift) or lakehouse (Databricks) for storage and compute.
 
 1. Implement SCD Type 2 for one real dimension in your own data (or Riverstone's), and prove the historical version is queryable, the way Q77-013 did.
 2. Make one real pipeline step idempotent using an upsert pattern, and prove a duplicate re-run doesn't duplicate rows.
 3. Write two automated data quality checks for a real dataset: one checking a specific value constraint, one checking for an unexpected volume anomaly.
 4. Pick one of this chapter's system design questions (daily pipeline, streaming sensors, or deduplication) and write your own full design for a different, real scenario from your own work.
-
----
-
-## Final-week revision list
-
-Q77-001, Q77-002, Q77-007, Q77-008, Q77-013, Q77-018, Q77-023, Q77-028, Q77-033, Q77-034, Q77-035.
 
 ---
 
@@ -372,9 +364,15 @@ ETL vs. ELT · batch vs. streaming · data warehouse vs. data lake vs. lakehouse
 
 ---
 
+## Final-week revision list
+
+Q77-001, Q77-002, Q77-007, Q77-008, Q77-013, Q77-018, Q77-023, Q77-028, Q77-033, Q77-034, Q77-035.
+
+---
+
 ## Where this leads
 
 - **Chapter 69, The Extra-Points Method,** is the rubric and move set every answer above is written against.
 - **Chapter 71, SQL Question Bank,** already covers the join-cardinality, indexing, and materialized-view foundations this chapter builds directly on.
 - **Chapter 72A, Data Structures & Algorithms Question Bank,** supplies the complexity reasoning (O(n²) scaling, topological sort) this chapter's design questions reuse explicitly.
-- **Part V of this book** (data engineering proper) teaches every technique this bank draws on, in full; this chapter tests it, it doesn't re-teach it from scratch.
+- **Part 5 of this book** (data engineering proper) teaches every technique this bank draws on, in full; this chapter tests it, it doesn't re-teach it from scratch.

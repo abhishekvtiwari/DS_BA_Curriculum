@@ -1,6 +1,6 @@
 # Chapter 20. Automating Reports & Delivering Insights
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -567,7 +567,8 @@ Record three things when you automate something: the time it took before (measur
 And keep a list of what to automate next, ordered by (time saved × frequency) ÷ effort. The top of that list is rarely the most interesting problem, which is exactly why it's worth writing down.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -621,7 +622,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: Riverstone's Daily Sales Flash
+
+**Goal:** an email that makes the morning call unnecessary, an exception alert when something is wrong, and a failure alert when the job breaks.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, and `requests`. Everything runnable in this chapter was executed on Python 3.12 with pandas 3.0.2, matplotlib 3.10.8, SQLAlchemy 2.0.54, psycopg 3.3.5.
 - **A mail route you're allowed to use:** SMTP with a service account, Microsoft Graph, the Gmail API, Apps Script's `MailApp` (Chapter 19), or a transactional provider.
@@ -630,12 +635,6 @@ What made the difference:
 - **Companion files (`companion/ch20/`):** `daily_flash.py` — the complete Daily Sales Flash: query, headline calculations, exception rule, 14-day chart, HTML builder, SMTP sender, failure alert, "no data" branch, logging, arguments, and exit codes. It writes the rendered email to `out/daily_flash_<date>.html`, which is the file shown in Figure 20.3.
 
 > **Note on what was run.** The data work, the HTML, the chart, and the exception and check logic were executed against the real `riverstone_full` database, and Figure 20.3 is a screenshot of the actual email the script produced. The parts that need an account someone else controls — sending by SMTP or Graph, Teams and Slack webhooks, Task Scheduler and cron entries — are written out but could not be executed here, and are listed as manual checks.
-
----
-
-## The project: Riverstone's Daily Sales Flash
-
-**Goal:** an email that makes the morning call unnecessary, an exception alert when something is wrong, and a failure alert when the job breaks.
 
 **Option A: your own report.** Take the report you produce most often and put it on rungs 2 and 3 of the ladder.
 
@@ -680,23 +679,6 @@ Use `riverstone_full` and Python. Answers at the end of the chapter.
 
 ---
 
-## You've got it when…
-
-- [ ] You can place a report on the ladder and say why it should stop there.
-- [ ] You map a flow and time the steps before writing code.
-- [ ] You choose the delivery tool from where the data and the maintainer are, not from preference.
-- [ ] You put the answer in the subject line and the body, and attach only what's actually needed.
-- [ ] You can build an HTML email that renders in Outlook: tables, inline styles, 640 px, `alt` text.
-- [ ] You send mail with credentials from the environment, from an account that isn't personal.
-- [ ] You schedule in business time, pass the reporting date explicitly, and know why cron needs absolute paths.
-- [ ] Your alerts have thresholds with a rationale, an action, and an owner, and you review whether anyone acts on them.
-- [ ] Your automations log every run, check before sending, alert a person on failure, say "no data today", and can be run twice safely.
-- [ ] Your recipient list lives in config with a review date, and you've thought about who may see what.
-- [ ] There's a one-page handover note, and someone else has run the job.
-- [ ] You can state the hours the automation saves and the errors it prevents.
-
----
-
 ## Recap
 
 - **The ladder** runs manual → refreshable → scheduled → triggered → self-serve. Stabilize before scheduling; everything above rung 2 needs an owner, a log, and a failure alert.
@@ -713,7 +695,32 @@ Use `riverstone_full` and Python. Answers at the end of the chapter.
 
 ---
 
-## Practice exercises
+## Key terms
+
+automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · data URI · CID attachment · SMTP · STARTTLS · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · working directory · cloud scheduler · time zone · reporting date · alert · exception report · threshold · persistence · materiality · alert fatigue · incoming webhook · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can place a report on the ladder and say why it should stop there.
+- [ ] You map a flow and time the steps before writing code.
+- [ ] You choose the delivery tool from where the data and the maintainer are, not from preference.
+- [ ] You put the answer in the subject line and the body, and attach only what's actually needed.
+- [ ] You can build an HTML email that renders in Outlook: tables, inline styles, 640 px, `alt` text.
+- [ ] You send mail with credentials from the environment, from an account that isn't personal.
+- [ ] You schedule in business time, pass the reporting date explicitly, and know why cron needs absolute paths.
+- [ ] Your alerts have thresholds with a rationale, an action, and an owner, and you review whether anyone acts on them.
+- [ ] Your automations log every run, check before sending, alert a person on failure, say "no data today", and can be run twice safely.
+- [ ] Your recipient list lives in config with a review date, and you've thought about who may see what.
+- [ ] There's a one-page handover note, and someone else has run the job.
+- [ ] You can state the hours the automation saves and the errors it prevents.
+
+---
+
+## Exercises
 
 Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email account only where it's safe.
 
@@ -758,27 +765,7 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 
 ---
 
-## Key terms
-
-automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · data URI · CID attachment · SMTP · STARTTLS · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · working directory · cloud scheduler · time zone · reporting date · alert · exception report · threshold · persistence · materiality · alert fatigue · incoming webhook · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 21 and 22:** the statistics behind sensible thresholds, and why a single day's dip usually isn't a signal.
-- **Chapter 23, Data Storytelling:** what to write in the three sentences of commentary you kept.
-- **Chapter 26, Git:** versioning automations, and keeping `.env` out of the repository.
-- **Chapter 30, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
-- **Chapter 46:** orchestration, when "run this at 7" becomes "run these eleven things in the right order, with retries".
-- **Chapter 47:** data-quality testing, which is the checks in this chapter done systematically.
-- **Interview preparation:** the Business Analyst bank (Chapter 76) asks how you'd automate and deliver a recurring report, and what you'd do when it fails.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -837,3 +824,15 @@ automation ladder · refreshable · scheduled · triggered · self-serve · repo
 **27.** First hour: stop the schedule (the stop switch), find out exactly what was sent and to whom, tell your manager and whoever owns data protection, and don't try to recall the email quietly. Afterwards: recipient lists in config with an owner, a review date, and a check that every recipient is on an approved domain; a test send to yourself on every change; and sensitivity written into the handover note.
 
 **Timed challenge answers.** Level 1: ₹2,511,819 · 118 orders · 116 customers · ₹21,287 average order. Level 2: 27.3% gross margin; +2.3% against 18 December 2024's ₹2,454,466. Level 3: **₹57,069,985** (₹5.71 crore) from 1 to 18 December. If you get ₹4.45 crore, your window started on the 5th, not the 1st: reusing the 14-day series for month to date is the most common slip, and it was a real bug in the first version of `daily_flash.py`. Level 4: highest **7 December (₹3,782,009)**, lowest **9 December (₹2,488,217)**; the 18th itself is ₹2,511,819, a little above the low. Level 5: Industrial Crate, 345 units. Level 6: `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Level 7: all four pass for 18 December 2025; for 1 January 2026 the first check fails, nothing is sent, and the "no data" email goes out instead. Bonus: 325 hours, about 40 working days.
+
+---
+
+## Where this leads
+
+- **Chapter 21 and 22:** the statistics behind sensible thresholds, and why a single day's dip usually isn't a signal.
+- **Chapter 23, Data Storytelling:** what to write in the three sentences of commentary you kept.
+- **Chapter 26, Git:** versioning automations, and keeping `.env` out of the repository.
+- **Chapter 30, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
+- **Chapter 46:** orchestration, when "run this at 7" becomes "run these eleven things in the right order, with retries".
+- **Chapter 47:** data-quality testing, which is the checks in this chapter done systematically.
+- **Interview preparation:** the Business Analyst bank (Chapter 76) asks how you'd automate and deliver a recurring report, and what you'd do when it fails.

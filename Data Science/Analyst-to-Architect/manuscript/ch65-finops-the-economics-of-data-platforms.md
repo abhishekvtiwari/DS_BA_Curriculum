@@ -1,6 +1,6 @@
 # Chapter 65. FinOps: The Economics of Data Platforms
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
@@ -189,7 +189,8 @@ Every architectural choice this Part has taught carries a cost dimension that's 
 **The single habit that makes every one of these decisions available rather than accidental:** attach a rough cost estimate to any architecture decision record (Chapter 60, section 60.4) that involves provisioning something new or changing how often something runs. "This will cost approximately ₹X/month, based on Y usage" turns a design conversation that used to end with "we'll see what it costs" into one where cost is weighed against the other trade-offs at the same table, before the decision is made rather than after.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -234,21 +235,19 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: build and defend a cost model
+
+**Goal:** produce a real, bottom-up monthly cost model for a system you're responsible for, with unit economics and at least one cost-aware recommendation.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas` for cost modelling (run here on Python 3.12, pandas 3.0.2) — the same tool used throughout this book for every other kind of analysis.
 - **Cloud cost tools:** AWS Cost Explorer and Cost and Usage Reports (or the equivalent on any cloud provider) for real tagging and showback at scale; the AWS Pricing Calculator for estimating a new system's cost before building it.
-- **Pricing sources used in this chapter**, checked in 2026: AWS RDS pricing for `db.m5.large` PostgreSQL and gp3 storage in `ap-south-1` (Mumbai), checked against multiple independent sources in August 2026, confirming a roughly 42% regional premium over `us-east-1` for identical instance specifications; S3 Standard and Glacier Deep Archive per-GB rates; data transfer-out pricing. LLM API prices reuse Part VI, Chapter 54's own September 2026 figures, so this chapter's numbers stay consistent with the rest of the book rather than introducing a second, conflicting price list.
+- **Pricing sources used in this chapter**, checked in 2026: AWS RDS pricing for `db.m5.large` PostgreSQL and gp3 storage in `ap-south-1` (Mumbai), checked against multiple independent sources in August 2026, confirming a roughly 42% regional premium over `us-east-1` for identical instance specifications; S3 Standard and Glacier Deep Archive per-GB rates; data transfer-out pricing. LLM API prices reuse Part 6, Chapter 54's own September 2026 figures, so this chapter's numbers stay consistent with the rest of the book rather than introducing a second, conflicting price list.
 - **Companion files (`companion/ch65/`):**
   - `build_ch65_files.py`: builds the full cost model from documented unit prices and Riverstone's real usage volumes.
   - `monthly_cost_model.csv`: all ten platform cost components, in USD and INR.
   - `unit_economics.csv`: cost per report, per prediction, per AI request, and the corrected dual-metric NFR.
-
----
-
-## The project: build and defend a cost model
-
-**Goal:** produce a real, bottom-up monthly cost model for a system you're responsible for, with unit economics and at least one cost-aware recommendation.
 
 **Option A: your own system.** Any platform or pipeline with a real, checkable cloud bill.
 
@@ -274,18 +273,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You can explain how cloud billing works — the meters, on-demand versus reserved — well enough to estimate a new system's cost before building it.
-- [ ] You can build a bottom-up cost model for a real platform and identify its largest cost drivers, without assuming they're the newest or most talked-about component.
-- [ ] You compute unit economics that are actually useful for a decision, not just a total that sits in a report.
-- [ ] You check an existing cost target against a real model rather than trusting it because it's already written down.
-- [ ] You can tell the difference between average and marginal cost, and specify which one any cost target actually means.
-- [ ] You tag resources at creation and use showback before reaching for chargeback.
-- [ ] You attach a rough cost estimate to architecture decisions before they're made, not after the bill explains them.
-
----
-
 ## Recap
 
 - **Cloud billing is pay-as-you-go**, metered by compute-hours, storage-gigabyte-months, requests, and data transfer, with reserved pricing available once a workload is stable enough to commit to.
@@ -298,7 +285,27 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+FinOps · cloud billing · on-demand pricing · reserved pricing · compute meter · storage meter · request/API meter · data transfer meter · storage tiering · lifecycle policy · unit economics · fully-loaded cost · marginal cost · tagging · showback · chargeback · budget alert · cost-aware architecture decision
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can explain how cloud billing works — the meters, on-demand versus reserved — well enough to estimate a new system's cost before building it.
+- [ ] You can build a bottom-up cost model for a real platform and identify its largest cost drivers, without assuming they're the newest or most talked-about component.
+- [ ] You compute unit economics that are actually useful for a decision, not just a total that sits in a report.
+- [ ] You check an existing cost target against a real model rather than trusting it because it's already written down.
+- [ ] You can tell the difference between average and marginal cost, and specify which one any cost target actually means.
+- [ ] You tag resources at creation and use showback before reaching for chargeback.
+- [ ] You attach a rough cost estimate to architecture decisions before they're made, not after the bill explains them.
+
+---
+
+## Exercises
 
 Use `companion/ch65/monthly_cost_model.csv` and `unit_economics.csv`.
 
@@ -333,25 +340,7 @@ Use `companion/ch65/monthly_cost_model.csv` and `unit_economics.csv`.
 
 ---
 
-## Key terms
-
-FinOps · cloud billing · on-demand pricing · reserved pricing · compute meter · storage meter · request/API meter · data transfer meter · storage tiering · lifecycle policy · unit economics · fully-loaded cost · marginal cost · tagging · showback · chargeback · budget alert · cost-aware architecture decision
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 60, Designing Whole Systems:** the NFR this chapter checks, corrects, and documents — the same design document, updated a second time.
-- **Chapter 54 (Part VI):** the LLM pricing table this chapter's AI-cost figures are computed from, kept consistent across both chapters.
-- **Chapter 63, Automation Architecture & Governance:** the ownership and inventory discipline this chapter's tagging scheme directly extends to cost.
-- **Chapter 66, Data Strategy, Maturity & Building Data Teams:** the business case for platform investment, now backed by a real cost model rather than an estimate.
-- **Interview preparation:** the Architecture & Leadership Question Bank asks about cost-aware design directly — "how would you estimate what a proposed system will cost, and how would you check that estimate later" is this chapter's method.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -388,3 +377,13 @@ FinOps · cloud billing · on-demand pricing · reserved pricing · compute mete
 **16.** Yes — when the higher cost is genuinely justified by what was learned (as in this chapter's story, where ₹2,182.58 turned out to be an entirely reasonable fully-loaded figure once properly understood), rather than an excuse to stop scrutinizing spend. What should be documented: the original target, why it was wrong, what the corrected target is and how it's defined, and what would trigger revisiting it again — exactly the change-log entry this chapter's story added to Riverstone's design document.
 
 **17.** Check whether the team's apparent cost includes genuinely shared infrastructure (backups, transfer, monitoring) that's been attributed entirely to them rather than split honestly across everyone who benefits from it — Figure 65.3's "shared overhead" category exists precisely to prevent this. If the shared-cost allocation is fair and the team's number is still highest, investigate whether that reflects real, justified usage (a genuinely heavier workload) before assuming either the team or the accounting is at fault.
+
+---
+
+## Where this leads
+
+- **Chapter 60, Designing Whole Systems:** the NFR this chapter checks, corrects, and documents — the same design document, updated a second time.
+- **Chapter 54 (Part 6):** the LLM pricing table this chapter's AI-cost figures are computed from, kept consistent across both chapters.
+- **Chapter 63, Automation Architecture & Governance:** the ownership and inventory discipline this chapter's tagging scheme directly extends to cost.
+- **Chapter 66, Data Strategy, Maturity & Building Data Teams:** the business case for platform investment, now backed by a real cost model rather than an estimate.
+- **Interview preparation:** the Architecture & Leadership Question Bank asks about cost-aware design directly — "how would you estimate what a proposed system will cost, and how would you check that estimate later" is this chapter's method.

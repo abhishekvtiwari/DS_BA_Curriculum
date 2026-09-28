@@ -1,6 +1,6 @@
 # Chapter 28. Advanced SQL, Performance & Data Modeling
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -770,6 +770,7 @@ ORDER BY quartile;
 > **Watch out: NTILE splits by count, not by value.** If many orders have the same value, `NTILE` may put identical values into different bands, because it only cares about getting equal-sized groups. For value-based bands, compute the cut points with `PERCENTILE_CONT` and use `CASE`.
 
 ---
+
 ## 28.4 How a database finds rows
 
 To speed up a query, you need a picture of what the database does with it. The picture is simpler than you might expect.
@@ -1514,9 +1515,10 @@ ORDER BY m.month;
 
 January: ₹202,640 of ₹300,000 is 67.5%. ✓ Both sides now have the grain "one month", so the join can't multiply anything.
 
-> **Interview extra point.** When an interviewer gives you two tables and a question, say the grain of each table before you write a join: *"orders is one row per order, order_items is one row per line, so if I join them I'll aggregate the lines first."* It shows the habit that prevents the most common wrong answer, and it's the kind of move Part VIII's SQL bank (Chapter 71) scores as an extra point.
+> **Interview extra point.** When an interviewer gives you two tables and a question, say the grain of each table before you write a join: *"orders is one row per order, order_items is one row per line, so if I join them I'll aggregate the lines first."* It shows the habit that prevents the most common wrong answer, and it's the kind of move Part 8's SQL bank (Chapter 71) scores as an extra point.
 
 ---
+
 ## 28.9 Dimensional modeling: facts, dimensions, and the star schema
 
 Normalized tables are built for *writing*: each fact once, so updates are safe. Analysts mostly *read*, and reading a normalized database means long chains of joins, repeated in every report and often subtly wrong. **Dimensional modeling**, popularized by Ralph Kimball, organizes the same data for reading. It's how most data warehouses, Power BI models (Chapter 16), and dbt marts (Chapter 32) are laid out.
@@ -2613,7 +2615,8 @@ The type 2 load (close, then insert) works as in section 28.10, except that MySQ
 > **Watch out: MySQL can't roll back an ALTER TABLE.** In MySQL, `CREATE`, `ALTER`, and `DROP` commit immediately, even inside `BEGIN … COMMIT`. A migration that fails halfway leaves the first half applied. Keep each MySQL migration to one structure change, and test it on a copy.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -2675,7 +2678,11 @@ Notice what made it work. The measurement came first, so she fixed the tile that
 
 ---
 
-## Tools
+## Project: a star schema with history
+
+**Goal:** a small, reconciled data warehouse for one business process, with a type 2 dimension, that a BI tool can read without knowing anything about the source tables.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -2686,12 +2693,6 @@ Versions used for this chapter, checked in September 2026:
 - **A plan visualizer (optional).** Several free tools turn PostgreSQL's `EXPLAIN (ANALYZE, FORMAT JSON)` output into a diagram. Paste plans only from practice data, never from a production database containing customer data.
 - **Migration tools.** Flyway (Redgate; the free edition covers versioned SQL migrations), Liquibase, and Alembic for Python projects. Check the current release and edition details on each tool's documentation site before you install. Flyway was not run for this chapter, because its installer couldn't be downloaded in the test environment; its conventions are described from Redgate's documentation, and `migrate.py` demonstrates the same mechanism.
 - **Companion files for this chapter:** `ch28_2025_addons.sql` and `ch28_2025_addons_mysql.sql` (staff, parts, BOM, customer changes), `generate_riverstone_perf.py` (the large database), `ch28_perf.py` (reruns every timing experiment), `ch28_star_schema.sql` (the `dw` schema from section 28.9), `migrate.py` with its `migrations/` folder, and `ch28_queries_mysql.sql` (every query in MySQL).
-
----
-
-## The project: a star schema with history
-
-**Goal:** a small, reconciled data warehouse for one business process, with a type 2 dimension, that a BI tool can read without knowing anything about the source tables.
 
 **Option A: your own work data.** Choose a process you report on (orders, tickets, payments) and a dimension that changes over time (customer segment, account owner, region). Work on a copy, never the production database, and remove or mask personal data before you start. Keep the project on your own machine unless your employer has agreed otherwise.
 
@@ -2719,7 +2720,30 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
+## Recap
+
+- A **recursive CTE** has an **anchor** and a **recursive part** joined by `UNION ALL`; it repeats until a pass finds nothing new. Use it for org charts, **bills of materials** (multiply quantities down the tree), and **where-used** queries. Guard against loops with a depth limit, a path, or `CYCLE`.
+- **Frames:** `ROWS` counts rows, `GROUPS` counts peer groups, `RANGE` measures values (with intervals for calendar windows). `EXCLUDE` removes the current row or its peers; the `WINDOW` clause names a window for reuse. `PERCENTILE_CONT` gives medians; `NTILE` gives equal-count bands.
+- Tables live in **pages**. A **sequential scan** reads them all; a **B-tree index** finds rows through sorted keys. `EXPLAIN` shows the plan and estimates; `EXPLAIN ANALYZE` runs it and measures.
+- Index **foreign keys** you join on (PostgreSQL doesn't do it for you), keep filters **sargable**, order **composite** indexes equality-first, and use **covering** and **partial** indexes for important, frequent queries. Every index slows writes.
+- **Normalization:** **1NF** one value per cell; **2NF** no partial dependencies; **3NF** no transitive dependencies. It removes update, insert, and delete anomalies.
+- **Grain:** say it, test it, never join different grains and then sum, and aggregate to a common grain first.
+- **Dimensional modeling:** a **fact table** at a declared grain, surrounded by **dimensions** with **surrogate keys**, including a **date dimension**. Prefer a **star** to a **snowflake**. Facts come as transactions, periodic snapshots, or accumulating snapshots.
+- **Slowly changing dimensions:** **type 1** overwrites, **type 2** adds a version with validity dates, **type 3** keeps a previous value. Join type 2 dimensions on the surrogate key or with a **point-in-time join**.
+- **Denormalize** only for a measured problem, from a normalized source, with an automated refresh and visible staleness. **Materialized views** trade freshness for speed.
+- **Migrations** are numbered, reviewed, never-edited scripts recorded in a history table. Change live structures with **expand and contract**.
+
+---
+
+## Key terms
+
+recursive CTE · anchor · recursive part · hierarchy · bill of materials (BOM) · exploding a BOM · where-used query · `CYCLE` clause · frame type · `GROUPS` frame · peer group · `EXCLUDE` · `WINDOW` clause · ordered-set aggregate · `PERCENTILE_CONT` · `NTILE` · page · sequential scan · index · B-tree · leaf page · statistics · query plan · `EXPLAIN` · `EXPLAIN ANALYZE` · cost · heap · index scan · bitmap scan · index-only scan · nested loop join · hash join · merge join · selective · sargable · expression index · composite index · covering index · partial index · normal form · first normal form (1NF) · update anomaly · insert anomaly · delete anomaly · functional dependency · partial dependency · second normal form (2NF) · transitive dependency · third normal form (3NF) · Boyce–Codd normal form (BCNF) · surrogate key · natural (business) key · grain · dimensional modeling · fact · measure · dimension · fact table · dimension table · star schema · snowflake schema · date dimension · transaction fact table · periodic snapshot · accumulating snapshot · conformed dimension · slowly changing dimension (SCD) · type 1 · type 2 · type 3 · `MERGE` · point-in-time join · denormalization · materialized view · staleness · migration · drift · schema history table · checksum · repeatable migration · idempotent · expand and contract
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can write a recursive CTE that walks down or up a hierarchy, and explain the anchor, the recursive part, and when it stops.
 - [ ] I multiply quantities down a bill of materials and can reconcile a rolled-up cost by hand.
@@ -2736,22 +2760,7 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Recap
-
-- A **recursive CTE** has an **anchor** and a **recursive part** joined by `UNION ALL`; it repeats until a pass finds nothing new. Use it for org charts, **bills of materials** (multiply quantities down the tree), and **where-used** queries. Guard against loops with a depth limit, a path, or `CYCLE`.
-- **Frames:** `ROWS` counts rows, `GROUPS` counts peer groups, `RANGE` measures values (with intervals for calendar windows). `EXCLUDE` removes the current row or its peers; the `WINDOW` clause names a window for reuse. `PERCENTILE_CONT` gives medians; `NTILE` gives equal-count bands.
-- Tables live in **pages**. A **sequential scan** reads them all; a **B-tree index** finds rows through sorted keys. `EXPLAIN` shows the plan and estimates; `EXPLAIN ANALYZE` runs it and measures.
-- Index **foreign keys** you join on (PostgreSQL doesn't do it for you), keep filters **sargable**, order **composite** indexes equality-first, and use **covering** and **partial** indexes for important, frequent queries. Every index slows writes.
-- **Normalization:** **1NF** one value per cell; **2NF** no partial dependencies; **3NF** no transitive dependencies. It removes update, insert, and delete anomalies.
-- **Grain:** say it, test it, never join different grains and then sum, and aggregate to a common grain first.
-- **Dimensional modeling:** a **fact table** at a declared grain, surrounded by **dimensions** with **surrogate keys**, including a **date dimension**. Prefer a **star** to a **snowflake**. Facts come as transactions, periodic snapshots, or accumulating snapshots.
-- **Slowly changing dimensions:** **type 1** overwrites, **type 2** adds a version with validity dates, **type 3** keeps a previous value. Join type 2 dimensions on the surrogate key or with a **point-in-time join**.
-- **Denormalize** only for a measured problem, from a normalized source, with an automated refresh and visible staleness. **Materialized views** trade freshness for speed.
-- **Migrations** are numbered, reviewed, never-edited scripts recorded in a history table. Change live structures with **expand and contract**.
-
----
-
-## Practice exercises
+## Exercises
 
 Use `riverstone_2025` (with this chapter's companion tables and the `dw` schema from section 28.9) unless an exercise says otherwise. Exercises 9 and 15 continue in `riverstone_lab`. Predict the shape of each result before running it.
 
@@ -2794,27 +2803,7 @@ Use `riverstone_2025` (with this chapter's companion tables and the `dw` schema 
 
 ---
 
-## Key terms
-
-recursive CTE · anchor · recursive part · hierarchy · bill of materials (BOM) · exploding a BOM · where-used query · `CYCLE` clause · frame type · `GROUPS` frame · peer group · `EXCLUDE` · `WINDOW` clause · ordered-set aggregate · `PERCENTILE_CONT` · `NTILE` · page · sequential scan · index · B-tree · leaf page · statistics · query plan · `EXPLAIN` · `EXPLAIN ANALYZE` · cost · heap · index scan · bitmap scan · index-only scan · nested loop join · hash join · merge join · selective · sargable · expression index · composite index · covering index · partial index · normal form · first normal form (1NF) · update anomaly · insert anomaly · delete anomaly · functional dependency · partial dependency · second normal form (2NF) · transitive dependency · third normal form (3NF) · Boyce–Codd normal form (BCNF) · surrogate key · natural (business) key · grain · dimensional modeling · fact · measure · dimension · fact table · dimension table · star schema · snowflake schema · date dimension · transaction fact table · periodic snapshot · accumulating snapshot · conformed dimension · slowly changing dimension (SCD) · type 1 · type 2 · type 3 · `MERGE` · point-in-time join · denormalization · materialized view · staleness · migration · drift · schema history table · checksum · repeatable migration · idempotent · expand and contract
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 29, Python as Software, Not Scripts,** turns scripts like `migrate.py` and `generate_riverstone_perf.py` into tested, packaged code.
-- **Chapter 32, Analytics Engineering with dbt,** rebuilds this chapter's star schema as dbt models with tests, documentation, and snapshots for type 2 history, replacing hand-written load scripts.
-- **Chapter 16, Business Intelligence with Power BI,** reads a star schema like `dw` as its data model.
-- **Chapter 47, Data Quality, Observability & Contracts,** turns grain tests and reconciliations into automated daily checks.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** takes dimensional models, partitioning, and materialized views to cloud warehouses and columnar storage.
-- **Chapter 62, Data Architecture Patterns,** compares warehouse modeling approaches at the architect's level.
-- **Chapter 71, SQL Question Bank,** has interview questions on recursive CTEs, indexes, query plans, normalization, grain, and slowly changing dimensions; **Chapter 77** covers data modeling in data engineering and system design interviews.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -3428,3 +3417,15 @@ GROUP BY p.part_name;
 ```
 
 Three packs per Garden Chair: one in the frame and one in each of the two leg assemblies (Figure 28.2). ✓ In MySQL, the `CAST` in both parts keeps the column's type fixed, so the multiplied quantities aren't cut to the anchor's precision.
+
+---
+
+## Where this leads
+
+- **Chapter 29, Python as Software, Not Scripts,** turns scripts like `migrate.py` and `generate_riverstone_perf.py` into tested, packaged code.
+- **Chapter 32, Analytics Engineering with dbt,** rebuilds this chapter's star schema as dbt models with tests, documentation, and snapshots for type 2 history, replacing hand-written load scripts.
+- **Chapter 16, Business Intelligence with Power BI,** reads a star schema like `dw` as its data model.
+- **Chapter 47, Data Quality, Observability & Contracts,** turns grain tests and reconciliations into automated daily checks.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** takes dimensional models, partitioning, and materialized views to cloud warehouses and columnar storage.
+- **Chapter 62, Data Architecture Patterns,** compares warehouse modeling approaches at the architect's level.
+- **Chapter 71, SQL Question Bank,** has interview questions on recursive CTEs, indexes, query plans, normalization, grain, and slowly changing dimensions; **Chapter 77** covers data modeling in data engineering and system design interviews.

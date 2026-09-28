@@ -50,7 +50,7 @@ Consequences to honor while writing:
 | P0-03 | 3 | How a Business Runs on Data | C | 4,500 | Approved (v1) | `manuscript/ch03-how-a-business-runs-on-data.md` |
 | P0-04 | 4 | Numbers Without Fear | C | 4,500 | Approved (v1) | `manuscript/ch04-numbers-without-fear.md` |
 | P0-05 | 5 | Thinking Like an Analyst | C | 3,500 | Approved (v1) | `manuscript/ch05-thinking-like-an-analyst.md` |
-| P0-06 | 6 | Setting Up to Learn | C | 2,500 | Approved (v1) | `manuscript/ch06-setting-up-to-learn.md` |
+| P0-06 | 6 | Planning Your Learning | C | 2,500 | Approved (v1) | `manuscript/ch06-setting-up-to-learn.md` |
 
 ## Part I — The Map
 

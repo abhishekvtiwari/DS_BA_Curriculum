@@ -1,6 +1,6 @@
 # Chapter 51. Data Activation: Reverse ETL, APIs & System Integration
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -18,7 +18,7 @@
 
 ## Why this matters
 
-Every chapter in Part V so far has moved data **toward** the warehouse: ingest it, clean it, model it, check it, store it well. That data now knows things nobody in the business has noticed yet: which leads are hot, which customers are quietly going overdue, which machine is drifting hot. None of that changes anything by sitting in a table.
+Every chapter in Part 5 so far has moved data **toward** the warehouse: ingest it, clean it, model it, check it, store it well. That data now knows things nobody in the business has noticed yet: which leads are hot, which customers are quietly going overdue, which machine is drifting hot. None of that changes anything by sitting in a table.
 
 **Data activation** is the last mile: pushing what the warehouse knows back into the systems where people actually work. A sales rep doesn't open a dashboard before every call; they open the CRM. A dispatch clerk doesn't run a query; they look at the ERP. If the insight isn't there, it doesn't exist for them.
 
@@ -423,7 +423,7 @@ Everything Chapter 45 taught about files applies directly: declared columns, a l
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -462,18 +462,16 @@ At the retrospective, the plant manager's line from Chapter 50 came up again, ad
 
 ---
 
-## Tools
+## Project: sync Riverstone's leads and overdue flags
+
+**Goal:** a nightly, idempotent sync of lead scores and overdue-payment flags into the sandbox CRM, with a reconciliation report, plus a webhook that alerts sales within a minute of a high-value lead.
+
+### Tools you'll need
 
 - **Python 3.12** with `psycopg2` and `requests`.
 - **The Chapter 51 companion folder** (`companion/ch51/`): `reset_ch51.py`, `crm_sandbox.py` (the sandbox CRM's write API), `webhook_receiver.py` (the local webhook inbox), and `sync_leads.py` (scoring and overdue logic). Run Python from that folder.
 - **Versions used for the outputs shown:** Python 3.12.3, requests 2.33.1, PostgreSQL 16.
 - **Worth knowing about:** reverse-ETL tools (Census, Hightouch), iPaaS platforms (Zapier, Workato, Tray.io, n8n, MuleSoft, Boomi), and RPA tools (UiPath, Automation Anywhere, Power Automate Desktop).
-
----
-
-## The project: sync Riverstone's leads and overdue flags
-
-**Goal:** a nightly, idempotent sync of lead scores and overdue-payment flags into the sandbox CRM, with a reconciliation report, plus a webhook that alerts sales within a minute of a high-value lead.
 
 **Option A: Riverstone.** Use the companion environment.
 
@@ -499,22 +497,6 @@ At the retrospective, the plant manager's line from Chapter 50 came up again, ad
 
 ---
 
-## You've got it when…
-
-- [ ] You can explain why a correct number in a warehouse can still change nothing.
-- [ ] You can name three fields worth syncing back into operational systems and what each changes.
-- [ ] You can write a `PATCH` request with authentication, and explain why `PATCH` and `PUT` aren't interchangeable.
-- [ ] You can build a content-based idempotency key and prove a replay is a no-op.
-- [ ] You can explain system of record and write a conflict rule for a specific field.
-- [ ] You can register and receive a webhook, and say what makes a receiver safe.
-- [ ] You can reconcile a set of writes and explain what a mismatch means.
-- [ ] You can compare point-to-point, hub-and-spoke, message queues, and iPaaS, and say which fits a given company size.
-- [ ] You can explain why RPA is fragile and when it's still the right tool.
-- [ ] You can describe SFTP and EDI integration and apply Chapter 45's file discipline to a file you produce.
-- [ ] You can design an audit trail that answers "why does this record say this?"
-
----
-
 ## Recap
 
 - **Data activation** closes the loop from source systems through the warehouse and back into the systems people actually work in. A dashboard is pulled; a synced field is pushed to where the decision already happens.
@@ -531,7 +513,31 @@ At the retrospective, the plant manager's line from Chapter 50 came up again, ad
 
 ---
 
-## Practice exercises
+## Key terms
+
+data activation · reverse ETL · lead score · customer health score · credit hold · reorder flag · churn risk · OAuth 2.0 · access token · `PATCH` versus `PUT` · idempotency key · replay · system of record · conflict rule · webhook · event signature (HMAC) · at-least-once webhook delivery · point-to-point integration · hub-and-spoke integration · message queue / event bus · iPaaS (integration platform as a service) · enterprise integration platform · RPA (robotic process automation) · SFTP · EDI (Electronic Data Interchange) · audit trail · write reconciliation
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can explain why a correct number in a warehouse can still change nothing.
+- [ ] You can name three fields worth syncing back into operational systems and what each changes.
+- [ ] You can write a `PATCH` request with authentication, and explain why `PATCH` and `PUT` aren't interchangeable.
+- [ ] You can build a content-based idempotency key and prove a replay is a no-op.
+- [ ] You can explain system of record and write a conflict rule for a specific field.
+- [ ] You can register and receive a webhook, and say what makes a receiver safe.
+- [ ] You can reconcile a set of writes and explain what a mismatch means.
+- [ ] You can compare point-to-point, hub-and-spoke, message queues, and iPaaS, and say which fits a given company size.
+- [ ] You can explain why RPA is fragile and when it's still the right tool.
+- [ ] You can describe SFTP and EDI integration and apply Chapter 45's file discipline to a file you produce.
+- [ ] You can design an audit trail that answers "why does this record say this?"
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -561,27 +567,7 @@ At the retrospective, the plant manager's line from Chapter 50 came up again, ad
 
 ---
 
-## Key terms
-
-data activation · reverse ETL · lead score · customer health score · credit hold · reorder flag · churn risk · OAuth 2.0 · access token · `PATCH` versus `PUT` · idempotency key · replay · system of record · conflict rule · webhook · event signature (HMAC) · at-least-once webhook delivery · point-to-point integration · hub-and-spoke integration · message queue / event bus · iPaaS (integration platform as a service) · enterprise integration platform · RPA (robotic process automation) · SFTP · EDI (Electronic Data Interchange) · audit trail · write reconciliation
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** deploys syncs like this one somewhere they stay running: secrets management for API tokens, containers, and scheduled infrastructure.
-- **Chapter 47** applies directly: the reconciliation and audit-trail habits here are Chapter 47's checks, pointed at writes instead of reads.
-- **Chapter 46** is where a real deployment of this sync would live, as an orchestrated, idempotent, checked pipeline step.
-- **Chapter 50**'s at-least-once delivery is the same guarantee webhooks make, from the other direction.
-- **Chapter 58, Intelligent Automation,** builds AI-driven actions on top of exactly this activation layer, with the same idempotency and system-of-record discipline.
-- **Chapter 63, Designing Automation & Integration Architecture,** returns to integration patterns at the whole-company level.
-- **Part VIII:** integration and API design questions appear in the data engineering interview chapters, and Chapter 77 includes system design cases built on exactly this loop.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -622,3 +608,15 @@ This makes retries within the *same scheduled run* a no-op regardless of whether
 **13.** A wrong number in a report is a **single, visible, correctable** failure: someone reads it, it's wrong, it gets fixed, and the damage is bounded to whoever acted on that one report before the correction went out (Chapter 47's severity framework treats this as, at most, an S1 with a clear blast radius). A sync that silently overwrites a human's entry is worse on every axis: it's **invisible** until someone happens to look at the specific record; it **destroys information** that may not exist anywhere else (the negotiated discount lived only in that field); it can **recur indefinitely**, silently re-erasing a fix every time the sync runs, until someone identifies the actual cause; and it **damages trust in the system itself**, since once a rep learns the CRM can silently lose their work, they stop trusting the sync for everything, not just the one field that broke.
 
 **14.** The goal was never "have an API". It was **reliable, correct data movement between systems, at a cost proportional to what's at stake.** An API is usually the best way to get that, but a twenty-year-old EDI relationship with a supplier that has worked reliably for two decades, validated by the same file-checking discipline as any other data source, isn't broken just because it's old; rebuilding it around a new API the supplier doesn't have would cost real effort to deliver the same reliability that already exists. Similarly, RPA against a portal with no API isn't a failure of engineering: it's occasionally the only bridge available, and the right response is to operate it carefully (monitoring, human review, revisiting the decision as the target changes), not to pretend it doesn't exist or refuse to use it. "Modernize everything" is a good instinct pointed at the wrong target: point it at reliability and cost, and let the technology choice follow from that, case by case.
+
+---
+
+## Where this leads
+
+- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** deploys syncs like this one somewhere they stay running: secrets management for API tokens, containers, and scheduled infrastructure.
+- **Chapter 47** applies directly: the reconciliation and audit-trail habits here are Chapter 47's checks, pointed at writes instead of reads.
+- **Chapter 46** is where a real deployment of this sync would live, as an orchestrated, idempotent, checked pipeline step.
+- **Chapter 50**'s at-least-once delivery is the same guarantee webhooks make, from the other direction.
+- **Chapter 58, Intelligent Automation,** builds AI-driven actions on top of exactly this activation layer, with the same idempotency and system-of-record discipline.
+- **Chapter 63, Designing Automation & Integration Architecture,** returns to integration patterns at the whole-company level.
+- **Part 8:** integration and API design questions appear in the data engineering interview chapters, and Chapter 77 includes system design cases built on exactly this loop.

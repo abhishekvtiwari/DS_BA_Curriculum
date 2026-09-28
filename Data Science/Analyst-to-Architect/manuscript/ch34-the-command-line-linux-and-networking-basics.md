@@ -1,6 +1,6 @@
 # Chapter 34. The Command Line, Linux & Networking Basics
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -391,6 +391,7 @@ $ awk '{ print $3 }' logs/report.log | sort | uniq -c | sort -nr
 Three failures in 61 days, two of them the same harmless cause (no orders on a Sunday and on Christmas Day), and one real problem on 9 November. `-A1` shows one line **after** each match (`-B` before, `-C` both), which is how you see what happened next. Finding that in a log viewer takes minutes; here it takes one line, and the same command works on a server over SSH where there is no log viewer at all.
 
 ---
+
 ## 34.5 Permissions: who can read, write, and run
 
 Every file has an **owner**, a **group**, and nine permission bits. `ls -l` shows them:
@@ -734,7 +735,8 @@ The `404` above is the same failure Chapter 29's client had to handle, seen from
 > **Try it.** With the mock CRM API from Chapter 29 running, `curl --silent "http://127.0.0.1:8029/leads?page=1&page_size=3" -H "X-API-Key: demo-key"` shows the raw JSON that `CrmClient` parses, and dropping the header shows the 401.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -811,7 +813,11 @@ Three things made this fixable in minutes rather than a day: the failure was lou
 
 ---
 
-## Tools
+## Project: a daily file that looks after itself
+
+**Goal:** a script that fetches one day's export, proves it arrived intact, archives it, logs what it did, and tells its caller what happened.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -821,12 +827,6 @@ Versions used for this chapter, checked in September 2026:
 - **Python 3.12** for the practice data generator and the local file server.
 - **Companion files** in `ch34/`: `make_ch34_data.py` (builds `practice/` from `sales_lines_2025.csv`), `daily_file_server.py` (the local file server), `daily_summary.sh` and `fetch_daily.sh` (the scripts), and `ch34_check.py` (checks the chapter's numbers).
 - **Worth adding later:** `jq` for JSON on the command line, `ripgrep` (`rg`) as a faster `grep`, `fzf` for searching history, `tmux` for sessions that survive a dropped connection, and `qsv` or `csvkit` for proper CSV parsing.
-
----
-
-## The project: a daily file that looks after itself
-
-**Goal:** a script that fetches one day's export, proves it arrived intact, archives it, logs what it did, and tells its caller what happened.
 
 **Option A: your own data.** A file your team downloads, exports, or receives every day. Work in a folder you own, and keep credentials in environment variables, not in the script.
 
@@ -888,21 +888,6 @@ The compressed archive holds the same ₹89,800.00 the summary reported, so noth
 
 ---
 
-## You've got it when…
-
-- [ ] I can find my way around a strange machine with `pwd`, `ls`, `cd`, and `find`, without a file manager.
-- [ ] I can answer "how many rows, which files, which values" with a pipeline of small tools.
-- [ ] I know where output and errors go, and how to send them where I want.
-- [ ] I check exit codes, and my scripts return meaningful ones.
-- [ ] I can search a log for errors and see the lines around them.
-- [ ] I can read `ls -l` permissions and fix them with `chmod`.
-- [ ] I know what `PATH` is, and why a cron job can't find a command my terminal finds.
-- [ ] I can write a script that takes arguments, uses `set -euo pipefail`, quotes its variables, and fails safely.
-- [ ] I can connect to a server with an SSH key and copy files both ways.
-- [ ] I can explain IP, DNS, port, and HTTP status codes to a colleague, and test an API with `curl`.
-
----
-
 ## Recap
 
 - The **shell** runs commands in a **current folder**. `pwd`, `ls`, `cd`, `head`, `tail`, `less`, `cp`, `mv`, `rm`, `mkdir`, and `find` cover the file work; Tab, the up arrow, and `Ctrl+C` save the most time.
@@ -917,7 +902,30 @@ The compressed archive holds the same ₹89,800.00 the summary reported, so noth
 
 ---
 
-## Practice exercises
+## Key terms
+
+shell · bash · zsh · WSL · prompt · current working directory · path (absolute, relative) · home folder · globbing · standard input · standard output · standard error · redirection · pipe · exit code · `grep` · `wc` · `sort` · `uniq` · `cut` · `awk` · `NR` and `FNR` · field separator · `head` · `tail` · `less` · `find` · `chmod` · permission bits · owner · group · others · `sudo` · superuser · environment variable · `export` · `PATH` · shell built-in · shebang · `set -euo pipefail` · command substitution · quoting · `for` loop · argument (`$1`, `$@`) · background job · SSH · key pair · public key · private key · passphrase · `~/.ssh/config` · `scp` · `rsync` · port forwarding · IP address · localhost · private address range · DNS · port · HTTP · method · status code · `curl` · `ss` · `cron` · checksum · `sha256sum`
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can find my way around a strange machine with `pwd`, `ls`, `cd`, and `find`, without a file manager.
+- [ ] I can answer "how many rows, which files, which values" with a pipeline of small tools.
+- [ ] I know where output and errors go, and how to send them where I want.
+- [ ] I check exit codes, and my scripts return meaningful ones.
+- [ ] I can search a log for errors and see the lines around them.
+- [ ] I can read `ls -l` permissions and fix them with `chmod`.
+- [ ] I know what `PATH` is, and why a cron job can't find a command my terminal finds.
+- [ ] I can write a script that takes arguments, uses `set -euo pipefail`, quotes its variables, and fails safely.
+- [ ] I can connect to a server with an SSH key and copy files both ways.
+- [ ] I can explain IP, DNS, port, and HTTP status codes to a colleague, and test an API with `curl`.
+
+---
+
+## Exercises
 
 Work in `companion/ch34/practice`. Predict each answer before you run it.
 
@@ -951,27 +959,7 @@ Work in `companion/ch34/practice`. Predict each answer before you run it.
 
 ---
 
-## Key terms
-
-shell · bash · zsh · WSL · prompt · current working directory · path (absolute, relative) · home folder · globbing · standard input · standard output · standard error · redirection · pipe · exit code · `grep` · `wc` · `sort` · `uniq` · `cut` · `awk` · `NR` and `FNR` · field separator · `head` · `tail` · `less` · `find` · `chmod` · permission bits · owner · group · others · `sudo` · superuser · environment variable · `export` · `PATH` · shell built-in · shebang · `set -euo pipefail` · command substitution · quoting · `for` loop · argument (`$1`, `$@`) · background job · SSH · key pair · public key · private key · passphrase · `~/.ssh/config` · `scp` · `rsync` · port forwarding · IP address · localhost · private address range · DNS · port · HTTP · method · status code · `curl` · `ss` · `cron` · checksum · `sha256sum`
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 29, Python as Software, Not Scripts,** takes over when a shell script grows logic: it runs with the same exit codes, environment variables, and HTTP ideas you've just used.
-- **Chapter 26, The Professional Toolkit,** uses the terminal for Git.
-- **Chapter 32, Analytics Engineering with dbt,** is a command-line tool end to end.
-- **Chapter 20, Automating Reports & Delivering Insights,** schedules jobs with `cron` and its cloud equivalents.
-- **Chapter 46, Pipelines & Orchestration,** and **Chapter 49, Storage, Warehouses & Lakehouses,** run on machines you reach only this way.
-- **Chapter 50, Cloud Fundamentals,** builds on IP addresses, ports, and SSH keys for virtual machines and networks.
-- **Chapter 73, Data Engineering Question Bank,** asks about permissions, exit codes, and debugging a failed job.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1190,3 +1178,15 @@ cd "${DIR:?DIR is not set}" && rm -rf -- ./*
 **15.** Cron runs with a minimal environment: a short `PATH` (often just `/usr/bin:/bin`), no `~/.bashrc`, and a different current folder. `uv` lives in your home folder, which isn't on that `PATH`. Two fixes: call it by full path (`/home/meera/.local/bin/uv run …`), or set `PATH=` at the top of the crontab or the script. A third, often best: have cron run a small wrapper script that sets the environment explicitly, so the job doesn't depend on anyone's login setup.
 
 **16.** `grep` is right for a quick look and a quick count on data you trust: *"how many of these 61 files mention Metro Mart, and which ones"* took one command and no parsing. It's a trap when the answer has to be correct in a published number and the data can contain commas, quotes, or newlines inside fields, or when the match could appear in the wrong column: `grep -c Storage ../sales_lines_2025.csv` counts lines where *any* field contains "Storage", including a product name and a category, which is not the same as "order lines in the Storage category". For that, use `awk -F, '$9 == "Storage"'`, or pandas.
+
+---
+
+## Where this leads
+
+- **Chapter 29, Python as Software, Not Scripts,** takes over when a shell script grows logic: it runs with the same exit codes, environment variables, and HTTP ideas you've just used.
+- **Chapter 26, The Professional Toolkit,** uses the terminal for Git.
+- **Chapter 32, Analytics Engineering with dbt,** is a command-line tool end to end.
+- **Chapter 20, Automating Reports & Delivering Insights,** schedules jobs with `cron` and its cloud equivalents.
+- **Chapter 46, Pipelines & Orchestration,** and **Chapter 49, Storage, Warehouses & Lakehouses,** run on machines you reach only this way.
+- **Chapter 50, Cloud Fundamentals,** builds on IP addresses, ports, and SSH keys for virtual machines and networks.
+- **Chapter 73, Data Engineering Question Bank,** asks about permissions, exit codes, and debugging a failed job.

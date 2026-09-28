@@ -1,6 +1,6 @@
 # Chapter 76A. Data Analyst & Data Scientist Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **A note on this chapter's numbering.** Like Chapter 72A, this chapter sits outside the original plan, added on author request as a role-specific companion to Chapter 76B (Business Analyst). It's numbered **76A**, a placeholder for the coordinator to renumber at final assembly, exactly the convention already established for Chapter 72A.
 >
@@ -209,7 +209,7 @@
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -233,15 +233,13 @@ The interviewer's note afterward: *"The resume line was modest. The depth behind
 
 ---
 
-## Tools
-
-No new tools beyond what earlier chapters in this part already cover. The one habit worth building specifically for this chapter: after finishing any real project, write a five-line summary immediately (business question, method, finding, impact number, one honest limitation) while it's fresh, so months later in an interview you're recalling a summary you already wrote carefully once, not reconstructing the whole thing from memory under pressure.
-
----
-
-## The project
+## Project
 
 **Goal:** prepare two full project narratives, one DA-style and one DS-style (or two of whichever type matches your own background), to the standard this chapter models.
+
+### Tools you'll need
+
+No new tools beyond what earlier chapters in this part already cover. The one habit worth building specifically for this chapter: after finishing any real project, write a five-line summary immediately (business question, method, finding, impact number, one honest limitation) while it's fresh, so months later in an interview you're recalling a summary you already wrote carefully once, not reconstructing the whole thing from memory under pressure.
 
 1. For each project, write the five-line summary described above: business question, method, finding, quantified impact, honest limitation.
 2. Practice defending your single most impressive resume metric out loud: state its exact baseline, time period, and one confound you checked.
@@ -250,15 +248,15 @@ No new tools beyond what earlier chapters in this part already cover. The one ha
 
 ---
 
-## Final-week revision list
-
-Q76A-001, Q76A-002, Q76A-007, Q76A-012, Q76A-016, Q76A-021, Q76A-026.
-
----
-
 ## Key terms
 
 Data Analyst vs. Data Scientist (role distinction) · business-question-first narrative structure · quantified impact · baseline (for a claimed metric) · confound (in a resume claim) · problem framing (DS) · cost-based threshold (referenced) · honest limitation · portfolio deep-dive · resume scrutiny
+
+---
+
+## Final-week revision list
+
+Q76A-001, Q76A-002, Q76A-007, Q76A-012, Q76A-016, Q76A-021, Q76A-026.
 
 ---
 

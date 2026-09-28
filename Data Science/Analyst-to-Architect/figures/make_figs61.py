@@ -67,7 +67,7 @@ def f3():  # the reliability toolkit
         o.append(box(x,60,175,140,name,c,desc.split("\n"),10))
         o.append(rect(x,206,175,50,fill="#f3f6fa",rx=6))
         for j,l in enumerate(ex.split("\n")): o.append(text(x+87.5,224+j*15,l,9.4,MUTED,anchor="middle"))
-    o.append(text(30,286,"None of these is exotic — Parts V and VI already use every one. This chapter names them as a reusable kit.",11.3,MUTED))
+    o.append(text(30,286,"None of these is exotic — Parts 5 and 6 already use every one. This chapter names them as a reusable kit.",11.3,MUTED))
     return svg(990,304,"".join(o))
 
 def f4():  # failure analysis of the platform: reusing ch60's containers, annotated

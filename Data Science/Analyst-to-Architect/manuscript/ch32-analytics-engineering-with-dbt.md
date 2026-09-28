@@ -1,6 +1,6 @@
 # Chapter 32. Analytics Engineering with dbt
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -991,7 +991,7 @@ The one boundary that keeps moving is the **semantic layer**: the idea that metr
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1037,7 +1037,11 @@ Notice that dbt didn't settle the argument. Writing the definition down did. dbt
 
 ---
 
-## Tools
+## Project: a tested mart that feeds a dashboard
+
+**Goal:** a dbt project someone else could clone, build, and trust, ending in a mart a BI tool reads.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -1048,12 +1052,6 @@ Versions used for this chapter, checked in September 2026:
 - **Adapters** for other warehouses: `dbt-snowflake`, `dbt-bigquery`, `dbt-databricks`, `dbt-redshift`, `dbt-duckdb`, `dbt-sqlserver`. The project changes very little between them; the SQL dialect does.
 - **Packages** worth knowing: `dbt_utils` (macros and extra tests), `dbt_expectations` (a larger test catalog), `codegen` (generates boilerplate YAML from your warehouse), `elementary` (observability, Chapter 47).
 - **Companion files** in `ch32/`: the complete `riverstone_dbt` project, including its CI workflow and `.sqlfluff`.
-
----
-
-## The project: a tested mart that feeds a dashboard
-
-**Goal:** a dbt project someone else could clone, build, and trust, ending in a mart a BI tool reads.
 
 **Option A: your own warehouse.** Pick one report that matters and rebuild its inputs as a dbt project. Work against a development schema, never production, and keep credentials in environment variables.
 
@@ -1085,23 +1083,6 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain ELT, and why transformation moved into the warehouse.
-- [ ] I can set up a dbt project whose credentials never appear in the code.
-- [ ] Every model of mine uses `ref` and `source`, and I can explain both jobs `ref` does.
-- [ ] I lay projects out in staging and marts, and I keep the grain in staging.
-- [ ] I choose materializations deliberately and can say what each costs.
-- [ ] My models carry grain tests, relationship tests, and at least one reconciliation.
-- [ ] I run `dbt build`, not `dbt run`, on a schedule, and I know why.
-- [ ] I can read a failing test's output and get to the offending rows.
-- [ ] I write descriptions beside the models and can navigate my own lineage graph.
-- [ ] I can keep type 2 history with a snapshot, and I know what a snapshot can't recover.
-- [ ] I can make a model incremental, with a lookback, and measure what it saves.
-- [ ] I write a business rule once, as a macro, and lint and build on every pull request.
-
----
-
 ## Recap
 
 - **Analytics engineering** brings software habits (version control, tests, review, documentation) to SQL transformation. **ELT** put that transformation inside the warehouse, and **dbt** is the tool most teams use for it.
@@ -1118,7 +1099,32 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+analytics engineering · ETL · ELT · dbt Core · dbt Cloud · adapter · profile · target · `dbt_project.yml` · `profiles.yml` · model · source · `ref` · `source()` · Jinja · compiled SQL · DAG (dependency graph) · staging layer · intermediate layer · mart · materialization · view · table · incremental model · ephemeral model · `is_incremental()` · `{{ this }}` · incremental strategy · lookback window · full refresh · generic test · singular test · `unique` · `not_null` · `relationships` · `accepted_values` · source freshness · `dbt build` · `dbt run` · `dbt test` · node selection (`+`, `state:modified`) · snapshot · `dbt_valid_from` · `dbt_valid_to` · `dbt_scd_id` · check strategy · timestamp strategy · macro · package · `dbt_utils` · docs site · lineage graph · SQLFluff · linting · continuous integration · semantic layer · MetricFlow
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain ELT, and why transformation moved into the warehouse.
+- [ ] I can set up a dbt project whose credentials never appear in the code.
+- [ ] Every model of mine uses `ref` and `source`, and I can explain both jobs `ref` does.
+- [ ] I lay projects out in staging and marts, and I keep the grain in staging.
+- [ ] I choose materializations deliberately and can say what each costs.
+- [ ] My models carry grain tests, relationship tests, and at least one reconciliation.
+- [ ] I run `dbt build`, not `dbt run`, on a schedule, and I know why.
+- [ ] I can read a failing test's output and get to the offending rows.
+- [ ] I write descriptions beside the models and can navigate my own lineage graph.
+- [ ] I can keep type 2 history with a snapshot, and I know what a snapshot can't recover.
+- [ ] I can make a model incremental, with a lookback, and measure what it saves.
+- [ ] I write a business rule once, as a macro, and lint and build on every pull request.
+
+---
+
+## Exercises
 
 Work in the `riverstone_dbt` project, against the `dev` target. Predict each answer before you run it.
 
@@ -1154,27 +1160,7 @@ Work in the `riverstone_dbt` project, against the `dev` target. Predict each ans
 
 ---
 
-## Key terms
-
-analytics engineering · ETL · ELT · dbt Core · dbt Cloud · adapter · profile · target · `dbt_project.yml` · `profiles.yml` · model · source · `ref` · `source()` · Jinja · compiled SQL · DAG (dependency graph) · staging layer · intermediate layer · mart · materialization · view · table · incremental model · ephemeral model · `is_incremental()` · `{{ this }}` · incremental strategy · lookback window · full refresh · generic test · singular test · `unique` · `not_null` · `relationships` · `accepted_values` · source freshness · `dbt build` · `dbt run` · `dbt test` · node selection (`+`, `state:modified`) · snapshot · `dbt_valid_from` · `dbt_valid_to` · `dbt_scd_id` · check strategy · timestamp strategy · macro · package · `dbt_utils` · docs site · lineage graph · SQLFluff · linting · continuous integration · semantic layer · MetricFlow
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 16, Business Intelligence with Power BI,** reads the mart this chapter builds.
-- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is the modeling this chapter automates; its grain and SCD lessons are the reason the tests here look the way they do.
-- **Chapter 46, Pipelines & Orchestration,** gets the data into the warehouse and runs dbt on a schedule alongside everything else.
-- **Chapter 47, Data Quality, Observability & Contracts,** goes further than tests: freshness, anomaly detection, contracts, and who gets paged.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** is where these models run at scale, and where materialization choices become money.
-- **Chapter 62, Data Architecture Patterns,** puts dbt in the wider picture, including when a team shouldn't use it.
-- **Chapter 71, SQL Question Bank,** and **Chapter 77** include dbt and analytics-engineering questions.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1322,3 +1308,14 @@ Run it after a few incremental runs, not just after a full refresh: drift is the
 
 **18.** When the transformation isn't SQL and doesn't want to be: machine-learning features that need Python, or parsing awkward files. When the data isn't in the warehouse yet: dbt can't fetch it. When you need row-by-row processing or true real-time results: dbt runs batches. When the project is one query that one person runs occasionally: a scheduled script is less machinery. And when the team has no version control or review habit, dbt on its own won't create one, though adopting it is a reasonable excuse to start.
 
+---
+
+## Where this leads
+
+- **Chapter 16, Business Intelligence with Power BI,** reads the mart this chapter builds.
+- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is the modeling this chapter automates; its grain and SCD lessons are the reason the tests here look the way they do.
+- **Chapter 46, Pipelines & Orchestration,** gets the data into the warehouse and runs dbt on a schedule alongside everything else.
+- **Chapter 47, Data Quality, Observability & Contracts,** goes further than tests: freshness, anomaly detection, contracts, and who gets paged.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** is where these models run at scale, and where materialization choices become money.
+- **Chapter 62, Data Architecture Patterns,** puts dbt in the wider picture, including when a team shouldn't use it.
+- **Chapter 71, SQL Question Bank,** and **Chapter 77** include dbt and analytics-engineering questions.

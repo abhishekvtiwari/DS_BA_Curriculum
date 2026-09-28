@@ -1,6 +1,6 @@
 # Chapter 58. Intelligent Automation
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -379,6 +379,7 @@ straight through                  9             47         6.7              1333
 > **Watch out: most automation business cases omit three costs.** The exception queue (somebody works it, every day), the review and audit time (somebody samples the automatic ones), and the build and maintenance cost (this pipeline is a system that needs a version, tests, and an owner). Add those three and a lot of "80% cost reduction" slides become "30%", which is still excellent and is a number that survives contact with the finance team.
 
 ---
+
 ## 58.8 Rolling it out
 
 Four stages, with a gate between each. Riverstone is at stage 2 and should stay there until the numbers say otherwise.
@@ -487,7 +488,7 @@ That last row deserves emphasis, because it is the cheapest win in the chapter a
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -526,7 +527,11 @@ By January the numbers are: 40 emails a day, 41 seconds of review each, about 28
 
 ---
 
-## Tools
+## Project: the intake pipeline, end to end
+
+**Goal:** an automation that writes to a system of record safely, and a business case that would survive a finance review.
+
+### Tools you'll need
 
 Checked in September 2026:
 
@@ -537,12 +542,6 @@ Checked in September 2026:
 - **RPA**, where there is no API: UiPath, Automation Anywhere, Power Automate. Treat as a bridge with an expiry date.
 - **Document intake** for photographed POs: a cloud document API, or a vision model (Chapter 54's multimodal section), feeding the same validation and queue.
 - **Companion files** in `ch58/`: `erp.py` (the SQLite order book with schema, idempotency, transactions, and audit log), `intake.py` (the pipeline), and `ch58_check.py`.
-
----
-
-## The project: the intake pipeline, end to end
-
-**Goal:** an automation that writes to a system of record safely, and a business case that would survive a finance review.
 
 **Steps:**
 
@@ -569,22 +568,6 @@ Checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can tell RPA, integration, and model-assisted automation apart and pick the right one.
-- [ ] I rank candidates by volume × time, then filter by the cost of an error.
-- [ ] Every automated write has a uniqueness key, a transaction, and an audit row.
-- [ ] I can replay an entire day's input and prove nothing doubles.
-- [ ] I report the silent error rate beside the straight-through rate.
-- [ ] My approval threshold is chosen from money, not from habit.
-- [ ] I classify exceptions, and each class has a defined action.
-- [ ] My ROI arithmetic includes the queue, the review, the build, and the cost of being wrong.
-- [ ] I roll out in stages with a gate at each, and I know which gate I am at.
-- [ ] I automate the segment I am excellent at rather than everything I am mediocre at.
-- [ ] I talk to the person whose job changes before I build.
-
----
-
 ## Recap
 
 - **Three generations**: RPA (a bridge), integration (the durable answer), and model-assisted (for unstructured input). Riverstone needs the third feeding the second.
@@ -600,7 +583,31 @@ Checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+intelligent automation · RPA · screen scraping · API integration · model-assisted intake · straight-through processing · silent error rate · system of record · idempotency · idempotency key · unique constraint · transaction · rollback · audit log · actor · pipeline version · human in the loop · assisted mode · approval threshold · exception queue · correction rate · exception taxonomy · transient failure · malformed input · unknown reference · batch circuit breaker · touch time · ROI · cost of an error · segmentation · shadow rollout · gate · reviewer interface · confirmation loop · process redesign · structured input (templates and portals)
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can tell RPA, integration, and model-assisted automation apart and pick the right one.
+- [ ] I rank candidates by volume × time, then filter by the cost of an error.
+- [ ] Every automated write has a uniqueness key, a transaction, and an audit row.
+- [ ] I can replay an entire day's input and prove nothing doubles.
+- [ ] I report the silent error rate beside the straight-through rate.
+- [ ] My approval threshold is chosen from money, not from habit.
+- [ ] I classify exceptions, and each class has a defined action.
+- [ ] My ROI arithmetic includes the queue, the review, the build, and the cost of being wrong.
+- [ ] I roll out in stages with a gate at each, and I know which gate I am at.
+- [ ] I automate the segment I am excellent at rather than everything I am mediocre at.
+- [ ] I talk to the person whose job changes before I build.
+
+---
+
+## Exercises
 
 Work in `companion/ch58`.
 
@@ -636,27 +643,7 @@ Work in `companion/ch58`.
 
 ---
 
-## Key terms
-
-intelligent automation · RPA · screen scraping · API integration · model-assisted intake · straight-through processing · silent error rate · system of record · idempotency · idempotency key · unique constraint · transaction · rollback · audit log · actor · pipeline version · human in the loop · assisted mode · approval threshold · exception queue · correction rate · exception taxonomy · transient failure · malformed input · unknown reference · batch circuit breaker · touch time · ROI · cost of an error · segmentation · shadow rollout · gate · reviewer interface · confirmation loop · process redesign · structured input (templates and portals)
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 59, Industry Case Studies,** puts this pipeline beside eight other end-to-end projects.
-- **Chapter 57, LLMOps,** keeps the extraction honest once this is running daily.
-- **Chapter 46, Pipelines & Orchestration,** schedules the intake run and the queue reminders.
-- **Chapter 12 and 28, SQL,** are where the transaction, the constraint, and the audit table come from.
-- **Chapter 64, Responsible AI & Governance,** covers accountability for an automated decision and what customers must be told.
-- **Chapter 3, How a Business Runs on Data,** is where the order-to-cash process this automates was first explained; reread it with this chapter in mind.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview version: "how would you automate invoice processing, and how would you know it was safe?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -790,3 +777,15 @@ The wrong value auto-loaded roughly doubles with each step up. **That is the num
 **17.** *"Because 12% of emails need judgment, and someone has to give it. She works the queue, she approves the large orders, and she samples the automatic ones, which is how we know the system still works. Her time on the task has gone from two hours a day to about half an hour, and that half hour is the part that protects us from shipping the wrong thing."* If the real question is whether headcount can fall, answer it directly with the measured time saved and let the business decide, rather than letting the question live unasked.
 
 **18.** Almost everything gets stricter. **Approval thresholds fall to near zero**, because the cost of an error is immediate and often unrecoverable. **Two-person authorization** becomes standard above small amounts. **Idempotency stops being a nicety** and becomes the property that prevents paying twice, and it must survive crashes, not just retries. The **audit trail becomes a legal record** with retention requirements. Reconciliation against the bank becomes a daily control, not a monthly one. And **you almost certainly do not let a model decide the amount**: it can read the invoice, and a rule, a match against a purchase order, and a person decide whether to pay it. The general principle: as the cost and irreversibility of an action rise, the model's role shrinks to reading, and the decision moves to rules and people.
+
+---
+
+## Where this leads
+
+- **Chapter 59, Industry Case Studies,** puts this pipeline beside eight other end-to-end projects.
+- **Chapter 57, LLMOps,** keeps the extraction honest once this is running daily.
+- **Chapter 46, Pipelines & Orchestration,** schedules the intake run and the queue reminders.
+- **Chapter 12 and 28, SQL,** are where the transaction, the constraint, and the audit table come from.
+- **Chapter 64, Responsible AI & Governance,** covers accountability for an automated decision and what customers must be told.
+- **Chapter 3, How a Business Runs on Data,** is where the order-to-cash process this automates was first explained; reread it with this chapter in mind.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview version: "how would you automate invoice processing, and how would you know it was safe?"

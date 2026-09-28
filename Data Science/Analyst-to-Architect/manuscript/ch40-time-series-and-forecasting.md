@@ -1,6 +1,6 @@
 # Chapter 40. Time Series & Forecasting
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -25,7 +25,7 @@ Every business runs on forecasts, most of them made in a spreadsheet by someone 
 - The maintenance team wants to know that a machine's heater is failing before the shift supervisor notices scrap.
 - An interviewer will ask what makes time series different from other data, and "the rows are in order" is a beginning, not an answer.
 
-Time series break the assumption that most of Part IV relied on: that rows are independent. Yesterday predicts today. That's what makes forecasting possible, and it's what makes every shortcut from Chapter 36 (random splits, cross-validation, features that peek forward) fail quietly. This chapter is about doing it properly, and about measuring whether the effort beat the spreadsheet.
+Time series break the assumption that most of Part 4 relied on: that rows are independent. Yesterday predicts today. That's what makes forecasting possible, and it's what makes every shortcut from Chapter 36 (random splits, cross-validation, features that peek forward) fail quietly. This chapter is about doing it properly, and about measuring whether the effort beat the spreadsheet.
 
 ---
 
@@ -881,7 +881,7 @@ Three general rules for sensor anomalies: **use the status column** (a stopped m
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -916,7 +916,11 @@ The thing Deepak says afterwards is the thing to remember: *"So the model's job 
 
 ---
 
-## Tools
+## Project: forecast Riverstone's monthly demand by product category
+
+**Goal:** a forecast for 2026 by category, with intervals, a backtested comparison against seasonal naive, and a one-page note the production planner could use.
+
+### Tools you'll need
 
 - **pandas** (3.0.2): date indexes, `asfreq`, `shift`, `rolling` with time-based windows, `resample`, `ewm` with `times`.
 - **statsmodels** 0.15.0: `seasonal_decompose`, `adfuller`, `acf`, `pacf`, `ExponentialSmoothing`, `SARIMAX`. Its documentation on state-space models is the reference for prediction intervals.
@@ -925,12 +929,6 @@ The thing Deepak says afterwards is the thing to remember: *"So the model's job 
 - Not used here but worth knowing: **pmdarima** (`auto_arima`), **statsforecast** (very fast classical models over thousands of series), **sktime** (forecasting with a scikit-learn interface), **darts** (deep learning forecasters). Deep learning models such as N-BEATS and the Temporal Fusion Transformer exist and mostly matter with many related series and rich features; on a single monthly series they rarely beat SARIMA.
 - Everything ran on one CPU core, Python 3.12.3, on 18 September 2026. The slowest step is the backtest with SARIMA, about 20 seconds.
 - **Companion files:** `companion/generate_riverstone_demand.py` (seed 20240) and `companion/generate_riverstone_sensors.py` (seed 20241; `--full` builds the 4.8-million-row version for Chapter 48). Run the chapter's code from `companion/ch40/`. Data specs: `planning/data/riverstone-demand.md` and `riverstone-sensors.md`.
-
----
-
-## The project: forecast Riverstone's monthly demand by product category
-
-**Goal:** a forecast for 2026 by category, with intervals, a backtested comparison against seasonal naive, and a one-page note the production planner could use.
 
 **Option A: your own data.** Any monthly or weekly series with at least three years of history: sales, tickets, web traffic, energy use.
 
@@ -957,7 +955,30 @@ The thing Deepak says afterwards is the thing to remember: *"So the model's job 
 
 ---
 
-## You've got it when…
+## Recap
+
+- A time series has **trend**, **seasonality**, **cycles**, and **noise**; **decomposition** separates them for understanding, not forecasting.
+- **Stationarity** is what classical models need; **differencing** (plain and seasonal) and **logs** get you there; the **ADF test** checks.
+- **Seasonal naive** is the baseline to beat, and it often isn't beaten.
+- **Exponential smoothing** weights recent values more; **Holt–Winters** adds trend and seasonality, and can fail when parameters are chosen by in-sample fit.
+- **SARIMA** combines autoregression, differencing, and moving-average terms at ordinary and seasonal lags; read **ACF/PACF**, fit on logs, show **intervals**.
+- **Prophet** is a strong low-effort option; **ML with lag features** competes on weekly data and wins with external features, if you avoid leaks and evaluate **recursively**.
+- **Backtest** with rolling origins; one test year lies.
+- **WAPE** is the planner's metric; **MAPE** misleads on small months; **MASE** compares across series.
+- A forecast becomes a **plan** with safety stock sized from backtest error.
+- Sensor anomalies: **status first**, **fast baselines for spikes, slow robust baselines for drift**, and **persistence** before alerting.
+
+---
+
+## Key terms
+
+time series · trend · seasonality · cycle · noise (residual) · decomposition · multiplicative model · stationarity · differencing · seasonal differencing · log transform · augmented Dickey–Fuller test · naive forecast · seasonal naive · moving average · exponential smoothing · alpha · Holt's method · Holt–Winters · damped trend · autocorrelation (ACF) · partial autocorrelation (PACF) · ARIMA · autoregressive (AR) · moving average (MA) · SARIMA · seasonal order · prediction interval · Prophet · auto_arima · lag feature · rolling feature · recursive forecast · direct multi-horizon · backtesting · rolling origin · fold · MAPE · WAPE · MASE · bias · safety stock · horizon · point anomaly · drift · rolling z-score · robust baseline · persistence rule · forecast residual · status masking
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can name trend, seasonality, cycle, and noise in a series and describe what a decomposition shows.
 - [ ] I check for duplicates and gaps before modeling.
@@ -974,22 +995,7 @@ The thing Deepak says afterwards is the thing to remember: *"So the model's job 
 
 ---
 
-## Recap
-
-- A time series has **trend**, **seasonality**, **cycles**, and **noise**; **decomposition** separates them for understanding, not forecasting.
-- **Stationarity** is what classical models need; **differencing** (plain and seasonal) and **logs** get you there; the **ADF test** checks.
-- **Seasonal naive** is the baseline to beat, and it often isn't beaten.
-- **Exponential smoothing** weights recent values more; **Holt–Winters** adds trend and seasonality, and can fail when parameters are chosen by in-sample fit.
-- **SARIMA** combines autoregression, differencing, and moving-average terms at ordinary and seasonal lags; read **ACF/PACF**, fit on logs, show **intervals**.
-- **Prophet** is a strong low-effort option; **ML with lag features** competes on weekly data and wins with external features, if you avoid leaks and evaluate **recursively**.
-- **Backtest** with rolling origins; one test year lies.
-- **WAPE** is the planner's metric; **MAPE** misleads on small months; **MASE** compares across series.
-- A forecast becomes a **plan** with safety stock sized from backtest error.
-- Sensor anomalies: **status first**, **fast baselines for spikes, slow robust baselines for drift**, and **persistence** before alerting.
-
----
-
-## Practice exercises
+## Exercises
 
 Code exercises run from `companion/ch40/` after the chapter's code (they use `kitchen`, `monthly`, `weekly`, `train`, `test`, `wape`, `backtest`, `methods`, `forecasts`, `readings`, `temp`, and the rest). Predict each answer before running it.
 
@@ -1023,27 +1029,7 @@ Code exercises run from `companion/ch40/` after the chapter's code (they use `ki
 
 ---
 
-## Key terms
-
-time series · trend · seasonality · cycle · noise (residual) · decomposition · multiplicative model · stationarity · differencing · seasonal differencing · log transform · augmented Dickey–Fuller test · naive forecast · seasonal naive · moving average · exponential smoothing · alpha · Holt's method · Holt–Winters · damped trend · autocorrelation (ACF) · partial autocorrelation (PACF) · ARIMA · autoregressive (AR) · moving average (MA) · SARIMA · seasonal order · prediction interval · Prophet · auto_arima · lag feature · rolling feature · recursive forecast · direct multi-horizon · backtesting · rolling origin · fold · MAPE · WAPE · MASE · bias · safety stock · horizon · point anomaly · drift · rolling z-score · robust baseline · persistence rule · forecast residual · status masking
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 44, Capstone,** can take demand forecasting as its end-to-end project, from question to planner's note.
-- **Chapter 45, Business Metrics,** puts rupee values on forecast error, safety stock, and stock-outs.
-- **Chapter 48, Big Data and Distributed Computing,** runs this chapter's anomaly rules on 12 machines and 40 weeks with PySpark, DuckDB, and Polars.
-- **Chapter 50, Streaming and Real-Time Data,** turns the sensor rules into alerts that fire as readings arrive.
-- **Chapter 52, Deploying and Monitoring Models,** schedules the forecast, monitors its WAPE, and retrains it.
-- **Chapter 30, Experiments,** and **Chapter 31, Causal Inference,** cover what forecasting can't: what happens if we change the price.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers stationarity, ARIMA versus ML, backtesting, MAPE versus WAPE, and "how would you forecast demand for a new product with no history?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1314,3 +1300,14 @@ A 4 °C threshold fires on Monday morning, long before any fault, and keeps firi
 
 **16.** (1) **Mask by status**, so stoppages and start-ups don't trigger alerts. (2) **Replace point z-scores with two rules**: a fast residual rule for spikes and a slow-baseline rule with a persistence window for drift, each tuned on a week of history and checked against the known faults. (3) **Agree the alert budget with the team** (say, no more than two false alerts a week per machine) and tune thresholds to it, then review the alerts together for a month before making them page anyone. An alert that isn't trusted is worse than no alert, because it hides the real one.
 
+---
+
+## Where this leads
+
+- **Chapter 44, Capstone,** can take demand forecasting as its end-to-end project, from question to planner's note.
+- **Chapter 45, Business Metrics,** puts rupee values on forecast error, safety stock, and stock-outs.
+- **Chapter 48, Big Data and Distributed Computing,** runs this chapter's anomaly rules on 12 machines and 40 weeks with PySpark, DuckDB, and Polars.
+- **Chapter 50, Streaming and Real-Time Data,** turns the sensor rules into alerts that fire as readings arrive.
+- **Chapter 52, Deploying and Monitoring Models,** schedules the forecast, monitors its WAPE, and retrains it.
+- **Chapter 30, Experiments,** and **Chapter 31, Causal Inference,** cover what forecasting can't: what happens if we change the price.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers stationarity, ARIMA versus ML, backtesting, MAPE versus WAPE, and "how would you forecast demand for a new product with no history?"

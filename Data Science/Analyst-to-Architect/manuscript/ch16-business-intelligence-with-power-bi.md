@@ -1,6 +1,6 @@
 # Chapter 16. Business Intelligence with Power BI
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -85,11 +85,11 @@ Two practical consequences:
 | Many people need to slice the same data themselves | **Power BI** |
 | Numbers must be consistent across teams (one definition of revenue) | **Power BI** (a shared semantic model) |
 | A one-off analysis nobody will repeat | A spreadsheet or a notebook |
-| Heavy statistics, modelling, or machine learning | Python (Part IV) |
+| Heavy statistics, modelling, or machine learning | Python (Part 4) |
 | Ad-hoc data exploration by an analyst | SQL |
 | A document with commentary and exhibits | A written report (Chapter 20) |
 
-> **Watch out: Power BI is not a database.** It reads from sources and keeps a copy for speed. It's not where data should be corrected, and a model is not a substitute for a warehouse (Part III). If the fix belongs upstream, fix it upstream (Chapter 14, section 14.10).
+> **Watch out: Power BI is not a database.** It reads from sources and keeps a copy for speed. It's not where data should be corrected, and a model is not a substitute for a warehouse (Part 3). If the fix belongs upstream, fix it upstream (Chapter 14, section 14.10).
 
 ---
 
@@ -706,12 +706,13 @@ Three shifts matter for an analyst's work, and all three are moving fast enough 
 
 1. **Natural-language questions.** Power BI's Q&A visual and **Copilot** answer typed questions ("revenue by region last quarter") and draft measures, DAX, and report pages. They work best on a **well-modelled, well-named** semantic model, which is the same work this chapter teaches. Treat generated DAX as a draft: verify it against SQL before it reaches a report.
 2. **The semantic model as the shared definition.** Fabric, dbt's semantic layer (Chapter 31), and similar tools push toward one place where "net revenue" is defined for every tool. That's a governance win, and it makes the modelling skill more valuable, not less.
-3. **BI merging with the data platform.** Fabric's OneLake, lakehouses, and direct-lake connections blur the line between "the warehouse" and "the report". Part III covers the engineering side; for an analyst, the practical effect is fewer imports and more querying of shared tables.
+3. **BI merging with the data platform.** Fabric's OneLake, lakehouses, and direct-lake connections blur the line between "the warehouse" and "the report". Part 3 covers the engineering side; for an analyst, the practical effect is fewer imports and more querying of shared tables.
 
 What hasn't changed, and probably won't: someone has to decide what a number means, check it, and design a page that tells the truth in ten seconds.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -764,7 +765,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: replace Riverstone's monthly pack with a live report
+
+**Goal:** one published report that answers the monthly review's questions, refreshes itself, and shows only each manager's region.
+
+### Tools you'll need
 
 - **Power BI Desktop** (free, Windows only), current monthly release. macOS or Linux: a Windows VM or cloud desktop.
 - **Power BI Service** with a Pro licence or trial, for publishing, refresh, apps, and RLS. Without one, everything up to publishing still works.
@@ -777,12 +782,6 @@ What made the difference:
   - `user_region.csv`: the mapping table for dynamic row-level security.
   - `city_region.csv`: city-to-region mapping for the Customer dimension.
   - `date_table.dax` and `report_checklist.md`: the date table code and a page-review checklist.
-
----
-
-## The project: replace Riverstone's monthly pack with a live report
-
-**Goal:** one published report that answers the monthly review's questions, refreshes itself, and shows only each manager's region.
 
 **Option A: your own data.** Build the same thing on a dataset from your work (anonymized), with at least one fact table, three dimensions, and a date table.
 
@@ -827,21 +826,6 @@ Answers at the end of the chapter.
 
 ---
 
-## You've got it when…
-
-- [ ] You can explain what Desktop, the Service, a workspace, a semantic model, and an app each are, and who needs which licence.
-- [ ] You choose Import or DirectQuery for a reason, and keep query folding alive where it matters.
-- [ ] You build a star schema with a marked date table, hidden keys, business names, and set formats.
-- [ ] You know when to write a measure and when to write a calculated column.
-- [ ] You can write `Net Revenue`, `Gross Margin %`, `Orders`, `% of Target`, `Revenue LY`, and `YoY Growth %` from memory, and check each against SQL.
-- [ ] You can explain filter context and what `CALCULATE`, `REMOVEFILTERS`, `KEEPFILTERS`, and `ALLSELECTED` do to it.
-- [ ] You design a page with a message, Chapter 15's chart rules, a saved theme, drill-through, and alt text.
-- [ ] You publish, set credentials and a schedule, know when a gateway is needed, and share through an app.
-- [ ] You implement and test dynamic row-level security, and know what it doesn't protect.
-- [ ] You can name the five modelling mistakes most likely to make a number wrong, and check for them.
-
----
-
 ## Recap
 
 - **Power BI Desktop** (free, Windows) builds; the **Service** refreshes and shares. Pro is $14 and PPU $24 per user per month at the time of writing, with Fabric capacity from F64 letting free users view. Check current pricing before promising anything.
@@ -858,7 +842,30 @@ Answers at the end of the chapter.
 
 ---
 
-## Practice exercises
+## Key terms
+
+business intelligence · Power BI Desktop · Power BI Service · workspace · semantic model (dataset) · report · dashboard · app · Microsoft Fabric · Pro · Premium Per User · Fabric capacity (F SKU) · on-premises data gateway · Import mode · DirectQuery · composite model · live connection · query folding · star schema · fact table · dimension table · grain · relationship · cross-filter direction · date table · mark as date table · DAX · measure · calculated column · iterator (`SUMX`) · `RELATED` · `DIVIDE` · filter context · row context · context transition · `CALCULATE` · `REMOVEFILTERS` · `KEEPFILTERS` · `ALLSELECTED` · `VAR`/`RETURN` · time intelligence · `TOTALYTD` · `SAMEPERIODLASTYEAR` · `DATESINPERIOD` · slicer · drill-down · drill-through · tooltip page · bookmark · theme · alt text · mobile layout · scheduled refresh · incremental refresh · deployment pipeline · row-level security · `USERPRINCIPALNAME` · object-level security · Performance analyzer · DAX Studio · usage metrics · Q&A · Copilot
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can explain what Desktop, the Service, a workspace, a semantic model, and an app each are, and who needs which licence.
+- [ ] You choose Import or DirectQuery for a reason, and keep query folding alive where it matters.
+- [ ] You build a star schema with a marked date table, hidden keys, business names, and set formats.
+- [ ] You know when to write a measure and when to write a calculated column.
+- [ ] You can write `Net Revenue`, `Gross Margin %`, `Orders`, `% of Target`, `Revenue LY`, and `YoY Growth %` from memory, and check each against SQL.
+- [ ] You can explain filter context and what `CALCULATE`, `REMOVEFILTERS`, `KEEPFILTERS`, and `ALLSELECTED` do to it.
+- [ ] You design a page with a message, Chapter 15's chart rules, a saved theme, drill-through, and alt text.
+- [ ] You publish, set credentials and a schedule, know when a gateway is needed, and share through an app.
+- [ ] You implement and test dynamic row-level security, and know what it doesn't protect.
+- [ ] You can name the five modelling mistakes most likely to make a number wrong, and check for them.
+
+---
+
+## Exercises
 
 Build in Power BI Desktop where you can; check every answer against `riverstone_full` with SQL.
 
@@ -903,26 +910,7 @@ Build in Power BI Desktop where you can; check every answer against `riverstone_
 
 ---
 
-## Key terms
-
-business intelligence · Power BI Desktop · Power BI Service · workspace · semantic model (dataset) · report · dashboard · app · Microsoft Fabric · Pro · Premium Per User · Fabric capacity (F SKU) · on-premises data gateway · Import mode · DirectQuery · composite model · live connection · query folding · star schema · fact table · dimension table · grain · relationship · cross-filter direction · date table · mark as date table · DAX · measure · calculated column · iterator (`SUMX`) · `RELATED` · `DIVIDE` · filter context · row context · context transition · `CALCULATE` · `REMOVEFILTERS` · `KEEPFILTERS` · `ALLSELECTED` · `VAR`/`RETURN` · time intelligence · `TOTALYTD` · `SAMEPERIODLASTYEAR` · `DATESINPERIOD` · slicer · drill-down · drill-through · tooltip page · bookmark · theme · alt text · mobile layout · scheduled refresh · incremental refresh · deployment pipeline · row-level security · `USERPRINCIPALNAME` · object-level security · Performance analyzer · DAX Studio · usage metrics · Q&A · Copilot
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 20, Automating Reports & Delivering Insights:** subscriptions, alerts, and scheduled delivery around this report, and how to present what it shows.
-- **Chapter 23, Data Storytelling:** turning a page of visuals into a decision.
-- **Chapter 28, Advanced SQL, Performance & Data Modeling:** star schemas, slowly changing dimensions, and the warehouse the model should eventually read from.
-- **Chapter 31, Analytics Engineering with dbt:** defining measures once, upstream of every BI tool.
-- **Chapter 46:** scheduling and orchestrating the loads that feed a BI model.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) covers DAX, filter context, star schemas, and "why don't these two numbers match?".
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1005,3 +993,14 @@ FY2026 runs from 1 April 2025, so to 31 December 2025 it is April–December 202
 **27.** Options: (a) Pro for everyone (300 × $14 ≈ $4,200 a month at list); (b) Fabric capacity at F64 or above, where viewers can hold free licences, which is often cheaper above roughly 350–600 viewers; (c) reduce the audience: an app for the people who need interaction, and emailed PDF subscriptions or a paginated report for those who only read one page; (d) check what's already owned, since Microsoft 365 E5 includes Pro. Present the break-even calculation, not only the options.
 
 **Timed challenge answers.** Level 1: ₹423,872,808 · 13,777 orders · 4,220 customers. Level 2: AOV ₹30,766.70 · gross margin 27.6%. Level 3: 94.7% of a ₹447,500,000 target, a gap of −₹23,627,192. Level 4: +21.8% on Q4 2024's ₹347,940,682. Level 5: West ₹142,688,728 · South ₹117,726,527 · North ₹102,966,828 · East ₹52,120,934 · Region missing ₹8,369,792. Level 6: Storage Box 25L ₹89,225,213 (21.0%), Food Container Set ₹83,156,260 (19.6%), Storage Box 10L ₹76,099,616 (18.0%). Level 7: ₹33,630,135, or 2.9% of 2025 revenue. Bonus: build the title from `SELECTEDVALUE`, `[Net Revenue]`, `[% of Target]`, and `[YoY Growth %]` with `FORMAT`, as in section 16.8.
+
+---
+
+## Where this leads
+
+- **Chapter 20, Automating Reports & Delivering Insights:** subscriptions, alerts, and scheduled delivery around this report, and how to present what it shows.
+- **Chapter 23, Data Storytelling:** turning a page of visuals into a decision.
+- **Chapter 28, Advanced SQL, Performance & Data Modeling:** star schemas, slowly changing dimensions, and the warehouse the model should eventually read from.
+- **Chapter 31, Analytics Engineering with dbt:** defining measures once, upstream of every BI tool.
+- **Chapter 46:** scheduling and orchestrating the loads that feed a BI model.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) covers DAX, filter context, star schemas, and "why don't these two numbers match?".

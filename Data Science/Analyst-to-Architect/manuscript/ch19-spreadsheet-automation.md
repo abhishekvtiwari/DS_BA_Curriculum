@@ -1,6 +1,6 @@
 # Chapter 19. Spreadsheet Automation: Macros, VBA, Office Scripts & Google Apps Script
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -1087,7 +1087,8 @@ If one person understands the macro, the business has a dependency, not an asset
 None of that makes VBA a waste of time. It makes it what it is: the fastest way to automate the workbook in front of you, and a skill that pays for itself the first month you use it.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1144,7 +1145,9 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: two automations, end to end
+
+### Tools you'll need
 
 - **Excel for Windows** (Microsoft 365 or 2016+) with the **Developer** tab enabled, for VBA, Outlook email, and PDF export. Excel for Mac runs VBA but not the Outlook automation.
 - **Excel on the web** with a Microsoft 365 **business** plan, for Office Scripts and Power Automate. Personal Microsoft accounts don't have Office Scripts.
@@ -1158,10 +1161,6 @@ What made the difference:
   - `office_scripts/` and `apps_script/`: the TypeScript and JavaScript versions.
 
 > **Note on this chapter's code.** Everything in Chapters 17 and 18 was run and its output checked automatically. VBA, Office Scripts, and Apps Script can't be run in that environment, so this chapter's code was written and reviewed by hand, and the **data** it processes was generated and checked with Python: `expected_results.md` is the yardstick. Run the macros in Excel and compare.
-
----
-
-## The project: two automations, end to end
 
 ### Part 1: the Excel consolidation (VBA)
 
@@ -1212,22 +1211,6 @@ Use `companion/ch19/branch_files/` and a blank `.xlsm`. Answers at the end of th
 
 ---
 
-## You've got it when…
-
-- [ ] You can record a macro, read what it wrote, and rewrite it without `Select`.
-- [ ] You know which file types hold macros, and how to handle macro security without disabling it.
-- [ ] You declare variables with sensible types, use `Option Explicit`, and can write `If`, `Select Case`, and all three loops from memory.
-- [ ] You use the last-row pattern instead of fixed ranges, and address objects instead of activating them.
-- [ ] You can consolidate a folder of files, with a source column and a per-file row count.
-- [ ] You can clean a column through a dictionary and flag what isn't in the map.
-- [ ] You can build a pivot, export a PDF, and send an Outlook email with an HTML body.
-- [ ] You debug with breakpoints, the Immediate window, and Locals, and handle errors with a handler that restores Excel's settings.
-- [ ] You make a slow macro fast with arrays and `ScreenUpdating`.
-- [ ] You can do the same job in Office Scripts and Apps Script, and say when each is the right home.
-- [ ] Your automations carry a settings sheet, a log, checks that can stop them, and a note for whoever inherits them.
-
----
-
 ## Recap
 
 - **Spreadsheet automation is worth doing** when the data and the audience already live in workbooks; Power Query, Power BI, and Python are better for everything else.
@@ -1243,7 +1226,31 @@ Use `companion/ch19/branch_files/` and a blank `.xlsm`. Answers at the end of th
 
 ---
 
-## Practice exercises
+## Key terms
+
+macro · macro recorder · `.xlsm` · `.xlsb` · macro security · trusted location · Mark of the Web · Personal Macro Workbook · form control · VBA · Visual Basic Editor · module · `Option Explicit` · `Dim` · `Set` · `Long` versus `Integer` · `Select Case` · `For Each` · `Do While` · array · `Scripting.Dictionary` · `Sub` · `Function` · `ByVal` / `ByRef` · object model · `Application` · `Workbook` · `Worksheet` · `Range` · `Cells` · `End(xlUp)` · `CurrentRegion` · `With` · `Value2` · `Dir` · `FileSystemObject` · `PivotCache` · `ExportAsFixedFormat` · late binding · `CreateObject` · `HTMLBody` · UDF · UserForm · `InputBox` · `FileDialog` · breakpoint · Immediate window · `Debug.Print` · `On Error GoTo` · `Resume` · `Err` · `ScreenUpdating` · `Calculation` · `EnableEvents` · Office Scripts · TypeScript · Power Automate · Apps Script · `SpreadsheetApp` · `getValues` / `setValues` · simple and installable triggers · `MailApp` · `GmailApp` · `UrlFetchApp` · `PropertiesService` · quota · `clasp`
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can record a macro, read what it wrote, and rewrite it without `Select`.
+- [ ] You know which file types hold macros, and how to handle macro security without disabling it.
+- [ ] You declare variables with sensible types, use `Option Explicit`, and can write `If`, `Select Case`, and all three loops from memory.
+- [ ] You use the last-row pattern instead of fixed ranges, and address objects instead of activating them.
+- [ ] You can consolidate a folder of files, with a source column and a per-file row count.
+- [ ] You can clean a column through a dictionary and flag what isn't in the map.
+- [ ] You can build a pivot, export a PDF, and send an Outlook email with an HTML body.
+- [ ] You debug with breakpoints, the Immediate window, and Locals, and handle errors with a handler that restores Excel's settings.
+- [ ] You make a slow macro fast with arrays and `ScreenUpdating`.
+- [ ] You can do the same job in Office Scripts and Apps Script, and say when each is the right home.
+- [ ] Your automations carry a settings sheet, a log, checks that can stop them, and a note for whoever inherits them.
+
+---
+
+## Exercises
 
 Use `companion/ch19/branch_files/` and `expected_results.md`.
 
@@ -1289,26 +1296,7 @@ Use `companion/ch19/branch_files/` and `expected_results.md`.
 
 ---
 
-## Key terms
-
-macro · macro recorder · `.xlsm` · `.xlsb` · macro security · trusted location · Mark of the Web · Personal Macro Workbook · form control · VBA · Visual Basic Editor · module · `Option Explicit` · `Dim` · `Set` · `Long` versus `Integer` · `Select Case` · `For Each` · `Do While` · array · `Scripting.Dictionary` · `Sub` · `Function` · `ByVal` / `ByRef` · object model · `Application` · `Workbook` · `Worksheet` · `Range` · `Cells` · `End(xlUp)` · `CurrentRegion` · `With` · `Value2` · `Dir` · `FileSystemObject` · `PivotCache` · `ExportAsFixedFormat` · late binding · `CreateObject` · `HTMLBody` · UDF · UserForm · `InputBox` · `FileDialog` · breakpoint · Immediate window · `Debug.Print` · `On Error GoTo` · `Resume` · `Err` · `ScreenUpdating` · `Calculation` · `EnableEvents` · Office Scripts · TypeScript · Power Automate · Apps Script · `SpreadsheetApp` · `getValues` / `setValues` · simple and installable triggers · `MailApp` · `GmailApp` · `UrlFetchApp` · `PropertiesService` · quota · `clasp`
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 20, Automating Reports & Delivering Insights:** scheduling, HTML email at scale, alerts, failure handling, and choosing between VBA, Apps Script, Python, and low-code flows.
-- **Chapter 11** remains the first answer for refreshable data shaping; **Chapter 16** for shared, interactive reporting.
-- **Chapter 18, Python for Analysts:** the same automations when the data comes from a database or an API, or must run unattended.
-- **Chapter 26, Git:** versioning exported modules and scripts.
-- **Chapter 46:** orchestration, when an automation grows into a pipeline with dependencies and retries.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) covers the object model, the last-row pattern, and "how would you make this macro faster?".
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1369,3 +1357,14 @@ macro · macro recorder · `.xlsm` · `.xlsb` · macro security · trusted locat
 **28.** When it works, the owner understands it, the data and audience are already in Excel, and the rewrite would buy nothing but elegance. A working automation with a documented owner and a check that stops it when the data is wrong is a good outcome, whatever language it's in. Rewrite when it's fragile, unreadable, unowned, or needs data and scheduling that a spreadsheet can't reach.
 
 **Timed challenge answers.** Level 1: **12** `.xlsx` files; `*.xls*` matches the same twelve here, but would also pick up `.xlsb` and legacy `.xls` files, which is a reason to be specific. Level 2: **25,832** rows. Level 3: 25,832 data rows plus one header. Level 4: **₹423,872,808.00**. Level 5: Mumbai HO ₹151,058,519.25 · Bengaluru ₹117,726,527.00 · Delhi ₹102,966,828.00 · Kolkata ₹52,120,933.75. Level 6: Oct ₹180,620,103.00 · Nov ₹155,985,902.00 · Dec ₹87,266,803.75. Level 7: seconds versus effectively instant. Bonus: `If filesRead <> 12 Then MsgBox "Expected 12 files, found " & filesRead: Exit Sub`.
+
+---
+
+## Where this leads
+
+- **Chapter 20, Automating Reports & Delivering Insights:** scheduling, HTML email at scale, alerts, failure handling, and choosing between VBA, Apps Script, Python, and low-code flows.
+- **Chapter 11** remains the first answer for refreshable data shaping; **Chapter 16** for shared, interactive reporting.
+- **Chapter 18, Python for Analysts:** the same automations when the data comes from a database or an API, or must run unattended.
+- **Chapter 26, Git:** versioning exported modules and scripts.
+- **Chapter 46:** orchestration, when an automation grows into a pipeline with dependencies and retries.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) covers the object model, the last-row pattern, and "how would you make this macro faster?".

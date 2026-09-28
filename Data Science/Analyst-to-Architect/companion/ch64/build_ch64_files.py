@@ -2,7 +2,7 @@
 Analyst to Architect — Chapter 64: Security, Privacy, Governance & Responsible AI
 build_ch64_files.py — builds the fairness-audit dataset for section 64.7.
 
-The lead-scoring model itself is invented for this chapter (Part VI's CRM sync mentions
+The lead-scoring model itself is invented for this chapter (Part 6's CRM sync mentions
 lead scoring but never specifies a model); built to contain a REALISTIC, EXPLAINABLE proxy-
 discrimination pattern: the score never uses region as a feature, but correlates with company
 size, and company size correlates with region because Riverstone's historically bigger

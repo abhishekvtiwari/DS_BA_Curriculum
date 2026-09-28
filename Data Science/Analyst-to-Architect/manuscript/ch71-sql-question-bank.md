@@ -1,6 +1,6 @@
 # Chapter 71. SQL Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the SQL questions that come up across screening calls, live-coding rounds, and take-home exercises for every data role · reason through the classic NULL and join traps that catch experienced candidates, not just beginners · write window-function solutions to the "second highest," "top N per group," "running total," "streak," and "retention" problems that recur across companies · know exactly where PostgreSQL and MySQL disagree · walk out with a 20-question final-week revision list.
 >
@@ -865,7 +865,7 @@ EXPLAIN SELECT * FROM orders WHERE customer_id = 1;
 
 **Likely follow-ups:** At what table size would you expect the planner to switch to using the index? What's the difference between a sequential scan and an index scan in terms of actual disk I/O?
 **Red flag:** assuming an index is always used just because it exists.
-**Learn it in:** Chapter 12 (and Part V for indexing at production scale).
+**Learn it in:** Chapter 12 (and Part 5 for indexing at production scale).
 
 ### Rapid-fire, 71.7
 
@@ -1037,7 +1037,9 @@ FROM orders;
 **Red flag:** starting with `SELECT * LIMIT 10` and eyeballing it as the only exploration step, with no aggregate health check at all.
 **Learn it in:** Chapter 12.
 
-## Common mistakes and how to spot them
+---
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1061,15 +1063,13 @@ What made this a strong round wasn't the original query, it was correct and unre
 
 ---
 
-## Tools
-
-**PostgreSQL** and **MySQL**, both free, both open source. `psql` (PostgreSQL's command-line client) and the `mysql` client, or a GUI like DBeaver or TablePlus for either. `EXPLAIN` (both engines) and `EXPLAIN ANALYZE` (PostgreSQL; actually runs the query and reports real timings, not just estimates) for understanding query plans. Everything in this chapter was run against PostgreSQL 16.15 and MySQL 8.0.46, on Riverstone's `riverstone` and `riverstone_2025` practice databases.
-
----
-
-## The project
+## Project
 
 **Goal:** verified, real answers to the classic SQL problems, on your own data or Riverstone's.
+
+### Tools you'll need
+
+**PostgreSQL** and **MySQL**, both free, both open source. `psql` (PostgreSQL's command-line client) and the `mysql` client, or a GUI like DBeaver or TablePlus for either. `EXPLAIN` (both engines) and `EXPLAIN ANALYZE` (PostgreSQL; actually runs the query and reports real timings, not just estimates) for understanding query plans. Everything in this chapter was run against PostgreSQL 16.15 and MySQL 8.0.46, on Riverstone's `riverstone` and `riverstone_2025` practice databases.
 
 1. Write and run the "customers with no orders" query (Q71-001), and reconcile the count against total customers minus customers-with-orders, the way this chapter did.
 2. Demonstrate the `NOT IN` NULL trap yourself: find a nullable foreign key in your data, and show the same query returning zero rows with `NOT IN` and the correct count with `NOT EXISTS`.
@@ -1079,15 +1079,15 @@ What made this a strong round wasn't the original query, it was correct and unre
 
 ---
 
-## Final-week revision list
-
-Q71-001, Q71-002, Q71-006, Q71-009, Q71-014, Q71-015, Q71-016, Q71-019, Q71-020, Q71-021, Q71-022, Q71-028, Q71-029, Q71-033, Q71-036, Q71-040, Q71-041, Q71-045, Q71-046.
-
----
-
 ## Key terms
 
 `LEFT JOIN` / `INNER JOIN` · `NOT IN` NULL trap · `NOT EXISTS` · `WHERE` vs. `HAVING` · correlated subquery · scalar subquery · CTE (`WITH`) · recursive CTE · `EXISTS` vs. `IN` · `ROW_NUMBER` / `RANK` / `DENSE_RANK` · `PARTITION BY` · `LAG` / `LEAD` · running total · gaps-and-islands · fan-out (join cardinality) · `EXPLAIN` · sequential scan vs. index scan · composite index · covering index · `STRING_AGG` / `GROUP_CONCAT` · `COALESCE` / `IFNULL` · `SERIAL` / `AUTO_INCREMENT`
+
+---
+
+## Final-week revision list
+
+Q71-001, Q71-002, Q71-006, Q71-009, Q71-014, Q71-015, Q71-016, Q71-019, Q71-020, Q71-021, Q71-022, Q71-028, Q71-029, Q71-033, Q71-036, Q71-040, Q71-041, Q71-045, Q71-046.
 
 ---
 

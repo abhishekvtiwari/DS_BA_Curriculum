@@ -38,7 +38,7 @@ def md_to_html(src, out, bodyclass, title, toc_depth):
     tmp.write_text(label_breaks(re.sub(r'^```mysql$', '```sql', pathlib.Path(src).read_text(), flags=re.M)))
     src = str(tmp)
     subprocess.run(['pandoc', '-f', fmt, '-t', 'html5', '-s', '--template', str(HERE/'template.html'),
-                    '--toc', f'--toc-depth={toc_depth}', '-M', f'pagetitle={title}', '-V', f'bodyclass={bodyclass}',
+                    '-M', f'pagetitle={title}', '-V', f'bodyclass={bodyclass}',
                     src, '-o', str(out)], check=True)
     h = out.read_text()
     h = re.sub(r'<blockquote>(\s*<p><strong>Watch out)', r'<blockquote class="warn">\1', h)
@@ -50,6 +50,7 @@ def md_to_html(src, out, bodyclass, title, toc_depth):
     # combining macron lands on the wrong letter in Lora Italic. Draw both with markup instead.
     h = prose_only(h, typeset)
     h = prose_only(h, carets, split_tags=False)
+    h = structure(h, toc_depth)
     out.write_text(h)
 
 SUP = dict(zip('⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵀ', '0123456789+−=()niT'))
@@ -80,6 +81,172 @@ def carets(s):
     s = re.sub(base + r'\^(<em>[^<]{1,10}</em>)', r'<sup>\1</sup>', s)
     s = re.sub(base + r'\^([−-]?(?:\w[\w.]{0,10})?\w)(?![\w.]*\w)', r'<sup>\1</sup>', s)
     return s
+
+
+# ---- Book structure (decision D8, 28 Sep 2026) ------------------------------------------------
+# Every chapter reads in six stages: Start, Learn, Apply, Review, Practise, Next. The builder labels
+# the first heading of each stage, puts a map of the stages ("In this chapter") under the chapter's
+# "Chapter at a glance" box, and writes the contents from the headings: chapters and their numbered
+# sections. Page numbers in both come from the PDF's bookmarks (see page_numbers).
+STAGE_OF = [
+    (r'(Why this matters|In plain English)$', 'Start'),
+    (r'\d+[A-Z]?\.\d+\b', 'Learn'),
+    (r'(Common mistakes|In the real world|Project|Timed challenge)\b', 'Apply'),
+    (r'(Recap|Key terms|Check yourself|Final-week revision list)$', 'Review'),
+    (r'(Exercises|Answers)$', 'Practise'),
+    (r'Where this leads$', 'Next'),
+]
+STAGES = ['Start', 'Learn', 'Apply', 'Review', 'Practise', 'Next']
+HEAD = re.compile(r'<h([1-6])([^>]*)>(.*?)</h\1>', re.S)
+
+
+def text_of(frag):
+    return re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', frag))).strip()
+
+
+def stage_of(title, current):
+    for pat, st in STAGE_OF:
+        if re.match(pat, title):
+            return st
+    return current if current in ('Learn',) else None     # an extra heading among the numbered sections
+
+
+def chapter_stages(h2s):
+    """[(id, title, stage)] for a chapter's H2s, or None if they are not in stage order."""
+    out, cur = [], None
+    for hid, title in h2s:
+        st = stage_of(title, cur)
+        if st is None:
+            return None
+        if cur and STAGES.index(st) < STAGES.index(cur):
+            return None
+        out.append((hid, title, st)); cur = st
+    return out
+
+
+def short(title):
+    return re.sub(r':.*$', '', title)
+
+
+def chapter_map(stages):
+    rows, seen = [], set()
+    for st in STAGES:
+        group = [(i, t) for i, t, s in stages if s == st]
+        if not group:
+            continue
+        if st == 'Learn':
+            each = [(i, t) for i, t in group if re.match(r'\d+[A-Z]?\.\d+', t)] or group[:1]
+        elif st == 'Practise':
+            each = group
+        else:
+            each = [(group[0][0], ' · '.join(short(t) for _, t in group))]
+        for k, (i, t) in enumerate(each):
+            lab = st if k == 0 else ''
+            rows.append(f'<li><span class="st">{lab}</span><a href="#{i}">{html.escape(t)}</a></li>')
+    return '<nav class="chapmap"><div class="chapmap-title">In this chapter</div><ul>' + ''.join(rows) + '</ul></nav>'
+
+
+def structure(h, toc_depth):
+    """Stage labels, chapter maps and the contents (D8). toc_depth 0 = no contents page."""
+    heads = [(m.start(), int(m.group(1)), re.search(r'id="([^"]+)"', m.group(2)), text_of(m.group(3)), m)
+             for m in HEAD.finditer(h)]
+    h1s = [x for x in heads if x[1] == 1]
+    chapters = [x for x in h1s if x[3].startswith('Chapter ')]
+    inserts = []                     # (position, text) to insert, applied from the end
+    toc = []
+    mapped = 0
+    for k, (pos, lvl, idm, title, m) in enumerate(h1s):
+        end = h1s[k + 1][0] if k + 1 < len(h1s) else len(h)
+        h2s = [(x[2].group(1), x[3], x[4]) for x in heads if x[1] == 2 and pos < x[0] < end and x[2]]
+        toc.append((1, idm.group(1) if idm else '', title))
+        if title.startswith('Part '):
+            inserts.append((m.start() + 3, ' class="part-title"'))
+        is_chapter = title.startswith('Chapter ')
+        for hid, t, _ in h2s:
+            if not is_chapter or re.match(r'\d+[A-Z]?\.\d+', t):
+                toc.append((2, hid, t))
+        if not is_chapter:
+            continue
+        stages = chapter_stages([(i, t) for i, t, _ in h2s])
+        if not stages:
+            print('  note: %s is not in stage order; no stage labels or map' % title[:50])
+            continue
+        first = {}
+        for i, t, st in stages:
+            first.setdefault(st, i)
+        for i, t, mm in h2s:
+            st = next(s for j, _, s in stages if j == i)
+            if first.get(st) == i:
+                inserts.append((mm.start() + 3, f' data-stage="{st}"'))
+        # the map goes right after the "Chapter at a glance" box, or under the title if there is none
+        g = h.find('</blockquote>', m.end(), end)
+        nxt = h2s[0][2].start() if h2s else end
+        at = g + len('</blockquote>') if 0 <= g < nxt else m.end()
+        inserts.append((at, '\n' + chapter_map(stages) + '\n'))
+        mapped += 1
+    for pos, txt in sorted(inserts, reverse=True):
+        h = h[:pos] + txt + h[pos:]
+    # contents: every H1 (parts, chapters, front matter) and each chapter's numbered sections;
+    # a lone chapter gets no contents page, because its map already lists its sections
+    single_chapter = len(h1s) == 1 and len(chapters) == 1
+    if single_chapter and not mapped:           # not in stage order yet: keep a full contents page
+        toc = [(1, t[1], t[2])] + [(2, i, tt) for i, tt, _ in
+               [(x[2].group(1), x[3], 0) for x in heads if x[1] == 2 and x[2]]] if (t := toc[0]) else toc
+    if toc_depth and (not single_chapter or not mapped) and toc:
+        items, open2 = [], False
+        for lvl, hid, t in toc:
+            if lvl == 1:
+                if open2: items.append('</ul></li>'); open2 = False
+                elif items: items.append('</li>')
+                items.append(f'<li class="l1"><a href="#{hid}">{html.escape(t)}</a>')
+            elif toc_depth >= 2:
+                if not open2: items.append('<ul>'); open2 = True
+                items.append(f'<li class="l2"><a href="#{hid}">{html.escape(t)}</a></li>')
+        items.append('</ul></li>' if open2 else '</li>')
+        nav = '<nav id="TOC"><div class="toc-title">Contents</div><ul>' + ''.join(items) + '</ul></nav>\n'
+        b = re.search(r'<body[^>]*>', h)
+        h = h[:b.end()] + '\n' + nav + h[b.end():]
+    return h
+
+
+def heading_pages(html_text, marks):
+    """{heading id: physical page} by walking the HTML headings and the PDF bookmarks in step.
+    Chromium writes a wrapped heading's bookmark with its lines (or words) doubled, so titles are
+    compared on a short prefix, first 12 characters, then 6."""
+    ids, pos = {}, 0
+    for m in HEAD.finditer(html_text):
+        idm = re.search(r'id="([^"]+)"', m.group(2))
+        t = norm_title(text_of(m.group(3)))
+        if not idm or not t:
+            continue
+        for n in (12, 6):
+            hit = next((k for k in range(pos, min(pos + 8, len(marks)))
+                        if marks[k][0].startswith(t[:n]) or undouble(marks[k][0]).startswith(t[:n])), None)
+            if hit is not None:
+                ids[idm.group(1)] = marks[hit][1]; pos = hit + 1; break
+    return ids
+
+
+def page_numbers(html_text, marks, label=str):
+    """Write page numbers into the contents and the chapter maps (V2, D8)."""
+    ids = heading_pages(html_text, marks)
+    def one(m):
+        hid, inner = m.group(1), m.group(2)
+        if '<span class="toc-t">' in inner:
+            inner = re.search(r'<span class="toc-t">(.*?)</span>', inner, re.S).group(1)
+        pg = label(ids[hid]) if hid in ids else '00'
+        return f'<a href="#{hid}"><span class="toc-t">{inner}</span><span class="toc-dots"></span><span class="toc-pg">{pg}</span></a>'
+    def nav(n):
+        return re.sub(r'<a href="#([^"]+)">(.*?)</a>', one, n.group(0), flags=re.S)
+    return re.sub(r'<nav (?:id="TOC"|class="chapmap")>.*?</nav>', nav, html_text, flags=re.S)
+
+
+def roman(n):
+    out = ''
+    for v, r in ((10, 'x'), (9, 'ix'), (5, 'v'), (4, 'iv'), (1, 'i')):
+        while n >= v: out += r; n -= v
+    return out
+
 
 LAYOUT_JS = (HERE / 'layout.js').read_text()
 PRINT_W_PX = round((210 - 18 - 18) * 96 / 25.4)    # A4 minus the @page side margins, in CSS px
@@ -145,6 +312,36 @@ def render(pw, html_path, pdf_path, footer_text=None, layout=False):
     b.close()
     return rep
 
+
+def clean_bookmarks(doc, html_text):
+    """Chromium writes a wrapped heading's bookmark with its lines or words doubled ("How to Use This
+    BookHow to Use This Book"). Give every bookmark its heading's real text, matched in order."""
+    heads = [text_of(m.group(3)) for m in HEAD.finditer(html_text)]
+    toc, k = doc.get_toc(simple=False), 0
+    for e in toc:
+        t = norm_title(e[1])
+        for n in (12, 6):
+            hit = next((j for j in range(k, min(k + 8, len(heads)))
+                        if t.startswith(norm_title(heads[j])[:n]) or undouble(t).startswith(norm_title(heads[j])[:n])), None)
+            if hit is not None:
+                e[1] = heads[hit]; k = hit + 1; break
+    doc.set_toc(toc)
+
+
+def join_cover(cover_pdf, body_pdf, out, title, html_path=None):
+    """Cover + body in one file. The cover is inserted into the body, so the body's tags (screen
+    readers, reflow) and bookmarks survive; merging the other way round dropped both tags."""
+    import pymupdf
+    doc = pymupdf.open(str(body_pdf))
+    cov = pymupdf.open(str(cover_pdf))
+    doc.insert_pdf(cov, start_at=0)
+    if html_path: clean_bookmarks(doc, pathlib.Path(html_path).read_text())
+    doc.set_metadata(dict(doc.metadata, title=title, author='Abhishek Tiwari'))
+    doc.save(str(out), garbage=3, deflate=True)
+    doc.close(); cov.close()
+    print(out, len(PdfReader(str(out)).pages), 'pages')
+
+
 def build(src, name, bodyclass, title, footer, cover, toc_depth):
     src = str(src if os.path.isabs(str(src)) else MS / str(src))   # bare names resolve to manuscript/
     body_html = D/f'{name}.html'
@@ -163,7 +360,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
         base = body_html.read_text()
         pages, rep = [], None
         for attempt in range(4):
-            body_html.write_text(toc_numbers(base, pages))
+            body_html.write_text(page_numbers(base, pages))
             rep = render(pw, body_html, D/f'{name}-body.pdf', footer, layout=True)
             new = outline_pages(D/f'{name}-body.pdf')
             if new == pages: break
@@ -171,13 +368,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
         (D/f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
         if rep and rep.get('overflow'):
             print('  WARNING wider than the text block:', rep['overflow'][:3])
-    w = PdfWriter()
-    w.append(str(D/f'{name}-cover.pdf'))
-    w.append(str(D/f'{name}-body.pdf'))
-    w.add_metadata({'/Title': title, '/Author': 'Abhishek Tiwari'})
-    out = str(OUT / f'{name}.pdf')
-    with open(out, 'wb') as f: w.write(f)
-    print(out, len(PdfReader(out).pages), 'pages')
+    join_cover(D/f'{name}-cover.pdf', D/f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
 
 JOBS = {}
 JOBS['blueprint'] = lambda: build('blueprint.md', 'Analyst-to-Architect-Blueprint', '',
@@ -187,12 +378,12 @@ JOBS['blueprint'] = lambda: build('blueprint.md', 'Analyst-to-Architect-Blueprin
                DOC='Planning document · Version 3', META='16 September 2026<br>83 chapters · 9 parts · ~497,000 words'), 3)
 JOBS['ch12'] = lambda: build('ch12-databases-and-sql-foundations.md', 'Ch12-Databases-and-SQL-Foundations', '',
           'Chapter 12. Databases & SQL Foundations', 'Analyst to Architect · Chapter 12 · Databases & SQL Foundations',
-          dict(KICKER='Analyst to Architect · Part II — The Analyst', TITLE='Chapter 12<br>Databases &amp; SQL Foundations',
+          dict(KICKER='Analyst to Architect · Part 2 — The Analyst', TITLE='Chapter 12<br>Databases &amp; SQL Foundations',
                SUB='Go to the data: tables, keys, filters, NULLs, summaries, joins, subqueries and transactions, taught from zero on the Riverstone Supplies database, in PostgreSQL and MySQL.',
                DOC='Sample chapter · Draft v4', META='16 September 2026<br>Every query tested on PostgreSQL 16 and MySQL 8'), 2)
 JOBS['ch13'] = lambda: build('ch13-sql-for-real-analysis.md', 'Ch13-SQL-for-Real-Analysis', '',
           'Chapter 13. SQL for Real Analysis', 'Analyst to Architect · Chapter 13 · SQL for Real Analysis',
-          dict(KICKER='Analyst to Architect · Part II — The Analyst', TITLE='Chapter 13<br>SQL for Real Analysis',
+          dict(KICKER='Analyst to Architect · Part 2 — The Analyst', TITLE='Chapter 13<br>SQL for Real Analysis',
                SUB='CTEs, views, and window functions, then ten patterns analysts use every week: top N, Pareto, deduplication, funnels, cohorts, streaks and more.',
                DOC='Draft chapter', META='16 September 2026<br>Every query tested on PostgreSQL 16 and MySQL 8'), 2)
 JOBS['ch01'] = lambda: build('ch01-what-is-data.md', 'Ch01-What-Is-Data', '',
@@ -203,7 +394,7 @@ JOBS['ch01'] = lambda: build('ch01-what-is-data.md', 'Ch01-What-Is-Data', '',
 
 JOBS['ch12v3'] = lambda: build('ch12.v3.md', 'Ch12-Databases-and-SQL-Foundations-v3-approved', '',
       'Chapter 12. Databases & SQL Foundations', 'Analyst to Architect · Chapter 12 · Databases & SQL Foundations',
-      dict(KICKER='Analyst to Architect · Part II — The Analyst', TITLE='Chapter 12<br>Databases &amp; SQL Foundations',
+      dict(KICKER='Analyst to Architect · Part 2 — The Analyst', TITLE='Chapter 12<br>Databases &amp; SQL Foundations',
            SUB='Go to the data: tables, keys, filters, NULLs, summaries, joins, subqueries and transactions, taught from zero on the Riverstone Supplies database, in PostgreSQL and MySQL.',
            DOC='Approved · Draft v3', META='16 September 2026<br>Every query tested on PostgreSQL 16 and MySQL 8'), 2)
 
@@ -231,34 +422,34 @@ JOBS['ch05'] = lambda: build('ch05-thinking-like-an-analyst.md', 'Ch05-Thinking-
            SUB='Good questions, precise problem statements, hypotheses, issue trees and MECE, facts versus opinions, checking claims, bias, and deciding with data.',
            DOC='Draft chapter', META='17 September 2026<br>Every number checked against the Riverstone databases'), 2)
 
-JOBS['ch06'] = lambda: build('ch06-setting-up-to-learn.md', 'Ch06-Setting-Up-to-Learn', '',
-      'Chapter 6. Setting Up to Learn', 'Analyst to Architect · Chapter 6 · Setting Up to Learn',
-      dict(KICKER='Analyst to Architect · Part 0 — First Principles', TITLE='Chapter 6<br>Setting Up to Learn',
-           SUB='The computer you need, installing and checking the book\'s tools, companion files, documentation, learning with AI assistants, and a study plan you can keep.',
+JOBS['ch06'] = lambda: build('ch06-setting-up-to-learn.md', 'Ch06-Planning-Your-Learning', '',
+      'Chapter 6. Planning Your Learning', 'Analyst to Architect · Chapter 6 · Planning Your Learning',
+      dict(KICKER='Analyst to Architect · Part 0 — First Principles', TITLE='Chapter 6<br>Planning Your Learning',
+           SUB='How long the book really takes, a weekly rhythm you can keep, when each tool arrives, reading documentation, learning with AI assistants, and a plan for your first 90 days.',
            DOC='Draft chapter', META='17 September 2026<br>Versions and install steps checked against official sources'), 2)
 
 JOBS['part0'] = lambda: build('part0-first-principles.md', 'Part0-First-Principles-Data-from-Zero', 'break-h1',
       'Analyst to Architect — Part 0: First Principles', 'Analyst to Architect · Part 0 · First Principles: Data from Zero',
       dict(KICKER='Analyst to Architect · Part 0', TITLE='First Principles:<br>Data from Zero',
-           SUB='Chapters 1–6: what data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and setting up to learn.',
+           SUB='Chapters 1–6: what data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and planning your learning.',
            DOC='Approved chapters · Version 1', META='17 September 2026<br>6 chapters · about 50,000 words · 23 figures · 88 exercises with answers'), 1)
 
 JOBS['part1'] = lambda: build('part1-the-map.md', 'Part1-The-Map', 'break-h1',
-      'Analyst to Architect — Part I: The Map', 'Analyst to Architect · Part I · The Map',
-      dict(KICKER='Analyst to Architect · Part I', TITLE='The Map',
+      'Analyst to Architect — Part 1: The Map', 'Analyst to Architect · Part 1 · The Map',
+      dict(KICKER='Analyst to Architect · Part 1', TITLE='The Map',
            SUB='Chapters 7–9: the data landscape, the career tree and how skills unlock roles, and how expertise actually forms.',
            DOC='Approved chapters · Version 1', META='17 September 2026<br>3 chapters · about 29,000 words · 13 figures · 43 exercises with answers'), 1)
 
 JOBS['ch25'] = lambda: build('ch25-the-business-analyst-track.md', 'Ch25-The-Business-Analyst-Track', '',
       'Chapter 25. The Business Analyst Track', 'Analyst to Architect · Chapter 25 · The Business Analyst Track',
-      dict(KICKER='Analyst to Architect · Part II — The Analyst', TITLE='Chapter 25<br>The Business Analyst Track',
+      dict(KICKER='Analyst to Architect · Part 2 — The Analyst', TITLE='Chapter 25<br>The Business Analyst Track',
            SUB='The business analyst on a data team: how the work divides between BA, data analyst, data scientist and data engineer, and how to specify the four things a data team is asked to build \u2014 a dashboard, a pipeline, a model, and a metric.',
            DOC='Draft chapter · v2', META='21 September 2026<br>Every example is a data product'), 2)
 
 JOBS['ch26'] = lambda: build('ch26-the-professional-toolkit-git-agile-documentation-and-ai-assistants.md', 'Ch26-The-Professional-Toolkit', '',
       'Chapter 26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants',
       'Analyst to Architect \u00b7 Chapter 26 \u00b7 The Professional Toolkit',
-      dict(KICKER='Analyst to Architect \u00b7 Part II \u2014 The Analyst',
+      dict(KICKER='Analyst to Architect \u00b7 Part 2 \u2014 The Analyst',
            TITLE='Chapter 26<br>The Professional Toolkit',
            SUB='Git, GitHub and pull requests; the four undos; keeping secrets out of a repository; one automated check; a README a stranger can follow; Agile, Scrum, Kanban and Jira; and working with an AI assistant.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>Every terminal session was run and its output captured'), 2)
@@ -266,7 +457,7 @@ JOBS['ch26'] = lambda: build('ch26-the-professional-toolkit-git-agile-documentat
 JOBS['ch27'] = lambda: build('ch27-capstone-your-analyst-portfolio.md', 'Ch27-Capstone-Your-Analyst-Portfolio', '',
       'Chapter 27. Capstone: Your Analyst Portfolio',
       'Analyst to Architect \u00b7 Chapter 27 \u00b7 Capstone: Your Analyst Portfolio',
-      dict(KICKER='Analyst to Architect \u00b7 Part II \u2014 The Analyst',
+      dict(KICKER='Analyst to Architect \u00b7 Part 2 \u2014 The Analyst',
            TITLE='Chapter 27<br>Capstone: Your<br>Analyst Portfolio',
            SUB='One question taken from the database to the memo, the check that turned a flattering finding into an honest one, and what happens to the work when a hiring manager opens it.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>Every query and every output was run on the full three-year database'), 2)
@@ -278,6 +469,92 @@ JOBS['ch83'] = lambda: build('ch83-the-long-game.md', 'Ch83-The-Long-Game', '',
            TITLE='Chapter 83<br>The Long Game',
            SUB='What the book actually costs in hours, the pace that survives a bad month, how to choose your own summit, and the four plateaus that arrive after the first job.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>The hours are computed from the book\u2019s own chapter estimates'), 2)
+
+JOBS['front'] = lambda: build('front-how-to-use-this-book.md', 'Front-How-to-Use-This-Book', '',
+      'How to Use This Book', 'Analyst to Architect · How to Use This Book',
+      dict(KICKER='Analyst to Architect', TITLE='How to Use<br>This Book',
+           SUB='How each chapter works, how to read the code and its output, the exercises and answers, how the parts climb, and where the companion files are.',
+           DOC='', META=''), 2)
+
+
+# ---- A package: several sources as one PDF with one page count (D8) ---------------------------
+FOOT_FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+
+
+def running_head(title):
+    m = re.match(r'(Chapter \d+[A-Za-z]?)\.\s*(.+)', title)
+    if m: return '%s · %s' % m.groups()
+    m = re.match(r'(Part \d+)\s*—\s*(.+)', title)
+    if m: return '%s · %s' % m.groups()
+    return title
+
+
+def stamp_footers(pdf_path, heads, label):
+    """Footer on every body page: 'Analyst to Architect · <part or chapter>' left, the page label right.
+    heads is [(physical page, H1 title)] in order; pages before the first H1 are the contents."""
+    import pymupdf
+    doc = pymupdf.open(str(pdf_path))
+    font = pymupdf.Font(fontfile=FOOT_FONT)
+    grey = (0x6b / 255, 0x73 / 255, 0x83 / 255)
+    mm = 72 / 25.4
+    for i, page in enumerate(doc):
+        page.wrap_contents()      # Chromium leaves its page scale unclosed; isolate it before adding text
+        n = i + 1
+        cur = next((t for pg, t in reversed(heads) if pg <= n), 'Contents')
+        left = 'Analyst to Architect · ' + running_head(cur)
+        right = label(n)
+        W, H = page.rect.width, page.rect.height
+        y = H - 11 * mm
+        tw = pymupdf.TextWriter(page.rect)
+        tw.append((18 * mm, y), left, font=font, fontsize=7.5)
+        tw.append((W - 18 * mm - font.text_length(right, 7.5), y), right, font=font, fontsize=7.5)
+        tw.write_text(page, color=grey)
+    tmp = str(pdf_path) + '.tmp'
+    doc.save(tmp, garbage=3, deflate=True)
+    doc.close()
+    os.replace(tmp, str(pdf_path))
+
+
+def build_package(srcs, name, title, cover):
+    """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …)."""
+    joined = '\n\n'.join((MS / s).read_text(encoding='utf-8').strip() for s in srcs) + '\n'
+    src = D / f'{name}.src.md'
+    src.write_text(joined, encoding='utf-8')
+    body_html = D / f'{name}.html'
+    md_to_html(str(src), body_html, 'break-h1', title, 2)
+    cover = dict(cover, DOC='', META='')
+    c = (HERE / 'cover.html').read_text()
+    for k, v in cover.items(): c = c.replace('{{' + k + '}}', v)
+    (D / f'{name}-cover.html').write_text(c)
+    base = body_html.read_text()
+    h1s = [(re.search(r'id="([^"]+)"', m.group(2)).group(1), text_of(m.group(3)))
+           for m in HEAD.finditer(base) if m.group(1) == '1']
+    first_part = next(i for i, t in h1s if t.startswith('Part '))
+    with sync_playwright() as pw:
+        render(pw, D / f'{name}-cover.html', D / f'{name}-cover.pdf')
+        pages, rep, label = [], None, str
+        for attempt in range(5):
+            body_html.write_text(page_numbers(base, pages, label))
+            rep = render(pw, body_html, D / f'{name}-body.pdf', None, layout=True)
+            new = outline_pages(D / f'{name}-body.pdf')
+            ids = heading_pages(base, new)
+            P = ids.get(first_part, 1)
+            label = (lambda P: lambda n: roman(n) if n < P else str(n - P + 1))(P)
+            if new == pages and attempt: break
+            pages = new
+        (D / f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
+    heads = [(ids[i], t) for i, t in h1s if i in ids]
+    stamp_footers(D / f'{name}-body.pdf', heads, label)
+    join_cover(D / f'{name}-cover.pdf', D / f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
+    return heads, label
+
+
+JOBS['package-0-1'] = lambda: build_package(
+    ['front-how-to-use-this-book.md', 'part0-first-principles.md', 'part1-the-map.md'],
+    'Part-0-1-First-Principles-and-The-Map', 'Analyst to Architect — Parts 0 and 1',
+    dict(KICKER='Analyst to Architect · Parts 0 and 1', TITLE='First Principles<br>and The Map',
+         SUB='How to use this book; Part 0, First Principles: Data from Zero (Chapters 1–6); and Part 1, The Map (Chapters 7–9).'))
+
 
 # ---------------------------------------------------------------------------
 # Generic builder.

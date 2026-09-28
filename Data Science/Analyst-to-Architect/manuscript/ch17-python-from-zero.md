@@ -1,6 +1,6 @@
 # Chapter 17. Python from Zero
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -26,7 +26,7 @@ Python is for the things those tools can't do, and for the things they can do on
 - **Anything you'd otherwise repeat:** the monthly cleaning in Chapter 14 was already a recorded pipeline; a Python script does the same job, runs on a schedule, logs what it did, and emails the result (Chapters 18 and 20).
 - **Anything that needs to be exact and reviewable:** code in a file can be read, versioned (Chapter 26), and tested. A sequence of clicks can't.
 
-It also changes what you're allowed to say yes to. "Can you check every branch export for the last three years?" is a week of clicking or twenty minutes of Python. That difference is most of the distance between an analyst and a senior analyst, and all of the distance toward the data-engineering and data-science work in Parts III and IV.
+It also changes what you're allowed to say yes to. "Can you check every branch export for the last three years?" is a week of clicking or twenty minutes of Python. That difference is most of the distance between an analyst and a senior analyst, and all of the distance toward the data-engineering and data-science work in Parts 3 and 4.
 
 The chapter starts from zero: what a variable is, what a loop is, why your program says `IndentationError`. If you've programmed before, skim to section 17.11 and do the exercises.
 
@@ -60,7 +60,7 @@ A **program** is a set of instructions a computer follows. **Python** is a langu
 | A report several people read every month | Power BI | Model once, refresh forever |
 | Clean and combine 40 files with different formats | **Python** | Repeatable, and it scales past one machine's patience |
 | Anything on a schedule with logging and alerts | **Python** | Scripts can run unattended (Chapter 20) |
-| Statistics, forecasting, machine learning | **Python** | The libraries are there (Parts IV–V) |
+| Statistics, forecasting, machine learning | **Python** | The libraries are there (Parts 4–5) |
 | Call an API, scrape a page, talk to another system | **Python** | Nothing else in the analyst's kit can |
 
 Python doesn't replace the others. Most real work is a chain: SQL pulls, Python cleans and combines, Power BI or Excel presents.
@@ -1088,7 +1088,8 @@ Every programmer is stuck several times a day. What separates people is how quic
 8. **Take a break.** A ten-minute walk solves an astonishing share of bugs.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1148,7 +1149,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: summarize a folder of exports
+
+**Goal:** a script that reads a folder of CSV files and prints a summary of each, then writes a small report. This is the shape of a hundred real analyst tasks.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** from python.org (3.10+ runs every example; the code in this chapter was run and checked on Python 3.12).
 - **VS Code** with the Python and Jupyter extensions, or any editor you like. **JupyterLab** (`pip install jupyterlab`) for notebooks.
@@ -1161,12 +1166,6 @@ What made the difference:
   - `broken_export.csv`: March's file with one unreadable row added, for section 17.12.
   - `summarize_exports.py`: the finished script from section 17.14 (also written by the chapter's own code).
 - **Optional:** `ruff` (formatter and linter), and the free official tutorial at docs.python.org for a second explanation of anything here.
-
----
-
-## The project: summarize a folder of exports
-
-**Goal:** a script that reads a folder of CSV files and prints a summary of each, then writes a small report. This is the shape of a hundred real analyst tasks.
 
 **Option A: your own data.** A folder of exports you receive regularly (anonymized).
 
@@ -1207,22 +1206,6 @@ Forty minutes, `companion/ch17/sales_exports/`, standard library only, no pandas
 
 ---
 
-## You've got it when…
-
-- [ ] You can install Python, create a virtual environment, and install a package into it without guessing.
-- [ ] You can explain the difference between the REPL, a notebook, and a script, and choose sensibly.
-- [ ] You use variables, f-strings, and the four basic types without looking them up.
-- [ ] You choose between a list, a dictionary, a tuple, and a set for a given job.
-- [ ] You write conditions and `for` loops, and can read a list comprehension aloud.
-- [ ] You write small functions with arguments, defaults, a return value, and a docstring.
-- [ ] You read and write CSV, JSON, and text files with `pathlib`, always specifying the encoding.
-- [ ] You read a traceback, name the ten common errors, and use `try`/`except` where it's the right answer.
-- [ ] You know what's in the standard library before reaching for a package.
-- [ ] You can turn a notebook that works into a script someone else can run, with arguments, logging, and an exit code.
-- [ ] When you're stuck, you have a routine, and it doesn't start with "ask someone".
-
----
-
 ## Recap
 
 - **Python earns its place** where a spreadsheet or SQL can't go: many files, APIs, schedules, statistics, and anything you'd otherwise repeat.
@@ -1239,7 +1222,31 @@ Forty minutes, `companion/ch17/sales_exports/`, standard library only, no pandas
 
 ---
 
-## Practice exercises
+## Key terms
+
+program · Python · interpreter · REPL · script · notebook · Jupyter · VS Code · PATH · virtual environment (`venv`) · `pip` · PyPI · package · module · `import` · standard library · variable · assignment · type (`str`, `int`, `float`, `bool`, `None`) · f-string · type conversion · floating-point approximation · list · index · slice · tuple · unpacking · dictionary · key and value · `get` with default · set · union, intersection, difference · condition · `if`/`elif`/`else` · comparison operator · truthiness · loop · `for` · `while` · `range` · `enumerate` · `zip` · `break` · `continue` · list comprehension · function · parameter · argument · default value · keyword argument · `return` · scope · docstring · `pathlib` · `glob` · context manager (`with`) · encoding · `csv.DictReader` · `csv.DictWriter` · JSON · serialization · exception · traceback · `try`/`except` · `Counter` · `defaultdict` · `datetime` · `strptime`/`strftime` · logging · `argparse` · `sys.argv` · exit code · `if __name__ == "__main__"` · PEP 8 · linter · formatter
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can install Python, create a virtual environment, and install a package into it without guessing.
+- [ ] You can explain the difference between the REPL, a notebook, and a script, and choose sensibly.
+- [ ] You use variables, f-strings, and the four basic types without looking them up.
+- [ ] You choose between a list, a dictionary, a tuple, and a set for a given job.
+- [ ] You write conditions and `for` loops, and can read a list comprehension aloud.
+- [ ] You write small functions with arguments, defaults, a return value, and a docstring.
+- [ ] You read and write CSV, JSON, and text files with `pathlib`, always specifying the encoding.
+- [ ] You read a traceback, name the ten common errors, and use `try`/`except` where it's the right answer.
+- [ ] You know what's in the standard library before reaching for a package.
+- [ ] You can turn a notebook that works into a script someone else can run, with arguments, logging, and an exit code.
+- [ ] When you're stuck, you have a routine, and it doesn't start with "ask someone".
+
+---
+
+## Exercises
 
 Use `companion/ch17/` and the standard library only. Run everything; the point is the typing.
 
@@ -1287,27 +1294,7 @@ Use `companion/ch17/` and the standard library only. Run everything; the point i
 
 ---
 
-## Key terms
-
-program · Python · interpreter · REPL · script · notebook · Jupyter · VS Code · PATH · virtual environment (`venv`) · `pip` · PyPI · package · module · `import` · standard library · variable · assignment · type (`str`, `int`, `float`, `bool`, `None`) · f-string · type conversion · floating-point approximation · list · index · slice · tuple · unpacking · dictionary · key and value · `get` with default · set · union, intersection, difference · condition · `if`/`elif`/`else` · comparison operator · truthiness · loop · `for` · `while` · `range` · `enumerate` · `zip` · `break` · `continue` · list comprehension · function · parameter · argument · default value · keyword argument · `return` · scope · docstring · `pathlib` · `glob` · context manager (`with`) · encoding · `csv.DictReader` · `csv.DictWriter` · JSON · serialization · exception · traceback · `try`/`except` · `Counter` · `defaultdict` · `datetime` · `strptime`/`strftime` · logging · `argparse` · `sys.argv` · exit code · `if __name__ == "__main__"` · PEP 8 · linter · formatter
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 18, Python for Analysts:** pandas replaces most of the loops in this chapter with whole-table operations, and adds Excel, SQL, APIs, and charts.
-- **Chapter 19, Spreadsheet Automation:** the same programming ideas in VBA and Apps Script, for work that has to stay inside a spreadsheet.
-- **Chapter 20, Automating Reports & Delivering Insights:** scheduling scripts, sending email, handling failure, and logging properly.
-- **Chapter 21 and 22:** statistics, with simulations written in Python.
-- **Chapter 26, Git:** version control for the scripts you're now writing.
-- **Chapter 30, Python as Software, Not Scripts:** modules, packaging, testing, and type hints, once scripts grow up.
-- **Interview preparation:** the Python & pandas Question Bank (Chapter 72) starts with exactly these fundamentals.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1372,3 +1359,15 @@ program · Python · interpreter · REPL · script · notebook · Jupyter · VS 
 **30.** Read it line by line and make sure you can explain each one. Check what it excludes (cancelled rows? blank amounts?), what it does with rows it can't parse, and whether it counts files you didn't intend (the README). Then reconcile the output against something you trust: one file totalled by hand, or the same period from the ERP. The number goes to Finance under your name, not the assistant's.
 
 **Timed challenge answers.** Level 1: **12** files, **330** rows. Level 2: **326** non-cancelled rows, **₹4,335,471.00**. Level 3: **October, ₹681,070.75**. Level 4: Storage Box 25L ₹908,212.50 · Storage Box 10L ₹860,946.00 · Industrial Crate ₹795,830.00. Level 5: **23** customers with non-cancelled revenue; **Sharma Hardware ₹502,775.00** and **Harbour Traders ₹412,680.50**. Level 6: Delivered 322 · Cancelled 4 · Shipped 3 · Pending 1. Level 7: mean **₹13,298.99**, median **₹10,212.50**, maximum **₹56,700.00**. Bonus: **9,475** units, largest line **85** units, **16** cities.
+
+---
+
+## Where this leads
+
+- **Chapter 18, Python for Analysts:** pandas replaces most of the loops in this chapter with whole-table operations, and adds Excel, SQL, APIs, and charts.
+- **Chapter 19, Spreadsheet Automation:** the same programming ideas in VBA and Apps Script, for work that has to stay inside a spreadsheet.
+- **Chapter 20, Automating Reports & Delivering Insights:** scheduling scripts, sending email, handling failure, and logging properly.
+- **Chapter 21 and 22:** statistics, with simulations written in Python.
+- **Chapter 26, Git:** version control for the scripts you're now writing.
+- **Chapter 30, Python as Software, Not Scripts:** modules, packaging, testing, and type hints, once scripts grow up.
+- **Interview preparation:** the Python & pandas Question Bank (Chapter 72) starts with exactly these fundamentals.

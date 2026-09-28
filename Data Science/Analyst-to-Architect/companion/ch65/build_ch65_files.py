@@ -5,7 +5,7 @@ build_ch65_files.py — builds Riverstone's monthly platform cost model.
 Infrastructure unit prices are anchored to real, searched AWS ap-south-1 (Mumbai) rates as of
 August 2026 (RDS db.m5.large Postgres $0.253/hr; gp3 storage $0.131/GB-month; S3 Standard
 $0.023/GB-month; S3 Glacier Deep Archive $0.002/GB-month; data transfer out $0.09/GB after the
-free tier) -- see the chapter's Tools section for sources. LLM API prices reuse Part VI Chapter
+free tier) -- see the chapter's Tools section for sources. LLM API prices reuse Part 6 Chapter
 54's already-searched September 2026 figures (per 1M tokens) so the whole book stays internally
 consistent. Volumes (order lines, PO emails, RAG questions, defect-model predictions) are the
 real, established Riverstone facts from Chapters 16, 54, 55, 56, and 58. Everything else in this

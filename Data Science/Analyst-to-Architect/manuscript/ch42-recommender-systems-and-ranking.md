@@ -1,6 +1,6 @@
 # Chapter 42. Recommender Systems & Ranking
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -593,7 +593,7 @@ Wholesale    top products: Drum Tap Fitting (90%), Dolly Wheels (set) (89%), Pal
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -621,19 +621,17 @@ The lesson isn't that collaborative filtering doesn't work — this chapter's ow
 
 ---
 
-## Tools
+## Project: "customers who bought this also bought" for Riverstone
+
+**Goal:** a working recommender, evaluated against at least two baselines, with a plan for cold start.
+
+### Tools you'll need
 
 - **scikit-learn** 1.8.0: `cosine_similarity`, `TruncatedSVD`, `TfidfVectorizer` (reused from Chapter 41).
 - **implicit** 0.7.3 (`pip install implicit`): `AlternatingLeastSquares`, purpose-built for implicit-feedback recommenders at scale.
 - Not used here but worth knowing: **LightFM** (hybrid recommenders combining content and collaborative signals in one model), **Surprise** (a research-oriented library for explicit-rating recommenders, less suited to implicit B2B data like Riverstone's).
 - Everything ran on one CPU core, Python 3.12.3, on 18 September 2026.
 - **Companion files:** `companion/ch42/products_text.py` adds short descriptions to the Chapter 38 product catalog. Run the chapter's code from `companion/ch42/`; it reads `../baskets/order_lines.csv`, `../baskets/products.csv`, and `../accounts/accounts.csv`.
-
----
-
-## The project: "customers who bought this also bought" for Riverstone
-
-**Goal:** a working recommender, evaluated against at least two baselines, with a plan for cold start.
 
 **Option A: your own data.** Any customer-by-product (or user-by-item) history: purchases, clicks, views, ratings.
 
@@ -659,19 +657,6 @@ The lesson isn't that collaborative filtering doesn't work — this chapter's ow
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain the difference between content-based and collaborative filtering in one sentence each.
-- [ ] I always compare a recommender against a popularity baseline before trusting it.
-- [ ] I can compute item-item cosine similarity by hand on a small example.
-- [ ] I evaluate recommenders with precision@k and NDCG@k using leave-one-out, not accuracy.
-- [ ] I know that more matrix-factorization factors isn't automatically better, and I test factor counts on held-out data.
-- [ ] I understand why implicit feedback (quantities, clicks) needs different treatment than explicit ratings.
-- [ ] I have a plan for cold-start products and cold-start customers before I need one.
-- [ ] I check whether a simple, grouped baseline (like segment-level popularity) closes most of the gap before recommending a complex model.
-
----
-
 ## Recap
 
 - **Popularity** is the recommender baseline every fancier method must beat, and it's identical for every customer.
@@ -686,7 +671,28 @@ The lesson isn't that collaborative filtering doesn't work — this chapter's ow
 
 ---
 
-## Practice exercises
+## Key terms
+
+recommender system · interaction matrix · density (sparsity) · popularity baseline · content-based filtering · collaborative filtering · item-based collaborative filtering · user-based collaborative filtering · cosine similarity (recommenders) · matrix factorization · latent factors · `TruncatedSVD` · implicit feedback · explicit feedback · confidence weighting · alternating least squares (ALS) · precision@k · NDCG (normalized discounted cumulative gain) · discounted cumulative gain (DCG) · leave-one-out evaluation · cold-start problem · hybrid recommender · segment-level baseline · cross-selling
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain the difference between content-based and collaborative filtering in one sentence each.
+- [ ] I always compare a recommender against a popularity baseline before trusting it.
+- [ ] I can compute item-item cosine similarity by hand on a small example.
+- [ ] I evaluate recommenders with precision@k and NDCG@k using leave-one-out, not accuracy.
+- [ ] I know that more matrix-factorization factors isn't automatically better, and I test factor counts on held-out data.
+- [ ] I understand why implicit feedback (quantities, clicks) needs different treatment than explicit ratings.
+- [ ] I have a plan for cold-start products and cold-start customers before I need one.
+- [ ] I check whether a simple, grouped baseline (like segment-level popularity) closes most of the gap before recommending a complex model.
+
+---
+
+## Exercises
 
 Code exercises run from `companion/ch42/` after the chapter's code (they use `matrix`, `X`, `X_train`, `eligible`, `held_out`, `evaluate`, `item_sim_train`, `content_similarity`, `products`, `accounts`, and the rest). Predict each answer before running it.
 
@@ -720,26 +726,7 @@ Code exercises run from `companion/ch42/` after the chapter's code (they use `ma
 
 ---
 
-## Key terms
-
-recommender system · interaction matrix · density (sparsity) · popularity baseline · content-based filtering · collaborative filtering · item-based collaborative filtering · user-based collaborative filtering · cosine similarity (recommenders) · matrix factorization · latent factors · `TruncatedSVD` · implicit feedback · explicit feedback · confidence weighting · alternating least squares (ALS) · precision@k · NDCG (normalized discounted cumulative gain) · discounted cumulative gain (DCG) · leave-one-out evaluation · cold-start problem · hybrid recommender · segment-level baseline · cross-selling
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 38, Unsupervised Learning,** supplied the basket data and the market-basket rules this chapter turned into personalized rankings.
-- **Chapter 41, NLP Foundations,** supplied the TF-IDF and cosine-similarity machinery behind content-based filtering, unchanged.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** governs how you'd defend a recommender's business value the same way it governs any other model.
-- **Chapter 48, Big Data and Distributed Computing,** covers the engineering for recommender systems at catalog sizes where a dense matrix no longer fits in memory.
-- **Chapter 54, Generative AI & Large Language Models,** revisits embeddings at a much larger scale, including recommendation-by-embedding-similarity as one of their standard uses.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers collaborative versus content-based filtering, the cold-start problem, and precision@k versus NDCG, all common questions for applied ML roles.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -986,3 +973,13 @@ The ranking of methods typically holds up under a time-based split too, though t
 
 **16.** Ask what the hybrid is *for*. If the goal is the single best precision@5 number today, on a catalog and customer base this well populated, the evidence says drop the hybrid and use the better single method. But if new products or new customers are a regular occurrence — which they are for most real catalogs — the hybrid's value shows up specifically in those cold-start cases that a leave-one-out test on existing, well-populated accounts doesn't measure at all. The right response isn't "sophistication is its own reward," it's "let's measure the hybrid specifically on cold-start cases before deciding whether it earns its extra complexity."
 
+---
+
+## Where this leads
+
+- **Chapter 38, Unsupervised Learning,** supplied the basket data and the market-basket rules this chapter turned into personalized rankings.
+- **Chapter 41, NLP Foundations,** supplied the TF-IDF and cosine-similarity machinery behind content-based filtering, unchanged.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** governs how you'd defend a recommender's business value the same way it governs any other model.
+- **Chapter 48, Big Data and Distributed Computing,** covers the engineering for recommender systems at catalog sizes where a dense matrix no longer fits in memory.
+- **Chapter 54, Generative AI & Large Language Models,** revisits embeddings at a much larger scale, including recommendation-by-embedding-similarity as one of their standard uses.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers collaborative versus content-based filtering, the cold-start problem, and precision@k versus NDCG, all common questions for applied ML roles.

@@ -56,9 +56,9 @@ Chapter 1 (section 1.2) introduced the ladder from data to insight. Business que
 
 | Kind | The question | Riverstone example | What it needs |
 |---|---|---|---|
-| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing (Chapters 10–13) |
+| **Descriptive** | What happened? | *What was billed revenue in March 2026?* | Counting and summarizing |
 | **Diagnostic** | Why did it happen? | *Why did March fall 80.3% from February?* | Breaking down, comparing, testing hypotheses (this chapter) |
-| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models (Chapters 36 and 40) |
+| **Predictive** | What will happen? | *What will April's revenue be?* | Patterns over time and models |
 | **Prescriptive** | What should we do? | *Should sales offer a discount to customers who didn't reorder?* | Options, criteria, and judgment (section 5.8) |
 
 Most requests arrive as descriptive questions but are really diagnostic or prescriptive underneath. *"What was March revenue?"* usually means *"Is March a problem, and what should we do about it?"* Answering only the surface question is the most common way to do correct work that doesn't help.
@@ -140,6 +140,7 @@ Some hypotheses can't be tested with the data you have. H5 needs March in earlie
 Every analysis in this book follows the loop in Figure 5.2, whether the test is a pivot table, a SQL query, or a machine learning model.
 
 ---
+
 ## 5.4 Breaking problems down: issue trees and MECE
 
 A list of six hypotheses is a start. But lists get long, overlap, and miss things. An **issue tree** organizes a question into branches, each branch into smaller branches, until every leaf is small enough to check with one piece of data.
@@ -150,7 +151,7 @@ The branches of a good tree are **MECE** (pronounced "mee-see"): **mutually excl
 
 ![Two ways to split Riverstone's eight customers: "big, in Mumbai, new in 2026" overlaps and leaves Patel Kitchenware out; "retail, wholesale, hospitality" puts every customer in exactly one group](figures/fig5-3-mece-bad-and-good-splits.svg)
 
-*Figure 5.3 — The left split double-counts two customers and misses one. The right split is MECE.*
+*Figure 5.3 — The top split double-counts two customers and misses one. The bottom split is MECE.*
 
 In Figure 5.3, splitting customers into "big", "in Mumbai", and "new in 2026" puts Metro Mart and Northgate in two groups each and Patel Kitchenware in none, so group totals won't match the company's revenue, and a conclusion like "the problem is new customers" might really be about Mumbai. Split by segment instead, and every customer sits in exactly one group.
 
@@ -177,12 +178,14 @@ Here is the question from section 5.2, answered with an issue tree. All the numb
 
 | | Invoiced orders | Average order value | Billed revenue |
 |---|---|---|---|
-| February 2026 | 5 | ₹32,340 | ₹161,700 |
+| February 2026 | 5 | ₹32,340 | ₹1,61,700 |
 | March 2026 | 2 | ₹15,900 | ₹31,800 |
 
-Both parts fell. How much of the ₹129,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹161,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹129,900.
+*Source: Mini database (Jan–Mar 2026).*
 
-> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't. Chapter 23 shows more careful ways to break down a change in a KPI.
+Both parts fell. How much of the ₹1,29,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹1,61,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹1,29,900.
+
+> **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't.
 
 **Step 2. Fewer orders: which customers?** Five customers had orders invoiced in February: Sharma Hardware, Metro Mart, Coastal Foods, Sunrise Caterers, and Northgate Distributors. In March, only Sharma Hardware and Green Leaf Hotels were invoiced. Metro Mart ordered in March, but its order is still pending. So three customers ordered in February and not at all in March: **Coastal Foods, Sunrise Caterers, and Northgate Distributors**.
 
@@ -190,7 +193,7 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 
 **Step 3. Timing: is something stuck?** Order 5012 from Metro Mart, worth ₹26,220, was placed on 15 March and is still *Pending*. It's booked, not billed. With it, March would be ₹58,020, still 64.1% below February. **H3 is true but explains only a part.**
 
-**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹109,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
+**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹1,09,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
 
 **Step 5. Why didn't they reorder?** The ERP's orders can't answer "why", but the invoices and payments can add a clue. On 31 March:
 
@@ -204,6 +207,8 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 | Green Leaf Hotels | yes | ₹0 | ₹0 |
 | Metro Mart | yes (pending) | ₹0 | ₹0 |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Every customer with an overdue balance placed no order in March, and no customer who ordered in March had anything overdue. The three customers from step 2 owe ₹82,510 between them, all of it overdue.
 
 That's a striking pattern, and it's exactly the moment to slow down. It doesn't say *which way* the connection runs, or whether there is one. A customer short of cash might stop ordering until it pays. A customer unhappy with a delivery might both withhold payment and stop ordering, so a single cause would explain both (section 5.6). Or, with seven customers, it could be coincidence. One detail points to a specific question: Northgate's February order still shows *Shipped*, not *Delivered*. If the crates never arrived, Northgate isn't a late payer; it's a customer waiting for its goods.
@@ -215,8 +220,6 @@ This branch ends as a **hypothesis to test outside the data**: a phone call to e
 **What to tell Anita.** A good answer is short, ranked, and honest about confidence:
 
 > *"March billed revenue was ₹31,800, down 80.3% from February. About three-quarters of the fall is fewer orders: Coastal Foods, Sunrise Caterers, and Northgate didn't reorder in March, and February's two wholesale orders alone were 67.5% of that month. Metro Mart's ₹26,220 order is still pending; shipping it brings March to ₹58,020. All three customers who didn't reorder have overdue balances (₹82,510 in total), and Northgate's order still shows as not delivered. I'd call all three this week, starting with Northgate, before offering any discounts. I can't tell yet whether March is seasonally slow; that needs last year's data."*
-
-> **SQL link.** Every number in this walk-through is a short query on the mini database (Chapter 12); Chapter 13's month-over-month and customer patterns do the same at scale.
 
 ---
 
@@ -238,6 +241,8 @@ Here are statements from Riverstone's Monday sales review, sorted:
 | "Northgate will pay next week." | assumption | Write it down, give it an owner, and check it by a date. |
 | "Northgate is a difficult customer." | opinion | Ask what experience it's based on; check the delivery status first. |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Businesses run on opinions and assumptions, because there's never time to check everything. The danger is when they're **presented as facts**, or an old assumption quietly becomes "what we know". List your assumptions in one place, so anyone can challenge them.
 
 ---
@@ -258,7 +263,7 @@ Chapter 4 (section 4.10) covered number tricks. This section is about the reason
 - **A common cause: C causes both.** In section 5.4, overdue balances and missing reorders went together. A delivery problem could cause both: the customer won't pay for goods it hasn't received, and won't reorder either. Chasing payment harder would then make things worse.
 - **Selection: the cases were chosen in a way that creates the pattern.** *"Customers who attend our trade fair order more."* Maybe the ones who attend were already the most engaged customers.
 
-And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance, and Chapters 30 and 31 cover how to test cause and effect properly, with experiments and without them.
+And sometimes it's **chance**: with seven customers, patterns appear by accident. Chapter 22 shows how to judge whether a pattern is bigger than chance.
 
 > **Watch out: your own analysis is a claim too.** The five questions apply to what you're about to send. The note to Anita in section 5.4 states a measured fact ("about three-quarters of the fall is fewer orders") and a recommendation ("I'd call them"), but it's careful not to say "customers stopped ordering *because* they owe us money".
 
@@ -271,12 +276,14 @@ A **cognitive bias** is a predictable way in which people's judgment drifts from
 | Bias | What it looks like at Riverstone | Antidote |
 |---|---|---|
 | **Confirmation bias**: noticing evidence that fits what you already believe | Vikram is sure a competitor is undercutting prices, so he asks for lost deals that mention price, and not for the ones that don't | Write hypotheses first (section 5.3); look for evidence that would prove your favorite wrong |
-| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹161,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
+| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹1,61,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
 | **Regression to the mean**: an unusually high or low value tends to be followed by a more ordinary one | A month boosted by one big first order is likely to be followed by a lower month, even if nothing went wrong | Before explaining a change, ask whether the starting point was unusual |
 | **Survivorship bias**: studying only the cases that made it through | Studying won deals to learn "what works", without looking at the lost and never-contacted leads that went through the same steps | Always include the cases that dropped out |
 | **Availability and recency**: overweighting what's vivid or recent | One angry phone call from a customer on Friday becomes "customers are unhappy" on Monday | Count: how many complaints, out of how many customers, over what period? |
 | **Small numbers**: trusting patterns from very few cases | "All the customers who owe us stopped ordering" is based on four customers | Give the counts; call it a hypothesis until more cases agree (Chapter 4, section 4.8) |
 | **The analyst's own bias**: wanting an interesting finding | A clean story about overdue balances is more exciting than "one big order made February unusual", so it's tempting to lead with it | State the ordinary explanation first if it's the bigger one |
+
+*Source for the Riverstone numbers: Mini database (Jan–Mar 2026).*
 
 The last row matters most. Analysts are rewarded for insights, so there's a pull toward the surprising story; a good reputation rests on being right, which often means reporting the ordinary explanation clearly.
 
@@ -296,6 +303,8 @@ Analysis exists to help someone decide. Data rarely decides by itself; it narrow
 | **Recommendation and confidence** | What should we do, and how sure are we? | B this week; decide on C or D after the calls. Medium confidence: the pattern is clear, but it's four customers and the cause is unknown. |
 | **What would change my mind** | Which new fact would change the recommendation? | If customers say price is the reason and their balances are paid, reconsider C. If goods weren't delivered, fix the delivery before anything else. |
 
+*Source: Mini database (Jan–Mar 2026).*
+
 Three principles sit behind the table:
 
 - **Match the effort to the decision.** A reversible, cheap decision (a phone call) needs less evidence than an irreversible, expensive one (a price change or a hire).
@@ -305,7 +314,8 @@ Three principles sit behind the table:
 > **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank) have practice cases with model answers.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -335,7 +345,7 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 
 **3. The tests.** All from the one-year database.
 
-- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times (Chapter 13). There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
+- **Volume.** The 43 rows include duplicates: the same enquiry submitted two or three times. There were **30 real enquiries** in the year, about 2.5 a month, or fewer than one a month per sales executive. "Piling up" isn't about volume.
 - **Missed and slow.** **8 of the 30 (26.7%) were never contacted at all.** The other 22 waited an average of **9.7 days** for a first contact. One referral, Tulip Mart, has been waiting since 23 September, 99 days.
 - **Lost after contact.** 6 of the 22 contacted leads were won (27.3%). Of the leads contacted within a week, 3 of 8 were won; of those contacted later, 3 of 14. That fits "faster is better", but with numbers this small it's a hypothesis, not a finding.
 - **Capacity.** If the team were overloaded, the executives handling the most customer orders should miss the most leads. The data says the opposite:
@@ -346,6 +356,8 @@ It's the first week of January 2026. Vikram Singh, the Sales Manager, has asked 
 | Rahul Mehta | 53 | 10 | 3 | 10.9 |
 | Neha Kulkarni | 46 | 15 | 5 | 9.8 |
 
+*Source: One-year database (2025 CRM leads).*
+
 Farah, with the most orders, missed none of her leads. Neha, with the fewest orders, was assigned half of all leads, including 9 of the 14 website enquiries, and missed 5. Website leads were the most often missed: 5 of 14 were never contacted.
 
 **4. Checking herself.** The CRM doesn't record time spent on visits, calls, or complaints, so orders aren't the whole workload. And reading the table as "Neha is the problem" would be unfair: she got as many leads as Rahul and Farah combined, including most website enquiries. The pattern points at **how leads are routed and followed up**, not at a person.
@@ -354,24 +366,22 @@ Farah, with the most orders, missed none of her leads. Neha, with the fewest ord
 
 > *"The data doesn't support hiring for lead volume: 30 real enquiries came in last year (the CRM's 43 includes duplicates), fewer than one a month per executive. The problem is follow-up: 8 enquiries were never contacted and the rest waited almost 10 days on average. Missed leads are concentrated among website enquiries and in the largest lead list, not with the busiest executive. I'd (1) call the 8 uncontacted leads this week, starting with the Tulip Mart referral, (2) spread website leads evenly, (3) set a two-working-day rule for first contact with a daily reminder, and (4) fix the duplicate website submissions. What would change my mind: if leads grow sharply, or if response times are still slow after a quarter of the new routing, a hire is worth revisiting. The CRM doesn't record time spent, so I can't rule out that the team is busy with work outside orders and leads."*
 
-Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (Chapter 20 does exactly that).
+Anita forwards it to the MD and Vikram. Vikram's first reaction is irritation. His second, after reading the table, is to ask Meera how to set up the daily reminder (you'll build that reminder yourself later in the book).
 
 The request was a solution ("hire"). Meera turned it into a question about a cause, tested each branch, avoided blaming one person, stated what she couldn't see, and recommended cheap, reversible steps first, with a clear condition for revisiting the expensive one.
 
 ---
 
-## Tools
+## Project: an issue tree for a real question
+
+**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
+
+### Tools you'll need
 
 - **Pen and paper, or a whiteboard.** Issue trees are fastest by hand. Draw the first version in five minutes; tidy it later.
 - **A spreadsheet or document** for the hypothesis log: one row per hypothesis, with the data needed, the result, and the status (supported, rejected, open).
 - **A diagram tool** (optional): diagrams.net, PowerPoint, or Google Slides for sharing a tree.
 - **SQL and spreadsheets** for the tests, from Chapter 10 onward. This chapter's numbers came from short queries on the Riverstone databases.
-
----
-
-## The project: an issue tree for a real question
-
-**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
 
 **Step 1. Choose a question** from your work, a local business, or your Chapter 4 project: turn one checked claim into an analyst's question. *"Sales up 40% in three years"* becomes *"Did the company's revenue grow faster than its market over those three years, and where did the growth come from?"*
 
@@ -400,20 +410,6 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## You've got it when…
-
-- [ ] I ask what an analysis is for before I start it.
-- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
-- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
-- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
-- [ ] I label statements as fact, opinion, or assumption.
-- [ ] I check claims for reverse causation, common causes, selection, and chance.
-- [ ] I can name the common biases and the habit that counters each one.
-- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
-- [ ] I've built an issue tree for a real question, with the data for every branch.
-
----
-
 ## Recap
 
 - Questions are **descriptive, diagnostic, predictive, or prescriptive**. Most requests are diagnostic or prescriptive underneath.
@@ -429,7 +425,29 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Practice exercises
+## Key terms
+
+descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I ask what an analysis is for before I start it.
+- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
+- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
+- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
+- [ ] I label statements as fact, opinion, or assumption.
+- [ ] I check claims for reverse causation, common causes, selection, and chance.
+- [ ] I can name the common biases and the habit that counters each one.
+- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
+- [ ] I've built an issue tree for a real question, with the data for every branch.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -441,8 +459,8 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 ### Core
 
 5. For the question *"Why did hospitality customers bring in less revenue in March 2026 than in February?"*, write three hypotheses that data could prove wrong, and for each, name the data you'd use. (Hospitality billed ₹23,325 in February and ₹20,100 in March in the mini database.)
-6. Billed revenue rose from ₹104,210 in January 2026 (3 invoiced orders) to ₹161,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
-7. Chapter 3 showed that Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
+6. Billed revenue rose from ₹1,04,210 in January 2026 (3 invoiced orders) to ₹1,61,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
+7. Chapter 3 showed that Riverstone collected ₹1,97,250 of ₹2,97,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
 8. Name the bias in each situation and suggest one habit that would counter it: (a) After one customer complains about a cracked crate, a manager says, "Our quality has slipped." (b) An analyst studies the five best customers to learn why customers stay. (c) Revenue drops after a record month, and the team spends a week looking for what went wrong. (d) A manager who wanted a new CRM highlights only the figures that make the old one look bad.
 9. A manager says: *"Customers with overdue balances order less. So chasing payments hurts sales, and finance should send fewer reminders."* Give three other explanations for the pattern, and describe what data would help decide between them.
 
@@ -460,30 +478,7 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Key terms
-
-descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 6, Setting Up to Learn,** installs the tools you'll use to test hypotheses, and helps you build a study plan.
-- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
-- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
-- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
-- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
-- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
-
-*(In the finished book these move to Appendix G.)*
+## Answers
 
 **1.** (a) Descriptive. (b) Prescriptive. (c) Diagnostic. (d) Predictive. (e) Descriptive.
 
@@ -495,7 +490,7 @@ descriptive question · diagnostic question · predictive question · prescripti
 
 **5.** Examples: (1) *Fewer hospitality customers ordered in March than in February.* Data: orders by customer and month (Sunrise Caterers ordered in February, Green Leaf Hotels in March). (2) *Hospitality customers who ordered placed smaller orders.* Data: order values by customer and month. (3) *The hospitality order that would have made the difference is still pending or was cancelled.* Data: order status for hospitality customers in March. Note that the gap is small (₹3,225) and each month has one order, so almost any difference is normal variation.
 
-**6.** (a) January: ₹104,210 ÷ 3 = **₹34,737**. February: ₹161,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹173,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
+**6.** (a) January: ₹1,04,210 ÷ 3 = **₹34,737**. February: ₹1,61,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹1,73,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
 
 **7.** One good tree:
 
@@ -507,7 +502,7 @@ descriptive question · diagnostic question · predictive question · prescripti
     - *Riverstone hasn't chased.* Data: reminder logs from finance.
   - **Paid but not recorded yet.** Data: bank statement lines not yet matched to invoices.
 
-The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹100,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
+The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹1,00,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
 
 **8.** (a) **Availability** (one vivid complaint). Habit: count complaints over a period, out of how many deliveries. (b) **Survivorship** (studying only customers who stayed). Habit: compare with customers who left. (c) **Regression to the mean** (after a record month, a lower one is normal). Habit: compare with the average and the same month last year before searching for a cause. (d) **Confirmation bias**. Habit: write down in advance what evidence would show the old CRM is fine, and look for it.
 
@@ -524,3 +519,17 @@ The first split (not yet due / overdue / paid but unrecorded) is MECE for the mo
 **14.** Don't cherry-pick; it risks your credibility and the manager's. Offer a fair picture instead: *"I'll look at Furniture's revenue, margin, and trend. If it supports cutting the range, that's a stronger case; if not, better you hear it from me than from the board."* Chapter 24 covers handling this kind of pressure.
 
 **15.** (1) **Are its numbers right?** Check the metric, definition, and figures against the database. (2) **Is it presenting hypotheses as facts?** Order tables can't tell you *why* customers behaved as they did. (3) **What has it left out?** Compare with your own issue tree: timing, mix, and the limits of the data. Chapter 26 covers working with AI assistants.
+
+---
+
+## Where this leads
+
+- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
+- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
+- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
+- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
+- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
+- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
+- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.

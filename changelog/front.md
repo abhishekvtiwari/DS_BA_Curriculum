@@ -1,0 +1,12 @@
+# Front section, "How to Use This Book": changelog (Part 0 + I build, D6)
+
+New file `Data Science/Analyst-to-Architect/manuscript/front-how-to-use-this-book.md` (unnumbered, no part line, before Chapter 1). Built with `python tools/pdf/build.py front`: 7 PDF pages = cover + contents + 5 text pages (spec: 4–6); about 1,900 words. `layout_check.py` clean. Spec: fix instructions, "Front section" F.1–F.7.
+
+- F.1 · Who the book is for; Riverstone described as Ch 1's "Meet Riverstone" box describes it; tools arrive one at a time; the plain idea → by hand → known tool → new tool order · new
+- F.2 · Chapter anatomy in order (at a glance with its five lines, Why this matters … Answers). Box names listed only where they exist in the manuscript (grep): Watch out, Try it, Simplification note, Real-life example, Tool note, Interview extra point · new
+- F.3 · old §6.9 table and four bullets unchanged; R4 / 0.15: "The answers are at the end of each chapter in this draft and move to Appendix G in the finished book." → "Each chapter's answers follow its exercises." · moved from Ch 6
+- F.4 · how to read code and output: no code in Parts 0–I; from Ch 10 code block → output block → line-by-line explanation; real output, one idea per block, PostgreSQL and MySQL side by side. The two example blocks are labelled placeholders, no real code (R1) · new
+- F.5 · the parts with their titles exactly as the chapter files' part lines (Part 0 — First Principles: Data from Zero … Part VIII — The Interview Playbook, Closing); job-ready ends at Part II; later parts are branches (Chapter 8). Also carries the two key rows of Ch 8 §8.7's pathways table (complete beginner; already an analyst) with a pointer to §8.7 (RJ-S2-5, findability) · new
+- F.6 · "the end of Part II at 317 to 394 hours: at six hours a week, about 12 to 15 months", from `tools/hours_table.py`, same as Ch 6 §6.1 and Ch 83 · new
+- F.7 · companion files (each chapter's Tools and Practice data lines name its files; Appendix E has the address: **not invented**, RJ-S1-3 stays Open); the two Riverstone datasets named (mini database, Q1 2026, 12 orders; one-year database, 2025, 173 orders; R5/0.8); old §6.4 folder tree without `.venv/`; the two rules ("the way Chapter 2 (section 2.4) will show you", since the reader hasn't read Ch 2 yet); old §6.5 "Files" habits with extension and path glossed · moved from Ch 6 §6.4, §6.5
+- Integrator: put the front section first in the Part 0 collated file (`part0-first-principles.md`).

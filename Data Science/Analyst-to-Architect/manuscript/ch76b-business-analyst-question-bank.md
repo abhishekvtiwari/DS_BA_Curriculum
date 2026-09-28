@@ -1,6 +1,6 @@
 # Chapter 76B. Business Analyst Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the requirements-gathering, process-mapping, and documentation questions that come up in BA interviews · tell a BRD, FRD, and SRS apart without hesitating · write a user story with real acceptance criteria, not a vague wish · map a process the way a BA actually would, with decision points and swimlanes · handle "can you just change the number?" and other stakeholder pushback without folding or getting defensive.
 >
@@ -312,7 +312,7 @@
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -336,15 +336,13 @@ What looked like one requirement was genuinely three, each needing a different d
 
 ---
 
-## Tools
-
-No software specific to this chapter. A whiteboard or a simple diagramming tool (Lucidchart, draw.io, or even PowerPoint) for process maps; a shared document for BRDs, FRDs, and user stories; Chapter 70's Excel/Sheets skills for a requirements traceability matrix in practice.
-
----
-
-## The project
+## Project
 
 **Goal:** run this chapter's full method on a real process, start to finish.
+
+### Tools you'll need
+
+No software specific to this chapter. A whiteboard or a simple diagramming tool (Lucidchart, draw.io, or even PowerPoint) for process maps; a shared document for BRDs, FRDs, and user stories; Chapter 70's Excel/Sheets skills for a requirements traceability matrix in practice.
 
 1. Pick a real, recurring process you're familiar with (at work or elsewhere), and interview at least two people involved in different steps of it.
 2. Map it as-is, including at least one exception path, using a swimlane format.
@@ -354,15 +352,15 @@ No software specific to this chapter. A whiteboard or a simple diagramming tool 
 
 ---
 
-## Final-week revision list
-
-Q76-001, Q76-002, Q76-007, Q76-008, Q76-013, Q76-018, Q76-023, Q76-028, Q76-029, Q76-033, Q76-038.
-
----
-
 ## Key terms
 
 elicitation · business requirement · functional requirement · non-functional requirement · business rule · requirements traceability matrix · BRD · FRD · SRS · user story · use case · INVEST · Given/When/Then · Definition of Done · spike · swimlane diagram · BPMN · decision point (gateway) · as-is vs. to-be · gap analysis · SDLC · sprint backlog · change request · UAT · UAT sign-off
+
+---
+
+## Final-week revision list
+
+Q76-001, Q76-002, Q76-007, Q76-008, Q76-013, Q76-018, Q76-023, Q76-028, Q76-029, Q76-033, Q76-038.
 
 ---
 

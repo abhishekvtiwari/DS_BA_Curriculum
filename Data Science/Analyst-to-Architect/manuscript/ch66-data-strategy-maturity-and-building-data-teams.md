@@ -1,12 +1,12 @@
 # Chapter 66. Data Strategy, Maturity & Building Data Teams
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
 > **You will learn to:** write a data strategy that fits on one page and actually gets used · score an organization's data maturity honestly, across the dimensions that matter, not just the ones that flatter it · build a real business case for data platform investment, including the uncomfortable parts a case usually leaves out · choose a team structure — centralized, embedded, or hybrid — that fits the organization's actual size, and hire against a named gap rather than a vague sense that "we need more people" · decide when to build a capability and when to buy it, with a real framework rather than a preference · lead change in an organization that doesn't yet trust data by default.
 >
-> **Before you start:** this chapter draws together every earlier Part VII chapter into an organizational and strategic view: the platform (Chapter 60), its trade-offs (61), its architecture pattern (62), its governance (63), its security (64), and — directly — its real cost (65).
+> **Before you start:** this chapter draws together every earlier Part 7 chapter into an organizational and strategic view: the platform (Chapter 60), its trade-offs (61), its architecture pattern (62), its governance (63), its security (64), and — directly — its real cost (65).
 >
 > **Time needed:** 8–10 hours, spread over a week.
 >
@@ -189,7 +189,8 @@ The hardest part of everything this Part has taught is not technical, and it's a
 **The uncomfortable truth this section closes on:** a data platform this well-designed, this well-governed, this honestly costed, can still fail — not technically, but organizationally — if nobody changes how decisions actually get made day to day. The technical work in Chapters 60 through 65 was necessary. This chapter's work is what makes it sufficient.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -227,7 +228,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: write a one-page strategy and an honest business case
+
+**Goal:** produce a real, one-page data strategy and a business case for one specific investment, both built to survive a skeptical reader's questions.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas` for the maturity scorecard and business-case model (run here on Python 3.12, pandas 3.0.2).
 - **No specialized software required** — a strategy on a page, a maturity scorecard, and a business case are documents and disciplined arithmetic, not tools to buy.
@@ -235,12 +240,6 @@ What made the difference:
   - `build_ch66_files.py`: builds both the maturity scorecard and the ROI model from figures already established in Chapters 19, 20, 58, and 65.
   - `maturity_scorecard.csv`: the five-dimension assessment behind Figure 66.1.
   - `roi_case.csv`: the honest business case behind Figure 66.4, including both the measured floor and the explicit gap to the platform's full cost.
-
----
-
-## The project: write a one-page strategy and an honest business case
-
-**Goal:** produce a real, one-page data strategy and a business case for one specific investment, both built to survive a skeptical reader's questions.
 
 **Option A: your own organization.** Write the strategy for a team or function you actually work in.
 
@@ -266,18 +265,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You can write a data strategy that fits on one page and says no to something explicitly.
-- [ ] You score maturity plainly, including dimensions that reflect poorly on work you're proud of.
-- [ ] You build a business case that shows its weakest, most defensible number rather than an inflated one, and names unquantified value explicitly instead of hiding it.
-- [ ] You choose a team structure — centralized, embedded, or hybrid — that fits the organization's actual size, using Conway's Law deliberately.
-- [ ] You hire against a specific, evidenced gap, not a general feeling that the team is busy.
-- [ ] You run a real build-versus-buy scorecard before defaulting to either option.
-- [ ] You can name the specific, non-technical habits that turn a well-built platform into one an organization actually uses by default.
-
----
-
 ## Recap
 
 - **A one-page data strategy** — where we are, where we're going, why, how we'll know, what we need — is a discipline that forces real decisions, not a formatting preference.
@@ -289,7 +276,27 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+data strategy · one-page strategy · maturity model · maturity stage · business case · measured floor · unmeasured ceiling · team topology · centralized team · embedded team · hybrid (hub and spoke) team · Conway's Law (Chapter 62) · build versus buy · vendor lock-in · change management · data culture · showback (Chapter 65)
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can write a data strategy that fits on one page and says no to something explicitly.
+- [ ] You score maturity plainly, including dimensions that reflect poorly on work you're proud of.
+- [ ] You build a business case that shows its weakest, most defensible number rather than an inflated one, and names unquantified value explicitly instead of hiding it.
+- [ ] You choose a team structure — centralized, embedded, or hybrid — that fits the organization's actual size, using Conway's Law deliberately.
+- [ ] You hire against a specific, evidenced gap, not a general feeling that the team is busy.
+- [ ] You run a real build-versus-buy scorecard before defaulting to either option.
+- [ ] You can name the specific, non-technical habits that turn a well-built platform into one an organization actually uses by default.
+
+---
+
+## Exercises
 
 Use `companion/ch66/maturity_scorecard.csv` and `roi_case.csv`.
 
@@ -324,25 +331,7 @@ Use `companion/ch66/maturity_scorecard.csv` and `roi_case.csv`.
 
 ---
 
-## Key terms
-
-data strategy · one-page strategy · maturity model · maturity stage · business case · measured floor · unmeasured ceiling · team topology · centralized team · embedded team · hybrid (hub and spoke) team · Conway's Law (Chapter 62) · build versus buy · vendor lock-in · change management · data culture · showback (Chapter 65)
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 62, Data Architecture Patterns:** Conway's Law and the mesh-maturity method this chapter's assessment and team-structure sections directly extend.
-- **Chapter 65, FinOps:** the real cost figure this chapter's business case is measured against.
-- **Chapters 19, 20, 58:** the three real automations whose savings anchor the honest ROI case.
-- **Chapter 67, The Architect as Leader:** the final chapter, where strategy, maturity, and the business case become one person's actual responsibility — leading the organization this chapter has been describing, not just analyzing it.
-- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about building a data team and justifying platform investment — "how would you make the case for headcount or budget" is this chapter's method.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -370,7 +359,7 @@ data strategy · one-page strategy · maturity model · maturity stage · busine
 
 **12.** For example: require that any monthly leadership review include one slide sourced directly from a Riverstone dashboard rather than a manually-prepared summary — a small, concrete habit change that routes at least one recurring decision-making moment through the platform by default, rather than a broader "be more data-driven" initiative with no specific mechanism behind it.
 
-**13.** With an invented, clearly-labeled figure (for example, ₹150,000/year in avoided defective-shipment costs, sized plausibly against the ₹4,000-per-miss figure established in Part VI), the total known savings would rise to roughly ₹353,775, moving coverage from 45% to about 78% — still short of 100%, which is itself worth noting: even adding one more real, estimable source doesn't fully close the gap, reinforcing that some value genuinely resists this kind of accounting.
+**13.** With an invented, clearly-labeled figure (for example, ₹150,000/year in avoided defective-shipment costs, sized plausibly against the ₹4,000-per-miss figure established in Part 6), the total known savings would rise to roughly ₹353,775, moving coverage from 45% to about 78% — still short of 100%, which is itself worth noting: even adding one more real, estimable source doesn't fully close the gap, reinforcing that some value genuinely resists this kind of accounting.
 
 **14.** At that later stage, "where we're going" would plausibly shift from closing foundational gaps (governance, cost habits) toward genuine differentiation — perhaps extending the platform's AI capabilities to a new business line, or beginning a real, evidence-triggered move toward a data mesh (Chapter 62) now that a second and third domain team have their own capacity, if that trigger has by then actually arrived.
 
@@ -379,3 +368,13 @@ data strategy · one-page strategy · maturity model · maturity stage · busine
 **16.** It's rarely appropriate, and the risk is exactly what Meera's story illustrates in reverse: an inflated case that doesn't survive the first hard question damages trust in every future case from the same source, permanently, in a way that costs far more than one delayed or declined investment. If the investment is genuinely right, the honest case — showing the real floor and naming the real ceiling — is very often persuasive enough on its own, as it was for Riverstone's governance hire.
 
 **17.** When the capability genuinely is core to competitive advantage — meaning competitors having access to the same vendor tool would erode a real, specific edge — cost and convenience legitimately take a back seat to control and differentiation. The test is whether "core to our competitive advantage" is actually true and specific, or a comfortable-sounding justification for a preference to build; a data catalog, honestly assessed, essentially never clears that bar, but a company's actual proprietary model or algorithm often does.
+
+---
+
+## Where this leads
+
+- **Chapter 62, Data Architecture Patterns:** Conway's Law and the mesh-maturity method this chapter's assessment and team-structure sections directly extend.
+- **Chapter 65, FinOps:** the real cost figure this chapter's business case is measured against.
+- **Chapters 19, 20, 58:** the three real automations whose savings anchor the honest ROI case.
+- **Chapter 67, The Architect as Leader:** the final chapter, where strategy, maturity, and the business case become one person's actual responsibility — leading the organization this chapter has been describing, not just analyzing it.
+- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about building a data team and justifying platform investment — "how would you make the case for headcount or budget" is this chapter's method.

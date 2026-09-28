@@ -1,6 +1,6 @@
 # Chapter 78. Automation & Integration Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** choose the right automation approach for a given problem, macro, script, low-code tool, or RPA, instead of defaulting to whichever one you know best · design report and alert automations that actually get read · reason correctly about APIs, webhooks, and reverse ETL · build retry and idempotency logic that survives a flaky upstream system · investigate an automation that silently stopped working, the way an interviewer actually wants.
 >
@@ -262,7 +262,7 @@ sync_lead_score("lead_103", 60)   # -> "created lead_103 with score 60"
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -286,15 +286,13 @@ The interviewer's follow-up: what did she change? Her answer: two things, not on
 
 ---
 
-## Tools
-
-**Python** for scripted automation and API integration; **VBA/Apps Script** (Chapter 19, Chapter 70) for in-application macros; common low-code platforms (Zapier, Power Automate, Make) for cross-system automation without custom code; a scheduler (cron, Airflow, or a platform's built-in scheduling) for anything running on a timer. Every code pattern in this chapter runs on plain Python 3.12 with no special libraries beyond the standard library.
-
----
-
-## The project
+## Project
 
 **Goal:** apply this chapter's method to a real automation of your own.
+
+### Tools you'll need
+
+**Python** for scripted automation and API integration; **VBA/Apps Script** (Chapter 19, Chapter 70) for in-application macros; common low-code platforms (Zapier, Power Automate, Make) for cross-system automation without custom code; a scheduler (cron, Airflow, or a platform's built-in scheduling) for anything running on a timer. Every code pattern in this chapter runs on plain Python 3.12 with no special libraries beyond the standard library.
 
 1. Pick one manual, repetitive task from your own work and run it through Q78-001's decision framework: which of the four approaches actually fits, and why.
 2. Add retry-with-backoff logic to one real script you have that calls an external system, and test that it actually waits longer between successive failures.
@@ -303,15 +301,15 @@ The interviewer's follow-up: what did she change? Her answer: two things, not on
 
 ---
 
-## Final-week revision list
-
-Q78-001, Q78-006, Q78-011, Q78-012, Q78-013, Q78-017, Q78-018, Q78-023, Q78-029.
-
----
-
 ## Key terms
 
 macro vs. script vs. low-code vs. RPA · report automation · alert fatigue · polling vs. webhook · webhook idempotency · reverse ETL · API rate limit · API key vs. OAuth · exponential backoff · jitter · circuit breaker · silent failure · monitoring (absence of success) · upsert (in an integration context) · single point of failure (undocumented automation)
+
+---
+
+## Final-week revision list
+
+Q78-001, Q78-006, Q78-011, Q78-012, Q78-013, Q78-017, Q78-018, Q78-023, Q78-029.
 
 ---
 

@@ -1,6 +1,6 @@
 # Chapter 69. The Extra-Points Method
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **Chapter at a glance**
 >
@@ -213,7 +213,7 @@ The twelve moves are seasoning, not the whole meal. A technically wrong answer w
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -238,15 +238,13 @@ Two weeks later, in a real screening call, an interviewer asks her to find River
 
 ---
 
-## Tools
-
-No software for this chapter. The only "tool" worth naming: **record yourself** answering three questions from any bank chapter out loud, on your phone, then listen back and mark where you stopped at "correct" instead of continuing to "strong." Most people are surprised by how often that's the very first sentence.
-
----
-
-## The project: score your own last answer
+## Project: score your own last answer
 
 **Goal:** take an answer you've actually given, in a past interview, a work meeting, or a mock session, and rewrite it through all three tiers.
+
+### Tools you'll need
+
+No software for this chapter. The only "tool" worth naming: **record yourself** answering three questions from any bank chapter out loud, on your phone, then listen back and mark where you stopped at "correct" instead of continuing to "strong." Most people are surprised by how often that's the very first sentence.
 
 **Steps:**
 
@@ -255,17 +253,6 @@ No software for this chapter. The only "tool" worth naming: **record yourself** 
 3. Identify which of the twelve moves (69.3) were present and which were missing.
 4. Rewrite the answer as a "strong" tier answer, then again as "extra-points," labeling each move you add.
 5. Time yourself saying the extra-points version out loud. If it's over two minutes, cut it: extra points that take too long lose the "structure & communication" dimension you just gained.
-
----
-
-## You've got it when…
-
-- [ ] I can name the five scoring dimensions without looking, and I know none of them is "technical knowledge" alone.
-- [ ] I lead every answer with one sentence that actually answers the question, before any caveat.
-- [ ] I can name all twelve moves, and I can give an example of each from memory.
-- [ ] I know which moves matter most in which round, and I don't spend full-depth time on a fifteen-second warm-up question.
-- [ ] I can catch myself over-clarifying or caveat-padding, and stop.
-- [ ] I've rewritten at least one of my own real answers through all three tiers.
 
 ---
 
@@ -280,7 +267,24 @@ No software for this chapter. The only "tool" worth naming: **record yourself** 
 
 ---
 
-## Practice exercises
+## Key terms
+
+extra-point moves · five-dimension rubric · correctness · structure & communication · depth & edge cases · business judgment · collaboration · simple-first · clarifying question · stated assumption · signposting · edge case · trade-off · validation (sanity check) · business impact · scale and maintenance · admitting limits · real evidence · closing the loop · red flag (interview) · over-correction
+
+---
+
+## Check yourself
+
+- [ ] I can name the five scoring dimensions without looking, and I know none of them is "technical knowledge" alone.
+- [ ] I lead every answer with one sentence that actually answers the question, before any caveat.
+- [ ] I can name all twelve moves, and I can give an example of each from memory.
+- [ ] I know which moves matter most in which round, and I don't spend full-depth time on a fifteen-second warm-up question.
+- [ ] I can catch myself over-clarifying or caveat-padding, and stop.
+- [ ] I've rewritten at least one of my own real answers through all three tiers.
+
+---
+
+## Exercises
 
 Each exercise below is a short question. Answer it three times (passing, strong, extra-points), labeling your moves on the third pass, exactly as section 69.4 modeled. These twenty, plus the worked example in 69.4, are this chapter's full set of practiced examples.
 
@@ -306,12 +310,6 @@ Each exercise below is a short question. Answer it three times (passing, strong,
 20. Tell me about a time you disagreed with a decision at work. *(A behavioral question: apply moves 3, 11, and 12 especially.)*
 
 *(In the finished book, one worked answer per exercise, at all three tiers, appears in Appendix G, cross-referenced to the bank chapter that teaches its underlying content.)*
-
----
-
-## Key terms
-
-extra-point moves · five-dimension rubric · correctness · structure & communication · depth & edge cases · business judgment · collaboration · simple-first · clarifying question · stated assumption · signposting · edge case · trade-off · validation (sanity check) · business impact · scale and maintenance · admitting limits · real evidence · closing the loop · red flag (interview) · over-correction
 
 ---
 

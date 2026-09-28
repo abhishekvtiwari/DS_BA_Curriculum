@@ -1,6 +1,6 @@
 # Chapter 11. The Spreadsheet, Mastered: Excel & Google Sheets
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -1682,7 +1682,7 @@ Open `challenge/riverstone_rewards_case.xlsx`. It has a **Rules** sheet, a **Que
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1763,7 +1763,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: rebuild a messy monthly workbook so next month is one refresh
+
+**Goal:** replace a copy-paste monthly workbook with one that loads its data, applies its rules once, checks itself, and updates with **Refresh All**.
+
+### Tools you'll need
 
 - **Microsoft Excel for Windows**, Microsoft 365: everything in this chapter. Power Pivot and the Data Model require Windows. `XLOOKUP`, dynamic arrays, and `LET` need Microsoft 365, Excel 2021, or later; `GROUPBY` and `PIVOTBY` need a current Microsoft 365 version.
 - **Excel for Mac** (Microsoft 365): lookups, pivot tables, dynamic arrays, what-if tools, and Power Query with fewer sources. No Power Pivot.
@@ -1779,12 +1783,6 @@ What made the difference:
   - `challenge/riverstone_stockroom_case.xlsx` and `riverstone_stockroom_solution.xlsx`: the guided championship case from section 11.14 and a helper-column solution.
   - `challenge/riverstone_rewards_case.xlsx` and `riverstone_rewards_solution.xlsx`: the timed practice case and its classic-formula solution.
   - `build_ch11_files.py`: the script that builds all of the above from Riverstone's data (seed 20251).
-
----
-
-## The project: rebuild a messy monthly workbook so next month is one refresh
-
-**Goal:** replace a copy-paste monthly workbook with one that loads its data, applies its rules once, checks itself, and updates with **Refresh All**.
 
 **Option A: your own workbook.** Pick a report you (or your team) rebuild every month. Make a copy, remove confidential data or replace names with codes, and follow the steps.
 
@@ -1813,7 +1811,32 @@ Your rebuilt report should show 2025 net revenue of **₹4,335,471**, **102.3%**
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Keep data long**, separate data from calculations and outputs, and **state each rule once**. Copy-paste workbooks fail because they repeat rules and ranges by hand.
+- The **conditional family** (`SUMIFS`, `COUNTIFS`, `AVERAGEIFS`, `MAXIFS`, `MINIFS`) answers most business questions; criteria are text, joined to cells with `&`. **`SUMPRODUCT`** handles what they can't: OR across columns, calculated conditions, weighted averages, and distinct counts.
+- The **everyday toolkit** (`IFS`, `SWITCH`, `TEXTBEFORE`, `EDATE`, `WORKDAY.INTL`, `ISOWEEKNUM`, `RANK.EQ`, rounding) turns raw columns into the fields reports need.
+- **`XLOOKUP`** covers exact matches, bands (`match_mode` −1), last matches (`search_mode` −1), several columns, and nested two-way lookups. **`INDEX`/`MATCH`** does the same in every version. **`VLOOKUP`** counts columns and defaults to approximate: recognize it, then replace it.
+- **Pivot tables** map to SQL: Filters → `WHERE`, Rows and Columns → `GROUP BY`, Values → aggregates. Use distinct counts for orders, **Show Values As** for shares and differences, slicers for filtering, and **refresh** Excel pivots.
+- **Dynamic arrays** (`FILTER`, `UNIQUE`, `SORT`, `SEQUENCE`, `LET`) return whole tables from one formula; results **spill**, and a blocked spill shows `#SPILL!`.
+- **Power Query** records cleanup as applied steps: combine a folder, set types yourself (delete the automatic guess), filter, add columns, merge, unpivot, and **refresh**.
+- **Power Pivot** holds related tables in a **data model**. **Measures** calculate in each cell's **filter context**; `CALCULATE` changes that context. Riverstone's gross margin is 26.2% overall but only 19.0% in Wholesale.
+- **Goal Seek** works backward to a target; **data tables** show many what-if answers at once; mixed-reference grids do the same in Sheets.
+- Google Sheets' **`QUERY`**, **`ARRAYFORMULA`**, **`IMPORTRANGE`**, and **Connected Sheets** cover much of what Power Query and Power Pivot do in Excel.
+- **Competitive Excel** rewards the same habits as good analysis, under a clock: read everything first, parse once, keep settings in input cells, build one row per step, check small cases, and search with data tables.
+- **Audit** by reconciling, reading formulas, finding constants, checking ranges, and looking for duplicates. **Leave the spreadsheet** when size, sources, users, scheduling, or risk demand it.
+
+---
+
+## Key terms
+
+lookup array · return array · match mode · search mode · exact match · approximate match · band (tier) table · `INDEX` · `MATCH` · two-way lookup · `VLOOKUP` · `HLOOKUP` · long data · wide data · pivot table · Rows area · Columns area · Values area · Filters area · distinct count · Show Values As · date grouping · value filter · slicer · timeline · `GETPIVOTDATA` · pivot chart · refresh · dynamic array · spill range · `#SPILL!` · spill reference (`#`) · `FILTER` · `UNIQUE` · `SORT` · `SORTBY` · `SEQUENCE` · `LET` · `GROUPBY` · `PIVOTBY` · Power Query · query · applied steps · combine files · data type detection · locale · merge queries · join kind · append queries · unpivot · parameter · M language · load to · Power Pivot · data model · relationship · one-to-many · date table · DAX · calculated column · measure · `SUMX` · `CALCULATE` · `DIVIDE` · `RELATED` · filter context · time intelligence · `TOTALYTD` · what-if analysis · Goal Seek · Solver · data table · Scenario Manager · `QUERY` · Google Visualization API Query Language · `ARRAYFORMULA` · `IMPORTRANGE` · `VSTACK` · Connected Sheets · data warehouse · ODBC · README sheet · inconsistent formula · check cell · Go To Special · Inquire · audit
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can write `SUMIFS`, `COUNTIFS`, `AVERAGEIFS`, `MAXIFS`, and `MINIFS` with dates, wildcards, blanks, cell references, and OR logic, and switch to `SUMPRODUCT` when a condition needs a calculation.
 - [ ] You know which average a question needs (per line, per order, per customer, weighted) and can calculate each.
@@ -1832,23 +1855,7 @@ Your rebuilt report should show 2025 net revenue of **₹4,335,471**, **102.3%**
 
 ---
 
-## Recap
-
-- **Keep data long**, separate data from calculations and outputs, and **state each rule once**. Copy-paste workbooks fail because they repeat rules and ranges by hand.
-- The **conditional family** (`SUMIFS`, `COUNTIFS`, `AVERAGEIFS`, `MAXIFS`, `MINIFS`) answers most business questions; criteria are text, joined to cells with `&`. **`SUMPRODUCT`** handles what they can't: OR across columns, calculated conditions, weighted averages, and distinct counts.
-- The **everyday toolkit** (`IFS`, `SWITCH`, `TEXTBEFORE`, `EDATE`, `WORKDAY.INTL`, `ISOWEEKNUM`, `RANK.EQ`, rounding) turns raw columns into the fields reports need.
-- **`XLOOKUP`** covers exact matches, bands (`match_mode` −1), last matches (`search_mode` −1), several columns, and nested two-way lookups. **`INDEX`/`MATCH`** does the same in every version. **`VLOOKUP`** counts columns and defaults to approximate: recognize it, then replace it.
-- **Pivot tables** map to SQL: Filters → `WHERE`, Rows and Columns → `GROUP BY`, Values → aggregates. Use distinct counts for orders, **Show Values As** for shares and differences, slicers for filtering, and **refresh** Excel pivots.
-- **Dynamic arrays** (`FILTER`, `UNIQUE`, `SORT`, `SEQUENCE`, `LET`) return whole tables from one formula; results **spill**, and a blocked spill shows `#SPILL!`.
-- **Power Query** records cleanup as applied steps: combine a folder, set types yourself (delete the automatic guess), filter, add columns, merge, unpivot, and **refresh**.
-- **Power Pivot** holds related tables in a **data model**. **Measures** calculate in each cell's **filter context**; `CALCULATE` changes that context. Riverstone's gross margin is 26.2% overall but only 19.0% in Wholesale.
-- **Goal Seek** works backward to a target; **data tables** show many what-if answers at once; mixed-reference grids do the same in Sheets.
-- Google Sheets' **`QUERY`**, **`ARRAYFORMULA`**, **`IMPORTRANGE`**, and **Connected Sheets** cover much of what Power Query and Power Pivot do in Excel.
-- **Competitive Excel** rewards the same habits as good analysis, under a clock: read everything first, parse once, keep settings in input cells, build one row per step, check small cases, and search with data tables.
-- **Audit** by reconciling, reading formulas, finding constants, checking ranges, and looking for duplicates. **Leave the spreadsheet** when size, sources, users, scheduling, or risk demand it.
-
----
-## Practice exercises
+## Exercises
 
 Use `ch11_practice.xlsx` (with the Sales data converted to a table named `Sales`) unless an exercise says otherwise.
 
@@ -1917,28 +1924,7 @@ Work these on the Sales table. Write each answer as one formula first, then chec
 
 ---
 
-## Key terms
-
-lookup array · return array · match mode · search mode · exact match · approximate match · band (tier) table · `INDEX` · `MATCH` · two-way lookup · `VLOOKUP` · `HLOOKUP` · long data · wide data · pivot table · Rows area · Columns area · Values area · Filters area · distinct count · Show Values As · date grouping · value filter · slicer · timeline · `GETPIVOTDATA` · pivot chart · refresh · dynamic array · spill range · `#SPILL!` · spill reference (`#`) · `FILTER` · `UNIQUE` · `SORT` · `SORTBY` · `SEQUENCE` · `LET` · `GROUPBY` · `PIVOTBY` · Power Query · query · applied steps · combine files · data type detection · locale · merge queries · join kind · append queries · unpivot · parameter · M language · load to · Power Pivot · data model · relationship · one-to-many · date table · DAX · calculated column · measure · `SUMX` · `CALCULATE` · `DIVIDE` · `RELATED` · filter context · time intelligence · `TOTALYTD` · what-if analysis · Goal Seek · Solver · data table · Scenario Manager · `QUERY` · Google Visualization API Query Language · `ARRAYFORMULA` · `IMPORTRANGE` · `VSTACK` · Connected Sheets · data warehouse · ODBC · README sheet · inconsistent formula · check cell · Go To Special · Inquire · audit
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 12, Databases & SQL Foundations:** the pivot table's `GROUP BY`, the lookup's `JOIN`, and `QUERY`'s clauses in a real database, for data too big or too shared for a spreadsheet.
-- **Chapter 13, SQL for Real Analysis:** running totals, rankings, and month-over-month changes with window functions, the SQL versions of **Show Values As** and `TOTALYTD`.
-- **Chapter 14, Data Cleaning & Preparation:** the messy data this chapter assumed away (spelling variants, mixed dates, duplicates), in Power Query, SQL, and pandas.
-- **Chapter 16, Business Intelligence with Power BI:** the same Power Query and DAX engines, with a star schema, `CALCULATE` in depth, and dashboards that refresh on a schedule.
-- **Chapter 18, Python for Analysts:** `pandas.merge`, `groupby`, and `pivot_table`, which do in code what lookups and pivot tables do here.
-- **Chapter 19, Spreadsheet Automation:** macros and scripts for the steps Power Query can't do, such as saving a PDF and emailing it.
-- **Chapter 20, Automating Reports & Delivering Insights:** scheduling the refresh this chapter still starts by hand.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes live pivot table, `XLOOKUP`, `INDEX`/`MATCH`, Power Query, and DAX tasks, and "how would you automate this monthly report?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -2044,3 +2030,16 @@ lookup array · return array · match mode · search mode · exact match · appr
 | B4 | **4** (Metro Mart, 7,062 points) |
 
 The most common wrong answers come from four traps: counting cancelled order 10131 (it's in the Lines sheet); using a customer's *total* revenue for the tier instead of revenue from earlier orders only (Sharma Hardware's first order is Standard, not Gold); giving the streak bonus to January orders (there's no December 2024 in the data); and expiring points for customers who ordered in Q4. Check L3 by hand for one customer: Sharma Hardware moves to Silver on order 10018 (₹112,750 of earlier orders) and to Gold on order 10088 (₹260,372.50).
+
+---
+
+## Where this leads
+
+- **Chapter 12, Databases & SQL Foundations:** the pivot table's `GROUP BY`, the lookup's `JOIN`, and `QUERY`'s clauses in a real database, for data too big or too shared for a spreadsheet.
+- **Chapter 13, SQL for Real Analysis:** running totals, rankings, and month-over-month changes with window functions, the SQL versions of **Show Values As** and `TOTALYTD`.
+- **Chapter 14, Data Cleaning & Preparation:** the messy data this chapter assumed away (spelling variants, mixed dates, duplicates), in Power Query, SQL, and pandas.
+- **Chapter 16, Business Intelligence with Power BI:** the same Power Query and DAX engines, with a star schema, `CALCULATE` in depth, and dashboards that refresh on a schedule.
+- **Chapter 18, Python for Analysts:** `pandas.merge`, `groupby`, and `pivot_table`, which do in code what lookups and pivot tables do here.
+- **Chapter 19, Spreadsheet Automation:** macros and scripts for the steps Power Query can't do, such as saving a PDF and emailing it.
+- **Chapter 20, Automating Reports & Delivering Insights:** scheduling the refresh this chapter still starts by hand.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes live pivot table, `XLOOKUP`, `INDEX`/`MATCH`, Power Query, and DAX tasks, and "how would you automate this monthly report?"

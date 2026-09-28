@@ -1,6 +1,6 @@
 # Chapter 26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -12,7 +12,7 @@
 >
 > **Tools:** Git 2.43 or later, a free GitHub account, and a text editor. Everything in this chapter was run on Git 2.43.0 on Linux; the commands are identical on macOS and on Windows through Git Bash or WSL.
 >
-> **Practice data:** none new. You will version the work you have already done in Part II: the queries from Chapters 12 and 13, the scripts from Chapters 17, 18, and 20. The worked example is one SQL file, built from nothing to a small shared repository.
+> **Practice data:** none new. You will version the work you have already done in Part 2: the queries from Chapters 12 and 13, the scripts from Chapters 17, 18, and 20. The worked example is one SQL file, built from nothing to a small shared repository.
 
 ---
 
@@ -709,7 +709,7 @@ If your company has an approved assistant with a data-processing agreement, the 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -762,7 +762,9 @@ The lesson is not that Git is complicated. It is that a repository remembers eve
 
 ---
 
-## Tools
+## Project: one repository for everything you have built
+
+### Tools you'll need
 
 | Tool | What it is for | Notes |
 |---|---|---|
@@ -781,11 +783,7 @@ The lesson is not that Git is complicated. It is that a repository remembers eve
 | **Confluence, Notion, SharePoint** | company wikis | Fine for decisions and context. Poor for anything that must match the code, because it drifts |
 | **AI coding assistants** | drafting, translating, and explaining code | Section 26.11. Delegate the typing, keep the judgment |
 
----
-
-## The project: one repository for everything you have built
-
-By now Part II has produced a folder of work. This project turns it into one repository a stranger could run, and it is the raw material for Chapter 27's portfolio. Budget two hours.
+By now Part 2 has produced a folder of work. This project turns it into one repository a stranger could run, and it is the raw material for Chapter 27's portfolio. Budget two hours.
 
 **1. Create the repository.** A new folder, `git init`, and a first commit containing only a `.gitignore` and an empty `README.md`. Starting with `.gitignore` is deliberate: the rules exist before anything can be committed by accident.
 
@@ -802,22 +800,6 @@ By now Part II has produced a folder of work. This project turns it into one rep
 **Stretch.** Review someone else's repository, from a study group or from a public one, and write three comments: one question about something you did not understand, one thing you would do differently and why, and one thing that was well done. Reviewing badly is the most common way new team members make a poor first impression, and it is entirely avoidable.
 
 **What "done" looks like:** a URL you could put on a CV, where a stranger can read what the work is, see how it was built, and run it.
-
----
-
-## You've got it when…
-
-- You can name the three places a file lives in Git and say which one a given error message is talking about.
-- You commit your work in pieces that make sense, with messages that would help a colleague, or you, in a year.
-- Your `.gitignore` exists before your first commit, and you know why `git rm --cached` is needed when it does not.
-- You know that deleting a committed secret does not remove it, and that the fix is to change the credential.
-- Given something that went wrong, you can say which of the four undos applies before you type a command.
-- You work on a branch without being told to, and your branch names say what is in them.
-- You can open a pull request whose description a reviewer can act on, and review someone else's without either rubber-stamping it or being unpleasant.
-- You can read a `git diff` and say what changed, line by line.
-- You have one repository whose README lets a stranger run your work in fifteen minutes.
-- You can read a Jira board and say what the team is doing this sprint.
-- You use an AI assistant for the typing and not for the judgment, and you can list what must never be pasted into one.
 
 ---
 
@@ -841,7 +823,31 @@ You will work with an AI assistant. Delegate the typing: boilerplate, translatio
 
 ---
 
-## Practice exercises
+## Key terms
+
+version control · repository · working directory · staging area · commit · commit hash · `git init` · `git status` · `git add` · `git commit` · `git log` · `git diff` · untracked file · tracked file · `.gitignore` · `git check-ignore` · `git rm --cached` · `.env` · `.env.example` · environment variable · `git restore` · `git restore --staged` · `git commit --amend` · `git revert` · branch · `git switch` · `git merge` · fast-forward · remote · `git push` · `git pull` · clone · pull request · code review · merge conflict · continuous integration · workflow · README · Markdown · Agile · sprint · Scrum · standup · retrospective · backlog · Kanban · work-in-progress limit · issue key · story point · AI assistant
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- You can name the three places a file lives in Git and say which one a given error message is talking about.
+- You commit your work in pieces that make sense, with messages that would help a colleague, or you, in a year.
+- Your `.gitignore` exists before your first commit, and you know why `git rm --cached` is needed when it does not.
+- You know that deleting a committed secret does not remove it, and that the fix is to change the credential.
+- Given something that went wrong, you can say which of the four undos applies before you type a command.
+- You work on a branch without being told to, and your branch names say what is in them.
+- You can open a pull request whose description a reviewer can act on, and review someone else's without either rubber-stamping it or being unpleasant.
+- You can read a `git diff` and say what changed, line by line.
+- You have one repository whose README lets a stranger run your work in fifteen minutes.
+- You can read a Jira board and say what the team is doing this sprint.
+- You use an AI assistant for the typing and not for the judgment, and you can list what must never be pasted into one.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -872,30 +878,7 @@ You will work with an AI assistant. Delegate the typing: boilerplate, translatio
 
 ---
 
-## Key terms
-
-version control · repository · working directory · staging area · commit · commit hash · `git init` · `git status` · `git add` · `git commit` · `git log` · `git diff` · untracked file · tracked file · `.gitignore` · `git check-ignore` · `git rm --cached` · `.env` · `.env.example` · environment variable · `git restore` · `git restore --staged` · `git commit --amend` · `git revert` · branch · `git switch` · `git merge` · fast-forward · remote · `git push` · `git pull` · clone · pull request · code review · merge conflict · continuous integration · workflow · README · Markdown · Agile · sprint · Scrum · standup · retrospective · backlog · Kanban · work-in-progress limit · issue key · story point · AI assistant
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 27, the capstone,** turns this repository into a portfolio that a hiring manager will actually open.
-- **Chapter 29, Python as Software,** adds the things a repository like this grows into: a package layout, tests, and type hints, all of which the check in section 26.8 will then run for you.
-- **Chapter 32, dbt,** puts your SQL transformations under the same discipline, with version control and automated tests as the default rather than an addition.
-- **Chapter 34, the command line,** goes properly into the terminal that this chapter used without explaining: paths, environment variables, and what a shell actually does.
-- **Chapter 44** builds an end-to-end data science project, which is a repository with the same requirements as this one and more moving parts.
-- **Chapter 47** turns the "check on every push" idea into data quality tests and contracts that run against the data rather than the code.
-- **Chapter 52** takes continuous integration to deployment: containers, cloud, and infrastructure defined as text files in a repository.
-- **Chapter 56, MLOps,** versions models and the data they were trained on, because a model with no record of what produced it cannot be debugged.
-- **Chapter 64** covers the governance side of what must never leave the building, including what an AI assistant counts as.
-- **Chapter 82** includes take-home assignments, which are graded on exactly the repository standards in section 26.9.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** The **working directory** (the files as you see them), the **staging area** (what you have selected for the next commit), and the **history** (commits, permanent). `git add` moves a change from the working directory to the staging area. `git commit` moves everything staged into the history, as one snapshot with a message.
 
@@ -982,3 +965,16 @@ Two version numbers appear because "a recent Python" is not a setup instruction.
 **15.** The analyst is paid for the part that cannot be delegated: knowing which question is worth asking, knowing what the data means and where it lies, and being accountable for a number that someone will act on. Speed of typing was never the scarce thing; it only looked like the job because it took most of the hours. For learning time, that argues for spending less of it memorizing syntax you can now generate, and more on the three things an assistant cannot do for you: **domain knowledge** (what a cancelled order means at this company), **verification** (how to tell a plausible number from a right one), and **judgment about the question** (Chapters 5, 23, and 25). It also argues for keeping the ability to read code fluently, since checking is now a larger share of the work than writing, and you cannot check what you cannot read.
 
 ---
+
+## Where this leads
+
+- **Chapter 27, the capstone,** turns this repository into a portfolio that a hiring manager will actually open.
+- **Chapter 29, Python as Software,** adds the things a repository like this grows into: a package layout, tests, and type hints, all of which the check in section 26.8 will then run for you.
+- **Chapter 32, dbt,** puts your SQL transformations under the same discipline, with version control and automated tests as the default rather than an addition.
+- **Chapter 34, the command line,** goes properly into the terminal that this chapter used without explaining: paths, environment variables, and what a shell actually does.
+- **Chapter 44** builds an end-to-end data science project, which is a repository with the same requirements as this one and more moving parts.
+- **Chapter 47** turns the "check on every push" idea into data quality tests and contracts that run against the data rather than the code.
+- **Chapter 52** takes continuous integration to deployment: containers, cloud, and infrastructure defined as text files in a repository.
+- **Chapter 56, MLOps,** versions models and the data they were trained on, because a model with no record of what produced it cannot be debugged.
+- **Chapter 64** covers the governance side of what must never leave the building, including what an AI assistant counts as.
+- **Chapter 82** includes take-home assignments, which are graded on exactly the repository standards in section 26.9.

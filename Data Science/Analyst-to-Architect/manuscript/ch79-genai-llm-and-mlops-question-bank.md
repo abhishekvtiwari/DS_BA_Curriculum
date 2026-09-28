@@ -1,6 +1,6 @@
 # Chapter 79. GenAI, LLM & MLOps Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the LLM fundamentals, RAG design, and evaluation questions that come up in GenAI-adjacent Data Scientist interviews · reason correctly about embeddings, chunking, and retrieval, not just name the components · explain how a model actually survives production (registries, serving, drift detection) · design a RAG assistant and a model-serving platform end to end, stating trade-offs out loud.
 >
@@ -337,7 +337,7 @@ daily cost at 2,000 calls/day: $330.00
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -363,15 +363,13 @@ The interviewer's note: *"A citation being real doesn't mean the retrieved conte
 
 ---
 
-## Tools
-
-**Python**, **NumPy**, and **SciPy**, used throughout this chapter for every computable claim (cosine similarity, chunking, the KS drift test). In real GenAI/MLOps work: a vector database (for RAG indexing), an orchestration framework for agents, MLflow or a similar tool for model registry and tracking, and an LLM observability/tracing platform. Vendor and model specifics change quickly; verify current details before relying on them in an actual interview.
-
----
-
-## The project
+## Project
 
 **Goal:** apply this chapter's verifiable pieces to a real or realistic scenario.
+
+### Tools you'll need
+
+**Python**, **NumPy**, and **SciPy**, used throughout this chapter for every computable claim (cosine similarity, chunking, the KS drift test). In real GenAI/MLOps work: a vector database (for RAG indexing), an orchestration framework for agents, MLflow or a similar tool for model registry and tracking, and an LLM observability/tracing platform. Vendor and model specifics change quickly; verify current details before relying on them in an actual interview.
 
 1. Implement the chunking function from Q79-012 on a real document of your own, and inspect a chunk boundary to check whether it splits meaning awkwardly, the way this chapter's real-world story describes.
 2. Compute cosine similarity between a real query and a few candidate documents (using any embedding source available to you) and confirm the ranking matches your own judgment of relevance.
@@ -380,15 +378,15 @@ The interviewer's note: *"A citation being real doesn't mean the retrieved conte
 
 ---
 
-## Final-week revision list
-
-Q79-001, Q79-002, Q79-007, Q79-012, Q79-013, Q79-018, Q79-023, Q79-028, Q79-033, Q79-038, Q79-039.
-
----
-
 ## Key terms
 
 token · context window · temperature · fine-tuning vs. prompting · embedding · cosine similarity · hallucination · RAG (Retrieval-Augmented Generation) · chunking (fixed-size vs. semantic) · vector database · reranking · citation/grounding · agent · tool use · golden set · LLM-as-judge · guardrail · regression test (LLM) · model registry · feature store · drift detection · KS test · retraining trigger · online vs. batch serving · prompt versioning · tracing (LLM) · prompt injection · caching (LLM cost)
+
+---
+
+## Final-week revision list
+
+Q79-001, Q79-002, Q79-007, Q79-012, Q79-013, Q79-018, Q79-023, Q79-028, Q79-033, Q79-038, Q79-039.
 
 ---
 

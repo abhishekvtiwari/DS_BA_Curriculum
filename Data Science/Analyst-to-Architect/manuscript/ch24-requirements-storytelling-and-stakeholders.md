@@ -1,6 +1,6 @@
 # Chapter 24. Requirements, Storytelling & Stakeholders
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -229,7 +229,8 @@ The full arc, using Chapter 23's real diagnosis from start to finish:
 Every step exists because skipping it has a specific, observable cost: skip step 2 and you analyze the wrong thing; skip step 3 and you either bore the board or blindside the branch managers; skip step 5's ordering and your correct finding gets buried; skip step 8's discipline and you either get steamrolled into a false conclusion or unnecessarily antagonize a legitimate question. None of these steps requires more technical skill than the rest of this book has already given you. They require slowing down at the two ends of the work — before you start, and after you've finished — where the technical skill alone doesn't help.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -274,7 +275,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: turn one analysis into a memo and a three-slide story
+
+**Goal:** take a finding you already have — from this book's earlier projects, or from your own work — and deliver it twice, in the two formats this chapter teaches.
+
+### Tools you'll need
 
 - No new software this chapter. Every principle applies equally to an email, a shared document, a slide deck, or a chat message.
 - **Companion files (`companion/ch24/`):**
@@ -283,12 +288,6 @@ What made the difference:
   - `example_memo_dec_dip.md`: the fully worked December memo, with its appendix.
   - `three_slide_story.md`: the same finding as a three-slide outline, ready to build in any slide tool.
 - **Worth reading further:** Barbara Minto's *The Pyramid Principle* (the origin of the structure in section 24.4) and any of the standard stakeholder-management frameworks referenced in project management literature — the power–interest grid in this chapter is the common core of most of them.
-
----
-
-## The project: turn one analysis into a memo and a three-slide story
-
-**Goal:** take a finding you already have — from this book's earlier projects, or from your own work — and deliver it twice, in the two formats this chapter teaches.
 
 **Option A: your own analysis.** Any finding you've produced that hasn't yet been formally written up or presented.
 
@@ -315,20 +314,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You turn a vague request into a specific question before starting any analysis.
-- [ ] You can write a business rule with a name, formula, population, time window, exclusions, and owner — and you confirm it in writing after the meeting where it was agreed.
-- [ ] You place stakeholders on a power–interest grid and engage each quadrant differently, rather than treating every stakeholder identically.
-- [ ] You state your conclusion in the first sentence of anything you write, not the last.
-- [ ] Every slide title in your decks is a complete sentence stating a finding.
-- [ ] Your memos include an explicit recommendation, even when that recommendation is "no action needed."
-- [ ] You expect interruptions in executive presentations and treat them as engagement, not derailment.
-- [ ] When someone asks you to change a number, you ask why before you touch anything, and you know which of the three honest responses applies.
-- [ ] You can tell the difference between a stakeholder's literal question and the real concern behind it, and you answer the real one.
-
----
-
 ## Recap
 
 - **Requirements gathering** turns "can you check X?" into an answerable question, using six clarifying questions about decision, comparison, scope, format, timing, and prior work.
@@ -342,7 +327,29 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+requirements gathering · clarifying question · business rule · stakeholder mapping · power–interest grid · RACI (Responsible, Accountable, Consulted, Informed) · bottom line up front (BLUF) · pyramid principle · one message per slide · slide title as a finding · one-page analysis memo · executive presentation · pushback · Goodhart's law (Chapter 23)
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You turn a vague request into a specific question before starting any analysis.
+- [ ] You can write a business rule with a name, formula, population, time window, exclusions, and owner — and you confirm it in writing after the meeting where it was agreed.
+- [ ] You place stakeholders on a power–interest grid and engage each quadrant differently, rather than treating every stakeholder identically.
+- [ ] You state your conclusion in the first sentence of anything you write, not the last.
+- [ ] Every slide title in your decks is a complete sentence stating a finding.
+- [ ] Your memos include an explicit recommendation, even when that recommendation is "no action needed."
+- [ ] You expect interruptions in executive presentations and treat them as engagement, not derailment.
+- [ ] When someone asks you to change a number, you ask why before you touch anything, and you know which of the three honest responses applies.
+- [ ] You can tell the difference between a stakeholder's literal question and the real concern behind it, and you answer the real one.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -380,25 +387,7 @@ What made the difference:
 
 ---
 
-## Key terms
-
-requirements gathering · clarifying question · business rule · stakeholder mapping · power–interest grid · RACI (Responsible, Accountable, Consulted, Informed) · bottom line up front (BLUF) · pyramid principle · one message per slide · slide title as a finding · one-page analysis memo · executive presentation · pushback · Goodhart's law (Chapter 23)
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 25, The Business Analyst Track:** requirements gathering formalized further, with process mapping, user stories, and the documents (BRD, FRD, SRS) that a full BA role produces.
-- **Chapter 23, Business Acumen, KPIs & Metrics:** the diagnosis method this chapter's worked example leans on throughout.
-- **Chapter 15, Data Visualization Principles:** the chart-design rules that make the "why" slide in section 24.5 honest and readable.
-- **Chapter 26, The Professional Toolkit:** documentation habits that make a business rule or a memo findable months later.
-- **Interview preparation:** the Business Analyst bank (Chapter 76) and the Behavioral & Case Interview bank (Chapter 75) both draw directly on this chapter — "tell me about a time a stakeholder pushed back on your analysis" is one of the most common behavioral questions an analyst will face.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -441,3 +430,13 @@ requirements gathering · clarifying question · business rule · stakeholder ma
 **21.** Check the analysis itself extra carefully (a wrong number delivered to an unhappy audience is much worse than one delivered to a receptive one), anticipate the specific objections that stakeholder is likely to raise and prepare honest answers, consider briefing them privately before the group meeting so the reaction happens in a lower-stakes setting, and make sure the tone of the delivery is neutral and fact-led rather than appearing to take a side.
 
 **22.** Yes — when the audience is technical peers reviewing your method (not deciding on an action), when you're explicitly asked to show your work step by step (a code review, an audit), or when the "reasons" themselves are the point of the conversation, such as teaching someone the method. BLUF is for decisions; bottom-up is for verification and learning.
+
+---
+
+## Where this leads
+
+- **Chapter 25, The Business Analyst Track:** requirements gathering formalized further, with process mapping, user stories, and the documents (BRD, FRD, SRS) that a full BA role produces.
+- **Chapter 23, Business Acumen, KPIs & Metrics:** the diagnosis method this chapter's worked example leans on throughout.
+- **Chapter 15, Data Visualization Principles:** the chart-design rules that make the "why" slide in section 24.5 honest and readable.
+- **Chapter 26, The Professional Toolkit:** documentation habits that make a business rule or a memo findable months later.
+- **Interview preparation:** the Business Analyst bank (Chapter 76) and the Behavioral & Case Interview bank (Chapter 75) both draw directly on this chapter — "tell me about a time a stakeholder pushed back on your analysis" is one of the most common behavioral questions an analyst will face.

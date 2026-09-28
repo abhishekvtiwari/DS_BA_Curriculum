@@ -1,6 +1,6 @@
 # Chapter 22. Statistics Without Fooling Yourself
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -591,7 +591,8 @@ Five habits behind it:
 5. **Say what would change your mind.** It's the fastest way to be trusted, and it makes the next test easier to justify.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -642,18 +643,16 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: audit three claims
+
+**Goal:** take three claims that would pass unchallenged in a meeting, and test each one properly.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas`, `numpy`, `scipy`, `matplotlib`. Run here on Python 3.12 with pandas 3.0.2, numpy 2.4.4, scipy 1.17.1. `statsmodels` adds `proportions_ztest`, `power` calculators, and multiple-comparison corrections, and is worth installing.
 - **Excel:** `CONFIDENCE.NORM`, `CONFIDENCE.T`, `T.TEST`, `CHISQ.TEST`, `NORM.S.INV`, and the Analysis ToolPak's t-Test, ANOVA, and Descriptive Statistics.
 - **Calculators** for sample size and A/B significance are everywhere online; use them for a second opinion, not as the method of record, and check what they assume about one- versus two-sided tests.
 - **Companion files (`companion/ch22/`):** `build_ch22_files.py` (seed 202201), `ab_test_2026.csv` (8,400 recipients across two variants), `transporters_q4_2025.csv` (11,600 deliveries by transporter and route, built to contain a genuine Simpson's paradox). Both datasets are invented for this chapter; the delivery data comes from Chapter 21.
-
----
-
-## The project: audit three claims
-
-**Goal:** take three claims that would pass unchallenged in a meeting, and test each one properly.
 
 **Option A: your own workplace.** Three recent claims from a report, a review, or a vendor.
 
@@ -700,22 +699,6 @@ Use `ab_test_2026.csv`, `transporters_q4_2025.csv`, and Chapter 21's delivery da
 
 ---
 
-## You've got it when…
-
-- [ ] You quote an interval with every estimate from a sample, and can say what it means without overclaiming.
-- [ ] You can state a null hypothesis and choose the right test for two proportions, two means, and skewed data.
-- [ ] You lead with effect size and interval, and treat p as supporting evidence.
-- [ ] You compute the sample size before running a test, and the minimum detectable effect after.
-- [ ] You fix the stopping rule in advance and can explain why peeking inflates false positives.
-- [ ] You correct, or at least disclose, when you've tested many things.
-- [ ] You ask what else could explain a correlation, and name the likely confounders.
-- [ ] You check whether a group comparison is comparing like with like, and standardize when it isn't.
-- [ ] You can spot survivorship, selection, and regression to the mean in someone else's chart.
-- [ ] You can say whether an effect matters to the business, not only whether it's significant.
-- [ ] You write results with the effect, the interval, the decision, and what would change your mind.
-
----
-
 ## Recap
 
 - **Confidence intervals** turn sampling error into a range. The method is right 95% of the time; a particular interval either contains the truth or doesn't. Use Wilson intervals for proportions.
@@ -732,7 +715,31 @@ Use `ab_test_2026.csv`, `transporters_q4_2025.csv`, and Chapter 21's delivery da
 
 ---
 
-## Practice exercises
+## Key terms
+
+sampling error · confidence interval · confidence level · margin of error · standard error · t-distribution · Wilson interval · null hypothesis · alternative hypothesis · p-value · significance level (α) · type I and type II error · power · minimum detectable effect · chi-square test · two-proportion z-test · Welch's t-test · Mann-Whitney U · paired test · ANOVA · effect size · A/B test · randomization unit · primary metric · stopping rule · peeking · sequential testing · multiple comparisons · family-wise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · p-hacking · garden of forking paths · pre-registration · correlation · Pearson · Spearman · causation · reverse causation · confounder · Simpson's paradox · standardization · survivorship bias · selection bias · non-response bias · regression to the mean · control group · practical significance · bootstrap
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You quote an interval with every estimate from a sample, and can say what it means without overclaiming.
+- [ ] You can state a null hypothesis and choose the right test for two proportions, two means, and skewed data.
+- [ ] You lead with effect size and interval, and treat p as supporting evidence.
+- [ ] You compute the sample size before running a test, and the minimum detectable effect after.
+- [ ] You fix the stopping rule in advance and can explain why peeking inflates false positives.
+- [ ] You correct, or at least disclose, when you've tested many things.
+- [ ] You ask what else could explain a correlation, and name the likely confounders.
+- [ ] You check whether a group comparison is comparing like with like, and standardize when it isn't.
+- [ ] You can spot survivorship, selection, and regression to the mean in someone else's chart.
+- [ ] You can say whether an effect matters to the business, not only whether it's significant.
+- [ ] You write results with the effect, the interval, the decision, and what would change your mind.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -777,26 +784,7 @@ Use `ab_test_2026.csv`, `transporters_q4_2025.csv`, and Chapter 21's delivery da
 
 ---
 
-## Key terms
-
-sampling error · confidence interval · confidence level · margin of error · standard error · t-distribution · Wilson interval · null hypothesis · alternative hypothesis · p-value · significance level (α) · type I and type II error · power · minimum detectable effect · chi-square test · two-proportion z-test · Welch's t-test · Mann-Whitney U · paired test · ANOVA · effect size · A/B test · randomization unit · primary metric · stopping rule · peeking · sequential testing · multiple comparisons · family-wise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · p-hacking · garden of forking paths · pre-registration · correlation · Pearson · Spearman · causation · reverse causation · confounder · Simpson's paradox · standardization · survivorship bias · selection bias · non-response bias · regression to the mean · control group · practical significance · bootstrap
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 23, Data Storytelling:** how to present an uncertain result so that it's understood rather than smoothed away.
-- **Chapter 24, Forecasting:** prediction intervals, and the same humility applied to the future.
-- **Chapter 25:** experimentation in practice, where the constraints are organizational as much as statistical.
-- **Chapter 27:** the ethics of analysis, including selective reporting.
-- **Part IV:** train/test splits, cross-validation, and overfitting are this chapter's ideas in a modelling coat.
-- **Interview preparation:** the Statistics & Analytics Question Bank (Chapter 73) covers p-values, A/B design, and "why might this result be wrong?", which is the most common senior-analyst interview question there is.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -859,3 +847,14 @@ sampling error · confidence interval · confidence level · margin of error · 
 **29.** Yes, when the cost of acting is low and the cost of waiting is high, when the direction is consistent with other evidence, or when the decision has to be made anyway. What's not legitimate is *reporting* it as a proven effect. Say "consistent with a small improvement, not yet established", act if the economics justify it, and keep measuring.
 
 **Timed challenge answers.** Level 1: A 23.50% opens and 1.98% orders; B 26.95% and 2.31%; differences +3.45 and +0.33 points. Level 2: A about 22.2–24.8%, B about 25.6–28.3%. Level 3: opens p = 0.0003, orders p = 0.29. Level 4: about 0.95 points. Level 5: SwiftLine 91.1% overall (94.1% metro, 74.2% upcountry), BlueCart 79.7% overall (95.3% metro, 75.8% upcountry). Level 6: standardized to the company mix, BlueCart is ahead of SwiftLine. Level 7: Kolkata 66.9–69.4%, Mumbai HO 90.3–91.2%: nowhere near overlapping. Bonus: about 5% of the A/A tests come out significant.
+
+---
+
+## Where this leads
+
+- **Chapter 23, Data Storytelling:** how to present an uncertain result so that it's understood rather than smoothed away.
+- **Chapter 24, Forecasting:** prediction intervals, and the same humility applied to the future.
+- **Chapter 25:** experimentation in practice, where the constraints are organizational as much as statistical.
+- **Chapter 27:** the ethics of analysis, including selective reporting.
+- **Part 4:** train/test splits, cross-validation, and overfitting are this chapter's ideas in a modelling coat.
+- **Interview preparation:** the Statistics & Analytics Question Bank (Chapter 73) covers p-values, A/B design, and "why might this result be wrong?", which is the most common senior-analyst interview question there is.

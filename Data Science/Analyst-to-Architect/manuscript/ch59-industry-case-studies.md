@@ -1,12 +1,12 @@
 # Chapter 59. Industry Case Studies
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
 > **You will learn to:** recognize the shape every data project shares, whatever the industry · read a case study for its constraints rather than its technology · see where the real work sits in nine different problems, and why it is so rarely the model · name the mistake each one made, what it cost, and how it was fixed · and judge your own next project against patterns that have already been through production.
 >
-> **Before you start:** nothing new. This chapter draws on everything from Part II onwards, and each case names the chapters that built its pieces.
+> **Before you start:** nothing new. This chapter draws on everything from Part 2 onwards, and each case names the chapters that built its pieces.
 >
 > **Time needed:** 3–4 hours to read, and a useful afternoon to map your own work onto the frame.
 >
@@ -217,6 +217,7 @@ Four habits, worth practicing on the nine below and on the next vendor deck you 
 | **The lesson** | **The project was never one project.** It was six years of small pieces, and the value came from the least glamorous ones: a definition of net revenue everyone agreed on, a dashboard with the numbers people already argue about, and a queue with good reasons in it |
 
 ---
+
 ## What the nine have in common
 
 Read across the cases rather than down them and five patterns appear, none of them technical.
@@ -227,7 +228,7 @@ Read across the cases rather than down them and five patterns appear, none of th
 
 **1. The stated problem was the wrong problem, in eight of nine cases.** "Catch more fraud" was really "spend 3,000 reviews a day well". "Optimize our routes" was really "write down the constraints we have never written down". "Deflect 50% of tickets" was actively harmful as stated. The first deliverable of a data project is usually a better question, and the skill is asking *what decision changes?* until the answer is concrete (Chapter 5).
 
-**2. The data work dominated the schedule, and the model rarely took more than a tenth of it.** Lead scoring: six weeks of CRM cleaning, three days of modeling. Predictive maintenance: two years of sensor data and twelve usable labels. Demand planning: a promotions spreadsheet nobody owned. This is why Part II of this book is longer than Part V, and why "we'll get the data later" is the most expensive sentence in a project plan.
+**2. The data work dominated the schedule, and the model rarely took more than a tenth of it.** Lead scoring: six weeks of CRM cleaning, three days of modeling. Predictive maintenance: two years of sensor data and twelve usable labels. Demand planning: a promotions spreadsheet nobody owned. This is why Part 2 of this book is longer than Part 5, and why "we'll get the data later" is the most expensive sentence in a project plan.
 
 **3. The binding constraint was almost always human attention.** Three thousand reviews a day, one alert a week, a coordinator's half hour, eleven investigations a fortnight, a planner's willingness to trust a number. Every one of these projects was really an exercise in **spending a fixed amount of human attention as well as possible**, and the threshold, queue, and alert-budget decisions that follow from that are more consequential than any hyperparameter.
 
@@ -252,6 +253,23 @@ The practical consequence: **an analyst moving between industries transfers most
 
 ---
 
+## Common mistakes
+
+| Mistake | How it shows up in these cases | The habit that prevents it |
+|---|---|---|
+| Solving the stated problem | "Deflect 50% of tickets" achieved by hiding the human path | Ask what decision changes, until the answer is concrete |
+| Budgeting for the model, not the data | Six weeks of CRM cleaning, unplanned | Assume the data work is most of the schedule, and say so up front |
+| Ignoring how late the truth arrives | Fraud labels at 2 to 90 days; 12 usable failures in two years | Ask when ground truth lands, before choosing an approach |
+| Inferring causality from history | Price rises that coincided with shortages | Test where you can; Chapter 31 where you can't |
+| Leaking the future into training | Lead score built on fields filled in after conversion | Build training sets from point-in-time snapshots |
+| Training on your own outputs | The fraud model learning the analysts' blind spots | A random sample of unreviewed cases, always |
+| Setting alert volume by threshold | Eleven maintenance alerts a week, then none investigated | Treat alert volume as a budget |
+| Launching everywhere at once | The cases that never shipped | One line, one segment, one format |
+| No owner after launch | Models that quietly stopped working | Name the owner before the launch date |
+| Measuring what is easy | Accuracy, AUC, deflection | Measure the decision, priced |
+
+---
+
 ## In the real world: how these projects actually start
 
 None of the nine began as a project. They began as a complaint, and somebody translated it.
@@ -266,23 +284,6 @@ Two more things are true of every project in this chapter:
 
 - **The first version was smaller than anyone wanted.** One line, one category, one customer segment, one email format. The projects that tried to launch everywhere at once are the ones not written up here, because they didn't finish.
 - **Somebody owned it after launch.** In each case a named person watched the numbers, worked the queue, and noticed when things drifted. The cases where that person did not exist are the ones that quietly stopped working: the alerts nobody investigated, the model trained on one shift, the forecast nobody used.
-
----
-
-## Common mistakes and how to spot them
-
-| Mistake | How it shows up in these cases | The habit that prevents it |
-|---|---|---|
-| Solving the stated problem | "Deflect 50% of tickets" achieved by hiding the human path | Ask what decision changes, until the answer is concrete |
-| Budgeting for the model, not the data | Six weeks of CRM cleaning, unplanned | Assume the data work is most of the schedule, and say so up front |
-| Ignoring how late the truth arrives | Fraud labels at 2 to 90 days; 12 usable failures in two years | Ask when ground truth lands, before choosing an approach |
-| Inferring causality from history | Price rises that coincided with shortages | Test where you can; Chapter 31 where you can't |
-| Leaking the future into training | Lead score built on fields filled in after conversion | Build training sets from point-in-time snapshots |
-| Training on your own outputs | The fraud model learning the analysts' blind spots | A random sample of unreviewed cases, always |
-| Setting alert volume by threshold | Eleven maintenance alerts a week, then none investigated | Treat alert volume as a budget |
-| Launching everywhere at once | The cases that never shipped | One line, one segment, one format |
-| No owner after launch | Models that quietly stopped working | Name the owner before the launch date |
-| Measuring what is easy | Accuracy, AUC, deflection | Measure the decision, priced |
 
 ---
 
@@ -309,7 +310,7 @@ case study · project frame · decision-first framing · baseline · label scarc
 
 ## Where this leads
 
-- **Part VII (Chapters 60–68)** is the professional side of these projects: stakeholders, storytelling, governance, ethics, and leading the work rather than doing all of it.
+- **Part 7 (Chapters 60–68)** is the professional side of these projects: stakeholders, storytelling, governance, ethics, and leading the work rather than doing all of it.
 - **Chapter 5, Thinking Like an Analyst,** is where the translation skill in this chapter was first taught; reread it now that you have seen nine translations.
 - **Chapter 53, 55 and 58** hold the runnable versions of cases 1, 7 and 9, with the numbers this chapter quotes.
 - **Chapter 30 and 31** are behind case 4's central lesson: test where you can, infer carefully where you cannot.

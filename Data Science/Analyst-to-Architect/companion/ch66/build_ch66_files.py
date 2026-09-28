@@ -48,7 +48,7 @@ branch_macro_savings_rs = branch_macro_runs_year * (branch_macro_minutes_saved/6
 # Chapter 65's real platform cost, annualized
 platform_annual_cost = 38_014 * 12
 
-# Chapter 58 (Part VI): PO-intake assisted mode Rs 198/day vs manual Rs 600/day, ~250 working days/year
+# Chapter 58 (Part 6): PO-intake assisted mode Rs 198/day vs manual Rs 600/day, ~250 working days/year
 po_intake_savings_rs = (600 - 198) * 250
 
 known_quantified_savings_partial = flash_savings_rs + branch_macro_savings_rs

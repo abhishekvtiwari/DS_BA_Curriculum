@@ -1,6 +1,6 @@
 # Chapter 45. Data Ingestion & Integration
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -830,7 +830,7 @@ When in doubt, ask your company's legal or compliance team before collecting any
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -883,19 +883,17 @@ At the monthly review, Anita asked the question Meera had been expecting. "Why d
 
 ---
 
-## Tools
+## Project: incremental ingestion for Riverstone
+
+**Goal:** a small, re-runnable ingestion job that loads Riverstone orders, order lines, CRM leads, and dispatch files into the warehouse, detects changes correctly, and proves every load with a reconciliation report. Chapter 46 turns it into an orchestrated pipeline, and Chapter 47 adds quality checks and freshness alerts.
+
+### Tools you'll need
 
 - **PostgreSQL 16**, with `wal_level = logical` for section 45.6. On a company database, ask the administrator; don't change it yourself.
 - **Python 3.12** with `psycopg2` (PostgreSQL driver), `duckdb` (local analytical database), and `requests` (HTTP). Install with `pip install psycopg2-binary duckdb requests`.
 - **The Chapter 45 companion folder** (`companion/ch45/`): `reset_ch45.py`, `apply_day.py`, `mock_crm_api.py`, `make_files.py`. Run Python from inside that folder. If your PostgreSQL needs a user or password, set the environment variable `RIVERSTONE_SOURCE`, for example `dbname=riverstone_source user=postgres password=yourpassword`, and use the same string for `SRC`.
 - **Versions used for the outputs shown:** Python 3.12.3, DuckDB 1.5.5, psycopg2 2.9.13, requests 2.33.1, PostgreSQL 16.
 - **Worth knowing about, not needed here:** Debezium for production CDC; managed connectors such as Fivetran and Airbyte; `dlt` and Singer-style tools for writing connectors in Python.
-
----
-
-## The project: incremental ingestion for Riverstone
-
-**Goal:** a small, re-runnable ingestion job that loads Riverstone orders, order lines, CRM leads, and dispatch files into the warehouse, detects changes correctly, and proves every load with a reconciliation report. Chapter 46 turns it into an orchestrated pipeline, and Chapter 47 adds quality checks and freshness alerts.
 
 **Option A: Riverstone.** Use the companion environment.
 
@@ -922,7 +920,33 @@ At the monthly review, Anita asked the question Meera had been expecting. "Why d
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Ingestion** moves data from source systems into the warehouse. Its dangerous failures are loads that succeed with wrong data.
+- Sources include **databases**, **files**, **APIs**, **events**, and **SaaS tools**; the **system of record** is the source that's officially correct.
+- Data lands in a **raw** layer as it arrived, then a typed **staging** layer, then **modeled** tables.
+- A **full load** replaces everything: simple, self-correcting, and sees updates and deletes. It stops being practical for large or busy tables.
+- An **incremental load** uses a **watermark**. By ID it misses **updates** and **deletes**; `updated_at` helps, with a **look-back** window, if it's trustworthy.
+- **Row hashes** detect inserts, updates, and deletes without help from the source, at the cost of scanning keys. **File hashes** skip content already loaded.
+- **Upserts** make loads **idempotent**: safe to run again.
+- **Change data capture** reads the database's **write-ahead log** through a **replication slot**: every change, in order, without scanning. Unconsumed slots fill disks.
+- **Reliable file loads** declare columns, keep raw text, type in staging with explicit formats and `TRY_CAST`, list rejects, and **reconcile** against the file.
+- **Schema changes** should be detected before loading; match columns **by name**, and stop on removed or renamed columns.
+- **API ingestion** needs secure **authentication**, **timeouts**, **pagination**, and **retries** for 429 and 503 only.
+- **Managed connectors** save building, not owning.
+- **Web data** needs an official source where possible, and checks on terms, robots.txt, personal data, and copyright.
+
+---
+
+## Key terms
+
+ingestion · source system · system of record · raw layer · staging layer · modeled layer · DuckDB · full load · reconciliation check · incremental load · watermark · last-updated timestamp · look-back window · hash (row hash, file hash) · upsert · idempotent · load log · write-ahead log (WAL) · change data capture (CDC) · replication slot · byte-order mark (BOM) · declared columns · `TRY_CAST` · rejected rows · Parquet · schema · schema change (schema drift) · data contract · authentication token · pagination (offset, cursor) · rate limit (429) · `Retry-After` · timeout · managed connector · web scraping · `robots.txt` · personal data
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can name the main kinds of source system and one typical difficulty of each.
 - [ ] You can explain raw, staging, and modeled layers, and why raw keeps data as it arrived.
@@ -942,25 +966,7 @@ At the monthly review, Anita asked the question Meera had been expecting. "Why d
 
 ---
 
-## Recap
-
-- **Ingestion** moves data from source systems into the warehouse. Its dangerous failures are loads that succeed with wrong data.
-- Sources include **databases**, **files**, **APIs**, **events**, and **SaaS tools**; the **system of record** is the source that's officially correct.
-- Data lands in a **raw** layer as it arrived, then a typed **staging** layer, then **modeled** tables.
-- A **full load** replaces everything: simple, self-correcting, and sees updates and deletes. It stops being practical for large or busy tables.
-- An **incremental load** uses a **watermark**. By ID it misses **updates** and **deletes**; `updated_at` helps, with a **look-back** window, if it's trustworthy.
-- **Row hashes** detect inserts, updates, and deletes without help from the source, at the cost of scanning keys. **File hashes** skip content already loaded.
-- **Upserts** make loads **idempotent**: safe to run again.
-- **Change data capture** reads the database's **write-ahead log** through a **replication slot**: every change, in order, without scanning. Unconsumed slots fill disks.
-- **Reliable file loads** declare columns, keep raw text, type in staging with explicit formats and `TRY_CAST`, list rejects, and **reconcile** against the file.
-- **Schema changes** should be detected before loading; match columns **by name**, and stop on removed or renamed columns.
-- **API ingestion** needs secure **authentication**, **timeouts**, **pagination**, and **retries** for 429 and 503 only.
-- **Managed connectors** save building, not owning.
-- **Web data** needs an official source where possible, and checks on terms, robots.txt, personal data, and copyright.
-
----
-
-## Practice exercises
+## Exercises
 
 Run `reset()` before each exercise that uses the companion environment, unless it says otherwise.
 
@@ -992,27 +998,7 @@ Run `reset()` before each exercise that uses the companion environment, unless i
 
 ---
 
-## Key terms
-
-ingestion · source system · system of record · raw layer · staging layer · modeled layer · DuckDB · full load · reconciliation check · incremental load · watermark · last-updated timestamp · look-back window · hash (row hash, file hash) · upsert · idempotent · load log · write-ahead log (WAL) · change data capture (CDC) · replication slot · byte-order mark (BOM) · declared columns · `TRY_CAST` · rejected rows · Parquet · schema · schema change (schema drift) · data contract · authentication token · pagination (offset, cursor) · rate limit (429) · `Retry-After` · timeout · managed connector · web scraping · `robots.txt` · personal data
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 46, Pipelines & Orchestration,** turns this chapter's loads into a scheduled, orchestrated pipeline, with idempotency tested by a deliberate failure, backfills, alerts, and the Daily Sales Flash sent only after its data passes checks.
-- **Chapter 47, Data Quality, Observability & Contracts,** turns reconciliation checks into automated tests, adds freshness monitoring and slot-lag alerts, and puts data contracts like the one in section 45.8 into practice.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** explains how warehouses store raw and staging layers, and covers ACID transactions, partitioning, and cloud warehouse costs.
-- **Chapter 50, Streaming & Real-Time,** takes change data capture from a daily read to a continuous stream.
-- **Chapter 51, Data Activation,** reverses the direction: writing warehouse data back into the CRM and ERP through APIs, with the same care for idempotency, retries, and systems of record.
-- **Chapter 64** covers privacy, security, and governance, including the rules behind section 45.11.
-- **Part VIII:** data engineering and ingestion questions appear in Chapter 72, and system design cases in Chapter 77.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1091,3 +1077,15 @@ On `dispatch_2026-01-02.csv`, it returns **`ok`**. On `dispatch_2026-01-05.csv`,
 **13.** Useful questions: (a) *Is there a maintained connector for our exact CRM product, covering the objects we need?* Yes pushes toward buying; no, or only partly, toward custom code. (b) *What will it cost at our data volume and sync frequency, and what does our engineering time cost?* Affordable pricing and little engineering time push toward buying; high per-row costs at large volumes, or spare engineering capacity, push toward building. (c) *Is our customer and lead data allowed to pass through a vendor's service, and where is it processed?* If policy or law requires it to stay inside our systems or country, that pushes toward custom code or a self-hosted tool. Other good questions: who fixes it when it breaks, how quickly it handles schema changes, and whether it supports incremental syncs.
 
 **14.** Tell them to stop and check before collecting anything. **Names and phone numbers are personal data**, and data protection laws such as India's Digital Personal Data Protection Act, 2023, apply even when the directory is public; using them for sales calls needs a lawful basis, which the company's legal or compliance team must confirm. Check the directory's **terms of use**, which often prohibit automated collection and commercial reuse, and its `robots.txt`. Ask whether there's an **official route**: a paid listing service, a licensed data provider, or the directory's own advertising options. And note that India's rules on unsolicited commercial calls also apply. The safest recommendation is to involve legal or compliance first, and to prefer sources where shop owners have agreed to be contacted.
+
+---
+
+## Where this leads
+
+- **Chapter 46, Pipelines & Orchestration,** turns this chapter's loads into a scheduled, orchestrated pipeline, with idempotency tested by a deliberate failure, backfills, alerts, and the Daily Sales Flash sent only after its data passes checks.
+- **Chapter 47, Data Quality, Observability & Contracts,** turns reconciliation checks into automated tests, adds freshness monitoring and slot-lag alerts, and puts data contracts like the one in section 45.8 into practice.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** explains how warehouses store raw and staging layers, and covers ACID transactions, partitioning, and cloud warehouse costs.
+- **Chapter 50, Streaming & Real-Time,** takes change data capture from a daily read to a continuous stream.
+- **Chapter 51, Data Activation,** reverses the direction: writing warehouse data back into the CRM and ERP through APIs, with the same care for idempotency, retries, and systems of record.
+- **Chapter 64** covers privacy, security, and governance, including the rules behind section 45.11.
+- **Part 8:** data engineering and ingestion questions appear in Chapter 72, and system design cases in Chapter 77.

@@ -1,6 +1,6 @@
 # Chapter 36. The Machine Learning Workflow & Feature Engineering
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -972,7 +972,7 @@ TEST (trained on 2023 to June 2025, scored once on July to 2 October 2025):
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1022,7 +1022,11 @@ The fixed model wasn't worse than the original. It was the same model, measured 
 
 ---
 
-## Tools
+## Project: a leakage-free feature pipeline for Riverstone lead scoring
+
+**Goal:** a tested, documented pipeline that turns raw CRM exports into model-ready features for lead scoring, with an honest evaluation against baselines. Chapters 37 and 39 build on it, so keep it tidy.
+
+### Tools you'll need
 
 - **scikit-learn:** every example was tested on 1.8.0; the current release at the time of writing is 1.9.1, so if a number differs slightly on your machine, check the version first. The pieces used are `Pipeline`, `ColumnTransformer`, `SimpleImputer`, `OneHotEncoder`, `StandardScaler`, `TargetEncoder` (available since version 1.3), `StratifiedKFold`, `TimeSeriesSplit`, `cross_val_score`, `LogisticRegression`, and the metrics `roc_auc_score` and `log_loss`. The official user guide's pages on cross-validation, pipelines, and "common pitfalls" (which covers leakage) are worth reading in full.
 - **pandas** (3.0.2) and **NumPy** (2.4.4) for cleaning and feature building.
@@ -1030,12 +1034,6 @@ The fixed model wasn't worse than the original. It was the same model, measured 
 - **In SQL:** the deduplication, the 90-day maturity filter, and the "activities logged within 24 hours" aggregate can all be done in the database with Chapter 13's patterns, which is often where production feature pipelines start (Chapter 47 on data pipelines).
 - **Beyond this chapter:** `imbalanced-learn` works with pipelines for resampling (Chapter 39), and `feature-engine` and `category_encoders` offer more transformers. Use them once the basics here feel routine.
 - **Companion files:** `companion/generate_riverstone_crm.py` rebuilds the CRM export (seed 20236) into `companion/crm/`. Run the chapter's code from that folder. The data spec is `planning/data/riverstone-crm.md`.
-
----
-
-## The project: a leakage-free feature pipeline for Riverstone lead scoring
-
-**Goal:** a tested, documented pipeline that turns raw CRM exports into model-ready features for lead scoring, with an honest evaluation against baselines. Chapters 37 and 39 build on it, so keep it tidy.
 
 **Option A: your own data.** Any prediction problem at work with a clear outcome and a time dimension: invoices paid late, customers who don't reorder, support tickets that escalate. Remove personal and confidential fields first, and check you're allowed to use the data.
 
@@ -1063,22 +1061,6 @@ The fixed model wasn't worse than the original. It was the same model, measured 
 
 ---
 
-## You've got it when…
-
-- [ ] I can write the target, unit, prediction moment, and success measure for a business request before touching data.
-- [ ] I know why leads, loans, or subscriptions whose outcome window hasn't passed must be excluded.
-- [ ] I can explain the jobs of training, validation, and test sets, and why the test set is used once.
-- [ ] I choose a time-based split when the model will predict forward in time, and I compare models only on the same split.
-- [ ] I can run stratified and time-series cross-validation and interpret the spread of the scores.
-- [ ] For any feature, I ask whether it would be known at the prediction moment, and I check which clock each timestamp uses.
-- [ ] I can explain target leakage and train-test contamination, with an example of each.
-- [ ] I can engineer features from numbers (cap, log, scale), categories (one-hot, target encoding), dates, text flags, and aggregates.
-- [ ] I check whether missingness predicts the target, and I use imputation with missing indicators.
-- [ ] I can build a `Pipeline` with a `ColumnTransformer`, inspect what it learned, and score a new row with it.
-- [ ] I always report a model next to a base rate and a rule-of-thumb baseline.
-
----
-
 ## Recap
 
 - **Frame first:** unit, **target**, **prediction moment**, allowed information, and success measure. Most leakage is prevented here.
@@ -1094,7 +1076,31 @@ The fixed model wasn't worse than the original. It was the same model, measured 
 
 ---
 
-## Practice exercises
+## Key terms
+
+supervised learning · binary classification · regression · target · unit of analysis · prediction moment · censoring · deduplication · training set · validation set · test set · random split · time-based split · data drift · cross-validation · fold · k-fold · stratified k-fold · time series split · ROC-AUC · data leakage · target leakage · train-test contamination · outcome-driven field · feature · feature engineering · log transform · capping · scaling (standardization) · one-hot encoding · sparse matrix · ordinal encoding · target encoding · cross-fitting · high cardinality · date parts · interaction · keyword flag · aggregate feature · missing value · imputation · missing indicator · informative missingness · pipeline · `ColumnTransformer` · transformer (`fit` / `transform`) · baseline · rule-of-thumb baseline · calibration
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can write the target, unit, prediction moment, and success measure for a business request before touching data.
+- [ ] I know why leads, loans, or subscriptions whose outcome window hasn't passed must be excluded.
+- [ ] I can explain the jobs of training, validation, and test sets, and why the test set is used once.
+- [ ] I choose a time-based split when the model will predict forward in time, and I compare models only on the same split.
+- [ ] I can run stratified and time-series cross-validation and interpret the spread of the scores.
+- [ ] For any feature, I ask whether it would be known at the prediction moment, and I check which clock each timestamp uses.
+- [ ] I can explain target leakage and train-test contamination, with an example of each.
+- [ ] I can engineer features from numbers (cap, log, scale), categories (one-hot, target encoding), dates, text flags, and aggregates.
+- [ ] I check whether missingness predicts the target, and I use imputation with missing indicators.
+- [ ] I can build a `Pipeline` with a `ColumnTransformer`, inspect what it learned, and score a new row with it.
+- [ ] I always report a model next to a base rate and a rule-of-thumb baseline.
+
+---
+
+## Exercises
 
 Code exercises run from `companion/crm/` after the chapter's code (they use `leads`, `train`, `valid`, `test`, `cats`, `nums`, `make_model`, and `score`). Predict each answer before running it.
 
@@ -1128,28 +1134,7 @@ Code exercises run from `companion/crm/` after the chapter's code (they use `lea
 
 ---
 
-## Key terms
-
-supervised learning · binary classification · regression · target · unit of analysis · prediction moment · censoring · deduplication · training set · validation set · test set · random split · time-based split · data drift · cross-validation · fold · k-fold · stratified k-fold · time series split · ROC-AUC · data leakage · target leakage · train-test contamination · outcome-driven field · feature · feature engineering · log transform · capping · scaling (standardization) · one-hot encoding · sparse matrix · ordinal encoding · target encoding · cross-fitting · high cardinality · date parts · interaction · keyword flag · aggregate feature · missing value · imputation · missing indicator · informative missingness · pipeline · `ColumnTransformer` · transformer (`fit` / `transform`) · baseline · rule-of-thumb baseline · calibration
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 37, Supervised Learning Algorithms,** swaps different models into this pipeline, from regularized logistic regression to gradient boosting, and asks whether they beat the baseline by enough to matter.
-- **Chapter 38, Unsupervised Learning,** reuses scaling and encoding for clustering, where there's no target to leak.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** takes this chapter's validation predictions and turns them into a call list with a cost-based threshold, checks calibration, and explains which features drive the scores.
-- **Chapter 40, Time Series & Forecasting,** extends time-based splitting into backtesting.
-- **Chapter 41, NLP Foundations,** replaces keyword flags with TF-IDF features for text.
-- **Chapter 44, Capstone,** runs this whole workflow on a new question from start to presentation.
-- **Chapters 47 and 52** move feature pipelines into scheduled data pipelines and deployed models.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers leakage, splits, cross-validation, encoding, and missing values with graded answers. Leakage questions are among the most common in data science interviews.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1417,3 +1402,16 @@ With default settings, gradient boosting does not beat logistic regression here.
 **15.** The outcomes are no longer independent of the model. High-scoring leads get called first and followed up more, so they're won more often partly *because* they scored high; low-scoring leads get less attention and are lost more often. A model retrained on that data learns the old model's opinions back, strengthened, and can't tell whether a low-scored lead would have been won with a call. This is a **feedback loop**. Keeping a small random sample of leads that are worked in normal order, not by score, gives unbiased data for retraining and for measuring the model's real effect (Chapter 30 on experiments).
 
 **16.** "The model can't tell which columns were filled in after a lead was won, so 'all the columns' would include some that are the answer in disguise, and it would look excellent in testing and fail on real leads. I'll include every column that's known when we score a lead, and I'll show you the list and why the others were left out."
+
+---
+
+## Where this leads
+
+- **Chapter 37, Supervised Learning Algorithms,** swaps different models into this pipeline, from regularized logistic regression to gradient boosting, and asks whether they beat the baseline by enough to matter.
+- **Chapter 38, Unsupervised Learning,** reuses scaling and encoding for clustering, where there's no target to leak.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** takes this chapter's validation predictions and turns them into a call list with a cost-based threshold, checks calibration, and explains which features drive the scores.
+- **Chapter 40, Time Series & Forecasting,** extends time-based splitting into backtesting.
+- **Chapter 41, NLP Foundations,** replaces keyword flags with TF-IDF features for text.
+- **Chapter 44, Capstone,** runs this whole workflow on a new question from start to presentation.
+- **Chapters 47 and 52** move feature pipelines into scheduled data pipelines and deployed models.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers leakage, splits, cross-validation, encoding, and missing values with graded answers. Leakage questions are among the most common in data science interviews.
