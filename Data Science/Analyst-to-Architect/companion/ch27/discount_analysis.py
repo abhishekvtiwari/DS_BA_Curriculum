@@ -21,7 +21,8 @@ def customer_year(year=2025, segment=None, min_orders=1):
                          net_revenue=("net_revenue", "sum"))
                     .reset_index()
                     .merge(customers[["customer_id", "segment"]], on="customer_id"))
-    per_customer["discount_pct"] = 100 * (1 - per_customer.net_revenue / per_customer.list_revenue)
+    per_customer["discount_pct"] = 100 * (1 - per_customer.net_revenue
+                                          / per_customer.list_revenue)
 
     if segment is not None:
         per_customer = per_customer[per_customer.segment == segment]

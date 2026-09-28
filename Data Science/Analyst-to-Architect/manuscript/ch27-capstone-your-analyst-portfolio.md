@@ -93,10 +93,12 @@ Start with the background question, because a claim about discounting should beg
 ```sql
 SELECT EXTRACT(YEAR FROM o.order_date)::int AS year,
        ROUND(100 * (1 - SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100))
-                      / SUM(oi.quantity * oi.unit_price)), 2)          AS discount_pct,
+                      / SUM(oi.quantity * oi.unit_price)), 2)
+           AS discount_pct,
        ROUND(100 * (SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100))
                   - SUM(oi.quantity * p.unit_cost))
-                  / SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 1) AS margin_pct
+                  / SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 1)
+           AS margin_pct
 FROM   orders AS o
 JOIN   order_items AS oi ON oi.order_id = o.order_id
 JOIN   products AS p ON p.product_id = oi.product_id
@@ -161,7 +163,7 @@ ORDER  BY discount_band;
 
 **How it works, and why it is built this way:**
 
-- **The CTE computes the customer's own discount rate**, rather than averaging the discount percentages on their lines. Averaging percentages weights a ₹2,000 line the same as a ₹200,000 one. Dividing total net revenue by total list revenue weights by money, which is what the question means.
+- **The CTE computes the customer's own discount rate**, rather than averaging the discount percentages on their lines. Averaging percentages weights a ₹2,000 line the same as a ₹2,00,000 one. Dividing total net revenue by total list revenue weights by money, which is what the question means.
 - **`COUNT(DISTINCT o.order_id)`** is necessary because the join to `order_items` puts a customer's order on the table once per line. This is the fan-out trap of Chapter 12, section 12.10, and it is the single most common way this query goes wrong.
 - **The `WHERE` clause uses a half-open date range**, `>= 2025-01-01` and `< 2026-01-01`, rather than `BETWEEN`. Chapter 12 section 12.6 explains why: `BETWEEN` on a timestamp column silently drops the last day.
 - **`CASE WHEN ... >= 5 THEN '5% or deeper' ELSE 'under 5%' END`** puts each customer into one of two bands by their own discount rate (Chapter 12, section 12.8), and `GROUP BY discount_band` makes one row per band. `ROUND(AVG(orders), 1)` and `ROUND(AVG(net_revenue))` give the band's average orders and average revenue per customer, to one decimal and to the rupee.
@@ -224,15 +226,19 @@ Both routes agree to the paisa: 46,356 orders and ₹1,14,66,41,651.25, the 2025
 One query counts the known problems in the order data. The data ends in December 2025, so "from 1 January 2025" means 2025:
 
 ```sql
-SELECT SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END)                 AS cancelled,
-       SUM(CASE WHEN sales_rep_id IS NULL THEN 1 ELSE 0 END)                 AS no_rep,
+SELECT SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END)      AS cancelled,
+       SUM(CASE WHEN sales_rep_id IS NULL THEN 1 ELSE 0 END)      AS no_rep,
        SUM(CASE WHEN sales_rep_id IS NULL
-                 AND order_date >= DATE '2025-01-01' THEN 1 ELSE 0 END)      AS no_rep_2025,
+                 AND order_date >= DATE '2025-01-01'
+                THEN 1 ELSE 0 END)                                AS no_rep_2025,
        SUM(CASE WHEN status = 'Pending'
-                 AND order_date < DATE '2025-06-01' THEN 1 ELSE 0 END)       AS old_pending,
-       SUM(CASE WHEN status = 'Pending' AND order_date >= DATE '2025-01-01'
-                 AND order_date < DATE '2025-06-01' THEN 1 ELSE 0 END)       AS old_pending_2025,
-       (SELECT COUNT(*) FROM customers WHERE city IS NULL)                   AS no_city
+                 AND order_date < DATE '2025-06-01'
+                THEN 1 ELSE 0 END)                                AS old_pending,
+       SUM(CASE WHEN status = 'Pending'
+                 AND order_date >= DATE '2025-01-01'
+                 AND order_date < DATE '2025-06-01'
+                THEN 1 ELSE 0 END)                                AS old_pending_2025,
+       (SELECT COUNT(*) FROM customers WHERE city IS NULL)        AS no_city
 FROM   orders;
 ```
 
@@ -479,9 +485,9 @@ Is a gap of half an order between the shallowest and the deepest quartile a real
 
 ## 27.5 Python: making the analysis arguable
 
-Everything above is six queries in a file. That is fine for finding the answer and useless for the conversation that follows, which always starts with *"what if you had drawn the line somewhere else?"*
+Everything above is a handful of queries in a file. That is fine for finding the answer and useless for the conversation that follows, which always starts with *"what if you had drawn the line somewhere else?"*
 
-Chapters 17 and 18 taught the pieces. Here they are as one script, which is the artifact that goes in the repository. It has two functions, and they are shown one at a time because they do two different jobs.
+Chapters 17 and 18 taught the pieces. Here they are as one script, `discount_analysis.py`, which is the artifact that goes in the repository; the companion copy is `companion/ch27/discount_analysis.py`. It reads the same tables as the SQL, from the CSV files in `companion/full/` that Chapter 18 used, so it needs no database connection. (If you would rather read from the database, replace the three `read_csv` lines with `pd.read_sql`, as in Chapter 18 section 18.13.) The script has two functions, and they are shown one at a time because they do two different jobs.
 
 **The first builds the table.** One row per customer, which is the grain the question needs:
 
@@ -489,7 +495,8 @@ Chapters 17 and 18 taught the pieces. Here they are as one script, which is the 
 """Does a deeper discount buy Riverstone more orders? One year, one answer."""
 import pandas as pd
 
-DATA = "."
+DATA = "../full"
+
 
 def customer_year(year=2025, segment=None, min_orders=1):
     """One row per customer: orders placed, list revenue, net revenue, discount rate."""
@@ -508,7 +515,8 @@ def customer_year(year=2025, segment=None, min_orders=1):
                          net_revenue=("net_revenue", "sum"))
                     .reset_index()
                     .merge(customers[["customer_id", "segment"]], on="customer_id"))
-    per_customer["discount_pct"] = 100 * (1 - per_customer.net_revenue / per_customer.list_revenue)
+    per_customer["discount_pct"] = 100 * (1 - per_customer.net_revenue
+                                          / per_customer.list_revenue)
 
     if segment is not None:
         per_customer = per_customer[per_customer.segment == segment]
@@ -517,15 +525,38 @@ def customer_year(year=2025, segment=None, min_orders=1):
 
 **How it works, line by line:**
 
-- **`DATA = "."`** is the folder holding the CSV files, named once at the top so there is one place to change it. A path repeated in four `read_csv` calls is four places to get it wrong.
-- **`parse_dates=["order_date"]`** makes pandas read that column as a date rather than text. Without it, `.dt.year` fails and any date comparison compares strings, which Chapter 18 section 18.3 shows going wrong quietly.
+- **The first line**, in triple quotes, is a docstring for the whole file: one sentence on what the script is for. It is the first thing anyone opening the file reads.
+- **`DATA = "../full"`** is the folder holding the CSV files, named once at the top so there is one place to change it. `..` means "the folder above this one", so from `companion/ch27/`, where the script lives, `../full` is `companion/full/`. In your own repository, point it at wherever your data lives. A path repeated in three `read_csv` calls is three places to get it wrong.
+- **`segment=None`** gives the argument a default (Chapter 17, section 17.8), so it is optional: leave it out and every segment is kept.
+- **`parse_dates=["order_date"]`** makes pandas read that column as a date rather than text (Chapter 18, section 18.2). Without it, `.dt.year` fails, because text has no year; section 18.9 has the rest of the date tools.
 - **`orders[(orders.status != "Cancelled") & (orders.order_date.dt.year == year)]`** applies the two filters that the SQL `WHERE` clause applied. The parentheses around each condition are required: `&` binds tighter than `!=` in Python, so leaving them out is a `TypeError` rather than a wrong answer, which is the good kind of mistake.
 - **`items.merge(orders[["order_id", "customer_id"]], on="order_id")`** joins lines to orders. The `on` argument names the column both frames are matched on, here the order key, and because a merge is an inner join by default, lines whose order was filtered out disappear. That is the cancelled-order rule and the year filter arriving in one step. Selecting only those two columns keeps the result narrow; `merge` would otherwise carry every order column along.
 - **`lines["list_revenue"]` and `lines["net_revenue"]`** are the same two expressions as the SQL, computed per line so they can be summed per customer.
 - **`.groupby("customer_id").agg(orders=("order_id", "nunique"), ...)`** is the pandas form of `GROUP BY` with named outputs: each named argument is `new_column=(source_column, function)`. **`"nunique"`** is `COUNT(DISTINCT)`. Using `"count"` here would count lines and overstate every customer's order count, which is the fan-out trap of section 27.2 wearing different clothes.
 - **`.reset_index()`** turns the grouping key back into an ordinary column, so the `merge` that follows can join on it.
 - **`100 * (1 - net_revenue / list_revenue)`** is computed after the sums, not averaged across lines, for the money-weighting reason in section 27.2.
-- **The last three lines apply `segment` and `min_orders`.** They are last on purpose: filtering customers out after the totals are built means the totals are never affected by the filter. Filtering the lines first would have changed each customer's discount rate.
+- **`if segment is not None:`** is the standard test for "was this argument given?". Use `is` to compare with `None`, and `==` to compare values: `None` is a single object, and `is` asks whether it is that object.
+- **The last three lines apply `segment` and `min_orders`.** They come last because both describe a customer, not a line: segment is a customer attribute, and `min_orders` needs the order count that the `groupby` has just computed.
+
+Before building anything on a function, look at what it returns. One cell:
+
+```python
+table = customer_year()
+print(table.shape)
+print(table.head())
+```
+
+```
+(4599, 6)
+   customer_id  orders  list_revenue  net_revenue      segment  discount_pct
+0            1      16        510075    502775.00       Retail      1.431162
+1            2       7        178700    174147.50       Retail      2.547566
+2            3      17        338725    331388.75  Hospitality      2.165842
+3            4      12        358850    323631.00    Wholesale      9.814407
+4            5      16        336875    329297.50       Retail      2.249351
+```
+
+4,599 rows, one per customer who bought in 2025, the same 4,599 (681 + 3,918) that the SQL counted. `.shape` gives (rows, columns) and `.head()` the first five rows (Chapter 18, section 18.3). Customer 4 is Wholesale at 9.8%; the others are all under 3%.
 
 **The second function reports.** It takes the table and answers the question:
 
@@ -542,6 +573,7 @@ def discount_report(year=2025, segment=None, band_cut=5.0, min_orders=1):
                  avg_revenue=("net_revenue", "mean"))
             .round({"avg_orders": 1, "avg_revenue": 0}))
 
+
 if __name__ == "__main__":
     print(discount_report())
 ```
@@ -553,15 +585,51 @@ band
 under 5%           3918         9.3     212765.0
 ```
 
+The same two rows as the SQL in section 27.2, from a different tool. That agreement is a check in its own right.
+
 **How it works, line by line:**
 
 - **It calls `customer_year` rather than rebuilding the table**, which is the whole reason for two functions: a chart, a statistical test, or a different cut can all start from the same table without any of them rewriting it.
-- **`.ge(band_cut)`** is "greater than or equal to" as a method, giving a column of True and False. It is written this way rather than with `>=` so it can be chained straight into `.map`.
-- **`.map({True: ..., False: ...})`** turns that into two readable labels, so the output says "5% or deeper" rather than "True". **`{band_cut:g}`** formats 5.0 as `5` rather than `5.0`, so the label reads properly whatever the setting is.
-- **`.assign(band=...)`** returns a new frame with the column added rather than modifying the existing one, which keeps the function safe to call twice in a row, as the what-if below does.
+- **`.ge(band_cut)`** (new here) is "greater than or equal to" as a method, giving a column of True and False. It is written this way rather than with `>=` so it can be chained straight into `.map`.
+- **`.map({True: ..., False: ...})`** turns that into two readable labels, so the output says "5% or deeper" rather than "True". **`{band_cut:g}`** (new here) is a format code in an f-string: `g` drops a trailing `.0`, so 5.0 prints as `5` and 1.15 as `1.15`, and the label reads properly whatever the setting is.
+- **`.assign(band=...)`** returns a new frame with the column added rather than modifying the existing one, which keeps the function safe to call twice in a row, as the what-ifs below do.
 - **`.agg(customers=("customer_id", "size"), ...)`** counts customers with `"size"` rather than `"count"`, because `"count"` skips missing values and `"size"` does not. Here they agree; when a column has nulls they do not, and the difference is the kind that goes unnoticed for months.
-- **`.round({"avg_orders": 1, "avg_revenue": 0})`** rounds each column to its own number of decimals. Rounding for display belongs at the end, never in the middle, so nothing downstream inherits a rounded number.
-- **`if __name__ == "__main__":`** means the file can be imported by a notebook without running the report, and run from the command line when you want it. Chapter 17 section 17.8 introduced this.
+- **`.round({"avg_orders": 1, "avg_revenue": 0})`** (new here: a dictionary instead of one number) rounds each column to its own number of decimals. Rounding for display belongs at the end, never in the middle, so nothing downstream inherits a rounded number.
+- **`if __name__ == "__main__":`** means the file can be imported by a notebook without running the report, and run from the terminal when you want it. Chapter 17 section 17.12 introduced it.
+
+### Running it, two ways
+
+Save both functions, with the imports above them, as `discount_analysis.py`. From the terminal, in the folder that holds it, the file prints its default report and stops:
+
+```
+# terminal
+$ cd companion/ch27
+$ python discount_analysis.py
+              customers  avg_orders  avg_revenue
+band                                            
+5% or deeper        681        14.8     459662.0
+under 5%           3918         9.3     212765.0
+```
+
+The what-ifs are different: you want to call `discount_report` again and again with different settings, which is a notebook's job. Start a notebook in the same folder, and import the two functions from the file instead of copying them:
+
+<!-- py: reset -->
+
+```python
+from discount_analysis import customer_year, discount_report
+
+print(discount_report(year=2024))
+```
+
+```
+              customers  avg_orders  avg_revenue
+band                                            
+5% or deeper        602        13.4     396882.0
+under 5%           3502         8.6     189632.0
+```
+
+- **`from discount_analysis import customer_year, discount_report`** loads the file as a module (Chapter 17, section 17.11) and takes the two functions out of it. Because of the `__name__` test, importing does not print the default report.
+- **`discount_report(year=2024)`** re-runs the original headline on 2024, a year not yet looked at, and gets the same shape: 13.4 orders against 8.6. The headline is stable. It still says nothing about discounting: 2024's Wholesale customers were also on deep discounts and also bought in bulk.
 
 ### The settings, and what happens if you change them
 
@@ -570,38 +638,31 @@ under 5%           3918         9.3     212765.0
 | `year` | `2025` | Which calendar year is analyzed | `2024` re-runs the whole thing on a year you have not looked at. This is how you find out whether a finding is a fact or a fluke, and it costs one keystroke |
 | `segment` | `None` | Restricts to one segment | `"Wholesale"` gives the fair comparison of section 27.4. `None` compares groups that differ in more than discount, which is what produced the wrong headline |
 | `band_cut` | `5.0` | The discount rate that separates "deep" from "shallow" | Moving it changes the size of the gap you report. See the measurement below. This is the most dangerous number in the script, because it looks like a fact and is a choice |
-| `min_orders` | `1` | Drops customers below this many orders | Raising it to `5` removes one-order customers, which raises both averages. Defensible if the question is about ongoing relationships, and it must be stated when it is used |
+| `min_orders` | `1` | Drops customers below this many orders | Raising it to `5` removes customers with fewer than five orders, which raises both averages. Defensible if the question is about ongoing relationships, and it must be stated when it is used |
 
 ### A measured what-if: the line you drew
 
-`band_cut` was set to 5 because Riverstone's approval policy has a step there, which is a real reason. Here is what happens if it moves to 3, which is also defensible:
+`band_cut` was set to 5 because Riverstone's approval ladder has a step there (section 27.4), which is a real reason. Notice, though, that the ladder's step is *over* 5%, while `>= 5` also puts customers at exactly 5%, the most a sales executive can give without approval, in the deep band. That is a choice as well, and the decision log records it. Here is what happens if the line moves to 3, which is also defensible:
 
 ```python
-print(discount_report(band_cut=5.0))
 print(discount_report(band_cut=3.0))
 ```
 
 ```
               customers  avg_orders  avg_revenue
 band                                            
-5% or deeper        681        14.8     459662.0
-under 5%           3918         9.3     212765.0
-
-              customers  avg_orders  avg_revenue
-band                                            
 3% or deeper        840        12.9     392353.0
 under 3%           3759         9.4     217362.0
 ```
 
-At 5% the gap is **5.5 orders and ₹246,897**. At 3% the same data gives **3.5 orders and ₹174,991**. The headline shrank by more than a third because of a decision the analyst made and could have made either way, on data that did not change at all.
+At 5% the gap is **5.5 orders and ₹2,46,897** (14.8 − 9.3, and ₹4,59,662 − ₹2,12,765). At 3% the same data gives **3.5 orders and ₹1,74,991**. The order gap shrank by more than a third, and the revenue gap by more than a quarter, because of a decision the analyst made and could have made either way, on data that did not change at all.
 
 Nobody moved a number. Nobody was dishonest. This is Chapter 22 section 22.4's garden of forking paths, in one line of one function, and the reason it matters here is that a portfolio only ever shows one branch of that garden.
 
-Two more, for the same reason:
+One more, which confirms section 27.4 from a different angle:
 
 ```python
 print(discount_report(segment="Wholesale", band_cut=9.0))
-print(discount_report(year=2024))
 ```
 
 ```
@@ -609,16 +670,106 @@ print(discount_report(year=2024))
 band                                            
 9% or deeper        244        14.5     451061.0
 under 9%            418        15.6     484856.0
-
-              customers  avg_orders  avg_revenue
-band                                            
-5% or deeper        602        13.4     396882.0
-under 5%           3502         8.6     189632.0
 ```
 
-The first confirms section 27.4 from a different angle: inside Wholesale, the more heavily discounted half orders **less** often, 14.5 against 15.6. The second re-runs the original headline on 2024 and gets the same shape, 13.4 against 8.6. So the headline is stable and still means nothing about discounting: 2024's Wholesale customers were also on deep discounts and also bought in bulk.
+Inside Wholesale, the more heavily discounted group (244 customers at 9% or more) orders **less** often, 14.5 against 15.6.
 
-**Stability and truth are different properties.** A result that reproduces every year can still be answering a question you did not ask. That sentence is most of what section 27.8 is about.
+**Stability and truth are different properties.** The 2024 re-run showed that the headline reproduces every year, and it can still be answering a question you did not ask. That sentence is most of what section 27.8 is about.
+
+### Is the Wholesale gap real?
+
+Section 27.4 left one question open: the deepest Wholesale quartile placed 13.6 orders and the shallowest 14.1. Chapters 21 and 22 supply the last step. First, the two quartiles as pandas columns:
+
+```python
+wholesale = customer_year(segment="Wholesale").sort_values("discount_pct")
+q1 = wholesale.orders.iloc[:166]     # the shallowest quarter, as NTILE(4) dealt it
+q4 = wholesale.orders.iloc[-165:]    # the deepest quarter
+print(len(wholesale), round(q1.mean(), 1), round(q4.mean(), 1))
+```
+
+```
+662 14.1 13.6
+```
+
+- **`.sort_values("discount_pct")`** puts the 662 Wholesale customers in order of discount, shallowest first, the order `NTILE` used.
+- **`.iloc[:166]`** takes the first 166 rows by position and **`.iloc[-165:]`** the last 165 (Chapter 18, section 18.4). Those are the sizes `NTILE(4)` gave the first and last quartiles, so these are the same customers as in section 27.4's table, and the averages agree.
+
+Now Chapter 22's test, and the interval for the difference:
+
+```python
+from scipy import stats
+
+test = stats.ttest_ind(q4, q1, equal_var=False)
+ci = test.confidence_interval(confidence_level=0.95)
+print(f"Q4 - Q1 = {q4.mean() - q1.mean():.2f} orders; "
+      f"95% CI [{ci.low:.2f}, {ci.high:.2f}]; p = {test.pvalue:.2f}")
+```
+
+```
+Q4 - Q1 = -0.48 orders; 95% CI [-1.89, 0.92]; p = 0.50
+```
+
+- **`stats.ttest_ind(q4, q1, equal_var=False)`** is Welch's t-test from Chapter 22 section 22.2: it compares the two means without assuming the two groups have the same spread. The order of the arguments sets the sign: Q4 minus Q1.
+- **`test.confidence_interval(confidence_level=0.95)`** (new here) returns the 95% confidence interval for that difference of means. It is Chapter 22 section 22.1's interval, built for a difference of two means rather than one mean; `.low` and `.high` are its two ends.
+- **`test.pvalue`** is the p-value, and the f-string prints every number to two decimals.
+
+And the relationship across all 662, not just the two ends:
+
+```python
+r = stats.pearsonr(wholesale.discount_pct, wholesale.orders)
+print(f"within Wholesale: pearson r = {r.statistic:.3f} "
+      f"(p = {r.pvalue:.3f}), n = {len(wholesale)}")
+```
+
+```
+within Wholesale: pearson r = -0.081 (p = 0.038), n = 662
+```
+
+`stats.pearsonr(x, y)` is Chapter 22 section 22.5's correlation: `.statistic` is r, and `.pvalue` tests whether r differs from zero.
+
+Two things to read carefully, and the second is the one that separates an analyst from someone who has learned a formula.
+
+**The confidence interval straddles zero**, from 1.89 fewer orders to 0.92 more. Chapter 22 section 22.1 is precise about what that means: the data is consistent with a small effect in either direction and with no effect at all, so it does not support a claim in either direction.
+
+**The correlation is statistically significant and practically nothing.** An r of −0.081 with p = 0.038 clears the conventional 5% bar, and it points the opposite way from the claim. With 662 customers, a tiny wobble becomes "significant". Chapter 22 section 22.8 warned about exactly this: significance is a statement about sample size as much as about effect. Reporting "significant negative relationship between discount depth and order frequency" would be technically true and would badly mislead the reader. The honest sentence is: *within Wholesale, discount depth explains essentially none of the variation in how often a customer orders.*
+
+### And inside Retail?
+
+Vikram's decision is about Retail, so the within-segment check has to be run there too, on the discounts Retail customers actually get. First, what are they?
+
+```python
+retail = customer_year(segment="Retail")
+print(retail.discount_pct.describe().round(2))
+```
+
+```
+count    2565.00
+mean        1.23
+std         0.81
+min         0.00
+25%         0.68
+50%         1.15
+75%         1.70
+max         5.00
+Name: discount_pct, dtype: float64
+```
+
+`.describe()` (Chapter 18, section 18.3) summarizes the column: 2,565 Retail customers, discounts from 0% to 5%, and a median (the `50%` row) of 1.15%. So split Retail at its own median, which puts half the customers on each side:
+
+```python
+print(discount_report(segment="Retail", band_cut=1.15))
+```
+
+```
+                 customers  avg_orders  avg_revenue
+band                                               
+1.15% or deeper       1278         9.5     221137.0
+under 1.15%           1287         9.1     212761.0
+```
+
+The more-discounted half of Retail placed 9.5 orders against 9.1: a gap of 0.4 orders, where the headline had 5.5. Across the range of discounts Retail customers really get, a deeper discount goes with barely more ordering. What this cannot tell you is what a discount of 8% or 10% would do in Retail, because only 10 Retail customers reached even 5%. That is a gap in the data, not evidence either way, and the memo has to say so.
+
+**The answer to Vikram's question is no**, and the reason is more useful to him than the answer: discount depth at Riverstone is a label for what segment a customer is in, not a lever that changes how they behave.
 
 ---
 
@@ -626,12 +777,36 @@ The first confirms section 27.4 from a different angle: inside Wholesale, the mo
 
 Chapter 15 gave the principles and Chapter 16 built the thing. The capstone question is narrower than either: **what should be on the page, given that a specific person has a specific decision to make?**
 
-For Vikram's question, that is one page with four objects and nothing else:
+One of those objects needs a number the analysis has not produced yet: the margin each segment earns, which is the cost side of the decision. One query on the `sales_lines` view (Chapter 13, section 13.2) gives it:
+
+```sql
+SELECT c.segment,
+       ROUND(100 * (SUM(s.net_revenue) - SUM(s.product_cost))
+                  / SUM(s.net_revenue), 1)                    AS margin_pct
+FROM   sales_lines AS s
+JOIN   customers AS c ON c.customer_id = s.customer_id
+WHERE  s.order_date >= DATE '2025-01-01' AND s.order_date < DATE '2026-01-01'
+GROUP  BY c.segment
+ORDER  BY c.segment;
+```
+
+```
+   segment   | margin_pct 
+-------------+------------
+ Hospitality |       31.8
+ Retail      |       30.2
+ Wholesale   |       18.6
+(3 rows)
+```
+
+It is section 27.2's margin formula, grouped by segment instead of year. `sales_lines` already leaves out cancelled orders and carries `net_revenue` and `product_cost` for every line, so the query only has to add them up. Wholesale, the deeply discounted segment, keeps 18.6 rupees of every hundred as gross margin; Retail keeps 30.2.
+
+For Vikram's question, the page has four objects and nothing else:
 
 | Object | What it shows | Why it earns its place |
 |---|---|---|
-| **One sentence at the top** | "Discount depth tracks segment, not buying behavior. Within Wholesale, deeper discounts do not increase order frequency." | Chapter 15 section 15.6: the title is the finding, not the subject. A reader who stops here has the answer |
-| **Small multiples: orders per customer by discount quartile, one panel per segment** | The three segments side by side, on a shared axis | This is the whole argument in one object. The Wholesale panel is flat; Retail and Hospitality have no deep-discount customers to compare |
+| **One sentence at the top** | "Discount depth tracks segment, not buying behavior. Within Wholesale, deeper discounts do not increase order frequency." | Chapter 15 section 15.11: the title is the finding, not the subject. A reader who stops here has the answer |
+| **Small multiples: orders per customer by discount, inside each segment** | Wholesale's four quartiles (section 27.4) and Retail's two halves at its 1.15% median (section 27.5), side by side on a shared axis, with a note that Retail's discounts run only from 0% to 5% | This is the whole argument in one object. Neither panel shows a ladder, and the note stops anyone reading the Retail panel as a test of deep discounts |
 | **A slicer for year** | 2023, 2024, 2025 | So the first question anyone asks, "is this just last year?", is answered by the reader rather than by an email to you |
 | **Margin by segment** | Wholesale 18.6%, Hospitality 31.8%, Retail 30.2% | The cost side of the decision. Discounting Retail toward Wholesale depth is a margin decision before it is a growth one |
 
@@ -658,11 +833,11 @@ This is what Vikram receives. It is one page, it recommends **not** doing someth
 >
 > **The cost side.** Wholesale runs at 18.6% gross margin against 30.2% for Retail. Moving Retail discounts up toward Wholesale depth is a decision to spend margin, and the growth case for it is not in this data.
 >
-> **What I checked that did not support the recommendation.** The headline gap reproduces in 2024 (13.4 orders against 8.6), so it is stable, but stability does not make it causal: the same segment mix produces it. I also tested whether the effect appears within Retail and Hospitality; both have fewer than a dozen customers above 5%, and those few placed about one order each, so there is no usable comparison there rather than evidence of no effect. If Retail discounting were to be tried, this is the gap that would need filling.
+> **What I checked that did not support the recommendation.** The headline gap reproduces in 2024 (13.4 orders against 8.6), so it is stable, but stability does not make it causal: the same segment mix produces it. Inside Retail, discounts run only from 0% to 5%; the more-discounted half (above the 1.15% median) placed 9.5 orders against 9.1 for the rest, a small gap. Only 10 Retail and 9 Hospitality customers reached 5%, and those few placed about one order each, so on what a deeper Retail discount would do there is no evidence at all, which is different from evidence of no effect. If Retail discounting were to be tried, this is the gap that would need filling.
 >
 > **What would change this recommendation.** A deliberate test: offer a deeper discount to a randomly chosen group of Retail customers for two quarters and compare order frequency against a held-back group. That is the only way to answer a causal question with this data, and it would cost far less than a policy change. Chapter 22's warning applies: a difference found by slicing is a hypothesis, not a finding.
 >
-> **Two data problems worth fixing regardless.** 48 customer records are duplicates of existing businesses, and 3,414 of 2025's orders have no sales rep recorded. Neither changes this analysis. Both distort any per-rep or per-customer report built on the CRM.
+> **Three data problems worth fixing regardless.** 48 customer records are duplicates of existing businesses; 3,414 orders since 2023 (1,404 of them in 2025) have no sales rep recorded; and 60 orders from before June 2025 are still marked Pending. None of them changes this analysis. All three distort any per-rep or per-customer report built on the CRM.
 
 Four things about that memo are worth copying, and none of them are about writing style.
 
@@ -706,7 +881,7 @@ That is also precisely why an interviewer values the evidence of the habit so hi
 ### The four things that fix it, and they are cheap
 
 1. **Write the analysis plan before you run it.** Two paragraphs: the claim, the comparison that would test it, and what result would make you drop it. Commit it first, so its timestamp is before the results. Chapter 26 gives you a history that proves the order.
-2. **Keep a "what I tried" section.** Every cut you ran, including the ones that showed nothing. In this project that section holds the 2024 replication, the within-Wholesale quartiles, the `band_cut` sensitivity, and the two segments with too few customers to say anything. That is four honest lines.
+2. **Keep a "what I tried" section.** Every cut you ran, including the ones that showed nothing. In this project that section holds the 2024 replication, the within-Wholesale quartiles, the Retail median split, the `band_cut` sensitivity, and the two segments with too few deep-discount customers to say anything. That is five honest lines.
 3. **Report the denominator of your search.** "I looked at six segment cuts and one was interesting" is a completely different claim from "the Wholesale cut is interesting", and Chapter 22 section 22.4 explains why the first one needs a correction and the second one hides that it needs one.
 4. **Name the null result in the summary, not the appendix.** In this chapter's memo it is a heading. A null result buried in a footnote has been reported and concealed at the same time.
 
@@ -763,7 +938,7 @@ Have both versions ready, because you will be asked for the short one and then i
 
 **The ten-minute version** is the same four parts with the interviewer driving. Have these five ready, because they are what gets asked:
 
-- **"How do you know the number is right?"** Name the reconciliation. Here: company net revenue matches the finance figure for 2025 to the rupee, and `COUNT(DISTINCT order_id)` rather than `COUNT(*)` because the join to lines multiplies rows.
+- **"How do you know the number is right?"** Name the reconciliation. Here: the customer-year table adds up to 46,356 orders and ₹1,14,66,41,651.25, exactly what the `sales_lines` view gives for 2025 (section 27.3), and the Python script reproduces the SQL's two rows; and `COUNT(DISTINCT order_id)` rather than `COUNT(*)` because the join to lines multiplies rows.
 - **"What would you do differently?"** Have a real answer. Here: write the analysis plan before running the first query, because the segment split should have been in the plan and instead it was a save.
 - **"What was hardest?"** Not a modesty question. It is asking what you found difficult, which tells them your level. "Knowing that a significant correlation of −0.08 was not worth reporting as a finding" is a better answer than any tooling difficulty.
 - **"Walk me through this bit of code."** They will pick something. You must be able to explain every line of every file in your portfolio, which is the real reason Chapter 26 section 26.11 says to read what an assistant gives you before you keep it.
@@ -816,7 +991,7 @@ Three projects is the right number. **One deep**, like this chapter's, with the 
 
 ## In the real world: the finding Farah nearly led with
 
-Farah Khan's first portfolio piece was the one Chapter 9 followed her building: hospitality orders before the wedding season, this year against last.
+Farah Khan's first portfolio piece grew out of the question Chapter 9 followed her asking: *which hospitality customers ordered before last year's wedding season but not this year?* The list of names was useful to the sales team, and it raised the question she turned into the project: were the customers who ordered early in the season worth more than the ones who did not?
 
 The finding was clean. Hospitality customers who ordered in the eight weeks before the season placed more orders across the rest of the year than those who did not. She had the query, a chart, and a sentence: *early-season buyers are worth more, so the team should push hospitality outreach into August.*
 
@@ -890,7 +1065,7 @@ Job-ready is not a syllabus. It is six things: you can get data out, you can tel
 
 ## Key terms
 
-portfolio project · analysis plan · decision log · confounder · segment effect · comparison group · discount band · threshold sensitivity · effect size · statistical significance · confidence interval · null result · selective reporting · garden of forking paths · denominator of the search · FINDINGS file · README first paragraph · commit history as evidence · ninety-second scan · the two-minute version · reconciliation · job-ready
+portfolio project · analysis plan · decision log · reconciliation · confounder · segment effect · comparison group · discount band · quartile · `NTILE` · threshold sensitivity · effect size · statistical significance · confidence interval · null result · selective reporting · garden of forking paths · denominator of the search · FINDINGS file · README first paragraph · commit history as evidence · ninety-second scan · the two-minute version · job-ready
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -932,7 +1107,7 @@ portfolio project · analysis plan · decision log · confounder · segment effe
 
 ### Stretch
 
-11. Design the two-quarter Retail discount test the memo proposes. Say who is in each group, what you would measure, how long you would run it, and what result would justify the policy change. Chapter 22 section 22.6 is the relevant material.
+11. Design the two-quarter Retail discount test the memo proposes. Say who is in each group, what you would measure, how long you would run it, and what result would justify the policy change. Chapter 22 section 22.3 is the relevant material.
 12. The Wholesale quartile table shows Q2 and Q3 above both Q1 and Q4. Give two explanations for that shape, and say what you would look at to tell them apart.
 13. Rewrite this chapter's memo for a reader who is not Vikram but the finance manager, whose decision is whether to change the approval thresholds. What changes, and what stays?
 
@@ -949,27 +1124,44 @@ portfolio project · analysis plan · decision log · confounder · segment effe
 
 **2.** `COUNT(*)` counts order *lines*, not orders, because the join to `order_items` puts an order on the table once per product on it. It would have been **higher**, by the average number of lines per order: the full dataset has 209,006 lines across 116,194 orders, so roughly 1.8 times higher. Every customer would look like a more frequent buyer than they are, and the error would be larger for Wholesale, whose orders carry more lines, which would have made the wrong headline look even stronger.
 
-**3.** Because averaging percentages gives every line equal weight regardless of size. A customer with one ₹200,000 crate order at 10% and nine ₹2,000 orders at 0% has an average line discount of 1%, and an actual discount rate of about 9.2%. The question is about money given away, so the calculation has to be weighted by money. This is the same reason a company-wide "average margin" is computed from summed revenue and summed cost, never from the mean of per-order margins.
+**3.** Because averaging percentages gives every line equal weight regardless of size. A customer with one ₹2,00,000 crate order at 10% and nine ₹2,000 orders at 0% has an average line discount of 1%, and an actual discount rate of about 9.2%. The question is about money given away, so the calculation has to be weighted by money. This is the same reason a company-wide "average margin" is computed from summed revenue and summed cost, never from the mean of per-order margins.
 
-**4.** Any two of: the headline gap reproduces in 2024, so it is stable, and stability is not causality; Retail and Hospitality have too few deep-discount customers (10 and 9) to test the claim there at all, which is an absence of evidence rather than evidence of absence; the `band_cut` at 5% is a choice, and moving it to 3% shrinks the gap by more than a third; the within-Wholesale correlation is statistically significant, which would superficially support a relationship, and is far too small to matter.
+**4.** Any two of: the headline gap reproduces in 2024, so it is stable, and stability is not causality; Retail and Hospitality have too few deep-discount customers (10 and 9) to test the claim there at all, which is an absence of evidence rather than evidence of absence; the `band_cut` at 5% is a choice, and moving it to 3% shrinks the order gap by more than a third; inside Retail, the more-discounted half orders only 0.4 more times a year (9.5 against 9.1); the within-Wholesale correlation is statistically significant, which would superficially support a relationship, and is far too small to matter.
 
 **5.** The prediction most people write is "larger, because the two groups are further apart". That is right, and the reason is not the one they have in mind:
 
+```python
+print(discount_report(band_cut=8.0))
+```
+
 ```
               customers  avg_orders  avg_revenue
+band                                            
 8% or deeper        576        15.6     484038.0
 under 8%           4023         9.3     215719.0
 ```
 
 The gap in average orders goes 3.5 at `band_cut=3`, 5.5 at 5, and 6.3 at 8. Now look at who is in the "deep" group at each setting:
 
-| `band_cut` | Deep group | Of which Wholesale | Average orders of the rest |
-|---|---|---|---|
-| 3.0 | 840 | 662 | 4.5 |
-| 5.0 | 681 | 662 | 1.2 |
-| 8.0 | 576 | 576 | none left |
+```python
+people = customer_year()
+for cut in [3.0, 5.0, 8.0]:
+    deep = people[people.discount_pct >= cut]
+    rest = deep[deep.segment != "Wholesale"]
+    print(f"{cut:g}%: deep group {len(deep)}, "
+          f"of which Wholesale {len(deep) - len(rest)}, "
+          f"average orders of the rest {rest.orders.mean():.1f}")
+```
 
-Raising the threshold does not select more heavily discounted customers. It **removes non-Wholesale customers from the deep group**, and they were the ones dragging its average down. At 8% the deep group is 100% Wholesale, and the "finding" is at its most impressive precisely when it has stopped measuring discounting altogether.
+```
+3%: deep group 840, of which Wholesale 662, average orders of the rest 4.5
+5%: deep group 681, of which Wholesale 662, average orders of the rest 1.2
+8%: deep group 576, of which Wholesale 576, average orders of the rest nan
+```
+
+The loop runs the same three lines for each cut: `deep` keeps the customers at or above it, `rest` keeps the ones in `deep` who are not Wholesale, and the f-string prints the counts and the rest's average orders. At 8% nobody is left in `rest`, and the average of nothing is `nan`, "not a number" (Chapter 18, section 18.1).
+
+Raising the threshold does not select more heavily discounted customers. It **removes non-Wholesale customers from the deep group**, and they were the ones dragging its average down. It also moves the 86 least-discounted Wholesale customers (662 − 576) into the "under 8%" group, where 4,023 customers dilute them. At 8% the deep group is 100% Wholesale, and the "finding" is at its most impressive precisely when it has stopped measuring discounting altogether.
 
 So the threshold is a dial on segment purity wearing the label of discount depth, and every value of it produces a true, quotable, larger-sounding number. That is the whole of section 27.8 in one parameter.
 
@@ -998,26 +1190,30 @@ Under sixty words, no tool names, and the reader knows what decision it serves.
 ```
 # What I checked
 
-- 2025 headline: 5%+ discount customers place 14.8 orders vs 9.3. Reproduces in 2024 (13.4 vs 8.6).
-- Split by segment: 662 of 681 deep-discount customers are Wholesale; no Wholesale customer is below 5%.
-  The headline is a segment comparison.
-- Within Wholesale, by discount quartile: 14.1 / 16.7 / 16.4 / 13.6 orders. Q4 - Q1 = -0.48,
-  95% CI [-1.89, 0.92], p = 0.50. No relationship.
-- Retail and Hospitality: 10 and 9 customers above 5%, averaging ~1 order each. Too few to test;
-  not evidence of no effect.
-- Threshold sensitivity: band_cut 3 / 5 / 8 gives gaps of 3.5 / 5.5 / 6.3 orders. The gap grows
-  because raising the cut removes non-Wholesale customers from the deep group, not because
-  discount depth matters.
-- Duplicate customer merge (48 records, 621 orders) moved the headline by 0.2 orders. Kept the merge.
+- 2025 headline: 5%+ discount customers place 14.8 orders vs 9.3. Reproduces in 2024
+  (13.4 vs 8.6).
+- Split by segment: 662 of 681 deep-discount customers are Wholesale; no Wholesale
+  customer is below 5%. The headline is a segment comparison.
+- Within Wholesale, by discount quartile: 14.1 / 16.7 / 16.4 / 13.6 orders.
+  Q4 - Q1 = -0.48, 95% CI [-1.89, 0.92], p = 0.50. No relationship.
+- Within Retail (discounts 0-5%): above the 1.15% median, 9.5 orders; below, 9.1.
+  A small gap.
+- Retail and Hospitality: 10 and 9 customers at 5%, averaging about 1 order each.
+  Too few to test deep discounts; not evidence of no effect.
+- Threshold sensitivity: band_cut 3 / 5 / 8 gives gaps of 3.5 / 5.5 / 6.3 orders.
+  The gap grows because raising the cut removes non-Wholesale customers from the
+  deep group, not because discount depth matters.
+- Duplicate customer merge (48 records, 621 orders) moved the headline by 0.2 orders.
+  Analysis kept on the data as loaded; the decision log records why.
 ```
 
-Six lines rather than four, which is the right direction to be wrong in.
+Seven lines rather than four, which is the right direction to be wrong in.
 
 **11.** Randomize at the customer level among Retail customers who ordered at least twice in 2025, which excludes the one-order accounts that distorted the original comparison. Roughly half get an additional standing discount of five percentage points for two quarters; the rest carry on unchanged. The primary measure is orders per customer over those two quarters; secondary measures are net revenue per customer and gross margin per customer, because the discount can win the first and lose the third. Two quarters is chosen so the comparison spans one weak season and one normal one. The policy change is justified if the treated group's order frequency is higher by enough that the extra gross profit exceeds the margin given away, which for Retail at about 30% margin means roughly a fifth more volume at a five-point discount before it breaks even. That number belongs in the plan before the test runs, because afterward it is negotiable.
 
-**12.** Two explanations. **Noise**: with 166 customers per quartile and a standard deviation of several orders, a spread of three orders between quartiles is well within what chance produces, and the confidence interval on the ends already includes zero. **A real middle effect**: medium-sized Wholesale accounts might order more frequently in smaller quantities, while the largest accounts consolidate into fewer, bigger orders and negotiate the deepest discounts, which would put the top quartile low for a reason that has nothing to do with the discount. To tell them apart, look at order *size* by quartile rather than count, and at revenue per customer, which is flat across the four. If the deepest quartile has the largest orders and similar revenue, the second explanation is doing the work; if nothing has a pattern, the first is.
+**12.** Two explanations. **Noise**: with 166 customers per quartile and a standard deviation of several orders, a spread of three orders between quartiles is well within what chance produces, and the confidence interval on the ends already includes zero. **A real middle effect**: medium-sized Wholesale accounts might order more frequently in smaller quantities, while the largest accounts consolidate into fewer, bigger orders and negotiate the deepest discounts, which would put the top quartile low for a reason that has nothing to do with the discount. To tell them apart, look at order *size* by quartile rather than count, and at revenue per customer, which section 27.4's table already shows has the same hump as the orders (₹4,31,573, ₹5,19,663, ₹5,11,059, ₹4,27,265). If the deepest quartile has the largest orders but fewer of them, the second explanation is doing the work; if nothing has a pattern, the first is.
 
-**13.** What changes: the recommendation is no longer about Retail growth but about the approval thresholds, so the lead becomes something like *"The 5% and 10% approval steps are working as intended in Wholesale and are not being reached in Retail or Hospitality, where only 19 customers in 2025 crossed 5% at all."* The margin paragraph moves up, because it is the finance manager's decision variable. The proposed test moves down or out; it is not their call. What stays: the segment finding, because it is the reason the thresholds look different by segment; the null result, in the same position; and the two data problems, which matter more to finance than to sales, since a missing sales rep on 3,414 orders breaks any commission or coverage report.
+**13.** What changes: the recommendation is no longer about Retail growth but about the approval thresholds, so the lead becomes something like *"The 5% and 10% approval steps are working as intended in Wholesale and are not being reached in Retail or Hospitality, where only 19 customers in 2025 reached 5% at all."* The margin paragraph moves up, because it is the finance manager's decision variable. The proposed test moves down or out; it is not their call. What stays: the segment finding, because it is the reason the thresholds look different by segment; the null result, in the same position; and the two data problems, which matter more to finance than to sales, since a missing sales rep on 3,414 orders breaks any commission or coverage report.
 
 **14.** They do not believe the file on its own, and that is the right instinct. What they believe is the **combination**: a FINDINGS file whose null results are specific and checkable against the code and the commit history, which was written over weeks and cannot be reconstructed afterward. A fabricated null result is harder to invent convincingly than a finding, because it has to be consistent with the data that is sitting right there. The deeper answer is that the file's real value is not proof, it is a prompt: it gives the interviewer something specific to ask about, and forty-five seconds of you explaining why you dropped a comparison is evidence that no file could supply.
 

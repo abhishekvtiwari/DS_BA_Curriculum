@@ -62,10 +62,10 @@ def fig_arc():
     stages = [
         ("SQL", ACC, "Get the headline out of the database", "14.8 orders vs 9.3", "Chapters 12, 13"),
         ("Cleaning", ORANGE, "Decide, log the decision, measure whether it mattered",
-         "48 duplicates: headline moves 0.2 orders", "Chapter 14"),
+         "48 duplicates: +0.2 orders", "Chapter 14"),
         ("The check", RED, "Split it by the thing that could explain both",
          "662 of 681 are Wholesale", "Chapters 21, 22"),
-        ("Python", GREEN, "Turn your choices into parameters so they can be argued with",
+        ("Python", GREEN, "Turn your choices into parameters to argue with",
          "band_cut 3 / 5 / 8", "Chapters 17, 18, 20"),
         ("Dashboard", TEAL, "One page, one decision, one named reader", "4 objects, nothing else",
          "Chapters 15, 16"),
@@ -136,7 +136,7 @@ def fig_not_survive():
           ("Q2, 8.5%", "166", 16.7, GREEN),
           ("Q3, 9.0%", "165", 16.4, GREEN),
           ("Q4, average discount 9.7%", "165", 13.6, GREEN)],
-         "Q4 − Q1 = −0.48 orders, 95% CI [−1.89, 0.92]. No ladder.", GREEN),
+         "Q4 − Q1 = −0.48 orders, and the middle two are highest. No ladder.", GREEN),
     ]
     o = []
     y = 4
