@@ -1600,13 +1600,13 @@ The index stores dates sorted, so it can find "from 1 December up to (but not in
 
 The same trap appears in many disguises. Each pair below returns the same rows, but only the second form can use a plain index on the column:
 
-| Not sargable | Sargable |
+| Not sargable (the condition after `WHERE`) | Sargable |
 |---|---|
-| `WHERE EXTRACT(YEAR FROM order_date) = 2025` | `WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'` |
-| `WHERE order_date::text LIKE '2025-12%'` | the date range above |
-| `WHERE UPPER(city) = 'PUNE'` | store city in one agreed case, then `WHERE city = 'Pune'` |
-| `WHERE quantity * unit_price > 50000` | often unavoidable; see *expression indexes* below |
-| `WHERE customer_name LIKE '%Hardware'` | `LIKE 'Sharma%'` can use an index; a leading `%` can't |
+| `EXTRACT(YEAR FROM order_date) = 2025` | `order_date >= '2025-01-01'` `AND order_date < '2026-01-01'` |
+| `order_date::text LIKE '2025-12%'` | the date range above |
+| `UPPER(city) = 'PUNE'` | store city in one agreed case, then `city = 'Pune'` |
+| `quantity * unit_price > 50000` | often unavoidable; see *expression indexes* below |
+| `customer_name LIKE '%Hardware'` | `LIKE 'Sharma%'` can use an index; a leading `%` can't |
 
 The half-open range (`>=` the start, `<` the next start) is also the correct form for timestamps, which `BETWEEN … AND '2025-12-31'` gets wrong by missing everything after midnight on the 31st (section 12.6's warning).
 
