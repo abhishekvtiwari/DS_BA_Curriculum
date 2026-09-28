@@ -176,36 +176,154 @@ If this were a portfolio project written by most people, that sentence would be 
 
 ## 27.3 Cleaning: the decisions, and whether they mattered
 
-Chapter 14 taught the techniques. What a portfolio needs, and what Chapter 14 section 14.9 called the cleaning log, is the record of what you decided and why.
+Chapter 14 taught the techniques. What a portfolio needs, and what Chapter 14 section 14.11 called the cleaning log, is the record of what you decided and why.
+
+### First, reconcile
+
+Before deciding anything about the data, check that the customer-year table holds all of it. The same 2025 orders and net revenue can be counted a second way, from the `sales_lines` view (Chapter 13, section 13.2), which knows nothing about customers. If the two routes disagree, the CTE has lost or double-counted something:
+
+```sql
+WITH customer_year AS (
+    SELECT o.customer_id,
+           COUNT(DISTINCT o.order_id)                                     AS orders,
+           SUM(oi.quantity * oi.unit_price)                               AS list_revenue,
+           SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100))  AS net_revenue
+    FROM   orders AS o
+    JOIN   order_items AS oi ON oi.order_id = o.order_id
+    WHERE  o.status <> 'Cancelled'
+      AND  o.order_date >= DATE '2025-01-01' AND o.order_date < DATE '2026-01-01'
+    GROUP  BY o.customer_id
+)
+SELECT (SELECT SUM(orders) FROM customer_year)                AS orders_in_table,
+       (SELECT COUNT(DISTINCT order_id) FROM sales_lines
+        WHERE  order_date >= DATE '2025-01-01'
+          AND  order_date <  DATE '2026-01-01')               AS orders_in_view,
+       (SELECT ROUND(SUM(net_revenue), 2) FROM customer_year) AS revenue_in_table,
+       (SELECT ROUND(SUM(net_revenue), 2) FROM sales_lines
+        WHERE  order_date >= DATE '2025-01-01'
+          AND  order_date <  DATE '2026-01-01')               AS revenue_in_view;
+```
+
+```
+ orders_in_table | orders_in_view | revenue_in_table | revenue_in_view 
+-----------------+----------------+------------------+-----------------
+           46356 |          46356 |    1146641651.25 |   1146641651.25
+(1 row)
+```
+
+**How it works:**
+
+- **The CTE is the one from section 27.2**, unchanged.
+- **Each `(SELECT ...)` in the list is a scalar subquery** (Chapter 12, section 12.12): a query that returns one value, used as a column. Four of them put the two routes side by side in one row.
+- **`SUM(orders)`** adds up every customer's order count. Because each order belongs to one customer, it must equal the number of distinct orders in the view.
+
+Both routes agree to the paisa: 46,356 orders and ₹1,14,66,41,651.25, the 2025 net revenue Chapter 14 reported for the whole company. Nothing was lost on the way into the table, and that sentence goes in the memo's back pocket for the question "how do you know the number is right?"
+
+### The four problems, and the decisions
+
+One query counts the known problems in the order data. The data ends in December 2025, so "from 1 January 2025" means 2025:
+
+```sql
+SELECT SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END)                 AS cancelled,
+       SUM(CASE WHEN sales_rep_id IS NULL THEN 1 ELSE 0 END)                 AS no_rep,
+       SUM(CASE WHEN sales_rep_id IS NULL
+                 AND order_date >= DATE '2025-01-01' THEN 1 ELSE 0 END)      AS no_rep_2025,
+       SUM(CASE WHEN status = 'Pending'
+                 AND order_date < DATE '2025-06-01' THEN 1 ELSE 0 END)       AS old_pending,
+       SUM(CASE WHEN status = 'Pending' AND order_date >= DATE '2025-01-01'
+                 AND order_date < DATE '2025-06-01' THEN 1 ELSE 0 END)       AS old_pending_2025,
+       (SELECT COUNT(*) FROM customers WHERE city IS NULL)                   AS no_city
+FROM   orders;
+```
+
+```
+ cancelled | no_rep | no_rep_2025 | old_pending | old_pending_2025 | no_city 
+-----------+--------+-------------+-------------+------------------+---------
+      4766 |   3414 |        1404 |          60 |               14 |     100
+(1 row)
+```
+
+Each `SUM(CASE WHEN ... THEN 1 ELSE 0 END)` counts the orders that meet one condition (conditional aggregation, Chapter 12 section 12.9), so one pass over `orders` gives five counts. An order still marked Pending more than six months before the data ends was, in practice, never updated. The last column is a scalar subquery on `customers`, as in the reconciliation above.
 
 This dataset has four known problems. Each one is a decision, not a fix:
 
 | What is in the data | The decision | Why |
 |---|---|---|
 | 4,766 cancelled orders | Excluded | A cancelled order is not revenue and was never a purchase decision |
-| 48 duplicate customer records, the same business entered twice with a name variant, holding 621 orders between them | Merged into their originals, then the analysis re-run both ways | Two records for one business understate that business's order count and inflate the customer count |
+| 48 duplicate customer records, the same business entered twice with a name variant, holding 621 orders between them | Measured both ways, merged and as loaded; the rest of the analysis uses the data as loaded | Two records for one business understate that business's order count and inflate the customer count, so the merge has to be measured. It moved the headline by 0.2 orders (below) |
 | 100 customers with no city | Kept | The question does not use city. Dropping rows to tidy a column you do not need is how analyses lose data for no reason |
-| 3,414 orders with no sales rep, and 60 Pending orders dated before June 2025 that were never updated | Kept, flagged in the memo | Neither affects a customer-level revenue measure. Both are worth telling the source system's owner about |
+| 3,414 orders across 2023–2025 with no sales rep (1,404 of them in 2025), and 60 Pending orders dated before June 2025 that were never updated (14 of them in 2025) | Kept, flagged in the memo | A missing rep does not touch a customer-level measure. The stale Pendings are counted (a Pending order passes the cancelled filter), but 14 orders out of 2025's 46,356 cannot move a customer average; the decision log says so. Both are worth telling the source system's owner about |
 
-The duplicate decision is the interesting one, because it is the kind that sounds important. Chapter 14 section 14.5 built the matching. The honest thing to do with a decision like this is to measure it, which takes one extra run:
+The duplicate decision is the interesting one, because it is the kind that sounds important. Chapter 14 section 14.4 built the matching: every record in its `clean_customers` table has a `match_key`, the normalized name, and two records with the same key are one business. (If you skipped Chapter 14's following-along step, run `companion/ch14/sql/ch14_clean_postgresql.sql`, or the MySQL version, to create that table.) The honest thing to do with a decision like this is to measure it. First, give every record the ID of the business it belongs to:
+
+```sql
+WITH merged_id AS (
+    SELECT customer_code::int                                    AS customer_id,
+           MIN(customer_code::int) OVER (PARTITION BY match_key) AS merged_id
+    FROM   clean_customers
+)
+SELECT COUNT(DISTINCT m.customer_id) AS duplicate_records,
+       COUNT(o.order_id)             AS their_orders
+FROM   merged_id AS m
+LEFT   JOIN orders AS o ON o.customer_id = m.customer_id
+WHERE  m.customer_id <> m.merged_id;
+```
 
 ```
-as loaded:
-         customers  avg_orders  avg_revenue
-deep           681        14.8     459662
-shallow       3918         9.3     212765
-
-duplicates merged into their originals:
-         customers  avg_orders  avg_revenue
-deep           674        15.0     464414
-shallow       3881         9.3     214797
+ duplicate_records | their_orders 
+-------------------+--------------
+                48 |          621
+(1 row)
 ```
 
-Merging the duplicates moved the deep-discount group from 14.8 orders to 15.0 and from ₹459,662 to ₹464,414. The conclusion is untouched.
+**How it works:**
+
+- **`customer_code::int`** turns Chapter 14's text code (`'0001'`) back into the number that `orders.customer_id` uses.
+- **`MIN(customer_code::int) OVER (PARTITION BY match_key)`** is a window function (Chapter 13, section 13.3): for every record, the smallest ID among the records with the same match key. A business entered once keeps its own ID. A duplicate gets the ID of the earlier record, which Chapter 14's answer key confirms is the original in all 48 groups.
+- **`WHERE m.customer_id <> m.merged_id`** keeps only the duplicate records, and the `LEFT JOIN` to `orders` counts their orders (a duplicate with no orders would still be counted as a record).
+
+Now re-run section 27.2's headline with the merged IDs. The only change is in the CTE: it joins `merged_id` and groups by `m.merged_id` instead of `o.customer_id`:
+
+```sql
+WITH merged_id AS (
+    SELECT customer_code::int                                    AS customer_id,
+           MIN(customer_code::int) OVER (PARTITION BY match_key) AS merged_id
+    FROM   clean_customers
+), customer_year AS (
+    SELECT m.merged_id                                                    AS customer_id,
+           COUNT(DISTINCT o.order_id)                                     AS orders,
+           SUM(oi.quantity * oi.unit_price)                               AS list_revenue,
+           SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100))  AS net_revenue
+    FROM   orders AS o
+    JOIN   order_items AS oi ON oi.order_id = o.order_id
+    JOIN   merged_id AS m ON m.customer_id = o.customer_id
+    WHERE  o.status <> 'Cancelled'
+      AND  o.order_date >= DATE '2025-01-01' AND o.order_date < DATE '2026-01-01'
+    GROUP  BY m.merged_id
+)
+SELECT CASE WHEN 100 * (1 - net_revenue / list_revenue) >= 5
+            THEN '5% or deeper' ELSE 'under 5%' END AS discount_band,
+       COUNT(*)                 AS customers,
+       ROUND(AVG(orders), 1)    AS avg_orders,
+       ROUND(AVG(net_revenue))  AS avg_revenue
+FROM   customer_year
+GROUP  BY discount_band
+ORDER  BY discount_band;
+```
+
+```
+ discount_band | customers | avg_orders | avg_revenue 
+---------------+-----------+------------+-------------
+ 5% or deeper  |       674 |       15.0 |      464414
+ under 5%      |      3881 |        9.3 |      214797
+(2 rows)
+```
+
+Merging the duplicates moved the deep-discount group from 14.8 orders to 15.0 and from ₹4,59,662 to ₹4,64,414. The conclusion is untouched.
 
 **That is worth writing down, and most people do not.** "I cleaned the data" is an assertion. "I merged 48 duplicate customer records holding 621 orders, and it changed the headline by 0.2 orders and 1%" is evidence, and it takes one paragraph. It also tells a reviewer something more useful than the number itself: that you check whether your own work mattered.
 
-The analysis below uses the merged version, because it is more correct, even though it makes no difference. Being right for the right reason is worth the extra hour when somebody may audit it.
+Because the merge changes the headline by only 0.2 orders, the rest of the chapter uses the data as loaded, which keeps the SQL short. That is a decision too, so the decision log records it, with the measurement beside it. A reviewer who disagrees can see exactly what the other choice would have given.
 
 ---
 
@@ -213,7 +331,7 @@ The analysis below uses the merged version, because it is more correct, even tho
 
 Here is the discipline Chapter 22 section 22.5 asked for: before believing that A causes B, look for the thing that could cause both.
 
-The candidate here appears the moment you ask the question out loud. **Who gets 5% discounts at Riverstone?** Chapter 3 said it: the discount policy is tiered, and Wholesale buys in crate quantities. Split the same two bands by segment:
+The candidate here appears the moment you ask the question out loud. **Who gets 5% discounts at Riverstone?** Chapter 3's approval ladder (section 3.6) sets the rules: up to 5% needs no approval, over 5% needs Vikram, and over 10% needs Anita. Discounts are given customer by customer, so the obvious suspect is the kind of customer. Split the same two bands by segment:
 
 ```sql
 WITH customer_year AS (
@@ -258,7 +376,49 @@ So the two groups in section 27.2 were not "customers on deep discounts" and "cu
 
 Look at the two remaining rows and it gets worse for the original claim. In Retail, the ten customers who did reach 5% averaged **1.1 orders** against 9.3 for everyone else. In Hospitality, 1.2 against 9.1. Those are customers who placed one big order and took a volume discount on it, not customers the discount made loyal.
 
-**The fair comparison** is inside a single segment, where the customers are alike in the way that matters. Wholesale is the only segment with enough spread to try it:
+**The fair comparison** is inside a single segment, where the customers are alike in the way that matters. Start with Wholesale, where the deep discounts are; section 27.5 does the same for Retail, which is the segment Vikram's decision is about.
+
+Inside Wholesale every customer is above 5%, so the 5% line is useless there. The comparison needs groups made from the customers' own spread, and SQL has one function for that which you have not met yet. **`NTILE(n)`** is a window function, like the `ROW_NUMBER` and `RANK` of Chapter 13 section 13.4: it sorts the rows and deals them into *n* groups of equal size, numbered 1 to *n*. Try it on nine made-up customers, few enough to check by eye:
+
+```sql
+SELECT customer, discount_pct,
+       NTILE(4) OVER (ORDER BY discount_pct) AS quartile
+FROM  (SELECT 'A' AS customer, 7.1 AS discount_pct
+       UNION ALL SELECT 'B', 9.8
+       UNION ALL SELECT 'C', 8.2
+       UNION ALL SELECT 'D', 11.5
+       UNION ALL SELECT 'E', 6.9
+       UNION ALL SELECT 'F', 8.8
+       UNION ALL SELECT 'G', 10.4
+       UNION ALL SELECT 'H', 9.1
+       UNION ALL SELECT 'I', 7.6) AS sample
+ORDER  BY discount_pct;
+```
+
+```
+ customer | discount_pct | quartile 
+----------+--------------+----------
+ E        |          6.9 |        1
+ A        |          7.1 |        1
+ I        |          7.6 |        1
+ C        |          8.2 |        2
+ F        |          8.8 |        2
+ H        |          9.1 |        3
+ B        |          9.8 |        3
+ G        |         10.4 |        4
+ D        |         11.5 |        4
+(9 rows)
+```
+
+**How it works:**
+
+- **The derived table `sample`** stacks nine one-row `SELECT`s with `UNION ALL` (Chapter 12, section 12.12), so the example needs no table of its own.
+- **`NTILE(4)`** asks for four groups, **`OVER (ORDER BY discount_pct)`** says in which order to deal the rows out: shallowest discount first. The group number is the **quartile**.
+- **Nine rows do not split evenly into four.** `NTILE` gives the leftover rows to the first groups, one each, so the sizes are 3, 2, 2, 2: group sizes never differ by more than one. On 662 customers it makes groups of 166, 166, 165 and 165.
+
+> **Predict before running.** What would `NTILE(3)` give the same nine customers? Write down the three group sizes, then change the 4 to a 3 and run it.
+
+Now the real comparison, inside Wholesale:
 
 ```sql
 WITH customer_year AS (
@@ -302,31 +462,18 @@ ORDER  BY quartile;
 **How it works:**
 
 - **The CTE is the one from section 27.2** with two lines added: a join to `customers` and `AND c.segment = 'Wholesale'`. `customer_year` now holds only the 662 Wholesale customers, and nothing else in the query changes.
-- **`NTILE(4) OVER (ORDER BY ...)`** is Chapter 13 section 13.7's window function. It sorts those customers by their own discount rate and cuts them into four groups of equal size, numbering them 1 to 4. It is used here rather than fixed discount bands because the whole range is between 6.7% and 12%, so fixed bands would put almost everyone in one of them.
+- **`NTILE(4) OVER (ORDER BY ...)`** is the function you have just tried. It sorts the Wholesale customers by their own discount rate and deals them into four groups of equal size, numbered 1 to 4. It is used here rather than fixed discount bands because every Wholesale customer's rate is between 6.7% and 12%, so fixed bands would put almost everyone in one of them.
 - **The same expression appears in the `SELECT` list and in the `ORDER BY` inside `OVER`.** SQL will not let a window function refer to an alias defined in the same `SELECT`, which is why it is written twice. A second CTE would avoid the repetition and is worth it once the expression is longer than this.
 - **`banded` exists as a separate CTE** because you cannot group by a window function's result in the same query that computes it. Windows are evaluated after `GROUP BY`, so the quartile has to be finished before the outer query can aggregate on it.
 - **`AVG(discount_pct)` in the output** is there to prove the quartiles are what you think they are. Printing the thing you sorted by is cheap and catches a whole class of silent error.
 
 The shallowest quartile, averaging 7.9% discount, placed **14.1** orders. The deepest, at 9.7%, placed **13.6**. The middle two are higher than both ends. There is no ladder here. Nearly two extra percentage points of discount, worth real money at Wholesale volumes, bought nothing.
 
-Chapter 21 and Chapter 22 supply the last step, because "14.1 against 13.6" is a difference and the question is whether it is a real one:
-
-```
-Q4 - Q1 = -0.48 orders; 95% CI [-1.89, 0.92]; p = 0.50
-within Wholesale: pearson r = -0.081 (p = 0.038), n = 662
-```
-
-Two things to read carefully, and the second is the one that separates an analyst from someone who has learned a formula.
-
-**The confidence interval straddles zero**, from 1.89 fewer orders to 0.92 more. Chapter 22 section 22.2 is precise about what that means: the data is consistent with a small effect in either direction and with no effect at all, so it does not support a claim in either direction.
-
-**The correlation is statistically significant and practically nothing.** An r of −0.081 with p = 0.038 clears the conventional 5% bar, and it points the opposite way from the claim. With 662 customers, a tiny wobble becomes "significant". Chapter 22 section 22.3 warned about exactly this: significance is a statement about sample size as much as about effect. Reporting "significant negative relationship between discount depth and order frequency" would be technically true and would badly mislead the reader. The honest sentence is: *within Wholesale, discount depth explains essentially none of the variation in how often a customer orders.*
+Is a gap of half an order between the shallowest and the deepest quartile a real difference, or noise? That is Chapter 22's question, and its tools run in Python, so section 27.5 answers it once the customer table is in Python.
 
 ![Three panels of average orders per customer: the headline two bars, the same bands split by segment, and the four discount quartiles inside Wholesale, which are flat](figures/fig27-2-the-finding-that-did-not-survive.svg)
 
 *Figure 27.2 — Every bar in all three panels is true. Only the third panel answers the question that was asked.*
-
-**The answer to Vikram's question is no**, and the reason is more useful to him than the answer: discount depth at Riverstone is a label for what segment a customer is in, not a lever that changes how they behave.
 
 ---
 

@@ -322,3 +322,170 @@
 (2 rows)
 
 
+
+===== write cost indexes on oi_copy_4 =====
+             indexname             
+-----------------------------------
+ oi_copy_4_order_id_idx
+ oi_copy_4_order_id_product_id_idx
+ oi_copy_4_pkey
+ oi_copy_4_product_id_idx
+(4 rows)
+
+
+
+===== write cost 500k rows =====
+no indexes median 416 ms [390, 416, 606]; four indexes median 2301 ms [2112, 2301, 2865]
+
+===== PG P9 monthly revenue by category, live: median 2626.33 ms over 5 runs =====
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ HashAggregate (actual time=2493.774..2493.852 rows=144 loops=1)
+   Group Key: (date_trunc('month'::text, (o.order_date)::timestamp with time zone))::date, p.category
+   Batches: 1  Memory Usage: 273kB
+   ->  Hash Join (actual time=169.802..1587.008 rows=1888466 loops=1)
+         Hash Cond: (oi.product_id = p.product_id)
+         ->  Hash Join (actual time=159.751..1012.459 rows=1888466 loops=1)
+               Hash Cond: (oi.order_id = o.order_id)
+               ->  Seq Scan on order_items oi (actual time=0.014..175.595 rows=1926847 loops=1)
+               ->  Hash (actual time=158.483..158.484 rows=700070 loops=1)
+                     Buckets: 262144  Batches: 8  Memory Usage: 5472kB
+                     ->  Seq Scan on orders o (actual time=0.061..72.687 rows=700070 loops=1)
+                           Filter: ((status)::text <> 'Cancelled'::text)
+                           Rows Removed by Filter: 14215
+         ->  Hash (actual time=10.016..10.017 rows=8 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               ->  Seq Scan on products p (actual time=9.991..9.994 rows=8 loops=1)
+ Planning Time: 0.818 ms
+ Execution Time: 2508.699 ms
+(18 rows)
+
+
+
+===== P9 buffers, live =====
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ HashAggregate (actual time=2857.039..2857.116 rows=144 loops=1)
+   Group Key: (date_trunc('month'::text, (o.order_date)::timestamp with time zone))::date, p.category
+   Batches: 1  Memory Usage: 273kB
+   Buffers: shared hit=2341 read=15754, temp read=10577 written=10577
+   ->  Hash Join (actual time=203.950..1836.889 rows=1888466 loops=1)
+         Hash Cond: (oi.product_id = p.product_id)
+         Buffers: shared hit=2341 read=15754, temp read=10577 written=10577
+         ->  Hash Join (actual time=190.975..1178.753 rows=1888466 loops=1)
+               Hash Cond: (oi.order_id = o.order_id)
+               Buffers: shared hit=2340 read=15754, temp read=10577 written=10577
+               ->  Seq Scan on order_items oi (actual time=0.016..200.998 rows=1926847 loops=1)
+                     Buffers: shared hit=2180 read=10693
+               ->  Hash (actual time=189.456..189.458 rows=700070 loops=1)
+                     Buckets: 262144  Batches: 8  Memory Usage: 5472kB
+                     Buffers: shared hit=160 read=5061, temp written=2091
+                     ->  Seq Scan on orders o (actual time=0.080..84.032 rows=700070 loops=1)
+                           Filter: ((status)::text <> 'Cancelled'::text)
+                           Rows Removed by Filter: 14215
+                           Buffers: shared hit=160 read=5061
+         ->  Hash (actual time=12.932..12.933 rows=8 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on products p (actual time=12.898..12.903 rows=8 loops=1)
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=357
+ Planning Time: 1.146 ms
+ Execution Time: 2877.426 ms
+(28 rows)
+
+
+
+===== PG P9 one month from materialized view: median 0.10 ms over 7 runs =====
+                                      QUERY PLAN                                      
+--------------------------------------------------------------------------------------
+ Sort (actual time=0.075..0.076 rows=4 loops=1)
+   Sort Key: (round(net_revenue, 0)) DESC
+   Sort Method: quicksort  Memory: 25kB
+   ->  Seq Scan on monthly_category_revenue (actual time=0.020..0.023 rows=4 loops=1)
+         Filter: (month = '2025-12-01'::date)
+         Rows Removed by Filter: 140
+ Planning Time: 0.266 ms
+ Execution Time: 0.105 ms
+(8 rows)
+
+
+
+===== P9 build/refresh =====
+build 2321 ms, refresh 2300 ms
+
+===== P9 mv rows =====
+ count 
+-------
+   144
+(1 row)
+
+
+
+===== P9 counts =====
+ count  
+--------
+ 700070
+(1 row)
+
+  count  
+---------
+ 1888466
+(1 row)
+
+
+
+===== MySQL indexes before =====
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment	Visible	Expression
+orders	0	PRIMARY	1	order_id	A	712008	NULL	NULL		BTREE			YES	NULL
+orders	1	customer_id	1	customer_id	A	3226	NULL	NULL		BTREE			YES	NULL
+orders	1	sales_rep_id	1	sales_rep_id	A	4	NULL	NULL	YES	BTREE			YES	NULL
+
+
+===== MySQL P1 one customer (FK index exists): median 0.17 ms over 7 runs =====
+EXPLAIN
+-> Index lookup on orders using customer_id (customer_id=2718)  (cost=43.2 rows=40) (actual time=0.177..0.183 rows=40 loops=1)
+
+
+
+===== MySQL P4 December via EXTRACT: median 136.00 ms over 7 runs =====
+EXPLAIN
+-> Aggregate: count(0)  (cost=143003 rows=1) (actual time=131..131 rows=1 loops=1)
+    -> Filter: ((extract(year from orders.order_date) = 2025) and (extract(month from orders.order_date) = 12))  (cost=71803 rows=712008) (actual time=125..129 rows=25078 loops=1)
+        -> Covering index scan on orders using idx_orders_order_date  (cost=71803 rows=712008) (actual time=0.548..81 rows=714285 loops=1)
+
+
+
+===== MySQL P4 December via range: median 7.09 ms over 7 runs =====
+EXPLAIN
+-> Aggregate: count(0)  (cost=14488 rows=1) (actual time=6.74..6.74 rows=1 loops=1)
+    -> Filter: ((orders.order_date >= DATE'2025-12-01') and (orders.order_date < DATE'2026-01-01'))  (cost=9672 rows=48152) (actual time=0.308..5.62 rows=25078 loops=1)
+        -> Covering index range scan on orders using idx_orders_order_date over ('2025-12-01' <= order_date < '2026-01-01')  (cost=9672 rows=48152) (actual time=0.306..3.19 rows=25078 loops=1)
+
+
+
+===== SUMMARY =====
+p1_seq: 38.77
+p1_idx: 0.18
+p2_big: 15.26
+p3b_seq: 262.47
+p3_seq: 109.78
+p3b_idx: 0.64
+p3_idx: 0.06
+p4_fn: 131.33
+p4_range: 2.95
+p6_single: 16.15
+p6_comp: 7.78
+p6_cover: 1.68
+p7_seq: 44.12
+p7_partial: 0.75
+w0: 415.60
+w4: 2300.67
+p9_live: 2626.33
+p9_build: 2321.07
+p9_mv: 0.10
+p9_refresh: 2300.14
+my_p1: 0.17
+my_p4_fn: 136.00
+my_p4_range: 7.09
