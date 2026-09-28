@@ -136,7 +136,7 @@ $ rm -r models/example
 
 *(Trimmed: dbt also prints the new folder's full path and links to its documentation, and on its very first run it creates a `.dbt` folder in your home folder.)*
 
-Every line dbt prints starts with the time, so yours will show different times. `dbt init` creates the project folder and its subfolders; `--skip-profile-setup` stops it asking connection questions, because you'll write that file yourself in a moment. `rm -r models/example` deletes the two sample models dbt includes (Chapter 34's `rm -r`: a folder and everything inside it, with no undo).
+Every line dbt prints starts with the time, so yours will show different times. `dbt init` creates the project folder and its subfolders; `--skip-profile-setup` stops it asking connection questions, because you'll write that file yourself in a moment. `rm -r models/example` deletes the two sample models dbt includes (Chapter 26's `rm -r`: a folder and everything inside it, with no undo).
 
 The folders that matter:
 

@@ -204,6 +204,8 @@ Tools line that went with it (Ch 14 now lists the build scripts as "for instruct
 
 ## 8. Loading the exports from the terminal
 
+**Landed** in Ch 26 §26.0 as the box "Try it: load the full dataset from the terminal", with the `sql/terminal/` path for the PostgreSQL load of Ch 14's exports (Part 2/3 build).
+
 **→ Ch 26 §26.0 "The terminal in 20 minutes", as an exercise ("now load it from the terminal")** (finding 14.1). Depends on: `cd`, running a program with arguments, the `psql` and `mysql` command-line clients (installed with the servers in Ch 12 §12.3), and for MySQL the `local_infile` setting on both sides. Ch 14 now loads through DBeaver with self-contained scripts (`companion/ch14/sql/ch14_load_postgresql.sql`, `ch14_load_mysql.sql`, INSERT statements, no file paths). The terminal versions that read the CSV files directly are kept at `companion/ch14/sql/terminal/ch14_load_postgresql.sql` and `ch14_load_mysql.sql` (they also load `truth_order_lines`), so the commands below need the path `sql/terminal/…` when placed:
 
 **SQL.** The companion scripts create staging tables where every column is text, then load the CSVs:

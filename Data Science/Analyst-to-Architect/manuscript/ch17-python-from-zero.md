@@ -2401,7 +2401,7 @@ What made the difference:
 
 - Add the targets from `targets_2025.csv` and show attainment per month (the year comes to 102.3% of ₹42,40,000).
 - Write the summary as JSON as well, so another script could read it.
-- Add a `tests.py` that checks `to_float("")`, `to_float("430.5")`, and `summarize()` on one known file, using `assert` (exercise 28 shows how); a first taste of Chapter 30's testing.
+- Add a `tests.py` that checks `to_float("")`, `to_float("430.5")`, and `summarize()` on one known file, using `assert` (exercise 28 shows how); a first taste of Chapter 29's testing.
 
 ---
 
@@ -2592,5 +2592,5 @@ Use `work/ch17/` and the standard library only. Run everything; the point is the
 - **Chapter 20, Automating Reports & Delivering Insights:** scheduling scripts, sending email, handling failure, and keeping a log file of every run.
 - **Chapter 21 and 22:** statistics, with simulations written in Python.
 - **Chapter 26, Git:** version control for the scripts you're now writing, and the terminal in more depth.
-- **Chapter 30, Python as Software, Not Scripts:** modules, packaging, testing, and type hints, once scripts grow up.
+- **Chapter 29, Python as Software, Not Scripts:** modules, packaging, testing, and type hints, once scripts grow up.
 - **Interview preparation:** the Python & pandas Question Bank (Chapter 72) starts with exactly these fundamentals.

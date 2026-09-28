@@ -1329,7 +1329,7 @@ jobs:
 | `python-version:` | which Python | `"3.14"` | set it to the version you actually develop on, or the check passes here and fails on your machine |
 | `@v7` | which major version of the prepared action | pinned | leave the version off and you get whatever is newest, which changes under you without warning |
 
-**What to put in this check for a data repository**, in order of value: does the Python import and run, do the tests pass, does a linter accept the SQL, and does a small query against a test database still return the expected number of rows. Chapter 29 adds tests (`python -m pytest -q`) to this same file once you have some, Chapter 47 turns the last idea into proper data-quality testing, and Chapter 52 takes the whole workflow further into deployment.
+**What to put in this check for a data repository**, in order of value: does the Python import and run, do the tests pass, does a linter accept the SQL, and does a small query against a test database still return the expected number of rows. Chapter 29 extends this check to run your tests once you have some, Chapter 47 turns the last idea into proper data-quality testing, and Chapter 52 takes the whole workflow further into deployment.
 
 ---
 
@@ -1501,7 +1501,7 @@ The failure mode is not nonsense. Nonsense is quick to spot. The failure mode is
 1. **Run it on data where you know the answer.** Chapter 12's mini database has twelve orders. If a generated query cannot get January right on twelve rows, it will not get it right on two hundred thousand.
 2. **Read it line by line before running it.** If you cannot explain every line, you cannot maintain it, and you certainly cannot defend the number it produced. This is the same standard this book applies to its own code.
 3. **Check the joins and the filters specifically.** These are where generated SQL goes wrong: a join that fans out and doubles the revenue, a `WHERE` clause that quietly drops NULLs, a missing exclusion of cancelled orders.
-4. **Reconcile.** Compare the total against something already known, exactly as Chapter 25 section 10 does for a data product.
+4. **Reconcile.** Compare the total against something already known, exactly as Chapter 25, section 25.10, does for a data product.
 5. **Never paste an error you do not understand back and accept the next answer.** Two rounds of that and you have code nobody understands, including the assistant.
 
 ### What must never be pasted into one
@@ -1803,7 +1803,7 @@ Two version numbers appear because "a recent Python" is not a setup instruction.
 ## Where this leads
 
 - **Chapter 27, the capstone,** turns this repository into a portfolio that a hiring manager will actually open.
-- **Chapter 29, Python as Software,** adds the things a repository like this grows into: a package layout, tests, and type hints. It adds `python -m pytest -q` to the check in section 26.8, which then runs your tests for you.
+- **Chapter 29, Python as Software,** adds the things a repository like this grows into: a package layout, tests, and type hints. It extends the check of section 26.8 so that it runs your tests for you.
 - **Chapter 32, dbt,** puts your SQL transformations under the same discipline, with version control and automated tests as the default rather than an addition.
 - **Chapter 34, the command line,** goes further with the terminal: pipes and text tools, permissions, `PATH`, shell scripts, SSH, and networking.
 - **Chapter 44** builds an end-to-end data science project, which is a repository with the same requirements as this one and more moving parts.

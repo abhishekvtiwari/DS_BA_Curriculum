@@ -2759,7 +2759,7 @@ What makes it an automation rather than a script that happens to run:
 - **It checks before it publishes.** Six checks run first, and a failure means no file is written and a non-zero exit code, so the scheduler can alert someone (Chapter 20).
 - **It logs what it did**, with timestamps, at a level you can turn up when debugging.
 - **It writes both a machine format (Excel) and a human summary (Markdown)**, so the email in Chapter 20 has something to say.
-- **Functions are small and testable.** `summarize()` can be run on a DataFrame you build by hand in a test (Chapter 30).
+- **Functions are small and testable.** `summarize()` can be run on a DataFrame you build by hand in a test (Chapter 29).
 
 ---
 
@@ -3159,6 +3159,6 @@ print(rep.shape, rep[["Rahul Mehta", "Simran Kaur"]].sum().round(0).to_dict())
 - **Chapter 20, Automating Reports & Delivering Insights:** scheduling this script, HTML email, alerts, failure handling, and handover.
 - **Chapters 21 and 22:** statistics with pandas and NumPy, and simulations.
 - **Chapter 26, Git:** versioning scripts, and keeping `.env` out of the repository.
-- **Chapter 30, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool.
+- **Chapter 29, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool.
 - **Part 4:** scikit-learn and modelling, all of which start from a DataFrame.
 - **Interview preparation:** the Python & pandas Question Bank (Chapter 72) covers `groupby`, `merge`, reshaping, and "make this faster".

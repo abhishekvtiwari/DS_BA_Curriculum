@@ -206,6 +206,8 @@ Fix the lines above, then run this script again.
 
 **→ Ch 26 (install plus `git --version`), with the new §26.0 "The terminal in 20 minutes" (D2) or §26.2 "Your first repository".**
 
+**Landed** in Ch 26 §26.0, "Step 0. Install Git", with the check re-run (`git version 2.43.0`) (Part 2/3 build).
+
 ### Step 5. Git
 
 - **Windows:** install **Git for Windows** from the official Git website, accepting the default options.
@@ -304,7 +306,7 @@ From Chapter 2, make sure you can: **show file extensions** (so `orders.csv` doe
 
 **→ Ch 17 §17.0 (the minimum needed to run Python) and Ch 26 new §26.0 "The terminal in 20 minutes" (D2).** Explained command by command there.
 
-**Landed** (the Python minimum) in Ch 17 §17.0 (Part 2/3 build). The Ch 26 §26.0 part is still → Ch 26.
+**Landed** (the Python minimum) in Ch 17 §17.0 (Part 2/3 build). The rest **landed** in Ch 26 §26.0 "The terminal in 20 minutes" (Part 2/3 build).
 
 ### The terminal
 
@@ -451,7 +453,7 @@ The answers are at the end of each chapter in this draft and move to **Appendix 
 
 **→ Ch 10 §10.0 and Ch 16 (installer row), Ch 12 §12.3 (password row), Ch 17 §17.0 (virtual environment row, wrong-folder row), Ch 26 §26.0 (wrong-folder row).**
 
-**Landed** in the Common mistakes of Ch 10 and Ch 16 (installer row), Ch 12 (password row) and Ch 17 (virtual environment and wrong-folder rows) (Part 2/3 build). The Ch 26 wrong-folder row is still → Ch 26.
+**Landed** in the Common mistakes of Ch 10 and Ch 16 (installer row), Ch 12 (password row) and Ch 17 (virtual environment and wrong-folder rows) (Part 2/3 build). The wrong-folder row also **landed** in Ch 26's Common mistakes (Part 2/3 build).
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -497,7 +499,7 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ Each tool's first-run check in Ch 10, 12, 16, 17, 26; the whole table → Appendix B.** Step 3 (documentation of a spreadsheet function such as `MEDIAN` or `RRI`) → Ch 10 or 11.
 
-**Landed** in the first-run checks of Ch 10, 12, 16 and 17, and Step 3 as Ch 10's Stretch exercise 27 (Part 2/3 build). Still → Ch 26 (Git check) and Appendix B (the whole table).
+**Landed** in the first-run checks of Ch 10, 12, 16 and 17, and Step 3 as Ch 10's Stretch exercise 27 (Part 2/3 build). The Git check **landed** in Ch 26's Check yourself (`git --version`) (Part 2/3 build). Still → Appendix B (the whole table).
 
 **Goal:** a working toolkit, verified, and a study plan you can keep.
 
@@ -523,7 +525,7 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ The chapter that installs each tool (Ch 10, 12, 17, 26).**
 
-**Landed** in Ch 10 and Ch 12 (Check yourself) (Part 2/3 build); Ch 17 wrote its own line. Still → Ch 26.
+**Landed** in Ch 10 and Ch 12 (Check yourself) (Part 2/3 build); Ch 17 wrote its own line; Ch 26's Check yourself has the Git and terminal lines (Part 2/3 build).
 
 - [ ] Every core tool is installed from its official source, and each check passed.
 - [ ] `SELECT COUNT(*) FROM order_items;` returns 19 in the Riverstone database.
@@ -538,7 +540,7 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ Ch 12, 17, 26 recaps as they apply.**
 
-**Landed** in Ch 12's Recap (Part 2/3 build); Ch 17 wrote its own recap. Still → Ch 26.
+**Landed** in Ch 12's Recap (Part 2/3 build); Ch 17 wrote its own recap; Ch 26's Recap opens with the terminal paragraph (Part 2/3 build).
 
 - **The core toolkit is free:** a spreadsheet, PostgreSQL and MySQL with DBeaver, Power BI Desktop, Python with VS Code and Jupyter, and Git. Later parts add their own tools.
 - **Install in order, from official sources, and check each tool** before moving on. Chapter 12, section 12.3, has the full database steps.
@@ -554,7 +556,7 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **Destinations (6-B), each reworded for the chapter that receives it:** 2(a) → Ch 26; 2(b) → Ch 12; 2(c) → Ch 17; 2(d) → Ch 10; 3 → Ch 17; 5 → Ch 17; 6 → Ch 17 (parts c, d) and Ch 12 (parts a, b, e); 7 → Ch 17; 10 → Ch 12; 11 → Ch 17 (Python) or Ch 12 (PostgreSQL). **S.2:** when exercise 6 lands, check part (e) still reads `ROUND(45E-1)` (it does here) and that the double-precision/approximate-value rule has been taught before it.
 
-**Landed** (Part 2/3 build): 2(d) → Ch 10 Check yourself; 3, 5, 6(c, d), 7, 11 → Ch 17 exercises 7, 25, 8, 33, 26; 6(a, b, e) → Ch 12 exercise 31; 10 → Ch 12 exercise 33. Not landed: 2(b) (Ch 12) and 2(c) (Ch 17), because a one-item matching exercise makes no sense alone. Still → Ch 26: 2(a).
+**Landed** (Part 2/3 build): 2(d) → Ch 10 Check yourself; 3, 5, 6(c, d), 7, 11 → Ch 17 exercises 7, 25, 8, 33, 26; 6(a, b, e) → Ch 12 exercise 31; 10 → Ch 12 exercise 33. Not landed: 2(b) (Ch 12), 2(c) (Ch 17) and 2(a) (Ch 26), because a one-item matching exercise makes no sense alone; Ch 26 checks `git --version` in its Check yourself instead.
 
 2. Match each check to the tool it confirms: (a) `git --version`; (b) `SELECT COUNT(*) FROM order_items;` returning 19; (c) `check_setup.py` printing *All set.*; (d) `=ROUND(2.5,0)` returning 3.
 3. A friend's terminal shows `python: can't open file 'check_setup.py': No such file or directory`. List two likely causes and how to check each.
@@ -584,7 +586,7 @@ She matched tools to computers, asked IT the right way, fixed the one problem th
 
 **→ The chapter that teaches each (6-E):** operating system, RAM stays in Ch 6; virtual machine, Microsoft Store, admin rights → Ch 16; installer, LTS, PostgreSQL, MySQL, DBeaver → Ch 12; Python install manager, virtual environment, pip, package, VS Code, extension, Jupyter, terminal, command, banker's rounding, round half away from zero, floating-point number → Ch 17 (banker's rounding also Ch 12's Watch out); Git, terminal, command → Ch 26; path, keyboard shortcut, companion files → front section (described there, not as key terms); signature → Ch 17; warm-up, core, stretch exercises → front section.
 
-**Landed** (Part 2/3 build): virtual machine, Microsoft Store, admin rights → Ch 16 Key terms; installer, LTS, DBeaver, banker's rounding → Ch 12 Key terms; the Python terms → Ch 17 Key terms. Still → Ch 26: Git, terminal, command.
+**Landed** (Part 2/3 build): virtual machine, Microsoft Store, admin rights → Ch 16 Key terms; installer, LTS, DBeaver, banker's rounding → Ch 12 Key terms; the Python terms → Ch 17 Key terms; terminal, shell, option, argument and the Git terms (version control, repository, …) → Ch 26 Key terms ("command" is explained in Ch 26 §26.0 but not listed as a key term).
 
 operating system · virtual machine · installer · Microsoft Store · administrator (admin) rights · LTS (long-term support) · PostgreSQL · MySQL · DBeaver · Power BI Desktop · Python install manager · virtual environment · pip · package · VS Code · extension · Jupyter · Git · companion files · terminal · command · path · keyboard shortcut · signature · banker's rounding (round half to even) · round half away from zero · floating-point number · warm-up, core, stretch exercises
 

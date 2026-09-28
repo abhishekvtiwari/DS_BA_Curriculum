@@ -1678,22 +1678,22 @@ Chapter 26, section 26.8, set up an automated check that runs on every push and 
 name: checks
 on: [push, pull_request]
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.2.0
       - run: uv sync --locked
       - run: uv run pytest -q
       - run: uv run mypy
 ```
 
-What changed from Chapter 26's version:
+What changed from Chapter 26's version (the job name, `check`, and the `checkout` line stay the same):
 
-- **`uses: astral-sh/setup-uv@v10.2.0`** installs uv on the fresh machine. It replaces `actions/setup-python`: uv reads `.python-version` and fetches that Python itself. The action publishes no short `@v10` tag, so the full version is pinned, which is also what Chapter 26 recommends. (10.2.0 was the current version on 28 September 2026; check the action's page for newer ones.)
+- **`uses: astral-sh/setup-uv@v10.2.0`** installs uv on the fresh machine. It replaces `actions/setup-python`: uv reads `.python-version` and fetches that Python itself. The action publishes no short `@v10` tag, so the full version is pinned instead of the major version Chapter 26 recommends: a stricter pin, updated the same way. (10.2.0 was the current version on 28 September 2026; check the action's page for newer ones.)
 - **`run: uv sync --locked`** replaces `pip install -r requirements.txt`: the machine gets exactly the versions in `uv.lock`, and the check fails if `pyproject.toml` and the lockfile disagree.
 - **`run: uv run pytest -q`** runs the tests quietly. The machine has no database and no `.env`, so the integration test shows as skipped, and 22 tests must pass.
-- **`run: uv run mypy`** fails the check if a type error comes in.
+- **`run: uv run mypy`** fails the check if a type error comes in. With the `pytest` step, it replaces Chapter 26's `compileall` and `--help` steps.
 
 If any step exits with a non-zero code, the check fails and the pull request shows a red cross, as in Chapter 26. These are the same three commands you can run yourself before pushing:
 

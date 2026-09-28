@@ -6,11 +6,11 @@
 >
 > **You will learn to:** place any report on the automation ladder and decide how far up it should go · map a report's flow and time its manual steps before automating anything · choose between VBA, Apps Script, Python, BI subscriptions, and low-code flows · produce the right output: formatted Excel, PDF, CSV, or the email body itself · build an HTML email with KPI tiles, a table, and a chart attached so that it shows in Outlook and Gmail · send mail safely from code with SMTP or a workspace API, with credentials in a `.env` file, and test it on a mail server on your own computer · schedule with Task Scheduler, cron, or a cloud scheduler, in the business's time zone · design exception reports and alerts that people don't learn to ignore · deliver to Teams, Slack, or WhatsApp · make an automation trustworthy: logging, checks, failure alerts, "no data today", retries, idempotency · manage recipients and confidentiality · document and hand over · measure what it saved.
 >
-> **Before you start:** Chapter 19 (spreadsheet automation, and its box "HTML in ten minutes" in section 19.7), Chapter 13 (the SQL the report runs on), Chapter 14 (checks on data), Chapter 15 (chart design), Chapter 16 (BI subscriptions), Chapter 18 (pandas and scripts), and the terminal basics from Chapter 17, section 17.0. The scheduling section uses a few more terminal pieces, each explained where it appears; Chapter 26 teaches the terminal properly.
+> **Before you start:** Chapter 19 (spreadsheet automation, and its box "HTML in ten minutes" in section 19.7), Chapter 13 (the SQL the report runs on), Chapter 14 (checks on data), Chapter 15 (chart design), Chapter 16 (BI subscriptions), Chapter 18 (pandas and scripts), and the terminal basics from Chapter 17, section 17.0. The scheduling section uses a few more terminal pieces, each explained where it appears; Chapters 26 and 34 teach the terminal properly.
 >
 > **Time needed:** 20–25 hours, spread over two to three weeks. Allow two of those hours for setting up: the `.env` file, the local test mail server, and a scheduler.
 >
-> **Tools:** Python 3.13 or 3.14 with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, `requests` and `aiosmtpd` (a test mail server), plus `tzdata` on Windows; a mail account you're allowed to send from (SMTP, Microsoft 365, or Google Workspace) when you're ready to send for real; Windows Task Scheduler or cron. Optional: Power Automate, n8n, Make, or Zapier.
+> **Tools:** the Python you installed in Chapter 17 (section 17.0 sets the book's rule on Python versions), with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, `requests` and `aiosmtpd` (a test mail server), plus `tzdata` on Windows; a mail account you're allowed to send from (SMTP, Microsoft 365, or Google Workspace) when you're ready to send for real; Windows Task Scheduler or cron. Optional: Power Automate, n8n, Make, or Zapier.
 >
 > **Practice data:** the `riverstone_full` database, and two files in `companion/ch20/`: `daily_flash.py`, the finished Daily Sales Flash, which builds the email in this chapter, and `.env.example`, the settings file you copy and fill in.
 
@@ -609,7 +609,7 @@ Its `Time zone:` line says, for example, `Etc/UTC (UTC, +0000)`. (On a Mac, `dat
 | `>> logs/cron.log` | Add (`>>`) anything the job prints to the end of this file, instead of losing it; `>` would overwrite the file each time |
 | `2>&1` | Send error output (stream 2) to the same place as normal output (stream 1), so a crash is in the log too |
 
-Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv` reads the file. Chapter 26, section 26.0, teaches `&&`, `>>`, and `2>&1` properly.
+Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv` reads the file. Chapter 26, section 26.0, teaches `&&` and that `.env` line properly, and Chapter 34, section 34.2, teaches `>>` and `2>&1`.
 
 If the server is a Red Hat or Fedora machine, its cron (called *cronie*) also accepts a line `CRON_TZ=Asia/Kolkata` at the top of the crontab, and then the times below it are India time: `0 7 * * 1-5`. The cron on Ubuntu and Debian doesn't support this; there, the job runs by the server's clock, as above.
 
@@ -1263,7 +1263,7 @@ What made the difference:
 
 ### Tools you'll need
 
-- **Python 3.13 or 3.14** with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, `requests`, and `aiosmtpd`; on Windows, also `tzdata`. Everything runnable in this chapter was executed on Python 3.11 with pandas 3.0.6, matplotlib 3.10.8, SQLAlchemy 2.1.1, psycopg 3.3.6, python-dotenv 1.2.3, and aiosmtpd 1.4.6; nothing in it needs a newer Python than 3.9.
+- **Python**, as installed in Chapter 17 (section 17.0), with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, `requests`, and `aiosmtpd`; on Windows, also `tzdata`. Everything runnable in this chapter was executed on Python 3.11 with pandas 3.0.6, matplotlib 3.10.8, SQLAlchemy 2.1.1, psycopg 3.3.6, python-dotenv 1.2.3, and aiosmtpd 1.4.6.
 - **A test mail server first:** `aiosmtpd` on your own computer (section 20.6). Then **a mail route you're allowed to use:** SMTP with a service account, Microsoft Graph, the Gmail API, Apps Script's `MailApp` (Chapter 19), or a transactional provider.
 - **A scheduler:** Windows Task Scheduler, cron, GitHub Actions, or a cloud scheduler.
 - **Optional:** Power Automate, n8n, Make, or Zapier for delivery; Teams or Slack incoming webhooks.
@@ -1471,7 +1471,7 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 - **Chapter 21 and 22:** the statistics behind sensible thresholds, and why a single day's dip usually isn't a signal.
 - **Chapter 24, Requirements, Storytelling & Stakeholders:** what to write in the three sentences of commentary you kept.
 - **Chapter 26, The Professional Toolkit:** the terminal in more depth (section 26.0), versioning automations with Git, and keeping `.env` out of the repository.
-- **Chapter 30, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
+- **Chapter 29, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
 - **Chapter 46:** orchestration, when "run this at 7" becomes "run these eleven things in the right order, with retries".
 - **Chapter 47:** data-quality testing, which is the checks in this chapter done systematically.
 - **Interview preparation:** the Automation & Integration Question Bank (Chapter 78) and the Business Analyst bank (Chapter 76B) ask how you'd automate and deliver a recurring report, and what you'd do when it fails.

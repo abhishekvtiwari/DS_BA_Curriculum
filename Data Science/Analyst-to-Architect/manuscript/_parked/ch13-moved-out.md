@@ -15,6 +15,8 @@ them when the block is placed (₹439,824 → ₹4,39,824).
 **→ Ch 28, recursive CTEs section** (with a pointer back to Ch 13 Pattern 5). Its outputs were real MySQL
 runs on `riverstone_2025` and still match (28 Sep 2026).
 
+**Landed** in Ch 28 §28.2, "A list of months when there's no calendar table", with the pointer back to Pattern 5 (Part 2/3 build). Kept here for the record.
+
 ### A date spine with a recursive CTE
 
 MySQL has no `generate_series`, but it can build the list of months with a **recursive CTE**: a CTE that refers to itself. Here is Pattern 5's Garden Chair query in MySQL:
@@ -80,6 +82,8 @@ The rest of the query is unchanged from Pattern 5. `WITH RECURSIVE` is written o
 
 **→ Ch 28, as an exercise in the recursive-CTE section** (optional). Chapter 13's exercise 16 now uses the
 `calendar_days` table and gives the same answer (31 / 17 / 439824).
+
+**Landed** in Ch 28 as exercise 23 and its answer (Part 2/3 build). Kept here for the record.
 
 16. *(MySQL, one-year database.)* Build a **daily** date spine for December 2025 with a recursive CTE. Use it to show how many days the month had, how many of those days had no orders, and the month's total revenue. Check the total against section 13.6.
 

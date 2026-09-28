@@ -123,7 +123,7 @@ psql (PostgreSQL) 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)
 
 Your version line will differ. If the terminal says *command not found* instead:
 
-- **Windows:** type the full path in place of `psql`, in quotes, for example `"C:\Program Files\PostgreSQL\16\bin\psql.exe" --version` (change `16` to your version). Chapter 34 shows how to add that folder to your `PATH` so the short name works.
+- **Windows:** type the full path in place of `psql`, in quotes, for example `"C:\Program Files\PostgreSQL\16\bin\psql.exe" --version` (change `16` to your version). Chapter 34, section 34.6, explains `PATH`, the list of folders the terminal searches when you type a short name like `psql`.
 - **macOS:** with Postgres.app, use `/Applications/Postgres.app/Contents/Versions/latest/bin/psql`; with Homebrew, `brew install libpq` installs the client.
 - **Linux:** `sudo apt install postgresql-client`.
 
