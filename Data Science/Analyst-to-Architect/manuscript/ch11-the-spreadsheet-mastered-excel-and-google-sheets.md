@@ -164,7 +164,7 @@ Rules that save hours:
 - **Criteria aren't case-sensitive.** `"retail"` matches `Retail`. For case-sensitive tests, use `SUMPRODUCT` (below) with `EXACT` (section 11.3).
 - **Don't type thousands separators in criteria.** `">=50,000"` is read as text, not as a number. Write `">=50000"`.
 - **Dates in criteria need `DATE` or a cell.** `">=01-07-2025"` depends on the computer's regional settings; `">="&DATE(2025,7,1)` doesn't.
-- **Fix the types before you count.** Lookups and `SUM` care about type (Chapter 10, sections 10.3 and 10.9): `XLOOKUP` won't match the number 5 to the text `0005`, and `SUM` skips numbers stored as text. Whether the IFS family treats the text `"101"` as the number 101 in a criterion differs between apps, so don't rely on it either way.
+- **Fix the types before you count.** Lookups and `SUM` care about type (Chapter 10, sections 10.3 and 10.10): `XLOOKUP` won't match the number 5 to the text `0005`, and `SUM` skips numbers stored as text. Whether the IFS family treats the text `"101"` as the number 101 in a criterion differs between apps, so don't rely on it either way.
 
 ### OR conditions
 
@@ -248,7 +248,7 @@ Other questions only `SUMPRODUCT` (or `FILTER`, section 11.6) can answer:
 
 `SUMIFS` can't apply `MONTH` to its criteria range; `SUMPRODUCT` can.
 
-**A weighted average (back to Chapter 4, section 4.5).** *"What was Riverstone's average discount?"* In Chapter 4 you worked it out by hand: 4.69% when each line is weighted by its value, not the plain 4.06%. Now let the spreadsheet do it. The general form is:
+**A weighted average (back to Chapter 4, section 4.5).** *"What was Riverstone's average discount?"* In Chapter 4 you worked it out by hand: 4.69% when each line is weighted by its value, not the plain 4.06%. Chapter 10's "Back to Chapter 4" (section 10.8) left this one for `SUMPRODUCT`; now let the spreadsheet do it. The general form is:
 
 ```excel
 =SUMPRODUCT(values, weights)/SUM(weights)
@@ -537,7 +537,7 @@ The return array is three columns wide, so the result is three cells: **Deccan P
 
 The result is **2025-12-05** (order 10161). With the default `search_mode` of 1, the same formula returns the *first* order, 2025-01-24 (order 10007). Home Plus (`0016`) placed no orders in 2025, so its lookup returns "never".
 
-> **Watch out: "last" means last in the list.** `search_mode` `-1` finds the last matching *row*, not the latest *date*. If the data isn't sorted by date, sort it first, or use `MAXIFS(Sales[order_date], Sales[customer_code], "0001")` (section 10.7), which finds the latest date regardless of order.
+> **Watch out: "last" means last in the list.** `search_mode` `-1` finds the last matching *row*, not the latest *date*. If the data isn't sorted by date, sort it first, or use `MAXIFS(Sales[order_date], Sales[customer_code], "0001")` (section 10.10), which finds the latest date regardless of order.
 
 ### Approximate match: bands and tiers
 
@@ -1092,7 +1092,7 @@ The result is a three-row summary with a total: Hospitality ₹11,44,038.75, Ret
 
 > **Tool note: where Power Query runs.** The full Power Query Editor is in Excel for Windows (Microsoft 365, Excel 2016 and later). Excel for Microsoft 365 for Mac includes the Power Query Editor with fewer data sources, and Excel for the web can refresh and edit some queries. Google Sheets has no Power Query; section 11.11 gives the alternatives. Features in this area change often, so check Microsoft's current "Power Query in Excel" help page for your platform.
 >
-> **If you're on Google Sheets:** read Steps 1–6 for the ideas, then build the same result by hand. Import each monthly CSV into its own tab (**File → Import → Upload → Insert new sheet**, as in Chapter 10), stack the twelve tabs on one `Data` tab with `=VSTACK(Jan!A2:I16, Feb!A2:I21, …)` (section 11.6), and add the net revenue column with one `ARRAYFORMULA` (section 11.10). It isn't a one-click refresh, but the rules still live in one place.
+> **If you're on Google Sheets:** read Steps 1–6 for the ideas, then build the same result by hand. Import each monthly CSV into its own tab (**File → Import → Upload**, **Insert new sheet(s)**, as in Chapter 10, section 10.4), stack the twelve tabs on one `Data` tab with `=VSTACK(Jan!A2:I16, Feb!A2:I21, …)` (section 11.6), and add the net revenue column with one `ARRAYFORMULA` (section 11.10). It isn't a one-click refresh, but the rules still live in one place.
 
 ### Step 1: connect to the folder
 
@@ -1564,7 +1564,7 @@ A workbook that other people rely on needs the same care as code. These habits p
 2. **Inputs, calculations, outputs.** Raw data and assumptions on their own sheets; calculations in between; the report on its own sheet. Color input cells consistently (a light yellow fill is common) so readers know what they may change.
 3. **No hard-coded numbers inside formulas.** `=B5*1.18` hides a tax rate; put `18%` in a labeled input cell or a named range (`tax_rate`) and refer to it.
 4. **One formula per column.** Every row of a calculated column should have the same formula. Excel flags a formula that differs from its neighbors with a green triangle (**Inconsistent Formula**); take those warnings seriously.
-5. **Tables and queries, not fixed ranges.** They grow with the data (sections 10.10 and 11.7).
+5. **Tables and queries, not fixed ranges.** They grow with the data (sections 10.11 and 11.7).
 6. **Avoid fragile functions** where you can: `INDIRECT` and `OFFSET` build references from text or positions, break silently when sheets are renamed, and recalculate constantly.
 7. **Check cells everywhere.** Every summary should have a visible check that compares its total with an independent total, showing 0 or "OK". Chapter 10's tracker did this; section 11.7's refresh test is another.
 

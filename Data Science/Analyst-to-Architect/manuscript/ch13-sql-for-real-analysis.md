@@ -472,16 +472,16 @@ Read the Sharma Hardware rows: three orders, each shown with the customer's tota
 
 Every window function has the same shape. Only the function is always required. `PARTITION BY` and the frame are optional. `ORDER BY` is optional for `SUM`, `AVG`, and `COUNT`, but the ranking functions and `LAG`/`LEAD` need it, because "first" and "previous" only make sense once rows are in order. You add each part when the question needs it.
 
-![The parts of a window function and how a frame slides](figures/fig13-2-window-anatomy-and-frame.svg)
-
-*Figure 13.2 — The four parts of a window function. The frame example uses Riverstone's 2025 monthly revenue from section 13.6.*
-
 | Part | Question it answers | Example |
 |---|---|---|
 | **The function** | What should I calculate? | `SUM`, `AVG`, `COUNT`, `ROW_NUMBER`, `RANK`, `LAG` |
 | **`PARTITION BY`** | Should the calculation restart for each group? | `PARTITION BY customer_id` |
 | **`ORDER BY`** | In what order should rows be lined up inside each group? | `ORDER BY order_date` |
 | **Frame** (`ROWS BETWEEN …`) | Which of those rows count for this row? | `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` |
+
+![The parts of a window function and how a frame slides](figures/fig13-2-window-anatomy-and-frame.svg)
+
+*Figure 13.2 — The four parts of a window function. The frame example uses Riverstone's 2025 monthly revenue from section 13.6.*
 
 ### Where windows run, and why you can't filter on them directly
 
@@ -514,8 +514,8 @@ ORDER BY revenue DESC;
 
 Read `SUM(SUM(net_revenue)) OVER ()` from the inside out, following the order from section 12.11:
 
-- **Step 3, `GROUP BY category`:** the inner `SUM(net_revenue)` adds up each category's order lines, leaving three rows: 161,385, 81,810, and 80,735.
-- **Step 5, `SELECT`:** the outer `SUM(…) OVER ()` is a window over those three rows. It adds them up, 161,385 + 81,810 + 80,735 = 323,930, and shows the total on every row.
+- **Step 3, `GROUP BY category`:** the inner `SUM(net_revenue)` adds up each category's order lines, leaving three rows: 1,61,385, 81,810, and 80,735.
+- **Step 5, `SELECT`:** the outer `SUM(…) OVER ()` is a window over those three rows. It adds them up, 1,61,385 + 81,810 + 80,735 = 3,23,930, and shows the total on every row.
 
 The outer `SUM` can only see what `GROUP BY` left behind, which is why the total is the same ₹3,23,930 you found for the quarter. Divide one by the other and you have each category's share; exercise 2 asks you to do exactly that.
 
@@ -905,7 +905,9 @@ How it works:
 
 ### The hidden frame trap: ROWS versus RANGE
 
-When you write `ORDER BY` inside `OVER` but **no frame**, SQL uses a default frame: `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`. `RANGE` treats rows with the **same `ORDER BY` value as one step**. That's invisible until two rows tie. In the year-to-date query above, leaving out the frame would give exactly the same numbers, but only because every month appears once. On rows that tie, running totals jump. Riverstone had three orders on 4 May 2025:
+When you write `ORDER BY` inside `OVER` but **no frame**, SQL uses a default frame: `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`. `RANGE` treats rows with the **same `ORDER BY` value as one step**. That's invisible until two rows tie. In the year-to-date query above, leaving out the frame would give exactly the same numbers, but only because every month appears once. On rows that tie, running totals jump.
+
+Riverstone had three orders on 4 May 2025:
 
 ```sql
 WITH early_may AS (

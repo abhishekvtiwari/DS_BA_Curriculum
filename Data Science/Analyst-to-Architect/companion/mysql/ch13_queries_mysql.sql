@@ -233,7 +233,7 @@ FROM units
 ORDER BY units_sold DESC, product_name;
 
 -- ---------------------------------------------------------------
--- 13.4 Ranking: ROW_NUMBER, RANK, and DENSE_RANK › The latest record per group (book line 589)
+-- 13.4 Ranking: ROW_NUMBER, RANK, and DENSE_RANK › The latest record per group (book line 591)
 WITH ranked AS (
     SELECT c.customer_name,
            o.order_id,
@@ -250,7 +250,7 @@ WHERE recency_rank = 1
 ORDER BY order_date DESC;
 
 -- ---------------------------------------------------------------
--- 13.5 LAG and LEAD: comparing a row with its neighbors › Looking back (book line 637)
+-- 13.5 LAG and LEAD: comparing a row with its neighbors › Looking back (book line 639)
 SELECT c.customer_name,
        o.order_id,
        o.order_date,
@@ -264,7 +264,7 @@ WHERE o.status <> 'Cancelled'
 ORDER BY c.customer_name, o.order_date;
 
 -- ---------------------------------------------------------------
--- 13.5 LAG and LEAD: comparing a row with its neighbors › Looking forward (book line 681)
+-- 13.5 LAG and LEAD: comparing a row with its neighbors › Looking forward (book line 683)
 SELECT c.customer_name,
        o.order_id,
        o.order_date,
@@ -278,7 +278,7 @@ WHERE o.status <> 'Cancelled'
 ORDER BY c.customer_name, o.order_date;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages (book line 724)
+-- 13.6 Time windows: growth, targets, and moving averages (book line 726)
 USE riverstone_2025;
 SELECT COUNT(DISTINCT order_id)   AS orders,
        COUNT(DISTINCT customer_id) AS customers,
@@ -286,7 +286,7 @@ SELECT COUNT(DISTINCT order_id)   AS orders,
 FROM sales_lines;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages › Month-over-month growth (book line 744)
+-- 13.6 Time windows: growth, targets, and moving averages › Month-over-month growth (book line 746)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month,
            SUM(net_revenue)                      AS revenue
@@ -303,7 +303,7 @@ WINDOW w AS (ORDER BY month)
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages › Moving averages: seeing the trend through the noise (book line 790)
+-- 13.6 Time windows: growth, targets, and moving averages › Moving averages: seeing the trend through the noise (book line 792)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month, SUM(net_revenue) AS revenue
     FROM sales_lines
@@ -319,11 +319,11 @@ FROM monthly
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages › Running totals: are we on track for the year? (book line 842)
+-- 13.6 Time windows: growth, targets, and moving averages › Running totals: are we on track for the year? (book line 844)
 SELECT * FROM sales_targets ORDER BY target_month LIMIT 3;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages › Running totals: are we on track for the year? (book line 859)
+-- 13.6 Time windows: growth, targets, and moving averages › Running totals: are we on track for the year? (book line 861)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month, SUM(net_revenue) AS revenue
     FROM sales_lines
@@ -342,7 +342,7 @@ WINDOW w AS (ORDER BY m.month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ORDER BY m.month;
 
 -- ---------------------------------------------------------------
--- 13.6 Time windows: growth, targets, and moving averages › The hidden frame trap: ROWS versus RANGE (book line 908)
+-- 13.6 Time windows: growth, targets, and moving averages › The hidden frame trap: ROWS versus RANGE (book line 912)
 WITH early_may AS (
     SELECT order_id, order_date, SUM(net_revenue) AS order_revenue
     FROM sales_lines
@@ -360,7 +360,7 @@ FROM early_may
 ORDER BY order_date, order_id;
 
 -- ---------------------------------------------------------------
--- 13.7 Patterns for ranking, shares, and clean-up › Pattern 1: Top N per group (book line 956)
+-- 13.7 Patterns for ranking, shares, and clean-up › Pattern 1: Top N per group (book line 960)
 WITH customer_revenue AS (
     SELECT c.segment, c.customer_name, SUM(s.net_revenue) AS revenue
     FROM sales_lines AS s
@@ -383,7 +383,7 @@ WHERE rank_in_segment <= 3
 ORDER BY segment, rank_in_segment;
 
 -- ---------------------------------------------------------------
--- 13.7 Patterns for ranking, shares, and clean-up › Pattern 2: Pareto and ABC analysis (book line 1006)
+-- 13.7 Patterns for ranking, shares, and clean-up › Pattern 2: Pareto and ABC analysis (book line 1010)
 WITH customer_revenue AS (
     SELECT c.customer_name, SUM(s.net_revenue) AS revenue
     FROM sales_lines AS s
@@ -410,7 +410,7 @@ FROM cumulative
 ORDER BY revenue DESC;
 
 -- ---------------------------------------------------------------
--- 13.7 Patterns for ranking, shares, and clean-up › Pattern 3: Remove duplicates, keep one (book line 1080)
+-- 13.7 Patterns for ranking, shares, and clean-up › Pattern 3: Remove duplicates, keep one (book line 1084)
 WITH numbered AS (
     SELECT lead_id,
            company_name,
@@ -427,12 +427,12 @@ WHERE submissions > 1
 ORDER BY email, submission_no;
 
 -- ---------------------------------------------------------------
--- 13.7 Patterns for ranking, shares, and clean-up › Pattern 3: Remove duplicates, keep one (book line 1124)
+-- 13.7 Patterns for ranking, shares, and clean-up › Pattern 3: Remove duplicates, keep one (book line 1128)
 SELECT COUNT(*) AS lead_rows, COUNT(DISTINCT LOWER(email)) AS unique_enquiries
 FROM leads;
 
 -- ---------------------------------------------------------------
--- 13.7 Patterns for ranking, shares, and clean-up › Pattern 4: Funnel conversion (book line 1156)
+-- 13.7 Patterns for ranking, shares, and clean-up › Pattern 4: Funnel conversion (book line 1160)
 WITH first_submissions AS (
     SELECT lead_id
     FROM (
@@ -462,7 +462,7 @@ FROM stage_counts
 ORDER BY step;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1223)
+-- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1227)
 WITH furniture AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month, SUM(net_revenue) AS revenue
     FROM sales_lines
@@ -475,7 +475,7 @@ FROM furniture
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1246)
+-- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1250)
 WITH months AS (
     SELECT month FROM calendar_months  -- MySQL has no generate_series: use the calendar table
 ),
@@ -498,12 +498,12 @@ WHERE month BETWEEN '2025-02-01' AND '2025-06-01'
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1290)
+-- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1294)
 SELECT MIN(month) AS first_month, MAX(month) AS last_month, COUNT(*) AS months
 FROM calendar_months;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1304)
+-- 13.8 Patterns over time, and a final check › Pattern 5: Fill in the missing months (book line 1308)
 WITH furniture AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month, SUM(net_revenue) AS revenue
     FROM sales_lines
@@ -523,7 +523,7 @@ WHERE month BETWEEN '2025-02-01' AND '2025-06-01'
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 6: At-risk customers (breaks in the rhythm) (book line 1351)
+-- 13.8 Patterns over time, and a final check › Pattern 6: At-risk customers (breaks in the rhythm) (book line 1355)
 WITH order_days AS (
     SELECT DISTINCT customer_id, order_date
     FROM sales_lines
@@ -557,7 +557,7 @@ ORDER BY (DATEDIFF(DATE '2025-12-31', r.last_order)) / r.usual_gap_days DESC
 LIMIT 8;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1423)
+-- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1427)
 SELECT customer_id, CAST(DATE_FORMAT(MIN(order_date), '%Y-%m-01') AS DATE) AS first_month
 FROM sales_lines
 GROUP BY customer_id
@@ -565,13 +565,13 @@ ORDER BY first_month DESC, customer_id
 LIMIT 5;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1446)
+-- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1450)
 SELECT customer_id, customer_name
 FROM customers
 WHERE customer_name = 'Patel Kitchenware';
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1461)
+-- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1465)
 WITH first_orders AS (
     SELECT customer_id, CAST(DATE_FORMAT(MIN(order_date), '%Y-%m-01') AS DATE) AS first_month
     FROM sales_lines
@@ -593,7 +593,7 @@ WHERE f.customer_id = 2
 ORDER BY a.month;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1506)
+-- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1510)
 WITH first_orders AS (
     SELECT customer_id, CAST(DATE_FORMAT(MIN(order_date), '%Y-%m-01') AS DATE) AS first_month
     FROM sales_lines
@@ -623,7 +623,7 @@ GROUP BY cohort
 ORDER BY cohort;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1553)
+-- 13.8 Patterns over time, and a final check › Pattern 7: Cohort retention (book line 1557)
 WITH first_orders AS (
     SELECT customer_id, CAST(DATE_FORMAT(MIN(order_date), '%Y-%m-01') AS DATE) AS first_month
     FROM sales_lines
@@ -656,7 +656,7 @@ GROUP BY cohort
 ORDER BY cohort;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 8: Streaks (gaps and islands) (book line 1607)
+-- 13.8 Patterns over time, and a final check › Pattern 8: Streaks (gaps and islands) (book line 1611)
 WITH months AS (
     SELECT DISTINCT customer_id, CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month
     FROM sales_lines
@@ -671,7 +671,7 @@ FROM months
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 8: Streaks (gaps and islands) (book line 1641)
+-- 13.8 Patterns over time, and a final check › Pattern 8: Streaks (gaps and islands) (book line 1645)
 WITH months AS (
     SELECT DISTINCT customer_id, CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month
     FROM sales_lines
@@ -703,7 +703,7 @@ ORDER BY b.months_in_a_row DESC, c.customer_name
 LIMIT 6;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 9: Pivot rows into columns (book line 1697)
+-- 13.8 Patterns over time, and a final check › Pattern 9: Pivot rows into columns (book line 1701)
 SELECT category,
        ROUND(SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 1 THEN net_revenue END), 0) AS q1,
        ROUND(SUM(CASE WHEN EXTRACT(QUARTER FROM order_date) = 2 THEN net_revenue END), 0) AS q2,
@@ -715,7 +715,7 @@ GROUP BY category
 ORDER BY full_year DESC;
 
 -- ---------------------------------------------------------------
--- 13.8 Patterns over time, and a final check › Pattern 10: Data-quality checks before you trust a report (book line 1731)
+-- 13.8 Patterns over time, and a final check › Pattern 10: Data-quality checks before you trust a report (book line 1735)
 SELECT 'Duplicate order IDs' AS check_name, COUNT(*) AS problem_rows
 FROM (SELECT order_id FROM orders GROUP BY order_id HAVING COUNT(*) > 1) AS d
 UNION ALL
@@ -741,7 +741,7 @@ SELECT 'Duplicate lead emails (extra rows)', COUNT(*) - COUNT(DISTINCT LOWER(ema
 FROM leads;
 
 -- ---------------------------------------------------------------
--- 13.9 Running this chapter in MySQL › Month-over-month growth in MySQL (book line 1810)
+-- 13.9 Running this chapter in MySQL › Month-over-month growth in MySQL (book line 1814)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month,
            SUM(net_revenue)                                  AS revenue
@@ -758,7 +758,7 @@ WINDOW w AS (ORDER BY month)
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.9 Running this chapter in MySQL › A date spine with the calendar table (book line 1852)
+-- 13.9 Running this chapter in MySQL › A date spine with the calendar table (book line 1858)
 WITH furniture AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month,
            SUM(net_revenue)                                  AS revenue
@@ -779,7 +779,7 @@ WHERE month BETWEEN '2025-02-01' AND '2025-06-01'
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- 13.9 Running this chapter in MySQL › Pivots without FILTER (book line 1891)
+-- 13.9 Running this chapter in MySQL › Pivots without FILTER (book line 1897)
 SELECT category,
        ROUND(SUM(CASE WHEN QUARTER(order_date) = 1 THEN net_revenue ELSE 0 END), 0) AS q1,
        ROUND(SUM(CASE WHEN QUARTER(order_date) = 2 THEN net_revenue ELSE 0 END), 0) AS q2,
@@ -791,7 +791,7 @@ GROUP BY category
 ORDER BY full_year DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2080)
+-- Answers (book line 2086)
 USE riverstone;
 WITH customer_units AS (
     SELECT c.customer_name, SUM(s.quantity) AS units
@@ -805,7 +805,7 @@ WHERE units > 100
 ORDER BY units DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2105)
+-- Answers (book line 2111)
 USE riverstone_2025;
 SELECT category,
        ROUND(SUM(net_revenue), 0)                                     AS revenue,
@@ -815,7 +815,7 @@ GROUP BY category
 ORDER BY revenue DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2126)
+-- Answers (book line 2132)
 WITH metro_orders AS (
     SELECT DISTINCT order_id, order_date
     FROM sales_lines
@@ -829,7 +829,7 @@ ORDER BY order_number
 LIMIT 5;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2155)
+-- Answers (book line 2161)
 WITH product_revenue AS (
     SELECT p.category, p.product_name, SUM(s.net_revenue) AS revenue
     FROM sales_lines AS s
@@ -847,7 +847,7 @@ WHERE rank_in_category <= 2
 ORDER BY category, rank_in_category;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2189)
+-- Answers (book line 2195)
 WITH rep_months AS (
     SELECT e.employee_name,
            CAST(DATE_FORMAT(s.order_date, '%Y-%m-01') AS DATE) AS month,
@@ -867,7 +867,7 @@ WHERE rn = 1
 ORDER BY revenue DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2220)
+-- Answers (book line 2226)
 WITH quarterly AS (
     SELECT c.segment,
            EXTRACT(QUARTER FROM s.order_date) AS quarter,
@@ -886,7 +886,7 @@ WINDOW w AS (PARTITION BY segment ORDER BY quarter)
 ORDER BY segment, quarter;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2261)
+-- Answers (book line 2267)
 WITH customer_orders AS (
     SELECT DISTINCT s.customer_id, s.order_id, s.order_date
     FROM sales_lines AS s
@@ -912,7 +912,7 @@ ORDER BY days_to_second_order DESC
 LIMIT 5;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2302)
+-- Answers (book line 2308)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month,
            COUNT(DISTINCT order_id)              AS orders
@@ -927,7 +927,7 @@ FROM monthly
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2339)
+-- Answers (book line 2345)
 WITH product_revenue AS (
     SELECT p.product_name, SUM(s.net_revenue) AS revenue
     FROM sales_lines AS s
@@ -953,7 +953,7 @@ FROM cumulative
 ORDER BY revenue DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2381)
+-- Answers (book line 2387)
 WITH first_submissions AS (
     SELECT lead_id, source
     FROM (
@@ -976,7 +976,7 @@ GROUP BY f.source
 ORDER BY win_rate_pct DESC, unique_leads DESC;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2419)
+-- Answers (book line 2425)
 WITH customer_orders AS (
     SELECT DISTINCT customer_id, order_id, order_date
     FROM sales_lines
@@ -1005,7 +1005,7 @@ ORDER BY r.gap_days DESC, c.customer_name
 LIMIT 5;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2463)
+-- Answers (book line 2469)
 WITH monthly AS (
     SELECT CAST(DATE_FORMAT(order_date, '%Y-%m-01') AS DATE) AS month, SUM(net_revenue) AS revenue
     FROM sales_lines
@@ -1027,7 +1027,7 @@ WHERE revenue < 0.8 * avg_prev_3m
 ORDER BY month;
 
 -- ---------------------------------------------------------------
--- Answers (book line 2503)
+-- Answers (book line 2509)
 WITH daily_sales AS (
     SELECT order_date, SUM(net_revenue) AS revenue
     FROM sales_lines

@@ -20,7 +20,7 @@
 
 Ask analysts where their time goes and many will say "cleaning". Whatever the exact share in your job, the reason is always the same: data is produced by people and systems that aren't thinking about your analysis. A branch office types dates its own way. A CRM lets two salespeople enter the same customer. An export tool writes a page header every few thousand rows. None of that is anyone's fault, and all of it lands on the analyst.
 
-Cleaning isn't glamorous, but it's where trust is won or lost. In Chapter 1, a customer list with three spellings of Mumbai turned "how many customers are in Mumbai?" into a wrong answer with no error message. In Chapter 10, a CSV opened with the wrong settings shifted 135 dates by weeks. In Chapter 11, a month-end workbook was ₹64,596 off because of a short range and a double paste. Every one of those was a cleaning problem that someone didn't catch.
+Cleaning isn't glamorous, but it's where trust is won or lost. In Chapter 1, a customer list with three spellings of Mumbai turned "how many customers are in Mumbai?" into a wrong answer with no error message. In Chapter 10, a CSV opened with the wrong settings turned 125 dates into the wrong dates, some by months, and left 195 more as text. In Chapter 11, a month-end workbook was ₹64,596 off because of a short range and a double paste. Every one of those was a cleaning problem that someone didn't catch.
 
 This chapter turns cleaning from a pile of fixes into a **method**. You'll clean a real-sized export (25,976 rows entered by four branch sales offices, each in its own way) with more than a dozen kinds of planted problems, in three tools, and prove the result is right by reconciling it with the source. The same method works on any dataset you'll meet: a sales export, a survey, a supplier price list, or a machine log.
 
@@ -1262,12 +1262,15 @@ LEFT JOIN customers c ON LPAD(c.customer_id::text, 4, '0') = s.customer_code;
 (1 row)
 ```
 
+How it works: the subquery `s` takes the data rows once each (`SELECT DISTINCT *` drops the exact copies). The `customers` table stores the ID as a number, so `LPAD(c.customer_id::text, 4, '0')` writes it the way the export does: `::text` turns 124 into the text `124`, and `LPAD(text, 4, '0')` pads it on the **l**eft with zeros to four characters, `0124`. `COUNT(c.customer_id)` counts only the lines that found a customer, because a `LEFT JOIN` leaves NULL where none matched (Chapter 12, section 12.10), and `COUNT` skips NULLs.
+
 A **match rate** of 97.9% sounds good. It isn't: 533 order lines (2.1%) have no customer, so any report by customer, segment, or city loses them, and they're not random. They're all Kolkata lines whose codes lost their leading zeros (`124` instead of `0124`). Codes above 999 still have four digits and match, which is exactly why the problem is hard to spot: most Kolkata lines look fine.
 
 Repair the key, and measure again:
 
 ```sql
-SELECT COUNT(*) AS lines, COUNT(c.customer_id) AS matched_after_lpad
+SELECT COUNT(*)             AS lines,
+       COUNT(c.customer_id) AS matched_after_lpad
 FROM (SELECT DISTINCT * FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$') s
 LEFT JOIN customers c ON LPAD(c.customer_id::text, 4, '0') = LPAD(TRIM(s.customer_code), 4, '0');
 ```
@@ -1279,7 +1282,7 @@ LEFT JOIN customers c ON LPAD(c.customer_id::text, 4, '0') = LPAD(TRIM(s.custome
 (1 row)
 ```
 
-100%. `LPAD(text, 4, '0')` pads on the left with zeros to four characters; `TRIM` first, so a stray space doesn't count as a character. Spreadsheet: `=TEXT(D2,"0000")` for numbers or `=RIGHT("0000"&TRIM(D2),4)` for text; Power Query: `Text.PadStart(Text.Trim([customer_code]), 4, "0")`; pandas: `.str.strip().str.zfill(4)`.
+100%. The only change is on the right of the `=`: `LPAD(text, 4, '0')` pads on the left with zeros to four characters, and `TRIM` comes first, so a stray space doesn't count as a character. (Spreadsheet equivalent: section 14.12, step 6.)
 
 ### A checklist for joining messy sources
 
@@ -1369,7 +1372,7 @@ The 58 invalid emails (such as `accounts.saffronkitchenware.example.com`, with n
 
 ### Validation in Excel and Power Query
 
-- **Data validation** (Chapter 10, section 10.11) prevents bad entries in sheets people type into.
+- **Data validation** (Chapter 10, section 10.12) prevents bad entries in sheets people type into.
 - **A checks sheet**: one row per rule, a `COUNTIFS` or `SUMPRODUCT` formula that counts failures, and conditional formatting that turns any non-zero count red. `=COUNTIFS(Clean[status],"<>Delivered",Clean[status],"<>Shipped",Clean[status],"<>Pending",Clean[status],"<>Cancelled")` counts status failures.
 - **Power Query:** a conditional column per rule, or a separate "checks" query that references the clean query, filters the failures, and loads its row count. Loading failures to their own sheet makes them impossible to ignore.
 
