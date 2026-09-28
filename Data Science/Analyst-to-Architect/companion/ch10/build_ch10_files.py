@@ -8,7 +8,7 @@ match the riverstone_2025 database used in Chapter 13.
 
 Creates:
   riverstone_sales_export_2025.csv   the raw ERP export (one row per order line, 330 rows)
-  ch10_practice.xlsx                 Export, Customers, Products, Targets, Cell detective sheets (no formulas)
+  ch10_practice.xlsx                 Data, Customers, Products, Targets, Cell detective sheets (no formulas)
   ch10_tracker_solution.xlsx         the finished monthly sales tracker from the chapter project
   ch10_tracker_check.xlsx            the same tracker with INDEX/MATCH instead of XLOOKUP (used only to verify
                                      the numbers with LibreOffice, which can't evaluate XLOOKUP)
@@ -55,7 +55,7 @@ for it in items:
 
 # CSV exactly as the ERP writes it: DD-MM-YYYY dates, zero-padded codes
 with open(HERE / "riverstone_sales_export_2025.csv", "w", newline="", encoding="utf-8") as f:
-    w = csv.writer(f)
+    w = csv.writer(f, lineterminator="\n")
     w.writerow(HEAD)
     for r in rows:
         w.writerow([r[0], r[1].strftime("%d-%m-%Y")] + r[2:])
@@ -122,11 +122,13 @@ detective = [
     (dt.date(2025, 1, 2), "a real date, shown as a date"),
     ("02-01-2025", "text that looks like a date"),
     (32062.5, "a number with a display format that hides the .5"),
+    ("0005", "a code stored as text, so it keeps its zeros"),
 ]
 for v, d in detective:
     ws.append([v, d])
 ws["A5"].number_format = "yyyy-mm-dd"
 ws["A7"].number_format = "#,##0"
+ws["A8"].number_format = "@"
 widths(ws, {"A": 16, "B": 46})
 wb.save(HERE / "ch10_practice.xlsx")
 
@@ -164,8 +166,8 @@ def build_tracker(path, use_xlookup):
         t.cell(row=r, column=2, value=f"=Targets!B{2+i}").number_format = "#,##0"
         t.cell(row=r, column=3, value=(f'=SUMIFS(Data!$L$2:$L${last},Data!$K$2:$K${last},A{r},'
                                        f'Data!$H$2:$H${last},"<>Cancelled")'))
-        t.cell(row=r, column=4, value=(f'=SUMIFS(Data!$J$2:$J${last},Data!$B$2:$B${last},">="&A{r},'
-                                       f'Data!$B$2:$B${last},"<="&EOMONTH(A{r},0),Data!$H$2:$H${last},"<>Cancelled")')).number_format = "#,##0"
+        t.cell(row=r, column=4, value=(f'=SUMIFS(Data!$J$2:$J${last},Data!$K$2:$K${last},A{r},'
+                                       f'Data!$H$2:$H${last},"<>Cancelled")')).number_format = "#,##0"
         t.cell(row=r, column=5, value=f"=D{r}/B{r}").number_format = "0.0%"
         if i == 0:
             t.cell(row=r, column=6, value="")
