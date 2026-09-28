@@ -6,7 +6,7 @@
 >
 > **You will learn to:** read a difference of logarithms as a percentage change · say what a causal claim would mean when nobody randomized anything · spot why the two obvious comparisons (before-and-after, and treated-versus-untreated) usually mislead · estimate an effect with difference-in-differences, by hand and as a regression with fixed effects · test the parallel-trends assumption it rests on · build a synthetic control from untreated groups · build a comparison group with matching and propensity scores, and check the balance you achieved · use a threshold in a business rule as a natural experiment (regression discontinuity) · recognize a valid instrumental variable, and why you'll rarely have one · judge how much to trust each method, and write the claim up with its assumptions attached.
 >
-> **Before you start:** Chapter 22 (correlation is not causation, section 22.5; fitting a line, section 22.10), Chapter 30 (confidence intervals, experiments, Cohen's d in section 30.4, and section 30.11's regression output, `C()` categories and logistic regression), Chapter 18 (pandas `groupby`, `pivot_table`, `pd.cut`, `lambda`, and the NumPy basics in section 18.1), Chapter 21 (standard deviation), and Chapter 11 (`SUMPRODUCT`). Section 31.0 below teaches the logarithms this chapter uses.
+> **Before you start:** Chapter 22 (correlation is not causation, section 22.5; fitting a line, section 22.10), Chapter 30 (confidence intervals, experiments, Cohen's d in section 30.4, and section 30.11's regression: one x, categories with `C()`, several variables, R², the formula syntax, and logistic regression), Chapter 18 (pandas `groupby`, `pivot_table`, `pd.cut`, `lambda`, and the NumPy basics in section 18.1), Chapter 21 (standard deviation), and Chapter 11 (`SUMPRODUCT`). Section 31.0 below teaches the logarithms this chapter uses.
 >
 > **Time needed:** 15–18 hours, spread over two and a half weeks, in two parts. **Part A, comparisons over time** (sections 31.0–31.5: logs, difference-in-differences, parallel trends, synthetic control), about 8 hours, ending with a checkpoint. **Part B, comparisons across units** (sections 31.6–31.9: matching, regression discontinuity, instruments, and how much to trust each), about 8 hours. Allow 2 more for the project.
 >
@@ -50,7 +50,7 @@ Every one of them is an argument about the counterfactual, not a calculation tha
 
 ## 31.0 Logs in ten minutes
 
-Every method in this chapter measures an effect as a *percentage*: "the price rise cost 8% of volume", "reviews add 7% to revenue". Percentages are awkward to subtract, and this chapter subtracts changes from changes all the time. The tool that makes percentages behave is the **logarithm**. Nothing earlier in the book needed it, so here it is from the start.
+Every method in this chapter measures an effect as a *percentage*: "the price rise cost 8% of volume", "reviews add 7% to revenue". Percentages are awkward to subtract, and this chapter subtracts changes from changes all the time. The tool that makes percentages behave is the **logarithm**. Section 30.11 used it once, for log-odds, without stopping to explain it; this section teaches it properly, from the start.
 
 ### The idea
 
@@ -338,7 +338,7 @@ true effect: -8.0%
 **How it works:**
 
 - `np.where(test, a, b)` (section 18.1) labels each row: "North (treated)" or "Other regions", and "after" or "before".
-- `pivot_table` (section 18.8) averages log orders for each group in each period, the four cells of the table. `cells[["before", "after"]]` puts the columns in time order.
+- `pivot_table` (section 18.8) averages log orders for each group in each period, the four cells of the table; `aggfunc="mean"` asks for the average. `cells[["before", "after"]]` puts the columns in time order.
 - `cells.loc[row, column]` reads one cell. North's own change is small and positive (0.0171); the other regions' change over the same months is larger (0.0900). The *gap between the two changes*, 0.0171 − 0.0900 = −0.0729, is the estimate.
 - Section 31.0's rule converts it: exp(−0.0729) − 1 = −7.0%. That's an honest result for 24 months of noisy data, against a true −8.0%, and a different universe from the +1.7% that before-and-after suggested.
 
@@ -365,7 +365,7 @@ Other regions   after         0         1                   0
 - `treated` is 1 for North; `is_after` is 1 from October 2025. `.first()` shows each cell's value once, since every row in a cell has the same values.
 - `treated x is_after` is the two multiplied together. It is 1 in exactly one cell: **North, after the change**. That column is where the price rise lives.
 
-In a statsmodels formula (section 30.11), `a:b` means "add a column that is a times b": an **interaction term**. So the regression is:
+In a statsmodels formula (section 30.11), `a:b` means "add a column that is a times b": an **interaction term**. (Section 30.11's formula box writes `treated * is_after`, which is shorthand for `treated + is_after + treated:is_after`.) So the regression is:
 
 ```python
 import statsmodels.formula.api as smf
@@ -415,8 +415,8 @@ Intercept            1
 treated:is_after     1
 ```
 
-- The model has 28 coefficients: the intercept, 3 region dummies (one region is the baseline, as in section 30.11), 23 month dummies (one month is the baseline), and the interaction.
-- Each `C(month)` coefficient is **that month's shared shock**: how far every region's log orders sat from the baseline month. Each `C(region)` coefficient is that region's usual level.
+- The model has 28 coefficients: the intercept, 3 region dummies (one region is the reference category, as in section 30.11), 23 month dummies (one month is the reference), and the interaction.
+- Each `C(month)` coefficient is **that month's shared shock**: how far every region's log orders sat from the reference month. Each `C(region)` coefficient is that region's usual level.
 - `names.str.split("[").str[0]` keeps the part of each name before the first `[`, so the counts group `C(month)[T.Timestamp('2024-08-01 00:00:00')]` and its 22 siblings together.
 - `treated` and `is_after` are left out on purpose. `C(region)` already knows which region is North, and `C(month)` already knows which months are after the change, so the two columns would repeat information the dummies hold. They are **absorbed** by the fixed effects.
 
@@ -435,7 +435,7 @@ effect (log): -0.0729
 1   -0.0394
 ```
 
-`fe.params[...]` reads one coefficient. `fe.conf_int()` is a table of every coefficient's 95% interval, and `.loc["treated:is_after"]` takes its row: two numbers, labelled `0` (the lower end) and `1` (the upper end). So `ci[0]` is the lower end and `ci[1]` the upper. Converted to percentages:
+`fe.params[...]` reads one coefficient. `fe.conf_int()` is a table of every coefficient's 95% interval, and `.loc["treated:is_after"]` takes its row: two numbers, labelled `0` (the lower end) and `1` (the upper end), as in section 30.11. So `ci[0]` is the lower end and `ci[1]` the upper. Converted to percentages:
 
 ```python
 print(f"as a percentage: {100 * (np.exp(effect) - 1):+.1f}%  "
@@ -450,7 +450,7 @@ R-squared: 0.991
 
 Same estimate, a far tighter interval, and the true −8% sits comfortably inside it. **Region fixed effects** absorb "North is smaller"; **month fixed effects** absorb the festive season and everything else that hit all regions at once. **R²** (section 22.10) is 0.991: regions and months explain almost all of the variation in log orders, which leaves a small residual, and a small residual gives a tight interval.
 
-> **Watch out: four regions is not many.** The interval above treats all 96 region-months as independent pieces of evidence. They aren't: a region's months are related to each other, since whatever made North unusual in March probably still applies in April. **Clustering** tells the formula to treat each region as one block of evidence: `smf.ols("log_orders ~ treated:is_after + C(region) + C(month)", data=panel).fit(cov_type="cluster", cov_kwds={"groups": panel["region"]})`. Here `cov_type="cluster"` asks for clustered standard errors, and `cov_kwds={"groups": ...}` names the column that says which block each row belongs to. But the clustering formula itself needs many clusters, and with only four it is unreliable in both directions (exercise 7 shows it). The honest options are resampling methods designed for few groups, of which the placebo test in exercise 6 is the simplest, or a clearly stated caveat. If your DiD has a handful of groups, say so in the write-up rather than quoting a tidy p-value.
+> **Watch out: four regions is not many.** The interval above treats all 96 region-months as independent pieces of evidence. They aren't: a region's months are related to each other, since whatever made North unusual in March probably still applies in April. **Clustering** tells the formula to treat each region as one block of evidence: `smf.ols("log_orders ~ treated:is_after + C(region) + C(month)", data=panel).fit(cov_type="cluster", cov_kwds={"groups": panel["region"]})`. Section 30.11 used the same setting for visitors with repeat sessions. Here `cov_type="cluster"` asks for clustered standard errors, and `cov_kwds={"groups": ...}` names the column that says which block each row belongs to. But the clustering formula itself needs many clusters, and with only four it is unreliable in both directions (exercise 7 shows it). The honest options are resampling methods designed for few groups, of which the placebo test in exercise 6 is the simplest, or a clearly stated caveat. If your DiD has a handful of groups, say so in the write-up rather than quoting a tidy p-value.
 
 ---
 
@@ -591,7 +591,7 @@ wide_panel = panel.pivot_table(index="month", columns="region", values="log_orde
 pre_period = wide_panel[wide_panel.index < "2025-10-01"]
 print(len(pre_period), "months before the change")
 print(pre_period.round(3).head(3).to_string())
-pre_period.to_csv("causal_data/pre_period_logs.csv")
+pre_period.to_csv("pre_period_logs.csv")
 ```
 
 ```
@@ -603,11 +603,11 @@ month
 2024-09-01  7.347  7.623  7.888  8.137
 ```
 
-`to_csv` writes the fifteen rows to `causal_data/pre_period_logs.csv`.
+`to_csv` writes the fifteen rows to `pre_period_logs.csv`, in the companion folder.
 
 ### In a spreadsheet
 
-Open `pre_period_logs.csv`. The months are in A2:A16, and the columns are in alphabetical order: East in B, North in C, South in D, West in E.
+Open `pre_period_logs.csv` in your spreadsheet. The months are in A2:A16, and the columns are in alphabetical order: East in B, North in C, South in D, West in E.
 
 1. Put the three weights in H2 (East), I2 (South), and J2 (West), each `=1/3` to start. In K2, `=SUM(H2:J2)` checks they add up to 1.
 2. The blend in F2: `=B2*$H$2+D2*$I$2+E2*$J$2`, filled down to F16. (`SUMPRODUCT`, section 11.2, does the same in one function when the columns sit side by side.)
@@ -693,6 +693,7 @@ loss at these weights: 0.00184
 ```
 
 - **`minimize(loss, start, ...)`** takes the function to make small and the weights to start from, the spreadsheet's `=1/3` cells.
+- **`constraints=[constraint]`** takes a list of rules; here there is one.
 - **`bounds`** gives each weight a lowest and highest value. `[(0, 1)] * 3` repeats the pair three times, as `'#' * 8` repeats a character.
 - **`constraint`** is a rule the weights must obey. `"type": "eq"` means "must equal zero", and the `lambda` (section 18.6) returns the weights' sum minus 1, which is zero exactly when they add up to 1: Solver's K2 = 1.
 - **`method="SLSQP"`** picks a search method that can handle bounds and an equality rule together.
@@ -810,6 +811,8 @@ Section 30.11 used logistic regression to read odds ratios. Here it is used for 
 > p = 1 / (1 + e^(−z))
 >
 > A z of 0 gives p = 0.5; large positive z gives p near 1; large negative z gives p near 0.
+>
+> It is section 30.11's arithmetic in one line: z is the log-odds, so the odds are e^z, and the rate is odds ÷ (1 + odds), which is the same number.
 
 The model uses only things known **before** the program started: 2024 revenue, 2024 growth, tenure, and segment (Common mistakes and exercise 16 say why that matters). Fit it and look at its coefficients:
 
@@ -828,7 +831,7 @@ growth_2024                 0.8568
 years_as_customer           0.0964
 ```
 
-`smf.logit` is section 30.11's logistic regression; `disp=False` stops it printing its fitting progress. Hospitality is the baseline segment, so a Retail account adds the `C(segment)[T.Retail]` coefficient and a Hospitality account adds nothing.
+`smf.logit` is section 30.11's logistic regression; `disp=False` stops it printing its fitting progress. The coefficients are on the log-odds scale, and Hospitality is the reference category, so a Retail account adds the `C(segment)[T.Retail]` coefficient and a Hospitality account adds nothing.
 
 Now work the first account by hand: a Retail account with ₹10,15,758 of 2024 revenue, 2024 growth of 0.2296, and 6 years as a customer:
 
@@ -916,7 +919,7 @@ participant 74: score 0.802
 nearest control 133: score 0.686, distance 0.116
 ```
 
-- `ordered` puts participants from the highest score down.
+- `ordered` puts participants from the highest score down: `ascending=False` reverses the usual smallest-first order.
 - **`min(available, key=...)`** looks at every key of the dictionary and returns the one whose `key` value is smallest. The `lambda` gives each control id its distance from this participant's score, so `best` is **the control whose distance is smallest**.
 - The distance is well over 0.05. This participant, with the highest score of all, sits outside the overlap: the caliper will refuse the match.
 
@@ -1072,6 +1075,10 @@ regression adjustment:  +7.5%  (95% CI +4.4% to +10.7%)
 true effect:            +7.0%
 ```
 
+- `matched_means` and `matched_effect` repeat the two-step difference above, inside the matched sample only.
+- The regression's x's are the program dummy and the four things known before the program; `C(segment)` adds segment as a category. Its `in_qbr_program` coefficient is the gap between participants and non-participants **holding the others fixed**, and `conf_int()` gives its interval, as in section 31.3.
+- Everything is in logs, so each estimate is converted with exp(d) − 1.
+
 Both corrections land near the truth, and both are a world away from the naive +75%. Note what made this work: every variable that drove selection (size, growth, tenure) was **measured and available**. That is the assumption matching rests on, and it has a name.
 
 > **Watch out: matching only fixes what you measured.** The assumption is **no unmeasured confounding**: nothing you left out of the score influenced both joining and the outcome. Here it holds by construction, because the data was generated that way. In real life, the sales team's judgment about which accounts "had potential" is exactly the kind of unmeasured variable that ruins it. That's why matching is weaker evidence than a threshold rule or an experiment, and why sensitivity analysis (section 31.9) matters.
@@ -1204,7 +1211,7 @@ centred
 [1.5, 2.0)      2636
 ```
 
-- **`np.arange(-5, 5.5, 0.5)`** makes the band edges −5, −4.5, … 5. It stops *before* 5.5, so 5 is the last edge.
+- **`bins=`** gives `pd.cut` the band edges. **`np.arange(-5, 5.5, 0.5)`** makes them −5, −4.5, … 5. It stops *before* 5.5, so 5 is the last edge.
 - **`right=False`** (section 18.5) makes each band include its left edge, `[0.0, 0.5)`, so an order of exactly ₹25,000, which gets free delivery, is counted above the cut-off, as in the rule. Without it, it would land in the band just below.
 - **`observed=True`** lists only bands that have orders in them. `.iloc[6:14]` shows the eight bands from −₹2,000 to +₹2,000.
 
@@ -1305,6 +1312,8 @@ all four            :  +7.5%
 without prior size  : +75.1%
 without 2024 growth :  +8.7%
 ```
+
+`formulas` is a dictionary from a label to a regression formula: the full model, then the same without one variable. The loop fits each and prints its `in_qbr_program` estimate as a percentage; `:20s` pads each label to 20 characters so the numbers line up.
 
 Leaving out prior size moves the estimate by about 68 points; leaving out 2024 growth moves it by about one. So a missing variable as strong as growth would barely matter, but one as strong as prior size would swamp the +7.5% that's left. The honest sentence is: *"about +7%, and that estimate depends on the sales team's choices being driven by things we can see."* Formal versions of this reasoning exist (Rosenbaum bounds, E-values); the informal version, said out loud with these numbers, is already most of the value.
 

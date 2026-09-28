@@ -3,7 +3,7 @@
 import numpy as np, pandas as pd, pathlib, sys
 import statsmodels.formula.api as smf
 from scipy.optimize import minimize
-D = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '/home/claude/book/companion/ch31') / 'causal_data'
+D = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1] / 'companion' / 'ch31') / 'causal_data'
 ok = 0
 def check(label, got, want, tol=0.0):
     global ok
@@ -33,8 +33,17 @@ check('true effect %', round(100 * (0.92 - 1), 1), -8.0)
 qbr['log_2025'] = np.log(qbr.revenue_2025); qbr['log_2024'] = np.log(qbr.revenue_2024)
 gap = qbr.groupby('in_qbr_program').log_2025.mean().diff().iloc[-1]
 check('naive QBR %', round(100 * (np.exp(gap) - 1), 1), 75.0)
-adj = smf.ols('log_2025 ~ in_qbr_program + log_2024 + growth_2024 + years_as_customer', data=qbr).fit()
-check('adjusted QBR %', round(100 * (np.exp(adj.params['in_qbr_program']) - 1), 1), 7.7)
+adj = smf.ols('log_2025 ~ in_qbr_program + log_2024 + growth_2024 + years_as_customer + C(segment)', data=qbr).fit()
+check('adjusted QBR %', round(100 * (np.exp(adj.params['in_qbr_program']) - 1), 1), 7.5)
+lo, hi = adj.conf_int().loc['in_qbr_program']
+check('adjusted CI low %', round(100 * (np.exp(lo) - 1), 1), 4.4); check('adjusted CI high %', round(100 * (np.exp(hi) - 1), 1), 10.7)
+check('selection share %', round(100 * (1 - round(100 * (np.exp(adj.params['in_qbr_program']) - 1), 1) / 75.0)), 90)
+nosize = smf.ols('log_2025 ~ in_qbr_program + growth_2024 + years_as_customer + C(segment)', data=qbr).fit()
+check('without size %', round(100 * (np.exp(nosize.params['in_qbr_program']) - 1), 1), 75.1)
+nogrowth = smf.ols('log_2025 ~ in_qbr_program + log_2024 + years_as_customer + C(segment)', data=qbr).fit()
+check('without growth %', round(100 * (np.exp(nogrowth.params['in_qbr_program']) - 1), 1), 8.7)
+check('arithmetic 2025 ratio %', round(100 * (qbr.groupby('in_qbr_program').revenue_2025.mean().iloc[1] /
+                                             qbr.groupby('in_qbr_program').revenue_2025.mean().iloc[0] - 1)), 72)
 check('QBR size ratio', round(qbr.groupby('in_qbr_program').revenue_2024.mean().iloc[1] /
                               qbr.groupby('in_qbr_program').revenue_2024.mean().iloc[0], 2), 1.62)
 orders['centred'] = (orders.order_value - 25000) / 1000
@@ -53,4 +62,16 @@ synth = wp[donors].to_numpy() @ best.x
 gap_after = (wp['North'].to_numpy() - synth)[wp.index >= '2025-10-01'].mean()
 check('synthetic gap %', round(100 * (np.exp(gap_after) - 1), 1), -6.6, 0.1)
 check('synthetic weight East', round(best.x[2], 2), 0.51, 0.01)
+# section 31.0 and the story's arithmetic
+check('log diff 2032->2067', round(np.log(2067) - np.log(2032), 4), 0.0171)
+check('exp(0.56)-1 %', round(100 * (np.exp(0.56) - 1), 1), 75.1)
+check('ln(1.08)', round(np.log(1.08), 3), 0.077)
+check('equal-weight loss', round(float(np.mean((pre['North'] - pre[donors].mean(axis=1)) ** 2)), 4), 0.0192)
+check('South+East loss', round(float(np.mean((pre['North'] - (pre['South'] + pre['East']) / 2) ** 2)), 4), 0.0044)
+vol = np.exp(fe.params['treated:is_after'])
+check('price-only revenue %', round(100 * (0.93 * 1.06 - 1), 1), -1.4)
+check('gross profit change % at 26.2% margin', round(100 * (vol * (1.06 - 0.738) / 0.262 - 1)), 14)
+tr = smf.ols('log_orders ~ treated:is_after + C(region) + C(month) + treated:t',
+             data=panel.assign(t=(panel.month.dt.year - 2024) * 12 + panel.month.dt.month)).fit()
+check('North-trend effect %', round(100 * (np.exp(tr.params['treated:is_after']) - 1), 1), -4.8)
 print(f'ch31_check.py: {ok} checks passed')
