@@ -6,8 +6,9 @@
 # What it builds in SCRATCH_DIR (deleted and rebuilt on every run):
 #   home/     mounted over /home/meera in a private mount namespace (unshare), so the chapter's paths
 #             (/home/meera/riverstone-analysis) are real while every file, including the Git repository,
-#             lives in SCRATCH_DIR. Nothing Git-related is ever created in the book's own folder;
-#             GIT_CEILING_DIRECTORIES stops Git from looking above /home/meera.
+#             lives in SCRATCH_DIR. It holds analyst-to-architect/companion/ch26, a COPY of the book's
+#             companion folder (never a link into the book, so no Git command can reach the book's own
+#             repository); GIT_CEILING_DIRECTORIES stops Git from looking above /home/meera.
 #   bin/git   a wrapper that gives every Git command a timestamp one minute after the previous one
 #             (from Mon 2 Mar 2026 10:00 IST), so commit hashes are the same on every run
 #   remote/   a bare repository standing in for https://github.com/meera/riverstone-analysis.git; exec/
@@ -15,6 +16,7 @@
 #             so push and pull print exactly what Git prints for a GitHub remote
 #   bin/github-*  what happens on github.com in section 26.7 (merging a pull request, a colleague's push),
 #             called from the chapter's hidden session blocks
+#   bin/code  stands in for VS Code's `code` command, which opens a file in the editor and prints nothing
 # Then it runs checks/ch26_shell_session.py on the chapter with /home/meera as the working folder.
 set -euo pipefail
 BOOK=$(cd "$(dirname "$0")/.." && pwd)
@@ -22,8 +24,9 @@ SCR=$(mkdir -p "${1:?usage: ch26_run.sh SCRATCH_DIR [--fill]}" && cd "$1" && pwd
 CH="$BOOK/manuscript/ch26-the-professional-toolkit-git-agile-documentation-and-ai-assistants.md"
 
 rm -rf "${SCR:?}/home" "${SCR:?}/bin" "${SCR:?}/exec" "${SCR:?}/remote" "${SCR:?}/clock" "${SCR:?}/sysconfig"
-mkdir -p "$SCR/home/analyst-to-architect" "$SCR/bin" "$SCR/exec" "$SCR/remote/meera"
-ln -s "$BOOK/companion" "$SCR/home/analyst-to-architect/companion"
+mkdir -p "$SCR/home/analyst-to-architect/companion" "$SCR/bin" "$SCR/exec" "$SCR/remote/meera"
+cp -r "$BOOK/companion/ch26" "$SCR/home/analyst-to-architect/companion/ch26"
+printf '#!/bin/sh\n# VS Code: opens the file in the editor; prints nothing\nexit 0\n' > "$SCR/bin/code"
 
 cat > "$SCR/bin/git" <<EOF
 #!/bin/sh
@@ -70,12 +73,13 @@ git push -q origin main; rm -rf "\$w"
 EOF
 chmod +x "$SCR/bin/"* "$SCR/exec/git-remote-https"
 
-export HOME=/home/meera PATH="$SCR/bin:$PATH" GIT_EXEC_PATH="$SCR/exec" GIT_CONFIG_SYSTEM="$SCR/sysconfig"
+export HOME=/home/meera PATH="$SCR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" GIT_EXEC_PATH="$SCR/exec" GIT_CONFIG_SYSTEM="$SCR/sysconfig"
+unset GIT_CONFIG_GLOBAL GIT_DIR GIT_WORK_TREE
 export GIT_CEILING_DIRECTORIES=/home/meera GIT_EDITOR=true GIT_MERGE_AUTOEDIT=no TZ=Asia/Kolkata
 unshare --mount --propagation private bash -c '
   mount --bind "$0/home" /home/meera
   python3 "$1/checks/ch26_shell_session.py" "$2" --cwd /home/meera "${@:3}"
-  status=$?
-  # the repository really is in the scratch folder:
-  echo "repository: $(cd /home/meera/riverstone-analysis 2>/dev/null && /usr/bin/git rev-parse --show-toplevel) (/home/meera is $0/home)"
-  exit $status' "$SCR" "$BOOK" "$CH" "$@"
+  exit $?' "$SCR" "$BOOK" "$CH" "$@" || status=$?
+# Outside the namespace: the repository the session built is in the scratch folder, not in the book.
+echo "repository: $(cd "$SCR/home/riverstone-analysis" 2>/dev/null && /usr/bin/git rev-parse --show-toplevel)"
+exit ${status:-0}

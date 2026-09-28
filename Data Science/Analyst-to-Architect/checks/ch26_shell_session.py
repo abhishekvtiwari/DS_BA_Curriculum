@@ -32,7 +32,9 @@ MARK = f'__done_{uuid.uuid4().hex}__'
 def run(command):
     plain = command.startswith(('cd ', 'export ', 'unset ')) or command.rstrip().endswith('&')
     wrapped = command if plain else '{ ' + command + ' ; } < /dev/null'
-    shell.stdin.write(wrapped + f'\necho {MARK}\n'); shell.stdin.flush()
+    # keep the command's exit code for the next command (a reader's `echo $?` on the next line sees it),
+    # although the marker's own echo runs in between
+    shell.stdin.write(wrapped + f'\n__rc=$?; echo {MARK}; ( exit $__rc )\n'); shell.stdin.flush()
     lines = []
     for line in shell.stdout:
         if line.rstrip('\n') == MARK:

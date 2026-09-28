@@ -3,3 +3,4 @@ xlsxwriter
 sqlalchemy
 psycopg[binary]
 python-dotenv
+matplotlib
