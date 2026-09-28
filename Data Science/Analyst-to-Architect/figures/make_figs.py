@@ -220,6 +220,8 @@ def fig_order():
     return svg(1050,320,"".join(o))
 
 if __name__ == "__main__":
-  for name,fn in [("fig12-1-riverstone-schema.svg",fig_schema),("fig12-2-one-order-many-tables.svg",fig_one_order),("fig12-3-inner-vs-left-join.svg",fig_joins),("fig12-4-fan-out.svg",fig_fanout),("fig12-5-execution-order.svg",fig_order)]:
-      open(name,"w").write(fn())
-  print("ok")
+  # Chapter 12's figures are drawn by make_figs12.py since the Part 2 build (text at 7 pt or more).
+  # The fig_* functions above are the old drawings, kept only as reference; this file's shared helpers
+  # (svg, text, box …) are imported by every make_figsNN.py.
+  import runpy
+  runpy.run_path("make_figs12.py", run_name="__main__")
