@@ -119,7 +119,7 @@ print(f"sample of {len(sample)} orders: mean ₹{sample.mean():,.0f}, standard d
 ```
 
 ```
-TODO
+sample of 200 orders: mean ₹23,280, standard deviation ₹17,862
 ```
 
 How it works:
@@ -142,7 +142,8 @@ print(f"95% interval   ₹{lo:,.0f} to ₹{hi:,.0f}")
 ```
 
 ```
-TODO
+standard error ₹1,263, t* = 1.972, margin ₹2,491
+95% interval   ₹20,789 to ₹25,771
 ```
 
 - `se = sd / np.sqrt(len(sample))` is *s* ÷ √*n*.
@@ -159,7 +160,8 @@ print(f"the true mean    ₹{true_mean:,.0f}  (inside the interval: {lo <= true_
 ```
 
 ```
-TODO
+scipy's interval ₹20,789 to ₹25,771
+the true mean    ₹24,840  (inside the interval: True)
 ```
 
 - `stats.t.interval(0.95, df=..., loc=..., scale=...)` does the second cell in one call. Its four settings are the **confidence level** (0.95), the **degrees of freedom**, the centre of the interval (`loc`, the sample mean), and the standard error (`scale`). It returns the two ends, which `lo_scipy, hi_scipy = ...` unpacks.
@@ -175,7 +177,7 @@ print(f"99% interval ₹{lo_99:,.0f} to ₹{hi_99:,.0f}")
 ```
 
 ```
-TODO
+99% interval ₹19,995 to ₹26,565
 ```
 
 Wider. To be right more often, the interval must cover more ground: the multiplier grows from 1.972 to about 2.60. Confidence costs width, and the only way to get both more confidence and a narrow interval is a bigger sample.
@@ -205,7 +207,8 @@ print(f"normal approximation: {(p_hat - 1.96*se_p)*100:.2f}% to {(p_hat + 1.96*s
 ```
 
 ```
-TODO
+on-time rate 81.76% from 45,040 orders
+normal approximation: 81.41% to 82.12%
 ```
 
 - `on_time.sum()` counts the `True` values, because Python treats `True` as 1 and `False` as 0. `int(...)` makes it a plain whole number.
@@ -220,7 +223,7 @@ print(f"Wilson interval:      {wilson_lo*100:.2f}% to {wilson_hi*100:.2f}%")
 ```
 
 ```
-TODO
+Wilson interval:      81.40% to 82.12%
 ```
 
 - `stats.binomtest(k, n)` builds a test object for *k* successes in *n* trials. It's really a hypothesis test (section 22.2), but here we only want its interval.
@@ -237,7 +240,7 @@ print(f"Kolkata: {kolkata.mean()*100:.2f}% ({k_lo*100:.2f}% to {k_hi*100:.2f}%) 
 ```
 
 ```
-TODO
+Kolkata: 68.15% (66.92% to 69.35%) from 5,626 orders
 ```
 
 The filter `deliveries[deliveries["branch"] == "Kolkata"]["on_time"]` keeps Kolkata's rows, then its `on_time` column (Chapter 18). The rest repeats the previous cell.
@@ -282,7 +285,13 @@ print(ab.shape)
 ```
 
 ```
-TODO
+   recipient_id variant  opened  ordered  order_value
+0             1       A    True    False          0.0
+1             2       A    True    False          0.0
+2             3       A   False    False          0.0
+3             4       A   False    False          0.0
+4             5       A   False    False          0.0
+(8400, 5)
 ```
 
 One row per recipient: which `variant` they got, whether they `opened` the email and `ordered`, and the `order_value` (0 for everyone who didn't order). `ab.shape` gives rows and columns: 8,400 recipients, 5 columns.
@@ -300,7 +309,10 @@ print(summary.to_string())
 ```
 
 ```
-TODO
+         sent  opens  orders    revenue  open_rate  order_rate  revenue_per_recipient
+variant
+A        4200    987      83  2031550.0      23.50        1.98                 483.70
+B        4200   1132      97  2227300.0      26.95        2.31                 530.31
 ```
 
 - `.agg(sent=("opened", "size"), ...)` is Chapter 18's named aggregation: each new column is (source column, function). **`size` counts the rows in each group, whatever column you name**, so `("opened", "size")` is simply "how many recipients"; `"sum"` on a True/False column counts the `True`s.
@@ -347,7 +359,10 @@ print(opens_table)
 ```
 
 ```
-TODO
+opened   False  True
+variant
+A         3213    987
+B         3068   1132
 ```
 
 The rows are the variants and the columns are `opened` = `False` and `True`: the same four counts as the hand table.
@@ -360,7 +375,10 @@ print(expected)
 ```
 
 ```
-TODO
+chi-square = 13.27, degrees of freedom = 1, p-value = 0.0003
+expected counts if there were no difference:
+[[3140.5 1059.5]
+ [3140.5 1059.5]]
 ```
 
 - `chi2_contingency(table, correction=False)` runs the test and returns four things, which `chi2, p_open, dof, expected = ...` unpacks: the statistic, the p-value, the degrees of freedom, and the expected table. The expected table matches the hand calculation, 1,059.5 and 3,140.5.
@@ -380,7 +398,8 @@ print(f"95% interval for the difference: {(diff - 1.96*se_diff)*100:+.2f} to {(d
 ```
 
 ```
-TODO
+open rate: A 23.50%, B 26.95%, difference +3.45 points
+95% interval for the difference: +1.60 to +5.31 points
 ```
 
 - `opens_table.loc["A"].sum()` adds row A across both columns: A's recipients. `opens_table.loc["A", True]` is the single cell "A, opened".
@@ -406,7 +425,7 @@ print(f"z = {z:.2f}, p-value = {p_z:.4f}, z squared = {z**2:.2f}")
 ```
 
 ```
-TODO
+z = 3.64, p-value = 0.0003, z squared = 13.27
 ```
 
 - `from statsmodels.stats.proportion import proportions_ztest` loads one function from the library's `stats.proportion` part.
@@ -426,7 +445,9 @@ print(f"revenue per recipient: A ₹{rev_a:,.2f}, B ₹{rev_b:,.2f}")
 ```
 
 ```
-TODO
+order rate: A 1.98%, B 2.31%
+chi-square p-value: 0.2915
+revenue per recipient: A ₹483.70, B ₹530.31
 ```
 
 - The same test on the `ordered` column. The `_` names catch the two results we don't need (degrees of freedom and the expected table); `_` is Python's convention for "a value I'm ignoring".
@@ -478,7 +499,10 @@ print(f"difference in medians: {bengaluru.median() - mumbai.median():.1f} days")
 ```
 
 ```
-TODO
+means: Mumbai 3.51 days, Bengaluru 4.17 days
+Welch t-test p = 1.93e-197
+Mann-Whitney p = 0
+difference in medians: 0.6 days
 ```
 
 Two things in that output need translating:
@@ -494,7 +518,8 @@ for name, p in [("Welch t-test", p_t), ("Mann-Whitney", p_u)]:
 ```
 
 ```
-TODO
+Welch t-test p < 0.001
+Mann-Whitney p < 0.001
 ```
 
 The `for` loop walks through a list of (name, p-value) pairs; `"p < 0.001" if p < 0.001 else ...` is Python's one-line if/else (Chapter 17), which picks the report format.
@@ -517,14 +542,14 @@ print(f"bootstrap 95% interval for the gap in medians: {boot_lo:.1f} to {boot_hi
 ```
 
 ```
-TODO
+bootstrap 95% interval for the gap in medians: 0.6 to 0.7 days
 ```
 
 - `rng.choice(mumbai, size=len(mumbai), replace=True)` draws a resample of Mumbai's delivery times, the same size as the original, **with replacement**. `replace=True` is the whole trick; with `replace=False` you'd get the same values back, shuffled.
 - The loop runs 10,000 times (`10_000` is 10,000; Python ignores the underscore) and keeps each gap in medians in the list `median_gaps`.
 - `np.percentile(median_gaps, [2.5, 97.5])` finds the values with 2.5% and 97.5% of the gaps below them: the middle 95% of the resampled gaps is the interval. It takes a few seconds to run.
 
-It works on skewed data because it never assumes a shape; the resamples inherit whatever shape the data has.
+Bengaluru's median delivery time is 0.6 to 0.7 days longer than Mumbai HO's, the same answer the two tests pointed to, now as a size with an interval. It works on skewed data because it never assumes a shape; the resamples inherit whatever shape the data has.
 
 ---
 
@@ -577,7 +602,13 @@ for lift in (0.2, 0.5, 1.0):
 ```
 
 ```
-TODO
+to detect a 1-point lift on a 24% open rate:  29,036 per variant
+to detect a 2-point lift on a 24% open rate:   7,358 per variant
+to detect a 3-point lift on a 24% open rate:   3,313 per variant
+to detect a 5-point lift on a 24% open rate:   1,222 per variant
+to detect a 0.2-point lift on a 2% order rate:   80,682 per variant
+to detect a 0.5-point lift on a 2% order rate:   13,809 per variant
+to detect a 1.0-point lift on a 2% order rate:    3,826 per variant
 ```
 
 What each line does:
@@ -603,7 +634,7 @@ print(f"with 4,200 per variant: opens {minimum_detectable_lift(0.24, 4200)} poin
 ```
 
 ```
-TODO
+with 4,200 per variant: opens 2.66 points, orders 0.95 points
 ```
 
 - The `while` loop keeps adding 0.01 points while the test would still need more than 4,200 recipients, and stops at the first lift it could detect with 80% power.
@@ -637,7 +668,8 @@ print(f"open rate {a.mean():.4f}")
 ```
 
 ```
-TODO
+[False False False  True False False  True False False False]
+open rate 0.2450
 ```
 
 `a[:10]` shows the first ten recipients (slicing, Chapter 17), and `a.mean()` is the share of `True`s. It's close to 0.25, but not exactly: that's sampling error.
@@ -653,7 +685,7 @@ print(f"A {pa:.4f}, B {pb:.4f}, z = {z:.2f}, declared a winner: {abs(z) > 1.96}"
 ```
 
 ```
-TODO
+A 0.2450, B 0.2537, z = -0.90, declared a winner: False
 ```
 
 `abs(z)` drops the sign, because a difference in either direction counts (a two-sided test). Here there's no winner, as there shouldn't be.
@@ -682,7 +714,9 @@ for peeks in (1, 5, 20):
 ```
 
 ```
-TODO
+checking  1 time(s): 4.9% of identical pairs declared a winner
+checking  5 time(s): 14.3% of identical pairs declared a winner
+checking 20 time(s): 23.9% of identical pairs declared a winner
 ```
 
 What each line does:
@@ -714,7 +748,14 @@ print("survive Bonferroni:", [p for p in p_values if p < bonferroni])
 ```
 
 ```
-TODO
+ 1 independent tests at α=0.05: P(at least one false positive) = 5.0%
+ 5 independent tests at α=0.05: P(at least one false positive) = 22.6%
+10 independent tests at α=0.05: P(at least one false positive) = 40.1%
+20 independent tests at α=0.05: P(at least one false positive) = 64.2%
+50 independent tests at α=0.05: P(at least one false positive) = 92.3%
+
+Bonferroni threshold for 7 tests: 0.0071
+survive Bonferroni: [0.001]
 ```
 
 - `0.95**k` is the chance that all *k* tests stay quiet; one minus it is the chance that at least one doesn't. `:.1%` prints a proportion as a percentage with one decimal.
@@ -746,7 +787,7 @@ print("survive Benjamini-Hochberg:", ranked[:largest])
 ```
 
 ```
-TODO
+survive Benjamini-Hochberg: [0.001, 0.012]
 ```
 
 - `sorted(p_values)` returns the p-values in increasing order.
@@ -810,7 +851,7 @@ print(f"r = {stats.pearsonr(x, y).statistic:.3f}")
 ```
 
 ```
-TODO
+r = 0.992
 ```
 
 `np.array([...])` makes a NumPy array from a list (Chapter 18). `stats.pearsonr(x, y)` returns a result with two parts, the correlation `.statistic` and a p-value `.pvalue` for the test "is the true correlation zero?". In a spreadsheet, `=CORREL(A2:A7,B2:B7)` gives the same 0.992.
@@ -828,7 +869,11 @@ print(by_customer.corr().round(3))
 ```
 
 ```
-TODO
+4,596 customers
+          orders  revenue  avg_days
+orders     1.000    0.915    -0.086
+revenue    0.915    1.000    -0.071
+avg_days  -0.086   -0.071     1.000
 ```
 
 - `groupby("customer_id")` makes one group per customer (`customer_id` is the customer who placed each order, Chapter 21), and the named aggregation counts their orders, adds their order values, and averages their delivery days.
@@ -857,7 +902,8 @@ print(f"Spearman (rank):    {stats.spearmanr(by_customer['orders'], by_customer[
 ```
 
 ```
-TODO
+Pearson (linear):   0.915
+Spearman (rank):    0.929
 ```
 
 And a correlation near zero means no *straight-line* relationship, not no relationship. Here is a U-shape: y is exactly x², so y is completely determined by x:
@@ -871,10 +917,12 @@ print(f"r = {stats.pearsonr(x_u, y_u).statistic:.2f}")
 ```
 
 ```
-TODO
+[-5 -4 -3 -2 -1  0  1  2  3  4  5]
+[25 16  9  4  1  0  1  4  9 16 25]
+r = -0.00
 ```
 
-`np.arange(-5, 6)` makes the whole numbers from −5 up to, but not including, 6. The falling left half and the rising right half cancel, so r = 0.00 (the right-hand panel of Figure 22.5). Always look at the scatter plot, as Chapter 15's Anscombe quartet showed.
+`np.arange(-5, 6)` makes the whole numbers from −5 up to, but not including, 6. The falling left half and the rising right half cancel exactly, so r is zero (the right-hand panel of Figure 22.5). The minus sign in `-0.00` is a trace of the computer's rounding, a number like −0.0000000000000001: read it as 0. Always look at the scatter plot, as Chapter 15's Anscombe quartet showed.
 
 Correlation says how tightly two measures move together. Section 22.10 turns that into a line that says *how much* one changes when the other does.
 
@@ -892,7 +940,10 @@ print(overall[["size", "on_time_pct"]])
 ```
 
 ```
-TODO
+             size  on_time_pct
+transporter
+BlueCart     5500         79.7
+SwiftLine    6100         91.1
 ```
 
 SwiftLine is 11 points better, and the obvious conclusion is to give SwiftLine more work. Now split by route type:
@@ -910,7 +961,17 @@ print(mix.unstack().to_string())
 ```
 
 ```
-TODO
+transporter     route  deliveries  on_time_pct
+   BlueCart     Metro        1100         95.3
+   BlueCart Upcountry        4400         75.8
+  SwiftLine     Metro        5200         94.1
+  SwiftLine Upcountry         900         74.2
+
+route mix (% of each transporter's deliveries):
+route        Metro  Upcountry
+transporter
+BlueCart      20.0       80.0
+SwiftLine     85.2       14.8
 ```
 
 - `on_time_pct=lambda s: round(s.mean()*100, 1)` names a new column and computes it with a **lambda**, a one-line function without a name (Chapter 21): for each group's `on_time` values `s`, the percentage on time, rounded to 1 decimal.
@@ -938,7 +999,10 @@ print(rates)
 ```
 
 ```
-TODO
+route        Metro  Upcountry
+transporter
+BlueCart      95.3       75.8
+SwiftLine     94.1       74.2
 ```
 
 `pivot` reshapes the long table into a grid (Chapter 18's `pivot_table` without the aggregation, because each cell has exactly one value): one row per `index` value, one column per `columns` value, filled with `values`.
@@ -954,7 +1018,13 @@ print(adjusted.to_string())
 ```
 
 ```
-TODO
+route
+Metro        0.543
+Upcountry    0.457
+on-time rate if both transporters had the company's route mix:
+transporter
+BlueCart     86.4
+SwiftLine    85.0
 ```
 
 - `weights` is the company's route mix, 0.543 and 0.457, labelled by route.
@@ -987,7 +1057,8 @@ print(f"if only the slowest quarter answered the survey: mean {survey_responders
 ```
 
 ```
-TODO
+all orders:        mean 4.37 days, on time 81.8%
+if only the slowest quarter answered the survey: mean 7.29 days, on time 28.0%
 ```
 
 `quantile(0.75)` is the third quartile (Chapter 21), so the filter keeps the slowest quarter of orders. Two f-strings side by side inside one `print` are joined into one line.
@@ -1012,7 +1083,10 @@ print("nothing was done to them between the periods")
 ```
 
 ```
-TODO
+2,560 customers
+the 50 'worst' in period 1: mean -2.29 standard deviations
+the same 50 in period 2:    mean -0.13 standard deviations
+nothing was done to them between the periods
 ```
 
 - `rng.normal(0, 1, len(customers))` draws one number per customer from a normal distribution with mean 0 and standard deviation 1: a score measured in standard deviations. The two periods are drawn separately, so they're unrelated.
@@ -1033,7 +1107,9 @@ print(f"slowest 100 in H1: H1 {slowest['mean_h1'].mean():.2f} days, H2 {slowest[
 ```
 
 ```
-TODO
+2,800 customers with 3+ orders in each half
+everyone:          H1 4.14 days, H2 4.54 days
+slowest 100 in H1: H1 7.89 days, H2 6.24 days
 ```
 
 - `.dt.month <= 6` keeps January to June; `>= 7` keeps July to December. Each half is grouped by customer, with the mean and count of delivery days.
@@ -1066,7 +1142,9 @@ print(f"at Riverstone's real list size of 8,400, it would be {(rate_b-rate_a)*84
 ```
 
 ```
-TODO
+with 500,000 per variant, a 0.36-point difference gives p = 2.62e-05
+that is 1,800 extra opens per 500,000 emails
+at Riverstone's real list size of 8,400, it would be 30 extra opens
 ```
 
 - `successes` is a 2×2 table built by hand, as in the chi-square section: opens and non-opens for two imaginary variants of 500,000 each.
@@ -1221,7 +1299,7 @@ print(len(x), x.mean(), round(y.mean(), 2))
 ```
 
 ```
-TODO
+6 6.5 160.83
 ```
 
 Second, the hand formulas in NumPy, so nothing is hidden:
@@ -1235,7 +1313,7 @@ print(f"slope b = {b:.2f}, intercept a = {a:.2f}")
 ```
 
 ```
-TODO
+slope b = 23.93, intercept a = 5.28
 ```
 
 - `x - x_bar` subtracts the mean from every value at once (NumPy works on whole arrays), giving the column x − x̄ of the table.
@@ -1246,21 +1324,29 @@ Third, scipy's version, which also gives the uncertainty:
 
 ```python
 fit = stats.linregress(x, y)
-print(fit)
+print(f"slope            {fit.slope:.2f}")
+print(f"intercept        {fit.intercept:.2f}")
+print(f"rvalue           {fit.rvalue:.3f}")
+print(f"pvalue           {fit.pvalue:.2g}")
+print(f"stderr           {fit.stderr:.3f}")
+print(f"intercept_stderr {fit.intercept_stderr:.2f}")
 ```
 
 ```
-TODO
+slope            23.93
+intercept        5.28
+rvalue           0.992
+pvalue           9.6e-05
+stderr           1.524
+intercept_stderr 11.11
 ```
 
-`stats.linregress(x, y)` fits the least-squares line, x first and then y (the opposite order to the spreadsheet). The result has six parts:
+`stats.linregress(x, y)` fits the least-squares line, x first and then y (the opposite order to the spreadsheet). The result has six parts, each read with a dot:
 
 - **`slope`** 23.93 and **`intercept`** 5.28: the hand answers.
 - **`rvalue`** 0.992: the correlation r. Square it for R².
 - **`pvalue`** 9.6e-05: the p-value for the null hypothesis "the true slope is 0", that x and y have no straight-line relationship (section 22.2).
 - **`stderr`** 1.524: the **standard error of the slope**, how much the slope would wobble from sample to sample (section 22.1). **`intercept_stderr`** 11.11 is the same for the intercept.
-
-The `np.float64(...)` around each number just says it's a NumPy number; `print(fit.slope)` shows the bare value.
 
 Fourth, a 95% interval for the slope, by section 22.1's recipe: estimate ± *t** × standard error. The degrees of freedom are *n* − 2, because two numbers, a and b, were estimated from the data:
 
@@ -1271,7 +1357,8 @@ print(f"slope 95% interval: {fit.slope - t_star*fit.stderr:.2f} to {fit.slope + 
 ```
 
 ```
-TODO
+t* = 2.776
+slope 95% interval: 19.70 to 28.16
 ```
 
 With only six customers, *t** is 2.776, much bigger than 1.96, and the slope could be anywhere from about ₹19,700 to ₹28,200 per order. The interval excludes 0, which matches the tiny p-value.
@@ -1288,11 +1375,13 @@ print(f"R² from the residuals {r_squared:.3f}, from rvalue {fit.rvalue**2:.3f}"
 ```
 
 ```
-TODO
+[  1.86 -11.01  15.06 -12.8    9.34  -2.46]
+sum of residuals: -0.000000
+R² from the residuals 0.984, from rvalue 0.984
 ```
 
 - `fitted` is ŷ for every customer at once, and `residuals` is y − ŷ: the columns of the hand table.
-- The sum is zero to six decimals (the computer's arithmetic leaves a trace far smaller than that).
+- The sum is zero to six decimals; as with the U-shape in section 22.5, the minus sign is only a rounding trace.
 - `r_squared` is 1 − SS_res ÷ SS_tot, and it equals `rvalue` squared.
 
 Sixth, the two charts of Figure 22.6, with Chapter 18's matplotlib:
@@ -1327,7 +1416,7 @@ print(f"slope {fit_all.slope:.2f} (₹ thousand per order), intercept {fit_all.i
 ```
 
 ```
-TODO
+slope 26.70 (₹ thousand per order), intercept -18.23, R² 0.838
 ```
 
 - **Slope 26.70**: across Riverstone's customers, each extra order in the year goes with about ₹26,700 more revenue, a little above the mean order value, because customers who order often also tend to place bigger orders.
@@ -1344,7 +1433,7 @@ print(f"{len(by_customer) - len(typical)} customers removed; slope {fit_typical.
 ```
 
 ```
-TODO
+46 customers removed; slope 25.77, R² 0.842
 ```
 
 The slope moves by under ₹1,000 per order: the line doesn't depend on a few big customers. If it had moved a lot, you'd report both and say why.
@@ -1369,7 +1458,10 @@ print(deliveries.groupby("is_kolkata")["delivery_days"].mean().round(2).to_strin
 ```
 
 ```
-TODO
+intercept 4.09 days, slope 2.25 days
+is_kolkata
+0    4.09
+1    6.33
 ```
 
 - `(deliveries["branch"] == "Kolkata")` is True or False for every order; `.astype(int)` turns those into 1 and 0.
@@ -1385,7 +1477,7 @@ print(f"t from the regression {t_from_line:.2f}; t from the t-test {t_test.stati
 ```
 
 ```
-TODO
+t from the regression 73.07; t from the t-test 73.07
 ```
 
 `stats.ttest_ind` without `equal_var=False` is the ordinary t-test, which assumes equal spreads, just as simple regression does. Chapter 30 uses this idea to put categories such as branch or segment into a regression.

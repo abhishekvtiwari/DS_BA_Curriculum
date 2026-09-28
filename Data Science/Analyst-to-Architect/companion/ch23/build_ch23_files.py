@@ -142,15 +142,42 @@ ltv = new_cust_annual_revenue * LTV_MARGIN * LTV_HORIZON_YEARS
 avg_cac = mk.marketing_spend.sum() / mk.new_customers.sum()
 nps = 34   # invented: % promoters (9-10) minus % detractors (0-6) from a quarterly survey
 
-md = f"""# Riverstone Supplies — FY2025 financial statements
+# ---- 7. quarter-end working capital (invented balances, real sales) -------------------------------
+# The chapter's "In the real world" story: DSO and DIO drifted up during 2025 while the year-end
+# snapshot looked normal. Each quarter-end balance is set from a target number of days on the twelve
+# months of sales (or cost of sales) up to that date; the December balances are the balance sheet's.
+TARGET_DAYS = {  # quarter end: (DSO, DIO, DPO)
+    "2025-03-31": (36, 52, 37), "2025-06-30": (38, 53, 37),
+    "2025-09-30": (40, 54, 38), "2025-12-31": (DSO, DIO, DPO)}
+rows = []
+for q_end, (dso_t, dio_t, dpo_t) in TARGET_DAYS.items():
+    end = pd.Timestamp(q_end) + pd.Timedelta(days=1)
+    ttm = not_cancelled[(not_cancelled.order_date >= end - pd.DateOffset(years=1)) & (not_cancelled.order_date < end)]
+    ttm_rev, ttm_cogs = round(ttm.net_revenue.sum()), round(ttm.cost.sum())
+    if q_end == "2025-12-31":
+        rec, inv, pay = receivables, inventory, payables
+    else:
+        rec, inv, pay = round(ttm_rev / 365 * dso_t), round(ttm_cogs / 365 * dio_t), round(ttm_cogs / 365 * dpo_t)
+    d_so, d_io, d_po = rec / ttm_rev * 365, inv / ttm_cogs * 365, pay / ttm_cogs * 365
+    rows.append({"quarter_end": q_end, "revenue_12m": ttm_rev, "cogs_12m": ttm_cogs, "receivables": rec,
+                 "inventory": inv, "payables": pay, "dso": round(d_so, 1), "dio": round(d_io, 1),
+                 "dpo": round(d_po, 1), "ccc": round(d_io + d_so - d_po, 1)})
+wcq = pd.DataFrame(rows)
+wcq.to_csv(HERE / "working_capital_quarters_2025.csv", index=False)
+wcq_md = "".join(f"| {r.quarter_end} | {r.receivables:,} | {r.inventory:,} | {r.payables:,} | {r.dso:.0f} | {r.dio:.0f} | {r.dpo:.0f} | {r.ccc:.0f} |\n" for r in wcq.itertuples())
 
-*Companion data for Chapter 23. Revenue, cost of goods sold, and gross margin come directly from the
-real order data (`companion/full/`) and match every earlier chapter exactly. Everything from operating
-expenses downward — the P&L below gross profit, the whole balance sheet, the cash flow statement, and
-all marketing and NPS figures — is invented for this chapter, sized to a plausible mid-size B2B
-distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplies is fictional.*
+md = f"""# Riverstone Supplies — financial statements for calendar 2025
 
-## Profit & loss, FY2025 (₹)
+*Companion data for Chapter 23. The statements cover calendar 2025, 1 January to 31 December, so that
+they line up with the order data; they are not India's April–March financial year from Chapter 16.
+Revenue, cost of goods sold, gross margin, and the customer counts come directly from the real order
+data (`companion/full/`) and match Chapter 16's 2025 figures. Everything from operating expenses
+downward (the P&L below gross profit, the whole balance sheet, the cash flow statement, the quarter-end
+balances) and all marketing and NPS figures are invented for this chapter, sized to a plausible
+mid-size B2B manufacturer and distributor, and built by a seeded script in this folder (seed 202301).
+Riverstone Supplies is fictional.*
+
+## Profit & loss, calendar 2025 (₹)
 
 | Line | ₹ | % of revenue |
 |---|---:|---:|
@@ -167,7 +194,7 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | Tax (25%) | ({tax:,}) | {tax/REVENUE*100:.1f}% |
 | **Profit after tax (net profit)** | **{pat:,}** | **{pat/REVENUE*100:.1f}%** |
 
-## Balance sheet, 31 March 2026 (year-end, ₹)
+## Balance sheet, 31 December 2025 (year-end, ₹)
 
 | Assets | ₹ | | Liabilities & equity | ₹ |
 |---|---:|---|---|---:|
@@ -181,9 +208,16 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | **Total assets** | **{total_assets:,}** | | **Total liabilities & equity** | **{total_assets:,}** |
 
 **Working capital** = current assets − current liabilities = ₹{working_capital:,}
-**Cash conversion cycle** = DIO ({DIO}d) + DSO ({DSO}d) − DPO ({DPO}d) = **{cash_conversion_cycle} days**
+**Liabilities-to-equity** = total liabilities ÷ equity = {total_liabilities/equity:.2f}
 
-## Cash flow statement, FY2025 (₹, indirect method)
+**Days on the cycle** (year-end balances stand in for the year's averages):
+
+- DIO = inventory ÷ COGS × 365 = {inventory:,} ÷ {COGS:,} × 365 = {inventory/COGS*365:.1f} days
+- DSO = receivables ÷ revenue × 365 = {receivables:,} ÷ {REVENUE:,} × 365 = {receivables/REVENUE*365:.1f} days
+- DPO = payables ÷ COGS × 365 = {payables:,} ÷ {COGS:,} × 365 = {payables/COGS*365:.1f} days
+- **Cash conversion cycle** = DIO + DSO − DPO = {DIO} + {DSO} − {DPO} = **{cash_conversion_cycle} days**
+
+## Cash flow statement, calendar 2025 (₹, indirect method)
 
 | Line | ₹ |
 |---|---:|
@@ -203,7 +237,7 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | Cash, opening | {cash_opening:,} |
 | Cash, closing | {cash:,} |
 
-## Customer and marketing metrics, FY2025
+## Customer and marketing metrics, 2025
 
 | Metric | Value |
 |---|---:|
@@ -221,12 +255,20 @@ distributor and built by `build_ch23_files.py` (seed 202301). Riverstone Supplie
 | LTV, naive formula (revenue × margin × 1/churn) | ₹{ltv_naive:,.0f} |
 | **LTV, 5-year-capped (recommended)** | **₹{ltv:,.0f}** |
 | 2025 marketing spend | ₹{mk.marketing_spend.sum():,} |
-| 2025 new customers (marketing-attributed) | {mk.new_customers.sum():,} |
+| 2025 new customers (the count CAC divides by) | {mk.new_customers.sum():,} |
 | **Customer acquisition cost (CAC)** | **₹{avg_cac:,.0f}** |
 | **LTV : CAC** | **{ltv/avg_cac:.1f} : 1** |
 | Net Promoter Score (quarterly survey, invented) | {nps:+d} |
-"""
-(HERE / "financials_fy2025.md").write_text(md, encoding="utf-8")
+
+## Quarter-end working capital, 2025 (invented balances)
+
+Each ratio uses the quarter-end balance and the twelve months of sales (DSO) or cost of sales (DIO, DPO)
+up to that date. The 31 December row is the balance sheet above.
+
+| Quarter end | Receivables | Inventory | Payables | DSO | DIO | DPO | CCC |
+|---|---:|---:|---:|---:|---:|---:|---:|
+{wcq_md}"""
+(HERE / "financials_2025.md").write_text(md, encoding="utf-8")
 
 print(f"Revenue {REVENUE:,}  COGS {COGS:,}  Gross margin {GROSS_MARGIN*100:.1f}%")
 print(f"EBIT {ebit:,} ({ebit/REVENUE*100:.1f}%)  PAT {pat:,} ({pat/REVENUE*100:.1f}%)")
@@ -234,3 +276,5 @@ print(f"Total assets {total_assets:,}  Equity {equity:,}  Working capital {worki
 print(f"CCC {cash_conversion_cycle}d  Retention {retention_rate*100:.1f}%  LTV:CAC {ltv/avg_cac:.1f}")
 print(f"new-customer annual revenue {new_cust_annual_revenue:,.0f}  all-customer annual revenue {avg_annual_revenue_per_customer:,.0f}")
 print(f"naive LTV (1/churn = {avg_customer_life_years_naive:.1f}y): {ltv_naive:,.0f}  |  5-year-capped LTV: {ltv:,.0f}  |  LTV:CAC (capped) {ltv/avg_cac:.1f}")
+print(f"new customers {len(new_2025):,} (marketing file sums to {mk.new_customers.sum():,})  CAC {avg_cac:,.0f}")
+print(wcq.to_string(index=False))
