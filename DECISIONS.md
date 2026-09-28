@@ -106,5 +106,6 @@ List any single finding you want handled differently from its theme:
 | Finding | Decision | Notes |
 |---|---|---|
 | RJ-* (Reader's Journey rows) | Approve | Abhishek, 28 Sep. The 64 new RJ rows are approved; the 66 duplicates are recorded against their originals and not added twice. |
-| Reading order | chapter-map.md | Abhishek, 28 Sep: follow `planning/chapter-map.md`. Findings that assume a different order are held `Open` and listed under "Questions for Abhishek"; nothing is guessed. |
+| Reading order | chapter-map.md, with D1 kept | Abhishek, 28 Sep: follow `planning/chapter-map.md`, but keep D1 and the move of Python out of Ch 14/15 ("d1 keep them"). Part II: 10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20–27. Part III: 28, 34, 29, 32, 33, 30, 31. Findings that assume another order stay `Open`. |
+| Renumbering Parts II and III | Approve | Abhishek, 28 Sep ("Renumbering yes"): chapter numbers follow the reading order. Done in the final pass with D2 and the cross-reference pass; map in `CLAUDE.md` §3. |
 | Any finding that assumes the sequence-map order | Open (held) | Listed in `review/reading-order-conflicts.md` and in the setup PR. |

@@ -70,9 +70,10 @@ output, not source: edit the Markdown and re-render.
 
 ## Two things to know before editing a chapter
 
-- **Reading order is not chapter order.** `planning/chapter-map.md` is the authority, and
-  `review/sequence-map.md` holds the approved whole-book order. In Part II the reading order runs
-  10, 11, 19, 12, 13, 17, 18, 14, 15, 16, 20, then 21 to 27; Part III runs 28, 34, 29, 32, 33, 30, 31.
+- **Reading order is not chapter order (yet).** Approved 28 Sep 2026: Part II reads 10, 11, 19, 12,
+  13, 14, 15, 16, 17, 18, 20, then 21 to 27; Part III reads 28, 34, 29, 32, 33, 30, 31. Parts II and
+  III are renumbered to that order in the final pass (map in `CLAUDE.md` §3); until then the files
+  keep their current numbers.
 - **Chapter output is verified, not typed.** Printed results come from running the companion code.
   Change the code and re-run it rather than editing a number in the prose, then use `checks/`.
 

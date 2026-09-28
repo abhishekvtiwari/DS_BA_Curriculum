@@ -2,25 +2,25 @@
 
 Written for the setup PR, 28 September 2026.
 
-**Abhishek's answer (28 Sep): follow P, `planning/chapter-map.md`.** So the findings below that hold
-only under S, or whose fix wording assumes S, are **held `Open`** in `tracker/register.csv` (39
-rows, each with a note), and listed under "Questions for Abhishek". So are 17.31, 18.44 and 20.22,
-whose right number depends on renumbering. Findings valid under P are approved.
+**Abhishek's answers (28 Sep).**
+1. Follow P, `planning/chapter-map.md`.
+2. **Keep D1 and the move of Python out of Ch 14/15** ("d1 keep them"). So the approved order is P with one change: Ch 14–16 come before Python (17–18).
+3. **Renumber Parts II and III** to the reading order ("Renumbering yes"), in the final pass.
 
-Still open, because they follow from choosing P:
-- **D1 and the approved move of Python out of Ch 14/15** (`CLAUDE.md` §3) assume S. Under P, Python
-  (17–18) comes before 14–16, so pandas there is legitimate. They are marked "in question" and not
-  applied.
-- **Renumbering.** P says the coordinator renumbers Parts II and III at assembly (new numbers 12 =
-  old 19, 13 = old 12, …). D6 says no chapter numbers change. Are Parts II/III renumbered to match
-  the reading order, or do the numbers stay with the reading order differing from them?
+| | Approved order |
+|---|---|
+| Part II | 10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20, 21–27 |
+| Part III | 28, 34, 29, 32, 33, 30, 31 |
 
-The two sources:
+| Old | 10 | 11 | 19 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20–27 | 28 | 34 | 29 | 32 | 33 | 30 | 31 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **New** | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20–27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 |
 
-- **P**: `Data Science/Analyst-to-Architect/planning/chapter-map.md`, "Reading order decided 17
-  September 2026". `README.md` ("Two things to know") repeats it.
-- **S**: `review/sequence-map.md`, the approved whole-book order of 25 September. `CLAUDE.md` §3
-  (D1, D2, the Python move) builds on it.
+What that did to the 46 findings below (register notes carry the reason for each):
+- **Approved (19):** valid under the approved order because 14–16 come first: 14.1, 14.2, 14.22, 14.23, 15.1, 15.3, 15.10, 16.2, 16.3, 16.4, 18.3, 18.10, 18.11, 18.24, 18.27, 18.43, 18.45, 18.49, 26.33.
+- **Held, recommend Reject (20):** they assume Ch 19 comes after Python (19.1, 19.10, 19.15, 19.16, 19.21, 19.35) or Ch 34 after 29–33 (29.1, 29.2, 32.1, 32.17, 32.24, 33.21, 34.2, 34.12, 34.15, 34.19, 34.20), or they would undo the renumbering (17.31, 18.44, 20.22).
+- **Held, newly (6):** approved earlier but written for P without D1: RJ-S1-1, RJ-S1-5, RJ-S2-10, RJ-S3-9, RJ-S3-10, 14.32.
+- **Unchanged:** RJ-S1-11 and 0.1 stay approved.
 
 ## 1. The orders themselves
 
