@@ -313,7 +313,7 @@ Be patient with the third ingredient, feedback and time. It's the one this book 
 |---|---|---|
 | Believing a timeline advertised by a course | Feeling like a failure in month three or four | Estimate from chapter hours and your real weekly hours (section 9.1) |
 | Planning with the hours you wish you had | Plans that collapse in the second week | Count last week's real hours; plan with those |
-| Studying without building | Can explain a JOIN, can't answer a question with one | Start a small project as soon as you've learned enough to begin |
+| Studying without building | Can explain a technique, can't answer a question with it | Start a small project as soon as you've learned enough to begin |
 | Rereading instead of testing yourself | Material feels familiar but won't come back without the book | Write what you remember first, then check (retrieval practice) |
 | Counting hours instead of designing practice | Many hours, little change | Use the five features of deliberate practice (section 9.4) |
 | Letting an AI assistant solve every hard step | Can read solutions, can't write them | Attempt first; use the assistant to compare and explain |
