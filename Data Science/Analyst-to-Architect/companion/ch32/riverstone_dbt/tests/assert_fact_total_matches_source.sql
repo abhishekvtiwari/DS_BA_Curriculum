@@ -1,4 +1,4 @@
--- The reconciliation from Chapter 28: the fact table must total what the source says, to the rupee.
+-- The reconciliation from Chapter 28: the fact table must total what the source says, to the paisa.
 -- A dbt test passes when it returns no rows.
 with fact as (select sum(net_revenue) as total from {{ ref('fct_sales_line') }}),
 source_total as (

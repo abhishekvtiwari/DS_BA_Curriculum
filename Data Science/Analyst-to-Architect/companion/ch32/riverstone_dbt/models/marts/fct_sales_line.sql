@@ -2,6 +2,7 @@
 select
     oi.order_item_id,
     oi.order_id,
+    o.order_date,
     to_char(o.order_date, 'YYYYMMDD')::int as date_key,
     c.customer_key,
     p.product_key,

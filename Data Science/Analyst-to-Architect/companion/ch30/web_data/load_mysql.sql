@@ -1,0 +1,1 @@
+-- MySQL: see the chapter's companion notes; the PostgreSQL script is the reference version.

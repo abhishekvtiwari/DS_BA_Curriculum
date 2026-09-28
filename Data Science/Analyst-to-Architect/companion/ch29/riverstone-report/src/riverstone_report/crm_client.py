@@ -1,6 +1,4 @@
-"""A careful client for the CRM's leads API: pagination, timeouts, retries with backoff, and rate limits."""
-from __future__ import annotations
-
+"""A careful client for the CRM leads API: pages, timeouts, retries, backoff, rate limits."""
 import logging
 import random
 import time
@@ -59,12 +57,14 @@ class CrmClient:
                     data: dict[str, Any] = response.json()
                     return data
                 if response.status_code not in RETRY_STATUSES:
-                    raise CrmApiError(f"{url} returned {response.status_code}: {response.text[:100]}")
+                    raise CrmApiError(
+                        f"{url} returned {response.status_code}: {response.text[:100]}")
                 problem = f"HTTP {response.status_code}"
             if attempt == self.max_attempts:
                 raise CrmApiError(f"{url} failed after {attempt} attempts (last: {problem})")
             wait = self._wait_time(attempt, response)
-            log.warning("attempt %d for %s failed (%s); retrying in %.3f s", attempt, params, problem, wait)
+            log.warning("attempt %d for %s failed (%s); retrying in %.3f s",
+                        attempt, params, problem, wait)
             self.sleep(wait)
         raise AssertionError("unreachable")
 

@@ -379,7 +379,9 @@ A self-join (section 12.10) gets you one level: each person and their manager. T
 
 ### The org chart, level by level
 
-The same shape as the counter. The anchor is the one person with no manager. The recursive part finds everyone whose manager was found on the previous pass, and adds 1 to the level, where the counter added 1 to `n`:
+The same shape as the counter. The anchor is the one person with no manager. The recursive part finds everyone whose manager was found on the previous pass, and adds 1 to the level, where the counter added 1 to `n`.
+
+Here is the query:
 
 ```sql
 WITH RECURSIVE org AS (
@@ -502,7 +504,9 @@ The only change is the join direction: `m.staff_id = c.manager_id` ("the person 
 
 ### Counting everyone below each manager
 
-*"How many people does each manager have under them, directly or indirectly?"* The trick is to pair every manager with every person below them. Start each person as "under themselves", then walk down:
+*"How many people does each manager have under them, directly or indirectly?"* The trick is to pair every manager with every person below them.
+
+Start each person as "under themselves", then walk down:
 
 ```sql
 WITH RECURSIVE under AS (
@@ -584,7 +588,7 @@ ORDER BY net_revenue DESC NULLS LAST;
 (5 rows)
 ```
 
-The three executives' revenue adds up to ₹4,130,969. Chapter 13's total for 2025 is ₹4,335,471, so ₹204,502 belongs to orders with no sales rep recorded (Chapter 13's data-quality check, Pattern 10, found 11 orders with no rep; 10 of them are not cancelled, and those hold the ₹204,502). The team walk is right; the gap is a data problem, and it's exactly the kind of gap you should explain before anyone else finds it. Meera Iyer isn't in the result at all: she has no `employee_id`, because a coordinator doesn't take orders. Vikram Singh has no orders recorded under his own name in 2025; his team's orders are credited to the executives who took them.
+The three executives' revenue adds up to ₹41,30,969. Chapter 13's total for 2025 is ₹43,35,471, so ₹2,04,502 belongs to orders with no sales rep recorded (Chapter 13's data-quality check, Pattern 10, found 11 orders with no rep; 10 of them are not cancelled, and those hold the ₹2,04,502). The team walk is right; the gap is a data problem, and it's exactly the kind of gap you should explain before anyone else finds it. Meera Iyer isn't in the result at all: she has no `employee_id`, because a coordinator doesn't take orders. Vikram Singh has no orders recorded under his own name in 2025; his team's orders are credited to the executives who took them.
 
 > **Watch out: a recursive CTE's column types must match.** You met this with the list of months. It bites again in the next example: if the anchor returns `quantity` as `NUMERIC(8,3)` and the recursive part multiplies it (giving plain `NUMERIC`), PostgreSQL stops with *ERROR: recursive query "explode" column 3 has type numeric(8,3) in non-recursive term but type numeric overall*. The fix is to cast the anchor's column to the wider type, `CAST(b.quantity AS NUMERIC)`. MySQL has the opposite problem: it sizes text columns from the anchor, so a path string that grows on each pass fails with a *Data too long* error unless you `CAST` it to a long enough `CHAR` in the anchor (section 28.13).
 
@@ -662,7 +666,7 @@ ORDER BY e.depth, p.part_id;
 **How it works:**
 
 - The anchor fetches the chair's direct children (depth 1).
-- The recursive part fetches each child's own children and multiplies: the frame needs 2 leg assemblies, each leg assembly needs 1.2 kg of steel tube, so through the legs one chair needs 2 × 1.2 = 2.4 kg. That's the orange row at depth 3.
+- The recursive part fetches each child's own children and multiplies: the frame needs 2 leg assemblies, each leg assembly needs 1.2 kg of steel tube, so through the legs one chair needs 2 × 1.2 = 2.4 kg. That's the steel tube row at depth 3, the shaded box in Figure 28.2.
 - Steel tube appears twice (1.0 kg directly in the frame, 2.4 kg in the legs). That's correct: it's used in two places. To buy steel, you add them: 3.4 kg per chair.
 - Assemblies appear in the list, but you don't buy them. For purchasing, keep only `part_type = 'Material'`.
 
@@ -1098,7 +1102,7 @@ ORDER BY order_date;
 (10 rows)
 ```
 
-Hand-check 26 November. The last three rows are 23, 25, and 26 November: ₹2,731 + ₹10,213 + ₹10,060 = ₹23,004. ✓ The last seven days run from 20 to 26 November, which includes the big ₹86,615 order on the 22nd: ₹86,615 + ₹2,731 + ₹10,213 + ₹10,060 = ₹109,619. ✓ On 1 December, the seven days (25 November to 1 December) include 25, 26, and 28 November and 1 December: ₹109,334. ✓
+Hand-check 26 November. The last three rows are 23, 25, and 26 November: ₹2,731 + ₹10,213 + ₹10,060 = ₹23,004. ✓ The last seven days run from 20 to 26 November, which includes the big ₹86,615 order on the 22nd: ₹86,615 + ₹2,731 + ₹10,213 + ₹10,060 = ₹1,09,619. ✓ On 1 December, the seven days (25 November to 1 December) include 25, 26, and 28 November and 1 December: ₹1,09,334. ✓
 
 This is Chapter 13's date-spine problem (Pattern 5) solved without a spine: `RANGE` with an interval measures by the calendar, so missing days take care of themselves. Because the frame begins before the query's first date, the first few rows here only see part of their window, which is why 22 November shows a single order. In a real report, start the `WHERE` six days earlier and filter the output afterwards.
 
@@ -1106,7 +1110,9 @@ This is Chapter 13's date-spine problem (Pattern 5) solved without a spine: `RAN
 
 ### Excluding the current row
 
-*"Was this month unusual compared with the other months of its quarter?"* Comparing a month with an average that includes itself dilutes the comparison. `EXCLUDE CURRENT ROW` leaves it out:
+*"Was this month unusual compared with the other months of its quarter?"* Comparing a month with an average that includes itself dilutes the comparison.
+
+`EXCLUDE CURRENT ROW` leaves the month itself out:
 
 ```sql
 WITH monthly AS (
@@ -1139,7 +1145,7 @@ ORDER BY month;
 (6 rows)
 ```
 
-September's ₹558,315 against the other two months of Q3 (₹232,692 and ₹329,282, averaging ₹280,987) shows the festive season starting in September, not October. (Check: (232,692 + 329,282) ÷ 2 = 280,987. ✓) `DATE_TRUNC('quarter', month)` works like the `'month'` version from Chapter 13: it returns the first day of the quarter, so each quarter's three months form one partition. `EXCLUDE` has four forms: `CURRENT ROW`, `GROUP` (the current row and its peers), `TIES` (the peers but not the current row), and `NO OTHERS` (the default). It is PostgreSQL only; MySQL has no `EXCLUDE` (section 28.13).
+September's ₹5,58,315 against the other two months of Q3 (₹2,32,692 and ₹3,29,282, averaging ₹2,80,987) shows the festive season starting in September, not October. (Check: (2,32,692 + 3,29,282) ÷ 2 = 2,80,987. ✓) `DATE_TRUNC('quarter', month)` works like the `'month'` version from Chapter 13: it returns the first day of the quarter, so each quarter's three months form one partition. `EXCLUDE` has four forms: `CURRENT ROW`, `GROUP` (the current row and its peers), `TIES` (the peers but not the current row), and `NO OTHERS` (the default). It is PostgreSQL only; MySQL has no `EXCLUDE` (section 28.13).
 
 ### FIRST_VALUE, LAST_VALUE, and the default frame
 
@@ -1254,7 +1260,7 @@ ORDER BY quartile;
 (4 rows)
 ```
 
-173 orders don't divide by 4, so the first band gets the extra order (44 + 43 + 43 + 43 = 173 ✓). The revenue column tells the story: the largest quarter of orders brings ₹2,115,857, almost half of the year's ₹4,335,471 (48.8%), and the smallest quarter brings 7.1%. The bands add up to the year's total: 307,338 + 716,217 + 1,196,060 + 2,115,857 = 4,335,472, one rupee more than the total because each band was rounded separately. ✓
+173 orders don't divide by 4, so the first band gets the extra order (44 + 43 + 43 + 43 = 173 ✓). The revenue column tells the story: the largest quarter of orders brings ₹21,15,857, almost half of the year's ₹43,35,471 (48.8%), and the smallest quarter brings 7.1%. The bands add up to the year's total: 3,07,338 + 7,16,217 + 11,96,060 + 21,15,857 = 43,35,472, one rupee more than the total because each band was rounded separately. ✓
 
 > **Watch out: NTILE splits by count, not by value.** If many orders have the same value, `NTILE` may put identical values into different bands, because it only cares about getting equal-sized groups. For value-based bands, compute the cut points with `PERCENTILE_CONT` and use `CASE`.
 
@@ -1372,8 +1378,8 @@ WHERE customer_id = 2718;
 ```
 
 ```
-                                          QUERY PLAN
-----------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Bitmap Heap Scan on orders (actual time=0.023..0.132 rows=40 loops=1)
    Recheck Cond: (customer_id = 2718)
    Heap Blocks: exact=40
@@ -1412,8 +1418,8 @@ WHERE customer_id = 4534;
 ```
 
 ```
-                                           QUERY PLAN
--------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Bitmap Heap Scan on orders (actual time=1.851..14.610 rows=23526 loops=1)
    Recheck Cond: (customer_id = 4534)
    Heap Blocks: exact=5170
@@ -1493,8 +1499,8 @@ WHERE o.customer_id = 2718;
 ```
 
 ```
-                                                     QUERY PLAN
---------------------------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Aggregate (actual time=0.541..0.541 rows=1 loops=1)
    ->  Nested Loop (actual time=0.050..0.468 rows=108 loops=1)
          ->  Bitmap Heap Scan on orders o (actual time=0.027..0.132 rows=40 loops=1)
@@ -1522,8 +1528,8 @@ WHERE order_id = 500000;
 ```
 
 ```
-                                             QUERY PLAN
-----------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Index Scan using idx_order_items_order_id on order_items (actual time=0.023..0.023 rows=1 loops=1)
    Index Cond: (order_id = 500000)
  Planning Time: 0.283 ms
@@ -1562,8 +1568,8 @@ WHERE order_date >= DATE '2025-12-01' AND order_date < DATE '2026-01-01';
 Without `EXPLAIN`, both return 25,078. Their plans are very different. Version A's plan:
 
 ```
-                                                        QUERY PLAN
---------------------------------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Aggregate (actual time=131.698..131.701 rows=1 loops=1)
    ->  Seq Scan on orders (actual time=123.024..130.388 rows=25078 loops=1)
          Filter: ((EXTRACT(year FROM order_date) = '2025'::numeric) AND (EXTRACT(month FROM order_date) = '12'::numeric))
@@ -1576,8 +1582,8 @@ Without `EXPLAIN`, both return 25,078. Their plans are very different. Version A
 Version B's plan:
 
 ```
-                                                QUERY PLAN
------------------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Aggregate (actual time=2.797..2.797 rows=1 loops=1)
    ->  Index Only Scan using idx_orders_order_date on orders (actual time=0.021..1.672 rows=25078 loops=1)
          Index Cond: ((order_date >= '2025-12-01'::date) AND (order_date < '2026-01-01'::date))
@@ -1602,7 +1608,7 @@ The same trap appears in many disguises. Each pair below returns the same rows, 
 | `WHERE quantity * unit_price > 50000` | often unavoidable; see *expression indexes* below |
 | `WHERE customer_name LIKE '%Hardware'` | `LIKE 'Sharma%'` can use an index; a leading `%` can't |
 
-The half-open range (`>=` the start, `<` the next start) is also the correct form for timestamps, which `BETWEEN … AND '2025-12-31'` gets wrong by missing everything after midnight on the 31st.
+The half-open range (`>=` the start, `<` the next start) is also the correct form for timestamps, which `BETWEEN … AND '2025-12-31'` gets wrong by missing everything after midnight on the 31st (section 12.6's warning).
 
 If a function in the filter is truly needed, you can index the expression itself, an **expression index**. In PostgreSQL: `CREATE INDEX idx_customers_upper_city ON customers (UPPER(city));`. MySQL (8.0.13 and later) needs an extra pair of brackets around the expression: `CREATE INDEX idx_customers_upper_city ON customers ((UPPER(city)));`. Either way, the query must then use exactly the same expression.
 
@@ -1619,8 +1625,8 @@ WHERE customer_id = 4534 AND order_date >= DATE '2025-01-01';
 ```
 
 ```
-                                           QUERY PLAN
--------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Bitmap Heap Scan on orders (actual time=10.308..16.677 rows=9301 loops=1)
    Recheck Cond: (customer_id = 4534)
    Filter: (order_date >= '2025-01-01'::date)
@@ -1643,8 +1649,8 @@ CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);
 The same `EXPLAIN` now gives:
 
 ```
-                                            QUERY PLAN
---------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Bitmap Heap Scan on orders (actual time=0.786..7.325 rows=9301 loops=1)
    Recheck Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
    Heap Blocks: exact=2047
@@ -1687,8 +1693,8 @@ WHERE customer_id = 4534 AND order_date >= DATE '2025-01-01';
 ```
 
 ```
-                                                 QUERY PLAN
-------------------------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Index Only Scan using idx_orders_customer_date_incl on orders (actual time=0.032..1.029 rows=9301 loops=1)
    Index Cond: ((customer_id = 4534) AND (order_date >= '2025-01-01'::date))
    Heap Fetches: 0
@@ -1717,8 +1723,8 @@ ORDER BY order_date;
 ```
 
 ```
-                                         QUERY PLAN
---------------------------------------------------------------------------------------------
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
  Index Scan using idx_orders_pending on orders (actual time=0.015..0.596 rows=3930 loops=1)
  Planning Time: 0.404 ms
  Execution Time: 0.746 ms
@@ -1813,7 +1819,7 @@ Chapter 12 (section 12.1) gave you the intuition: **store each fact once, and li
 
 ### The starting point: an order sheet
 
-Before Riverstone's order entry was cleaned up, someone kept a tracking sheet of January's orders like this. It's a table in the lab, built from real orders in the one-year database:
+Before Riverstone's order entry was cleaned up, someone kept a tracking sheet of January's orders like this. It's a table in the lab, built from real orders in the one-year database. Start the lab afresh. Run these two lines from your `riverstone_2025` connection, not from a lab connection, because PostgreSQL refuses to drop the database you're connected to:
 
 <!-- lab:start -->
 
@@ -1822,7 +1828,9 @@ DROP DATABASE IF EXISTS riverstone_lab;
 CREATE DATABASE riverstone_lab;
 ```
 
-Connect to `riverstone_lab` (in DBeaver, a new connection; in `psql`, `\c riverstone_lab`), then:
+If PostgreSQL answers *database "riverstone_lab" is being accessed by other users*, DBeaver still has Chapter 12's lab connection open: right-click that connection → *Disconnect*, and run the two lines again. (PostgreSQL 13 and later also accept `DROP DATABASE IF EXISTS riverstone_lab WITH (FORCE);`, which closes other connections first.)
+
+Then connect to the new database: in DBeaver, edit your lab connection (or create one) so its *Database* is `riverstone_lab`, as in section 12.13, and open an SQL editor on it. (In `psql`, the same switch is `\c riverstone_lab`.) Now build the order sheet:
 
 ```sql
 CREATE TABLE order_sheet (
@@ -1913,7 +1921,7 @@ WHERE product_id = 101;
 (1 row)
 ```
 
-(15 + 45 + 30 = 90 units. ✓) Most tables you meet in databases are already in 1NF. You'll meet 0NF data mainly in spreadsheets, form exports, and JSON, and Chapter 14 shows how to split it.
+(15 + 45 + 30 = 90 units. ✓) Most tables you meet in databases are already in 1NF. You'll meet data that breaks it (sometimes called 0NF) mainly in spreadsheets, form exports, and JSON.
 
 ### The anomalies 1NF still allows
 
@@ -2020,7 +2028,7 @@ SELECT * FROM customers_3nf ORDER BY customer_id;
 (4 rows)
 ```
 
-Now Sharma Hardware's city is stored once. The update anomaly from earlier can't happen, because there's only one row to update. (`sales_rep` has the same problem as `city`, since a rep's details depend on the rep, and exercise 9 asks you to fix it.)
+`ROW_NUMBER() OVER (ORDER BY customer)` (section 13.4) numbers the four customers 1 to 4 in name order, and the numbers become their surrogate keys. It's used here rather than an automatic identity column (section 12.13) because the rows already exist and you choose the order they're numbered in; section 28.9 uses identity columns for tables that are filled as they go. Now Sharma Hardware's city is stored once. The update anomaly from earlier can't happen, because there's only one row to update. (`sales_rep` has the same problem as `city`, since a rep's details depend on the rep, and exercise 9 asks you to fix it.)
 
 ### Proving nothing was lost
 
@@ -2049,7 +2057,7 @@ JOIN products_2nf    AS p ON p.product_id = l.product_id;
 
 <!-- lab:end -->
 
-Both ₹129,040. ✓ Check one line by hand: order 10005 is 15 × ₹430 less 5% = ₹6,127.50.
+Both ₹1,29,040. ✓ Check one line by hand: order 10005 is 15 × ₹430 less 5% = ₹6,127.50.
 
 ![Four boxes left to right: 0NF order_sheet with products packed in one cell; 1NF with one row per order line; 2NF split into orders, products, and order lines; 3NF with customers in their own table](figures/fig28-5-normalization-steps.svg)
 
@@ -2057,7 +2065,7 @@ Both ₹129,040. ✓ Check one line by hand: order 10005 is 15 × ₹430 less 5%
 
 ### Beyond 3NF, and when to stop
 
-There are stricter forms. **Boyce–Codd normal form (BCNF)** tightens 3NF for tables with several overlapping candidate keys, and fourth and fifth normal forms deal with multi-valued facts. They're worth knowing by name for interviews; in business databases, a design in 3NF is almost always in BCNF too.
+There are stricter forms. **Boyce–Codd normal form (BCNF)** tightens 3NF for tables with several overlapping candidate keys (a **candidate key** is any column, or set of columns, that could serve as the primary key), and fourth and fifth normal forms deal with multi-valued facts. They're worth knowing by name for interviews; in business databases, a design in 3NF is almost always in BCNF too.
 
 3NF is the standard target for **transactional systems** (the ERP, the CRM), where data is written constantly and must stay consistent. Reporting systems deliberately bend the rules, for speed and simplicity. That's sections 28.9 and 28.11.
 
@@ -2090,7 +2098,7 @@ If you can't write the sentence, you don't understand the table yet, and any tot
 
 ### Habit 2: test the grain, don't assume it
 
-A grain is a claim about the data, and data breaks claims. The test is a `GROUP BY` on the columns that should be unique:
+A grain is a claim about the data, and data breaks claims. The test is a `GROUP BY` on the columns that should be unique. Back in `riverstone_2025`:
 
 <!-- db: riverstone_2025 -->
 
@@ -2111,7 +2119,7 @@ No rows: each product appears at most once per order, so the grain holds. Chapte
 
 ### Habit 3: never join tables of different grains and then add
 
-Here's the trap in its most common business form. *"Show January's order lines next to January's target."* The target is monthly; the lines are daily. Join them and sum the target:
+Here's the trap in its most common business form. *"Show January's order lines next to January's target."* The target's grain is one month; the lines' grain is one order line. Join them and sum the target:
 
 ```sql
 SELECT ROUND(SUM(t.target_revenue)) AS target_summed_after_join
@@ -2128,7 +2136,7 @@ WHERE sl.order_date < DATE '2025-02-01';
 (1 row)
 ```
 
-January's target is ₹300,000, not ₹4,500,000. The join copied the one monthly target onto each of January's 15 order lines, and `SUM` added all 15 copies (15 × ₹300,000). The query ran without error and returned a believable-looking number. This is the fan-out trap from section 12.10 in a new form, and it's the reason for habit 4.
+January's target is ₹3,00,000, not ₹45,00,000. The join copied the one monthly target onto each of January's 15 order lines, and `SUM` added all 15 copies (15 × ₹3,00,000). The query ran without error and returned a believable-looking number. This is the fan-out trap from section 12.10 in a new form, and it's the reason for habit 4.
 
 ### Habit 4: bring both sides to the same grain, then join
 
@@ -2160,7 +2168,7 @@ ORDER BY m.month;
 (3 rows)
 ```
 
-January: ₹202,640 of ₹300,000 is 67.5%. ✓ Both sides now have the grain "one month", so the join can't multiply anything.
+January: ₹2,02,640 of ₹3,00,000 is 67.5%. ✓ Both sides now have the grain "one month", so the join can't multiply anything.
 
 > **Interview extra point.** When an interviewer gives you two tables and a question, say the grain of each table before you write a join: *"orders is one row per order, order_items is one row per line, so if I join them I'll aggregate the lines first."* It shows the habit that prevents the most common wrong answer, and it's the kind of move Part 8's SQL bank (Chapter 71) scores as an extra point.
 
@@ -2169,6 +2177,8 @@ January: ₹202,640 of ₹300,000 is 67.5%. ✓ Both sides now have the grain "o
 ---
 
 ## 28.9 Dimensional modeling: facts, dimensions, and the star schema
+
+Chapter 16 (section 16.3) built a star schema inside Power BI: a fact table, dimensions around it, and a date table. This section builds one in SQL, from the design method up, and adds what Power BI kept out of sight: surrogate keys, history (slowly changing dimensions), and loading. The first few ideas are a recap.
 
 Normalized tables are built for *writing*: each fact once, so updates are safe. Analysts mostly *read*, and reading a normalized database means long chains of joins, repeated in every report and often subtly wrong. **Dimensional modeling**, popularized by Ralph Kimball, organizes the same data for reading. It's how most data warehouses, Power BI models (Chapter 16), and dbt marts (Chapter 32) are laid out.
 
@@ -2228,16 +2238,37 @@ FROM generate_series(DATE '2025-01-01', DATE '2025-12-31', INTERVAL '1 day') AS 
 
 **How it works:**
 
-- `generate_series` (Chapter 13) produces every day of 2025, including days with no orders, so a report on "orders by weekday" or "days without sales" has every day to count.
-- `date_key` is a whole number like `20250315`. It's readable, sorts correctly, and joins fast. Using a meaningful number for dates is a common exception to the rule that surrogate keys carry no meaning.
-- Each descriptive column is computed once here instead of in every report: `TO_CHAR(d, 'Day')` gives the weekday name, `'YYYY-"Q"Q'` gives `2025-Q1`. Real date dimensions add fiscal year (April to March, for most Indian companies), holiday flags, and week numbers. When finance decides that the festive season starts in October, you change one table, not fifty reports.
+- **`DROP SCHEMA IF EXISTS dw CASCADE`** drops the schema *and everything in it*: `CASCADE` means "and every table inside". That makes the build safe to rerun, and it's safe here only because `dw` holds nothing but this chapter's build. Never write `CASCADE` against a schema you didn't create.
+- **`generate_series`** (Chapter 13, Pattern 5) produces every day of 2025, including days with no orders, so a report on "orders by weekday" or "days without sales" has every day to count. It returns timestamps, so `d::date` turns each one into a plain date.
+- **`date_key`** is a whole number like `20250315`: `TO_CHAR(d, 'YYYYMMDD')` writes the date as the text `'20250315'`, and `::INTEGER` turns that text into a number. It's readable, sorts correctly, and joins fast. Using a meaningful number for dates is a common exception to the rule that surrogate keys carry no meaning.
+- **`TO_CHAR(d, 'Day')`** gives the weekday name, padded with spaces to nine characters (`'Saturday '`), so **`TRIM`** removes the padding; `'Month'` works the same way.
+- **`'YYYY-"Q"Q'`**: inside a `TO_CHAR` format, text in double quotes is printed as it is, so `"Q"` prints the letter Q, and the plain `Q` is the quarter number: `2025-Q1`.
+- **`EXTRACT(ISODOW FROM d)`** numbers the weekdays Monday = 1 to Sunday = 7, so `IN (6, 7)` is true on Saturdays and Sundays.
+
+Each descriptive column is computed once here instead of in every report. Real date dimensions add fiscal year (April to March, for most Indian companies), holiday flags, and week numbers. When finance decides that the festive season starts in October, you change one table, not fifty reports. Check three rows:
+
+```sql
+SELECT *
+FROM dw.dim_date
+WHERE full_date IN ('2025-01-01', '2025-03-15', '2025-12-31')
+ORDER BY full_date;
+```
+
+```
+ date_key | full_date  | day_name  | month_start | month_name | quarter_label | is_weekend
+----------+------------+-----------+-------------+------------+---------------+------------
+ 20250101 | 2025-01-01 | Wednesday | 2025-01-01  | January    | 2025-Q1       | f
+ 20250315 | 2025-03-15 | Saturday  | 2025-03-01  | March      | 2025-Q1       | t
+ 20251231 | 2025-12-31 | Wednesday | 2025-12-01  | December   | 2025-Q4       | f
+(3 rows)
+```
 
 ### Product and sales rep dimensions
 
 <!-- build: dw -->
 ```sql
 CREATE TABLE dw.dim_product (
-    product_key   SERIAL PRIMARY KEY,
+    product_key   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     product_id    INTEGER NOT NULL UNIQUE,
     product_name  VARCHAR(100) NOT NULL,
     category      VARCHAR(30) NOT NULL
@@ -2246,7 +2277,7 @@ INSERT INTO dw.dim_product (product_id, product_name, category)
 SELECT product_id, product_name, category FROM products ORDER BY product_id;
 
 CREATE TABLE dw.dim_sales_rep (
-    sales_rep_key  SERIAL PRIMARY KEY,
+    sales_rep_key  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     employee_id    INTEGER UNIQUE,
     rep_name       VARCHAR(100) NOT NULL,
     job_title      VARCHAR(50) NOT NULL
@@ -2257,7 +2288,23 @@ INSERT INTO dw.dim_sales_rep (employee_id, rep_name, job_title)
 SELECT employee_id, employee_name, job_title FROM employees ORDER BY employee_id;
 ```
 
-Each dimension gets its own **surrogate key** (`product_key`, `sales_rep_key`), separate from the source system's id. Section 28.10 shows why that separation is essential for customers. The sales rep dimension also has a row for *"No rep recorded"*, because 11 orders have no rep (10 of them not cancelled): the fact table can then always point to a real dimension row, and reports show an honest "No rep recorded" instead of silently dropping those orders in an inner join.
+Each dimension gets its own **surrogate key** (`product_key`, `sales_rep_key`), separate from the source system's id. `INTEGER GENERATED ALWAYS AS IDENTITY` is section 12.13's automatic numbering: the database numbers the rows 1, 2, 3… as they arrive, which is why neither `INSERT` lists the key column. (You'll often see `SERIAL` in older PostgreSQL code; it's the older shorthand for the same thing.) Section 28.10 shows why a separate key is essential for customers. The sales rep dimension also has a row for *"No rep recorded"*, inserted first so it gets key 1, because 11 orders have no rep (10 of them not cancelled): the fact table can then always point to a real dimension row, and reports show an honest "No rep recorded" instead of silently dropping those orders in an inner join.
+
+```sql
+SELECT * FROM dw.dim_sales_rep ORDER BY sales_rep_key;
+```
+
+```
+ sales_rep_key | employee_id |    rep_name     |    job_title
+---------------+-------------+-----------------+-----------------
+             1 |             | No rep recorded | Unknown
+             2 |           1 | Anita Rao       | Sales Head
+             3 |           2 | Vikram Singh    | Sales Manager
+             4 |           3 | Neha Kulkarni   | Sales Executive
+             5 |           4 | Rahul Mehta     | Sales Executive
+             6 |           5 | Farah Khan      | Sales Executive
+(6 rows)
+```
 
 ### The customer dimension
 
@@ -2278,12 +2325,12 @@ ORDER BY changed_on;
 (3 rows)
 ```
 
-The dimension below keeps a separate row for each version of each customer. Section 28.10 explains the design (it's a *type 2 slowly changing dimension*); for now, read the build as "one row per customer per period in which their details stayed the same".
+The dimension keeps a separate row for each version of each customer. Section 28.10 explains the design (it's a *type 2 slowly changing dimension*); for now, read it as "one row per customer per period in which their details stayed the same". First the table:
 
 <!-- build: dw -->
 ```sql
 CREATE TABLE dw.dim_customer (
-    customer_key   SERIAL PRIMARY KEY,
+    customer_key   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_id    INTEGER NOT NULL,
     customer_name  VARCHAR(100) NOT NULL,
     city           VARCHAR(50),
@@ -2292,7 +2339,166 @@ CREATE TABLE dw.dim_customer (
     valid_to       DATE NOT NULL,
     is_current     BOOLEAN NOT NULL
 );
+```
 
+Filling it takes one long query. Build it in four steps, each run on its own and checked on the three customers who changed (2, 5, and 11), before putting it into the table.
+
+**Step 1: when could each version start?** On the signup date, and on every change date:
+
+```sql
+WITH version_starts AS (
+    SELECT customer_id, signup_date AS valid_from FROM customers
+    UNION
+    SELECT customer_id, changed_on FROM customer_changes
+)
+SELECT customer_id, valid_from
+FROM version_starts
+WHERE customer_id IN (2, 5, 11)
+ORDER BY customer_id, valid_from;
+```
+
+```
+ customer_id | valid_from
+-------------+------------
+           2 | 2024-12-15
+           2 | 2025-04-01
+           5 | 2024-12-22
+           5 | 2025-07-01
+          11 | 2025-04-09
+          11 | 2025-09-01
+(6 rows)
+```
+
+Each changed customer has two start dates: signup and the change. `UNION` (not `UNION ALL`) removes duplicates, so if a customer changed on the day they signed up, the two identical start dates would become one, not two versions of one day.
+
+**Step 2: when does each version end?** On the day the next one starts:
+
+```sql
+WITH version_starts AS (
+    SELECT customer_id, signup_date AS valid_from FROM customers
+    UNION
+    SELECT customer_id, changed_on FROM customer_changes
+),
+versions AS (
+    SELECT customer_id,
+           valid_from,
+           LEAD(valid_from, 1, DATE '9999-12-31')
+               OVER (PARTITION BY customer_id ORDER BY valid_from) AS valid_to
+    FROM version_starts
+)
+SELECT customer_id, valid_from, valid_to
+FROM versions
+WHERE customer_id IN (2, 5, 11)
+ORDER BY customer_id, valid_from;
+```
+
+```
+ customer_id | valid_from |  valid_to
+-------------+------------+------------
+           2 | 2024-12-15 | 2025-04-01
+           2 | 2025-04-01 | 9999-12-31
+           5 | 2024-12-22 | 2025-07-01
+           5 | 2025-07-01 | 9999-12-31
+          11 | 2025-04-09 | 2025-09-01
+          11 | 2025-09-01 | 9999-12-31
+(6 rows)
+```
+
+`LEAD` (section 13.5) looks at the next row of the customer's own versions. Section 13.5 used it with one argument; here it has three. The second, `1`, says how many rows ahead to look. The third, `DATE '9999-12-31'`, is the value to use when there is no next row: the latest version gets this far-future date, which means "still current".
+
+**Step 3: which city was in effect?** For each version, find the latest city change on or before its start. Try it by hand for Metro Mart (customer 5), whose city changed from Thane to Mumbai on 1 July 2025:
+
+```sql
+SELECT
+    (SELECT ch.new_value FROM customer_changes AS ch
+     WHERE ch.customer_id = 5 AND ch.column_name = 'city'
+       AND ch.changed_on <= DATE '2025-07-01'
+     ORDER BY ch.changed_on DESC LIMIT 1)          AS city_on_2025_07_01,
+    (SELECT ch.new_value FROM customer_changes AS ch
+     WHERE ch.customer_id = 5 AND ch.column_name = 'city'
+       AND ch.changed_on <= DATE '2024-12-22'
+     ORDER BY ch.changed_on DESC LIMIT 1)          AS city_on_2024_12_22,
+    (SELECT ch.old_value FROM customer_changes AS ch
+     WHERE ch.customer_id = 5 AND ch.column_name = 'city'
+     ORDER BY ch.changed_on LIMIT 1)               AS city_before_first_change;
+```
+
+```
+ city_on_2025_07_01 | city_on_2024_12_22 | city_before_first_change
+--------------------+--------------------+--------------------------
+ Mumbai             |                    | Thane
+(1 row)
+```
+
+**How it works:** each column is a scalar subquery (section 12.12), a query that returns one value.
+
+- `ORDER BY ch.changed_on DESC LIMIT 1` keeps the latest change, and `ch.changed_on <= …` keeps only changes on or before the date. Together they mean *"the latest change on or before this date"*. For the version starting 1 July 2025, that's the move itself, so its `new_value` is Mumbai.
+- For the version starting 22 December 2024 there was no change yet, so the subquery finds nothing and returns NULL.
+- For that case, the third subquery takes the *old* value of the customer's *first* change (`ORDER BY ch.changed_on`, ascending): the city before anything changed, Thane.
+- A customer who never changed has no rows in `customer_changes` at all; then the city in `customers` is right.
+
+**Step 4: put the pieces together.** `COALESCE` (section 12.7) takes the first of those three answers that isn't NULL. The same three-way fallback finds the segment:
+
+```sql
+WITH version_starts AS (
+    SELECT customer_id, signup_date AS valid_from FROM customers
+    UNION
+    SELECT customer_id, changed_on FROM customer_changes
+),
+versions AS (
+    SELECT customer_id,
+           valid_from,
+           LEAD(valid_from, 1, DATE '9999-12-31')
+               OVER (PARTITION BY customer_id ORDER BY valid_from) AS valid_to
+    FROM version_starts
+)
+SELECT v.customer_id,
+       c.customer_name,
+       COALESCE(
+           (SELECT ch.new_value FROM customer_changes AS ch
+            WHERE ch.customer_id = v.customer_id AND ch.column_name = 'city'
+              AND ch.changed_on <= v.valid_from
+            ORDER BY ch.changed_on DESC LIMIT 1),
+           (SELECT ch.old_value FROM customer_changes AS ch
+            WHERE ch.customer_id = v.customer_id AND ch.column_name = 'city'
+            ORDER BY ch.changed_on LIMIT 1),
+           c.city)                                   AS city,
+       COALESCE(
+           (SELECT ch.new_value FROM customer_changes AS ch
+            WHERE ch.customer_id = v.customer_id AND ch.column_name = 'segment'
+              AND ch.changed_on <= v.valid_from
+            ORDER BY ch.changed_on DESC LIMIT 1),
+           (SELECT ch.old_value FROM customer_changes AS ch
+            WHERE ch.customer_id = v.customer_id AND ch.column_name = 'segment'
+            ORDER BY ch.changed_on LIMIT 1),
+           c.segment)                                AS segment,
+       v.valid_from,
+       v.valid_to,
+       v.valid_to = DATE '9999-12-31'                AS is_current
+FROM versions AS v
+JOIN customers AS c ON c.customer_id = v.customer_id
+WHERE v.customer_id IN (2, 5, 11)
+ORDER BY v.customer_id, v.valid_from;
+```
+
+```
+ customer_id |   customer_name   |   city    |  segment  | valid_from |  valid_to  | is_current
+-------------+-------------------+-----------+-----------+------------+------------+------------
+           2 | Patel Kitchenware | Ahmedabad | Wholesale | 2024-12-15 | 2025-04-01 | f
+           2 | Patel Kitchenware | Ahmedabad | Retail    | 2025-04-01 | 9999-12-31 | t
+           5 | Metro Mart        | Thane     | Retail    | 2024-12-22 | 2025-07-01 | f
+           5 | Metro Mart        | Mumbai    | Retail    | 2025-07-01 | 9999-12-31 | t
+          11 | Harbour Traders   | Kochi     | Retail    | 2025-04-09 | 2025-09-01 | f
+          11 | Harbour Traders   | Kochi     | Wholesale | 2025-09-01 | 9999-12-31 | t
+(6 rows)
+```
+
+Patel Kitchenware is Wholesale until 1 April 2025 and Retail from then on; Metro Mart is in Thane until 1 July. The last column is new: **`v.valid_to = DATE '9999-12-31' AS is_current`**. A comparison is itself a value, true or false, so it can be a column: true for the version that hasn't ended.
+
+**Step 5: load the table.** `INSERT INTO … (columns)` can take any query, including one that starts with `WITH`. Drop the test filter and insert every customer's versions:
+
+<!-- build: dw -->
+```sql
 INSERT INTO dw.dim_customer
     (customer_id, customer_name, city, segment, valid_from, valid_to, is_current)
 WITH version_starts AS (
@@ -2335,11 +2541,7 @@ JOIN customers AS c ON c.customer_id = v.customer_id
 ORDER BY v.customer_id, v.valid_from;
 ```
 
-**How it works:**
-
-- `version_starts` lists the dates on which each customer's details could begin: their signup date, plus every change date.
-- `versions` uses `LEAD` (section 13.5) to end each version the day the next one starts. The last version gets the far-future end date `9999-12-31`, meaning "still current".
-- For each version, the subqueries find the city (and segment) in effect: the new value of the latest change on or before the version's start; if there wasn't one yet, the *old* value of the first change; and if there were never any changes, the current value from `customers`.
+`customer_key` isn't listed, so the identity column numbers the rows in the order they arrive, customer by customer and oldest version first.
 
 ### The fact table
 
@@ -2443,7 +2645,7 @@ SELECT (SELECT ROUND(SUM(net_revenue)) FROM sales_lines)        AS view_total,
 (1 row)
 ```
 
-₹4,335,471 and 326 lines in both. ✓ If any order line had failed to find a customer version (a gap between one version's end and the next one's start, for instance), the inner join would have dropped it and the fact total would be lower. This one query catches that.
+₹43,35,471 and 326 lines in both. ✓ If any order line had failed to find a customer version (a gap between one version's end and the next one's start, for instance), the inner join would have dropped it and the fact total would be lower. This one query catches that.
 
 ### Querying the star
 
@@ -2478,7 +2680,7 @@ ORDER BY d.quarter_label, c.segment;
 (12 rows)
 ```
 
-No `DATE_TRUNC`, no `CASE`, no joins through orders to reach customers. The quarters add up to the year: Q4 alone is ₹1,754,302 (435,551 + 562,000 + 756,751), 40.5% of the total, which matches Chapter 13's festive-season finding.
+No `DATE_TRUNC`, no `CASE`, no joins through orders to reach customers. The quarters add up to the year: Q4 alone is ₹17,54,302 (4,35,551 + 5,62,000 + 7,56,751), 40.5% of the total, which matches Chapter 13's festive-season finding.
 
 ### Star or snowflake?
 
@@ -2492,7 +2694,7 @@ In a star schema, each dimension is one wide table, even if that repeats values:
 | Easier for BI tools and business users | yes | no |
 | Typical use | most warehouses and Power BI models | very large dimensions with many shared levels |
 
-Dimension tables are small (Riverstone's biggest has 27 rows; a large company's customer dimension might have a few million), so the repetition costs little, and the simpler joins help everyone who writes reports. **Default to a star.** Power BI's documentation recommends star schemas for its models, and Chapter 16 builds on this one.
+Dimension tables are small (Riverstone's biggest has 27 rows; a large company's customer dimension might have a few million), so the repetition costs little, and the simpler joins help everyone who writes reports. **Default to a star.** Power BI's documentation recommends star schemas for its models, which is why Chapter 16's model looked like this one.
 
 ### Other kinds of fact tables
 
@@ -2509,7 +2711,7 @@ And one more design term you'll hear: **conformed dimensions** are dimensions sh
 
 Customers move, get reclassified, change their names. Products move between categories. Sales reps change teams. Dimensions change slowly (compared with facts, which arrive every minute), and how you handle those changes decides whether last year's reports still say what they said last year. The standard catalog of techniques is called **slowly changing dimension (SCD) types**. Three matter in practice.
 
-To see each one clearly, go back to the lab and use the example from section 12.1: suppose Sharma Hardware moves from Mumbai to Thane, effective 1 April 2026. A nightly extract from the ERP (`customer_extract`) brings the new city, along with a brand-new customer, Coastal Foods.
+To see each one clearly, go back to the lab and use the example from section 12.1: suppose Sharma Hardware moves from Mumbai to Thane, effective 1 April 2026. A nightly extract from the ERP (`customer_extract`) brings the new city, along with a customer the lab's small dimension doesn't hold yet, Coastal Foods. (The ids are the `customer_id`s from `riverstone_2025`: Sharma Hardware 1, Green Leaf Hotels 3, Coastal Foods 4. They are not the surrogate keys `customers_3nf` gave in section 28.7.)
 
 <!-- lab:start -->
 
@@ -2574,7 +2776,7 @@ SELECT * FROM dim_customer_t1 ORDER BY customer_id;
 
 ```sql
 CREATE TABLE dim_customer_t2 (
-    customer_key  SERIAL PRIMARY KEY,
+    customer_key  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_id   INTEGER NOT NULL,
     customer      VARCHAR(100) NOT NULL,
     city          VARCHAR(50),
@@ -2605,7 +2807,7 @@ BEGIN;
 
 -- step 1: close the current version of customers whose details changed
 UPDATE dim_customer_t2 AS d
-SET valid_to = DATE '2026-03-31',
+SET valid_to = DATE '2026-04-01',
     is_current = FALSE
 FROM customer_extract AS x
 WHERE d.customer_id = x.customer_id
@@ -2630,20 +2832,20 @@ ORDER BY customer_id, valid_from;
 ```
  customer_key | customer_id |     customer      |  city   | valid_from |  valid_to  | is_current
 --------------+-------------+-------------------+---------+------------+------------+------------
-            1 |           1 | Sharma Hardware   | Mumbai  | 2024-11-04 | 2026-03-31 | f
+            1 |           1 | Sharma Hardware   | Mumbai  | 2024-11-04 | 2026-04-01 | f
             3 |           1 | Sharma Hardware   | Thane   | 2026-04-01 | 9999-12-31 | t
             2 |           3 | Green Leaf Hotels | Pune    | 2024-09-08 | 9999-12-31 | t
             4 |           4 | Coastal Foods     | Chennai | 2026-04-01 | 9999-12-31 | t
 (4 rows)
 ```
 
-**How it works:** step 1 closes Sharma Hardware's Mumbai version. Green Leaf Hotels didn't change, so it's left alone. Step 2 then looks for extract rows with no current version: that's Sharma Hardware (whose current version step 1 closed) and Coastal Foods (brand new). Both get a new row. Green Leaf still has its current row, so the `LEFT JOIN … IS NULL` skips it.
+**How it works:** step 1 closes Sharma Hardware's Mumbai version. Its `valid_to` is set to 1 April 2026, the day the new version starts: with half-open periods, `valid_to` is the first day the version is *no longer* true, so the Mumbai version covers everything up to and including 31 March. `UPDATE … FROM` (section 12.13's dialect table) lets the `UPDATE` read a second table, here the extract. Green Leaf Hotels didn't change, so it's left alone. Step 2 then looks for extract rows with no current version: that's Sharma Hardware (whose current version step 1 closed) and Coastal Foods (new to this dimension). Both get a new row. Green Leaf still has its current row, so the `LEFT JOIN … IS NULL` skips it.
 
 > **Simplification note.** This version compares two columns and hard-codes the dates. A production load compares every tracked column (often by comparing a hash of them), takes the dates from the extract, handles customers deleted from the source, and runs as a scheduled job. Chapter 32 shows dbt's *snapshots*, which implement type 2 this way from a short configuration.
 
 ### Joining facts to a type 2 dimension
 
-Three orders: one before the move, two after.
+Four orders: two before the move (one of them on 31 March, the last day in Mumbai), and two after.
 
 ```sql
 CREATE TABLE fact_sales (
@@ -2655,8 +2857,9 @@ CREATE TABLE fact_sales (
 
 INSERT INTO fact_sales VALUES
 (20001, '2026-03-18', 1, 42000),
-(20002, '2026-04-09', 1, 35500),
-(20003, '2026-04-10', 3, 18000);
+(20002, '2026-03-31', 1, 12500),
+(20003, '2026-04-09', 1, 35500),
+(20004, '2026-04-10', 3, 18000);
 
 SELECT f.order_id,
        f.order_date,
@@ -2675,12 +2878,13 @@ ORDER BY f.order_id;
  order_id | order_date | customer_key | city_at_order_time | net_revenue
 ----------+------------+--------------+--------------------+-------------
     20001 | 2026-03-18 |            1 | Mumbai             |    42000.00
-    20002 | 2026-04-09 |            3 | Thane              |    35500.00
-    20003 | 2026-04-10 |            2 | Pune               |    18000.00
-(3 rows)
+    20002 | 2026-03-31 |            1 | Mumbai             |    12500.00
+    20003 | 2026-04-09 |            3 | Thane              |    35500.00
+    20004 | 2026-04-10 |            2 | Pune               |    18000.00
+(4 rows)
 ```
 
-The March order belongs to Mumbai; the April order to Thane. This is a **point-in-time join**. In a warehouse you do it once, when loading facts, and store the `customer_key`, as `dw.fact_sales_line` did.
+The March orders belong to Mumbai, including the one on 31 March, the last day of the Mumbai version; the April order belongs to Thane. This is a **point-in-time join**. Had step 1 stored 31 March as `valid_to`, order 20002 would match neither version (31 March is not *before* 31 March), and the inner join would silently drop it. In a warehouse you do it once, when loading facts, and store the `customer_key`, as `dw.fact_sales_line` did.
 
 Now the trap. Join on the business key alone, forgetting the dates:
 
@@ -2695,13 +2899,13 @@ ORDER BY d.city;
 ```
   city  | net_revenue
 --------+-------------
- Mumbai |    77500.00
+ Mumbai |    90000.00
  Pune   |    18000.00
- Thane  |    77500.00
+ Thane  |    90000.00
 (3 rows)
 ```
 
-Total revenue should be ₹95,500. This shows ₹173,000. Each of Sharma Hardware's two orders matched both versions, so ₹77,500 (₹42,000 + ₹35,500) was counted in Mumbai *and* in Thane. It's the fan-out trap again: a type 2 dimension's grain is *one customer version*, not *one customer*, and joining on `customer_id` alone ignores that.
+Total revenue should be ₹1,08,000. This shows ₹1,98,000. Each of Sharma Hardware's three orders matched both versions, so ₹90,000 (₹42,000 + ₹12,500 + ₹35,500) was counted in Mumbai *and* in Thane. It's the fan-out trap again: a type 2 dimension's grain is *one customer version*, not *one customer*, and joining on `customer_id` alone ignores that.
 
 ### Type 3: add a "previous" column
 
@@ -2788,7 +2992,7 @@ ORDER BY w.segment;
 (3 rows)
 ```
 
-**Reading it.** Retail's 2025 revenue is ₹1,573,615 as it was, or ₹1,488,774 if you re-label history with today's segments: ₹84,842 apart. Reconcile the difference by hand from the monthly figures: Patel Kitchenware's orders before 1 April (₹2,900 in January and ₹35,138 in March, ₹38,038) move *into* Retail, and Harbour Traders' orders from April to August (₹122,880) move *out*. ₹38,038 − ₹122,880 = −₹84,842. ✓ Both columns total ₹4,335,471.
+**Reading it.** Retail's 2025 revenue is ₹15,73,615 as it was, or ₹14,88,774 if you re-label history with today's segments: ₹84,842 apart. Reconcile the difference by hand from the monthly figures: Patel Kitchenware's orders before 1 April (₹2,900 in January and ₹35,138 in March, ₹38,038) move *into* Retail, and Harbour Traders' orders from April to August (₹1,22,880) move *out*. ₹38,038 − ₹1,22,880 = −₹84,842. ✓ Both columns total ₹43,35,471.
 
 Neither column is wrong. They answer different questions: *"How did the Retail team's customers perform at the time?"* versus *"How much have the customers who are Retail today bought?"* A type 1 dimension can only give the second answer, and it would give it without telling anyone. **What to tell Anita:** say which view a report uses, in its title.
 
@@ -2800,11 +3004,11 @@ Neither column is wrong. They answer different questions: *"How did the Retail t
 
 ### The problem: a question that reads everything
 
-*"Monthly revenue by product category, for the last three years."* On `riverstone_perf` that joins 700,070 non-cancelled orders to 1,888,466 lines and groups them into 144 rows. No index helps, because the question needs every row. Median time: 2,343 ms. For one analyst once a month, fine. For a dashboard opened by forty people every morning, it's forty queries of two and a half seconds, each reading 140 MB, for numbers that only change once a day.
+*"Monthly revenue by product category, for the last three years."* On `riverstone_perf` that joins 700,070 non-cancelled orders to 1,888,466 lines and groups them into 144 rows. No index helps, because the question needs every row. Median time: 2,626 ms. For one analyst once a month, fine. For a dashboard opened by forty people every morning, it's forty queries of two and a half seconds, each reading 140 MB, for numbers that only change once a day.
 
 ### A summary table or materialized view
 
-A **materialized view** is a view whose result is stored as a table and refreshed on request:
+A **materialized view** is a view whose result is stored as a table and refreshed on request. Still in `riverstone_perf`:
 
 <!-- run: none -->
 ```sql
@@ -2817,7 +3021,14 @@ JOIN order_items AS oi ON oi.order_id = o.order_id
 JOIN products    AS p  ON p.product_id = oi.product_id
 WHERE o.status <> 'Cancelled'
 GROUP BY 1, 2;
+```
 
+**How it works:** the query is the live one, unchanged. `CREATE MATERIALIZED VIEW … AS` runs it once and stores its 144 rows. A plain view (section 13.2) stores only the query and runs it every time; a materialized view stores the answer. `GROUP BY 1, 2` groups by the first and second columns of the `SELECT`.
+
+The stored rows don't change when new orders arrive. Tomorrow, and every night after, one statement recomputes them:
+
+<!-- run: none -->
+```sql
 REFRESH MATERIALIZED VIEW monthly_category_revenue;
 ```
 
@@ -2846,12 +3057,12 @@ ORDER BY net_revenue DESC;
 
 The measured trade-off on the test machine:
 
-| | Time |
+| Step | Time |
 |---|---|
-| Live query (median of 5) | 2,343 ms |
-| Build the materialized view | 1,906 ms |
-| Read a year from the materialized view (median of 7) | 0.04 ms |
-| `REFRESH MATERIALIZED VIEW` | 1,926 ms |
+| Live query (median of 5) | 2,626 ms |
+| Build the materialized view | 2,321 ms |
+| Read one month (4 rows) from the materialized view (median of 7) | 0.10 ms |
+| `REFRESH MATERIALIZED VIEW` | 2,300 ms |
 
 One refresh a night costs about two seconds; every read after that is effectively free. The price is **staleness**: until the next refresh, the view doesn't show today's orders. For a monthly trend that's fine. For "orders taken in the last hour", it isn't.
 
@@ -2867,10 +3078,10 @@ One refresh a night costs about two seconds; every read after that is effectivel
 Three rules keep denormalization safe:
 
 1. **Normalize first.** The source of truth stays normalized. Denormalized copies are derived from it and can always be rebuilt.
-2. **Denormalize for a measured problem**, not in advance. The table above started with a 2.3-second query, not a guess.
+2. **Denormalize for a measured problem**, not in advance. The table above started with a 2.6-second query, not a guess.
 3. **Automate the refresh and make staleness visible.** Put "data as of 06:00" on the dashboard. A summary nobody refreshes becomes a wrong number that everyone trusts.
 
-> **Dialect note.** PostgreSQL's `REFRESH MATERIALIZED VIEW CONCURRENTLY` lets people keep reading during a refresh (it needs a unique index on the view). MySQL has no materialized views: create a summary table and refresh it with a scheduled `DELETE` and `INSERT … SELECT` in a transaction, or an event (section 28.13). Warehouses such as Snowflake and BigQuery have their own materialized views with automatic refresh (Chapter 49), and dbt builds summary tables as *models* on a schedule (Chapter 32).
+> **Dialect note.** PostgreSQL's `REFRESH MATERIALIZED VIEW CONCURRENTLY` lets people keep reading during a refresh (it needs a unique index on the view). MySQL has no materialized views: create a summary table and refresh it with a scheduled `DELETE` and `INSERT … SELECT` in a transaction, or an event (section 28.13). Warehouses such as Snowflake and BigQuery have their own materialized views with automatic refresh, and dbt builds summary tables as *models* on a schedule (Chapter 32).
 
 **Good place to stop.**
 
@@ -2958,13 +3169,52 @@ And here's the failure the `DEFAULT` rule prevents, in a migration someone forgo
 ```sql
 BEGIN;
 ALTER TABLE suppliers ADD COLUMN gst_number VARCHAR(15) NOT NULL;
+SELECT MAX(version) FROM schema_migrations;
+ROLLBACK;
 ```
 
 ```
+BEGIN
 ERROR:  column "gst_number" of relation "suppliers" contains null values
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ROLLBACK
 ```
 
-Because the migration runs inside a transaction, the error leaves nothing half-done: no column, no history row. PostgreSQL can roll back structure changes like this; MySQL can't (section 28.13), which is one more reason to test migrations on a copy first.
+**Reading it:**
+
+- The `ALTER` fails: three suppliers exist, and a new `NOT NULL` column with no default would leave them holding nothing.
+- After an error inside a transaction, PostgreSQL refuses **every** further statement until you end the transaction. Even the harmless `SELECT` fails with *current transaction is aborted*. It's a safety catch: nothing more can happen on top of a half-finished change.
+- **`ROLLBACK`** (section 12.13) ends the transaction and undoes everything since `BEGIN`. Always run it after an error inside `BEGIN`, before anything else. (`COMMIT` would also end it, but after an error PostgreSQL treats it as a rollback anyway.)
+
+Check that nothing was left behind:
+
+```sql
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'suppliers'
+ORDER BY ordinal_position;
+
+SELECT MAX(version) AS current_version FROM schema_migrations;
+```
+
+```
+    column_name
+--------------------
+ supplier_id
+ supplier_name
+ city
+ payment_terms_days
+(4 rows)
+
+ current_version
+-----------------
+               3
+(1 row)
+```
+
+No `gst_number` column, and the database is still at version 3. Because the migration ran inside a transaction, the error left nothing half-done: no column, no history row. PostgreSQL can roll back structure changes like this; MySQL can't (section 28.13), which is one more reason to test migrations on a copy first.
+
+> **Tool note: running migrations in DBeaver.** Run each migration block with *Execute script* (Alt+X), which runs the statements one after another. If the script stops on an error, the transaction is still open: run `ROLLBACK;` before anything else, or every later statement fails the same way.
 
 > **Dialect note: the same migration in MySQL.** MySQL 8.0 doesn't raise this error. It adds the column and fills the existing rows with the type's implicit default, an empty string for `VARCHAR`, even in strict mode (tested on 8.0.46). The migration "succeeds", and three suppliers now have a GST number of `''` that no validation will ever flag. Same script, same intent, a silent data problem in one database and a loud error in the other: test migrations on every database engine you deploy to.
 
@@ -3032,11 +3282,11 @@ Nobody writes those `INSERT INTO schema_migrations` lines by hand in a real proj
 |---|---|---|
 | **Flyway** (Redgate) | plain SQL files named `V1__create_suppliers.sql`, `V2__seed_suppliers.sql` | Java and SQL-first teams; widely used with PostgreSQL, MySQL, SQL Server, Oracle |
 | **Liquibase** | *changelogs* in SQL, XML, YAML, or JSON, with changesets | enterprises needing detailed change tracking across many databases |
-| **Alembic** | Python files, usually generated from SQLAlchemy models | Python applications (Chapter 29) |
+| **Alembic** | Python files, usually generated from SQLAlchemy models | Python applications that use SQLAlchemy |
 | Framework tools (Django, Rails, Laravel, Entity Framework) | code in the application's language | teams whose database belongs to one application |
 | **dbt** | not a migration tool: it rebuilds analytical models from `SELECT` statements | warehouses (Chapter 32) |
 
-Flyway shows the conventions most clearly. Versioned migration files are named with a `V`, a version number, two underscores, and a description, like `V3__add_payment_terms.sql`, and are applied once each, in version order. Flyway records each one in a **schema history table** (`flyway_schema_history`) with a **checksum** of the file, so if someone edits a file after it was applied, `flyway validate` reports the mismatch instead of silently letting environments drift. `flyway info` lists applied and pending migrations. **Repeatable migrations**, named `R__description.sql`, have no version and are re-applied whenever their checksum changes, which suits views. (Versions current at the time of writing are listed in the chapter's *Tools* section; check Redgate's documentation for the edition you use.)
+Flyway shows the conventions most clearly. Versioned migration files are named with a `V`, a version number, two underscores, and a description, like `V3__add_payment_terms.sql`, and are applied once each, in version order. Flyway records each one in a **schema history table** (`flyway_schema_history`) with a **checksum** of the file, so if someone edits a file after it was applied, `flyway validate` reports the mismatch instead of silently letting environments drift. `flyway info` lists applied and pending migrations. **Repeatable migrations**, named `R__description.sql`, have no version and are re-applied whenever their checksum changes, which suits views. (Check Redgate's documentation for the current version and edition.)
 
 A migration project for Riverstone's reporting database looks like this:
 
@@ -3052,10 +3302,72 @@ reporting-db/
 └── README.md
 ```
 
-The companion file `migrate.py` is a 50-line runner that applies a folder like this to PostgreSQL in the same way, with checksums, so you can watch the mechanism work before adopting a real tool. (It applies only `V` files; the `R__` file shows Flyway's naming.) Here it is on an empty database, run twice, and then run again after someone edited `V3` by adding a comment line:
+The companion file `migrate.py` is a runner of about 50 lines that applies a folder like this to PostgreSQL in the same way, with checksums, so you can watch the mechanism work before adopting a real tool. (It applies only `V` files; the `R__` file shows Flyway's naming.) The migration files hold **only the change**. Here's one:
 
+<!-- run: none -->
 ```
-# terminal, in companion/ch28 (create the empty database riverstone_lab_migrations first)
+# terminal, in the companion files folder
+$ cd ch28
+$ cat migrations/V3__add_payment_terms.sql
+ALTER TABLE suppliers ADD COLUMN payment_terms_days INTEGER NOT NULL DEFAULT 30;
+```
+
+(`cat` prints a file, as in section 26.0; in Windows PowerShell, `type` does the same.) There's no `BEGIN`, no `COMMIT`, and no `INSERT INTO schema_migrations`: the runner adds those around each file. Its core is four short pieces. First, find the files and sort them by number:
+
+<!-- run: none -->
+```python
+files = []
+for f in pathlib.Path(a.folder).glob('V*__*.sql'):
+    m = re.fullmatch(r'V(\d+)__(.+)\.sql', f.name)
+    if m: files.append((int(m.group(1)), m.group(2).replace('_', ' '), f))
+files.sort()
+```
+
+`glob('V*__*.sql')` lists the files whose names fit Flyway's pattern (Chapter 17 used `glob` for CSV files). `re.fullmatch` checks the whole name against a regular expression, the pattern language of section 14.2, just as pandas' `.str.fullmatch` did in Chapter 18: `(\d+)` captures the digits and `(.+)` the description, so `V3__add_payment_terms.sql` gives the number 3 and `add payment terms`. Sorting on the number puts `V10` after `V9`, where sorting the names as text would not. Second, read what the database has already run:
+
+<!-- run: none -->
+```python
+applied = {int(v): c for v, c in (line.split('|') for line in psql(
+    'SELECT version, checksum FROM schema_migrations;').splitlines() if line)}
+```
+
+`psql(…)` is a small function in the file that sends SQL to the `psql` client and returns what it prints. The result is a dictionary from version number to checksum. Third, for each file, compare checksums and stop on a mismatch:
+
+<!-- run: none -->
+```python
+    body = f.read_text()
+    checksum = hashlib.md5(body.encode()).hexdigest()
+    if version in applied:
+        if applied[version] != checksum:
+            sys.exit(f'checksum mismatch: {f.name} was changed after it was applied. Write a new migration instead.')
+        continue
+```
+
+`hashlib.md5(…).hexdigest()` turns the file's contents into a 32-character fingerprint; change one character of the file and the fingerprint changes. An applied file with the same fingerprint is skipped; one with a different fingerprint stops the run (`sys.exit`). Fourth, run a new file and its history row in one transaction:
+
+<!-- run: none -->
+```python
+    psql('BEGIN;\n' + body + f"\nINSERT INTO schema_migrations (version, description, checksum) "
+         f"VALUES ({version}, '{description}', '{checksum}');\nCOMMIT;\n")
+    print(f'applied  {f.name}'); ran += 1
+```
+
+That's exactly what you typed by hand above: `BEGIN`, the change, the history row, `COMMIT`. The `psql` function runs the client with `-v ON_ERROR_STOP=1`, so the first error stops the file, and the transaction is rolled back. The whole file, with comments, is `migrate.py` in the companion folder.
+
+**Try it.** Create an empty database for it in DBeaver: `CREATE DATABASE riverstone_lab_migrations;`. The runner connects through `psql` (section 28.1's box), which takes the user and password from two **environment variables** (section 26.4): `PGUSER` and `PGPASSWORD`. In the terminal, set them for this session (Git Bash, macOS, and Linux shown; in PowerShell write `$env:PGUSER = "postgres"`), putting your own password in place of the placeholder:
+
+<!-- run: none -->
+```
+# terminal, in companion/ch28
+$ export PGUSER=postgres
+$ export PGPASSWORD='your-postgres-password'
+```
+
+They last until you close the terminal, and they never go into a file that could be shared. If `psql` isn't on your `PATH` (section 28.1, step 3), add `--psql` and the full path to it after `migrate.py`. Now run the runner twice, then make a quiet edit to V3 and run it a third time (type `python` instead of `python3` on Windows):
+
+<!-- run: none -->
+```
+# terminal, in companion/ch28
 $ python3 migrate.py --db riverstone_lab_migrations migrations
 applied  V1__create_suppliers.sql
 applied  V2__seed_suppliers.sql
@@ -3065,11 +3377,23 @@ applied  V5__contract_drop_city.sql
 database is at version 5
 $ python3 migrate.py --db riverstone_lab_migrations migrations
 nothing to apply; database is at version 5
+$ echo "-- reviewed" >> migrations/V3__add_payment_terms.sql
+$ cat migrations/V3__add_payment_terms.sql
+ALTER TABLE suppliers ADD COLUMN payment_terms_days INTEGER NOT NULL DEFAULT 30;
+-- reviewed
 $ python3 migrate.py --db riverstone_lab_migrations migrations
 checksum mismatch: V3__add_payment_terms.sql was changed after it was applied. Write a new migration instead.
 ```
 
-The second run is the point of the history table: running migrations is **idempotent** (running it again changes nothing). The third run is the point of the checksum: a quiet edit to an applied migration would mean this database and every other copy now disagree about what "version 3" means, so the runner refuses to continue.
+**What each command does:**
+
+- **`--db riverstone_lab_migrations`** names the database; **`migrations`** is the folder of files.
+- The **first run** applies all five files in number order and reports the version reached.
+- The **second run** is the point of the history table: running migrations is **idempotent** (running it again changes nothing).
+- **`echo "-- reviewed" >> …`** adds a comment line to the end of V3. `>>` *appends* to a file; a single `>` would replace the whole file. The edit changes nothing about what V3 does, but it changes the file's fingerprint.
+- The **third run** is the point of the checksum: a quiet edit to an applied migration would mean this database and every other copy now disagree about what "version 3" means, so the runner refuses to continue.
+
+To tidy up, remove the comment line from V3 in your editor (or copy the file back from the companion download).
 
 ### Reviewing a migration
 
@@ -3086,22 +3410,32 @@ Before approving a migration, a reviewer asks:
 
 ## 28.13 The same SQL in MySQL
 
-Most of this chapter runs in MySQL 8.0 unchanged: recursive CTEs, `ROWS` and `RANGE` frames (including intervals), `FIRST_VALUE` and `LAST_VALUE`, `NTILE`, named windows, indexes, `EXPLAIN`, normalization, star schemas, and type 2 dimensions built with `UPDATE` and `INSERT`. The companion file `ch28_queries_mysql.sql` has a tested MySQL version of every query. Here's what changes.
+The ideas in this chapter all carry over to MySQL 8.0: recursive CTEs, frames, plans, indexes, normalization, grain, star schemas, and type 2 dimensions built with `UPDATE` and `INSERT`. The spellings below change. The companion file `ch28_queries_mysql.sql` has a tested MySQL version of every query. Everything here was run on MySQL 8.0.46. MySQL 8.0 reached the end of Oracle's standard support in April 2026; the current long-term-support releases are 8.4 and 9.7 (section 12.3), and the book's MySQL outputs have not been rerun on them, so check anything version-sensitive against the MySQL documentation for your release.
 
 ### Setting up
 
-Load `riverstone_2025_setup_mysql.sql`, then `ch28_2025_addons_mysql.sql`. For the large database, run `generate_riverstone_perf.py` and load `perf_data/load_mysql.sql` with `mysql --local-infile=1` (the server setting `local_infile` must be `ON`).
+Load `riverstone_2025_setup_mysql.sql`, then `ch28_2025_addons_mysql.sql`. For the large database, follow section 28.1's box "Build riverstone_perf", using its MySQL note.
 
 ### What changes
 
 | Feature | PostgreSQL | MySQL 8.0 |
 |---|---|---|
-| Recursive CTE | `WITH RECURSIVE` | same; recursion stops after 1,000 levels by default (`cte_max_recursion_depth`) |
+| Recursive CTE | `WITH RECURSIVE` | same; recursion stops after 1,000 passes by default (`cte_max_recursion_depth`, section 28.2) |
 | Column sizes in a recursive CTE | taken from both parts; types must match | taken from the anchor; `CAST` growing strings in the anchor |
 | `SEARCH` / `CYCLE` clauses | yes (14+) | no; build a path string and check it |
 | `GROUPS` frames, `EXCLUDE` | yes | no |
 | `RANGE` with interval | `INTERVAL '6 days'` | `INTERVAL 6 DAY` |
 | `PERCENTILE_CONT` | yes | no; use `NTILE` or `ROW_NUMBER` with `COUNT` |
+| First of the month | `DATE_TRUNC('month', d)` | `CAST(DATE_FORMAT(d, '%Y-%m-01') AS DATE)` |
+| Date as a number | `TO_CHAR(d, 'YYYYMMDD')` | `DATE_FORMAT(d, '%Y%m%d')` |
+| A list of dates | `generate_series(…)` | a recursive CTE (section 28.2) or a calendar table |
+| Type conversion | `x::date` or `CAST(x AS DATE)` | `CAST(x AS DATE)` only |
+| Null-safe equals | `a IS NOT DISTINCT FROM b` | `a <=> b` |
+| Null-safe "differs" | `a IS DISTINCT FROM b` | `NOT (a <=> b)` |
+| Update from another table | `UPDATE t SET … FROM other WHERE …` | `UPDATE t JOIN other ON … SET …` |
+| Automatic key | `INTEGER GENERATED ALWAYS AS IDENTITY` | `INT AUTO_INCREMENT` |
+| A schema for the warehouse | `CREATE SCHEMA dw`; `DROP SCHEMA dw CASCADE` | a schema *is* a database: `CREATE DATABASE dw`; `DROP DATABASE dw` |
+| Expression index | `ON customers (UPPER(city))` | `ON customers ((UPPER(city)))`, 8.0.13+ |
 | Foreign key indexes | not automatic | created automatically by InnoDB |
 | Partial indexes | yes | no (a functional index on a `CASE` expression can imitate one) |
 | Covering index | `INCLUDE (…)` | no `INCLUDE`; add the columns to the index key |
@@ -3159,24 +3493,9 @@ ORDER BY sort_path;
 +----------------------------+
 ```
 
-`WHERE sort_path LIKE '0100/0110%'` keeps Anita Rao's branch (staff 110 under 100). The same path string is also the loop check: in the recursive part, add `WHERE LOCATE(LPAD(s.staff_id, 4, '0'), o.sort_path) = 0`.
+`WHERE sort_path LIKE '0100/0110%'` keeps Anita Rao's branch (staff 110 under 100). The same path string is also the loop check of section 28.2's defense 2: in the recursive part, add `WHERE LOCATE(LPAD(s.staff_id, 4, '0'), o.sort_path) = 0`. `LOCATE(text, path)` returns where `text` first appears in `path`, or 0 if it doesn't, so the walk never visits an id twice; on Riverstone's clean data it still returns all 35 people.
 
-MySQL's safety limit stops runaway recursion for you:
-
-```mysql
-WITH RECURSIVE numbers AS (
-    SELECT 1 AS n
-    UNION ALL
-    SELECT n + 1 FROM numbers
-)
-SELECT COUNT(*) FROM numbers;
-```
-
-```
-ERROR 3636 (HY000): Recursive query aborted after 1001 iterations. Try increasing @@cte_max_recursion_depth to a larger value.
-```
-
-For a legitimate deep walk, raise it for your session: `SET SESSION cte_max_recursion_depth = 10000;`.
+MySQL's safety limit for runaway recursion, `cte_max_recursion_depth`, is in section 28.2's first example.
 
 ### Frames
 
@@ -3219,7 +3538,7 @@ ERROR 1235 (42000): This version of MySQL doesn't yet support 'GROUPS'
 
 ### Plans in MySQL
 
-MySQL's tree format reads the same way as PostgreSQL's, inside out. Here are the December queries from section 28.6 on `riverstone_perf` in MySQL, with an index on `order_date` (recorded output, test machine):
+MySQL's tree format reads the same way as PostgreSQL's, inside out. Here are the December queries from section 28.6 on `riverstone_perf` in MySQL, after `CREATE INDEX idx_orders_order_date ON orders (order_date);` (recorded output, test machine). `EXPLAIN ANALYZE` runs the query and prints the tree:
 
 <!-- run: none -->
 ```mysql
@@ -3229,9 +3548,9 @@ WHERE EXTRACT(YEAR FROM order_date) = 2025 AND EXTRACT(MONTH FROM order_date) = 
 ```
 
 ```
--> Aggregate: count(0)  (cost=143147 rows=1) (actual time=113..113 rows=1 loops=1)
-    -> Filter: ((extract(year from orders.order_date) = 2025) and (extract(month from orders.order_date) = 12))  (cost=71842 rows=713052) (actual time=107..112 rows=25078 loops=1)
-        -> Covering index scan on orders using idx_orders_order_date  (cost=71842 rows=713052) (actual time=0.519..69.8 rows=714285 loops=1)
+-> Aggregate: count(0)  (cost=143003 rows=1) (actual time=131..131 rows=1 loops=1)
+    -> Filter: ((extract(year from orders.order_date) = 2025) and (extract(month from orders.order_date) = 12))  (cost=71803 rows=712008) (actual time=125..129 rows=25078 loops=1)
+        -> Covering index scan on orders using idx_orders_order_date  (cost=71803 rows=712008) (actual time=0.548..81 rows=714285 loops=1)
 ```
 
 <!-- run: none -->
@@ -3243,23 +3562,74 @@ WHERE order_date >= '2025-12-01' AND order_date < '2026-01-01';
 
 ```
 -> Aggregate: count(0)  (cost=14488 rows=1) (actual time=6.74..6.74 rows=1 loops=1)
-    -> Filter: ((orders.order_date >= DATE'2025-12-01') and (orders.order_date < DATE'2026-01-01'))  (cost=9672 rows=48152) (actual time=0.31..5.64 rows=25078 loops=1)
-        -> Covering index range scan on orders using idx_orders_order_date over ('2025-12-01' <= order_date < '2026-01-01')  (cost=9672 rows=48152) (actual time=0.309..3.22 rows=25078 loops=1)
+    -> Filter: ((orders.order_date >= DATE'2025-12-01') and (orders.order_date < DATE'2026-01-01'))  (cost=9672 rows=48152) (actual time=0.308..5.62 rows=25078 loops=1)
+        -> Covering index range scan on orders using idx_orders_order_date over ('2025-12-01' <= order_date < '2026-01-01')  (cost=9672 rows=48152) (actual time=0.306..3.19 rows=25078 loops=1)
 ```
 
-The lesson transfers exactly. The `EXTRACT` version reads all 714,285 index entries (MySQL is clever enough to scan the small index instead of the table, but it still reads everything), with a median of 115 ms; the range reads only December's 25,078, with a median of 6.38 ms. And MySQL needed no index for the single-customer lookup: its automatic foreign-key index on `customer_id` gave a median of 0.08 ms straight after loading.
+The lesson transfers exactly. The `EXTRACT` version reads all 714,285 index entries (MySQL is clever enough to scan the small index instead of the table, but it still reads everything), with a median of 136 ms; the range reads only December's 25,078, with a median of 7.09 ms. And MySQL needed no index for the single-customer lookup: its automatic foreign-key index on `customer_id` gave a median of 0.17 ms straight after loading, the same as PostgreSQL's after section 28.5 added one.
 
 ### Type 1 without MERGE
 
-MySQL's upsert updates a row when the primary key already exists, and inserts it otherwise:
+MySQL's upsert updates a row when the primary key already exists, and inserts it otherwise. To try it, build section 28.10's two starting tables in your MySQL lab. The lab database from Chapter 12 may already exist; `IF NOT EXISTS` makes the first line safe either way:
 
-<!-- run: none -->
+<!-- lab:start -->
+
+<!-- run: mysql -->
+```sql
+CREATE DATABASE IF NOT EXISTS riverstone_lab;
+```
+
+Then, connected to `riverstone_lab` in MySQL, the same statements as section 28.10:
+
+```mysql
+CREATE TABLE dim_customer_t1 (
+    customer_id  INTEGER PRIMARY KEY,
+    customer     VARCHAR(100) NOT NULL,
+    city         VARCHAR(50),
+    segment      VARCHAR(30)
+);
+
+INSERT INTO dim_customer_t1 VALUES
+(1, 'Sharma Hardware',   'Mumbai', 'Retail'),
+(3, 'Green Leaf Hotels', 'Pune',   'Hospitality');
+
+CREATE TABLE customer_extract (
+    customer_id  INTEGER PRIMARY KEY,
+    customer     VARCHAR(100) NOT NULL,
+    city         VARCHAR(50),
+    segment      VARCHAR(30)
+);
+
+INSERT INTO customer_extract VALUES
+(1, 'Sharma Hardware',   'Thane',   'Retail'),
+(3, 'Green Leaf Hotels', 'Pune',    'Hospitality'),
+(4, 'Coastal Foods',     'Chennai', 'Wholesale');
+```
+
+Now the upsert, and the result:
+
 ```mysql
 INSERT INTO dim_customer_t1 (customer_id, customer, city, segment)
 SELECT customer_id, customer, city, segment
 FROM customer_extract AS x
 ON DUPLICATE KEY UPDATE city = x.city, segment = x.segment;
+
+SELECT * FROM dim_customer_t1 ORDER BY customer_id;
 ```
+
+```
++-------------+-------------------+---------+-------------+
+| customer_id | customer          | city    | segment     |
++-------------+-------------------+---------+-------------+
+|           1 | Sharma Hardware   | Thane   | Retail      |
+|           3 | Green Leaf Hotels | Pune    | Hospitality |
+|           4 | Coastal Foods     | Chennai | Wholesale   |
++-------------+-------------------+---------+-------------+
+```
+
+<!-- lab:end -->
+
+**How it works:** the `INSERT … SELECT` tries to insert every extract row. Rows 1 and 3 already exist, so their primary keys clash, and instead of an error, `ON DUPLICATE KEY UPDATE` runs: it sets the city and segment from the extract row (`x.city`). Row 4 is new and is simply inserted. The same result as `MERGE` in section 28.10. Unlike `MERGE`, it has no `WHEN MATCHED AND …` condition, so every clashing row goes through the update, changed or not.
 
 The type 2 load (close, then insert) works as in section 28.10, except that MySQL's multi-table `UPDATE` is written `UPDATE dim_customer_t2 AS d JOIN customer_extract AS x ON … SET …`. Both versions are in `ch28_queries_mysql.sql`.
 
@@ -3273,7 +3643,7 @@ The type 2 load (close, then insert) works as in section 28.10, except that MySQ
 
 | Mistake | Symptom | Fix |
 |---|---|---|
-| Recursive CTE with no loop protection | Query runs until cancelled, or MySQL stops at 1,000 levels | Add a depth limit, a path check, or PostgreSQL's `CYCLE` clause |
+| Recursive CTE with no loop protection | Query runs until cancelled, or MySQL stops after 1,000 passes | Add a depth limit, a path check, or PostgreSQL's `CYCLE` clause |
 | Anchor and recursive part with different column types | *recursive query … has type numeric(8,3) in non-recursive term* (PostgreSQL); *Data too long* (MySQL) | `CAST` the anchor's columns to the wider type |
 | Adding BOM quantities instead of multiplying them down the tree | Material needs far too low for multi-level products | Multiply each child's quantity by its parent's running quantity |
 | Walking a hierarchy with orphan rows | Some people or parts silently missing from the result | Compare the walk's row count with the table; `LEFT JOIN` to find missing managers |
@@ -3287,7 +3657,8 @@ The type 2 load (close, then insert) works as in section 28.10, except that MySQ
 | Trusting estimated costs as timings | Surprise when a "cheap" plan is slow | Use `EXPLAIN ANALYZE`; costs are relative units |
 | `EXPLAIN ANALYZE` on a `DELETE` or `UPDATE` | Rows really changed | Wrap in `BEGIN; … ROLLBACK;` |
 | Moving the charged price into the products table while normalizing | Past orders show today's prices | Separate list price (product) from price charged (order line) |
-| Joining tables of different grains, then summing | Totals several times too large, with no error (₹4,500,000 target for January) | Aggregate to a common grain first |
+| Joining tables of different grains, then summing | Totals several times too large, with no error (₹45,00,000 target for January) | Aggregate to a common grain first |
+| `valid_to` set to the last day of a version, with a half-open join | Facts dated on the last day of the old version vanish from inner joins | Store the next version's start date in `valid_to` |
 | Joining facts to a type 2 dimension on the business key | Revenue counted once per customer version | Join on the surrogate key, or on the key plus the date range |
 | Using type 1 for attributes reports are sliced by | Last year's segment or territory totals change without new data | Use type 2 and say which view the report shows |
 | Materialized view nobody refreshes | Dashboard numbers stop moving; everyone trusts them | Schedule the refresh and show "data as of" |
@@ -3307,25 +3678,25 @@ Meera Iyer takes it. She's tempted to start adding indexes, but she has seen tha
 
 | Dashboard tile | Median | What the plan shows |
 |---|---|---|
-| Customer page: one customer's revenue | 225.37 ms | `Seq Scan on order_items`: 1.9 million lines read for 108 |
-| December orders compared with last year | 100.95 ms | `Seq Scan on orders` with `EXTRACT(YEAR …)` in the filter |
-| Pending orders list | 32.26 ms | `Seq Scan`, 710,355 rows removed |
-| Three-year monthly trend by category | 2,343 ms | Hash joins over every non-cancelled line |
+| Customer page: one customer's revenue | 262.47 ms | `Seq Scan on order_items`: 1.9 million lines read for 108 |
+| December orders compared with last year | 131.33 ms | `Seq Scan on orders` with `EXTRACT(YEAR …)` in the filter |
+| Pending orders list | 44.12 ms | `Seq Scan`, 710,355 rows removed |
+| Three-year monthly trend by category | 2,626 ms | Hash joins over every non-cancelled line |
 
-The trend tile is 86.7% of the 2,702 ms total. That's the headline for Vikram: one tile is the problem, and it's a different kind of problem from the other three.
+The trend tile is 85.7% of the 3,064 ms total. That's the headline for Vikram: one tile is the problem, and it's a different kind of problem from the other three.
 
 **Second, fix each for the right reason.**
 
-- *Customer page.* `order_items.order_id` has no index. The ERP vendor's MySQL version had one automatically; the PostgreSQL reporting copy doesn't. One index: 0.30 ms.
-- *December comparison.* No index is missing: the filter can't use the one on `order_date`. She rewrites `EXTRACT(YEAR FROM order_date) = 2025 AND EXTRACT(MONTH FROM order_date) = 12` as a date range. 2.88 ms, no database change needed.
-- *Pending list.* A partial index on pending orders: 48 kB, 0.56 ms.
-- *Trend.* No index can help a question that reads three years of lines. The numbers only change once a day, so a materialized view refreshed at 06:00 turns it into a 144-row table. Refresh: about 2 seconds a night. Reading it: 0.04 ms.
+- *Customer page.* `order_items.order_id` has no index. The ERP vendor's MySQL version had one automatically; the PostgreSQL reporting copy doesn't. One index: 0.64 ms.
+- *December comparison.* No index is missing: the filter can't use the one on `order_date`. She rewrites `EXTRACT(YEAR FROM order_date) = 2025 AND EXTRACT(MONTH FROM order_date) = 12` as a date range. 2.95 ms, no database change needed.
+- *Pending list.* A partial index on pending orders: 48 kB, 0.75 ms.
+- *Trend.* No index can help a question that reads three years of lines. The numbers only change once a day, so a materialized view refreshed at 06:00 turns it into a 144-row table. Refresh: about 2 seconds a night. Reading it: 0.10 ms.
 
-**Third, check she hasn't broken anything.** The trend from the materialized view matches the live query for every month and category. She measures the cost to writes too: the reporting copy is loaded nightly, and the chapter's test showed four indexes making a large insert six times slower. Two new indexes and one partial index add seconds to a load that runs once a night, which is acceptable, and she writes that down.
+**Third, check she hasn't broken anything.** The trend from the materialized view matches the live query for every month and category. She measures the cost to writes too: the reporting copy is loaded nightly, and the chapter's test showed four indexes making a large insert about five and a half times slower. One new index and one partial index add seconds to a load that runs once a night, which is acceptable, and she writes that down.
 
-**Fourth, ship it properly.** She doesn't run anything on the reporting database herself. She writes two migrations, `V14__index_order_items_order_id.sql` (with `CREATE INDEX CONCURRENTLY`, in its own non-transactional migration) and `V15__monthly_category_revenue.sql`, and a change to the dashboard's December query. The data engineer reviews them against section 28.12's checklist and applies them on Wednesday evening. The refresh joins the nightly job, and the trend tile gets a caption: *"Data as of 06:00 today."*
+**Fourth, ship it properly.** She doesn't run anything on the reporting database herself. She writes three migrations, `V14__index_order_items_order_id.sql` and `V15__index_orders_pending.sql` (each with `CREATE INDEX CONCURRENTLY`, each in its own non-transactional migration) and `V16__monthly_category_revenue.sql`, and a change to the dashboard's December query. The data engineer reviews them against section 28.12's checklist and applies them on Wednesday evening. The refresh joins the nightly job, and the trend tile gets a caption: *"Data as of 06:00 today."*
 
-**What she tells Vikram:** *"The dashboard's four tiles took about 2.7 seconds of database time; they now take under 4 milliseconds. Three fixes were missing or misused indexes. The fourth was the trend chart re-adding three years of orders every time anyone opened it; it now reads a summary refreshed every morning, so it won't show today's orders until tomorrow. Nothing changes for anyone entering orders."*
+**What she tells Vikram:** *"The dashboard's four tiles took about 3 seconds of database time; they now take under 5 milliseconds. Three fixes were missing or misused indexes. The fourth was the trend chart re-adding three years of orders every time anyone opened it; it now reads a summary refreshed every morning, so it won't show today's orders until tomorrow. Nothing changes for anyone entering orders."*
 
 Notice what made it work. The measurement came first, so she fixed the tile that mattered most. Each fix matched its cause, rather than "add indexes until it's fast". Every change went through a reviewed migration. And the one trade-off, a trend that's a day old, was put in front of the person who owns the decision.
 
@@ -3339,13 +3710,13 @@ Notice what made it work. The measurement came first, so she fixed the tile that
 
 Versions used for this chapter, checked in September 2026:
 
-- **PostgreSQL 16** (tested on 16 on Ubuntu 24.04). Everything here works in PostgreSQL 15 and later; `CYCLE` and `SEARCH` need 14 or later, `MERGE` needs 15 or later.
-- **MySQL 8.0** (tested on 8.0.46). `EXPLAIN ANALYZE` needs 8.0.18 or later, and expression indexes need 8.0.13 or later. The features used behave the same in the 8.4 long-term-support release.
+- **PostgreSQL 15 or later** (every query was run on PostgreSQL 16 on Ubuntu 24.04; the current release is 18, section 12.3). `CYCLE` and `SEARCH` need 14 or later, `MERGE` needs 15 or later. The `psql` client comes with the server.
+- **MySQL** (every MySQL query was run on 8.0.46). MySQL 8.0 reached the end of Oracle's standard support in April 2026; install a current long-term-support release (8.4 or 9.7, section 12.3). `EXPLAIN ANALYZE` needs 8.0.18 or later, and expression indexes need 8.0.13 or later.
 - **DBeaver** for running queries. Its *Explain execution plan* button shows plans as a tree; `EXPLAIN (ANALYZE, BUFFERS)` in the editor gives the full text.
-- **Python 3.12** for `generate_riverstone_perf.py` and `migrate.py`. Both use only the standard library; `migrate.py` calls the `psql` client.
+- **Python** (Chapter 17's installation; tested on 3.11 and 3.12) for `generate_riverstone_perf.py`, `migrate.py`, and `ch28_perf.py`. All three use only the standard library; `migrate.py` and `ch28_perf.py` call the `psql` client.
 - **A plan visualizer (optional).** Several free tools turn PostgreSQL's `EXPLAIN (ANALYZE, FORMAT JSON)` output into a diagram. Paste plans only from practice data, never from a production database containing customer data.
-- **Migration tools.** Flyway (Redgate; the free edition covers versioned SQL migrations), Liquibase, and Alembic for Python projects. Check the current release and edition details on each tool's documentation site before you install. Flyway was not run for this chapter, because its installer couldn't be downloaded in the test environment; its conventions are described from Redgate's documentation, and `migrate.py` demonstrates the same mechanism.
-- **Companion files for this chapter:** `ch28_2025_addons.sql` and `ch28_2025_addons_mysql.sql` (staff, parts, BOM, customer changes), `generate_riverstone_perf.py` (the large database), `ch28_perf.py` (reruns every timing experiment), `ch28_star_schema.sql` (the `dw` schema from section 28.9), `migrate.py` with its `migrations/` folder, and `ch28_queries_mysql.sql` (every query in MySQL).
+- **Migration tools.** Flyway (Redgate; the free edition covers versioned SQL migrations), Liquibase, and Alembic for Python projects. Check the current release and edition details on each tool's documentation site before you install. This chapter describes Flyway's conventions from Redgate's documentation; `migrate.py` demonstrates the same mechanism.
+- **Companion files for this chapter:** `ch28_2025_addons.sql` and `ch28_2025_addons_mysql.sql` (staff, parts, BOM, customer changes), `generate_riverstone_perf.py` (the large database), `ch28_perf.py` (reruns every timing experiment and writes `ch28_perf_log.txt`), `ch28_star_schema.sql` (the `dw` schema from section 28.9), `migrate.py` with its `migrations/` folder, and `ch28_queries_mysql.sql` (every query in MySQL).
 
 **Option A: your own work data.** Choose a process you report on (orders, tickets, payments) and a dimension that changes over time (customer segment, account owner, region). Work on a copy, never the production database, and remove or mask personal data before you start. Keep the project on your own machine unless your employer has agreed otherwise.
 
@@ -3358,7 +3729,7 @@ Versions used for this chapter, checked in September 2026:
 3. **Build the other dimensions**, each with a surrogate key. Add an "unknown" row wherever the source has missing values.
 4. **Build the type 2 dimension** from your change history (Riverstone: `customer_changes`). Check that each business key has exactly one current row and no gaps or overlaps between versions.
 5. **Load the fact table** with a point-in-time join to the type 2 dimension.
-6. **Reconcile.** Row counts and totals against the source (Riverstone: ₹4,335,471 and 326 lines). Hand-check one fact row end to end.
+6. **Reconcile.** Row counts and totals against the source (Riverstone: ₹43,35,471 and 326 lines). Hand-check one fact row end to end.
 7. **Answer three business questions** from the star: one by date attribute, one "as it was" versus "as it is" by the changing attribute, one that uses the unknown row.
 8. **Make it repeatable.** Put the build into numbered migration files for the structures and one load script for the data, so the whole warehouse can be dropped and rebuilt from nothing.
 
@@ -3375,14 +3746,14 @@ Versions used for this chapter, checked in September 2026:
 
 ## Recap
 
-- A **recursive CTE** has an **anchor** and a **recursive part** joined by `UNION ALL`; it repeats until a pass finds nothing new. Use it for org charts, **bills of materials** (multiply quantities down the tree), and **where-used** queries. Guard against loops with a depth limit, a path, or `CYCLE`.
-- **Frames:** `ROWS` counts rows, `GROUPS` counts peer groups, `RANGE` measures values (with intervals for calendar windows). `EXCLUDE` removes the current row or its peers; the `WINDOW` clause names a window for reuse. `PERCENTILE_CONT` gives medians; `NTILE` gives equal-count bands.
+- A **recursive CTE** has an **anchor** and a **recursive part** joined by `UNION ALL`; each pass reads only the previous pass's rows, and it repeats until a pass finds nothing new. The anchor fixes the columns' types. It can build lists (a date spine) as well as walk trees. Use it for org charts, **bills of materials** (multiply quantities down the tree), and **where-used** queries. Guard against loops with a depth limit, a path, or `CYCLE` (MySQL stops at 1,000 passes); order a tree with `SEARCH DEPTH FIRST`.
+- **Frames:** `ROWS` counts rows, `GROUPS` counts peer groups, `RANGE` measures values (with intervals for calendar windows). `EXCLUDE` removes the current row or its peers; the `WINDOW` clause names a window for reuse. Windows see only the rows `WHERE` kept. `PERCENTILE_CONT` interpolates, `PERCENTILE_DISC` returns a real value; `NTILE` gives equal-count bands.
 - Tables live in **pages**. A **sequential scan** reads them all; a **B-tree index** finds rows through sorted keys. `EXPLAIN` shows the plan and estimates; `EXPLAIN ANALYZE` runs it and measures.
 - Index **foreign keys** you join on (PostgreSQL doesn't do it for you), keep filters **sargable**, order **composite** indexes equality-first, and use **covering** and **partial** indexes for important, frequent queries. Every index slows writes.
 - **Normalization:** **1NF** one value per cell; **2NF** no partial dependencies; **3NF** no transitive dependencies. It removes update, insert, and delete anomalies.
 - **Grain:** say it, test it, never join different grains and then sum, and aggregate to a common grain first.
 - **Dimensional modeling:** a **fact table** at a declared grain, surrounded by **dimensions** with **surrogate keys**, including a **date dimension**. Prefer a **star** to a **snowflake**. Facts come as transactions, periodic snapshots, or accumulating snapshots.
-- **Slowly changing dimensions:** **type 1** overwrites, **type 2** adds a version with validity dates, **type 3** keeps a previous value. Join type 2 dimensions on the surrogate key or with a **point-in-time join**.
+- **Slowly changing dimensions:** **type 1** overwrites, **type 2** adds a version with validity dates (`valid_to` = the next version's `valid_from`), **type 3** keeps a previous value. Join type 2 dimensions on the surrogate key or with a **point-in-time join**.
 - **Denormalize** only for a measured problem, from a normalized source, with an automated refresh and visible staleness. **Materialized views** trade freshness for speed.
 - **Migrations** are numbered, reviewed, never-edited scripts recorded in a history table. Change live structures with **expand and contract**.
 
@@ -3390,7 +3761,7 @@ Versions used for this chapter, checked in September 2026:
 
 ## Key terms
 
-recursive CTE · anchor · recursive part · hierarchy · bill of materials (BOM) · exploding a BOM · where-used query · `CYCLE` clause · frame type · `GROUPS` frame · peer group · `EXCLUDE` · `WINDOW` clause · ordered-set aggregate · `PERCENTILE_CONT` · `NTILE` · page · sequential scan · index · B-tree · leaf page · statistics · query plan · `EXPLAIN` · `EXPLAIN ANALYZE` · cost · heap · index scan · bitmap scan · index-only scan · nested loop join · hash join · merge join · selective · sargable · expression index · composite index · covering index · partial index · normal form · first normal form (1NF) · update anomaly · insert anomaly · delete anomaly · functional dependency · partial dependency · second normal form (2NF) · transitive dependency · third normal form (3NF) · Boyce–Codd normal form (BCNF) · surrogate key · natural (business) key · grain · dimensional modeling · fact · measure · dimension · fact table · dimension table · star schema · snowflake schema · date dimension · transaction fact table · periodic snapshot · accumulating snapshot · conformed dimension · slowly changing dimension (SCD) · type 1 · type 2 · type 3 · `MERGE` · point-in-time join · denormalization · materialized view · staleness · migration · drift · schema history table · checksum · repeatable migration · idempotent · expand and contract
+recursive CTE · `RECURSIVE` · anchor · recursive part · working table (previous pass) · `cte_max_recursion_depth` · `UNION ALL` in recursion · hierarchy · bill of materials (BOM) · exploding a BOM · where-used query · `CYCLE` clause · `SEARCH DEPTH FIRST` · frame type · `GROUPS` frame · peer group · `EXCLUDE` · `WINDOW` clause (recap) · ordered-set aggregate · `PERCENTILE_CONT` (recap) · `PERCENTILE_DISC` · `NTILE` (recap) · page · sequential scan · index · B-tree · leaf page · statistics · query plan · `EXPLAIN` · `EXPLAIN ANALYZE` · cost · heap · index scan · bitmap scan · index-only scan · nested loop join · hash join · merge join · selective · sargable · expression index · composite index · covering index · partial index · normal form · first normal form (1NF) · update anomaly · insert anomaly · delete anomaly · functional dependency · partial dependency · second normal form (2NF) · transitive dependency · third normal form (3NF) · Boyce–Codd normal form (BCNF) · candidate key · surrogate key · natural (business) key · grain (recap) · dimensional modeling · fact · measure · dimension · fact table (recap) · dimension table (recap) · star schema (recap) · snowflake schema · date dimension (recap) · transaction fact table · periodic snapshot · accumulating snapshot · conformed dimension · slowly changing dimension (SCD) · type 1 · type 2 · type 3 · `MERGE` · point-in-time join · denormalization · materialized view · staleness · migration · drift · schema history table · checksum · repeatable migration · idempotent · expand and contract
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -3453,12 +3824,11 @@ Use `riverstone_2025` (with this chapter's companion tables and the `dw` schema 
 
 21. *(MySQL.)* Write exercise 2 (people per level) in MySQL.
 22. *(MySQL.)* Write the where-used query for the fastener pack (part 306) in MySQL: which products use it, and how many packs per unit?
+23. *(MySQL.)* Build a **daily** date spine for December 2025 with a recursive CTE. Use it to show how many days the month had, how many of those days had no orders, and the month's total revenue. Check the total against Chapter 13 (section 13.6).
 
 ---
 
 ## Answers
-
-*(In the finished book these move to Appendix G.)*
 
 **1.** Start the anchor at Ramesh Patil's direct reports, not at Ramesh himself:
 
@@ -3614,7 +3984,7 @@ ORDER BY visit_order;
 (35 rows)
 ```
 
-`SEARCH DEPTH FIRST BY staff_id` adds a hidden column, here named `visit_order`, that sorts each person immediately after their manager, with siblings in `staff_id` order. `SEARCH BREADTH FIRST` would sort level by level instead, like section 28.2's first query.
+`SEARCH DEPTH FIRST BY staff_id` adds a hidden column, here named `visit_order`, that sorts each person immediately after their manager, with siblings in `staff_id` order. `SEARCH BREADTH FIRST` would sort level by level instead, like section 28.2's org chart query.
 
 **6.**
 
@@ -3958,7 +4328,7 @@ INSERT INTO customer_extract VALUES
 BEGIN;
 
 UPDATE dim_customer_t2 AS d
-SET valid_to = DATE '2026-04-30',
+SET valid_to = DATE '2026-05-01',
     is_current = FALSE
 FROM customer_extract AS x
 WHERE d.customer_id = x.customer_id
@@ -3974,25 +4344,25 @@ WHERE d.customer_id IS NULL;
 
 COMMIT;
 
-SELECT customer_key, customer_id, customer, city, segment, valid_from, valid_to, is_current
+SELECT customer_key, customer, city, segment, valid_from, valid_to, is_current
 FROM dim_customer_t2
 ORDER BY customer_id, valid_from;
 ```
 
 ```
- customer_key | customer_id |     customer      |  city   |   segment   | valid_from |  valid_to  | is_current
---------------+-------------+-------------------+---------+-------------+------------+------------+------------
-            1 |           1 | Sharma Hardware   | Mumbai  | Retail      | 2024-11-04 | 2026-03-31 | f
-            3 |           1 | Sharma Hardware   | Thane   | Retail      | 2026-04-01 | 9999-12-31 | t
-            2 |           3 | Green Leaf Hotels | Pune    | Hospitality | 2024-09-08 | 2026-04-30 | f
-            5 |           3 | Green Leaf Hotels | Pune    | Retail      | 2026-05-01 | 9999-12-31 | t
-            4 |           4 | Coastal Foods     | Chennai | Wholesale   | 2026-04-01 | 9999-12-31 | t
+ customer_key |     customer      |  city   |   segment   | valid_from |  valid_to  | is_current
+--------------+-------------------+---------+-------------+------------+------------+------------
+            1 | Sharma Hardware   | Mumbai  | Retail      | 2024-11-04 | 2026-04-01 | f
+            3 | Sharma Hardware   | Thane   | Retail      | 2026-04-01 | 9999-12-31 | t
+            2 | Green Leaf Hotels | Pune    | Hospitality | 2024-09-08 | 2026-05-01 | f
+            5 | Green Leaf Hotels | Pune    | Retail      | 2026-05-01 | 9999-12-31 | t
+            4 | Coastal Foods     | Chennai | Wholesale   | 2026-04-01 | 9999-12-31 | t
 (5 rows)
 ```
 
 <!-- lab:end -->
 
-Only Green Leaf Hotels gets a new version. Sharma Hardware and Coastal Foods are unchanged, so step 1 leaves their current rows open and step 2 finds they already have one. Running the same two steps a second time would change nothing, which is how you check a load is idempotent. (The date `2026-04-30` closes the version on the day before the new one starts; with this chapter's half-open joins, `valid_to` could equally store the start date of the next version, as `dw.dim_customer` does. Pick one convention and use it everywhere.)
+Only Green Leaf Hotels gets a new version. Sharma Hardware and Coastal Foods are unchanged, so step 1 leaves their current rows open and step 2 finds they already have one. Running the same two steps a second time would change nothing, which is how you check a load is idempotent. (`valid_to` stores the first day the version is no longer true, which is the next version's `valid_from`, as in `dw.dim_customer`. With half-open joins (`>= valid_from AND < valid_to`) there is then no gap and no overlap. If you store the last day a version was true instead (an inclusive convention, 2026-04-30), you must join with `<= valid_to`. Mixing the two drops or doubles rows at every change.)
 
 **16.** Don't add it. The filter keeps 96% of rows, so an index on `status` would be slower than scanning: the planner would ignore it, as it did for `'Delivered'` in section 28.5, and every insert and status change would pay to maintain it. If a query really needs the rare statuses (pending or cancelled), a **partial index** on those rows is the right tool. And if the delivered query is slow, the fix is elsewhere: a summary table, or not reading every delivered order.
 
@@ -4071,14 +4441,47 @@ GROUP BY p.part_name;
 
 Three packs per Garden Chair: one in the frame and one in each of the two leg assemblies (Figure 28.2). ✓ In MySQL, the `CAST` in both parts keeps the column's type fixed, so the multiplied quantities aren't cut to the anchor's precision.
 
+**23.** A recursive CTE produces the 31 days; a left join keeps the days with no sales:
+
+```mysql
+WITH RECURSIVE days AS (
+    SELECT DATE '2025-12-01' AS day
+    UNION ALL
+    SELECT day + INTERVAL 1 DAY
+    FROM days
+    WHERE day < DATE '2025-12-31'
+),
+daily_sales AS (
+    SELECT order_date, SUM(net_revenue) AS revenue
+    FROM sales_lines
+    WHERE order_date >= '2025-12-01' AND order_date < '2026-01-01'
+    GROUP BY order_date
+)
+SELECT COUNT(*)                                          AS days_in_month,
+       SUM(CASE WHEN s.order_date IS NULL THEN 1 ELSE 0 END) AS days_without_orders,
+       ROUND(SUM(COALESCE(s.revenue, 0)), 0)             AS month_revenue
+FROM days AS d
+LEFT JOIN daily_sales AS s ON s.order_date = d.day;
+```
+
+```
++---------------+---------------------+---------------+
+| days_in_month | days_without_orders | month_revenue |
++---------------+---------------------+---------------+
+|            31 |                  17 |        439824 |
++---------------+---------------------+---------------+
+```
+
+The revenue matches December in section 13.6 (₹4,39,824). ✓ Orders came in on only 14 of December's 31 days, which is normal for a B2B supplier whose customers order every few weeks, and a reason daily charts for this kind of business need a date spine: without one, the 17 empty days would simply vanish. `SUM(CASE WHEN s.order_date IS NULL THEN 1 ELSE 0 END)` counts the unmatched days. A 31-row spine needs 30 passes, well within MySQL's 1,000-pass limit, so no setting needs changing.
+
 ---
 
 ## Where this leads
 
+- **Chapter 34, The Command Line, Linux & Networking Basics,** comes next in Part 3's reading order. It takes the terminal you used for `riverstone_perf` and `migrate.py` further: `PATH`, shell scripts, servers, and the network between you and a database.
 - **Chapter 29, Python as Software, Not Scripts,** turns scripts like `migrate.py` and `generate_riverstone_perf.py` into tested, packaged code.
 - **Chapter 32, Analytics Engineering with dbt,** rebuilds this chapter's star schema as dbt models with tests, documentation, and snapshots for type 2 history, replacing hand-written load scripts.
-- **Chapter 16, Business Intelligence with Power BI,** reads a star schema like `dw` as its data model.
 - **Chapter 47, Data Quality, Observability & Contracts,** turns grain tests and reconciliations into automated daily checks.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** takes dimensional models, partitioning, and materialized views to cloud warehouses and columnar storage.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** takes the same questions of speed and cost to cloud warehouses, partitioning, and columnar storage.
 - **Chapter 62, Data Architecture Patterns,** compares warehouse modeling approaches at the architect's level.
 - **Chapter 71, SQL Question Bank,** has interview questions on recursive CTEs, indexes, query plans, normalization, grain, and slowly changing dimensions; **Chapter 77** covers data modeling in data engineering and system design interviews.

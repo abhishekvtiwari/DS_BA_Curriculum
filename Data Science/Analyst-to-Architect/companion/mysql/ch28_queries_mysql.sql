@@ -11,6 +11,25 @@
 USE riverstone_2025;
 
 -- ============ 28.2 Recursive CTEs ============
+-- counting to five
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n
+    UNION ALL
+    SELECT n + 1 FROM numbers WHERE n < 5
+)
+SELECT n FROM numbers;
+
+-- without the stop rule MySQL aborts after 1,000 passes:
+-- ERROR 3636 (HY000): Recursive query aborted after 1001 iterations. Try increasing @@cte_max_recursion_depth to a larger value.
+
+-- a list of months (MySQL keeps DATE + INTERVAL as a DATE, so no CAST is needed)
+WITH RECURSIVE months AS (
+    SELECT DATE '2025-01-01' AS month
+    UNION ALL
+    SELECT month + INTERVAL 1 MONTH FROM months WHERE month < DATE '2025-12-01'
+)
+SELECT COUNT(*) AS months, MIN(month) AS first_month, MAX(month) AS last_month FROM months;
+
 -- org chart with levels
 WITH RECURSIVE org AS (
     SELECT staff_id, staff_name, job_title, manager_id, 1 AS level
@@ -359,7 +378,7 @@ INSERT INTO dim_customer_t2 (customer_id, customer, city, segment, valid_from) V
 (1, 'Sharma Hardware', 'Mumbai', 'Retail', '2024-11-04'), (3, 'Green Leaf Hotels', 'Pune', 'Hospitality', '2024-09-08');
 START TRANSACTION;
 UPDATE dim_customer_t2 AS d JOIN customer_extract AS x ON d.customer_id = x.customer_id
-SET d.valid_to = '2026-03-31', d.is_current = FALSE
+SET d.valid_to = '2026-04-01', d.is_current = FALSE   -- valid_to = the new version's start (half-open)
 WHERE d.is_current AND (NOT (d.city <=> x.city) OR NOT (d.segment <=> x.segment));
 INSERT INTO dim_customer_t2 (customer_id, customer, city, segment, valid_from)
 SELECT x.customer_id, x.customer, x.city, x.segment, '2026-04-01'
@@ -392,6 +411,23 @@ WITH RECURSIVE org AS (
     SELECT s.staff_id, o.level + 1 FROM staff AS s JOIN org AS o ON s.manager_id = o.staff_id
 )
 SELECT level, COUNT(*) AS people FROM org GROUP BY level ORDER BY level;
+
+-- exercise 23: a daily date spine for December 2025
+WITH RECURSIVE days AS (
+    SELECT DATE '2025-12-01' AS day
+    UNION ALL
+    SELECT day + INTERVAL 1 DAY FROM days WHERE day < DATE '2025-12-31'
+),
+daily_sales AS (
+    SELECT order_date, SUM(net_revenue) AS revenue
+    FROM sales_lines
+    WHERE order_date >= '2025-12-01' AND order_date < '2026-01-01'
+    GROUP BY order_date
+)
+SELECT COUNT(*) AS days_in_month,
+       SUM(CASE WHEN s.order_date IS NULL THEN 1 ELSE 0 END) AS days_without_orders,
+       ROUND(SUM(COALESCE(s.revenue, 0)), 0) AS month_revenue
+FROM days AS d LEFT JOIN daily_sales AS s ON s.order_date = d.day;
 
 WITH RECURSIVE uses AS (
     SELECT b.parent_part_id, CAST(b.quantity AS DECIMAL(12,3)) AS qty FROM bom_lines AS b WHERE b.child_part_id = 306

@@ -1,4 +1,4 @@
--- One row per order, with names cleaned up and cancelled orders flagged.
+-- One row per order, with cancelled orders flagged.
 select
     order_id,
     customer_id,

@@ -8,6 +8,7 @@ from riverstone_report.errors import CrmApiError
 
 
 class FakeResponse:
+    """Just enough of a requests.Response for CrmClient: a status, headers, a body."""
     def __init__(self, status_code, body=None, headers=None):
         self.status_code = status_code
         self._body = body or {}
@@ -34,14 +35,16 @@ class FakeSession:
 
 
 def make_client(replies, sleeps):
+    """A CrmClient that talks to a FakeSession and records its waits instead of sleeping."""
     return CrmClient("https://crm.example", "test-key", session=FakeSession(replies),
-                     sleep=sleeps.append, rng=random.Random(1))
+                     sleep=sleeps.append, rng=random.Random(29))
 
 
 def test_follows_pages_until_next_page_is_none():
     sleeps = []
-    client = make_client([FakeResponse(200, {"items": [{"lead_id": 1}], "next_page": 2}),
-                          FakeResponse(200, {"items": [{"lead_id": 2}], "next_page": None})], sleeps)
+    replies = [FakeResponse(200, {"items": [{"lead_id": 1}], "next_page": 2}),
+               FakeResponse(200, {"items": [{"lead_id": 2}], "next_page": None})]
+    client = make_client(replies, sleeps)
     assert [lead["lead_id"] for lead in client.iter_leads()] == [1, 2]
     assert sleeps == []
 
@@ -51,7 +54,7 @@ def test_retries_server_errors_then_succeeds():
     client = make_client([FakeResponse(503), requests.ConnectionError(),
                           FakeResponse(200, {"items": [], "next_page": None})], sleeps)
     assert list(client.iter_leads()) == []
-    assert len(sleeps) == 2 and sleeps[1] > sleeps[0]
+    assert sleeps == [0.637, 1.173]
 
 
 def test_honors_retry_after_on_429():

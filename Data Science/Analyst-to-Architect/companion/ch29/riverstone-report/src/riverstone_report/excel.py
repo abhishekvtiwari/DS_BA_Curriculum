@@ -1,6 +1,4 @@
 """Writing the formatted workbook."""
-from __future__ import annotations
-
 from pathlib import Path
 
 import pandas as pd
@@ -11,14 +9,17 @@ from riverstone_report.transform import MonthSummary
 RUPEES = '"₹"#,##0'
 
 
-def write_report(summary: MonthSummary, categories: pd.DataFrame, customers: pd.DataFrame, path: Path) -> Path:
+def write_report(summary: MonthSummary, categories: pd.DataFrame,
+                 customers: pd.DataFrame, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     headline = pd.DataFrame({
         "metric": ["Net revenue", "Orders", "Customers", "Target", "% of target"],
-        "value": [summary.revenue, summary.orders, summary.customers, summary.target, summary.pct_of_target],
+        "value": [summary.revenue, summary.orders, summary.customers,
+                  summary.target, summary.pct_of_target],
     })
+    sheets = [("Summary", headline), ("Categories", categories), ("Top customers", customers)]
     with pd.ExcelWriter(path, engine="openpyxl") as writer:
-        for sheet, frame in [("Summary", headline), ("Categories", categories), ("Top customers", customers)]:
+        for sheet, frame in sheets:
             frame.to_excel(writer, sheet_name=sheet, index=False)
             ws = writer.sheets[sheet]
             for cell in ws[1]:

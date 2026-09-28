@@ -7,7 +7,7 @@ What it does: serves the 43 leads in leads.json (exported from riverstone_2025) 
   first request for page 3 gets 429 with Retry-After: 1. Every later request succeeds.
 How:  python3 mock_crm_api.py            (serves on http://127.0.0.1:8029 until Ctrl+C)
       or from Python: server, url = start_server()   ...   server.shutdown()
-Tested on: Python 3.12.3 (standard library only). Nothing leaves your machine.
+Tested on: Python 3.14.7 (standard library only). Nothing leaves your machine.
 Riverstone Supplies is fictional; every name and number is invented.
 """
 from __future__ import annotations
