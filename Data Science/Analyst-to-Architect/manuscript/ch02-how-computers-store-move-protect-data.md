@@ -461,7 +461,9 @@ Every habit below protects one or more of the three.
 
 ### Accounts and passwords
 
-Most data breaches start with a person, not a clever technical attack: a reused password, a shared login, or a click on a fake email. The habits that prevent most of them:
+Most data breaches start with a person, not a clever technical attack: a reused password, a shared login, or a click on a fake email.
+
+The habits that prevent most of them:
 
 - **Long and unique.** A long passphrase is harder to guess than a short password full of symbols, and **every account needs a different one**. When one website is breached, attackers try the same email and password everywhere else.
 - **Use a password manager.** Nobody can remember fifty unique passphrases. A password manager remembers them, fills them in, and warns you about reused ones.
