@@ -177,12 +177,12 @@ Here is the question from section 5.2, answered with an issue tree. All the numb
 
 | | Invoiced orders | Average order value | Billed revenue |
 |---|---|---|---|
-| February 2026 | 5 | ₹32,340 | ₹161,700 |
+| February 2026 | 5 | ₹32,340 | ₹1,61,700 |
 | March 2026 | 2 | ₹15,900 | ₹31,800 |
 
 *Source: Mini database (Jan–Mar 2026).*
 
-Both parts fell. How much of the ₹129,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹161,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹129,900.
+Both parts fell. How much of the ₹1,29,900 fall does each explain? If March had kept February's average order value, 2 orders would have brought ₹64,680. So the drop in the **number** of orders accounts for ₹1,61,700 − ₹64,680 = **₹97,020** (74.7% of the fall), and the smaller **size** of March's orders accounts for the remaining ₹64,680 − ₹31,800 = **₹32,880** (25.3%). ✓ ₹97,020 + ₹32,880 = ₹1,29,900.
 
 > **Simplification note.** The shares depend slightly on whether you change count or size first; the ranking doesn't.
 
@@ -192,7 +192,7 @@ Is that unusual? Coastal Foods ordered on 9 January and 11 February, 33 days apa
 
 **Step 3. Timing: is something stuck?** Order 5012 from Metro Mart, worth ₹26,220, was placed on 15 March and is still *Pending*. It's booked, not billed. With it, March would be ₹58,020, still 64.1% below February. **H3 is true but explains only a part.**
 
-**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹109,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
+**Step 4. Smaller orders: the mix.** February's two wholesale orders (Coastal Foods ₹32,625 and Northgate ₹76,560) were ₹1,09,185, or 67.5% of February's billed revenue. No wholesale customer ordered in March. Wholesale orders are the largest, so losing them shrinks both the count and the average. **H4 is supported.**
 
 **Step 5. Why didn't they reorder?** The ERP's orders can't answer "why", but the invoices and payments can add a clue. On 31 March:
 
@@ -275,7 +275,7 @@ A **cognitive bias** is a predictable way in which people's judgment drifts from
 | Bias | What it looks like at Riverstone | Antidote |
 |---|---|---|
 | **Confirmation bias**: noticing evidence that fits what you already believe | Vikram is sure a competitor is undercutting prices, so he asks for lost deals that mention price, and not for the ones that don't | Write hypotheses first (section 5.3); look for evidence that would prove your favorite wrong |
-| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹161,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
+| **Anchoring**: judging a number against the first number you saw | March looks like a disaster against February's ₹1,61,700. But February was unusual: Northgate's first order alone was ₹76,560, 47.3% of the month. Against the quarter's monthly average of ₹99,237, March is still weak, but the comparison is fairer | Compare against several baselines: the previous month, the average, the same month last year, the target |
 | **Regression to the mean**: an unusually high or low value tends to be followed by a more ordinary one | A month boosted by one big first order is likely to be followed by a lower month, even if nothing went wrong | Before explaining a change, ask whether the starting point was unusual |
 | **Survivorship bias**: studying only the cases that made it through | Studying won deals to learn "what works", without looking at the lost and never-contacted leads that went through the same steps | Always include the cases that dropped out |
 | **Availability and recency**: overweighting what's vivid or recent | One angry phone call from a customer on Friday becomes "customers are unhappy" on Monday | Count: how many complaints, out of how many customers, over what period? |
@@ -451,8 +451,8 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 ### Core
 
 5. For the question *"Why did hospitality customers bring in less revenue in March 2026 than in February?"*, write three hypotheses that data could prove wrong, and for each, name the data you'd use. (Hospitality billed ₹23,325 in February and ₹20,100 in March in the mini database.)
-6. Billed revenue rose from ₹104,210 in January 2026 (3 invoiced orders) to ₹161,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
-7. Chapter 3 showed that Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
+6. Billed revenue rose from ₹1,04,210 in January 2026 (3 invoiced orders) to ₹1,61,700 in February (5 invoiced orders). (a) Calculate each month's average invoiced order value. (b) Split the ₹57,490 increase into the part from more orders (holding January's average order value) and the part from the change in order size. (c) Which explains more?
+7. Chapter 3 showed that Riverstone collected ₹1,97,250 of ₹2,97,710 billed in the first quarter of 2026 (66.3%). Build a two-level MECE issue tree for *"Why did we collect only two-thirds of what we billed?"* For each leaf, name the data that would test it.
 8. Name the bias in each situation and suggest one habit that would counter it: (a) After one customer complains about a cracked crate, a manager says, "Our quality has slipped." (b) An analyst studies the five best customers to learn why customers stay. (c) Revenue drops after a record month, and the team spends a week looking for what went wrong. (d) A manager who wanted a new CRM highlights only the figures that make the old one look bad.
 9. A manager says: *"Customers with overdue balances order less. So chasing payments hurts sales, and finance should send fewer reminders."* Give three other explanations for the pattern, and describe what data would help decide between them.
 
@@ -504,7 +504,7 @@ descriptive question · diagnostic question · predictive question · prescripti
 
 **5.** Examples: (1) *Fewer hospitality customers ordered in March than in February.* Data: orders by customer and month (Sunrise Caterers ordered in February, Green Leaf Hotels in March). (2) *Hospitality customers who ordered placed smaller orders.* Data: order values by customer and month. (3) *The hospitality order that would have made the difference is still pending or was cancelled.* Data: order status for hospitality customers in March. Note that the gap is small (₹3,225) and each month has one order, so almost any difference is normal variation.
 
-**6.** (a) January: ₹104,210 ÷ 3 = **₹34,737**. February: ₹161,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹173,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
+**6.** (a) January: ₹1,04,210 ÷ 3 = **₹34,737**. February: ₹1,61,700 ÷ 5 = **₹32,340**. (b) Holding January's average order value, 5 orders would bring 5 × ₹34,736.67 = ₹1,73,683, which is ₹69,473 more than January: that's the **count effect, +₹69,473**. The change in size is 5 × (₹32,340 − ₹34,736.67) = **−₹11,983**. Check: ₹69,473 − ₹11,983 = ₹57,490. ✓ (c) The increase came entirely from **more orders**; the average order actually got a little smaller.
 
 **7.** One good tree:
 
@@ -516,7 +516,7 @@ descriptive question · diagnostic question · predictive question · prescripti
     - *Riverstone hasn't chased.* Data: reminder logs from finance.
   - **Paid but not recorded yet.** Data: bank statement lines not yet matched to invoices.
 
-The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹100,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
+The first split (not yet due / overdue / paid but unrecorded) is MECE for the money not collected. From Chapter 3: ₹1,00,460 is unpaid, of which ₹88,760 is overdue and ₹11,700 is not yet due.
 
 **8.** (a) **Availability** (one vivid complaint). Habit: count complaints over a period, out of how many deliveries. (b) **Survivorship** (studying only customers who stayed). Habit: compare with customers who left. (c) **Regression to the mean** (after a record month, a lower one is normal). Habit: compare with the average and the same month last year before searching for a cause. (d) **Confirmation bias**. Habit: write down in advance what evidence would show the old CRM is fine, and look for it.
 

@@ -94,17 +94,19 @@ def ch06_table(t):
             ('Part II', '10–27', t['part2'], 'weeks', False),
             ('Job-ready: Parts 0 to II', '1–27', t['job_ready'], 'job', True),
             ('Parts III to VII', '28–67', t['after'], 'years', False),
-            ('All teaching chapters', '1–67', t['all'], 'years', True)]
-    out = ['| | Chapters | Hours | At 6 hours a week | At 8 hours a week | At 10 hours a week |',
-           '|---|---|---|---|---|---|']
+            ('All of it', '1–67', t['all'], 'years', True)]
+    out = ['| | Hours | 6 hours a week | 8 hours a week | 10 hours a week |',
+           '|---|---|---|---|---|']
     for name, chs, (lo, hi), unit, bold in rows:
         cells = []
         for r in RATES:
             if unit == 'job':
-                cells.append(f"{span(lo, hi, r, 'weeks')} ({span(lo, hi, r, 'months')})")
+                cells.append(f"{span(lo, hi, r, 'weeks')}, or {span(lo, hi, r, 'months')}")
             else:
                 cells.append(span(lo, hi, r, unit))
-        row = [name, chs, f'{lo}–{hi}'] + cells
+        # the nobr span keeps a range such as 290–357 on one line in a narrow column (the
+        # builder's table code doesn't yet keep number ranges together)
+        row = [f'{name} (<span class="nobr">Chapters {chs}</span>)', f'<span class="nobr">{lo}–{hi}</span>'] + cells
         if bold:
             row = [f'**{c}**' for c in row]
         out.append('| ' + ' | '.join(row) + ' |')

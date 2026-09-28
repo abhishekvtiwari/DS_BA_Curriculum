@@ -26,7 +26,7 @@ def arrow(x1,y1,x2,y2,c=MUTED,sw=2):
 
 # ---------- Figure 4.1: percent changes don't cancel ----------
 def fig_asym():
-    o=[]; base=320; scale=1.5  # px per rupee
+    o=[]; base=356; scale=1.5  # px per rupee
     def panel(x0,title,steps,col):
         o.append(text(x0,28,title,15,INK,"bold",family=HEAD))
         bw=66; gap=38
@@ -38,13 +38,16 @@ def fig_asym():
             o.append(text(x+bw/2,base+20,label,12.5,MUTED,anchor="middle"))
             if i>0:
                 o.append(arrow(x-gap+4,base-steps[i-1][1]*scale-26,x-4,base-h-26,c=col))
-                o.append(text(x-gap/2,base-max(steps[i-1][1],v)*scale-44,note,13,col,"bold",anchor="middle"))
+                top=base-max(steps[i-1][1],v)*scale
+                a,b=note.split(" of ")   # two short lines, so neighbouring notes can't collide
+                o.append(text(x-gap/2,top-62,a,13,col,"bold",anchor="middle"))
+                o.append(text(x-gap/2,top-46,"of "+b,13,col,"bold",anchor="middle"))
         o.append(path(f"M{x0-8},{base} H{x0+3*bw+2*gap+8}",stroke=RULE,sw=1.2))
     panel(24,"Up 50%, then down 50%",[("start",100,""),("after +50%",150,"+50% of 100"),("after −50%",75,"−50% of 150")],ACC)
     panel(386,"Down 20%, then up 20%",[("start",100,""),("after −20%",80,"−20% of 100"),("after +20%",96,"+20% of 80")],ORANGE)
-    o.append(text(24,368,"Each percentage is taken of a different starting number,",13,MUTED,style="italic"))
-    o.append(text(24,387,"so equal-looking rises and falls don't cancel out.",13,MUTED,style="italic"))
-    return svg(W_CANVAS,402,"".join(o))
+    o.append(text(24,404,"Each percentage is taken of a different starting number,",13,MUTED,style="italic"))
+    o.append(text(24,423,"so equal-looking rises and falls don't cancel out.",13,MUTED,style="italic"))
+    return svg(W_CANVAS,438,"".join(o))
 
 # ---------- Figure 4.2: bumpy real growth vs two smooth paths ----------
 REV=[202640,253664,278008,210282,329359,186928,232692,329282,558315,681071,633408,439824]

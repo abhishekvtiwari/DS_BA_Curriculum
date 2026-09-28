@@ -57,13 +57,13 @@ A **percentage** is a fraction out of 100. 12% means 12 out of every 100, or 0.1
 
 **2. What percentage one number is *of* another.** Divide the part by the whole.
 
-*"What share of 2025 revenue came from Sharma Hardware?"* ₹502,775 ÷ ₹4,335,471 = 0.116, or **11.6%**.
+*"What share of 2025 revenue came from Sharma Hardware?"* ₹5,02,775 ÷ ₹43,35,471 = 0.116, or **11.6%**.
 
 **3. Percent change.** The change, divided by the *starting* value:
 
 > percent change = (new − old) ÷ old
 
-*"How did November's revenue compare with October's?"* October was ₹681,071, November ₹633,408. (₹633,408 − ₹681,071) ÷ ₹681,071 = −0.070, or **−7.0%**.
+*"How did November's revenue compare with October's?"* October was ₹6,81,071, November ₹6,33,408. (₹6,33,408 − ₹6,81,071) ÷ ₹6,81,071 = −0.070, or **−7.0%**.
 
 ### Working backward
 
@@ -125,24 +125,24 @@ Here are Riverstone's three customer segments in 2025:
 
 | Segment | Revenue | Orders | Customers | Revenue per customer | Average order value |
 |---|---|---|---|---|---|
-| Wholesale | ₹1,702,658 | 55 | 6 | ₹283,776 | ₹30,957 |
-| Retail | ₹1,488,774 | 59 | 8 | ₹186,097 | ₹25,233 |
-| Hospitality | ₹1,144,039 | 59 | 9 | ₹127,115 | ₹19,390 |
-| **Total** | **₹4,335,471** | **173** | **23** | **₹188,499** | **₹25,061** |
+| Wholesale | ₹17,02,658 | 55 | 6 | ₹2,83,776 | ₹30,957 |
+| Retail | ₹14,88,774 | 59 | 8 | ₹1,86,097 | ₹25,233 |
+| Hospitality | ₹11,44,039 | 59 | 9 | ₹1,27,115 | ₹19,390 |
+| **Total** | **₹43,35,471** | **173** | **23** | **₹1,88,499** | **₹25,061** |
 
 *Source: One-year database (2025).*
 
 Hospitality has the most customers and ties for the most orders, but the least revenue. Which segment is "biggest" depends entirely on the denominator you pick:
 
 - **By customers:** Hospitality (9).
-- **By revenue:** Wholesale (₹1,702,658).
-- **Per customer:** Wholesale again, and by a lot. A wholesale customer brings in ₹283,776 ÷ ₹127,115 = **2.23 times** as much as a hospitality customer.
+- **By revenue:** Wholesale (₹17,02,658).
+- **Per customer:** Wholesale again, and by a lot. A wholesale customer brings in ₹2,83,776 ÷ ₹1,27,115 = **2.23 times** as much as a hospitality customer.
 
-Rates also make different-sized periods comparable. ₹4,335,471 in a year is about **₹11,878 per day** (÷ 365), and 173 orders is about **3.3 orders per week** (÷ 52). Neither is a number anyone at Riverstone reports, but both are useful sanity checks: if someone claims a single ordinary day brought in ₹2 lakh, you know to ask what happened that day.
+Rates also make different-sized periods comparable. ₹43,35,471 in a year is about **₹11,878 per day** (÷ 365), and 173 orders is about **3.3 orders per week** (÷ 52). Neither is a number anyone at Riverstone reports, but both are useful sanity checks: if someone claims a single ordinary day brought in ₹2 lakh, you know to ask what happened that day.
 
 A **share** (or proportion) is a ratio where the part is inside the whole, like Sharma Hardware's 11.6%. Shares of a whole add up to 100%. Ratios between separate groups, like 2.23 times, don't add up to anything.
 
-> **Try it.** Riverstone collected ₹197,250 of ₹297,710 billed in the first quarter of 2026 (Chapter 3; mini database, Jan–Mar 2026). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
+> **Try it.** Riverstone collected ₹1,97,250 of ₹2,97,710 billed in the first quarter of 2026 (Chapter 3; mini database, Jan–Mar 2026). What's the collection rate? If next quarter it's 75.0%, how many points is that up, and what percent change?
 
 ---
 
@@ -154,21 +154,21 @@ Here is Riverstone's revenue for every month of 2025, with the percent change fr
 
 | Month | Revenue | Change from previous month |
 |---|---|---|
-| January | ₹202,640 | |
-| February | ₹253,664 | +25.2% |
-| March | ₹278,008 | +9.6% |
-| April | ₹210,282 | −24.4% |
-| May | ₹329,359 | +56.6% |
-| June | ₹186,928 | −43.2% |
-| July | ₹232,692 | +24.5% |
-| August | ₹329,282 | +41.5% |
-| September | ₹558,315 | +69.6% |
-| October | ₹681,071 | +22.0% |
-| November | ₹633,408 | −7.0% |
-| December | ₹439,824 | −30.6% |
-| **Year** | **₹4,335,471** | |
+| January | ₹2,02,640 | |
+| February | ₹2,53,664 | +25.2% |
+| March | ₹2,78,008 | +9.6% |
+| April | ₹2,10,282 | −24.4% |
+| May | ₹3,29,359 | +56.6% |
+| June | ₹1,86,928 | −43.2% |
+| July | ₹2,32,692 | +24.5% |
+| August | ₹3,29,282 | +41.5% |
+| September | ₹5,58,315 | +69.6% |
+| October | ₹6,81,071 | +22.0% |
+| November | ₹6,33,408 | −7.0% |
+| December | ₹4,39,824 | −30.6% |
+| **Year** | **₹43,35,471** | |
 
-*Source: One-year database (2025). Monthly figures are rounded to the rupee, so they add to ₹4,335,473 (₹202,640 + ₹253,664 + ₹278,008 + ₹210,282 + ₹329,359 + ₹186,928 + ₹232,692 + ₹329,282 + ₹558,315 + ₹681,071 + ₹633,408 + ₹439,824); the exact annual total is ₹4,335,471.*
+*Source: One-year database (2025). Monthly figures are rounded to the rupee, so they add to ₹43,35,473 (₹2,02,640 + ₹2,53,664 + ₹2,78,008 + ₹2,10,282 + ₹3,29,359 + ₹1,86,928 + ₹2,32,692 + ₹3,29,282 + ₹5,58,315 + ₹6,81,071 + ₹6,33,408 + ₹4,39,824); the exact annual total is ₹43,35,471.*
 
 The monthly changes swing wildly, from −43.2% to +69.6%. Most of that is the calendar: monsoon months are slow and the festive season is busy. Month-over-month percentages exaggerate seasonal patterns, which is why businesses with more than a year of data also compare each month with the same month last year.
 
@@ -176,23 +176,23 @@ The monthly changes swing wildly, from −43.2% to +69.6%. Most of that is the c
 
 *"What was the typical monthly growth in 2025?"*
 
-The tempting method is to average the eleven monthly changes. They add up to 143.8, and 143.8 ÷ 11 = **13.1%**. It sounds reasonable. It's wrong, and you can prove it: start with January's ₹202,640 and grow it by 13.1% eleven times. You get **₹782,621** for December. The real December was ₹439,824.
+The tempting method is to average the eleven monthly changes. They add up to 143.8, and 143.8 ÷ 11 = **13.1%**. It sounds reasonable. It's wrong, and you can prove it: start with January's ₹2,02,640 and grow it by 13.1% eleven times. You get **₹7,82,621** for December. The real December was ₹4,39,824.
 
 The problem is Figure 4.1 again. A +56.6% month and a −43.2% month don't cancel, because each is a percentage of a different base. Averaging percentages that compound on each other always overstates growth when the numbers bounce around.
 
-The right question is: *what single, steady monthly rate would take ₹202,640 to ₹439,824 in eleven steps?* That's the **compound growth rate**:
+The right question is: *what single, steady monthly rate would take ₹2,02,640 to ₹4,39,824 in eleven steps?* That's the **compound growth rate**:
 
 > compound growth rate = (end ÷ start)^(1 ÷ number of periods) − 1
 
-₹439,824 ÷ ₹202,640 = 2.17. The eleventh root of 2.17 is 1.073. So the compound monthly growth rate is **7.3%**. Grow ₹202,640 by 7.3% eleven times and you land exactly on December.
+₹4,39,824 ÷ ₹2,02,640 = 2.17. The eleventh root of 2.17 is 1.073. So the compound monthly growth rate is **7.3%**. Grow ₹2,02,640 by 7.3% eleven times and you land exactly on December.
 
 "The eleventh root" sounds hard, but a root only undoes a power. 1.073 multiplied by itself 11 times gives 2.17, so 1.073 is the "eleventh root" of 2.17. You never work it out by hand: type `2.17`, press the power key (xʸ), then `(1 ÷ 11)`.
 
-![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to ₹782,621](figures/fig4-2-average-growth-vs-compound.svg)
+![Line chart of Riverstone's monthly revenue in 2025, with a steady 7.3% compound path ending at December's actual value and a 13.1% path overshooting to ₹7,82,621](figures/fig4-2-average-growth-vs-compound.svg)
 
-*Figure 4.2 — The 13.1% path, built from the average of the monthly changes, overshoots December by ₹342,797. The 7.3% compound path connects the real start and end.*
+*Figure 4.2 — The 13.1% path, built from the average of the monthly changes, overshoots December by ₹3,42,797. The 7.3% compound path connects the real start and end.*
 
-> **Watch out: start and end points drive compound growth.** The compound rate only uses the first and last values. From June (₹186,928, the lowest month) to October (₹681,071, the highest), revenue grew **264.3%**, a number that's true and tells you almost nothing about the year. Always ask why a growth figure starts and ends where it does.
+> **Watch out: start and end points drive compound growth.** The compound rate only uses the first and last values. From June (₹1,86,928, the lowest month) to October (₹6,81,071, the highest), revenue grew **264.3%**, a number that's true and tells you almost nothing about the year. Always ask why a growth figure starts and ends where it does.
 
 ### Compounding
 
@@ -204,18 +204,18 @@ A handy shortcut is the **rule of 72**: a quantity growing at *r*% a year double
 
 **CAGR** (compound annual growth rate) is the compound growth rate when the periods are years. It's the standard way to describe growth over several years in company reports, investor decks, and interviews.
 
-*"Anita wants the business in the one-year database to reach ₹60 lakh (₹6,000,000) of revenue by 2028, three years after 2025's ₹4,335,471. What growth rate does she need each year?"*
+*"Anita wants the business in the one-year database to reach ₹60 lakh (₹60,00,000) of revenue by 2028, three years after 2025's ₹43,35,471. What growth rate does she need each year?"*
 
-1. Ratio of end to start: ₹6,000,000 ÷ ₹4,335,471 = 1.384.
+1. Ratio of end to start: ₹60,00,000 ÷ ₹43,35,471 = 1.384.
 2. Three years, so take the cube root: 1.384^(1/3) = 1.1144.
 3. Subtract 1: **CAGR = 11.4% a year.**
 
-Check it by growing forward: ₹4,335,471 × 1.1144 = ₹4,831,418 in 2026, ₹5,384,098 in 2027, and ₹6,000,000 in 2028. ✓
+Check it by growing forward: ₹43,35,471 × 1.1144 = ₹48,31,418 in 2026, ₹53,84,098 in 2027, and ₹60,00,000 in 2028. ✓
 
 Two tempting shortcuts both get the plan wrong:
 
-- **Splitting the gap evenly.** ₹6,000,000 − ₹4,335,471 = ₹1,664,529, or ₹554,843 a year. That's 12.8% of 2025's revenue, but a fixed rupee amount is a smaller percentage each year, so it isn't a growth rate at all.
-- **Rounding down to a nice number.** 10% a year for three years reaches ₹5,770,512, which is ₹229,488 short. Over several years, one percentage point matters.
+- **Splitting the gap evenly.** ₹60,00,000 − ₹43,35,471 = ₹16,64,529, or ₹5,54,843 a year. That's 12.8% of 2025's revenue, but a fixed rupee amount is a smaller percentage each year, so it isn't a growth rate at all.
+- **Rounding down to a nice number.** 10% a year for three years reaches ₹57,70,512, which is ₹2,29,488 short. Over several years, one percentage point matters.
 
 ---
 ## 4.5 Averages: mean, median, mode, and weighted
@@ -226,17 +226,17 @@ An **average** is one number that stands for many. There are three common kinds,
 - The **median** is the middle value when the values are sorted. Half are below it, half above.
 - The **mode** is the most common value.
 
-Riverstone received 173 orders in 2025 (not counting the two that were cancelled), worth ₹4,335,471 in total.
+Riverstone received 173 orders in 2025 (not counting the two that were cancelled), worth ₹43,35,471 in total.
 
-- **Mean:** ₹4,335,471 ÷ 173 = **₹25,061**.
+- **Mean:** ₹43,35,471 ÷ 173 = **₹25,061**.
 - **Median:** sort the 173 order values; the 87th is **₹21,375**.
 - **Mode:** order values are almost never exactly equal, so the mode of the values themselves is useless here. The mode is useful for categories and repeated counts instead: the most commonly ordered product is the Storage Box 10L (on 76 order lines), the most common quantity on a line is 15, and the most common discount is 0% (140 of 326 lines).
 
-![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to ₹100,278; the median line at ₹21,375 sits left of the mean line at ₹25,061](figures/fig4-3-order-values-mean-vs-median.svg)
+![Histogram of 173 order values in 10,000-rupee bands, most between 0 and 40,000, with a long tail to ₹1,00,278; the median line at ₹21,375 sits left of the mean line at ₹25,061](figures/fig4-3-order-values-mean-vs-median.svg)
 
 *Figure 4.3 — Most orders are small; a few large ones stretch the tail to the right and pull the mean above the median.*
 
-Why is the mean higher than the median? Look at Figure 4.3. Most orders are under ₹40,000, but a handful are much larger: the biggest five are ₹65,818, ₹68,875, ₹74,218, ₹82,250, and ₹100,278. Large values pull the mean toward them; they don't move the median at all, because the median only cares about which value is in the middle. Data with a long tail on the high side is called **right-skewed**, and it's everywhere in business: order values, salaries, house prices, time to resolve a ticket.
+Why is the mean higher than the median? Look at Figure 4.3. Most orders are under ₹40,000, but a handful are much larger: the biggest five are ₹65,818, ₹68,875, ₹74,218, ₹82,250, and ₹1,00,278. Large values pull the mean toward them; they don't move the median at all, because the median only cares about which value is in the middle. Data with a long tail on the high side is called **right-skewed**, and it's everywhere in business: order values, salaries, house prices, time to resolve a ticket.
 
 The result: only **70 of the 173 orders (40.5%)** are above the "average" order. If a sales executive is told the average order is ₹25,061, most of their orders will feel below average.
 
@@ -257,16 +257,16 @@ Every order line has a discount of 0%, 5%, 8%, 10%, or 12%. The simple average o
 
 > weighted average = sum of (value × weight) ÷ sum of weights
 
-Weighted by each line's value before discount, the average discount is **4.69%**. You can check it without a formula: the lines were worth ₹4,548,725 at list price and ₹4,335,471 after discounts, so discounts took ₹213,254, and ₹213,254 ÷ ₹4,548,725 = 4.69%. ✓ Larger lines tend to get larger discounts (5.3% on average for lines worth ₹20,000 or more, 3.8% for smaller ones), which is why the weighted figure is higher.
+Weighted by each line's value before discount, the average discount is **4.69%**. You can check it without a formula: the lines were worth ₹45,48,725 at list price and ₹43,35,471 after discounts, so discounts took ₹2,13,254, and ₹2,13,254 ÷ ₹45,48,725 = 4.69%. ✓ Larger lines tend to get larger discounts (5.3% on average for lines worth ₹20,000 or more, 3.8% for smaller ones), which is why the weighted figure is higher.
 
-The same trap appears with prices. Riverstone's four product categories sold at average net prices of ₹435 (Storage), ₹341 (Kitchen), ₹1,273 (Industrial), and ₹1,121 (Furniture) per unit. The simple average of those four prices is ₹793. But the company sold 9,475 units for ₹4,335,471, an average of **₹458 per unit**, because Storage and Kitchen sold thousands of units and Furniture sold 30. **An average of averages ignores how many items stand behind each one.**
+The same trap appears with prices. Riverstone's four product categories sold at average net prices of ₹435 (Storage), ₹341 (Kitchen), ₹1,273 (Industrial), and ₹1,121 (Furniture) per unit. The simple average of those four prices is ₹793. But the company sold 9,475 units for ₹43,35,471, an average of **₹458 per unit**, because Storage and Kitchen sold thousands of units and Furniture sold 30. **An average of averages ignores how many items stand behind each one.**
 
 ### The average of averages
 
 The monthly business review pack often shows a row of monthly averages. Averaging that row gives the wrong annual figure:
 
 - Average of the twelve monthly average order values: **₹24,243**.
-- Actual average order value for the year: ₹4,335,471 ÷ 173 orders = **₹25,061**.
+- Actual average order value for the year: ₹43,35,471 ÷ 173 orders = **₹25,061**.
 
 The busy months (September to November, with 18 to 21 orders each and high order values) count the same as quiet January with 8 orders. To combine averages, go back to the totals: add up all the revenue, add up all the orders, then divide.
 
@@ -297,7 +297,7 @@ Rounding in the middle of a calculation carries the error forward. Section 4.2's
 
 ### Significant figures and false precision
 
-The **significant figures** of a number are the digits that carry meaning. ₹4,335,471 has seven. Does the reader need all seven? In a finance reconciliation, yes. In a meeting, "about ₹43 lakh" or "₹4.3 million" says the same thing and is easier to remember.
+The **significant figures** of a number are the digits that carry meaning. ₹43,35,471 has seven. Does the reader need all seven? In a finance reconciliation, yes. In a meeting, "about ₹43 lakh" or "₹4.3 million" says the same thing and is easier to remember.
 
 The opposite mistake is **false precision**: more digits than the data can support. *"Customers take an average of 31.6 days to pay"* (Chapter 3) is correct arithmetic from five invoices. With five invoices, "about a month" is more honest. The number of digits you write is a claim about how sure you are.
 
@@ -313,7 +313,7 @@ A rough guide for reports:
 
 Before you read any number in a table or chart, read the frame around it. Five checks catch most misreadings:
 
-1. **Units.** Rupees, thousands, lakhs, crores, or millions? Percent or percentage points? A column headed "Revenue (₹ lakh)" with a value of 43.4 means ₹4,340,000.
+1. **Units.** Rupees, thousands, lakhs, crores, or millions? Percent or percentage points? A column headed "Revenue (₹ lakh)" with a value of 43.4 means ₹43,40,000.
 2. **Period and cut-off.** A month, a quarter, year to date? Chapter 3 showed that the same report run on different dates gives different numbers.
 3. **Per-period or cumulative.** A **cumulative** (running total) line always goes up as long as the values are positive, even in a terrible month. December 2025's revenue fell 30.6%, but the year-to-date line still rose.
 4. **Definition.** Booked, billed, or collected? With or without cancellations? (Chapter 3.)
@@ -384,14 +384,14 @@ Indian business writing uses lakhs and crores; international writing uses thousa
 | 1 crore (100 lakh) | 1,00,00,000 | 10,000,000 | 10 million |
 | 100 crore | 1,00,00,00,000 | 1,000,000,000 | 1 billion |
 
-The Indian way puts a comma after the thousands and then after every two digits; the international way puts one after every three. Riverstone's 2025 revenue in the one-year database, ₹4,335,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupee amounts the Indian way, as you've just seen. Numbers that aren't money, such as counts of orders or units, keep the international grouping.
+The Indian way puts a comma after the thousands and then after every two digits; the international way puts one after every three. Riverstone's 2025 revenue in the one-year database, ₹43,35,471, is about ₹43.4 lakh, ₹0.43 crore, or ₹4.3 million. This book writes rupee amounts the Indian way, as you've just seen. Numbers that aren't money, such as counts of orders or units, keep the international grouping.
 
 ### Sanity checks: does the number fit?
 
 When a number arrives, check it against another number you already trust. Two examples from Riverstone:
 
 - **Revenue per day.** ₹43 lakh a year is about ₹11,878 a day. Separately, 173 orders ÷ 52 weeks ÷ 7 days × ₹25,061 an order is about ₹11,911 a day. (Keep 173 ÷ 52 = 3.327 orders a week unrounded: rounded to 3.3, it gives ₹11,814, the drift section 4.6 warns about.) Two different routes land within ₹50 of each other, so both numbers are probably sound.
-- **Units from revenue.** October's revenue was ₹681,071, and the year's average price was ₹458 a unit. So October probably shipped about ₹681,071 ÷ ₹457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
+- **Units from revenue.** October's revenue was ₹6,81,071, and the year's average price was ₹458 a unit. So October probably shipped about ₹6,81,071 ÷ ₹457.57 ≈ **1,488 units**. The database says **1,625**. The estimate is 8.4% low, because October sold relatively more low-priced kitchen items and fewer ₹1,450 industrial crates than the year as a whole, but it's the right order of magnitude. If the database had said 16,250 or 162, you'd know something was wrong before looking at a single row.
 
 ### Estimating from nothing
 
@@ -454,13 +454,13 @@ It's the first week of January 2026. The managing director is presenting Riverst
 
 The draft slide has six claims. Meera takes them one at a time, and for each one asks: *of what, and compared with what?*
 
-**1. "2025 revenue up 117%."** Meera finds where it comes from: December's ₹439,824 against January's ₹202,640. That's true, but it compares two single months of a seasonal business, and it isn't "2025 revenue" at all. The slide has no 2024 figures to compare with, so it can't support any year-on-year growth claim. What the board can use: *full-year revenue ₹43.4 lakh (₹4,335,471), 102.3% of the annual target.*
+**1. "2025 revenue up 117%."** Meera finds where it comes from: December's ₹4,39,824 against January's ₹2,02,640. That's true, but it compares two single months of a seasonal business, and it isn't "2025 revenue" at all. The slide has no 2024 figures to compare with, so it can't support any year-on-year growth claim. What the board can use: *full-year revenue ₹43.4 lakh (₹43,35,471), 102.3% of the annual target.*
 
-**2. "Average monthly growth: 13.1%."** The average of the eleven monthly changes. Meera grows January by 13.1% eleven times and gets ₹782,621 for December, almost double the real figure. The compound rate is 7.3%, but she recommends dropping the line entirely: in a year that peaks in October and dips in the monsoon, a "monthly growth rate" describes nothing real.
+**2. "Average monthly growth: 13.1%."** The average of the eleven monthly changes. Meera grows January by 13.1% eleven times and gets ₹7,82,621 for December, almost double the real figure. The compound rate is 7.3%, but she recommends dropping the line entirely: in a year that peaks in October and dips in the monsoon, a "monthly growth rate" describes nothing real.
 
 **3. "Gross margin down 3.9% in November."** It was 27.9% in October and 24.0% in November: down 3.9 *points*, a 14.0% fall. More useful for a board: *full-year gross margin 26.2%; November was the lowest month.*
 
-**4. "Average order value: ₹24,243."** Meera recognizes the number from the monthly pack: it's the average of the twelve monthly averages. The real figure is ₹4,335,471 ÷ 173 = **₹25,061**. She adds the median, **₹21,375**, because the MD is likely to be asked what a typical order looks like.
+**4. "Average order value: ₹24,243."** Meera recognizes the number from the monthly pack: it's the average of the twelve monthly averages. The real figure is ₹43,35,471 ÷ 173 = **₹25,061**. She adds the median, **₹21,375**, because the MD is likely to be asked what a typical order looks like.
 
 **5. The segment pie chart: Wholesale 39%, Retail 34%, Hospitality 26%.** They add to 99%. A board member will notice. One decimal fixes it: 39.3%, 34.3%, 26.4%.
 
@@ -550,7 +550,7 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 ### Warm-up
 
 1. Calculate: (a) a 5% discount on an order worth ₹14,550; (b) what percentage ₹26,220 is of ₹58,020 (order 5012's share of March 2026 bookings, Chapter 3); (c) the price of a ₹780 Storage Box 25L after 8% off.
-2. From Riverstone's 2025 revenue by quarter and category (one-year database): Kitchen revenue was ₹133,888 in the first quarter of 2025 and ₹461,146 in the fourth; Industrial was ₹275,450 in the third quarter and ₹292,040 in the fourth. Calculate each percent change.
+2. From Riverstone's 2025 revenue by quarter and category (one-year database): Kitchen revenue was ₹1,33,888 in the first quarter of 2025 and ₹4,61,146 in the fourth; Industrial was ₹2,75,450 in the third quarter and ₹2,92,040 in the fourth. Calculate each percent change.
 3. Wholesale's share of revenue was 39.3% in 2025. If it's 42.0% next year, what's the change in percentage points, and what's the percent change? Write one correct sentence for each.
 4. The 11 non-cancelled orders in the mini database (first quarter of 2026) were worth: ₹14,700, ₹73,260, ₹16,250, ₹14,550, ₹14,640, ₹32,625, ₹23,325, ₹76,560, ₹20,100, ₹11,700, ₹26,220. Find the mean, the median, and the mode. Which better describes a typical order, and why?
 
@@ -558,15 +558,15 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 5. (a) Northgate paid ₹76,560 for an order after a 12% discount. What was the order worth at list price? (b) Riverstone raises a price by 8%, then gives a customer 8% off the new price. Is the customer paying more or less than before, and by what percent?
 6. A distributor's revenue grew from ₹25 lakh to ₹40 lakh over five years. (a) What was its CAGR? (b) Using the rule of 72, roughly how long would it take to double at that rate? (c) Why is "it grew 12% a year" (60% ÷ 5) wrong?
-7. Riverstone's 2025 gross margin by category was: Storage 26.9% on ₹2,297,974 of revenue; Kitchen 33.2% on ₹1,208,030; Industrial 13.6% on ₹795,830; Furniture 24.2% on ₹33,638. (a) What's the simple average of the four margins? (b) What's the margin weighted by revenue? (c) Which one is the company's gross margin, and why are they different?
+7. Riverstone's 2025 gross margin by category was: Storage 26.9% on ₹22,97,974 of revenue; Kitchen 33.2% on ₹12,08,030; Industrial 13.6% on ₹7,95,830; Furniture 24.2% on ₹33,638. (a) What's the simple average of the four margins? (b) What's the margin weighted by revenue? (c) Which one is the company's gross margin, and why are they different?
 8. The categories' shares of 2025 revenue, to one decimal place, are Storage 53.0%, Kitchen 27.9%, Industrial 18.4%, and Furniture 0.8%. A manager says the table is wrong. Explain what's happening and write the note you'd put under the table.
 9. Riverstone wins 20% of its unique leads. (a) How many leads does it need to win 15 new customers? (b) If three new leads arrive this week and each has a 20% chance of being won, what's the chance at least one is won? (c) What assumption does (b) make, and when might it be false?
 
 ### Stretch
 
-10. A local newspaper profile of Riverstone runs the headline *"Riverstone revenue soars 264%"*, based on June 2025 (₹186,928) and October 2025 (₹681,071). Explain in two sentences why the headline misleads, and write an honest replacement using numbers from this chapter.
-11. November 2025's revenue was ₹633,408. Using the year's average price of ₹458 per unit, estimate how many units Riverstone shipped in November. The database says 1,355. How far off is your estimate, in percent? Is that good enough for a sanity check, and why?
-12. In 2025, Riverstone received 29 orders worth ₹734,312 in the first quarter and 59 orders worth ₹1,754,302 in the fourth. (a) Calculate each quarter's average order value. (b) Calculate the average order value for the two quarters combined. (c) Explain why the average of your two answers in (a) isn't the answer to (b).
+10. A local newspaper profile of Riverstone runs the headline *"Riverstone revenue soars 264%"*, based on June 2025 (₹1,86,928) and October 2025 (₹6,81,071). Explain in two sentences why the headline misleads, and write an honest replacement using numbers from this chapter.
+11. November 2025's revenue was ₹6,33,408. Using the year's average price of ₹458 per unit, estimate how many units Riverstone shipped in November. The database says 1,355. How far off is your estimate, in percent? Is that good enough for a sanity check, and why?
+12. In 2025, Riverstone received 29 orders worth ₹7,34,312 in the first quarter and 59 orders worth ₹17,54,302 in the fourth. (a) Calculate each quarter's average order value. (b) Calculate the average order value for the two quarters combined. (c) Explain why the average of your two answers in (a) isn't the answer to (b).
 
 ### Think about it (no calculation needed)
 
@@ -601,17 +601,17 @@ percentage · percent of · share / proportion · percent change · reverse perc
 
 **1.** (a) 0.05 × ₹14,550 = **₹727.50**. (b) ₹26,220 ÷ ₹58,020 = 0.452, so **45.2%**. (c) ₹780 × 0.92 = **₹717.60**.
 
-**2.** Kitchen: (₹461,146 − ₹133,888) ÷ ₹133,888 = **+244.4%**; revenue more than tripled. Industrial: (₹292,040 − ₹275,450) ÷ ₹275,450 = **+6.0%**.
+**2.** Kitchen: (₹4,61,146 − ₹1,33,888) ÷ ₹1,33,888 = **+244.4%**; revenue more than tripled. Industrial: (₹2,92,040 − ₹2,75,450) ÷ ₹2,75,450 = **+6.0%**.
 
 **3.** 42.0 − 39.3 = **2.7 percentage points**: "Wholesale's share rose 2.7 points, from 39.3% to 42.0%." (42.0 − 39.3) ÷ 39.3 = **6.9%**: "Wholesale's share of revenue grew by 6.9%." The first is clearer for most readers.
 
-**4.** Total ₹323,930 ÷ 11 = **mean ₹29,448**. Sorted: ₹11,700, ₹14,550, ₹14,640, ₹14,700, ₹16,250, **₹20,100**, ₹23,325, ₹26,220, ₹32,625, ₹73,260, ₹76,560; the sixth value is the **median, ₹20,100**. No value repeats, so there's **no mode**. The median describes a typical order better: two large wholesale orders (₹73,260 and ₹76,560) pull the mean up, and 8 of the 11 orders are below it.
+**4.** Total ₹3,23,930 ÷ 11 = **mean ₹29,448**. Sorted: ₹11,700, ₹14,550, ₹14,640, ₹14,700, ₹16,250, **₹20,100**, ₹23,325, ₹26,220, ₹32,625, ₹73,260, ₹76,560; the sixth value is the **median, ₹20,100**. No value repeats, so there's **no mode**. The median describes a typical order better: two large wholesale orders (₹73,260 and ₹76,560) pull the mean up, and 8 of the 11 orders are below it.
 
 **5.** (a) ₹76,560 ÷ 0.88 = **₹87,000**. (Check: 12% of ₹87,000 is ₹10,440, and ₹87,000 − ₹10,440 = ₹76,560. ✓) (b) 1.08 × 0.92 = 0.9936. The customer pays **0.64% less** than the original price, because the 8% discount is taken from a bigger number than the 8% rise was.
 
 **6.** (a) ₹40 lakh ÷ ₹25 lakh = 1.6. 1.6^(1/5) = 1.0986, so the CAGR is **9.9% a year**. (b) 72 ÷ 9.9 ≈ **7.3 years** (the exact answer is 7.4). (c) 60% ÷ 5 = 12% ignores compounding: each year's growth is calculated on a bigger base, so a steady 9.9% a year is enough to add 60% in five years. Growing ₹25 lakh by 12% a year for five years would reach about ₹44 lakh, not ₹40 lakh.
 
-**7.** (a) (26.9 + 33.2 + 13.6 + 24.2) ÷ 4 = **24.5%**. (b) Weighted by revenue, the margin is **26.2%**: total revenue ₹4,335,471 minus total product cost ₹3,198,250, divided by revenue. (c) The weighted figure is the company's gross margin. The simple average gives tiny Furniture (under 1% of revenue) the same say as Storage (more than half), and it gives low-margin Industrial (18.4% of revenue) a quarter of the weight, which drags the simple average down.
+**7.** (a) (26.9 + 33.2 + 13.6 + 24.2) ÷ 4 = **24.5%**. (b) Weighted by revenue, the margin is **26.2%**: total revenue ₹43,35,471 minus total product cost ₹31,98,250, divided by revenue. (c) The weighted figure is the company's gross margin. The simple average gives tiny Furniture (under 1% of revenue) the same say as Storage (more than half), and it gives low-margin Industrial (18.4% of revenue) a quarter of the weight, which drags the simple average down.
 
 **8.** Nothing is wrong. The unrounded shares (53.00%, 27.86%, 18.36%, 0.78%) add up to 100%, but three of them rounded up, so the rounded shares add to 100.1%. Note: *"Shares are rounded to one decimal place and may not add to exactly 100%."* Don't adjust one share to force the total.
 
@@ -619,9 +619,9 @@ percentage · percent of · share / proportion · percent change · reverse perc
 
 **10.** It compares the slowest month with the busiest month of a seasonal business, so most of the "growth" is the calendar, and it says nothing about the year. A single-month comparison can't be called revenue growth for the company. Honest replacement: *"Riverstone's 2025 revenue was ₹43.4 lakh, 2.3% above its annual target, with a festive-season peak of ₹6.8 lakh in October."*
 
-**11.** ₹633,408 ÷ ₹458 ≈ **1,383 units** (using the unrounded ₹457.57, about 1,384). Against the actual 1,355, that's about **2.1% too high**. That's good enough: a sanity check is looking for errors of 10 times or 100 times, and an estimate within a few percent confirms the order of magnitude. Differences in the product mix explain the rest.
+**11.** ₹6,33,408 ÷ ₹458 ≈ **1,383 units** (using the unrounded ₹457.57, about 1,384). Against the actual 1,355, that's about **2.1% too high**. That's good enough: a sanity check is looking for errors of 10 times or 100 times, and an estimate within a few percent confirms the order of magnitude. Differences in the product mix explain the rest.
 
-**12.** (a) First quarter: ₹734,312 ÷ 29 = **₹25,321**. Fourth quarter: ₹1,754,302 ÷ 59 = **₹29,734**. (b) (₹734,312 + ₹1,754,302) ÷ (29 + 59) = ₹2,488,614 ÷ 88 = **₹28,280**. (c) The average of the two quarterly figures, ₹27,528, gives each quarter equal weight, but the fourth quarter had twice as many orders. The combined figure must come from the totals.
+**12.** (a) First quarter: ₹7,34,312 ÷ 29 = **₹25,321**. Fourth quarter: ₹17,54,302 ÷ 59 = **₹29,734**. (b) (₹7,34,312 + ₹17,54,302) ÷ (29 + 59) = ₹24,88,614 ÷ 88 = **₹28,280**. (c) The average of the two quarterly figures, ₹27,528, gives each quarter equal weight, but the fourth quarter had twice as many orders. The combined figure must come from the totals.
 
 **13.** Whether "average" is the mean or the median (a few very high salaries, such as senior leaders', pull the mean up); the median and the range; who is included (full-time only? contractors? leaders?); whether it's salary alone or includes bonuses and benefits; and the date and location. The median, with the number of employees, describes a typical employee far better.
 

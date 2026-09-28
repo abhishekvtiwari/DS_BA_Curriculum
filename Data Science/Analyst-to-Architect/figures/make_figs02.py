@@ -68,7 +68,7 @@ def fig_row_vs_column():
         for i,r in enumerate(data):
             o.append(rect(x,yy,82,26,fill="#e2f3ee" if q else "#f6f9fc",stroke=RULE,sw=0.8))
             o.append(text(x+8,yy+18,r[j],12,INK,"bold" if q else "normal",family=MONO)); x+=82
-    o.append(wrap(458,Y+36,["To add up qty, it reads","only the qty column.","Similar values sit","together, so they","compress well."],12,INK,19))
+    o.append(wrap(486,Y+36,["To add up qty, it reads","only the qty column.","Similar values sit","together, so they","compress well."],12,INK,19))
     return svg(W,Y+16+4*36+14,"".join(o))
 
 # ---------- Figure 2.3: an API request and response ----------

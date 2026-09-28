@@ -22,7 +22,7 @@ In Chapter 1 you learned what data is. In Chapter 2 you learned where it lives. 
 
 The short answer is that a company *is* a chain of people handing work to each other. A salesperson hands an order to the warehouse. The warehouse hands a delivery to finance. Finance hands a number to the managing director. Every handover leaves a record, and those records are the data you'll clean, query, chart, and model for the rest of your career.
 
-Analysts who understand this chain are far more useful than analysts who only know the tools. When a manager asks, *"What were sales last month?"*, the analyst who knows the chain asks one question back: *"Orders placed, invoices raised, or cash received?"* Those are three different numbers. At Riverstone Supplies in January 2026 they were ₹116,210, ₹104,210, and ₹0. By the end of this chapter you'll know exactly why, and you'll never again hand over a "sales" number without saying which one it is.
+Analysts who understand this chain are far more useful than analysts who only know the tools. When a manager asks, *"What were sales last month?"*, the analyst who knows the chain asks one question back: *"Orders placed, invoices raised, or cash received?"* Those are three different numbers. At Riverstone Supplies in January 2026 they were ₹1,16,210, ₹1,04,210, and ₹0. By the end of this chapter you'll know exactly why, and you'll never again hand over a "sales" number without saying which one it is.
 
 This chapter also starts the book's **automation** thread. Before you can automate anything, you have to see where people work by hand. Section 3.7 shows you how.
 
@@ -116,7 +116,7 @@ The order row only says *who ordered what, when*. But it has a history before it
 
 **9. Payment (2 February 2026).** Sharma Hardware pays ₹14,700 by bank transfer. The bank statement shows a short reference, "SHARMA HW JAN". A finance assistant works out that it pays invoice 9001 and records **payment 1** against it.
 
-**10. Report (3 February 2026).** The team prepares the **January sales report**. Invoice 9001 is one of the three behind the line *"January: ₹104,210"*.
+**10. Report (3 February 2026).** The team prepares the **January sales report**. Invoice 9001 is one of the three behind the line *"January: ₹1,04,210"*.
 
 **It took a long time.** From enquiry to cash was 103 days. Once the order existed, things moved faster: order to invoice 1 day, invoice to payment 27 days, order to cash 28 days. Each gap comes from subtracting two dates recorded by two different departments.
 
@@ -172,7 +172,7 @@ A **report** summarizes many transactions to answer a question (*"How much did w
 | **Grain** (Chapter 1) | one order, one invoice, one payment | one month, one customer, one product |
 | **Created** | by the business system, as work happens | by a person or a scheduled job, after the fact |
 | **Changes?** | should be corrected, not rewritten; a cancellation is a new status or a new record | changes whenever the data or the rules change |
-| **Example** | invoice 9001: ₹14,700, due 2026-02-05 | "January billings: ₹104,210" |
+| **Example** | invoice 9001: ₹14,700, due 2026-02-05 | "January billings: ₹1,04,210" |
 
 Systems for transactions are tuned to write one record quickly and safely; reporting needs to read millions and add them up. That's why growing companies move reporting into a separate **data warehouse**.
 
@@ -188,10 +188,10 @@ Here are all three for Riverstone's first quarter of 2026:
 
 | Month | Booked (orders placed) | Billed (invoiced) | Collected (cash in) |
 |---|---|---|---|
-| January | ₹116,210 | ₹104,210 | ₹0 |
-| February | ₹161,700 | ₹161,700 | ₹64,700 |
-| March | ₹58,020 | ₹31,800 | ₹132,550 |
-| **Quarter** | **₹335,930** | **₹297,710** | **₹197,250** |
+| January | ₹1,16,210 | ₹1,04,210 | ₹0 |
+| February | ₹1,61,700 | ₹1,61,700 | ₹64,700 |
+| March | ₹58,020 | ₹31,800 | ₹1,32,550 |
+| **Quarter** | **₹3,35,930** | **₹2,97,710** | **₹1,97,250** |
 
 *Source: Mini database (Jan–Mar 2026).*
 
@@ -201,18 +201,18 @@ Here are all three for Riverstone's first quarter of 2026:
 
 Every gap traces to specific transactions:
 
-- **January booked ₹116,210 but billed ₹104,210.** The difference, ₹12,000, is order 5004 from Green Leaf Hotels: 100 water bottles, placed on 20 January and cancelled. Figure 3.3 and the table count bookings the way Riverstone's sales team reports them from the CRM, as every order placed, so the cancelled order is in. It was never shipped or invoiced.
+- **January booked ₹1,16,210 but billed ₹1,04,210.** The difference, ₹12,000, is order 5004 from Green Leaf Hotels: 100 water bottles, placed on 20 January and cancelled. Figure 3.3 and the table count bookings the way Riverstone's sales team reports them from the CRM, as every order placed, so the cancelled order is in. It was never shipped or invoiced.
 - **January collected ₹0.** Every January invoice had 30-day terms, so none was due until February. Sharma Hardware's ₹14,700 arrived on 2 February.
-- **February's three numbers.** All five February orders shipped and were invoiced in February, so bookings and billings match at ₹161,700. The ₹64,700 collected was for *January's* invoices: ₹14,700 from Sharma Hardware, ₹40,000 of Coastal Foods' ₹73,260, and ₹10,000 of Patel Kitchenware's ₹16,250.
+- **February's three numbers.** All five February orders shipped and were invoiced in February, so bookings and billings match at ₹1,61,700. The ₹64,700 collected was for *January's* invoices: ₹14,700 from Sharma Hardware, ₹40,000 of Coastal Foods' ₹73,260, and ₹10,000 of Patel Kitchenware's ₹16,250.
 - **March booked ₹58,020 but billed ₹31,800.** Order 5012 from Metro Mart, worth ₹26,220, is still *Pending* on 31 March: booked, not yet shipped, so not invoiced. ₹58,020 − ₹26,220 = ₹31,800. ✓
 - **March collected more than it billed**, mostly February's invoices being paid. Cash lags billings by about the payment terms.
 
 And the quarter reconciles:
 
-- Bookings ₹335,930 − cancelled ₹12,000 − pending ₹26,220 = billings ₹297,710. ✓
-- Billings ₹297,710 − collected ₹197,250 = **₹100,460 still owed by customers**, which finance calls **receivables** (or accounts receivable). ✓
+- Bookings ₹3,35,930 − cancelled ₹12,000 − pending ₹26,220 = billings ₹2,97,710. ✓
+- Billings ₹2,97,710 − collected ₹1,97,250 = **₹1,00,460 still owed by customers**, which finance calls **receivables** (or accounts receivable). ✓
 
-> **Watch out: "sales" without a definition.** If you don't know which of the three is meant, ask. If you can't, give the name and rule with the number: *"Billed sales (invoices raised) in January: ₹104,210."* Otherwise two departments argue about who is wrong when both are right.
+> **Watch out: "sales" without a definition.** If you don't know which of the three is meant, ask. If you can't, give the name and rule with the number: *"Billed sales (invoices raised) in January: ₹1,04,210."* Otherwise two departments argue about who is wrong when both are right.
 
 > **Simplification note.** Accountants recognize **revenue** under formal accounting standards, which decide exactly when a sale counts. This book uses invoices as a stand-in for revenue, as the rest of the book does. In a real company, ask finance which rule applies before publishing a revenue number; this is general information, not accounting advice.
 
@@ -232,23 +232,23 @@ Here are nine KPIs Riverstone's management could track, calculated for the first
 
 | KPI | Definition | Q1 2026 | Owner |
 |---|---|---|---|
-| **Bookings** | value of orders placed, excluding cancelled orders | ₹323,930 (includes ₹26,220 pending) | Sales Head |
-| **Billings** | value of invoices raised | ₹297,710 | Finance Manager |
-| **Collections** | cash received from customers | ₹197,250 (66.3% of billings) | Finance Manager |
+| **Bookings** | value of orders placed, excluding cancelled orders | ₹3,23,930 (includes ₹26,220 pending) | Sales Head |
+| **Billings** | value of invoices raised | ₹2,97,710 | Finance Manager |
+| **Collections** | cash received from customers | ₹1,97,250 (66.3% of billings) | Finance Manager |
 | **Gross margin** | (billings − cost of the products sold) ÷ billings | 22.6% | Finance Manager |
 | **Average order value (AOV)** | billings ÷ number of invoiced orders | ₹29,771 | Sales Head |
 | **Cancellation rate** | cancelled orders ÷ all orders placed | 8.3% (1 of 12) | Sales Head |
-| **Overdue receivables** | unpaid amounts on invoices past their due date | ₹88,760 of ₹100,460 owed | Finance Manager |
+| **Overdue receivables** | unpaid amounts on invoices past their due date | ₹88,760 of ₹1,00,460 owed | Finance Manager |
 | **Average days to collect** | days from invoice to final payment, for fully paid invoices | 31.6 days | Finance Manager |
 | **Active customers** | customers with at least one non-cancelled order in the period | 7 of 8 | Sales Head |
 
 *Source: Mini database (Jan–Mar 2026).*
 
-Check two of them by hand. **Gross margin:** the products on invoiced orders cost Riverstone ₹230,450 to make, so the margin is ₹297,710 − ₹230,450 = ₹67,260, and ₹67,260 ÷ ₹297,710 = 22.6%. ✓ **Average days to collect:** five invoices are fully paid, taking 27, 51, 26, 33, and 21 days; they add up to 158, and 158 ÷ 5 = 31.6 days. ✓ (Invoice 9001, the one from Figure 3.2, is the 27.)
+Check two of them by hand. **Gross margin:** the products on invoiced orders cost Riverstone ₹2,30,450 to make, so the margin is ₹2,97,710 − ₹2,30,450 = ₹67,260, and ₹67,260 ÷ ₹2,97,710 = 22.6%. ✓ **Average days to collect:** five invoices are fully paid, taking 27, 51, 26, 33, and 21 days; they add up to 158, and 158 ÷ 5 = 31.6 days. ✓ (Invoice 9001, the one from Figure 3.2, is the 27.)
 
 ### A KPI needs a definition, not just a name
 
-"Average order value" sounds precise. It isn't. Divide bookings by orders and you get ₹323,930 ÷ 11 non-cancelled orders = ₹29,448. Divide billings by invoiced orders and you get ₹29,771. Both are reasonable; they're different KPIs with the same name. You've already met the same problem with bookings: the table in section 3.4 counts the cancelled order (₹335,930 for the quarter), and the KPI table above leaves it out (₹323,930). A usable KPI definition answers six questions:
+"Average order value" sounds precise. It isn't. Divide bookings by orders and you get ₹3,23,930 ÷ 11 non-cancelled orders = ₹29,448. Divide billings by invoiced orders and you get ₹29,771. Both are reasonable; they're different KPIs with the same name. You've already met the same problem with bookings: the table in section 3.4 counts the cancelled order (₹3,35,930 for the quarter), and the KPI table above leaves it out (₹3,23,930). A usable KPI definition answers six questions:
 
 1. **Formula:** exactly what's divided by what?
 2. **Inclusions and exclusions:** are cancelled orders in? Pending? Returns? Tax?
@@ -368,7 +368,7 @@ Anita approving a 12% discount is a judgment, and it should stay with a person; 
 
 ## In the real world: three numbers for January
 
-It's Tuesday, 3 February 2026. The managing director's monthly business review is on Thursday, and two numbers for January have just reached the MD's inbox. Anita's weekly sales summary, pulled from the CRM's pipeline, says **January sales: ₹116,210**. Suresh Menon, the Finance Manager, sent his month-end report from the ERP: **January sales: ₹104,210**, and underneath it, **cash received in January: ₹0**.
+It's Tuesday, 3 February 2026. The managing director's monthly business review is on Thursday, and two numbers for January have just reached the MD's inbox. Anita's weekly sales summary, pulled from the CRM's pipeline, says **January sales: ₹1,16,210**. Suresh Menon, the Finance Manager, sent his month-end report from the ERP: **January sales: ₹1,04,210**, and underneath it, **cash received in January: ₹0**.
 
 The MD replies to both: *"Which one is right? And why did we collect nothing?"*
 
@@ -387,15 +387,15 @@ Anita asks Meera Iyer to find out. Meera doesn't start by deciding who's wrong. 
 
 *Source: Mini database (Jan–Mar 2026).*
 
-The CRM total is ₹116,210. The invoiced total is ₹104,210. The difference is exactly order 5004: Green Leaf Hotels cancelled its 100 water bottles in the ERP, and nobody updated the deal in the CRM, because the systems aren't connected.
+The CRM total is ₹1,16,210. The invoiced total is ₹1,04,210. The difference is exactly order 5004: Green Leaf Hotels cancelled its 100 water bottles in the ERP, and nobody updated the deal in the CRM, because the systems aren't connected.
 
 **3. Why no cash?** All three invoices had 30-day terms. The earliest, 9001, was due on 5 February. Sharma Hardware paid ₹14,700 yesterday, 2 February, three days early. Coastal Foods' due date is 9 February and Patel Kitchenware's is 14 February. Every invoice raised in January falls due in February, and no older invoices were waiting to be paid, so zero cash in January is exactly what 30-day terms predict.
 
-**4. Does it reconcile?** ₹116,210 − ₹12,000 = ₹104,210. ✓
+**4. Does it reconcile?** ₹1,16,210 − ₹12,000 = ₹1,04,210. ✓
 
 On Wednesday afternoon, Meera sends Anita and Suresh a half-page note:
 
-> *"Both reports are correct; they count different steps. **Booked** in January (orders placed, per the CRM): ₹116,210. **Billed** (invoices raised, per the ERP): ₹104,210. The ₹12,000 difference is Green Leaf Hotels' order 5004, cancelled in the ERP but still marked Won in the CRM; I've asked Neha's team to update it. **Collected**: ₹0, because January's invoices aren't due until 5–14 February; ₹14,700 has already arrived. Suggestion: the monthly pack shows all three lines with a one-line definition under each, and the ERP is the source for billed and collected."*
+> *"Both reports are correct; they count different steps. **Booked** in January (orders placed, per the CRM): ₹1,16,210. **Billed** (invoices raised, per the ERP): ₹1,04,210. The ₹12,000 difference is Green Leaf Hotels' order 5004, cancelled in the ERP but still marked Won in the CRM; I've asked Neha's team to update it. **Collected**: ₹0, because January's invoices aren't due until 5–14 February; ₹14,700 has already arrived. Suggestion: the monthly pack shows all three lines with a one-line definition under each, and the ERP is the source for billed and collected."*
 
 On Thursday the pack has three lines instead of one, and the meeting discusses what the numbers mean instead of which is true.
 
@@ -475,7 +475,7 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 - **Business systems** record daily work: **ERP** (orders, stock, invoices, accounts), **CRM** (leads, quotes, deals), **HRMS** (employees, payroll), **POS** (shop sales), **e-commerce** (online orders), and **support desks** (tickets). Spreadsheets and email fill the gaps between them.
 - Each fact should have one **system of record**. Systems that aren't **integrated** drift apart.
 - A **transaction** records one event; a **report** summarizes many, using rules, at a point in time.
-- "Sales" can mean **bookings** (orders placed), **billings** (invoices raised), or **collections** (cash received). For Riverstone's January: ₹116,210, ₹104,210, and ₹0, all correct. Reconcile them with cancellations, pending orders, and payment terms.
+- "Sales" can mean **bookings** (orders placed), **billings** (invoices raised), or **collections** (cash received). For Riverstone's January: ₹1,16,210, ₹1,04,210, and ₹0, all correct. Reconcile them with cancellations, pending orders, and payment terms.
 - A **KPI** is a chosen metric with a **definition**, an owner, a target, and a review. Pair KPIs so none can be gamed alone; watch **leading** as well as **lagging** indicators.
 - **Dashboards and meetings** turn data into decisions on a rhythm. **Decision rights** say who decides; the decider rarely holds the data.
 - **Manual work hides** in re-keying, copy-paste, emailed files, manual matching, and shadow systems. Find it with five questions, count it in hours, fix the process first, and keep judgment with people.
@@ -546,7 +546,7 @@ department · lead · quote / quotation · order · delivery challan / delivery 
 
 **4.** (a) Bookings. (b) Collections. (c) None: a quote isn't a sale. (d) Billings. (e) Bookings go down if you count bookings net of cancellations (the KPI definition in section 3.5); nothing is billed or collected. (f) None: it's a leading indicator, not a sale.
 
-**5.** Booked: ₹14,550 + ₹14,640 + ₹32,625 + ₹23,325 + ₹76,560 = **₹161,700**. Billed: all five were invoiced in February, so also **₹161,700**. Collected: ₹14,700 + ₹40,000 + ₹10,000 = **₹64,700**. Collections are lower because all three payments were for January's invoices; February's invoices have 30-day terms and weren't due until March.
+**5.** Booked: ₹14,550 + ₹14,640 + ₹32,625 + ₹23,325 + ₹76,560 = **₹1,61,700**. Billed: all five were invoiced in February, so also **₹1,61,700**. Collected: ₹14,700 + ₹40,000 + ₹10,000 = **₹64,700**. Collections are lower because all three payments were for January's invoices; February's invoices have 30-day terms and weren't due until March.
 
 **6.** Missing: which "sales" (booked, billed, or collected); whether cancellations, returns, and tax count; whether "compared" means rupees or percent; which date decides the month; the source system; the owner and target. One good rewrite:
 

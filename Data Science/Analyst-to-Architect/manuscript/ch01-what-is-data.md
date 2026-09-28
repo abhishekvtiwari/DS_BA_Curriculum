@@ -39,9 +39,9 @@ Now notice two more things about the notebook. First, the owner writes every lin
 
 Everything in this chapter is a version of that notebook.
 
-> **Meet Riverstone.** Riverstone Supplies is the fictional company you'll follow through this book. It makes and sells plastic storage boxes, kitchenware, industrial crates and a small range of furniture to shops, hotels and wholesalers. It has two plants, at Taloja and Chakan, and one warehouse, at Bhiwandi.
+> **Meet Riverstone.** Riverstone Supplies is the fictional company you'll follow through this book. It makes and sells plastic storage boxes, kitchenware, industrial crates, and a small range of furniture to shops, hotels, and wholesalers. It has two plants, at Taloja and Chakan, and one warehouse, at Bhiwandi.
 >
-> You'll practise on two of its datasets:
+> You'll practice on two of its datasets:
 >
 > - **The mini database:** 12 orders from January to March 2026, small enough to check by eye. Chapters 1–5 and 12 use it.
 > - **The one-year database:** all of 2025, 173 orders plus 2 that were cancelled. You'll use it from Chapter 4 onward.
@@ -420,18 +420,16 @@ Each tool is installed in the chapter that first uses it; Chapter 6 shows when.
 
 Here's how the first three days looked for Kavya, a college student in Mumbai:
 
-```
- date       | time  | item              | category      | amount_rs | payment_method | shop          | necessary
-------------+-------+-------------------+---------------+-----------+----------------+---------------+-----------
- 2026-09-07 | 08:40 | Tea and poha      | Food          |        60 | UPI            | Station stall | No
- 2026-09-07 | 09:15 | Metro card top-up | Transport     |       500 | UPI            | Metro station | Yes
- 2026-09-07 | 19:30 | Vegetables        | Groceries     |       240 | Cash           | Local market  | Yes
- 2026-09-08 | 13:05 | Lunch thali       | Food          |       180 | Card           | Canteen       | Yes
- 2026-09-08 | 21:10 | Movie ticket      | Entertainment |       350 | UPI            | Online        | No
- 2026-09-09 | 08:45 | Tea and poha      | Food          |        60 | UPI            | Station stall | No
- 2026-09-09 | 18:20 | Mobile recharge   | Bills         |       299 | UPI            | Online        | Yes
- 2026-09-09 | 20:00 | Auto rickshaw     | Transport     |        90 | Cash           | Street        | Yes
-```
+| `date` | `time` | `item` | `category` | `amount_rs` | `payment_method` | `shop` | `necessary` |
+|---|---|---|---|---|---|---|---|
+| 2026-09-07 | 08:40 | Tea and poha | Food | 60 | UPI | Station stall | No |
+| 2026-09-07 | 09:15 | Metro card top-up | Transport | 500 | UPI | Metro station | Yes |
+| 2026-09-07 | 19:30 | Vegetables | Groceries | 240 | Cash | Local market | Yes |
+| 2026-09-08 | 13:05 | Lunch thali | Food | 180 | Card | Canteen | Yes |
+| 2026-09-08 | 21:10 | Movie ticket | Entertainment | 350 | UPI | Online | No |
+| 2026-09-09 | 08:45 | Tea and poha | Food | 60 | UPI | Station stall | No |
+| 2026-09-09 | 18:20 | Mobile recharge | Bills | 299 | UPI | Online | Yes |
+| 2026-09-09 | 20:00 | Auto rickshaw | Transport | 90 | Cash | Street | Yes |
 
 **Step 2. Describe the dataset.** Write down:
 

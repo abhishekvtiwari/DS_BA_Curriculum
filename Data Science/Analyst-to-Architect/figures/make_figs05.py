@@ -106,7 +106,7 @@ def fig_mece():
                 o.append(text(x+12,top+42+j*19,m+("  (twice)" if flag else ""),13,RED if flag else INK,"bold" if flag else "normal"))
         ny=top+36+max(len(m) for _,m in groups)*19+22
         if gap_name:
-            o.append(rect(x0,ny-15,W,22,fill="#fff",stroke=RED,sw=1.4,rx=5,extra='stroke-dasharray="4 3"'))
+            o.append(rect(x0,ny-15,290,22,fill="#fff",stroke=RED,sw=1.4,rx=5,extra='stroke-dasharray="4 3"'))
             o.append(text(x0+10,ny+1,"In no group: "+gap_name,13,RED,"bold"))
             ny+=28
         for l in notes:
@@ -141,9 +141,9 @@ def fig_tree():
         ("Mix: wholesale orders?","67.5% of Feb billed;","none placed in March",("yes","FOUND")),
         ("Pending order 5012","₹26,220 booked, not billed;","with it, March = ₹58,020",("part","TIMING")),
         ("Seasonal March dip?","needs March last year:","not in this data",("no","UNKNOWN"))]
-    H2=94; G2=12; y2=[10+i*(H2+G2) for i in range(5)]
+    H2=88; G2=8; y2=[10+i*(H2+G2) for i in range(5)]
     for (a,b,c,st),y in zip(L2,y2): node(L2X,y,L2W,H2,[a,b,c],status=st)
-    H1=100
+    H1=96
     L1=[("Fewer invoiced orders?","5 in Feb → 2 in Mar","−₹97,020 of the fall",("yes","MAIN CAUSE"),[0,1]),
         ("Smaller orders?","avg ₹32,340 → ₹15,900","−₹32,880 of the fall",("yes","CONTRIBUTES"),[2]),
         ("Timing or season?","March not closed; one","order still Pending",("part","PARTLY"),[3,4])]
@@ -158,13 +158,13 @@ def fig_tree():
     for y in y1:
         o.append(path(f"M{RX+RW},{ry+RH/2} H{RX+RW+16} V{y+H1/2} H{L1X}",stroke=RULE,sw=1.6))
     # legend: the pill words already say the status; the legend explains them
-    ly=y2[-1]+H2+30
+    ly=y2[-1]+H2+26
     for k,(lx,dy) in zip(["yes","part","call","no"],[(10,0),(280,0),(10,22),(280,22)]):
         c,lab=STATUS[k]
         o.append(rect(lx,ly+dy-12,14,14,fill=c,rx=3)); o.append(text(lx+20,ly+dy,lab,12.5,INK))
+    o.append(text(710,ly,"Source: Mini database (Jan–Mar 2026).",12,MUTED,anchor="end",style="italic"))
     ly+=22
-    o.append(text(10,ly+30,"Source: Mini database (Jan–Mar 2026).",12,MUTED,style="italic"))
-    return svg(W_CANVAS,ly+42,"".join(o))
+    return svg(W_CANVAS,ly+12,"".join(o))
 
 if __name__=="__main__":
     for name,fn in [("fig5-1-vague-to-precise-question.svg",fig_precise),("fig5-3-mece-bad-and-good-splits.svg",fig_mece),

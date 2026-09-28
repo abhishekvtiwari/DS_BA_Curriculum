@@ -43,19 +43,19 @@ You don't need every utensil on day one, only a plan, a rhythm, and the next rec
 
 Every chapter's *Time needed* line estimates its **study hours**: the reading, the exercises, and the project together. Adding up those lines for every teaching chapter gives the book's own answer to "how long will this take?":
 
-| | Chapters | Hours | At 6 hours a week | At 8 hours a week | At 10 hours a week |
-|---|---|---|---|---|---|
-| Parts 0 and I | 1–9 | 28–38 | 5–6 weeks | 4–5 weeks | 3–4 weeks |
-| Part II | 10–27 | 290–357 | 48–60 weeks | 36–45 weeks | 29–36 weeks |
-| **Job-ready: Parts 0 to II** | **1–27** | **318–395** | **53–66 weeks (12 to 15 months)** | **40–49 weeks (9 to 11 months)** | **32–40 weeks (7 to 9 months)** |
-| Parts III to VII | 28–67 | 445–584 | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
-| **All teaching chapters** | **1–67** | **763–979** | **2.4 to 3.1 years** | **1.8 to 2.4 years** | **1.5 to 1.9 years** |
+| | Hours | 6 hours a week | 8 hours a week | 10 hours a week |
+|---|---|---|---|---|
+| Parts 0 and I (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
+| Part II (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
+| **Job-ready: Parts 0 to II (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
+| Parts III to VII (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
+| **All of it (<span class="nobr">Chapters 1–67</span>)** | **<span class="nobr">762–978</span>** | **2.4 to 3.1 years** | **1.8 to 2.4 years** | **1.5 to 1.9 years** |
 
 These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9).
 
 **Read the bold job-ready row first.** Parts 0 to II, the **job-ready path**, are what a first analyst job asks for. Parts III to VII are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
 
-**To turn the table into your own plan, divide.** Weeks = hours ÷ your hours a week. At 6 hours a week, the job-ready path is 318 ÷ 6 = 53 weeks at the low end and 395 ÷ 6 = 65.8, about 66 weeks, at the high end: a year to fifteen months. Months are weeks × 12 ÷ 52, so 53 weeks is about 12 months and 66 weeks is about 15. The same arithmetic works for any number of hours; use the hours you really have, not the hours you wish you had.
+**To turn the table into your own plan, divide.** Weeks = hours ÷ your hours a week. At 6 hours a week, the job-ready path is 317 ÷ 6 = 52.8, about 53 weeks, at the low end and 394 ÷ 6 = 65.7, about 66 weeks, at the high end: a year to fifteen months. Months are weeks × 12 ÷ 52, so 53 weeks is about 12 months and 66 weeks is about 15. The same arithmetic works for any number of hours; use the hours you really have, not the hours you wish you had.
 
 That's longer than many courses promise, and it's honest. A plan built on the real number survives a bad month; a plan built on a hopeful one fails in week three and takes your confidence with it.
 
@@ -186,7 +186,7 @@ Meera Iyer has done analyst work for months without the title: the customer coun
 | 11 | 30 | 60 |
 | the next chapter in the book's order | 18 of its hours | 78 |
 
-She writes her first 90 days in `notes/plan.md`. By day 30, about 26 hours: Chapters 7 to 9 and most of Chapter 10. By day 60, about 51 hours: two-thirds of the way through Chapter 11. By day 90, 78 hours: Chapter 11 finished in week 10, and the next chapter under way. At the top of the plan she writes the whole path, from the job-ready row of section 6.1: 318 to 395 hours, which at 6 hours a week is 12 to 15 months. At work, she'll rebuild the January reconciliation from Chapter 3 in a spreadsheet as her month 2 practice project, using the practice data rather than company files, so nothing sensitive leaves the company's systems.
+She writes her first 90 days in `notes/plan.md`. By day 30, about 26 hours: Chapters 7 to 9 and most of Chapter 10. By day 60, about 51 hours: two-thirds of the way through Chapter 11. By day 90, 78 hours: Chapter 11 finished in week 10, and the next chapter under way. At the top of the plan she writes the whole path, from the job-ready row of section 6.1: 317 to 394 hours, which at 6 hours a week is 12 to 15 months. At work, she'll rebuild the January reconciliation from Chapter 3 in a spreadsheet as her month 2 practice project, using the practice data rather than company files, so nothing sensitive leaves the company's systems.
 
 **4. The AI rule.** She sets herself one rule, taped to the edge of her screen: *"Try for 20 minutes. Ask why, not what. Never paste Riverstone's real data."*
 
@@ -248,7 +248,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ## Recap
 
-- **The book's hours are known.** Parts 0 to II, the job-ready path, are 318 to 395 hours; the whole book is 763 to 979. At 6 hours a week, job-ready is 12 to 15 months.
+- **The book's hours are known.** Parts 0 to II, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
 - **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
 - **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
 - **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
@@ -314,7 +314,7 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 
 **3.** A spreadsheet in Chapter 10; the databases (PostgreSQL and DBeaver, with MySQL optional) in Chapter 12; Power BI Desktop in Chapter 16; Python, with VS Code and Jupyter, in Chapter 17; Git in Chapter 26.
 
-**4.** One way: Monday 1 hour reading, Wednesday 1 hour exercises, Friday 30 minutes review from memory, Saturday 2 hours project, Sunday 30 minutes redoing missed exercises and planning: 1 + 1 + 0.5 + 2 + 0.5 = 5 hours. The job-ready path is 318–395 hours; 318 ÷ 5 = 63.6, about 64 weeks, and 395 ÷ 5 = 79 weeks. That's 64–79 weeks, or about 15 to 18 months (64 × 12 ÷ 52 = 14.8; 79 × 12 ÷ 52 = 18.2).
+**4.** One way: Monday 1 hour reading, Wednesday 1 hour exercises, Friday 30 minutes review from memory, Saturday 2 hours project, Sunday 30 minutes redoing missed exercises and planning: 1 + 1 + 0.5 + 2 + 0.5 = 5 hours. The job-ready path is 317–394 hours; 317 ÷ 5 = 63.4, about 63 weeks, and 394 ÷ 5 = 78.8, about 79 weeks. That's 63–79 weeks, or about 15 to 18 months (63 × 12 ÷ 52 = 14.5; 79 × 12 ÷ 52 = 18.2).
 
 **5.** Describe the structure, not the data: *"I have a table with a customer name column, a due date column, and a balance column. How do I flag rows where the due date is before today and the balance is above zero?"* Or build a small made-up sample (three fake customers with invented numbers) and share that. Test the formula on the fake data, then apply it to the real file on your own computer. If your company has approved an AI tool for internal data, follow its rules instead.
 

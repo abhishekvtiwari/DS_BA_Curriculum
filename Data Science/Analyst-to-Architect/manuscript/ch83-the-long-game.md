@@ -46,21 +46,21 @@ Everything in this chapter is about walking: the pace that works, the weight to 
 
 Chapter 9 said the honest thing about time: months to become a job-ready analyst, years to go further, and no course compresses that. Now that the book exists, the estimate can be exact, because every chapter carries its own.
 
-Adding up the *Time needed* line of all sixty-seven teaching chapters gives **764 to 980 hours**.
+Adding up the *Time needed* line of all sixty-seven teaching chapters gives **762 to 978 hours**.
 
 | | Chapters | Hours | At 6 hours a week |
 |---|---|---|---|
-| Parts 0 and I, the foundations | 1–9 | 29–39 | 5–6 weeks |
+| Parts 0 and I, the foundations | 1–9 | 27–37 | 5–6 weeks |
 | **Part II, The Analyst** | **10–27** | **290–357** | **48–60 weeks** |
-| **Parts 0 to II: job-ready** | **1–27** | **319–396** | **12 to 15 months** |
+| **Parts 0 to II: job-ready** | **1–27** | **317–394** | **12 to 15 months** |
 | Part III, advanced analytics | 28–34 | 92–122 | 15–20 weeks |
 | Part IV, machine learning | 35–44 | 86–121 | 14–20 weeks |
 | Part V, data engineering | 45–52 | 100–132 | 17–22 weeks |
 | Part VI, production ML and GenAI | 53–59 | 91–116 | 15–19 weeks |
 | Part VII, architecture and leadership | 60–67 | 76–93 | 13–16 weeks |
-| **All of it** | **1–67** | **764–980** | **2.4 to 3.1 years** |
+| **All of it** | **1–67** | **762–978** | **2.4 to 3.1 years** |
 
-![Horizontal bars of hours per part, low and high estimate, with Part II much the largest, and two summary rows: job-ready at 319 to 396 hours and the whole book at 764 to 980](figures/fig83-1-the-arithmetic.svg)
+![Horizontal bars of hours per part, low and high estimate, with Part II much the largest, and two summary rows: job-ready at 317 to 394 hours and the whole book at 762 to 978](figures/fig83-1-the-arithmetic.svg)
 
 *Figure 83.1 — Being hirable is a quarter of the book. The other three quarters are the rest of a career, and they are optional.*
 
@@ -70,7 +70,7 @@ Three things follow from that table, and they are worth more than any encouragem
 
 **The number is not discouraging; it is a plan.** "A year or so" is something you can arrange your life around. "However long it takes" is not, and it is what most people are working to, which is why they cannot tell whether they are on schedule and eventually assume they are not.
 
-**Job-ready is a quarter of the book.** Parts 0 to II are 319 to 396 hours of the 764 to 980. You do not need the other three quarters to be hired, and Chapter 8's career tree exists precisely so you can see how far your own branch actually goes.
+**Job-ready is a quarter of the book.** Parts 0 to II are 317 to 394 hours of the 762 to 978. You do not need the other three quarters to be hired, and Chapter 8's career tree exists precisely so you can see how far your own branch actually goes.
 
 **These are reading-and-exercise hours, not fluency hours.** Chapter 9 section 9.1 made this distinction and it matters here: finishing Chapters 12 and 13 means you can write the queries they teach. Being quick on a messy dataset you did not design takes more. Plan the chapter hours, then plan again.
 
@@ -99,7 +99,7 @@ Consider two people who start this book on the same Monday.
 
 The steady one passes the sprinter in **week 50**, and after that it is not a race any more.
 
-Now the part that should stop you. The sprinter's 300 hours do not reach the end of Part II, which needs 319 to 396 hours from the start of the book. **The sprinter burns out somewhere between one chapter and five chapters short of being employable**, depending on how fast they were actually absorbing it. They did four times the weekly work the steady one ever did, they have nothing anybody would hire them for, and the reason is not talent or discipline. It is that they chose a pace they could not hold, on a route that was longer than they had been told.
+Now the part that should stop you. The sprinter's 300 hours do not reach the end of Part II, which needs 317 to 394 hours from the start of the book. **The sprinter burns out somewhere between one chapter and five chapters short of being employable**, depending on how fast they were actually absorbing it. They did four times the weekly work the steady one ever did, they have nothing anybody would hire them for, and the reason is not talent or discipline. It is that they chose a pace they could not hold, on a route that was longer than they had been told.
 
 Progress here compounds in a specific, literal way. The SQL from Chapter 12 is used in Chapter 13, and in Chapter 14's cleaning, and in Chapter 16's model, and in Chapter 28's window functions, and in Chapter 32's dbt models, and in Chapter 49's warehouse, and in every interview in Part VIII. An hour spent on foundations is not spent once. It is a deposit that every later chapter withdraws from.
 
@@ -354,7 +354,7 @@ Not a project. One week, and then you are on your own.
 
 ## Recap
 
-The book is 764 to 980 hours across sixty-seven teaching chapters, and 319 to 396 of those reach the end of Part II, which is the point at which people get hired. At six hours a week, job-ready is about twelve to fifteen months and the whole map is two and a half to three years. That is a plan you can arrange a life around, and it is the number most people never get told.
+The book is 762 to 978 hours across sixty-seven teaching chapters, and 317 to 394 of those reach the end of Part II, which is the point at which people get hired. At six hours a week, job-ready is about twelve to fifteen months and the whole map is two and a half to three years. That is a plan you can arrange a life around, and it is the number most people never get told.
 
 **Consistency beats intensity, arithmetically.** Six hours a week passes twenty-five-hours-a-week-for-twelve-weeks in week 50, and the sprinter runs out roughly one chapter short of employable. Choose a pace that survives a bad month and defend it.
 

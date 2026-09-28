@@ -17,15 +17,26 @@ def wraplines(s, n):
 
 
 # ---------- Figure 83.1: the arithmetic of the book ----------
+def hours():
+    """The hours come from tools/hours_table.py, the one source for Chapter 6 section 6.1 and
+    Chapter 83 section 83.1 (theme T12), so this figure can't drift from the tables."""
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "tools"))
+    import hours_table
+    return hours_table
+
+
 def fig_arithmetic():
+    ht = hours(); t = ht.totals()
+    p = {name: (lo, hi) for name, a, b, lo, hi in t["parts"]}
     parts = [
-        ("Parts 0 and I", "Ch 1–9", 29, 39, GREY),
-        ("Part II, The Analyst", "Ch 10–27", 290, 357, ACC),
-        ("Part III", "Ch 28–34", 92, 122, GREY),
-        ("Part IV", "Ch 35–44", 86, 121, GREY),
-        ("Part V", "Ch 45–52", 100, 132, GREY),
-        ("Part VI", "Ch 53–59", 91, 116, GREY),
-        ("Part VII", "Ch 60–67", 76, 93, GREY),
+        ("Parts 0 and I", "Ch 1–9") + t["foundations"] + (GREY,),
+        ("Part II, The Analyst", "Ch 10–27") + p["Part II"] + (ACC,),
+        ("Part III", "Ch 28–34") + p["Part III"] + (GREY,),
+        ("Part IV", "Ch 35–44") + p["Part IV"] + (GREY,),
+        ("Part V", "Ch 45–52") + p["Part V"] + (GREY,),
+        ("Part VI", "Ch 53–59") + p["Part VI"] + (GREY,),
+        ("Part VII", "Ch 60–67") + p["Part VII"] + (GREY,),
     ]
     x0, y0, W = 42, 104, 1040
     o = [text(x0, 38, "What this book actually costs, in hours",
@@ -46,12 +57,13 @@ def fig_arithmetic():
         o.append(rect(x0 + BARX, y + 2, lhi, 22, fill=c, extra=' opacity="0.32"', rx=4))
         o.append(rect(x0 + BARX, y + 2, llo, 22, fill=c, rx=4))
         o.append(text(x0 + BARX + lhi + 10, y + 18, f"{lo}–{hi}", 11.5, c, "bold", family=MONO))
-        wk = f"{lo/6:.0f}–{hi/6:.0f} weeks"
+        wk = ht.span(lo, hi, 6, "weeks")
         o.append(text(x0 + BARX + BARW + 34, y + 18, wk, 11.5, MUTED, family=MONO))
     yb = y0 + len(parts) * 42 + 6
     o.append(path(f"M{x0},{yb} H{x0+W}", stroke=RULE, sw=1.2))
-    rows = [("Job-ready: Parts 0–II", "Ch 1–27", "319–396 hours", "12 to 15 months", ACC),
-            ("The whole map", "Ch 1–67", "764–980 hours", "2.4 to 3.1 years", INK)]
+    (jl, jh), (al, ah) = t["job_ready"], t["all"]
+    rows = [("Job-ready: Parts 0–II", "Ch 1–27", f"{jl}–{jh} hours", ht.span(jl, jh, 6, "months"), ACC),
+            ("The whole map", "Ch 1–67", f"{al}–{ah} hours", ht.span(al, ah, 6, "years"), INK)]
     for k, (name, chs, hrs, wk, c) in enumerate(rows):
         y = yb + 26 + k * 32
         o.append(text(x0, y, name, 13, c, "bold"))
@@ -79,8 +91,9 @@ def fig_consistency():
               12.5, MUTED, style="italic")]
 
     # job-ready band
-    o.append(rect(x0, py(396), PW, py(319) - py(396), fill="#e2f3ee"))
-    o.append(text(x0 + 10, py(396) - 10, "job-ready band: 319–396 hours (end of Part II)",
+    jl, jh = hours().totals()["job_ready"]
+    o.append(rect(x0, py(jh), PW, py(jl) - py(jh), fill="#e2f3ee"))
+    o.append(text(x0 + 10, py(jh) - 10, f"job-ready band: {jl}–{jh} hours (end of Part II)",
                   11, GREEN, style="italic"))
 
     # axes
