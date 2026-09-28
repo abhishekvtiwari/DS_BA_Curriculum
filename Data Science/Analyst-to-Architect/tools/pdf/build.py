@@ -231,10 +231,10 @@ JOBS['ch05'] = lambda: build('ch05-thinking-like-an-analyst.md', 'Ch05-Thinking-
            SUB='Good questions, precise problem statements, hypotheses, issue trees and MECE, facts versus opinions, checking claims, bias, and deciding with data.',
            DOC='Draft chapter', META='17 September 2026<br>Every number checked against the Riverstone databases'), 2)
 
-JOBS['ch06'] = lambda: build('ch06-setting-up-to-learn.md', 'Ch06-Setting-Up-to-Learn', '',
-      'Chapter 6. Setting Up to Learn', 'Analyst to Architect · Chapter 6 · Setting Up to Learn',
-      dict(KICKER='Analyst to Architect · Part 0 — First Principles', TITLE='Chapter 6<br>Setting Up to Learn',
-           SUB='The computer you need, installing and checking the book\'s tools, companion files, documentation, learning with AI assistants, and a study plan you can keep.',
+JOBS['ch06'] = lambda: build('ch06-setting-up-to-learn.md', 'Ch06-Planning-Your-Learning', '',
+      'Chapter 6. Planning Your Learning', 'Analyst to Architect · Chapter 6 · Planning Your Learning',
+      dict(KICKER='Analyst to Architect · Part 0 — First Principles', TITLE='Chapter 6<br>Planning Your Learning',
+           SUB='How long the book really takes, a weekly rhythm you can keep, when each tool arrives, reading documentation, learning with AI assistants, and a plan for your first 90 days.',
            DOC='Draft chapter', META='17 September 2026<br>Versions and install steps checked against official sources'), 2)
 
 JOBS['part0'] = lambda: build('part0-first-principles.md', 'Part0-First-Principles-Data-from-Zero', 'break-h1',
