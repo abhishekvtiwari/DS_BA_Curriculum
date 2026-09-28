@@ -167,15 +167,15 @@ People can hold only a few things in mind at once. A legend with eight entries f
 
 The most common charting mistake happens before any chart is drawn: starting from the data ("I have sales by month and region, what chart can I make?") instead of the question ("Is our festive peak getting bigger, and is it the same everywhere?"). The question decides the chart.
 
-![A chart chooser with six rows. Compare categories: sorted bar chart. Show change over time: line chart. Show a distribution: histogram or box plot. Show a relationship: scatter plot. Show parts of a whole: stacked or 100% bar. Show where: map. Each row lists alternatives](figures/fig15-2-chart-chooser.svg)
-
-*Figure 15.2 — Start from the kind of question, then choose the chart. The alternatives column matters: the first choice isn't always the best one for your data.*
-
-Three more questions sharpen the choice:
+Figure 15.2 matches the kind of question to a chart. Three more questions sharpen the choice:
 
 1. **Who is reading it, and where?** A CEO scanning a slide on a phone needs one message in large type. An analyst exploring data in a workbook can handle a detailed scatter plot.
 2. **Explore or explain?** **Exploratory** charts are for you: quick, many, rough, to find what's interesting. **Explanatory** charts are for others: few, polished, each with one message. Most of this chapter is about explanatory charts; section 15.5's distributions are also your main exploratory tools.
 3. **What should they do next?** If the chart should lead to a decision ("increase September stock"), design it so that decision is the obvious conclusion, with the evidence visible.
+
+![A chart chooser with six rows. Compare categories: sorted bar chart. Show change over time: line chart. Show a distribution: histogram or box plot. Show a relationship: scatter plot. Show parts of a whole: stacked or 100% bar. Show where: map. Each row lists alternatives](figures/fig15-2-chart-chooser.svg)
+
+*Figure 15.2 — Start from the kind of question, then choose the chart. The alternatives column matters: the first choice isn't always the best one for your data.*
 
 ### Levels of measurement decide what's allowed
 
@@ -672,7 +672,7 @@ Using the wrong kind is a common, subtle error. A rainbow (red, orange, yellow, 
 
 ### Highlight, don't decorate
 
-The most effective use of color in business charts is **one highlight color against gray**:
+The most effective use of color in business charts is **one highlight color against gray**, as Figure 15.11 shows.
 
 ![Left, before: eleven lines of monthly revenue per sales rep in eleven colors with a legend. Right, after: ten lines in light gray and one line, Rahul Mehta, in orange with a direct label, and a label for the ten other reps](figures/fig15-11-highlight.svg)
 
@@ -826,19 +826,19 @@ Edward Tufte's idea of the **data-ink ratio** (1983) is a useful discipline: the
 
 Most misleading charts aren't made by people trying to deceive. They come from software defaults, from zooming in "to see the detail", and from wanting a chart to look impressive. Chapter 4, section 4.7, introduced several tricks; this section shows them on Riverstone data, with the honest alternative.
 
-![Three charts. Left: Delhi and Bengaluru revenue bars with a y-axis from 10.175 to 10.183 crore, making Delhi's bar look far taller. Middle: the same two bars from zero, almost identical, titled the gap is 0.04%. Right: revenue bars for 2023 to 2025 on a left axis starting at 55 and gross margin as a red line on a right axis from 20 to 28.5, so the line appears to track the bars](figures/fig15-13-misleading.svg)
+![Three charts. Top left: Delhi and Bengaluru revenue bars with a y-axis from 10.175 to 10.183 crore, making Delhi's bar look far taller. Top right: the same two bars from zero, almost identical, titled the gap is 0.04%. Bottom: revenue bars for 2023 to 2025 on a left axis starting at 55 and gross margin as a red line on a right axis from 20 to 28.5, so the line appears to track the bars](figures/fig15-13-misleading.svg)
 
-*Figure 15.13 — Left and middle: a truncated axis turns a 0.04% difference into a visual landslide. Right: a dual-axis chart whose two scales were chosen so that margin seems to follow revenue.*
+*Figure 15.13 — Top: a truncated axis turns a 0.04% difference into a visual landslide. Bottom: a dual-axis chart whose two scales were chosen so that margin seems to follow revenue.*
 
 ### Truncated axes on bars
 
-The left chart uses the quick (and wrong) Q4 branch numbers from Chapter 14's story: Delhi ₹10,18,31,086 and Bengaluru ₹10,17,88,506. With the axis starting at ₹10.175 crore, Delhi's bar looks about twice as tall. From zero, the bars are indistinguishable, which is the truth: a difference of ₹42,580, or 0.04%. (And the clean numbers put Bengaluru ahead by ₹1.47 crore, which a correct chart of clean data would show.)
+The top-left chart uses the quick (and wrong) Q4 branch numbers from Chapter 14's story: Delhi ₹10,18,31,086 and Bengaluru ₹10,17,88,506. With the axis starting at ₹10.175 crore, Delhi's bar looks about twice as tall. From zero, the bars are indistinguishable, which is the truth: a difference of ₹42,580, or 0.04%. (And the clean numbers put Bengaluru ahead by ₹1.47 crore, which a correct chart of clean data would show.)
 
 **The rule:** bars always start at zero. If the differences you care about are small relative to the values, show the **differences** (a bar chart of change, or a dot plot of attainment) instead of truncating.
 
 ### Dual axes chosen to agree
 
-The right chart puts revenue (bars, left axis) and gross margin (line, right axis) together. With the left axis starting at ₹55 crore and the right at 20%, the margin line climbs in step with revenue, and a reader concludes "as we grew, margins grew with volume". But the chart-maker could as readily have chosen scales that made margin look flat, or falling behind. In Riverstone's case, margin rose mainly because prices rose while unit costs were held constant in the data (the dataset's documented simplification), not because of volume.
+The bottom chart puts revenue (bars, left axis) and gross margin (line, right axis) together. With the left axis starting at ₹55 crore and the right at 20%, the margin line climbs in step with revenue, and a reader concludes "as we grew, margins grew with volume". But the chart-maker could as readily have chosen scales that made margin look flat, or falling behind. In Riverstone's case, margin rose mainly because prices rose while unit costs were held constant in the data (the dataset's documented simplification), not because of volume.
 
 **The alternative:** two aligned charts, or one chart with margin labeled on the bars (the project's makeover B in the answers), so no scale choice creates a relationship.
 
@@ -1091,10 +1091,6 @@ What made the difference:
 
 **Option B: Riverstone's data.** Figure 15.15 shows five charts from Riverstone's old monthly management pack. The data for each is in `ch15_chart_data.xlsx` (sheets `product_2025`, `margin_by_year`, `region_2025`, `rep_month_2025`, and `region_month_2025`).
 
-![Five poor charts. A: an exploded, shadowed pie of eight products in rainbow colors. B: revenue columns for 2023–2025 on an axis starting at 55 with a gross margin line on a second axis. C: region columns on an axis starting at 13, in four colors, with heavy gridlines. D: a rainbow stacked area chart of eleven sales reps by month with a legend. E: clustered columns for four regions across twelve months with tiny rotated data labels and heavy gridlines](figures/fig15-15-project-before.svg)
-
-*Figure 15.15 — Five charts from Riverstone's old management pack, each with several of this chapter's mistakes.*
-
 **Steps**
 
 1. **For each chart, write down its question** and the one message the reader should take away. If you can't find a message, decide what question the data could answer for a manager.
@@ -1105,6 +1101,10 @@ What made the difference:
 6. **Add alt text** to each chart, and check it in grayscale.
 7. **Put the before-and-after pairs on five slides** (or one page each), with three bullet points under each explaining what you changed and why.
 8. **Test it:** show only the "after" charts to someone who hasn't seen the data, give them ten seconds per chart, and ask what each one says. If their answer doesn't match your title, revise.
+
+![Five poor charts. A: an exploded, shadowed pie of eight products in rainbow colors. B: revenue columns for 2023–2025 on an axis starting at 55 with a gross margin line on a second axis. C: region columns on an axis starting at 13, in four colors, with heavy gridlines. D: a rainbow stacked area chart of eleven sales reps by month with a legend. E: clustered columns for four regions across twelve months with crowded, rotated data labels and heavy gridlines](figures/fig15-15-project-before.svg)
+
+*Figure 15.15 — Five charts from Riverstone's old management pack, each with several of this chapter's mistakes.*
 
 **What good looks like:** each redesign answers one question in under ten seconds; every bar chart starts at zero; no chart needs a legend with more than three entries; titles state findings with numbers; missing data (the ₹2.3 crore with no city) is visible; the charts work in grayscale. One set of solutions is in Figure 15.16 in the answers, but many good redesigns exist.
 
@@ -1197,17 +1197,17 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 ## Answers
 
-**Project (Option B): one set of redesigns.**
-
-![Five redesigned charts. A: sorted horizontal bars of product revenue in gray with Storage Box 25L highlighted in blue and values labeled. B: revenue columns for 2023 to 2025 from a zero baseline with revenue labels above and gross margin percentages inside each column. C: sorted horizontal bars of region revenue with a gray City missing bar at the bottom. D: eleven rep lines in light gray with Rahul Mehta in orange. E: a blue heatmap of revenue by region and month](figures/fig15-16-project-after.svg)
-
-*Figure 15.16 — One set of redesigns for the old management pack. Each chart has one message in its title.*
+**Project (Option B): one set of redesigns, shown in Figure 15.16.**
 
 - **A (exploded pie → sorted bars):** eight slices can't be ranked by angle, and the shadow and explosion distort them. Sorted bars with values, one highlight. Title: *"Storage Box 25L led 2025"*.
 - **B (dual axis → one chart with labels):** the two scales were chosen so margin appears to follow revenue. Revenue bars from zero with margin written in each bar; no second axis. Title: *"Revenue up 87% since 2023; margin up 6.4 points"*.
 - **C (truncated, multicolored columns → sorted bars from zero, missing data shown):** an axis starting at ₹13 crore made East look about a twentieth of West. Title: *"West brings 33% of 2025 revenue"*.
 - **D (rainbow stacked area → highlight lines):** the middle layers of a stacked area can't be read, and eleven colors need a legend. Gray lines and one highlight (or small multiples). Title: *"Every rep follows the same season; Rahul Mehta leads"*.
-- **E (48 clustered columns with tiny labels → heatmap):** a two-way question with too many bars. A sequential heatmap with values. Title: *"October is the peak in every region"*.
+- **E (48 clustered columns with crowded labels → heatmap):** a two-way question with too many bars. A sequential heatmap with values. Title: *"October is the peak in every region"*.
+
+![Five redesigned charts. A: sorted horizontal bars of product revenue in gray with Storage Box 25L highlighted in blue and values labeled. B: revenue columns for 2023 to 2025 from a zero baseline with revenue labels above and gross margin percentages inside each column. C: sorted horizontal bars of region revenue with a gray City missing bar at the bottom. D: eleven rep lines in light gray with Rahul Mehta in orange. E: a blue heatmap of revenue by region and month](figures/fig15-16-project-after.svg)
+
+*Figure 15.16 — One set of redesigns for the old management pack. Each chart has one message in its title.*
 
 **1.** Dot position on a common scale; bar length on a common baseline; pie slice angle; bubble area; color saturation.
 

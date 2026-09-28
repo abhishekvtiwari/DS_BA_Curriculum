@@ -63,7 +63,7 @@ Most cleaning goes wrong in one of two ways: people fix problems in whatever ord
 Two principles sit underneath:
 
 - **Never clean the source.** Chapter 13 said it for SQL: don't delete from the system of record as part of an analysis. The same goes for a shared spreadsheet or a CSV someone else produced. Clean into a new table, a query, or a copy.
-- **Cleaning must be repeatable.** Next quarter's export will have the same problems. A recorded Power Query, a SQL script, or a Python script cleans it again in seconds; a morning of manual edits in a spreadsheet has to be redone by hand.
+- **Cleaning must be repeatable.** Next quarter's export will have the same problems. A recorded Power Query or a SQL script cleans it again in seconds; a morning of manual edits in a spreadsheet has to be redone by hand.
 
 ### The data for this chapter
 
@@ -80,16 +80,45 @@ Riverstone runs one ERP, the system of record from Chapter 3. Orders reach it th
 
 The truth is known: after cleaning, the order export must match the database's Q4 2025 order lines exactly. `answer_key.json` lists every planted problem with its count. Don't open it until you've profiled the files yourself.
 
-### Loading the exports as text
+### Loading the data in DBeaver
 
-**SQL.** The companion scripts create staging tables where every column is text, then load the CSVs:
+You load two things, in the same way you loaded `riverstone` in Chapter 12 (section 12.3): first the full dataset, then the two messy exports.
+
+**PostgreSQL.**
+
+1. **Create the database.** In DBeaver, open an SQL editor on your PostgreSQL connection and run `CREATE DATABASE riverstone_full;`. Edit the connection so its database is `riverstone_full`, and reconnect.
+2. **Load the full dataset.** Choose *File → Open File…*, open `companion/full/riverstone_full_setup_postgresql.sql`, check that the editor's toolbar shows `riverstone_full` as the active database, and choose *Execute SQL Script* (Alt+X). It creates eight tables and fills them; it takes a minute or two.
+3. **Load the exports.** Open `companion/ch14/sql/ch14_load_postgresql.sql` the same way and run it with *Execute SQL Script*. It creates the **staging tables** `stg_orders_raw` and `stg_customers_raw`, where every column is text, and writes every line of the two CSV files into them exactly as the files have it: page headers, footer, blanks, and all. It also creates four small mapping tables used in section 14.5, and `truth_order_lines`, the correct clean table, which you'll use only at the very end (section 14.11).
+
+**MySQL.** Open `companion/full/riverstone_full_setup_mysql.sql` and run it with *Execute SQL Script*; like Chapter 12's MySQL script, it creates the `riverstone_full` database itself. Refresh the connection, double-click `riverstone_full` to make it the active database, then open and run `companion/ch14/sql/ch14_load_mysql.sql`.
+
+<!-- db: riverstone_full -->
+
+**Check it worked.** Run these two counts in each database you loaded:
+
+```sql
+SELECT COUNT(*) AS order_lines FROM order_items;
+```
 
 ```
-psql -d riverstone_full -f sql/ch14_load_postgresql.sql
-mysql --local-infile=1 -u root -p riverstone_full < sql/ch14_load_mysql.sql
+ order_lines 
+-------------
+      209006
+(1 row)
 ```
 
-Run them from `companion/ch14`. They create `stg_orders_raw` and `stg_customers_raw`, plus four small mapping tables used in section 14.5. The table definition shows the idea:
+```sql
+SELECT COUNT(*) AS rows_loaded FROM stg_orders_raw;
+```
+
+```
+ rows_loaded 
+-------------
+       25976
+(1 row)
+```
+
+The first is the whole company's order lines for 2023–2025; the second is every line of the export, including the lines that aren't orders. The staging table's definition shows the idea behind it:
 
 ```sql
 CREATE TABLE stg_orders_raw (
@@ -97,7 +126,7 @@ CREATE TABLE stg_orders_raw (
   qty_unit TEXT, unit_price TEXT, discount_pct TEXT, status TEXT, sales_rep TEXT, branch TEXT, entered_at_utc TEXT);
 ```
 
-(MySQL uses `VARCHAR` lengths instead of `TEXT`, and `LINES TERMINATED BY '\r\n'`, because the export has Windows line endings.)
+Thirteen columns, all `TEXT`. A text column accepts anything, so a date written as `31-11-2025` or a price written as `Rs. 430` arrives unchanged instead of being rejected or silently converted. (The MySQL script uses `VARCHAR` with a length instead of `TEXT`.)
 
 **Excel and Power Query.** **Data → Get Data → From File → From Text/CSV**, choose the file, set **Data Type Detection** to **Do not detect data types**, and click **Transform Data**. Every column arrives as text. Delete any automatic **Changed Type** step (Chapter 11, section 11.7).
 
@@ -125,14 +154,91 @@ For each column:
 7. **Ranges:** for numbers and dates, the minimum and maximum. Are they possible?
 8. **Relationships:** do codes match the lists they should match (customers, products)?
 
-### Profiling the order export in SQL
+### Patterns in ten minutes (regular expressions)
+
+Profiling asks questions such as "is this ID all digits?" and "what shape does this date have?". `LIKE` (Chapter 12, section 12.5) can't answer them: `%` matches any characters at all, so it can't say "digits only". The tool for the job is a **regular expression** (regex for short): a small pattern language for describing text. You need only nine pieces of it in this chapter:
+
+| Piece | Means | Example | Matches |
+|---|---|---|---|
+| `^` | the start of the text | `^Rs` | `Rs. 430`, not `430 Rs` |
+| `$` | the end of the text | `Ltd$` | `Metro Mart Pvt Ltd` |
+| `[0-9]` or `\d` | one digit | `\d\d` | `05` |
+| `[^0-9]` | one character that is **not** a digit | `[^0-9]` | the `R`, `s`, `.` and space in `Rs. 430` |
+| `+` | the piece before it, one or more times | `[0-9]+` | `7`, `0124`, `184028` |
+| `{4}` | the piece before it, exactly four times | `\d{4}` | `2025` |
+| `?` | the piece before it is optional | `pvt\.?` | `pvt` and `pvt.` |
+| `\s` | one space (or tab) | `\s+` | one or more spaces |
+| `\|` | or | `pvt\|private` | either word |
+
+A dot on its own means "any character", so a real full stop is written `\.`. Letters and digits match themselves.
+
+PostgreSQL uses a regex in two ways. The operator `~` asks "does this text match the pattern?" and returns true (`t`) or false (`f`); `!~` asks the opposite, "does it **not** match?". Before you run the next two queries, predict what each returns.
 
 <!-- db: riverstone_full -->
+
+```sql
+SELECT '0124' ~ '^[0-9]+$' AS all_digits;
+```
+
+```
+ all_digits 
+------------
+ t
+(1 row)
+```
+
+Read the pattern from left to right: the start of the text (`^`), one or more digits (`[0-9]+`), the end of the text (`$`). Because it's anchored at both ends, every character in between must be a digit. `0124` passes.
+
+```sql
+SELECT 'order_item_id' ~ '^[0-9]+$' AS all_digits;
+```
+
+```
+ all_digits 
+------------
+ f
+(1 row)
+```
+
+The text `order_item_id` has no digits at all, so it fails. That one pattern will pick out every row of the export that isn't an order line.
+
+The function `regexp_replace(text, pattern, replacement, flags)` replaces what matches. Its fourth argument is optional: without it, only the **first** match is replaced; the flag `'g'` (global) replaces **every** match.
+
+```sql
+SELECT regexp_replace('05-11-2025', '[0-9]', '9')      AS first_only,
+       regexp_replace('05-11-2025', '[0-9]', '9', 'g') AS every_digit;
+```
+
+```
+ first_only | every_digit 
+------------+-------------
+ 95-11-2025 | 99-99-9999
+(1 row)
+```
+
+Without `'g'`, only the `0` became `9`. With it, every digit did, and what's left is the **shape** of the value: two digits, a dash, two digits, a dash, four digits. The profiling queries below use exactly this trick.
+
+```sql
+SELECT regexp_replace('Rs. 430', '^[^0-9]+', '') AS price_text;
+```
+
+```
+ price_text 
+------------
+ 430
+(1 row)
+```
+
+`^[^0-9]+` means "from the start, one or more characters that aren't digits": here `Rs. ` (the `R`, the `s`, the full stop, and the space). Replacing it with nothing (`''`) leaves `430`. Section 14.7 shows why this careful version matters. A third flag, `'i'`, makes a pattern ignore capital letters; section 14.4 uses it. MySQL spells these `REGEXP` and `REGEXP_REPLACE` (section 14.13).
+
+### Profiling the order export in SQL
 
 **Rows and key.**
 
 ```sql
-SELECT COUNT(*) AS rows_loaded, COUNT(DISTINCT order_item_id) AS distinct_ids FROM stg_orders_raw;
+SELECT COUNT(*)                      AS rows_loaded,
+       COUNT(DISTINCT order_item_id) AS distinct_ids
+FROM stg_orders_raw;
 ```
 
 ```
@@ -144,10 +250,16 @@ SELECT COUNT(*) AS rows_loaded, COUNT(DISTINCT order_item_id) AS distinct_ids FR
 
 Order lines should have one row each, but there are 143 more rows than distinct IDs. Something is repeated, or some rows aren't order lines at all.
 
-**Rows that aren't data.** A real order line ID is all digits:
+**Rows that aren't data.** A real order line ID is all digits, so list every ID that isn't:
 
 ```sql
-SELECT order_item_id, COUNT(*) AS rows FROM stg_orders_raw WHERE order_item_id !~ '^[0-9]+$' OR order_item_id IS NULL GROUP BY order_item_id ORDER BY rows DESC;
+SELECT order_item_id,
+       COUNT(*) AS rows
+FROM stg_orders_raw
+WHERE order_item_id !~ '^[0-9]+$'
+   OR order_item_id IS NULL
+GROUP BY order_item_id
+ORDER BY rows DESC;
 ```
 
 ```
@@ -158,15 +270,19 @@ SELECT order_item_id, COUNT(*) AS rows FROM stg_orders_raw WHERE order_item_id !
 (2 rows)
 ```
 
-Six rows contain the word `order_item_id`: the export repeats its **header row** every 4,000 lines, a leftover from a paginated report. One row has an empty ID: the **footer** (`Report generated 01-01-2026 02:00; rows: 25975`). That accounts for one of the 25,833 "distinct IDs" too. Removing these 7 rows leaves 25,969 data rows, still 137 more than distinct IDs: candidates for duplicates (section 14.4).
+How it works: `!~ '^[0-9]+$'` keeps IDs that are **not** all digits, and `OR order_item_id IS NULL` adds empty IDs, because a regex test on NULL gives NULL, not true (Chapter 12, section 12.6). Six rows contain the word `order_item_id`: the export repeats its **header row** every 4,000 lines, a leftover from a paginated report. One row has an empty ID: the **footer** (`Report generated 01-01-2026 02:00; rows: 25975`). The repeated header text `order_item_id` is itself one of the 25,833 "distinct IDs"; the footer's empty ID is NULL, which `COUNT(DISTINCT …)` skips. So there are 25,832 real IDs. Removing these 7 rows leaves 25,969 data rows, 137 more than the real IDs: candidates for duplicates (section 14.4).
 
 > **Watch out: footers lie too.** The footer claims 25,975 rows. That count includes the six repeated headers and the duplicate rows, so it's the number of lines the export tool wrote, not the number of order lines. Never use a file's own summary line as your reconciliation total.
 
 **Date patterns.** Replacing every digit with `9` shows the shapes of the values without their details:
 
 ```sql
-SELECT regexp_replace(order_date, '[0-9]', '9', 'g') AS date_pattern, COUNT(*) AS rows
-FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 ORDER BY rows DESC;
+SELECT regexp_replace(order_date, '[0-9]', '9', 'g') AS date_pattern,
+       COUNT(*) AS rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY 1
+ORDER BY rows DESC;
 ```
 
 ```
@@ -179,39 +295,45 @@ FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 ORDER BY rows DE
 (4 rows)
 ```
 
-Four formats in one column. `99-99-9999` is Riverstone's usual day-first format. `9999-99-99` is year-first. `99/99/9999` uses slashes. And `99999` is five digits with no separators: an **Excel date serial number** (Chapter 10, section 10.3) from someone who pasted dates as values before exporting. A pattern profile can't tell whether `05-11-2025` is 5 November or 11 May; section 14.7 settles that.
+How it works: `WHERE order_item_id ~ '^[0-9]+$'` keeps only data rows. `GROUP BY 1` means "group by the first column in the `SELECT` list", a shortcut for writing the whole `regexp_replace(…)` expression again; `ORDER BY 1` would sort by it the same way. Four formats in one column. `99-99-9999` is Riverstone's usual day-first format. `9999-99-99` is year-first. `99/99/9999` uses slashes. And `99999` is five digits with no separators: an **Excel date serial number** (Chapter 10, section 10.3) from someone who pasted dates as values before exporting. A pattern profile can't tell whether `05-11-2025` is 5 November or 11 May; section 14.7 settles that.
 
-**Categories.** List every status with its count:
+**Categories.** List every status with its count. Wrapping each value in brackets and measuring its length makes invisible spaces visible:
 
 ```sql
-SELECT status, COUNT(*) AS rows FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY status ORDER BY rows DESC;
+SELECT '[' || status || ']' AS shown,
+       LENGTH(status)       AS len,
+       COUNT(*)             AS rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY status
+ORDER BY rows DESC;
 ```
 
 ```
-   status   | rows  
-------------+-------
- Delivered  | 19835
- Pending    |  1026
- Shipped    |  1004
- Cancelled  |   985
- DELIVERED  |   697
- Dlvd       |   694
- Delivered  |   672
- delivered  |   653
- Pending    |    57
- pending    |    52
- Shipped    |    51
- shipped    |    45
- SHIPPED    |    44
- PENDING    |    39
- Cxl        |    32
- CANCELLED  |    31
- Canceled   |    28
- cancelled  |    24
+    shown     | len | rows  
+--------------+-----+-------
+ [Delivered]  |   9 | 19835
+ [Pending]    |   7 |  1026
+ [Shipped]    |   7 |  1004
+ [Cancelled]  |   9 |   985
+ [DELIVERED]  |   9 |   697
+ [Dlvd]       |   4 |   694
+ [Delivered ] |  10 |   672
+ [delivered]  |   9 |   653
+ [Pending ]   |   8 |    57
+ [pending]    |   7 |    52
+ [Shipped ]   |   8 |    51
+ [shipped]    |   7 |    45
+ [SHIPPED]    |   7 |    44
+ [PENDING]    |   7 |    39
+ [Cxl]        |   3 |    32
+ [CANCELLED]  |   9 |    31
+ [Canceled]   |   8 |    28
+ [cancelled]  |   9 |    24
 (18 rows)
 ```
 
-Eighteen values for a field with four real statuses. `Delivered` appears twice because one version has a trailing space you can't see. `Dlvd` and `Cxl` are abbreviations, and `Canceled` is the American spelling. A report that filters `status = 'Cancelled'` would miss 115 cancelled lines.
+`'[' || status || ']'` joins text with `||` (Chapter 12, section 12.16), and `LENGTH` counts characters (section 12.8). Eighteen values for a field with four real statuses. `Delivered`, `Pending`, and `Shipped` each appear twice with the same capitals: one version has a trailing space, which the brackets and the extra character in `len` give away. `Dlvd` and `Cxl` are abbreviations, and `Canceled` is the American spelling. A report that filters `status = 'Cancelled'` would miss 115 cancelled lines.
 
 **Blanks.** Count empty values per column:
 
@@ -220,7 +342,8 @@ SELECT COUNT(*) FILTER (WHERE product_id IS NULL OR product_id = '') AS product_
        COUNT(*) FILTER (WHERE quantity IS NULL OR quantity = '')     AS quantity,
        COUNT(*) FILTER (WHERE sales_rep IS NULL OR sales_rep = '')   AS sales_rep,
        COUNT(*) FILTER (WHERE branch IS NULL OR branch = '')         AS branch
-FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$';
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$';
 ```
 
 ```
@@ -230,13 +353,17 @@ FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$';
 (1 row)
 ```
 
-`FILTER (WHERE …)` counts only the rows that meet its condition (PostgreSQL; section 14.12 gives the MySQL form). Checking both `IS NULL` and `= ''` matters: PostgreSQL's CSV loader turns an unquoted empty field into NULL, MySQL's turns it into an empty string, and a spreadsheet shows both as a blank cell.
+`FILTER (WHERE …)` counts only the rows that meet its condition (Chapter 13; section 14.13 gives the MySQL form). Checking both `IS NULL` and `= ''` matters: PostgreSQL's CSV loader turns an unquoted empty field into NULL, MySQL's turns it into an empty string (the load scripts store blanks the same way), and a spreadsheet shows both as a blank cell.
 
 **Numbers stored as text.** The pattern trick works for prices too:
 
 ```sql
-SELECT regexp_replace(unit_price, '[0-9]', '9', 'g') AS price_pattern, COUNT(*) AS rows
-FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 ORDER BY rows DESC;
+SELECT regexp_replace(unit_price, '[0-9]', '9', 'g') AS price_pattern,
+       COUNT(*) AS rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY 1
+ORDER BY rows DESC;
 ```
 
 ```
@@ -256,7 +383,12 @@ Most prices are plain numbers, but 2,316 rows carry currency text: `Rs. 430`, `�
 **Discounts.** Listing distinct values shows the problem immediately:
 
 ```sql
-SELECT discount_pct, COUNT(*) AS rows FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 ORDER BY 1;
+SELECT discount_pct,
+       COUNT(*) AS rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY 1
+ORDER BY 1;
 ```
 
 ```
@@ -279,8 +411,13 @@ Riverstone's discounts are 0, 5, 8, 10, or 12 percent. Some rows record 5% as `0
 **Quantities and units.**
 
 ```sql
-SELECT qty_unit, COUNT(*) AS rows, MIN(NULLIF(quantity,'')::int) AS min_qty, MAX(NULLIF(quantity,'')::int) AS max_qty
-FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY qty_unit;
+SELECT qty_unit,
+       COUNT(*)                      AS rows,
+       MIN(NULLIF(quantity, '')::int) AS min_qty,
+       MAX(NULLIF(quantity, '')::int) AS max_qty
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY qty_unit;
 ```
 
 ```
@@ -291,12 +428,23 @@ FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY qty_unit;
 (2 rows)
 ```
 
+How it works, from the inside out:
+
+- `NULLIF(a, b)` returns NULL when `a` equals `b`, and `a` otherwise. `NULLIF(quantity, '')` turns an empty string into a real NULL.
+- `::int` converts text to a whole number, just as `::date` converts text to a date (Chapter 12, section 12.8). Its cousins are `::text` (to text) and `::numeric` (to an exact decimal). A conversion fails with an error on text that isn't a number, such as `''` or `N/A`, which is why `NULLIF` comes first.
+- `MIN` and `MAX` skip NULLs, so the blank quantities don't count.
+
 Most quantities are in pieces (`PCS`), but 141 rows are in cartons (`CTN`) of 10 pieces. And a maximum of **700** pieces on one line is far above anything Riverstone normally sells; section 14.6 investigates.
 
 **Code lengths.**
 
 ```sql
-SELECT LENGTH(customer_code) AS code_length, COUNT(*) AS rows FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 ORDER BY 1;
+SELECT LENGTH(customer_code) AS code_length,
+       COUNT(*) AS rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY 1
+ORDER BY 1;
 ```
 
 ```
@@ -327,15 +475,7 @@ In about ten queries, the profile found problems in almost every column, and it 
 | `status`, `branch` | 18 and 17 spellings | Map to standard values |
 | `sales_rep` | 817 blanks, trailing spaces | Trim; keep blanks as unknown |
 
-### Profiling in Excel and Power Query
-
-Power Query has a built-in profiler. In the Power Query Editor, turn on **View → Data Preview → Column quality**, **Column distribution**, and **Column profile**. At the bottom of the window, change **Column profiling based on top 1000 rows** to **Column profiling based on entire data set**; the default profiles only the first thousand rows, which would miss every Kolkata row and most of the problems here.
-
-- **Column quality** shows the percentage of **Valid**, **Error**, and **Empty** values under each header.
-- **Column distribution** shows the number of **distinct** and **unique** values (unique = appearing exactly once).
-- **Column profile** (click a column) shows count, errors, empty, distinct, min, max, and a value distribution chart. On `status` it lists the 18 spellings; on `order_date`, the range tells you nothing (it's text), which is itself a finding.
-
-In a plain worksheet, the same checks are formulas you already know: `=ROWS()` and `=COUNTA(UNIQUE(A2:A25977))` for rows and distinct IDs (Chapter 11, section 11.6), a pivot table with `status` in both Rows and Values (Count) for the categories, `=COUNTBLANK()` for blanks, and `=MIN()`/`=MAX()` for ranges. For patterns, a helper column with nested `SUBSTITUTE`s works, or in Microsoft 365, `=REGEXREPLACE(C2,"[0-9]","9")` where available.
+**Spreadsheet equivalent:** Power Query has a built-in profiler, and a plain worksheet can do every check with formulas you already know; section 14.12 shows both.
 
 > **Tool note: profile the whole file.** Power Query's "top 1000 rows" default, Excel's filter drop-down (which lists at most 10,000 distinct values), and a quick scroll through the first screen all look at part of the data. Problems in one branch or one month often sit far down the file. Always state what your profile covered.
 
@@ -384,25 +524,7 @@ Statisticians describe three kinds of missingness, and the idea behind them is p
 | **Missing at random** (given other columns) | Gaps depend on something you can see | sales rep missing more often in one branch | Look at the gap by that column before trusting totals |
 | **Missing not at random** | Gaps depend on the missing value itself | customers with low satisfaction skip the survey question | Averages of what remains are biased; say so |
 
-Always look at missingness by a few important columns before deciding. For the sales rep:
-
-```sql
-SELECT branch, COUNT(*) AS lines, COUNT(*) FILTER (WHERE sales_rep IS NULL) AS no_rep,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE sales_rep IS NULL) / COUNT(*), 1) AS pct
-FROM clean_order_lines GROUP BY branch ORDER BY branch;
-```
-
-```
-  branch   | lines | no_rep | pct 
------------+-------+--------+-----
- Bengaluru |  7185 |    220 | 3.1
- Delhi     |  6274 |    213 | 3.4
- Kolkata   |  3210 |     91 | 2.8
- Mumbai HO |  9163 |    288 | 3.1
-(4 rows)
-```
-
-(This query runs on `clean_order_lines`, the cleaned table the companion script builds, so the branches are already standardized and duplicates removed; sections 14.4–14.7 explain each step.) About 3% of lines have no rep in every branch. That looks like a steady process gap (orders entered without assigning a rep), not a problem concentrated in one place. A rep-level report can still be produced, with an "(unassigned)" row; a branch head asking "why is my team's number low?" can see that the gap is the same everywhere.
+Always look at missingness by a few important columns before deciding. For the sales rep, the question is "is the gap the same in every branch, or concentrated in one?". The branch column has 17 spellings at this point, so the answer has to wait until the branches are mapped (section 14.5); section 14.9 runs the check on the cleaned table. (Spoiler: about 3% of lines have no rep in every branch, a steady process gap rather than one office's habit.)
 
 ### Four decisions
 
@@ -415,23 +537,59 @@ Figure 14.2 gives a decision path for each missing (or clearly wrong) value.
 1. **Standardize.** Every form of missing becomes one form (NULL). No judgment needed.
 2. **Repair**, when another column can supply the value **reliably**, and log the repair.
    - Eight order lines have a blank `product_id`. In 2025, every product had a different list price (₹115, ₹290, ₹380, ₹430, ₹620, ₹750, ₹1,150, ₹1,400), so the price identifies the product with certainty. The repair is safe *for this data*; if two products shared a price it wouldn't be.
-   - Nine lines have impossible dates. Every line also has an entry timestamp, and the entry date in Indian time is always the order date. That's a reliable source for a repair (section 14.7).
-3. **Quarantine**, when the value is needed for the number you report and can't be recovered. Fourteen lines have a blank quantity. Revenue can't be calculated for them, and there's no honest way to guess. Move them to a **quarantine** list with the reason, exclude them from revenue, and **report the gap**: "14 lines (₹X of list value, to be confirmed by the ERP team) are excluded."
+   - Nine lines have impossible dates. Every line also has an entry timestamp, and Riverstone's ERP team confirmed that orders are always entered on the order date (in Indian time). That's a reliable source for a repair (section 14.7).
+3. **Quarantine**, when the value is needed for the number you report and can't be recovered. Fourteen lines have a blank quantity. Revenue can't be calculated for them, and there's no honest way to guess. Move them to a **quarantine** list with the reason, exclude them from revenue, and **report the gap** in words a manager can act on: *"14 order lines with no quantity are excluded from revenue until the branches confirm them (list attached)."*
 4. **Keep and label**, when the value isn't needed for the result. A missing sales rep doesn't stop revenue from being counted; it only means the line can't be credited to a person.
 
 > **Simplification note: imputation.** Statistical and machine-learning work sometimes **imputes** missing values: fills them with a median, a group average, or a model's prediction. It can be the right call for building a model (Part 4 covers it). For business reporting, where each line is a real transaction, don't invent values. Quarantine and report instead.
 
 ### Missing values in each tool
 
-| Task | Excel / Power Query | SQL | pandas (section 14.11) |
-|---|---|---|---|
-| Count blanks | `COUNTBLANK`; Power Query **Column quality** | `COUNT(*) FILTER (WHERE col IS NULL OR col = '')` | `df[col].isna().sum()` |
-| Placeholders to blank | **Transform → Replace Values** (`N/A` → empty) | `NULLIF(TRIM(col), '')`, or a mapping table | `df[col].replace(["N/A", "-"], None)` |
-| Keep and label | `=IF(A2="","(unassigned)",A2)`; **Replace Values** `null` → `(unassigned)` for display | `COALESCE(sales_rep, '(unassigned)')` | `df[col].fillna("(unassigned)")` |
-| Remove rows | **Home → Remove Rows → Remove Blank Rows** (whole row blank only); filter a column | `WHERE quantity IS NOT NULL` | `df.dropna(subset=["quantity"])` |
-| Fill down (group labels) | **Transform → Fill → Down** | `LAST_VALUE(...) IGNORE NULLS` is limited; use a window with `COUNT` (Chapter 13) | `df[col].ffill()` |
+| Task | Excel / Power Query | SQL |
+|---|---|---|
+| Count blanks | `COUNTBLANK`; Power Query **Column quality** | `COUNT(*) FILTER (WHERE col IS NULL OR col = '')` |
+| Placeholders to blank | **Transform → Replace Values** (`N/A` → empty) | `NULLIF(TRIM(col), '')`, or a mapping table |
+| Keep and label | `=IF(A2="","(unassigned)",A2)`; **Replace Values** `null` → `(unassigned)` for display | `COALESCE(sales_rep, '(unassigned)')` |
+| Remove rows | **Home → Remove Rows → Remove Blank Rows** (whole row blank only); filter a column | `WHERE quantity IS NOT NULL` |
+| Fill down (group labels) | **Transform → Fill → Down** | No simple equivalent; use Power Query, or the two-step query below |
 
 **Fill down** deserves a note. Reports exported "for printing" often show a branch or month name only on the first row of each group and leave the rows below it blank. Those blanks aren't missing; they mean "same as above", and **Fill Down** restores them. Using it on a column where blank really means unknown (such as `sales_rep`) would copy one person's name onto hundreds of orders they never touched.
+
+SQL has no Fill Down. Some databases offer `LAST_VALUE(…) IGNORE NULLS`, but PostgreSQL doesn't support `IGNORE NULLS` at all. Two window functions (Chapter 13, section 13.3) do the job instead. The six-row report here is typed in on the spot with `VALUES`: `VALUES (…), (…)` builds a tiny table inside a query, and `AS v(row_no, branch, line)` names it and its columns. It's a handy way to test an idea on a few rows before running it on 25,000.
+
+```sql
+WITH report AS (
+  SELECT * FROM (VALUES (1, 'Delhi', 'Order 501'), (2, NULL, 'Order 502'), (3, NULL, 'Order 503'),
+                        (4, 'Kolkata', 'Order 504'), (5, NULL, 'Order 505'), (6, NULL, 'Order 506'))
+               AS v(row_no, branch, line)
+), groups AS (
+  SELECT row_no, branch, line,
+         COUNT(branch) OVER (ORDER BY row_no) AS grp
+  FROM report
+)
+SELECT row_no, branch, line, grp,
+       MAX(branch) OVER (PARTITION BY grp) AS branch_filled
+FROM groups
+ORDER BY row_no;
+```
+
+```
+ row_no | branch  |   line    | grp | branch_filled 
+--------+---------+-----------+-----+---------------
+      1 | Delhi   | Order 501 |   1 | Delhi
+      2 |         | Order 502 |   1 | Delhi
+      3 |         | Order 503 |   1 | Delhi
+      4 | Kolkata | Order 504 |   2 | Kolkata
+      5 |         | Order 505 |   2 | Kolkata
+      6 |         | Order 506 |   2 | Kolkata
+(6 rows)
+```
+
+How it works:
+
+- `COUNT(branch) OVER (ORDER BY row_no)` is a running count of the non-blank branches so far (`COUNT(column)` skips NULLs). It goes up by one at each new label and stays the same on the blank rows below it, so `grp` numbers the groups: 1 for Delhi and its rows, 2 for Kolkata and its rows.
+- `MAX(branch) OVER (PARTITION BY grp)` looks at each group on its own and takes the one non-blank value in it. `MAX` also skips NULLs, so every row in the group gets the label.
+- The order matters: the report must have a column (`row_no`) that keeps the rows in their printed order. Without one, "the row above" has no meaning in a database table.
 
 ---
 
@@ -442,7 +600,10 @@ A **duplicate** is a record that describes the same real thing as another record
 ### Exact duplicate rows
 
 ```sql
-SELECT COUNT(*) AS data_rows, COUNT(DISTINCT stg_orders_raw.*) AS distinct_rows FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$';
+SELECT COUNT(*)                         AS data_rows,
+       COUNT(DISTINCT stg_orders_raw.*) AS distinct_rows
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$';
 ```
 
 ```
@@ -452,10 +613,17 @@ SELECT COUNT(*) AS data_rows, COUNT(DISTINCT stg_orders_raw.*) AS distinct_rows 
 (1 row)
 ```
 
-`COUNT(DISTINCT stg_orders_raw.*)` counts distinct whole rows (PostgreSQL). There are **137** rows that are exact copies of another row. Which IDs?
+`COUNT(DISTINCT stg_orders_raw.*)` counts distinct whole rows: `table.*` stands for "all the columns of this row together" (PostgreSQL; section 14.13 gives the MySQL form). There are **137** rows that are exact copies of another row. Which IDs?
 
 ```sql
-SELECT order_item_id, COUNT(*) AS copies FROM stg_orders_raw WHERE order_item_id ~ '^[0-9]+$' GROUP BY 1 HAVING COUNT(*) > 1 ORDER BY 1 LIMIT 5;
+SELECT order_item_id,
+       COUNT(*) AS copies
+FROM stg_orders_raw
+WHERE order_item_id ~ '^[0-9]+$'
+GROUP BY 1
+HAVING COUNT(*) > 1
+ORDER BY 1
+LIMIT 5;
 ```
 
 ```
@@ -469,7 +637,7 @@ SELECT order_item_id, COUNT(*) AS copies FROM stg_orders_raw WHERE order_item_id
 (5 rows)
 ```
 
-Each duplicate appears exactly twice, and both copies are identical in every column. That's the signature of an **export glitch** (a page of results written twice), not two real sales. It's safe to keep one copy: `SELECT DISTINCT *`, Power Query's **Home → Remove Rows → Remove Duplicates** with all columns selected, Excel's **Data → Remove Duplicates** (all columns ticked), or `drop_duplicates()` in pandas.
+Each duplicate appears exactly twice, and both copies are identical in every column. That's the signature of an **export glitch** (a page of results written twice), not two real sales. It's safe to keep one copy: `SELECT DISTINCT *`, Power Query's **Home → Remove Rows → Remove Duplicates** with all columns selected, or Excel's **Data → Remove Duplicates** (all columns ticked).
 
 > **Watch out: same ID, different values.** Before removing duplicates by ID alone, check whether rows with the same ID are really identical. If two rows share `order_item_id` 184028 but have different quantities, one of them was *updated*, and you need the latest version, not the first one you meet. `COUNT(DISTINCT stg_orders_raw.*)` compared with `COUNT(DISTINCT order_item_id)` answers the question: here both give 25,832, so every repeated ID is a true copy.
 
@@ -483,42 +651,76 @@ The CRM export has 5,027 customer records. Riverstone's customer team suspects s
 
 *Figure 14.3 — A match key removes differences that don't matter (case, extra spaces, a legal suffix) so duplicates can be found. The choice of matching columns changes what you find.*
 
-The cleaning script builds `match_key` in the `clean_customers` table:
+Building the key takes three steps: remove a trailing legal suffix, squeeze every run of spaces down to one space, and convert to lower case. Try them on three names typed in with `VALUES`, one output column per step:
 
 ```sql
-LOWER(regexp_replace(regexp_replace(customer_name, '\s+(pvt\.?\s*ltd\.?|private limited)$', '', 'i'), '\s+', ' ', 'g')) AS match_key
+WITH names AS (
+  SELECT * FROM (VALUES ('BHARAT Stores Agra Pvt Ltd'),
+                        ('Bharat  Stores Agra'),
+                        ('Bharat Silk Route Home Needs Pvt. Ltd.')) AS v(name)
+), steps AS (
+  SELECT regexp_replace(name, '\s+(pvt\.?\s*ltd\.?|private limited)$', '', 'i') AS step1_no_suffix
+  FROM names
+)
+SELECT step1_no_suffix,
+       regexp_replace(step1_no_suffix, '\s+', ' ', 'g')        AS step2_one_space,
+       LOWER(regexp_replace(step1_no_suffix, '\s+', ' ', 'g')) AS match_key
+FROM steps;
 ```
 
-Reading from the inside out: remove a trailing "Pvt Ltd" (with or without dots) or "Private Limited", case-insensitively; replace every run of spaces with one space; convert to lower case. (The name has already been trimmed.) Then group by the key:
+```
+       step1_no_suffix        |       step2_one_space        |          match_key           
+------------------------------+------------------------------+------------------------------
+ BHARAT Stores Agra           | BHARAT Stores Agra           | bharat stores agra
+ Bharat  Stores Agra          | Bharat Stores Agra           | bharat stores agra
+ Bharat Silk Route Home Needs | Bharat Silk Route Home Needs | bharat silk route home needs
+(3 rows)
+```
+
+How it works, piece by piece:
+
+- **Step 1** removes the suffix. The pattern `\s+(pvt\.?\s*ltd\.?|private limited)$` reads: one or more spaces (`\s+`), then either `pvt`, an optional dot (`\.?`), any number of spaces including none (`\s*`), `ltd` and an optional dot, **or** (`|`) the words `private limited`, and then the end of the name (`$`). The brackets group the two choices. The flag `'i'` ignores capital letters, so `Pvt Ltd`, `PVT. LTD.` and `Private Limited` all match. Only a suffix at the very end is removed.
+- **Step 2** replaces every run of spaces (`\s+`) with one space. The flag `'g'` makes it replace every run, not only the first: the double space in `Bharat  Stores Agra` becomes one.
+- **Step 3** is `LOWER`, so `BHARAT` and `Bharat` agree.
+
+The first two names now have the same key, which is exactly what makes them a candidate pair. The cleaning script builds `match_key` for every customer in the `clean_customers` table with the same three steps nested inside each other: `LOWER(regexp_replace(regexp_replace(customer_name, …suffix…, '', 'i'), '\s+', ' ', 'g'))`, read from the inside out. (The names have already been trimmed.)
+
+> **Following along.** From here on, some queries read the cleaned tables `clean_customers` and `clean_order_lines`. Section 14.9 builds them step by step. To run these queries now, open `companion/ch14/sql/ch14_clean_postgresql.sql` (or `ch14_clean_mysql.sql`) and run it with *Execute SQL Script*, as you ran the load script. It takes a few seconds and leaves the staging tables untouched.
+
+Group the customers by the key and list every group with more than one record:
 
 ```sql
-SELECT match_key, COUNT(*) AS records, STRING_AGG(customer_code || ' ' || customer_name, ' | ' ORDER BY customer_code) AS versions
-FROM clean_customers GROUP BY match_key HAVING COUNT(*) > 1 ORDER BY match_key LIMIT 5;
+SELECT COUNT(*) AS records,
+       STRING_AGG(customer_code || ' ' || customer_name, '; ' ORDER BY customer_code) AS versions
+FROM clean_customers
+GROUP BY match_key
+HAVING COUNT(*) > 1
+ORDER BY match_key
+LIMIT 5;
 ```
 
 ```
-          match_key           | records |                                   versions                                    
-------------------------------+---------+-------------------------------------------------------------------------------
- balaji distributors          |       2 | 2278 Balaji Distributors | 5010 BALAJI DISTRIBUTORS
- bharat general store thane   |       2 | 1620 Bharat General Store Thane | 4982 Bharat General Store Thane
- bharat logistics delhi       |       2 | 4090 Bharat Logistics Delhi | 4996 Bharat Logistics Delhi
- bharat silk route home needs |       2 | 3874 Bharat Silk Route Home Needs | 5023 Bharat Silk Route Home Needs Pvt Ltd
- bharat stores agra           |       2 | 2153 Bharat Stores Agra | 5020 BHARAT STORES AGRA
+ records |                                   versions                                   
+---------+------------------------------------------------------------------------------
+       2 | 2278 Balaji Distributors; 5010 BALAJI DISTRIBUTORS
+       2 | 1620 Bharat General Store Thane; 4982 Bharat General Store Thane
+       2 | 4090 Bharat Logistics Delhi; 4996 Bharat Logistics Delhi
+       2 | 3874 Bharat Silk Route Home Needs; 5023 Bharat Silk Route Home Needs Pvt Ltd
+       2 | 2153 Bharat Stores Agra; 5020 BHARAT STORES AGRA
 (5 rows)
 ```
 
+`STRING_AGG(text, separator ORDER BY …)` is an aggregate, like `COUNT`, that joins the group's values into one piece of text, the SQL cousin of Excel's `TEXTJOIN` (Chapter 11). Here each value is the code and the name, the separator is `'; '`, and `ORDER BY customer_code` inside the brackets puts the versions in code order. So each row shows both records of a candidate pair side by side. MySQL's version is `GROUP_CONCAT(… ORDER BY … SEPARATOR '; ')`. Now count all the groups:
+
 ```sql
-SELECT COUNT(*) AS duplicate_groups FROM (SELECT match_key FROM clean_customers GROUP BY match_key HAVING COUNT(*) > 1) g;
+SELECT COUNT(*) AS duplicate_groups
+FROM (SELECT match_key
+      FROM clean_customers
+      GROUP BY match_key
+      HAVING COUNT(*) > 1) g;
 ```
 
-```
- duplicate_groups 
-------------------
-               48
-(1 row)
-```
-
-**48** groups. Checked against the answer key, all 48 are real planted duplicates, and none is a false match. (`bharat general store thane` looks identical in both versions because the difference is a double space that the display collapses.)
+The inner query is the grouping from before, reduced to one row per duplicate group; the outer query counts those rows. **48** groups. Checked against the answer key, all 48 are real planted duplicates, and none is a false match. (`Bharat General Store Thane` looks identical in both versions because the only difference in the export was a double space, which the cleaning script had already squeezed to one.)
 
 A natural refinement is to match on name **and city**, to avoid merging two different "Balaji Distributors" in different cities. On this data that finds only 46 groups: two duplicate pairs have a city on one record and none on the other, and NULL never equals anything (Chapter 12). Every matching rule is a trade-off between missing real duplicates and merging different businesses. Measure both kinds of error when you can, and have a person confirm candidates before any merge.
 
@@ -526,10 +728,10 @@ A natural refinement is to match on name **and city**, to avoid merging two diff
 
 Match keys handle predictable differences. Typos ("Balaji Distrubutors") and word order ("Stores Balaji") need **similarity** measures:
 
-- **PostgreSQL:** the `pg_trgm` extension compares strings by shared three-letter sequences. After `CREATE EXTENSION pg_trgm;`, `similarity('Metro Mart', 'METRO MART Pvt Ltd')` returns 0.5555556 (1 means identical). Candidates above a threshold such as 0.6, within the same city, go to a review list.
-- **MySQL:** `SOUNDEX()` matches similar-sounding English words, which is crude for Indian business names; fuzzy matching usually moves to Python or a dedicated tool.
-- **Power Query:** **Home → Merge Queries** with **Use fuzzy matching to perform the merge**, and under **Fuzzy matching options** set a **Similarity threshold** (0 to 1), **Ignore case**, **Match by combining text parts** (ignores spaces), and a **Transformation table** for known equivalents (`Pvt Ltd` → empty). Power Query uses the Jaccard similarity algorithm.
-- **Excel's Fuzzy Lookup add-in** from Microsoft does the same in older versions; **pandas** users reach for libraries such as `rapidfuzz` (Chapter 18).
+- **PostgreSQL:** the `pg_trgm` extension compares strings by shared **trigrams**, three-letter pieces of the text. After `CREATE EXTENSION pg_trgm;`, `similarity('Metro Mart', 'METRO MART Pvt Ltd')` returns 0.5555556 (1 means identical): the two names share 10 trigrams out of 18 distinct ones between them (case is ignored), and 10 ÷ 18 = 0.56. That "shared pieces ÷ all distinct pieces from both" is called **Jaccard similarity**; `pg_trgm` applies it to trigrams. Candidates above a threshold such as 0.6, within the same city, go to a review list. Notice that this real duplicate scores **below** 0.6: the legal suffix adds trigrams that the other name doesn't have. Compare match keys instead of raw names (the similarity of the two keys is 1), or lower the threshold and review more candidates.
+- **MySQL:** `SOUNDEX()` matches similar-sounding English words, which is crude for Indian business names; fuzzy matching usually moves to a dedicated tool.
+- **Power Query:** **Home → Merge Queries** with **Use fuzzy matching to perform the merge**, and under **Fuzzy matching options** set a **Similarity threshold** (0 to 1), **Ignore case**, **Match by combining text parts** (ignores spaces), and a **Transformation table** for known equivalents (`Pvt Ltd` → empty). Power Query uses Jaccard similarity too.
+- **Excel's Fuzzy Lookup add-in** from Microsoft does the same in older versions.
 
 > **Watch out: never auto-merge customers.** Merging two customer records moves order history, credit limits, and contacts. A wrong merge is much harder to undo than a missed duplicate. Cleaning for **analysis** can group candidates with a match key in your query; cleaning the **CRM itself** needs a review list, an owner's sign-off, and the CRM's own merge feature.
 
@@ -540,7 +742,11 @@ Match keys handle predictable differences. Typos ("Balaji Distrubutors") and wor
 A **category** (status, branch, city, segment) should have a small, fixed set of allowed values. Real data has many spellings of each. The profile found 18 statuses and 17 branches; the CRM export has 12 segment spellings:
 
 ```sql
-SELECT segment, COUNT(*) AS customers FROM stg_customers_raw GROUP BY 1 ORDER BY 2 DESC;
+SELECT segment,
+       COUNT(*) AS customers
+FROM stg_customers_raw
+GROUP BY 1
+ORDER BY 2 DESC;
 ```
 
 ```
@@ -565,7 +771,7 @@ The second `Retail` has a trailing space. `HoReCa` (hotels, restaurants, cafés)
 
 ### Two steps: normalize, then map
 
-1. **Normalize** the text so that differences which never matter disappear: `LOWER(TRIM(value))` removes case and outer spaces. In Excel, `=LOWER(TRIM(A2))`; in Power Query, **Transform → Format → Trim**, then **lowercase**. That alone reduces the segment spellings from 12 to 6 and the statuses from 18 to 7.
+1. **Normalize** the text so that differences which never matter disappear: `LOWER(TRIM(value))` removes case and outer spaces. That alone reduces the segment spellings from 12 to 6 and the statuses from 18 to 7. (Spreadsheet equivalent: section 14.12, step 4.)
 2. **Map** the normalized values to the standard ones with a **mapping table** (also called a lookup or crosswalk table): one row per known variant.
 
 | raw_value | clean_value |
@@ -578,14 +784,66 @@ The second `Retail` has a trailing space. `HoReCa` (hotels, restaurants, cafés)
 | shipped | Shipped |
 | pending | Pending |
 
-The companion scripts create `map_status`, `map_branch`, `map_city`, and `map_segment`. The cleaning query joins to them:
+The load script created four mapping tables: `map_status`, `map_branch`, `map_city`, and `map_segment`. A mapping table is an ordinary table, so you can look at it:
 
 ```sql
-SELECT ..., ms.clean_value AS status, mb.clean_value AS branch
-FROM typed t
-LEFT JOIN map_status ms ON ms.raw_value = LOWER(TRIM(t.status))
-LEFT JOIN map_branch mb ON mb.raw_value = LOWER(TRIM(t.branch));
+SELECT *
+FROM map_status
+ORDER BY clean_value, raw_value;
 ```
+
+```
+ raw_value | clean_value 
+-----------+-------------
+ canceled  | Cancelled
+ cancelled | Cancelled
+ cxl       | Cancelled
+ delivered | Delivered
+ dlvd      | Delivered
+ pending   | Pending
+ shipped   | Shipped
+(7 rows)
+```
+
+Seven rows, one per normalized spelling. Now join the export to it: normalize each status with `LOWER(TRIM())`, and look it up in `raw_value` with a `LEFT JOIN` (Chapter 12, section 12.10):
+
+```sql
+SELECT t.status              AS exported,
+       LOWER(TRIM(t.status)) AS key,
+       ms.clean_value,
+       COUNT(*)              AS rows
+FROM stg_orders_raw t
+LEFT JOIN map_status ms ON ms.raw_value = LOWER(TRIM(t.status))
+WHERE t.order_item_id ~ '^[0-9]+$'
+GROUP BY 1, 2, 3
+ORDER BY 3, 4 DESC;
+```
+
+```
+  exported  |    key    | clean_value | rows  
+------------+-----------+-------------+-------
+ Cancelled  | cancelled | Cancelled   |   985
+ Cxl        | cxl       | Cancelled   |    32
+ CANCELLED  | cancelled | Cancelled   |    31
+ Canceled   | canceled  | Cancelled   |    28
+ cancelled  | cancelled | Cancelled   |    24
+ Delivered  | delivered | Delivered   | 19835
+ DELIVERED  | delivered | Delivered   |   697
+ Dlvd       | dlvd      | Delivered   |   694
+ Delivered  | delivered | Delivered   |   672
+ delivered  | delivered | Delivered   |   653
+ Pending    | pending   | Pending     |  1026
+ Pending    | pending   | Pending     |    57
+ pending    | pending   | Pending     |    52
+ PENDING    | pending   | Pending     |    39
+ Shipped    | shipped   | Shipped     |  1004
+ Shipped    | shipped   | Shipped     |    51
+ shipped    | shipped   | Shipped     |    45
+ SHIPPED    | shipped   | Shipped     |    44
+(18 rows)
+```
+
+Read it one column at a time. `exported` is the value as the export has it (the second `Delivered`, `Pending`, and `Shipped` carry the trailing space). `key` is the normalized value: `TRIM` removed the space and `LOWER` the capitals, so 18 spellings become 7 keys. `clean_value` comes from the mapping table, and it's never empty: every key found its row. `GROUP BY 1, 2, 3` groups by the first three columns, and `ORDER BY 3, 4 DESC` sorts by the clean value, then by the count, largest first. The full cleaning script (section 14.9) makes exactly this join, and the same one to `map_branch` for the branch.
 
 Figure 14.4 shows the effect on status.
 
@@ -606,10 +864,13 @@ Why a table instead of a long `CASE` expression or nested `IF`s?
 Cities show why a mapping table needs a human to build it. Compare the CRM's city values with Riverstone's reference list of cities (here, the cities in the `customers` table):
 
 ```sql
-SELECT city, COUNT(*) AS customers FROM stg_customers_raw
+SELECT city,
+       COUNT(*) AS customers
+FROM stg_customers_raw
 WHERE LOWER(TRIM(city)) NOT IN (SELECT LOWER(clean_value) FROM map_city WHERE clean_value IS NOT NULL)
   AND TRIM(city) NOT IN (SELECT DISTINCT city FROM customers WHERE city IS NOT NULL)
-GROUP BY city ORDER BY customers DESC, city;
+GROUP BY city
+ORDER BY customers DESC, city;
 ```
 
 ```
@@ -633,11 +894,13 @@ GROUP BY city ORDER BY customers DESC, city;
 (15 rows)
 ```
 
+The two `NOT IN` subqueries (Chapter 12, section 12.12) do the filtering. The first drops any city that, lower-cased, is already one of the mapping table's clean names (such as `mumbai` or `MUMBAI`); the second drops any city written exactly as in the reference list. What's left is every value that is neither. The real blanks don't appear, because a NULL city fails both tests (Chapter 12, section 12.6). `hyderabad` is only a capitals problem, which the cleaning fixes by capitalizing each word; the rest need the mapping table.
+
 No function turns **Bombay** into **Mumbai**, **Madras** into **Chennai**, **Poona** into **Pune**, or **Vizag** into **Visakhapatnam**: those are old names and nicknames that only a person who knows India would map. **New Delhi** is a judgment call (it's a district within Delhi); Riverstone's sales regions treat it as Delhi, so the mapping follows the business rule and says so. After mapping, the CRM's 64 distinct city values become 39 real cities.
 
-For spreadsheet users, the same approach is a two-column mapping sheet and a lookup: `=XLOOKUP(LOWER(TRIM(C2)), CityMap[raw_value], CityMap[clean_value], PROPER(TRIM(C2)))`. The fourth argument keeps values that aren't in the map (tidied with `PROPER`), and a separate check lists them. In Power Query, merge with the mapping query on the normalized column (a left outer join) and expand `clean_value`.
+(Spreadsheet equivalent: section 14.12, step 5, and a worksheet lookup in the same section.)
 
-> **Tool note: case sensitivity differs.** PostgreSQL compares text case-sensitively, so `'Delivered' = 'DELIVERED'` is false and the profile shows every spelling. MySQL's default collation is case-insensitive, so `GROUP BY status` merges `Delivered`, `DELIVERED`, and `delivered` into one group and hides the problem (Chapter 12, section 12.16). Profile in MySQL with `GROUP BY BINARY status` or a case-sensitive collation (section 14.12).
+> **Tool note: case sensitivity differs.** PostgreSQL compares text case-sensitively, so `'Delivered' = 'DELIVERED'` is false and the profile shows every spelling. MySQL's default collation is case-insensitive, so `GROUP BY status` merges `Delivered`, `DELIVERED`, and `delivered` into one group and hides the problem (Chapter 12, section 12.16). Profile in MySQL with `GROUP BY status COLLATE utf8mb4_bin`, a case-sensitive collation (section 14.13).
 
 ---
 
@@ -650,8 +913,13 @@ An **outlier** is a value far from the others. Some outliers are errors; some ar
 The profile showed a maximum quantity of 700 pieces on a line. Is that possible? Compare with history:
 
 ```sql
-SELECT oi.product_id, MAX(oi.quantity) AS max_qty_before_q4 FROM order_items oi JOIN orders o USING (order_id)
-WHERE o.order_date < '2025-10-01' GROUP BY 1 ORDER BY 1;
+SELECT oi.product_id,
+       MAX(oi.quantity) AS max_qty_before_q4
+FROM order_items oi
+JOIN orders o USING (order_id)
+WHERE o.order_date < '2025-10-01'
+GROUP BY 1
+ORDER BY 1;
 ```
 
 ```
@@ -668,10 +936,15 @@ WHERE o.order_date < '2025-10-01' GROUP BY 1 ORDER BY 1;
 (8 rows)
 ```
 
-In 33 months of order history, no line was ever above 90 pieces. After converting cartons (section 14.7), six Q4 lines exceed that:
+This query reads the real order history in `riverstone_full`, not the export. `JOIN orders o USING (order_id)` is shorthand for `ON oi.order_id = o.order_id`: when the joining column has the same name in both tables, `USING` names it once. In 33 months of order history, no line was ever above 90 pieces, and the Industrial Crate (105) never above 65.
+
+Now look for Q4 lines above 90 in the cleaned table (built in section 14.9; see "Following along" in section 14.4), where cartons are already converted to pieces (section 14.7):
 
 ```sql
-SELECT c.order_item_id, c.product_id, c.quantity, c.unit_price, c.branch FROM clean_order_lines c WHERE c.quantity > 90 ORDER BY c.quantity DESC;
+SELECT order_item_id, product_id, quantity, unit_price, branch
+FROM clean_order_lines
+WHERE quantity > 90
+ORDER BY quantity DESC;
 ```
 
 ```
@@ -692,19 +965,18 @@ Every one is an exact multiple of 10, and dividing by 10 gives an ordinary quant
 | Method | How | Good for | Watch out |
 |---|---|---|---|
 | **Business limits** | Values outside what's possible or ever seen (history, product rules) | Quantities, prices, discounts, dates | Limits change; review them yearly |
-| **Percentiles** | Flag values above the 99th percentile, or below the 1st | Any numeric column | Always flags 1% of rows, even in clean data |
-| **IQR rule** | Below Q1 − 1.5 × IQR or above Q3 + 1.5 × IQR (Chapter 21) | Roughly symmetric data | Skewed business data (order values) flags many real big orders |
-| **Z-score** | More than 3 standard deviations from the mean | Near-normal data | A few huge errors inflate the standard deviation and hide themselves |
 | **Within-group comparison** | Compare a value with its own group (product, customer, month) | Mixed populations | Small groups have unstable ranges |
-| **Visual** | Box plot, histogram, scatter (Chapter 15) | Seeing the shape | Doesn't scale to hundreds of columns |
+| **Visual** | Chart the values and look for points far from the rest (Chapter 15) | Seeing the shape | Doesn't scale to hundreds of columns |
 
-For this export, the **business limit** (the historical maximum per product, or overall) is the strongest method: it's based on what Riverstone has actually sold, and anyone can understand it. In a spreadsheet: `=IF(F2>90,"check","")` in a helper column, or conditional formatting (Chapter 10). In Power Query: **Add Column → Conditional Column** (`if [quantity] > 90 then "check" else null`). In pandas: `df[df.quantity > 90]`.
+Statistical rules (percentiles and z-scores, for example) come in Chapter 21, once those measures are taught; for business data, limits from history are usually the better first check.
 
-> **Watch out: don't clip or delete outliers in reporting data.** "Capping" values at the 99th percentile is a technique for some statistical models. In a sales report it silently changes real transactions. Keep every row, flag the suspects, and decide per row.
+For this export, the **business limit** is the strongest method: it's based on what Riverstone has actually sold, and anyone can understand it. The validation in this chapter uses the overall limit of 90 pieces. A per-product limit would be stricter: it would also flag an Industrial Crate line above 65. (Spreadsheet equivalent: section 14.12, step 10.)
+
+> **Watch out: don't clip or delete outliers in reporting data.** "Capping" values (replacing everything above a limit with the limit) is a technique for some statistical models. In a sales report it silently changes real transactions. Keep every row, flag the suspects, and decide per row.
 
 ### Outliers that are real
 
-The profile also shows Wholesale lines of 85 or 90 Industrial Crates, and an October with far higher revenue than July. Those are **reality**: bulk buyers, and Riverstone's festive-season peak (Chapter 11). Removing them would make the data "cleaner" and the analysis wrong. An outlier check produces questions; the business answers them.
+The cleaned table also has 301 lines of 85 or 90 pieces, all from Hospitality customers (hotel and restaurant groups stocking several kitchens at once) and all for products whose history already reaches 90, such as the Storage Box 10L. And October's revenue is far higher than July's. Those are **reality**: bulk buyers, and Riverstone's festive-season peak (Chapter 11). Removing them would make the data "cleaner" and the analysis wrong. An outlier check produces questions; the business answers them.
 
 ---
 
@@ -714,34 +986,120 @@ The profile also shows Wholesale lines of 85 or 90 Industrial Crates, and an Oct
 
 The profile found four date formats. The safe approach is to **parse each known format explicitly**, and leave anything else unparsed (NULL) for review. Never rely on a tool's automatic date guessing: it will happily read `05-11-2025` as 11 May in one system and 5 November in another.
 
-In SQL, the cleaning script splits each recognized format into year, month, and day, then builds the date:
+The cleaning script does it in two stages: first split each recognized format into year, month, and day, then build a date from the parts and check it. Try both stages on six sample values, one of each shape, typed in with `VALUES` (section 14.3):
 
 ```sql
-CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date,7,4)::int   -- DD-MM-YYYY or DD/MM/YYYY
-     WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date,1,4)::int END AS y
+WITH samples AS (
+  SELECT * FROM (VALUES ('05-11-2025'), ('05/11/2025'), ('2025-11-05'), ('45940'), ('31-11-2025'), ('32-10-2025')) AS v(order_date)
+)
+SELECT order_date,
+       CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 7, 4)::int
+            WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 1, 4)::int END AS y,
+       CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 4, 2)::int
+            WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 6, 2)::int END AS m,
+       CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 1, 2)::int
+            WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 9, 2)::int END AS dd
+FROM samples;
 ```
 
-(with matching expressions for month and day), and then:
-
-```sql
-CASE WHEN order_date ~ '^\d{5}$' THEN DATE '1899-12-30' + order_date::int          -- Excel serial number
-     WHEN y IS NOT NULL AND m BETWEEN 1 AND 12
-          AND EXTRACT(MONTH FROM make_date(y, m, 1) + (dd - 1)) = m AND dd >= 1
-     THEN make_date(y, m, 1) + (dd - 1) END AS parsed_date
+```
+ order_date |  y   | m  | dd 
+------------+------+----+----
+ 05-11-2025 | 2025 | 11 |  5
+ 05/11/2025 | 2025 | 11 |  5
+ 2025-11-05 | 2025 | 11 |  5
+ 45940      |      |    |   
+ 31-11-2025 | 2025 | 11 | 31
+ 32-10-2025 | 2025 | 10 | 32
+(6 rows)
 ```
 
 How it works:
 
-- The regular expression decides the format. `^\d{2}[-/]\d{2}[-/]\d{4}$` means "exactly two digits, a dash or slash, two digits, a dash or slash, four digits". Anything that doesn't match exactly gets no year, and so no date.
-- **Excel serial numbers** count days from 30 December 1899, so `45940` is `DATE '1899-12-30' + 45940` = 10 October 2025.
-- **Impossible dates** are caught without errors. `make_date(2025, 11, 1) + 30` is 1 December, not 31 November; because its month (12) isn't the month written (11), the test fails and `parsed_date` is NULL. This trick avoids the error PostgreSQL raises for `to_date('31-11-2025', 'DD-MM-YYYY')`, and it works the same way in MySQL (section 14.12).
+- The regular expression decides the format. `^\d{2}[-/]\d{2}[-/]\d{4}$` means "exactly two digits, a dash or slash, two digits, a dash or slash, four digits" (`[-/]` is one character that is either `-` or `/`). `^\d{4}-\d{2}-\d{2}$` is the year-first shape. A value that matches neither gets no parts at all: `45940` has three empty columns.
+- `substr(text, start, length)` takes part of a text, the short form of `SUBSTRING(text FROM start FOR length)` (Chapter 12, section 12.8). In `05-11-2025` the year starts at character 7 and is 4 long; the month is at 4, length 2; the day at 1, length 2. The year-first shape has its parts in other places, hence the second `WHEN`.
+- `::int` turns each part into a whole number (section 14.2).
 
-Nine lines have impossible dates. Each also has an entry timestamp, which gives a reliable repair:
+Notice that `31-11-2025` and `32-10-2025` split without complaint. Splitting doesn't check anything; the next stage does. The test is to build the first day of the month, add the days, and see whether you're still in the same month:
 
 ```sql
-SELECT s.order_item_id, s.order_date AS exported_date, c.entered_at_ist, c.order_date AS repaired_date
-FROM clean_order_lines c JOIN (SELECT DISTINCT order_item_id, order_date FROM stg_orders_raw) s ON s.order_item_id = c.order_item_id::text
-WHERE c.date_repaired ORDER BY 1;
+SELECT order_date, y, m, dd,
+       make_date(y, m, 1) + (dd - 1)                        AS candidate,
+       EXTRACT(MONTH FROM make_date(y, m, 1) + (dd - 1)) = m AS month_survives
+FROM (VALUES ('05-11-2025', 2025, 11, 5),
+             ('31-11-2025', 2025, 11, 31),
+             ('32-10-2025', 2025, 10, 32)) AS p(order_date, y, m, dd);
+```
+
+```
+ order_date |  y   | m  | dd | candidate  | month_survives 
+------------+------+----+----+------------+----------------
+ 05-11-2025 | 2025 | 11 |  5 | 2025-11-05 | t
+ 31-11-2025 | 2025 | 11 | 31 | 2025-12-01 | f
+ 32-10-2025 | 2025 | 10 | 32 | 2025-11-01 | f
+(3 rows)
+```
+
+How it works:
+
+- `make_date(year, month, day)` builds a date from three numbers; here always the 1st of the month.
+- Adding a whole number to a date moves it forward that many days, so `+ (dd - 1)` goes from the 1st to the day written.
+- `EXTRACT(MONTH FROM …)` (Chapter 12) reads the month back. For `31-11-2025`, 1 November plus 30 days is **1 December**, not 31 November, so the month (12) no longer equals the month written (11), and `month_survives` is false.
+
+This trick catches impossible dates without an error. `to_date('31-11-2025', 'DD-MM-YYYY')` would stop the whole query with an error, and the same idea works in MySQL (section 14.13). Put together, as the cleaning script has it, the two stages give one `parsed_date` per value:
+
+```sql
+WITH samples AS (
+  SELECT * FROM (VALUES ('05-11-2025'), ('05/11/2025'), ('2025-11-05'), ('45940'), ('31-11-2025'), ('32-10-2025')) AS v(order_date)
+), parts AS (
+  SELECT order_date,
+         CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 7, 4)::int
+              WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 1, 4)::int END AS y,
+         CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 4, 2)::int
+              WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 6, 2)::int END AS m,
+         CASE WHEN order_date ~ '^\d{2}[-/]\d{2}[-/]\d{4}$' THEN substr(order_date, 1, 2)::int
+              WHEN order_date ~ '^\d{4}-\d{2}-\d{2}$'        THEN substr(order_date, 9, 2)::int END AS dd
+  FROM samples
+)
+SELECT order_date,
+       CASE WHEN order_date ~ '^\d{5}$' THEN DATE '1899-12-30' + order_date::int
+            WHEN y IS NOT NULL AND m BETWEEN 1 AND 12 AND dd >= 1
+                 AND EXTRACT(MONTH FROM make_date(y, m, 1) + (dd - 1)) = m
+            THEN make_date(y, m, 1) + (dd - 1) END AS parsed_date
+FROM parts;
+```
+
+```
+ order_date | parsed_date 
+------------+-------------
+ 05-11-2025 | 2025-11-05
+ 05/11/2025 | 2025-11-05
+ 2025-11-05 | 2025-11-05
+ 45940      | 2025-10-10
+ 31-11-2025 | 
+ 32-10-2025 | 
+(6 rows)
+```
+
+The `parts` step is the first query; the final `CASE` adds two things:
+
+- **Excel serial numbers** (`^\d{5}$`, exactly five digits) count days from 30 December 1899, so `45940` is `DATE '1899-12-30' + 45940` = 10 October 2025.
+- The other formats become a date only if the parts exist, the month is between 1 and 12, the day is at least 1, and the month survives. Anything else gets no `WHEN`, so the `CASE` returns NULL: the two impossible dates are left unparsed for review, not guessed.
+
+Three shapes of the same date agree, the serial number is decoded, and the impossible dates are NULL. The cleaning script applies exactly this to all 25,832 lines.
+
+Nine lines have impossible dates. Each also has an entry timestamp, which gives a reliable repair. The cleaned table keeps the repaired date and a true/false column `date_repaired` that marks those lines:
+
+```sql
+SELECT s.order_item_id,
+       s.order_date     AS exported_date,
+       c.entered_at_ist,
+       c.order_date     AS repaired_date
+FROM clean_order_lines c
+JOIN (SELECT DISTINCT order_item_id, order_date FROM stg_orders_raw) s
+  ON s.order_item_id = c.order_item_id::text
+WHERE c.date_repaired
+ORDER BY 1;
 ```
 
 ```
@@ -759,31 +1117,44 @@ WHERE c.date_repaired ORDER BY 1;
 (9 rows)
 ```
 
-September has 30 days, November has 30, and no month has 32. The entry dates show what the dates should have been, often the 28th, which suggests someone typed a slip of a key. The repair is logged (section 14.10), not hidden.
+How it works: the staging table stores IDs as text and the clean table as numbers, so `c.order_item_id::text` converts one side to make the join possible; the subquery with `DISTINCT` keeps one copy of each duplicated line. `entered_at_ist` is the entry timestamp converted to Indian time (the next subsection shows how), and `WHERE c.date_repaired` keeps the lines where it's true.
+
+September has 30 days, November has 30, and no month has 32. Only the day and month are impossible, and several don't even match the entry month, so the whole exported date is untrustworthy. Riverstone's ERP team confirmed that orders are always entered on the order date (in Indian time), so the entry date is a reliable repair. The repair is logged (section 14.11), not hidden.
 
 > **Watch out: a date that parses isn't necessarily right.** `05-11-2025` parsed as day-first is a valid date, and so is the same text parsed month-first. Only knowledge of the source tells you which format a system writes. Check parsed dates against an independent clue: the entry timestamp, the order ID sequence, or the export's date range. Here, every repaired and parsed date falls inside Q4 2025, and a validation rule in section 14.9 confirms it.
 
-**In Excel and Power Query.** Add a custom column that tries each format in turn, using `try … otherwise`:
-
-```
-= let t = Text.Trim([order_date]) in
-  if Text.Length(t) = 5 and Value.Is(Value.FromText(t), type number) then Date.From(Number.From(t))
-  else try Date.FromText(t, [Format = "dd-MM-yyyy", Culture = "en-IN"])
-  otherwise try Date.FromText(t, [Format = "dd/MM/yyyy", Culture = "en-IN"])
-  otherwise try Date.FromText(t, [Format = "yyyy-MM-dd", Culture = "en-IN"])
-  otherwise null
-```
-
-`Date.FromText` with an explicit `Format` reads exactly that pattern and raises an error for `31-11-2025`, which `try … otherwise` turns into the next attempt and finally `null`. `Date.From` on a number converts an Excel serial date. In a worksheet, `=IFERROR(DATE(RIGHT(C2,4),MID(C2,4,2),LEFT(C2,2)),"check")` handles day-first text (Chapter 10) but not impossible dates: Excel's `DATE(2025,11,31)` quietly returns 1 December. Test with `=AND(DAY(D2)=VALUE(LEFT(C2,2)), MONTH(D2)=VALUE(MID(C2,4,2)))`.
+(Spreadsheet equivalent: section 14.12, step 7, which also shows the worksheet trap with impossible dates.)
 
 ### Time zones
 
 The export's `entered_at_utc` column records when each line was entered, in **UTC** (Coordinated Universal Time), as many cloud systems do: `2025-10-01T07:06:00Z`, where `Z` means UTC. India Standard Time (IST) is UTC + 5 hours 30 minutes, with no daylight saving time.
 
-The difference matters at the edges of the day. A web-portal order entered at 00:05 IST on 1 November is 18:35 UTC on **31 October**. Group entries by their UTC date, and that order lands in the wrong day, and the wrong month:
+The difference matters at the edges of the day. An order keyed in at 00:05 IST on 1 November (say, a late-night upload from Kolkata) is 18:35 UTC on **31 October**. Group entries by their UTC date, and that order lands in the wrong day, and the wrong month.
+
+The cleaning script converts to Indian time once, into one column, `entered_at_ist`, using the database's time-zone rules. Here is the conversion on two real lines, one entered mid-morning and one just after midnight:
 
 ```sql
-SELECT COUNT(*) AS lines, COUNT(*) FILTER (WHERE (entered_at_ist - INTERVAL '5 hours 30 minutes')::date <> order_date) AS utc_date_differs FROM clean_order_lines;
+SELECT order_item_id,
+       entered_at_utc,
+       entered_at_utc::timestamptz AT TIME ZONE 'Asia/Kolkata' AS entered_at_ist
+FROM stg_orders_raw
+WHERE order_item_id IN ('183953', '193320');
+```
+
+```
+ order_item_id |    entered_at_utc    |   entered_at_ist    
+---------------+----------------------+---------------------
+ 183953        | 2025-10-01T04:51:00Z | 2025-10-01 10:21:00
+ 193320        | 2025-10-31T18:49:00Z | 2025-11-01 00:19:00
+(2 rows)
+```
+
+How it works: `::timestamptz` converts the text into a **timestamp with time zone**, a moment in time that knows its time zone (the `Z` says UTC). `AT TIME ZONE 'Asia/Kolkata'` then gives the clock time in India at that moment. The first line gains 5 hours 30 minutes on the same day. The second line was entered at 18:49 on 31 October in UTC, which was already 00:19 on **1 November** in India. How many lines are like the second one?
+
+```sql
+SELECT COUNT(*) AS lines,
+       COUNT(*) FILTER (WHERE (entered_at_ist - INTERVAL '5 hours 30 minutes')::date <> order_date) AS utc_date_differs
+FROM clean_order_lines;
 ```
 
 ```
@@ -793,13 +1164,7 @@ SELECT COUNT(*) AS lines, COUNT(*) FILTER (WHERE (entered_at_ist - INTERVAL '5 h
 (1 row)
 ```
 
-**1,598** lines (6.2%) have a different calendar date in UTC than in India. The cleaning script converts to Indian time once, in one column (`entered_at_ist`), using the database's time-zone rules:
-
-```sql
-(entered_at_utc::timestamptz AT TIME ZONE 'Asia/Kolkata') AS entered_at_ist
-```
-
-`::timestamptz` reads the text as an absolute moment (the `Z` says UTC), and `AT TIME ZONE 'Asia/Kolkata'` gives the local clock time. MySQL can use `CONVERT_TZ(t, '+00:00', '+05:30')`, or named zones once its time-zone tables are loaded; Power Query uses `DateTimeZone.SwitchZone(DateTimeZone.FromText([entered_at_utc]), 5, 30)`; pandas uses `tz_convert("Asia/Kolkata")`.
+The clean table keeps only the Indian time, so the query goes back to UTC by subtracting the offset: IST − 5 hours 30 minutes = UTC. `INTERVAL '5 hours 30 minutes'` is a length of time (Chapter 13), and `::date` keeps only the date part. **1,598** lines (6.2%) have a different calendar date in UTC than in India. MySQL can use `CONVERT_TZ(t, '+00:00', '+05:30')`, or named zones once its time-zone tables are loaded (section 14.13).
 
 > **Simplification note.** Using a fixed +5:30 offset is safe for India. For countries with daylight saving time, always use named time zones (`Europe/London`, `America/New_York`), because the offset changes twice a year.
 
@@ -807,22 +1172,55 @@ SELECT COUNT(*) AS lines, COUNT(*) FILTER (WHERE (entered_at_ist - INTERVAL '5 h
 
 The Delhi branch enters some quantities in **cartons** of 10 (`qty_unit = 'CTN'`). Mixing units in one column is one of the most damaging problems in business data, because every value looks plausible: 3 cartons looks like a small order of 3 pieces.
 
-The fix is a **conversion to one unit**, driven by the unit column:
+The fix is a **conversion to one unit**, driven by the unit column. On three sample lines:
 
 ```sql
-NULLIF(quantity,'')::int * CASE WHEN qty_unit = 'CTN' THEN 10 ELSE 1 END AS quantity
+SELECT quantity, qty_unit,
+       NULLIF(quantity, '')::int * CASE WHEN qty_unit = 'CTN' THEN 10 ELSE 1 END AS pieces
+FROM (VALUES ('3', 'CTN'), ('30', 'PCS'), ('', 'PCS')) AS v(quantity, qty_unit);
 ```
 
-In a real business, the conversion factor belongs in the product master (a crate and a bottle don't come in the same carton size); here every Riverstone carton holds 10 pieces. Spreadsheet: `=E2*IF(G2="CTN",10,1)`. Power Query: `if [qty_unit] = "CTN" then [quantity] * 10 else [quantity]`.
+```
+ quantity | qty_unit | pieces 
+----------+----------+--------
+ 3        | CTN      |     30
+ 30       | PCS      |     30
+          | PCS      |       
+(3 rows)
+```
 
-The same thinking applies to other units you'll meet: kilograms and tonnes, rupees and lakhs, percentages and fractions. Kolkata's spreadsheet upload records discounts as **fractions** (`0.05` for 5%). The rule "a discount above 0 and below 1 is a fraction" is safe here because Riverstone's real discounts are whole percentages; in data where 0.5% discounts exist, you'd need the source system's documentation instead.
+The `CASE` gives the multiplier: 10 for cartons, 1 for pieces. `NULLIF(…)::int` turns the text into a number first (section 14.2), so a blank quantity stays NULL: NULL times anything is NULL (Chapter 12, section 12.6), which is right, because a blank isn't zero. In a real business, the conversion factor belongs in the product master (a crate and a bottle don't come in the same carton size); here every Riverstone carton holds 10 pieces. (Spreadsheet equivalent: section 14.12, step 8.)
+
+The same thinking applies to other units you'll meet: kilograms and tonnes, rupees and lakhs, percentages and fractions. Kolkata's spreadsheet upload records discounts as **fractions** (`0.05` for 5%). The rule "a discount above 0 and below 1 is a fraction" is safe here because Riverstone's real discounts are whole percentages; in data where 0.5% discounts exist, you'd need the source system's documentation instead. The rule in SQL:
+
+```sql
+SELECT discount_pct,
+       CASE WHEN discount_pct::numeric > 0 AND discount_pct::numeric < 1
+            THEN discount_pct::numeric * 100
+            ELSE discount_pct::numeric END AS discount_clean
+FROM (VALUES ('0.05'), ('5'), ('0'), ('0.12')) AS v(discount_pct);
+```
+
+```
+ discount_pct | discount_clean 
+--------------+----------------
+ 0.05         |           5.00
+ 5            |              5
+ 0            |              0
+ 0.12         |          12.00
+(4 rows)
+```
+
+`::numeric` converts the text to an exact decimal (section 14.2). Fractions are multiplied by 100; everything else passes through. `5.00` and `5` are the same number; the `.00` only shows that it came from a calculation.
 
 ### Currency and number text
 
 Stripping currency text looks routine and hides a classic trap:
 
 ```sql
-SELECT unit_price AS exported, regexp_replace(unit_price, '[^0-9.]', '', 'g') AS naive_strip, regexp_replace(regexp_replace(unit_price, '^[^0-9]+', ''), ',', '', 'g') AS correct
+SELECT unit_price                                                        AS exported,
+       regexp_replace(unit_price, '[^0-9.]', '', 'g')                    AS naive_strip,
+       regexp_replace(regexp_replace(unit_price, '^[^0-9]+', ''), ',', '', 'g') AS correct
 FROM (VALUES ('₹1,400.00'), ('Rs. 430'), ('750')) AS v(unit_price);
 ```
 
@@ -835,11 +1233,11 @@ FROM (VALUES ('₹1,400.00'), ('Rs. 430'), ('750')) AS v(unit_price);
 (3 rows)
 ```
 
-The **naive** approach, "keep only digits and the decimal point", turns `Rs. 430` into `.430`, which converts to **0.43**: the full stop in the abbreviation `Rs.` looks like a decimal point. Every `Rs.` price would become a thousandth of its value, and nothing would fail. The **correct** approach removes the leading non-digit characters (`^[^0-9]+`), then the thousands separators.
+The **naive** approach, "keep only digits and the decimal point", turns `Rs. 430` into `.430`, which converts to **0.43**: the full stop in the abbreviation `Rs.` looks like a decimal point. Every `Rs.` price would become a thousandth of its value, and nothing would fail. The **correct** approach removes the leading non-digit characters (`^[^0-9]+`, as in section 14.2), then, in the outer `regexp_replace`, every comma (`','` with the `'g'` flag).
 
-A validation rule catches mistakes like this: after conversion, every price must equal the product's list price for 2025 (section 14.9).
+A validation rule catches mistakes like this: after conversion, every price must equal the product's list price for 2025 (section 14.10).
 
-> **Watch out: thousands and decimal separators.** `1,400.00` uses the Indian and English convention. Much of Europe writes `1.400,00`. Converting text to numbers with the wrong culture turns one into the other. In Power Query, use **Change Type → Using Locale** or `Number.FromText(x, "en-IN")`; in Excel, **Data → Text to Columns → Advanced** sets the separators; in pandas, `thousands=","` and `decimal="."` in `read_csv`.
+> **Watch out: thousands and decimal separators.** `1,400.00` uses the Indian and English convention. Much of Europe writes `1.400,00`. Converting text to numbers with the wrong culture turns one into the other. In Power Query, use **Change Type → Using Locale** or `Number.FromText(x, "en-IN")`; in Excel, **Data → Text to Columns → Advanced** sets the separators.
 
 ---
 

@@ -661,7 +661,6 @@ SELECT 7 / 2   AS whole_numbers,
 
 `7 / 2` gives `3`, not `3.5`. Writing `7 / 2.0` (or `7 * 1.0 / 2`) makes one side a decimal, and the answer keeps its fraction. A `SELECT` with no `FROM` simply calculates and shows one row. This quietly breaks percentage calculations in a lot of beginners' reports. (MySQL does the opposite: `/` always gives a decimal, `3.5000`, and `DIV` gives the whole-number result. Writing `100.0 *` works correctly in all of them.)
 
-**Good place to stop.**
 
 ---
 
@@ -1370,7 +1369,6 @@ WHERE customer_id = 6;
 
 You'll use these heavily in Chapter 14, where real-world text is full of extra spaces, inconsistent capitals, and typos.
 
-**Good place to stop.**
 
 ---
 
@@ -2883,12 +2881,14 @@ INSERT INTO suppliers (city, onboarded_on)
 VALUES ('Surat', '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  null value in column "supplier_name" of relation "suppliers" violates not-null constraint
 DETAIL:  Failing row contains (5, null, Surat, null, null, null, t, 2026-02-01).
 ```
 
-MySQL says:
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2903,10 +2903,14 @@ INSERT INTO suppliers (supplier_name, city, onboarded_on)
 VALUES ('Deccan Cartons', 'Nashik', '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  duplicate key value violates unique constraint "suppliers_supplier_name_key"
 DETAIL:  Key (supplier_name)=(Deccan Cartons) already exists.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2921,10 +2925,14 @@ INSERT INTO suppliers (supplier_name, city, rating, onboarded_on)
 VALUES ('Gujarat Pigments', 'Ahmedabad', 7, '2026-02-01');
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  new row for relation "suppliers" violates check constraint "suppliers_rating_check"
 DETAIL:  Failing row contains (7, Gujarat Pigments, Ahmedabad, null, null, 7, t, 2026-02-01).
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2939,10 +2947,14 @@ INSERT INTO purchase_orders (supplier_id, po_date, item, quantity, unit_cost)
 VALUES (99, '2026-03-21', 'Lids', 100, 9.00);
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  insert or update on table "purchase_orders" violates foreign key constraint "purchase_orders_supplier_id_fkey"
 DETAIL:  Key (supplier_id)=(99) is not present in table "suppliers".
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -2966,6 +2978,8 @@ FROM suppliers
 ORDER BY supplier_id;
 ```
 
+PostgreSQL:
+
 ```
  supplier_id |   supplier_name
 -------------+--------------------
@@ -2976,6 +2990,8 @@ ORDER BY supplier_id;
            8 | Gujarat Pigments
 (5 rows)
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -3035,11 +3051,51 @@ Malabar Resins,Kochi,2026-03-10
 Indus Moulds,Rajkot,2026-03-12
 ```
 
-- **In DBeaver (both databases):** right-click the table → *Import Data* → *CSV*, choose the file, and check that each CSV column is matched to the right table column. It's the easiest route, and fine for occasional loads.
-- **In the PostgreSQL `psql` client:** `\copy suppliers (supplier_name, city, onboarded_on) FROM 'new_suppliers.csv' WITH (FORMAT csv, HEADER true)`. It reads the file from your computer and replies `COPY 2`.
-- **In MySQL:** `LOAD DATA LOCAL INFILE 'new_suppliers.csv' INTO TABLE suppliers FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES (supplier_name, city, onboarded_on);`. Loading local files is switched off by default for security, so the first attempt usually fails with *"Loading local data is disabled; this must be enabled on both the client and server sides"*. On your own lab server, an administrator setting (`SET GLOBAL local_infile = 1;`) plus the client option `--local-infile=1` (or the *allowLoadLocalInfile* driver property in DBeaver) enables it. On a company server, ask first.
+The examples in the rest of this section don't include these two suppliers. So if you're following along, either read the steps now and try them at the very end of the section, or undo the load afterwards with `DELETE FROM suppliers WHERE supplier_name IN ('Malabar Resins', 'Indus Moulds');`.
 
-Whichever route you use, the table's constraints still apply: a duplicate name or a missing date in row 237 rejects the load, which is exactly what you want. Chapter 45 covers loading large and messy files reliably. (The examples below don't include these two suppliers, so skip the load if you're following along.)
+The route to use now is **DBeaver's import wizard**, which works the same way for both databases:
+
+1. In the navigator, expand `riverstone_lab` → *Tables* (in PostgreSQL, under *Schemas* → *public*), right-click `suppliers`, and choose *Import Data*.
+2. Choose **CSV** as the source type, then pick `new_suppliers.csv`.
+3. On the import settings page, check that the delimiter is a comma and that the first row is read as the header.
+4. On the column-mapping page, check that each CSV column goes to the table column of the same name (`supplier_name`, `city`, `onboarded_on`), and that `supplier_id` is left for the database to fill.
+5. Click *Proceed* (or *Start*), then check the result:
+
+<!-- run: none -->
+```sql
+SELECT COUNT(*) FROM suppliers;
+```
+
+```
+ count
+-------
+     8
+(1 row)
+```
+
+The count went up by exactly two, from the 6 suppliers you have at this point to 8.
+
+Whichever route you use, the table's constraints still apply: a duplicate name or a missing date in row 237 rejects the load, which is exactly what you want. Chapter 45 covers loading large and messy files reliably.
+
+**For later: loading from the command line (Chapter 45).** Once you've met the terminal (Chapter 26), each database's command-line client can load the same file with one command. You don't need these now. In PostgreSQL's `psql` client:
+
+<!-- run: none -->
+```
+\copy suppliers (supplier_name, city, onboarded_on) FROM 'new_suppliers.csv' WITH (FORMAT csv, HEADER true)
+```
+
+It reads the file from your computer and replies `COPY 2`. In MySQL:
+
+<!-- run: none -->
+```mysql
+LOAD DATA LOCAL INFILE 'new_suppliers.csv'
+INTO TABLE suppliers
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES
+(supplier_name, city, onboarded_on);
+```
+
+Loading local files is switched off by default in MySQL for security, so the first attempt usually fails with *"Loading local data is disabled; this must be enabled on both the client and server sides"*. On your own lab server, an administrator setting, `SET GLOBAL local_infile = 1;`, plus the client option `--local-infile=1` (or the `allowLoadLocalInfile` driver property in DBeaver) enables it. On a company server, ask first.
 
 ### Step 5: UPDATE: changing rows
 
@@ -3069,6 +3125,8 @@ UPDATE suppliers
 SET rating = 4
 WHERE supplier_name = 'Sagar Labels';
 ```
+
+DBeaver reports *Updated Rows: 1*: one row, as the preview promised.
 
 **Calculated updates.** Western Polymers (supplier 1) has raised prices by 5% on orders not yet received. `SET` can use the column's current value:
 
@@ -3148,6 +3206,23 @@ DELETE FROM purchase_orders
 WHERE po_id = 5;
 ```
 
+DBeaver reports *Updated Rows: 1* (it uses the same words for deletes). Check what's left:
+
+<!-- run: both -->
+```sql
+SELECT COUNT(*) AS orders_left
+FROM purchase_orders;
+```
+
+```
+ orders_left
+-------------
+           4
+(1 row)
+```
+
+Five orders minus one: MySQL gives the same 4.
+
 Now try to remove a supplier who still has orders:
 
 <!-- run: both -->
@@ -3156,10 +3231,14 @@ DELETE FROM suppliers
 WHERE supplier_name = 'Western Polymers';
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  update or delete on table "suppliers" violates foreign key constraint "purchase_orders_supplier_id_fkey" on table "purchase_orders"
 DETAIL:  Key (supplier_id)=(1) is still referenced from table "purchase_orders".
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -3183,7 +3262,38 @@ SET is_active = FALSE
 WHERE supplier_name = 'Nilgiri Packaging';
 ```
 
-Reports and forms then show only `WHERE is_active = TRUE`, while the history stays complete. Most business systems work this way.
+Check it:
+
+<!-- run: both -->
+```sql
+SELECT supplier_name, is_active
+FROM suppliers
+WHERE supplier_name = 'Nilgiri Packaging';
+```
+
+PostgreSQL:
+
+```
+   supplier_name   | is_active
+-------------------+-----------
+ Nilgiri Packaging | f
+(1 row)
+```
+
+MySQL:
+
+<!-- out: mysql -->
+```
++-------------------+-----------+
+| supplier_name     | is_active |
++-------------------+-----------+
+| Nilgiri Packaging |         0 |
++-------------------+-----------+
+```
+
+`f` (false) in PostgreSQL, `0` in MySQL: the same fact, in each database's spelling of a true/false value (Step 2). Reports and forms then show only `WHERE is_active = TRUE`, while the history stays complete. Most business systems work this way.
+
+**Good place to stop.**
 
 ### Step 7: Insert or update in one statement (upsert)
 
@@ -3232,7 +3342,7 @@ ORDER BY supplier_name;
 (6 rows)
 ```
 
-> **Real-life example: the nightly supplier sync.** Many companies copy a master list, such as suppliers, products, or price lists, from one system into another every night. An upsert is the heart of that job: new suppliers are added, changed details are updated, and running the job twice doesn't create duplicates. You'll build this kind of job in Chapter 20.
+> **Real-life example: the nightly supplier sync.** Many companies copy a master list, such as suppliers, products, or price lists, from one system into another every night. An upsert is the heart of that job: new suppliers are added, changed details are updated, and running the job twice doesn't create duplicates. Chapter 45 builds this kind of load; Chapter 20 uses the same "safe to run twice" idea for reports.
 
 ### Step 8: Transactions: the undo button
 
@@ -3267,6 +3377,8 @@ Transactions are why a bank transfer never takes money out of one account withou
 
 **The big difference: structure changes.** Try undoing an `ALTER TABLE` (Step 9 explains the statement itself):
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 BEGIN;
@@ -3283,6 +3395,8 @@ WHERE table_name = 'suppliers' AND column_name = 'notes';
                    0
 (1 row)
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -3371,10 +3485,14 @@ SET gst_number = '24AAACW1234A1Z5'
 WHERE supplier_name = 'Sagar Labels';
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  duplicate key value violates unique constraint "uq_suppliers_gst"
 DETAIL:  Key (gst_number)=(24AAACW1234A1Z5) already exists.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -3399,12 +3517,18 @@ Renaming is easy for the database and risky for everything around it: every save
 ALTER TABLE suppliers DROP COLUMN fax_number;
 ```
 
+A structure change like these two touches no rows, so there's no row count to check. The table description at the end of this step (`information_schema.columns`, or `DESCRIBE` in MySQL) shows both changes.
+
 **Change a column's type or size.** Purchasing has a supplier in "Thiruvananthapuram (Technopark Phase III)", which doesn't fit in 50 characters. This is where the two databases differ:
+
+PostgreSQL:
 
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN city TYPE VARCHAR(80);
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -3419,6 +3543,8 @@ Making a column *bigger* is safe. Making it *smaller*, or changing text to a num
 ```mysql
 ALTER TABLE purchase_orders MODIFY COLUMN status VARCHAR(30);
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -3451,6 +3577,8 @@ In PostgreSQL, `ALTER COLUMN … TYPE` changes only the type, and `NOT NULL` and
 ALTER TABLE purchase_orders ALTER COLUMN status TYPE VARCHAR(30);
 ```
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 SELECT column_name, character_maximum_length, is_nullable, column_default
@@ -3469,6 +3597,8 @@ The MySQL rule of thumb: **before any `MODIFY COLUMN`, run `SHOW CREATE TABLE` a
 
 **Make a column required.** Purchasing wants every supplier to have an email. Try it:
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
@@ -3477,6 +3607,8 @@ ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
 ```
 ERROR:  column "email" of relation "suppliers" contains null values
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -3496,15 +3628,21 @@ UPDATE suppliers SET email = 'hello@gujaratpigments.example' WHERE supplier_name
 UPDATE suppliers SET email = 'contact@nilgiripack.example'   WHERE supplier_name = 'Nilgiri Packaging';
 ```
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 ALTER TABLE suppliers ALTER COLUMN email SET NOT NULL;
 ```
 
+MySQL:
+
 <!-- run: mysql -->
 ```mysql
 ALTER TABLE suppliers MODIFY COLUMN email VARCHAR(100) NOT NULL;
 ```
+
+This time both statements succeed: no row breaks the rule any more. The finished-table description at the end of this step shows `email` as required.
 
 (To make a column optional again: `ALTER COLUMN email DROP NOT NULL` in PostgreSQL, or `MODIFY COLUMN email VARCHAR(100) NULL` in MySQL.)
 
@@ -3524,10 +3662,14 @@ SET status = 'Shipped'
 WHERE po_id = 2;
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  new row for relation "purchase_orders" violates check constraint "chk_po_status"
 DETAIL:  Failing row contains (2, 1, 2026-03-16, Polypropylene granules (kg), 1500, 127.05, Shipped).
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -3550,6 +3692,8 @@ ALTER TABLE purchase_orders ALTER COLUMN status SET DEFAULT 'Open';
 
 Here's the finished `suppliers` table:
 
+PostgreSQL:
+
 <!-- run: pg -->
 ```sql
 SELECT column_name, data_type, character_maximum_length AS max_length, is_nullable
@@ -3571,6 +3715,8 @@ ORDER BY ordinal_position;
  gst_number    | character varying |         15 | YES
 (8 rows)
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql
@@ -3713,11 +3859,15 @@ DROP TABLE po_import_staging;
 DROP TABLE suppliers;
 ```
 
+PostgreSQL:
+
 ```
 ERROR:  cannot drop table suppliers because other objects depend on it
 DETAIL:  constraint purchase_orders_supplier_id_fkey on table purchase_orders depends on table suppliers
 HINT:  Use DROP ... CASCADE to drop the dependent objects too.
 ```
+
+MySQL:
 
 <!-- out: mysql -->
 ```
@@ -3814,6 +3964,8 @@ For the lab, Steps 1–11 were enough. For production, the checklist is the skil
 | Rename a database | `ALTER DATABASE a RENAME TO b;` (nobody connected) | not supported: create new, move tables |
 | Remove a database | `DROP DATABASE IF EXISTS db;` (connect elsewhere first) | `DROP DATABASE IF EXISTS db;` |
 
+**Good place to stop.**
+
 <!-- lab:end -->
 
 ---
@@ -3845,9 +3997,9 @@ Teams often adopt a published SQL style guide and enforce it with an automatic f
 
 ---
 
-## 12.15 Putting it all together: Monday morning with the sales head
+## 12.15 Putting it all together: Tuesday morning with the sales head
 
-It's Monday, 31 March 2026, the last day of the quarter. Before the 10 a.m. review, Anita Rao, Riverstone's Sales Head, sends you four questions. None of them mentions SQL. This is what real analysis work looks like, so we'll answer each one the way an experienced analyst would, with a method rather than guesswork.
+It's Tuesday, 31 March 2026, the last day of the quarter. Before the 10 a.m. review, Anita Rao, Riverstone's Sales Head, sends you five questions. None of them mentions SQL. This is what real analysis work looks like, so we'll answer each one the way an experienced analyst would, with a method rather than guesswork.
 
 ### A six-step method for any business question
 
@@ -3860,7 +4012,7 @@ It's Monday, 31 March 2026, the last day of the quarter. Before the 10 a.m. revi
 
 ### Question 1: "Which customers have gone quiet?"
 
-**Restate.** Customers with no order in the 30 days up to 31 March 2026, meaning no order since 1 March. Cancelled orders don't count as activity. Customers who have *never* ordered must be included, because they're the easiest to miss.
+**Restate.** Customers with no (non-cancelled) order in March 2026, meaning nothing since 1 March. Cancelled orders don't count as activity. Customers who have *never* ordered must be included, because they're the easiest to miss.
 
 **Shape.** One row per customer: name, segment, last order date, days since that order.
 
@@ -3900,18 +4052,20 @@ ORDER BY last_order_date NULLS FIRST;
 
 **What to tell Anita.** Five of eight customers haven't ordered this month. Blue Bay Cafe signed up on 1 March and has never ordered: a warm lead to call today. Patel Kitchenware has gone 76 days, far longer than any other customer.
 
+> **Back to Chapter 7.** Section 7.6 showed a data analyst answering the same question on a full year of data: every customer with no non-cancelled order in the 60 days to 31 December 2025, which found five customers. It was this query with two dates changed, run on the one-year database. Exercise 30 asks you to write it. Chapter 13 then improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
+
 ### Question 2: "How much are discounts costing us?"
 
-**Restate.** For non-cancelled orders, compare what products would have sold for at the price charged before discount (the *list value*) with the discount given, by category.
+**Restate.** For non-cancelled orders, compare the value of the goods before discount, at the price charged (the *gross value*), with the discount given, by category. We use the price on the order line, not today's list price in `products`, for the reason in section 12.2: the price charged is what the customer was offered.
 
 **Shape.** One row per category. **Tables:** `order_items` (quantities, prices, discounts), `products` (category), `orders` (status). Every join goes from a line to its one order and one product, so nothing fans out.
 
 ```sql
 SELECT p.category,
-       ROUND(SUM(oi.quantity * oi.unit_price), 0)                           AS list_value,
+       ROUND(SUM(oi.quantity * oi.unit_price), 0)                           AS gross_value,
        ROUND(SUM(oi.quantity * oi.unit_price * oi.discount_pct / 100), 0)   AS discount_given,
        ROUND(100.0 * SUM(oi.quantity * oi.unit_price * oi.discount_pct / 100)
-             / SUM(oi.quantity * oi.unit_price), 1)                         AS discount_pct_of_list
+             / SUM(oi.quantity * oi.unit_price), 1)                         AS discount_pct_of_gross
 FROM order_items AS oi
 JOIN orders   AS o ON oi.order_id   = o.order_id
 JOIN products AS p ON oi.product_id = p.product_id
@@ -3921,17 +4075,17 @@ ORDER BY discount_given DESC;
 ```
 
 ```
-  category  | list_value | discount_given | discount_pct_of_list
-------------+------------+----------------+----------------------
- Industrial |     181250 |          19865 |                 11.0
- Storage    |      85050 |           3240 |                  3.8
- Kitchen    |      82850 |           2115 |                  2.6
+  category  | gross_value | discount_given | discount_pct_of_gross
+------------+-------------+----------------+-----------------------
+ Industrial |      181250 |          19865 |                  11.0
+ Storage    |       85050 |           3240 |                   3.8
+ Kitchen    |       82850 |           2115 |                   2.6
 (3 rows)
 ```
 
-**Check.** List value minus discount should equal the net revenue from section 12.9: for Industrial, 181,250 − 19,865 = 161,385. ✓
+**Check.** Gross value minus discount should equal the net revenue from section 12.10's profit query: for Industrial, ₹1,81,250 − ₹19,865 = ₹1,61,385. ✓
 
-**What to tell Anita.** Riverstone gave away ₹19,865 on crates this quarter, 11% of their value, against under 4% elsewhere. Put that next to the gross profit query from section 12.9: crates earned only ₹23,885 of gross profit. **The discounts on crates were worth about 83% of the profit the crates actually made.** That's a finding worth a meeting.
+**What to tell Anita.** Riverstone gave away ₹19,865 on crates this quarter, 11% of their value, against under 4% elsewhere. Put that next to the gross profit query from section 12.10: crates earned only ₹23,885 of gross profit. **The discounts on crates were worth about 83% of the profit the crates actually made.** That's a finding worth a meeting.
 
 ### Question 3: "Who owes us money, and how late is it?"
 
@@ -3995,7 +4149,7 @@ FROM (
 JOIN orders    AS o ON inv.order_id  = o.order_id
 JOIN customers AS c ON o.customer_id = c.customer_id
 WHERE inv.balance > 0
-GROUP BY c.customer_name
+GROUP BY c.customer_id, c.customer_name
 ORDER BY total_due DESC;
 ```
 
@@ -4015,9 +4169,11 @@ ORDER BY total_due DESC;
 - The innermost subquery totals payments per invoice (the fan-out fix). The next layer computes each invoice's `balance`. The outer query joins balances to customers and aggregates.
 - `WHERE inv.balance > 0` removes fully paid invoices *before* grouping.
 - Each `SUM(CASE WHEN … THEN inv.balance ELSE 0.00 END)` adds up only the balances that fall into one ageing band. Five `CASE` columns turn one list of invoices into a five-column report, the same result you'd build with a pivot table in Chapter 11.
+- Each column is its own `CASE`, so there's no "first match wins" across columns, as there was in section 12.8's single `CASE`. That's why every band states both its limits (the 1–30 column checks that the invoice is past due *and* at most 30 days late): otherwise an invoice could be counted in two columns.
 - `ELSE 0.00` (rather than leaving out the `ELSE`) makes empty bands show zero instead of NULL, which matters when someone totals the columns in Excel.
+- `GROUP BY c.customer_id, c.customer_name` groups by the ID as well as the name, as in Question 1.
 
-**Check.** The `total_due` column adds up to 46,560 + 23,325 + 12,625 + 11,700 + 6,250 = ₹100,460, exactly the outstanding total from section 12.10. ✓ And each row's bands add up to its total. ✓
+**Check.** The `total_due` column adds up to 46,560 + 23,325 + 12,625 + 11,700 + 6,250 = ₹100,460, exactly the outstanding total from the fan-out fix in section 12.12. ✓ And each row's bands add up to its total. ✓
 
 **What to tell Anita.** ₹88,760 is overdue, and more than half of it is Northgate Distributors (₹46,560). Northgate is *also* on the "gone quiet" list from Question 1, so before sales chases them for a new order, finance should chase the old one. Sunrise Caterers hasn't paid anything, has no city recorded, and has no sales rep assigned: a credit risk and a data-quality problem at the same time.
 
@@ -4037,7 +4193,7 @@ LEFT JOIN employees   AS m  ON e.manager_id   = m.employee_id
 JOIN      orders      AS o  ON o.sales_rep_id = e.employee_id
 JOIN      order_items AS oi ON oi.order_id    = o.order_id
 WHERE o.status <> 'Cancelled'
-GROUP BY e.employee_name, m.employee_name
+GROUP BY e.employee_id, e.employee_name, m.employee_name
 ORDER BY net_revenue DESC;
 ```
 
@@ -4050,15 +4206,196 @@ ORDER BY net_revenue DESC;
 (3 rows)
 ```
 
-**How it works.** `COUNT(DISTINCT o.order_id)` avoids the fan-out from joining to order lines. Both names are in `GROUP BY` because both appear in `SELECT`. Anita Rao and Vikram Singh don't appear as reps because they have no orders of their own; the inner join to `orders` removes them, which is what this question wants.
+**How it works.** `COUNT(DISTINCT o.order_id)` avoids the fan-out from joining to order lines. Both names are in `GROUP BY` because both appear in `SELECT`, and `e.employee_id` is there too, so two reps with the same name would stay apart. Anita Rao and Vikram Singh don't appear as reps because they have no orders of their own; the inner join to `orders` removes them, which is what this question wants.
 
 **Check.** The three reps total ₹300,605. Order 5008 has no rep and is worth ₹23,325. 300,605 + 23,325 = ₹323,930, exactly the total non-cancelled revenue. ✓ **Reconciling to a known total is how you prove a report hasn't lost anything.** Mention the unassigned ₹23,325 in a footnote so nobody wonders where it went.
 
 **What to tell Anita.** Rahul Mehta leads on revenue with ₹146,745, largely from two big Coastal Foods orders. Neha Kulkarni handled as many orders but at a much smaller average size, which is worth understanding before judging performance. Ranking reps, showing each one's share of team revenue, and comparing this quarter with last all need **window functions**, the headline tool of Chapter 13.
 
+### Question 5: "Why did March fall?"
+
+Chapter 5 asked this question and answered it with an issue tree, using numbers from this mini database. Every one of those numbers is a short query you can now write yourself. Here is the walk-through again, as SQL.
+
+**Restate.** Chapter 5 measured **billed revenue**: invoices, by invoice date. That's a business rule, so write it down. (The monthly report in "In the real world", later in this chapter, uses a different rule, orders by order date. On this data both give ₹31,800 for March, but in general they differ.)
+
+**Step 1. Split with a formula.** Billed revenue = number of invoices × average invoice:
+
+```sql
+SELECT DATE_TRUNC('month', invoice_date)::date AS month,
+       COUNT(*)                                AS invoices,
+       SUM(amount)                             AS billed,
+       ROUND(AVG(amount), 0)                   AS avg_invoice
+FROM invoices
+WHERE invoice_date >= DATE '2026-02-01'
+GROUP BY DATE_TRUNC('month', invoice_date)
+ORDER BY month;
+```
+
+```
+   month    | invoices |  billed   | avg_invoice
+------------+----------+-----------+-------------
+ 2026-02-01 |        5 | 161700.00 |       32340
+ 2026-03-01 |        2 |  31800.00 |       15900
+(2 rows)
+```
+
+February: 5 invoices averaging ₹32,340, ₹1,61,700 in all. March: 2 averaging ₹15,900, ₹31,800. The same numbers as Chapter 5. The split of the ₹1,29,900 fall is arithmetic, done by hand exactly as there: at February's average, March's 2 invoices would have brought ₹64,680, so fewer invoices explain ₹1,61,700 − ₹64,680 = ₹97,020, and smaller invoices the other ₹64,680 − ₹31,800 = ₹32,880. ✓ ₹97,020 + ₹32,880 = ₹1,29,900.
+
+**Step 2. Which customers stopped?** Customers invoiced in February, `EXCEPT` those with a non-cancelled order in March:
+
+```sql
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01'
+EXCEPT
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders AS o ON c.customer_id = o.customer_id
+WHERE o.order_date >= DATE '2026-03-01'
+  AND o.order_date <  DATE '2026-04-01'
+  AND o.status <> 'Cancelled'
+ORDER BY customer_name;
+```
+
+```
+     customer_name
+------------------------
+ Coastal Foods
+ Northgate Distributors
+ Sunrise Caterers
+(3 rows)
+```
+
+Coastal Foods, Northgate Distributors, and Sunrise Caterers: the three from Chapter 5. ✓ A tempting shortcut gets this wrong. Take away the customers *invoiced* in March instead:
+
+```sql
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01'
+EXCEPT
+SELECT c.customer_name
+FROM customers AS c
+JOIN orders   AS o ON c.customer_id = o.customer_id
+JOIN invoices AS i ON i.order_id    = o.order_id
+WHERE i.invoice_date >= DATE '2026-03-01'
+  AND i.invoice_date <  DATE '2026-04-01'
+ORDER BY customer_name;
+```
+
+```
+     customer_name
+------------------------
+ Coastal Foods
+ Metro Mart
+ Northgate Distributors
+ Sunrise Caterers
+(4 rows)
+```
+
+Four customers, and Metro Mart is wrong: it *did* order in March; the order just isn't billed yet. "Didn't reorder" is a question about orders, so the second half must look at orders.
+
+**Step 3. Booked, not billed.** Which non-cancelled orders have no invoice? An anti-join (section 12.10), with each order's revenue:
+
+```sql
+SELECT o.order_id,
+       o.order_date,
+       o.status,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS order_revenue
+FROM orders AS o
+JOIN order_items AS oi ON oi.order_id = o.order_id
+LEFT JOIN invoices AS i ON i.order_id = o.order_id
+WHERE i.invoice_id IS NULL
+  AND o.status <> 'Cancelled'
+GROUP BY o.order_id, o.order_date, o.status;
+```
+
+```
+ order_id | order_date | status  | order_revenue
+----------+------------+---------+---------------
+     5012 | 2026-03-15 | Pending |         26220
+(1 row)
+```
+
+Metro Mart's order 5012, ₹26,220, still Pending. Billed, March would be ₹31,800 + ₹26,220 = ₹58,020, as Chapter 5 said. ✓
+
+**Step 4. The wholesale mix.** How much of February's billing came from wholesale customers? Conditional aggregation (section 12.9):
+
+```sql
+SELECT SUM(i.amount)                                                   AS billed,
+       SUM(CASE WHEN c.segment = 'Wholesale' THEN i.amount ELSE 0 END) AS wholesale,
+       ROUND(100.0 * SUM(CASE WHEN c.segment = 'Wholesale' THEN i.amount ELSE 0 END)
+             / SUM(i.amount), 1)                                       AS wholesale_pct
+FROM invoices AS i
+JOIN orders    AS o ON o.order_id    = i.order_id
+JOIN customers AS c ON c.customer_id = o.customer_id
+WHERE i.invoice_date >= DATE '2026-02-01'
+  AND i.invoice_date <  DATE '2026-03-01';
+```
+
+```
+  billed   | wholesale | wholesale_pct
+-----------+-----------+---------------
+ 161700.00 | 109185.00 |          67.5
+(1 row)
+```
+
+₹1,09,185 of ₹1,61,700, 67.5%, from two wholesale orders. ✓
+
+**Step 5. Did they stop ordering, and do they owe money?** Reuse Question 3's balance for each invoice, add it up per customer, and add a yes/no column with `EXISTS`: *is there a non-cancelled March order for this customer?* An `EXISTS (…)` in the `SELECT` list gives true or false for each row; it's the same test you used in `WHERE` in section 12.12.
+
+```sql
+SELECT c.customer_name,
+       EXISTS (SELECT 1
+               FROM orders AS m
+               WHERE m.customer_id = c.customer_id
+                 AND m.order_date >= DATE '2026-03-01'
+                 AND m.status <> 'Cancelled')           AS ordered_in_march,
+       COALESCE(SUM(inv.balance), 0.00)                 AS owed,
+       SUM(CASE WHEN inv.due_date < DATE '2026-03-31'
+                THEN inv.balance ELSE 0.00 END)          AS overdue
+FROM customers AS c
+JOIN orders AS o ON o.customer_id = c.customer_id
+LEFT JOIN (
+    SELECT i.order_id, i.due_date,
+           i.amount - COALESCE(pay.paid, 0) AS balance
+    FROM invoices AS i
+    LEFT JOIN (SELECT invoice_id, SUM(amount) AS paid
+               FROM payments
+               GROUP BY invoice_id) AS pay
+           ON i.invoice_id = pay.invoice_id
+) AS inv ON inv.order_id = o.order_id
+GROUP BY c.customer_id, c.customer_name
+ORDER BY overdue DESC, owed DESC, c.customer_name;
+```
+
+```
+     customer_name      | ordered_in_march |   owed   | overdue
+------------------------+------------------+----------+----------
+ Northgate Distributors | f                | 46560.00 | 46560.00
+ Sunrise Caterers       | f                | 23325.00 | 23325.00
+ Coastal Foods          | f                | 12625.00 | 12625.00
+ Patel Kitchenware      | f                |  6250.00 |  6250.00
+ Sharma Hardware        | t                | 11700.00 |     0.00
+ Green Leaf Hotels      | t                |     0.00 |     0.00
+ Metro Mart             | t                |     0.00 |     0.00
+(7 rows)
+```
+
+Chapter 5's seven-row table, row for row. ✓ `ordered_in_march` shows `t` (true) or `f` (false). The joins start from `orders`, so Blue Bay Cafe, which has never ordered, isn't listed, and `SUM(CASE … ELSE 0.00 END)` counts a balance as overdue only when its due date has passed.
+
+**What the data can't answer.** As in Chapter 5, the queries stop at *what* happened. Whether March is always slow needs last year's March, which the mini database doesn't have; whether a competitor is involved needs a phone call. The overdue pattern in step 5 is a hypothesis to test with the customers, not a cause.
+
+> **Watch out: billed revenue and order revenue are different rules.** Billed revenue counts invoices by invoice date; order revenue counts orders by order date and status. An order placed on 28 February and invoiced on 2 March lands in different months under the two rules. Say which one you report, every time.
+
 ### What just happened
 
-Four questions, four queries, and each answer came with a number *and* a reason to act. None of the SQL was new; every piece came from sections 12.4 to 12.12. What made the difference was the method: restating the question, knowing the grain of each table, choosing joins deliberately, building in steps, and checking every result against something you already trusted. That habit, far more than syntax, is what makes an analyst trusted.
+Five questions, a handful of queries, and each answer came with a number *and* a reason to act. None of the SQL was new; every piece came from sections 12.4 to 12.12. What made the difference was the method: restating the question, knowing the grain of each table, choosing joins deliberately, building in steps, and checking every result against something you already trusted. That habit, far more than syntax, is what makes an analyst trusted.
 
 ## 12.16 The same SQL in MySQL
 
@@ -4147,7 +4484,22 @@ The same five customers, in the same order, with the same day counts as the Post
 
 ### Trap 2: MySQL ignores capital letters when comparing text
 
-Run this in both databases:
+Run the same query in both databases. PostgreSQL:
+
+```sql
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE status = 'delivered';
+```
+
+```
+ delivered_orders
+------------------
+                0
+(1 row)
+```
+
+MySQL:
 
 ```mysql
 SELECT COUNT(*) AS delivered_orders
@@ -4169,7 +4521,23 @@ That's often convenient: a user who types "mumbai" in a search box still finds M
 
 - **A query that works in MySQL can silently return nothing when moved to PostgreSQL**, Snowflake, or most other warehouses. When a company migrates its reports, this is one of the first things to break.
 - **Duplicate checks behave differently.** In MySQL, `GROUP BY email` treats `Ravi@Example.com` and `ravi@example.com` as one group, and a `UNIQUE` column won't accept both. In PostgreSQL they're two.
-- **When you really need an exact match** in MySQL, such as for case-sensitive codes or passwords, ask for a binary comparison: `WHERE status COLLATE utf8mb4_bin = 'delivered'` returns 0.
+- **When you really need an exact match** in MySQL, such as for case-sensitive codes, ask for a binary comparison. `COLLATE utf8mb4_bin` compares the stored characters exactly:
+
+```mysql
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE status COLLATE utf8mb4_bin = 'delivered';
+```
+
+```
++------------------+
+| delivered_orders |
++------------------+
+|                0 |
++------------------+
+```
+
+  Zero, like PostgreSQL.
 
 **Portable habit:** match the stored capitalization exactly, or write `LOWER(status) = 'delivered'`, which gives the same answer in every database.
 
@@ -4192,7 +4560,13 @@ In MySQL's default settings, `||` is an old synonym for `OR`. MySQL tried to tre
 
 ### Where NULLs sort
 
-`SELECT DISTINCT city FROM customers ORDER BY city;` returns the same six rows in both databases, but PostgreSQL puts Sunrise Caterers' missing city **last**, and MySQL puts it **first**:
+Section 12.5's `DISTINCT` query returns the same six rows in both databases, but PostgreSQL put Sunrise Caterers' missing city **last**, and MySQL puts it **first**:
+
+```mysql
+SELECT DISTINCT city
+FROM customers
+ORDER BY city;
+```
 
 ```
 +-----------+
@@ -4256,37 +4630,6 @@ ORDER BY order_id;
 The same answer. The cancelled order and the pending order have no invoice, which is correct, and no invoice is orphaned. If an invoice with no matching order ever appeared here, it would mean money billed against an order the sales system doesn't know about: exactly what an audit wants to find.
 
 Each half has its own `WHERE`, so the two halves can never return the same row, which is why `UNION ALL` is safe (and faster than `UNION`). If you want *all* rows from both sides, not just the unmatched ones, remove the first `WHERE`, keep the second, and still use `UNION ALL`: the second half then adds only the rows the first half couldn't produce.
-
-### The monthly report, in MySQL
-
-The "In the real world" report at the end of this chapter needs one change: `DATE_FORMAT` builds the first day of each month, because MySQL has no `DATE_TRUNC`.
-
-```mysql
--- Monthly sales summary (MySQL)
--- Revenue counts Delivered and Shipped orders (finance policy).
-SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
-       COUNT(DISTINCT o.order_id)                          AS orders,
-       COUNT(DISTINCT o.customer_id)                       AS active_customers,
-       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
-FROM orders AS o
-JOIN order_items AS oi
-  ON o.order_id = oi.order_id
-WHERE o.status IN ('Delivered', 'Shipped')
-GROUP BY month
-ORDER BY month;
-```
-
-```
-+------------+--------+------------------+-------------+
-| month      | orders | active_customers | net_revenue |
-+------------+--------+------------------+-------------+
-| 2026-01-01 |      3 |                3 |      104210 |
-| 2026-02-01 |      5 |                5 |      161700 |
-| 2026-03-01 |      2 |                2 |       31800 |
-+------------+--------+------------------+-------------+
-```
-
-`'%Y-%m-01'` is a format pattern: `%Y` is the four-digit year, `%m` the two-digit month, and `-01` is typed literally, giving text like `2026-02-01`. `CAST(… AS DATE)` turns that text back into a real date, so it sorts and joins like one. The format letters are MySQL's own; `%d` is the day, `%M` the month's name, and `%b` its short name, which is handy for chart labels (`DATE_FORMAT(order_date, '%b %Y')` gives `Feb 2026`).
 
 ### Habits that make your SQL portable
 
@@ -4367,11 +4710,40 @@ ORDER BY month;
 (3 rows)
 ```
 
-It runs in well under a second, it gives the same answer every time, and a late correction just means running it again. Every idea in this chapter is in it: filtering, a join, aggregates, `COUNT(DISTINCT)` to avoid fan-out, date truncation, and a comment recording a **business rule** (which statuses count as revenue).
+**The same report in MySQL.** The report you just built needs one change in MySQL (section 12.16): `DATE_FORMAT` builds the first day of each month, because MySQL has no `DATE_TRUNC`.
+
+```mysql
+-- Monthly sales summary (MySQL)
+-- Revenue counts Delivered and Shipped orders (finance policy).
+SELECT CAST(DATE_FORMAT(o.order_date, '%Y-%m-01') AS DATE) AS month,
+       COUNT(DISTINCT o.order_id)                          AS orders,
+       COUNT(DISTINCT o.customer_id)                       AS active_customers,
+       ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)), 0) AS net_revenue
+FROM orders AS o
+JOIN order_items AS oi
+  ON o.order_id = oi.order_id
+WHERE o.status IN ('Delivered', 'Shipped')
+GROUP BY month
+ORDER BY month;
+```
+
+```
++------------+--------+------------------+-------------+
+| month      | orders | active_customers | net_revenue |
++------------+--------+------------------+-------------+
+| 2026-01-01 |      3 |                3 |      104210 |
+| 2026-02-01 |      5 |                5 |      161700 |
+| 2026-03-01 |      2 |                2 |       31800 |
++------------+--------+------------------+-------------+
+```
+
+`'%Y-%m-01'` is a format pattern: `%Y` is the four-digit year, `%m` the two-digit month, and `-01` is typed literally, giving text like `2026-02-01`. `CAST(… AS DATE)` turns that text back into a real date, so it sorts and joins like one. The format letters are MySQL's own; `%d` is the day, `%M` the month's name, and `%b` its short name, which is handy for chart labels (`DATE_FORMAT(order_date, '%b %Y')` gives `Feb 2026`).
+
+The query runs in well under a second, it gives the same answer every time, and a late correction just means running it again. Every idea in this chapter is in it: filtering, a join, aggregates, `COUNT(DISTINCT)` to avoid fan-out, date truncation, and a comment recording a **business rule** (which statuses count as revenue).
 
 That business rule is the most important line in the query, and SQL can't decide it for you. Does a Shipped order count as revenue, or only Delivered? Does Pending? Finance, sales, and operations may each give a different answer. **Your first job on any report is to find out and write it down.** Chapter 24 covers how to have that conversation.
 
-And once the query is right, nobody should have to run it by hand at all. **Chapter 20** takes this exact query and turns it into a *Daily Sales Flash*: an email that lands in every manager's inbox at 8 a.m., with the numbers in the body of the email, an alert when stock runs low, and a warning to you if the job ever fails.
+And once the query is right, nobody should have to run it by hand at all. **Chapter 20** takes a query of exactly this kind and turns it into a *Daily Sales Flash*: an email that lands in every manager's inbox by 7:30 each morning, with the numbers in the body of the email, an alert when something in the data looks wrong, and a warning to you if the job ever fails.
 
 ---
 
@@ -5053,6 +5425,8 @@ ERROR 3959 (HY000): Check constraint 'chk_capacity' uses column 'capacity_units'
 
 (The first statement ran; the second failed.) Drop the rule, rename, and add the rule back. Then widen `city` with `MODIFY`, restating `NOT NULL` so the column stays required:
 
+MySQL:
+
 <!-- run: mysql -->
 ```mysql
 ALTER TABLE warehouses DROP CONSTRAINT chk_capacity;
@@ -5060,6 +5434,8 @@ ALTER TABLE warehouses RENAME COLUMN capacity_units TO capacity_boxes;
 ALTER TABLE warehouses ADD CONSTRAINT chk_capacity CHECK (capacity_boxes > 0);
 ALTER TABLE warehouses MODIFY COLUMN city VARCHAR(80) NOT NULL;
 ```
+
+MySQL:
 
 <!-- run: mysql -->
 ```mysql

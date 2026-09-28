@@ -8,11 +8,9 @@
 >
 > **Before you start:** Chapter 10.
 >
-> **Time needed:** 35–45 hours of reading and practice, spread over five to six weeks. Sections 11.2–11.4 reward slow, hands-on work.
+> **Time needed:** 35–45 hours of reading and practice, over five to six weeks: about 12 sittings of 3–4 hours (two for §11.2, one each for §11.1 and §11.3–11.5, one for the core of §11.6 with §11.10–11.11, one for §11.7, one for Goal Seek, §11.12–11.13 and the story, one for the project, one for the exercises, and two for the second pass).
 >
-> **Core and second pass:** this chapter is big, so read it in two passes. **Core** (first time through): sections 11.1–11.5; the first half of 11.6 (`UNIQUE`, `SORT`, `FILTER`, `SEQUENCE`, `LET`); section 11.7 Steps 1–6, the refresh and unpivot; Goal Seek in 11.9; 11.10 and 11.11; 11.12 and 11.13; the story and the project. **Second pass** (after the project, or when a job needs it): the rest of 11.6 (shaping arrays, `LAMBDA` and its helpers, `GROUPBY`/`PIVOTBY`), "Power Query in depth", section 11.8 (Power Pivot and DAX, taught again in Chapter 16), data tables and Scenario Manager, and the Timed challenge. Each second-pass part is marked where it starts.
->
-> **Sittings (about 3–4 hours each):** 1 · §11.1 and §11.2 up to OR conditions. 2 · the rest of §11.2. 3 · §11.3. 4 · §11.4. 5 · §11.5. 6 · §11.6 (core half), §11.10, §11.11. 7 · §11.7 Steps 1–6, refresh, unpivot. 8 · Goal Seek, §11.12, §11.13, the story. 9 · the project. 10 · the exercises. 11–12 · the second pass.
+> **Core and second pass:** parts marked **Second pass** (the end of §11.6, "Power Query in depth", §11.8 on Power Pivot and DAX, data tables, and the Timed challenge) can wait until after the project; everything else is the core.
 >
 > **Tools:** Microsoft Excel for Windows (Microsoft 365) for Power Query and Power Pivot; Google Sheets for sections 11.2–11.6, 11.9, and 11.10. Where a feature exists only in one app, or only on Windows, the section says so and gives an alternative.
 >
@@ -472,7 +470,7 @@ Chapter 4 worked these out by hand. Open its workbook, `numbers_practice.xlsx`, 
 =(E12-E11)/E11     → -0.140
 ```
 
-The first formula is the change in **percentage points** (the margins are stored as fractions, so `*100` turns −0.039 into −3.9; format it with one decimal place). The second is the **percent change**; format it as a percentage and it shows −14.0%.
+The first formula, `(E12-E11)*100`, is the change in **percentage points**: November's margin minus October's (the margins are stored as fractions, so `*100` turns −0.039 into −3.9; format it with one decimal place). The second, `(E12-E11)/E11`, divides the same change by October's margin to get the **percent change**; format it as a percentage and it shows −14.0%.
 
 **Shares that don't add up to 100% (section 4.6).** On the **segments** sheet, `C2:C4` holds each segment's share of revenue, and column D rounds it to a whole percentage:
 
@@ -480,7 +478,7 @@ The first formula is the change in **percentage points** (the margins are stored
 D2:  =ROUND(C2*100,0)     → 39
 ```
 
-Filled down, D3 and D4 show 34 and 26, and `=SUM(D2:D4)` returns **99**, while `=SUM(C2:C4)` returns 1 (100%). Nothing is missing; each share rounded down a little.
+`ROUND(number, digits)` with 0 digits rounds to a whole number, and `C2*100` turns the fraction 0.393 into 39.3 first. Filled down, D3 and D4 show 34 and 26, and `=SUM(D2:D4)` returns **99**, while `=SUM(C2:C4)` returns 1 (100%). Nothing is missing; each share rounded down a little.
 
 **The mode (section 4.5).** Back in `ch11_practice.xlsx`, `=MODE.SNGL(Sales!E2:E331)` returns **15**, the most common quantity on a line, the same answer Chapter 4 found by counting.
 
@@ -610,6 +608,8 @@ Wholesale customers bought **₹2,07,827** in October. The `XLOOKUP` version nes
 ```excel
 =XLOOKUP("Wholesale", B4:D4, XLOOKUP(DATE(2025,10,1), A5:A16, B5:D16))
 ```
+
+The inner `XLOOKUP(DATE(2025,10,1), A5:A16, B5:D16)` finds October in the month column and returns its three segment values. The outer one looks for "Wholesale" in the header row `B4:D4` and returns the matching value from that row: 207827 again.
 
 ### XMATCH: a better MATCH
 
@@ -1364,7 +1364,7 @@ Gross Margin % :=
 DIVIDE ( [Gross Margin], [Valid Net Revenue] )
 ```
 
-`DIVIDE` is a safe division that returns blank instead of an error when the denominator is zero. The results reveal something the revenue view hides:
+`Gross Margin` has the same shape as `Valid Net Revenue`: `CALCULATE` with the status filter around a `SUMX` over Sales. For each line, the `SUMX` expression takes the net price per unit (`Sales[unit_price]` after `Sales[discount_pct]`), subtracts the product's cost, which `RELATED ( Products[unit_cost] )` fetches across the relationship, and multiplies by `Sales[quantity]`. `DIVIDE` is a safe division that returns blank instead of an error when the denominator is zero. The results reveal something the revenue view hides:
 
 | Segment | Valid net revenue (₹) | Gross margin (₹) | Gross margin % |
 |---|---|---|---|
@@ -1509,6 +1509,8 @@ Combine it with `QUERY` to summarize another team's file without copying it. Ins
 =QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/…", "Sales!A1:S331"),
   "select Col14, sum(Col10) where Col8 <> 'Cancelled' group by Col14", 1)
 ```
+
+It's the section's first `QUERY` again, with the letters swapped for positions in `Sales!A1:S331`: `Col14` is column N (segment), `Col10` is column J (net revenue), and `Col8` is column H (status). The link's last part (…) is your source file's address.
 
 > **Watch out: IMPORTRANGE and permissions.** Once access is allowed, **anyone who can edit your file** can import any range from the source file. Don't connect a file with salaries or customer contact details to a widely shared report. Very large imports can also be slow or fail; import only the columns you need.
 
@@ -2005,14 +2007,14 @@ Open `challenge/riverstone_rewards_case.xlsx`. It has a **Rules** sheet, a **Que
 - **Power Pivot** holds related tables in a **data model**. **Measures** calculate in each cell's **filter context**; `CALCULATE` changes that context. Riverstone's gross margin is 26.2% overall but only 19.0% in Wholesale.
 - **Goal Seek** works backward to a target; **data tables** show many what-if answers at once; mixed-reference grids do the same in Sheets.
 - Google Sheets' **`QUERY`**, **`ARRAYFORMULA`**, **`IMPORTRANGE`**, and **Connected Sheets** cover much of what Power Query and Power Pivot do in Excel.
-- **Competitive Excel** rewards the same habits as good analysis, under a clock: read everything first, parse once, keep settings in input cells, build one row per step, check small cases, and search with data tables.
+- **Competitive Excel** (the optional Timed challenge) rewards the same habits as good analysis, under a clock: read everything first, parse once, keep settings in input cells, build one row per step, check small cases, and search with data tables.
 - **Audit** by reconciling, reading formulas, finding constants, checking ranges, and looking for duplicates. **Leave the spreadsheet** when size, sources, users, scheduling, or risk demand it.
 
 ---
 
 ## Key terms
 
-lookup array · return array · match mode · search mode · exact match · approximate match · band (tier) table · `INDEX` · `MATCH` · two-way lookup · `VLOOKUP` · `HLOOKUP` · long data · wide data · pivot table · Rows area · Columns area · Values area · Filters area · distinct count · Show Values As · date grouping · value filter · slicer · timeline · `GETPIVOTDATA` · pivot chart · refresh · dynamic array · spill range · `#SPILL!` · spill reference (`#`) · `FILTER` · `UNIQUE` · `SORT` · `SORTBY` · `SEQUENCE` · `LET` · `GROUPBY` · `PIVOTBY` · Power Query · query · applied steps · combine files · data type detection · locale · merge queries · join kind · append queries · unpivot · parameter · M language · load to · Power Pivot · data model · relationship · one-to-many · date table · DAX · calculated column · measure · `SUMX` · `CALCULATE` · `DIVIDE` · `RELATED` · filter context · time intelligence · `TOTALYTD` · what-if analysis · Goal Seek · Solver · data table · Scenario Manager · `QUERY` · Google Visualization API Query Language · `ARRAYFORMULA` · `IMPORTRANGE` · `VSTACK` · Connected Sheets · data warehouse · ODBC · README sheet · inconsistent formula · check cell · Go To Special · Inquire · audit
+double unary (`--`) · weighted average · `ROW` / `ROWS` · lookup array · return array · match mode · search mode · exact match · approximate match · band (tier) table · `INDEX` · `MATCH` · two-way lookup · `VLOOKUP` · `HLOOKUP` · long data · wide data · pivot table · Rows area · Columns area · Values area · Filters area · distinct count · Show Values As · date grouping · value filter · slicer · timeline · `GETPIVOTDATA` · pivot chart · refresh · dynamic array · spill range · `#SPILL!` · spill reference (`#`) · `FILTER` · `UNIQUE` · `SORT` · `SORTBY` · `SEQUENCE` · `LET` · `LAMBDA` · parameter · accumulator · `GROUPBY` · `PIVOTBY` · Power Query · query · applied steps · combine files · data type detection · locale · merge queries · join kind · append queries · unpivot · parameter · M language · load to · Power Pivot · data model · relationship · one-to-many · date table · DAX · calculated column · measure · `SUMX` · `CALCULATE` · `DIVIDE` · `RELATED` · filter context · time intelligence · `TOTALYTD` · what-if analysis · Goal Seek · Solver · data table · Scenario Manager · `QUERY` · Google Visualization API Query Language · `ARRAYFORMULA` · `IMPORTRANGE` · `VSTACK` · Connected Sheets · data warehouse · ODBC · README sheet · inconsistent formula · check cell · Go To Special · Inquire · audit
 
 *(All terms are defined in the Glossary, Appendix A.)*
 

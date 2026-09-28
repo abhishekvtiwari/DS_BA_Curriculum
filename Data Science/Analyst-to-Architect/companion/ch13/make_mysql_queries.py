@@ -54,7 +54,7 @@ def to_mysql(sql):
     for a, b in SUBTRACTIONS:
         sql = re.sub(a, b, sql)
     sql = re.sub(r"'Q' \|\| (EXTRACT\(QUARTER FROM [\w.]+\)|quarter)", r"CONCAT('Q', \1)", sql)
-    sql = re.sub(r"SELECT generate_series\(DATE '2025-01-01', DATE '2025-12-01', INTERVAL '1 month'\)::date AS month",
+    sql = re.sub(r"SELECT generate_series\(DATE '2025-01-01', DATE '2025-12-01', INTERVAL '1 month'\)::date\s+AS month",
                  "SELECT month FROM calendar_months  -- MySQL has no generate_series: use the calendar table", sql)
     assert '::' not in sql and '||' not in sql and 'FILTER' not in sql, sql
     return sql

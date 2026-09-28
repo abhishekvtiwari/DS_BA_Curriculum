@@ -85,7 +85,8 @@ WHERE customer_revenue > (
     SELECT AVG(customer_revenue)
     FROM (
         SELECT o.customer_id,
-               SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100)) AS customer_revenue
+               SUM(oi.quantity * oi.unit_price * (1 - oi.discount_pct / 100))
+                   AS customer_revenue
         FROM orders AS o
         JOIN order_items AS oi ON o.order_id = oi.order_id
         WHERE o.status <> 'Cancelled'
@@ -167,11 +168,11 @@ open_invoices AS (
     WHERE b.balance > 0
 )
 SELECT customer_name,
-       SUM(balance)                                                         AS total_due,
-       SUM(CASE WHEN days_past_due <= 0              THEN balance ELSE 0.00 END) AS not_yet_due,
-       SUM(CASE WHEN days_past_due BETWEEN 1 AND 30  THEN balance ELSE 0.00 END) AS overdue_1_30,
+       SUM(balance) AS total_due,
+       SUM(CASE WHEN days_past_due <= 0 THEN balance ELSE 0.00 END) AS not_yet_due,
+       SUM(CASE WHEN days_past_due BETWEEN 1 AND 30 THEN balance ELSE 0.00 END) AS overdue_1_30,
        SUM(CASE WHEN days_past_due BETWEEN 31 AND 60 THEN balance ELSE 0.00 END) AS overdue_31_60,
-       SUM(CASE WHEN days_past_due > 60              THEN balance ELSE 0.00 END) AS overdue_60_plus
+       SUM(CASE WHEN days_past_due > 60 THEN balance ELSE 0.00 END) AS overdue_60_plus
 FROM open_invoices
 GROUP BY customer_name
 ORDER BY total_due DESC;
@@ -570,14 +571,16 @@ ORDER BY units_sold DESC, product_name;
 (6 rows)
 ```
 
-![ROW_NUMBER, RANK and DENSE_RANK on a tie](figures/fig13-3-row-number-rank-dense-rank.svg)
-
-*Figure 13.3 — The same tie, numbered three ways.*
+How it works:
 
 - **The `units` step starts from `products` and `LEFT JOIN`s the sales.** That keeps the Garden Chair, which sold nothing (section 12.10), and `COALESCE` turns its missing sum (NULL) into 0 (section 12.6). Without them the tie example would have five rows, and the chair would silently vanish from the ranking.
 - **`ROW_NUMBER()`** gives every row a different number, even on a tie. Which of the tied rows gets 3 and which gets 4 is up to you: that's why `product_name` is added to its `ORDER BY` as a **tie-breaker**. Without one, the database may choose differently tomorrow, and your report changes for no reason.
 - **`RANK()`** gives tied rows the same rank, then **skips**: 3, 3, 5. It's how a merit list or a race works: two students tie for third place, and the next student is fifth, because four students scored higher.
 - **`DENSE_RANK()`** gives tied rows the same rank **without skipping**: 3, 3, 4. Use it when you want "the top three distinct sales levels".
+
+![ROW_NUMBER, RANK and DENSE_RANK on a tie](figures/fig13-3-row-number-rank-dense-rank.svg)
+
+*Figure 13.3 — The same tie, numbered three ways.*
 
 Which one is right is a business question. "Give a bonus to the top 3 reps": if two tie for third, does the company pay four bonuses (`RANK` or `DENSE_RANK` ≤ 3) or pick one (`ROW_NUMBER` ≤ 3 with a stated tie-breaker)? Ask before you write the query.
 
@@ -637,8 +640,10 @@ This **"number, then keep 1"** pattern solves a whole family of questions: each 
 SELECT c.customer_name,
        o.order_id,
        o.order_date,
-       LAG(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date)                AS previous_order,
-       o.order_date - LAG(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS days_since_previous
+       LAG(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date)
+           AS previous_order,
+       o.order_date - LAG(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date)
+           AS days_since_previous
 FROM orders    AS o
 JOIN customers AS c ON o.customer_id = c.customer_id
 WHERE o.status <> 'Cancelled'
@@ -679,8 +684,10 @@ How it works:
 SELECT c.customer_name,
        o.order_id,
        o.order_date,
-       LAG(o.order_date)  OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS previous_order,
-       LEAD(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS next_order
+       LAG(o.order_date)  OVER (PARTITION BY o.customer_id ORDER BY o.order_date)
+           AS previous_order,
+       LEAD(o.order_date) OVER (PARTITION BY o.customer_id ORDER BY o.order_date)
+           AS next_order
 FROM orders    AS o
 JOIN customers AS c ON o.customer_id = c.customer_id
 WHERE o.status <> 'Cancelled'
@@ -790,8 +797,10 @@ WITH monthly AS (
 )
 SELECT month,
        ROUND(revenue, 0) AS revenue,
-       ROUND(AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 0) AS moving_avg_3m,
-       COUNT(*)          OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)      AS months_in_window
+       ROUND(AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 0)
+           AS moving_avg_3m,
+       COUNT(*) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+           AS months_in_window
 FROM monthly
 ORDER BY month;
 ```
@@ -860,7 +869,8 @@ SELECT m.month,
        ROUND(t.target_revenue, 0)                                      AS target,
        ROUND(SUM(m.revenue) OVER w, 0)                                 AS ytd_revenue,
        ROUND(SUM(t.target_revenue) OVER w, 0)                          AS ytd_target,
-       ROUND(100.0 * SUM(m.revenue) OVER w / SUM(t.target_revenue) OVER w, 1) AS ytd_pct_of_target
+       ROUND(100.0 * SUM(m.revenue) OVER w / SUM(t.target_revenue) OVER w, 1)
+           AS ytd_pct_of_target
 FROM monthly       AS m
 JOIN sales_targets AS t ON t.target_month = m.month
 WINDOW w AS (ORDER BY m.month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
@@ -909,7 +919,8 @@ SELECT order_id,
        ROUND(order_revenue, 0) AS order_revenue,
        ROUND(SUM(order_revenue) OVER (ORDER BY order_date), 0) AS running_default,
        ROUND(SUM(order_revenue) OVER (ORDER BY order_date, order_id
-                                      ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), 0) AS running_rows
+                                      ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), 0)
+                                          AS running_rows
 FROM early_may
 ORDER BY order_date, order_id;
 ```
@@ -959,7 +970,9 @@ ranked AS (
            100.0 * revenue / SUM(revenue) OVER (PARTITION BY segment)     AS pct_of_segment
     FROM customer_revenue
 )
-SELECT segment, rank_in_segment, customer_name, ROUND(revenue, 0) AS revenue, ROUND(pct_of_segment, 1) AS pct_of_segment
+SELECT segment, rank_in_segment, customer_name,
+       ROUND(revenue, 0)        AS revenue,
+       ROUND(pct_of_segment, 1) AS pct_of_segment
 FROM ranked
 WHERE rank_in_segment <= 3
 ORDER BY segment, rank_in_segment;
@@ -1072,8 +1085,9 @@ WITH numbered AS (
            company_name,
            email,
            created_at,
-           ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id) AS submission_no,
-           COUNT(*)     OVER (PARTITION BY LOWER(email))                              AS submissions
+           ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id)
+               AS submission_no,
+           COUNT(*) OVER (PARTITION BY LOWER(email)) AS submissions
     FROM leads
 )
 SELECT lead_id, company_name, email, created_at, submission_no
@@ -1146,7 +1160,8 @@ WITH first_submissions AS (
     SELECT lead_id
     FROM (
         SELECT lead_id,
-               ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id) AS submission_no
+               ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id)
+                   AS submission_no
         FROM leads
     ) AS numbered
     WHERE submission_no = 1
@@ -1164,7 +1179,7 @@ stage_counts AS (
 SELECT step,
        stage,
        leads,
-       ROUND(100.0 * leads / LAG(leads) OVER (ORDER BY step), 1)         AS pct_of_previous_step,
+       ROUND(100.0 * leads / LAG(leads) OVER (ORDER BY step), 1) AS pct_of_previous_step,
        ROUND(100.0 * leads / FIRST_VALUE(leads) OVER (ORDER BY step), 1) AS pct_of_new_leads
 FROM stage_counts
 ORDER BY step;
@@ -1214,7 +1229,8 @@ WITH furniture AS (
     WHERE category = 'Furniture'
     GROUP BY DATE_TRUNC('month', order_date)
 )
-SELECT month, ROUND(revenue, 0) AS revenue, ROUND(LAG(revenue) OVER (ORDER BY month), 0) AS previous_month
+SELECT month, ROUND(revenue, 0) AS revenue, ROUND(LAG(revenue) OVER (ORDER BY month), 0)
+    AS previous_month
 FROM furniture
 ORDER BY month;
 ```
@@ -1231,7 +1247,8 @@ The query claims May's "previous month" was ₹16,388. It wasn't; April was zero
 
 ```sql
 WITH months AS (
-    SELECT generate_series(DATE '2025-01-01', DATE '2025-12-01', INTERVAL '1 month')::date AS month
+    SELECT generate_series(DATE '2025-01-01', DATE '2025-12-01', INTERVAL '1 month')::date
+        AS month
 ),
 furniture AS (
     SELECT DATE_TRUNC('month', order_date)::date AS month, SUM(net_revenue) AS revenue
@@ -1341,7 +1358,8 @@ WITH order_days AS (
 gaps AS (
     SELECT customer_id,
            order_date,
-           order_date - LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date) AS gap_days
+           order_date - LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date)
+               AS gap_days
     FROM order_days
 ),
 customer_rhythm AS (
@@ -1456,7 +1474,8 @@ SELECT a.month,
        'Q' || EXTRACT(QUARTER FROM f.first_month)                     AS cohort,
        EXTRACT(YEAR FROM a.month) * 12 + EXTRACT(MONTH FROM a.month)  AS month_number,
        (EXTRACT(YEAR FROM a.month) * 12 + EXTRACT(MONTH FROM a.month))
-     - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month)) AS months_since_first
+     - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month))
+         AS months_since_first
 FROM first_orders  AS f
 JOIN active_months AS a ON f.customer_id = a.customer_id
 WHERE f.customer_id = 2
@@ -1500,7 +1519,8 @@ cohort_activity AS (
     SELECT f.customer_id,
            'Q' || EXTRACT(QUARTER FROM f.first_month) AS cohort,
            (EXTRACT(YEAR FROM a.month) * 12 + EXTRACT(MONTH FROM a.month))
-         - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month)) AS months_since_first
+         - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month))
+             AS months_since_first
     FROM first_orders  AS f
     JOIN active_months AS a ON f.customer_id = a.customer_id
     WHERE f.first_month < DATE '2025-10-01'
@@ -1546,7 +1566,8 @@ cohort_activity AS (
     SELECT f.customer_id,
            'Q' || EXTRACT(QUARTER FROM f.first_month) AS cohort,
            (EXTRACT(YEAR FROM a.month) * 12 + EXTRACT(MONTH FROM a.month))
-         - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month)) AS months_since_first
+         - (EXTRACT(YEAR FROM f.first_month) * 12 + EXTRACT(MONTH FROM f.first_month))
+             AS months_since_first
     FROM first_orders  AS f
     JOIN active_months AS a ON f.customer_id = a.customer_id
     WHERE f.first_month < DATE '2025-10-01'
@@ -1592,10 +1613,10 @@ WITH months AS (
     WHERE customer_id = 2
 )
 SELECT month,
-       EXTRACT(YEAR FROM month) * 12 + EXTRACT(MONTH FROM month)                    AS month_number,
-       ROW_NUMBER() OVER (ORDER BY month)                                           AS row_num,
+       EXTRACT(YEAR FROM month) * 12 + EXTRACT(MONTH FROM month) AS month_number,
+       ROW_NUMBER() OVER (ORDER BY month)                        AS row_num,
        EXTRACT(YEAR FROM month) * 12 + EXTRACT(MONTH FROM month)
-         - ROW_NUMBER() OVER (ORDER BY month)                                       AS island_id
+         - ROW_NUMBER() OVER (ORDER BY month)                    AS island_id
 FROM months
 ORDER BY month;
 ```
@@ -1632,12 +1653,15 @@ numbered AS (
     FROM months
 ),
 streaks AS (
-    SELECT customer_id, island_id, MIN(month) AS streak_start, MAX(month) AS streak_end, COUNT(*) AS months_in_a_row
+    SELECT customer_id, island_id,
+           MIN(month) AS streak_start, MAX(month) AS streak_end, COUNT(*) AS months_in_a_row
     FROM numbered
     GROUP BY customer_id, island_id
 ),
 best AS (
-    SELECT s.*, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY months_in_a_row DESC, streak_start) AS rn
+    SELECT s.*,
+           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY months_in_a_row DESC, streak_start)
+               AS rn
     FROM streaks AS s
 )
 SELECT c.customer_name, b.streak_start, b.streak_end, b.months_in_a_row
@@ -1678,7 +1702,7 @@ SELECT category,
        ROUND(SUM(net_revenue) FILTER (WHERE EXTRACT(QUARTER FROM order_date) = 2), 0) AS q2,
        ROUND(SUM(net_revenue) FILTER (WHERE EXTRACT(QUARTER FROM order_date) = 3), 0) AS q3,
        ROUND(SUM(net_revenue) FILTER (WHERE EXTRACT(QUARTER FROM order_date) = 4), 0) AS q4,
-       ROUND(SUM(net_revenue), 0)                                                     AS full_year
+       ROUND(SUM(net_revenue), 0) AS full_year
 FROM sales_lines
 GROUP BY category
 ORDER BY full_year DESC;
@@ -1825,7 +1849,9 @@ Every number matches section 13.6. The `WINDOW w AS (…)` clause, `LAG`, and th
 
 ### A date spine with the calendar table
 
-MySQL has no `generate_series`, so use the calendar table from Pattern 5. Here is Pattern 5's Furniture query in MySQL (one-year database). The spine, `FROM calendar_months AS m LEFT JOIN …`, is identical; only the month calculation in `furniture` changes:
+MySQL has no `generate_series`, so use the calendar table from Pattern 5. The spine, `FROM calendar_months AS m LEFT JOIN …`, is identical in both databases.
+
+Here is Pattern 5's Furniture query in MySQL (one-year database), with only the month calculation changed:
 
 ```mysql
 WITH furniture AS (
@@ -1872,7 +1898,7 @@ SELECT category,
        ROUND(SUM(CASE WHEN QUARTER(order_date) = 2 THEN net_revenue ELSE 0 END), 0) AS q2,
        ROUND(SUM(CASE WHEN QUARTER(order_date) = 3 THEN net_revenue ELSE 0 END), 0) AS q3,
        ROUND(SUM(CASE WHEN QUARTER(order_date) = 4 THEN net_revenue ELSE 0 END), 0) AS q4,
-       ROUND(SUM(net_revenue), 0)                                                    AS full_year
+       ROUND(SUM(net_revenue), 0) AS full_year
 FROM sales_lines
 GROUP BY category
 ORDER BY full_year DESC;
@@ -2244,8 +2270,10 @@ WITH customer_orders AS (
 with_next AS (
     SELECT customer_id,
            order_date,
-           LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS next_order_date,
-           ROW_NUMBER()     OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS order_number
+           LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date, order_id)
+               AS next_order_date,
+           ROW_NUMBER()     OVER (PARTITION BY customer_id ORDER BY order_date, order_id)
+               AS order_number
     FROM customer_orders
 )
 SELECT c.customer_name,
@@ -2284,7 +2312,8 @@ WITH monthly AS (
 )
 SELECT month,
        orders,
-       ROUND(AVG(orders) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 1) AS moving_avg_3m
+       ROUND(AVG(orders) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 1)
+           AS moving_avg_3m
 FROM monthly
 ORDER BY month;
 ```
@@ -2358,7 +2387,8 @@ WITH first_submissions AS (
     SELECT lead_id, source
     FROM (
         SELECT lead_id, source,
-               ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id) AS submission_no
+               ROW_NUMBER() OVER (PARTITION BY LOWER(email) ORDER BY created_at, lead_id)
+                   AS submission_no
         FROM leads
     ) AS numbered
     WHERE submission_no = 1
@@ -2397,14 +2427,16 @@ WITH customer_orders AS (
 ),
 gaps AS (
     SELECT customer_id,
-           LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS gap_start,
-           order_date                                                                   AS gap_end,
-           COUNT(*) OVER (PARTITION BY customer_id)                                     AS total_orders
+           LAG(order_date) OVER (PARTITION BY customer_id ORDER BY order_date, order_id)
+               AS gap_start,
+           order_date AS gap_end,
+           COUNT(*) OVER (PARTITION BY customer_id) AS total_orders
     FROM customer_orders
 ),
 ranked AS (
     SELECT customer_id, gap_start, gap_end, gap_end - gap_start AS gap_days,
-           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY gap_end - gap_start DESC, gap_start) AS rn
+           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY gap_end - gap_start DESC, gap_start)
+               AS rn
     FROM gaps
     WHERE gap_start IS NOT NULL
       AND total_orders >= 3
@@ -2441,7 +2473,8 @@ WITH monthly AS (
 smoothed AS (
     SELECT month,
            revenue,
-           AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING) AS avg_prev_3m
+           AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING)
+               AS avg_prev_3m
     FROM monthly
 )
 SELECT month,

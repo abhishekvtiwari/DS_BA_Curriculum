@@ -71,45 +71,52 @@ def fig_group_vs_window():
 
 def fig_anatomy():
     o = []
-    code = [("AVG(revenue) OVER (", "#0f5c8c", "1  What to calculate (always required)"),
-            ("    PARTITION BY category", "#7a4fa0", "2  Restart for each group (optional)"),
-            ("    ORDER BY month", "#c0662b", "3  The order of rows in each group (needed by"),
-            ("", "#c0662b", "    RANK, ROW_NUMBER, LAG and LEAD; optional for SUM, AVG)"),
-            ("    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW", "#2f7d6d", "4  Which rows count: the frame (optional)"),
-            (")", "#0f5c8c", "")]
-    o.append(rect(20, 14, 680, len(code) * 22 + 16, fill="#f6f9fc", stroke=RULE, rx=6))
-    for i, (c, col, lab) in enumerate(code):
-        y = 36 + i * 22
-        if c:
-            o.append(text(34, y, c, 11.5, col, "bold", family=MONO))
-        if lab:
-            o.append(text(380, y, lab, 11, col, "bold" if lab[0] != " " else "normal"))
-    top = 14 + len(code) * 22 + 16 + 34
+    # (indent in characters, code, colour, label lines); SVG collapses leading spaces, so indent by x
+    code = [(0, "AVG(revenue) OVER (", "#0f5c8c", ["1  What to calculate (always required)"]),
+            (4, "PARTITION BY category", "#7a4fa0", ["2  Restart for each group (optional)"]),
+            (4, "ORDER BY month", "#c0662b", ["3  The order of rows in each group: needed by",
+                                              "    RANK, LAG and LEAD; optional for SUM and AVG"]),
+            (4, "ROWS BETWEEN 2 PRECEDING AND CURRENT ROW", "#2f7d6d", ["4  Which rows count: the frame (optional)"]),
+            (0, ")", "#0f5c8c", [])]
+    cw = 11.5 * 0.602                      # DejaVu Sans Mono advance per character
+    y = 36
+    rows = []
+    for ind, c, col, labs in code:
+        rows.append((y, ind, c, col, labs))
+        y += 22 + 16 * (len(labs) - 1 if labs else 0)
+    box_h = y - 14 - 6
+    o.append(rect(20, 14, 680, box_h, fill="#f6f9fc", stroke=RULE, rx=6))
+    for y, ind, c, col, labs in rows:
+        o.append(text(34 + ind * cw, y, c, 11.5, col, "bold", family=MONO))
+        for k, lab in enumerate(labs):
+            o.append(text(356 + (0 if k == 0 else 21), y + k * 16, lab.strip(), 11, col,
+                          "bold" if k == 0 else "normal"))
+    top = 14 + box_h + 28
     o.append(text(20, top, "The frame slides down the rows. For April, the 3-month window is February, March and April:", 11.5, INK, "bold"))
     months = [("Jan", "2,02,640"), ("Feb", "2,53,664"), ("Mar", "2,78,008"), ("Apr", "2,10,282"), ("May", "3,29,359"), ("Jun", "1,86,928")]
     labels = {1: "◄ 2 PRECEDING", 2: "◄ 1 PRECEDING", 3: "◄ CURRENT ROW"}
-    bx, by, rh = 20, top + 14, 26
+    bx, by, rh = 20, top + 12, 24
     for i, (mn, v) in enumerate(months):
         infr = i in (1, 2, 3)
         o.append(rect(bx, by + i * rh, 220, rh - 2, fill="#e2f3ee" if infr else "#fff",
                       stroke="#2f7d6d" if infr else RULE, sw=1.8 if infr else 0.8, rx=3))
         wt = "bold" if i == 3 else "normal"
-        o.append(text(bx + 10, by + i * rh + 17, mn + " 2025", 11.5, INK, wt, family=MONO))
-        o.append(text(bx + 210, by + i * rh + 17, v, 11.5, INK, wt, anchor="end", family=MONO))
+        o.append(text(bx + 10, by + i * rh + 16, mn + " 2025", 11.5, INK, wt, family=MONO))
+        o.append(text(bx + 210, by + i * rh + 16, v, 11.5, INK, wt, anchor="end", family=MONO))
         if i in labels:
-            o.append(text(bx + 230, by + i * rh + 17, labels[i], 11, "#2f7d6d", "bold" if i == 3 else "normal"))
+            o.append(text(bx + 230, by + i * rh + 16, labels[i], 11, "#2f7d6d", "bold" if i == 3 else "normal"))
     # bracket spanning the whole frame (Feb to Apr)
     x0, y0, y1 = 352, by + rh, by + 4 * rh - 2
     o.append(path(f"M{x0},{y0} h8 V{y1} h-8", stroke="#2f7d6d", sw=1.6))
     o.append(text(x0 + 14, (y0 + y1) / 2 + 4, "frame: 3 rows", 11, "#2f7d6d", "bold"))
-    cx, cy = 470, by + 8
+    cx, cy = 470, by + 6
     o.append(rect(cx, cy, 230, 118, fill="#f6f9fc", stroke=RULE, rx=6))
     o.append(text(cx + 12, cy + 22, "moving_avg_3m for April", 11.5, INK, "bold"))
     o.append(text(cx + 12, cy + 44, "(2,53,664 + 2,78,008", 11, INK, family=MONO))
-    o.append(text(cx + 12, cy + 62, " + 2,10,282) ÷ 3", 11, INK, family=MONO))
+    o.append(text(cx + 19, cy + 62, "+ 2,10,282) ÷ 3", 11, INK, family=MONO))
     o.append(text(cx + 12, cy + 80, "= 2,47,318", 11, INK, "bold", family=MONO))
     o.append(text(cx + 12, cy + 104, "In May, the frame moves on.", 11, MUTED))
-    return svg(W, by + 6 * rh + 16, "".join(o))
+    return svg(W, by + 6 * rh + 12, "".join(o))
 
 def fig_ranks():
     o = []

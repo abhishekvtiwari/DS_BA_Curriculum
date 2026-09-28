@@ -182,7 +182,7 @@ def f9():
 
 # 15.11 highlight one line
 def f10():
-    fig, (a, b) = plt.subplots(1, 2, figsize=(W_IN, 3.5), sharey=True)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(W_IN, 3.0), sharey=True)
     for i, c in enumerate(rep.columns): a.plot(range(12), rep[c]/1e7, lw=1.3, color=plt.cm.tab20(i), label=c)
     a.legend(ncol=2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), handlelength=1.2, columnspacing=0.8, labelspacing=0.25)
     a.set_title("Before: 11 colors, one\nlegend to decode"); tidy(a)
@@ -199,7 +199,7 @@ def f10():
 
 # 15.12 title that states the finding
 def f11():
-    fig, (a, b) = plt.subplots(2, 1, figsize=(W_IN, 4.9))
+    fig, (a, b) = plt.subplots(2, 1, figsize=(W_IN, 3.9))
     d = mon[mon.year == 2025]
     for ax in (a, b):
         ax.plot(range(12), d.net_revenue/1e7, color=ACC, lw=2.2, marker="o", ms=3.5)
@@ -269,11 +269,11 @@ def project_before():
     a.pie(p.net_revenue, labels=p.product_name, colors=plt.cm.rainbow(np.linspace(0,1,8)), explode=[0.08]*8, shadow=True, startangle=100,
           labeldistance=1.18, textprops={"fontsize":SM})
     a.set_title("Chart A: Product Mix", pad=16)
-    b = fig.add_subplot(gs[0, 1]); b.bar(gm.year.astype(str), gm.net_revenue/1e7, color="#4f81bd"); b.set_ylim(55, 118)
+    b = fig.add_subplot(gs[0, 1]); b.bar(gm.year.astype(str), gm.net_revenue/1e7, color="#4f81bd"); b.set_ylim(55, 118); b.set_yticks(range(55, 120, 15))
     b2 = b.twinx(); b2.plot(gm.year.astype(str), gm.gross_margin_pct, color="#c0504d", marker="s", lw=3); b2.set_ylim(20, 28.5)
     b.set_title("Chart B: Revenue & Margin")
     c = fig.add_subplot(gs[1, 0]); r = reg[reg.region != MISSING]
-    c.bar(r.region, r.net_revenue/1e7, color=["#9bbb59","#4bacc6","#f79646","#8064a2"]); c.set_ylim(13, 39); c.grid(True, color="#999999", lw=0.8)
+    c.bar(r.region, r.net_revenue/1e7, color=["#9bbb59","#4bacc6","#f79646","#8064a2"]); c.set_ylim(13, 39); c.set_yticks(range(13, 40, 5)); c.grid(True, color="#999999", lw=0.8)
     c.set_title("Chart C: Region Performance")
     d = fig.add_subplot(gs[1, 1]); d.stackplot(range(12), (rep/1e7).T.values, colors=plt.cm.gist_rainbow(np.linspace(0,1,11)), labels=rep.columns)
     d.set_ylim(0, 34)      # room for the legend on top of the chart, as in the old pack
