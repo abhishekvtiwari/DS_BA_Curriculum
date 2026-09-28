@@ -1,6 +1,6 @@
 # Chapter 81. Behavioral, HR & Offer Conversations
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer any behavioral question using the STAR method without sounding scripted · build a small story bank that covers most behavioral themes with just five or six real stories, not forty different ones · ask questions that actually reveal something about the role, not filler · negotiate an offer without either accepting the first number or overplaying a weak hand.
 >
@@ -248,7 +248,7 @@
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -272,15 +272,13 @@ The lesson he took from it, and the one this chapter is built around: **your tec
 
 ---
 
-## Tools
-
-No software specific to this chapter. A document listing your five to eight story-bank stories, each with a one-line theme tag and a bullet-point STAR outline (not a full script), reviewed and refreshed as new real experiences accumulate.
-
----
-
-## The project
+## Project
 
 **Goal:** build your own story bank to this chapter's standard.
+
+### Tools you'll need
+
+No software specific to this chapter. A document listing your five to eight story-bank stories, each with a one-line theme tag and a bullet-point STAR outline (not a full script), reviewed and refreshed as new real experiences accumulate.
 
 1. List five to eight real stories from your own experience, tagging each with the behavioral theme(s) it could answer.
 2. Write a full STAR outline (bullet points, not a script) for your three strongest stories.
@@ -290,15 +288,15 @@ No software specific to this chapter. A document listing your five to eight stor
 
 ---
 
-## Final-week revision list
-
-Q81-001, Q81-006, Q81-011, Q81-012, Q81-013, Q81-018, Q81-023, Q81-028.
-
----
-
 ## Key terms
 
 STAR method (Situation, Task, Action, Result) · story bank · behavioral theme · self-aware weakness · gap explanation · offer negotiation · counter-offer · total compensation
+
+---
+
+## Final-week revision list
+
+Q81-001, Q81-006, Q81-011, Q81-012, Q81-013, Q81-018, Q81-023, Q81-028.
 
 ---
 

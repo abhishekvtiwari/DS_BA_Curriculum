@@ -1,6 +1,6 @@
 # Chapter 15. Data Visualization Principles
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -758,7 +758,7 @@ Every principle from the chapter is a line of code: direct labels instead of a l
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -821,7 +821,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: redesign Riverstone's old management pack
+
+**Goal:** turn five poor charts into clear, honest charts that each deliver one message, and explain every change.
+
+### Tools you'll need
 
 - **Excel for Windows** (Microsoft 365). Histogram, box-and-whisker, waterfall, treemap, and filled map charts need Excel 2016 or later; the filled map needs an internet connection.
 - **Google Sheets:** most chart types; no native box plot.
@@ -833,12 +837,6 @@ What made the difference:
   - `companion/ch15/build_ch15_data.py`: rebuilds them from `companion/full/`.
   - `figures/make_figs15.py` and `make_figs15_diagrams.py`: the code for every figure in this chapter, including the project's before and after charts.
 - **Free helpers:** a color-blindness simulator (such as Coblis), a contrast checker (such as WebAIM's), and ColorBrewer for sequential and diverging palettes.
-
----
-
-## The project: redesign Riverstone's old management pack
-
-**Goal:** turn five poor charts into clear, honest charts that each deliver one message, and explain every change.
 
 **Option A: your own charts.** Take five charts from a report, dashboard, or presentation you've received or made (remove confidential numbers, or rebuild them with invented data). Redesign each one using this chapter's principles.
 
@@ -869,7 +867,29 @@ What made the difference:
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Perception:** people judge position and length most accurately, then angle, then area and color. Put the key comparison on position or length. One highlight color is noticed instantly; many colors aren't.
+- **Start from the question:** compare categories (sorted bars), change over time (lines), distribution (histograms and box plots), relationship (scatter), parts of a whole (stacked bars, waterfalls, rarely pies), location (maps). Levels of measurement constrain the choice; sometimes a table is best.
+- **Bars** start at zero, are sorted, horizontal when labels are long, labeled directly, one color. **Lines** show time left to right, can zoom the axis carefully, and should be labeled directly; avoid dual axes.
+- **Distributions:** histogram bin width changes the story; box plots compare groups by median and quartiles (Riverstone's Wholesale orders: median ₹25,762 against about ₹19,000 for the others). **Scatter plots** reveal what summaries hide (Anscombe's quartet); fix overplotting with transparency and jitter.
+- **Composition:** stacked bars show totals and the bottom segment; waterfalls explain changes (2024 ₹90.3 crore to 2025 ₹114.7 crore, led by Retail's +₹11.3 crore). **Heatmaps** answer two-way questions; **maps** only when location matters.
+- **Color:** categorical, sequential, and diverging palettes for different data; consistent meanings; color-blind-safe choices; contrast of 4.5:1 for text and 3:1 for graphics.
+- **Titles state findings;** labels carry units; annotations explain; clutter goes.
+- **Honesty:** no truncated bars, 3D, or scales chosen to agree; show full periods, missing data, and uncertainty. Ask whether someone who disagrees would accept the chart as fair.
+- **Accessibility:** alt text, labels as well as color, readable text, and the data available as a table.
+
+---
+
+## Key terms
+
+data visualization · encoding · graphical perception · pre-attentive attributes · working memory · exploratory chart · explanatory chart · bar chart · column chart · grouped (clustered) bar · stacked bar · 100% stacked bar · small multiples · dot plot · lollipop chart · line chart · dual-axis chart · sparkline · distribution · histogram · bin · skew · box plot · quartile · interquartile range (IQR) · whisker · strip plot · jitter · density curve · violin plot · scatter plot · overplotting · correlation · log scale · Anscombe's quartet · pie chart · donut chart · waterfall (bridge) chart · treemap · heatmap · choropleth map · symbol map · categorical palette · sequential palette · diverging palette · highlight color · color vision deficiency · Okabe–Ito palette · contrast ratio · WCAG · action title · annotation · data-ink ratio · clutter · truncated axis · cherry-picking · alt text · accessibility
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can explain why position and length beat angle, area, and color, and use that to choose an encoding.
 - [ ] You write the question and the message before choosing a chart.
@@ -885,21 +905,7 @@ What made the difference:
 
 ---
 
-## Recap
-
-- **Perception:** people judge position and length most accurately, then angle, then area and color. Put the key comparison on position or length. One highlight color is noticed instantly; many colors aren't.
-- **Start from the question:** compare categories (sorted bars), change over time (lines), distribution (histograms and box plots), relationship (scatter), parts of a whole (stacked bars, waterfalls, rarely pies), location (maps). Levels of measurement constrain the choice; sometimes a table is best.
-- **Bars** start at zero, are sorted, horizontal when labels are long, labeled directly, one color. **Lines** show time left to right, can zoom the axis carefully, and should be labeled directly; avoid dual axes.
-- **Distributions:** histogram bin width changes the story; box plots compare groups by median and quartiles (Riverstone's Wholesale orders: median ₹25,762 against about ₹19,000 for the others). **Scatter plots** reveal what summaries hide (Anscombe's quartet); fix overplotting with transparency and jitter.
-- **Composition:** stacked bars show totals and the bottom segment; waterfalls explain changes (2024 ₹90.3 crore to 2025 ₹114.7 crore, led by Retail's +₹11.3 crore). **Heatmaps** answer two-way questions; **maps** only when location matters.
-- **Color:** categorical, sequential, and diverging palettes for different data; consistent meanings; color-blind-safe choices; contrast of 4.5:1 for text and 3:1 for graphics.
-- **Titles state findings;** labels carry units; annotations explain; clutter goes.
-- **Honesty:** no truncated bars, 3D, or scales chosen to agree; show full periods, missing data, and uncertainty. Ask whether someone who disagrees would accept the chart as fair.
-- **Accessibility:** alt text, labels as well as color, readable text, and the data available as a table.
-
----
-
-## Practice exercises
+## Exercises
 
 Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_full` database, and Excel, Google Sheets, or Python.
 
@@ -942,26 +948,7 @@ Use `companion/ch15/ch15_chart_data.xlsx` (or the CSV files), the `riverstone_fu
 
 ---
 
-## Key terms
-
-data visualization · encoding · graphical perception · pre-attentive attributes · working memory · exploratory chart · explanatory chart · bar chart · column chart · grouped (clustered) bar · stacked bar · 100% stacked bar · small multiples · dot plot · lollipop chart · line chart · dual-axis chart · sparkline · distribution · histogram · bin · skew · box plot · quartile · interquartile range (IQR) · whisker · strip plot · jitter · density curve · violin plot · scatter plot · overplotting · correlation · log scale · Anscombe's quartet · pie chart · donut chart · waterfall (bridge) chart · treemap · heatmap · choropleth map · symbol map · categorical palette · sequential palette · diverging palette · highlight color · color vision deficiency · Okabe–Ito palette · contrast ratio · WCAG · action title · annotation · data-ink ratio · clutter · truncated axis · cherry-picking · alt text · accessibility
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 16, Business Intelligence with Power BI:** these principles applied to interactive dashboards: visual choice, themes, tooltips, and report layout.
-- **Chapter 18, Python for Analysts:** matplotlib and seaborn properly, including reusable chart styles.
-- **Chapter 20, Automating Reports & Delivering Insights:** charts in automated reports and emails, and presenting findings to stakeholders.
-- **Chapter 21, Descriptive Statistics & Probability:** the statistics behind histograms, box plots, percentiles, correlation, and uncertainty bands.
-- **Chapter 22, Statistics Without Fooling Yourself:** correlation versus causation, and how to show uncertainty clearly.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes "critique this chart" and "which chart would you use?" questions, and the Business Analyst bank (Chapter 76) covers presenting findings.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1058,3 +1045,14 @@ Call it with `rep = pd.read_csv("chart_data/rep_month_2025.csv").set_index("mont
 **24.** Acknowledge the goal (a professional look) and explain the cost with evidence: in a 3D pie, near slices look bigger than far ones, so the chart shows the wrong sizes, and pies can't show close shares (Figure 15.1). Offer a design that looks polished and is accurate: a sorted bar chart in the company's colors, with an action title and clean labels. If a pie is still wanted for a simple two- or three-part share, make it flat, with labels on the slices.
 
 **25.** Ask what decisions the dashboard supports and who uses it. Suggest a top level of three to five KPIs that answer the most important question ("are we on track this month?"), each with a comparison (target or last year), and move the other KPIs to drill-down pages by topic. Twenty KPIs on one screen means small text, no context for any of them, and no clear place to look; people end up reading none of them. Chapter 16 shows how to design the pages in Power BI.
+
+---
+
+## Where this leads
+
+- **Chapter 16, Business Intelligence with Power BI:** these principles applied to interactive dashboards: visual choice, themes, tooltips, and report layout.
+- **Chapter 18, Python for Analysts:** matplotlib and seaborn properly, including reusable chart styles.
+- **Chapter 20, Automating Reports & Delivering Insights:** charts in automated reports and emails, and presenting findings to stakeholders.
+- **Chapter 21, Descriptive Statistics & Probability:** the statistics behind histograms, box plots, percentiles, correlation, and uncertainty bands.
+- **Chapter 22, Statistics Without Fooling Yourself:** correlation versus causation, and how to show uncertainty clearly.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) includes "critique this chart" and "which chart would you use?" questions, and the Business Analyst bank (Chapter 76) covers presenting findings.

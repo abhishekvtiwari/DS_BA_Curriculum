@@ -352,7 +352,7 @@ Nothing in that table looks dramatic. Each problem is one small slip by a busy p
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -391,19 +391,17 @@ Look at what Anita received: a number she can use, the reason it differs from th
 
 ---
 
-## Tools
+## Project: a week of your own spending
+
+**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise in this chapter. Sketching a table by hand is still one of the best ways to think about data.
 - **Excel or Google Sheets** (optional). Chapter 10 teaches both from the beginning. If you already have either, use it for the project; Google Sheets is free with a Google account.
 - **Your phone.** It's full of data about you: steps, screen time, photos, payments. It's the most convenient practice dataset you own.
 
 Each tool is installed in the chapter that first uses it; Chapter 6 shows when.
-
----
-
-## The project: a week of your own spending
-
-**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
 
 **Step 1. Collect.** For seven days, record every payment you make: cash, card, and UPI. Write one row per payment with these columns:
 
@@ -456,20 +454,6 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
-- [ ] I can turn a receipt, register, or form into a table and state its grain.
-- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
-- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
-- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
-- [ ] I can tell structured, semi-structured, and unstructured data apart.
-- [ ] I can write a data dictionary for a small table.
-- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
-- [ ] I've logged a week of my own spending and turned it into one insight.
-
----
-
 ## Recap
 
 - **Data** is a recorded observation. **Information** is data organized to answer a question. **Knowledge** explains why. **Insight** points to an action. Analysts earn their value by climbing that ladder.
@@ -485,7 +469,29 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Practice exercises
+## Key terms
+
+data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
+- [ ] I can turn a receipt, register, or form into a table and state its grain.
+- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
+- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
+- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
+- [ ] I can tell structured, semi-structured, and unstructured data apart.
+- [ ] I can write a data dictionary for a small table.
+- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
+- [ ] I've logged a week of my own spending and turned it into one insight.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -529,30 +535,7 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Key terms
-
-data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
-- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
-- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
-- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
-- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
-- **Chapter 18** flattens semi-structured data such as JSON into tables.
-- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
-- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
-- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Yes: it's recorded information about trains and times. (b) No, not until it's recorded, for example as an audio file or written music. (c) Yes: a recorded count. (d) No, until you write it in a to-do list or set a reminder; then it's a recorded note. (e) Yes: it's recorded, even though it's handwritten and unstructured, which makes it harder to use.
 
@@ -595,3 +578,18 @@ The last row is the kind of detail that prevents arguments later: a blank `minut
 **12.** Good questions include: *"Bad for what decision? What were you trying to do when the data let you down?"* (fit for use), *"Which fields matter most: names, contact details, cities, or something else?"* (scope), and *"Who enters and updates customer data today, and how?"* (the source, because fixing the data without fixing how it's captured means it will be bad again in six months).
 
 **13.** The blank could mean *no discount was given*, *a discount was given but not recorded*, or *the discount wasn't decided yet* (for example, pending approval). The treatment should be decided by the people who own the rule: usually finance, together with sales. The analyst's job is to raise the question, document the answer in the data dictionary, and apply it consistently in every report.
+
+---
+
+## Where this leads
+
+- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
+- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
+- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
+- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
+- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
+- **Chapter 18** flattens semi-structured data such as JSON into tables.
+- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
+- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
+- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.

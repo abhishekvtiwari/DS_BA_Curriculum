@@ -1,6 +1,6 @@
 # Chapter 64. Security, Privacy, Governance & Responsible AI
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
@@ -149,7 +149,7 @@ Chapter 62 introduced the ingredients — data contracts (Chapter 47), a semanti
 
 Most fairness-auditing examples in textbooks involve a model scoring individual people on a protected attribute — race, gender, age — because that's where regulation and public attention concentrate. Riverstone, like many B2B companies, has no such system: its AI touches products (Chapter 53's defect model) and business processes (Chapter 58's PO-intake), not decisions about individual people's opportunities. **That doesn't mean fairness auditing is irrelevant here — it means the right question is different**, and finding it is itself part of the architect's job.
 
-Riverstone's CRM lead-scoring model (mentioned in passing in Part V's reverse-ETL sync) is the right candidate: it ranks incoming sales leads, and the sales team's attention naturally follows the ranking. **The honest fairness question isn't about a protected demographic class — it's geographic: does the model systematically disadvantage leads from Riverstone's smaller, historically underinvested markets, creating a self-fulfilling prophecy where regions that most need sales attention to grow get the least of it?**
+Riverstone's CRM lead-scoring model (mentioned in passing in Part 5's reverse-ETL sync) is the right candidate: it ranks incoming sales leads, and the sales team's attention naturally follows the ranking. **The honest fairness question isn't about a protected demographic class — it's geographic: does the model systematically disadvantage leads from Riverstone's smaller, historically underinvested markets, creating a self-fulfilling prophecy where regions that most need sales attention to grow get the least of it?**
 
 ```python
 import pandas as pd
@@ -260,7 +260,8 @@ Return to Chapter 60's design document one more time. Its risks section listed: 
 This is what closing an architectural risk actually looks like in practice — not a promise fulfilled in the abstract, but a specific document updated with a specific answer that the rest of the platform can now be built and reviewed against. It's also the last piece needed before Chapter 63's controls (approvals, segregation of duties, audit trails) can be applied consistently across the whole platform rather than department by department: you cannot enforce segregation of duties without an access model defining who the duties are segregated *between*.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -304,7 +305,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: a governance and responsible-AI review
+
+**Goal:** review one system — your own work, or a Riverstone system from earlier in this book — for privacy, security, fairness, and compliance gaps, and document concretely what you'd change.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas` and `scipy` for fairness auditing (run here on Python 3.12, pandas 3.0.2, scipy 1.17.1) — the same statistical toolkit Chapter 22 already taught.
 - **Secrets management:** a managed vault service (AWS Secrets Manager, HashiCorp Vault, or equivalent) rather than environment variables alone, once a platform outgrows Chapter 20's minimum-viable approach.
@@ -314,17 +319,11 @@ What made the difference:
   - `access-control-matrix.md`: the full role-by-resource model behind Figure 64.1, in an editable table format.
   - `data-classification-worksheet.md`: a template for classifying a dataset's sensitivity, retention needs, and applicable regulation.
 
-> **Note on this chapter's fairness data.** Riverstone's ERP and CRM data (used throughout this book) contain no real lead-scoring model — Part VI's reverse-ETL sync mentions lead scoring only in passing. The dataset and the specific proxy-discrimination pattern in section 64.7 are invented for this chapter, built to be realistic and statistically genuine (the code runs, the numbers are real outputs of real data, not asserted), but the underlying model and its bias are a constructed teaching example, not a finding about an actual Riverstone system elsewhere in this book.
-
----
-
-## The project: a governance and responsible-AI review
-
-**Goal:** review one system — your own work, or a Riverstone system from earlier in this book — for privacy, security, fairness, and compliance gaps, and document concretely what you'd change.
+> **Note on this chapter's fairness data.** Riverstone's ERP and CRM data (used throughout this book) contain no real lead-scoring model — Part 6's reverse-ETL sync mentions lead scoring only in passing. The dataset and the specific proxy-discrimination pattern in section 64.7 are invented for this chapter, built to be realistic and statistically genuine (the code runs, the numbers are real outputs of real data, not asserted), but the underlying model and its bias are a constructed teaching example, not a finding about an actual Riverstone system elsewhere in this book.
 
 **Option A: your own project.** Pick something you've built, at work or from this book's exercises.
 
-**Option B: Riverstone.** Choose one AI-adjacent system from Parts V–VII: the defect model (Chapter 53), the support assistant (Chapter 55), or the PO-intake pipeline (Chapter 58).
+**Option B: Riverstone.** Choose one AI-adjacent system from Parts 5–7: the defect model (Chapter 53), the support assistant (Chapter 55), or the PO-intake pipeline (Chapter 58).
 
 **Steps**
 
@@ -346,19 +345,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You ask what could go wrong and who could be harmed at design time, not after an incident.
-- [ ] You can explain the difference between authentication and authorization, and design controls for each separately.
-- [ ] You can draw a role-by-resource access matrix for a real system and defend every cell.
-- [ ] You build in data minimization, purpose limitation, retention, and anonymization from the start, not as an afterthought.
-- [ ] You know, at a current, verified level, what GDPR, India's DPDP Act, and the EU AI Act actually require — and you know when a question needs a lawyer, not an architecture book.
-- [ ] You run a fairness audit past the "is there a gap" question and into "what's the mechanism," distinguishing direct effects from proxy discrimination.
-- [ ] You can state, for any production model, which version made a given decision, who approved it, and when it was last checked for fairness.
-- [ ] You treat an open architectural risk as something to close with a specific answer, not leave as permanent "TBD."
-
----
-
 ## Recap
 
 - **Governance is a design input**, decided by asking what could go wrong, who could be harmed, and what you're obligated to do — before building, not after an incident.
@@ -372,7 +358,28 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+encryption at rest · encryption in transit · least privilege · authentication · authorization · secrets management · credential vault · RBAC (role-based access control) · ABAC (attribute-based access control) · access-control matrix · privacy by design · data minimization · purpose limitation · retention · anonymization · pseudonymization · differential privacy · federated learning · GDPR · right to be forgotten · DPDP Act (Digital Personal Data Protection Act) · Data Protection Board of India · consent manager · EU AI Act · high-risk AI system · Digital Omnibus on AI · data catalog · lineage · data stewardship · fairness audit · protected attribute · disparate impact · disparate treatment · proxy discrimination · model governance · model registry · audit trail
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You ask what could go wrong and who could be harmed at design time, not after an incident.
+- [ ] You can explain the difference between authentication and authorization, and design controls for each separately.
+- [ ] You can draw a role-by-resource access matrix for a real system and defend every cell.
+- [ ] You build in data minimization, purpose limitation, retention, and anonymization from the start, not as an afterthought.
+- [ ] You know, at a current, verified level, what GDPR, India's DPDP Act, and the EU AI Act actually require — and you know when a question needs a lawyer, not an architecture book.
+- [ ] You run a fairness audit past the "is there a gap" question and into "what's the mechanism," distinguishing direct effects from proxy discrimination.
+- [ ] You can state, for any production model, which version made a given decision, who approved it, and when it was last checked for fairness.
+- [ ] You treat an open architectural risk as something to close with a specific answer, not leave as permanent "TBD."
+
+---
+
+## Exercises
 
 Use `companion/ch64/leads_scored_2025.csv`.
 
@@ -407,26 +414,7 @@ Use `companion/ch64/leads_scored_2025.csv`.
 
 ---
 
-## Key terms
-
-encryption at rest · encryption in transit · least privilege · authentication · authorization · secrets management · credential vault · RBAC (role-based access control) · ABAC (attribute-based access control) · access-control matrix · privacy by design · data minimization · purpose limitation · retention · anonymization · pseudonymization · differential privacy · federated learning · GDPR · right to be forgotten · DPDP Act (Digital Personal Data Protection Act) · Data Protection Board of India · consent manager · EU AI Act · high-risk AI system · Digital Omnibus on AI · data catalog · lineage · data stewardship · fairness audit · protected attribute · disparate impact · disparate treatment · proxy discrimination · model governance · model registry · audit trail
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 60, Designing Whole Systems:** the open access-control risk this chapter closes, and the design-document discipline of writing risks down explicitly.
-- **Chapter 22, Statistics Without Fooling Yourself:** the hypothesis-testing method this chapter's fairness audit runs directly.
-- **Chapter 56 and 57 (MLOps, LLMOps):** the monitoring and versioning infrastructure model governance (section 64.8) sits on top of.
-- **Chapter 63, Automation Architecture & Governance:** the controls (approvals, segregation of duties, audit trails) this chapter applies specifically to security, privacy, and model decisions.
-- **Chapter 65, FinOps:** the cost side of the platform this chapter has been securing and governing.
-- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about fairness auditing and regulatory awareness — "how would you find out if a model is unfair, and what would you do about it" is close to word-for-word this chapter's section 64.7.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -463,3 +451,14 @@ encryption at rest · encryption in transit · least privilege · authentication
 **16.** It can be appropriate when the cost of the fix genuinely outweighs the harm of the gap and that trade-off is made consciously — for example, a very small, low-stakes effect where correcting it would meaningfully degrade the system's core usefulness for everyone. The documentation must be explicit: what was found, why it wasn't addressed, and what would change that decision — an undocumented decision to do nothing is never acceptable, but a documented, reasoned one sometimes is.
 
 **17.** Build the foundational habits (section 64.4's privacy-by-design practices, section 64.3's access model) now, regardless of specific legal trigger, because they're good practice independent of regulation and cost far less built in from the start than retrofitted later. Hold off on regulation-specific mechanics (a particular consent-manager integration, a specific high-risk-system technical file) until the trigger is closer and the requirements are stable enough that building them wouldn't mean rebuilding them again before they're even needed.
+
+---
+
+## Where this leads
+
+- **Chapter 60, Designing Whole Systems:** the open access-control risk this chapter closes, and the design-document discipline of writing risks down explicitly.
+- **Chapter 22, Statistics Without Fooling Yourself:** the hypothesis-testing method this chapter's fairness audit runs directly.
+- **Chapter 56 and 57 (MLOps, LLMOps):** the monitoring and versioning infrastructure model governance (section 64.8) sits on top of.
+- **Chapter 63, Automation Architecture & Governance:** the controls (approvals, segregation of duties, audit trails) this chapter applies specifically to security, privacy, and model decisions.
+- **Chapter 65, FinOps:** the cost side of the platform this chapter has been securing and governing.
+- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about fairness auditing and regulatory awareness — "how would you find out if a model is unfair, and what would you do about it" is close to word-for-word this chapter's section 64.7.

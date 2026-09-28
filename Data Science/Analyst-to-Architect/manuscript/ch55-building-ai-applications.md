@@ -1,6 +1,6 @@
 # Chapter 55. Building AI Applications: RAG, Agents & Evaluation
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -454,6 +454,7 @@ BM25 < 10 or cosine < 0.6                  17 of 55            8 of 10
 **There is no free lunch here, and the shape of the trade is the lesson.** Refusing more of the unanswerable questions means refusing more of the answerable ones. Riverstone's choice is the middle rule: catch 7 of the 10 questions the corpus can't answer, at the price of sending 5 of 55 answerable ones to a human who could have been spared. For a support desk where a wrong answer reaches a customer and a handover costs two minutes, that is the right side of the trade, and it is a business decision, not a technical one.
 
 ---
+
 ## 55.7 Tools: when the answer isn't in a document
 
 Some questions can't be answered from documents at all. *"Where is my order SO-4472?"* needs a live lookup. *"What would 1,200 of product 102 cost?"* needs arithmetic and the discount policy applied.
@@ -723,7 +724,8 @@ a real model call adds roughly 500-3,000 ms on top of that
 5. Questions that no document answers are the **content backlog**, and handing that list to the support lead is often the most valuable output of the whole project.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -764,7 +766,11 @@ The pattern generalizes: **the assistant is a very fast auditor of your document
 
 ---
 
-## Tools
+## Project: a grounded assistant for your own documents
+
+**Goal:** an assistant that answers from your documents with citations, refuses what it can't answer, and has a number attached to both.
+
+### Tools you'll need
 
 Checked in September 2026. Verify before quoting: this area changes as fast as Chapter 54's.
 
@@ -777,12 +783,6 @@ Checked in September 2026. Verify before quoting: this area changes as fast as C
 - **Companion files** in `ch55/`: `generate_corpus.py` (28 documents, 65 questions, seed 55), `retrieval.py` (chunking, BM25, vectors, hybrid), `assistant.py` (grounding, citation, refusal), `tools.py` (the two tools), and `ch55_check.py`.
 
 > **Simplification note, in one place.** Three components here are stand-ins: the **embedding model** (TF-IDF plus SVD instead of a neural embedder), the **generator** (a local function that can only return a sentence from the retrieved text), and the **judge** (rules instead of a model). Each is labeled where it appears. What that changes: a real embedder retrieves better on paraphrased questions, a real model paraphrases the retrieved chunk into a direct answer (the "contained the fact" number in section 55.9 is the one that would move most), and a real judge scores fluency and completeness. What it doesn't change: chunking, hybrid search, the metrics, thresholds, citations, guardrails, tool safety, and every number in the retrieval tables.
-
----
-
-## The project: a grounded assistant for your own documents
-
-**Goal:** an assistant that answers from your documents with citations, refuses what it can't answer, and has a number attached to both.
 
 **Option A: your own corpus.** A team wiki, a product manual, an HR handbook, a set of SOPs. Check what may be indexed and by whom before you start.
 
@@ -813,22 +813,6 @@ Checked in September 2026. Verify before quoting: this area changes as fast as C
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain why retrieval beats a longer prompt, in cost, accuracy, and traceability.
-- [ ] I choose a chunking strategy by measuring it, and I put context back on every chunk.
-- [ ] I can implement BM25 and explain idf, saturation, and length normalization.
-- [ ] I run keyword and vector search together and know which wins on my corpus.
-- [ ] I measure retrieval with recall@k and MRR on my own question set.
-- [ ] My prompts ground answers in numbered sources and demand a citation.
-- [ ] I set refusal thresholds on absolute scores, chosen from a measured trade-off.
-- [ ] I give tools read-only access, validate every argument, and keep the decision to run them in my code.
-- [ ] I can say when an agent is right and when a script is better.
-- [ ] I evaluate the application end to end, not just the model.
-- [ ] I filter superseded documents, treat retrieved text as untrusted, and log chunk ids with every answer.
-
----
-
 ## Recap
 
 - **Retrieval** exists because the model doesn't know your business, and pasting everything costs money, degrades accuracy, and leaves no citation.
@@ -844,7 +828,31 @@ Checked in September 2026. Verify before quoting: this area changes as fast as C
 
 ---
 
-## Practice exercises
+## Key terms
+
+retrieval-augmented generation (RAG) · corpus · document metadata · chunk · chunking strategy · overlap · context attachment · index · BM25 · inverse document frequency · term saturation · length normalization · vector search · embedding · cosine similarity · hybrid search · score normalization · reranking · cross-encoder · recall@k · mean reciprocal rank · golden set · grounding · citation · refusal · confidence threshold · absolute versus normalized scores · tool · tool schema · tool whitelist · read-only tool · agent · step limit · LLM-as-judge · rubric · human review · guardrail · metadata filter · prompt injection through documents · content backlog · latency budget · prompt caching · feedback loop
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain why retrieval beats a longer prompt, in cost, accuracy, and traceability.
+- [ ] I choose a chunking strategy by measuring it, and I put context back on every chunk.
+- [ ] I can implement BM25 and explain idf, saturation, and length normalization.
+- [ ] I run keyword and vector search together and know which wins on my corpus.
+- [ ] I measure retrieval with recall@k and MRR on my own question set.
+- [ ] My prompts ground answers in numbered sources and demand a citation.
+- [ ] I set refusal thresholds on absolute scores, chosen from a measured trade-off.
+- [ ] I give tools read-only access, validate every argument, and keep the decision to run them in my code.
+- [ ] I can say when an agent is right and when a script is better.
+- [ ] I evaluate the application end to end, not just the model.
+- [ ] I filter superseded documents, treat retrieved text as untrusted, and log chunk ids with every answer.
+
+---
+
+## Exercises
 
 Work in `companion/ch55`, with the corpus built by `generate_corpus.py`.
 
@@ -880,27 +888,7 @@ Work in `companion/ch55`, with the corpus built by `generate_corpus.py`.
 
 ---
 
-## Key terms
-
-retrieval-augmented generation (RAG) · corpus · document metadata · chunk · chunking strategy · overlap · context attachment · index · BM25 · inverse document frequency · term saturation · length normalization · vector search · embedding · cosine similarity · hybrid search · score normalization · reranking · cross-encoder · recall@k · mean reciprocal rank · golden set · grounding · citation · refusal · confidence threshold · absolute versus normalized scores · tool · tool schema · tool whitelist · read-only tool · agent · step limit · LLM-as-judge · rubric · human review · guardrail · metadata filter · prompt injection through documents · content backlog · latency budget · prompt caching · feedback loop
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 56, MLOps,** and **Chapter 57, LLMOps,** serve this assistant, monitor it, control its cost, and handle the day the model changes.
-- **Chapter 58, Intelligent Automation,** connects the tools to systems that write, with the approval steps that requires.
-- **Chapter 54, Generative AI & LLMs,** is the model behind it, including the embeddings this chapter searches.
-- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is where a vector index lives if you use pgvector: it is an index on a table, with the same trade-offs.
-- **Chapter 47, Data Quality, Observability & Contracts,** is the discipline the corpus needs once documents have owners and statuses.
-- **Chapter 64, Responsible AI & Governance,** covers disclosure, privacy, and what to tell customers about an AI assistant.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you evaluate a RAG system?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1037,3 +1025,15 @@ The citation check has two halves, and the second matters more: a model can cite
 **17.** Three reasons: **facts don't fine-tune well** (Chapter 54's section 54.9), so the model will still get the numbers wrong, and more confidently; **there is no citation**, so no answer can be traced or checked; and **every document change means retraining**, while a retrieval index is updated in seconds. A fourth if needed: fine-tuning costs labeled examples you don't have, while retrieval needs only documents you already own.
 
 **18.** What stays the same: chunking with context attached, hybrid retrieval, grounding, citations, refusal thresholds, evaluation, and every guardrail. What changes: the index (a NumPy dot product over 28,000 chunks is fine; over 10 million it is not, so pgvector or a dedicated vector database with an approximate-nearest-neighbour index, which is Chapter 28's trade between exactness and speed); the need for metadata filters *before* the search rather than after; incremental indexing rather than rebuilding; and the evaluation set, which must grow to cover the new document types or it quietly stops representing the corpus.
+
+---
+
+## Where this leads
+
+- **Chapter 56, MLOps,** and **Chapter 57, LLMOps,** serve this assistant, monitor it, control its cost, and handle the day the model changes.
+- **Chapter 58, Intelligent Automation,** connects the tools to systems that write, with the approval steps that requires.
+- **Chapter 54, Generative AI & LLMs,** is the model behind it, including the embeddings this chapter searches.
+- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is where a vector index lives if you use pgvector: it is an index on a table, with the same trade-offs.
+- **Chapter 47, Data Quality, Observability & Contracts,** is the discipline the corpus needs once documents have owners and statuses.
+- **Chapter 64, Responsible AI & Governance,** covers disclosure, privacy, and what to tell customers about an AI assistant.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you evaluate a RAG system?"

@@ -30,13 +30,13 @@ def fig_arithmetic():
     ht = hours(); t = ht.totals()
     p = {name: (lo, hi) for name, a, b, lo, hi in t["parts"]}
     parts = [
-        ("Parts 0 and I", "Ch 1–9") + t["foundations"] + (GREY,),
-        ("Part II, The Analyst", "Ch 10–27") + p["Part II"] + (ACC,),
-        ("Part III", "Ch 28–34") + p["Part III"] + (GREY,),
-        ("Part IV", "Ch 35–44") + p["Part IV"] + (GREY,),
-        ("Part V", "Ch 45–52") + p["Part V"] + (GREY,),
-        ("Part VI", "Ch 53–59") + p["Part VI"] + (GREY,),
-        ("Part VII", "Ch 60–67") + p["Part VII"] + (GREY,),
+        ("Parts 0 and 1", "Ch 1–9") + t["foundations"] + (GREY,),
+        ("Part 2, The Analyst", "Ch 10–27") + p["Part 2"] + (ACC,),
+        ("Part 3", "Ch 28–34") + p["Part 3"] + (GREY,),
+        ("Part 4", "Ch 35–44") + p["Part 4"] + (GREY,),
+        ("Part 5", "Ch 45–52") + p["Part 5"] + (GREY,),
+        ("Part 6", "Ch 53–59") + p["Part 6"] + (GREY,),
+        ("Part 7", "Ch 60–67") + p["Part 7"] + (GREY,),
     ]
     x0, y0, W = 42, 104, 1040
     o = [text(x0, 38, "What this book actually costs, in hours",
@@ -62,7 +62,7 @@ def fig_arithmetic():
     yb = y0 + len(parts) * 42 + 6
     o.append(path(f"M{x0},{yb} H{x0+W}", stroke=RULE, sw=1.2))
     (jl, jh), (al, ah) = t["job_ready"], t["all"]
-    rows = [("Job-ready: Parts 0–II", "Ch 1–27", f"{jl}–{jh} hours", ht.span(jl, jh, 6, "months"), ACC),
+    rows = [("Job-ready: Parts 0–2", "Ch 1–27", f"{jl}–{jh} hours", ht.span(jl, jh, 6, "months"), ACC),
             ("The whole map", "Ch 1–67", f"{al}–{ah} hours", ht.span(al, ah, 6, "years"), INK)]
     for k, (name, chs, hrs, wk, c) in enumerate(rows):
         y = yb + 26 + k * 32
@@ -93,7 +93,7 @@ def fig_consistency():
     # job-ready band
     jl, jh = hours().totals()["job_ready"]
     o.append(rect(x0, py(jh), PW, py(jl) - py(jh), fill="#e2f3ee"))
-    o.append(text(x0 + 10, py(jh) - 10, f"job-ready band: {jl}–{jh} hours (end of Part II)",
+    o.append(text(x0 + 10, py(jh) - 10, f"job-ready band: {jl}–{jh} hours (end of Part 2)",
                   11, GREEN, style="italic"))
 
     # axes
@@ -141,7 +141,7 @@ def fig_consistency():
         o.append(text(bx + 216, y, c, 11.5, ACC if k else MUTED, bold, family=MONO if k else None))
         if k == 0:
             o.append(path(f"M{bx+12},{y+8} H{bx+bw-12}", stroke=RULE, sw=1))
-    o.append(wrap(bx + 16, by + bh - 42, wraplines("300 hours does not reach the end of Part II. The sprinter stops short of employable.", 34), 11, RED, 16))
+    o.append(wrap(bx + 16, by + bh - 42, wraplines("300 hours does not reach the end of Part 2. The sprinter stops short of employable.", 34), 11, RED, 16))
 
     yf = y0 + PH + 66
     o.append(text(x0, yf,

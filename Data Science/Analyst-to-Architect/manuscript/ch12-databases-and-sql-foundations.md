@@ -1,6 +1,6 @@
 # Chapter 12. Databases & SQL Foundations
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -3474,7 +3474,7 @@ You'll probably work with more than one database in your career; many companies 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -3544,19 +3544,17 @@ And once the query is right, nobody should have to run it by hand at all. **Chap
 
 ---
 
-## Tools
+## Project: rebuild a real report in SQL
+
+**Goal:** replace one manual report with a single, commented, verified SQL query.
+
+### Tools you'll need
 
 - **PostgreSQL**: a free, professional-grade relational database that follows the SQL standard closely. It's the recommended database for learning and a common choice in industry.
 - **MySQL Community Server** (optional second database): the free edition of MySQL, behind a large share of web and e-commerce applications. Install the current LTS release (section 12.3).
 - **DBeaver Community Edition**: a free query editor that connects to almost any database, including both of the above. Alternatives: pgAdmin (PostgreSQL's own tool), MySQL Workbench (MySQL's own tool), or the editor built into your company's data warehouse.
 - **The Riverstone practice files** (Appendix E): `riverstone_setup.sql` (the small database used in this chapter), its MySQL twin `riverstone_setup_mysql.sql`, `ch12_queries_mysql.sql` (every query in this chapter, tested in MySQL), `ch12_lab_postgresql.sql` and `ch12_lab_mysql.sql` (every statement from section 12.13 and exercises 23–27, in order), and the full-size version with thousands of orders, for the project.
 - **Later in the book:** a cloud data warehouse (Chapter 49), where the same SQL runs on billions of rows.
-
----
-
-## The project: rebuild a real report in SQL
-
-**Goal:** replace one manual report with a single, commented, verified SQL query.
 
 **Option A: your own work data.** Use a report you actually produce: sales, collections, inventory, attendance, leads. Get permission first, and never copy confidential data to personal devices. Remove or mask names if needed.
 
@@ -3581,7 +3579,33 @@ And once the query is right, nobody should have to run it by hand at all. **Chap
 
 ---
 
-## You've got it when…
+## Recap
+
+- A **relational database** stores data in strictly typed **tables**. **Primary keys** identify rows; **foreign keys** link tables; the database enforces both.
+- Data is split across tables (**normalization**) to store each fact once. **Joins** stitch it back together.
+- `SELECT` chooses columns, `FROM` names tables, `WHERE` filters rows, `ORDER BY` sorts, `LIMIT` keeps the top *n*.
+- **NULL** means unknown. Test it with `IS NULL`; remember that comparisons with NULL are never true, so `<>` filters silently drop NULL rows.
+- `CASE` adds if-then logic; `DATE_TRUNC` groups by period; text functions clean labels.
+- **Aggregates** (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`) plus `GROUP BY` turn rows into summaries. `HAVING` filters groups; `WHERE` filters rows.
+- **`INNER JOIN`** keeps matches only; **`LEFT JOIN`** keeps every left row. Anti-joins find what's missing. Self-joins relate a table to itself.
+- **Fan-out** from joining to a finer grain inflates counts and sums. Know the grain of every table.
+- The database runs clauses in the order **FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT**, which explains most errors.
+- **Subqueries** nest queries; `NOT EXISTS` is safer than `NOT IN`. `UNION ALL` stacks results; `UNION` also removes duplicates.
+- **DDL** (`CREATE`, `ALTER`, `DROP`, `TRUNCATE`) builds and changes structure; **DML** (`INSERT`, `UPDATE`, `DELETE`) changes rows. Turn business rules into **constraints**, check the `WHERE` before every change, and use **transactions**. In MySQL, structure changes can't be rolled back, so back up first.
+- Readable SQL is correct SQL more often. Always hand-check one result.
+- **MySQL** runs the same SQL with a few different spellings and three silent traps: subtract dates with `DATEDIFF`, join text with `CONCAT`, and remember that its default collation ignores capital letters and sorts NULLs first.
+
+---
+
+## Key terms
+
+attribute/column · row/record · table · relational database · DBMS · schema · data type · `NUMERIC` vs floating point · entity-relationship (ER) diagram · primary key · composite key · foreign key · referential integrity · one-to-many · many-to-many · bridge table · normalization · grain · SQL dialect · alias · `DISTINCT` · three-valued logic · `NULL` · `COALESCE` · `CASE` · cast · aggregate function · `GROUP BY` · `HAVING` · inner join · left join · right join · full outer join · cross join · self-join · anti-join · fan-out · reconciliation · logical execution order · subquery · correlated subquery · derived table · gross margin · ageing report · `UNION` / `UNION ALL` · `INTERSECT` / `EXCEPT` · DDL · DML · TCL · DCL · `CREATE DATABASE` · `CREATE TABLE` · constraint · `NOT NULL` · `UNIQUE` · `CHECK` · `DEFAULT` · identity column / `AUTO_INCREMENT` · `INSERT` · `RETURNING` / `LAST_INSERT_ID()` · `UPDATE` · `DELETE` · `ON DELETE CASCADE` · soft delete · upsert · `ALTER TABLE` · `MODIFY COLUMN` · schema (PostgreSQL) · `TRUNCATE` · `DROP` · implicit commit · staging table · migration · transaction · `COMMIT` / `ROLLBACK` · auto-commit · MySQL · LTS release · collation · `DATEDIFF` · `ONLY_FULL_GROUP_BY`
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 Be strict with yourself as you check each box:
 
@@ -3602,25 +3626,7 @@ When a new business question arrives and your thinking is about *the business*, 
 
 ---
 
-## Recap
-
-- A **relational database** stores data in strictly typed **tables**. **Primary keys** identify rows; **foreign keys** link tables; the database enforces both.
-- Data is split across tables (**normalization**) to store each fact once. **Joins** stitch it back together.
-- `SELECT` chooses columns, `FROM` names tables, `WHERE` filters rows, `ORDER BY` sorts, `LIMIT` keeps the top *n*.
-- **NULL** means unknown. Test it with `IS NULL`; remember that comparisons with NULL are never true, so `<>` filters silently drop NULL rows.
-- `CASE` adds if-then logic; `DATE_TRUNC` groups by period; text functions clean labels.
-- **Aggregates** (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`) plus `GROUP BY` turn rows into summaries. `HAVING` filters groups; `WHERE` filters rows.
-- **`INNER JOIN`** keeps matches only; **`LEFT JOIN`** keeps every left row. Anti-joins find what's missing. Self-joins relate a table to itself.
-- **Fan-out** from joining to a finer grain inflates counts and sums. Know the grain of every table.
-- The database runs clauses in the order **FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT**, which explains most errors.
-- **Subqueries** nest queries; `NOT EXISTS` is safer than `NOT IN`. `UNION ALL` stacks results; `UNION` also removes duplicates.
-- **DDL** (`CREATE`, `ALTER`, `DROP`, `TRUNCATE`) builds and changes structure; **DML** (`INSERT`, `UPDATE`, `DELETE`) changes rows. Turn business rules into **constraints**, check the `WHERE` before every change, and use **transactions**. In MySQL, structure changes can't be rolled back, so back up first.
-- Readable SQL is correct SQL more often. Always hand-check one result.
-- **MySQL** runs the same SQL with a few different spellings and three silent traps: subtract dates with `DATEDIFF`, join text with `CONCAT`, and remember that its default collation ignores capital letters and sorts NULLs first.
-
----
-
-## Practice exercises
+## Exercises
 
 All exercises use the Riverstone database from section 12.2. Try each one before looking at the answers. For every query, **predict the number of rows first**, then run it.
 
@@ -3675,25 +3681,7 @@ Use the `riverstone_lab` database. If you've already dropped it, create it again
 
 ---
 
-## Key terms
-
-attribute/column · row/record · table · relational database · DBMS · schema · data type · `NUMERIC` vs floating point · entity-relationship (ER) diagram · primary key · composite key · foreign key · referential integrity · one-to-many · many-to-many · bridge table · normalization · grain · SQL dialect · alias · `DISTINCT` · three-valued logic · `NULL` · `COALESCE` · `CASE` · cast · aggregate function · `GROUP BY` · `HAVING` · inner join · left join · right join · full outer join · cross join · self-join · anti-join · fan-out · reconciliation · logical execution order · subquery · correlated subquery · derived table · gross margin · ageing report · `UNION` / `UNION ALL` · `INTERSECT` / `EXCEPT` · DDL · DML · TCL · DCL · `CREATE DATABASE` · `CREATE TABLE` · constraint · `NOT NULL` · `UNIQUE` · `CHECK` · `DEFAULT` · identity column / `AUTO_INCREMENT` · `INSERT` · `RETURNING` / `LAST_INSERT_ID()` · `UPDATE` · `DELETE` · `ON DELETE CASCADE` · soft delete · upsert · `ALTER TABLE` · `MODIFY COLUMN` · schema (PostgreSQL) · `TRUNCATE` · `DROP` · implicit commit · staging table · migration · transaction · `COMMIT` / `ROLLBACK` · auto-commit · MySQL · LTS release · collation · `DATEDIFF` · `ONLY_FULL_GROUP_BY`
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 13, SQL for Real Analysis,** builds on this chapter with common table expressions, window functions (rankings, running totals, month-over-month growth), and the report patterns analysts use every week.
-- **Chapter 14, Data Cleaning & Preparation,** tackles the messy data that real databases are full of.
-- **Chapter 20, Automating Reports & Delivering Insights,** puts your queries on a schedule and delivers the results to people's inboxes, chats, and dashboards.
-- **Chapter 28** returns to databases from the designer's side: normalization rules, indexes, and query performance.
-- **Interview preparation:** the SQL Question Bank (Chapter 71) tests everything in this chapter, from "explain the difference between WHERE and HAVING" to live join and NULL puzzles, with graded model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every query below was run against the Riverstone database, and the outputs are real.)*
 
@@ -4304,3 +4292,13 @@ No other table points to `warehouses` with a foreign key, so the drop succeeds s
 7. **Tell people** what changed, and keep the script.
 
 And the most important step: if steps 1 and 2 can't be settled with the people who own the app and the reports before they leave, **don't do it on a Friday evening.** A change nobody is around to check or fix over the weekend is a risk, not a favor. Saying *"I'll have it ready first thing Monday, tested"* is the professional answer.
+
+---
+
+## Where this leads
+
+- **Chapter 13, SQL for Real Analysis,** builds on this chapter with common table expressions, window functions (rankings, running totals, month-over-month growth), and the report patterns analysts use every week.
+- **Chapter 14, Data Cleaning & Preparation,** tackles the messy data that real databases are full of.
+- **Chapter 20, Automating Reports & Delivering Insights,** puts your queries on a schedule and delivers the results to people's inboxes, chats, and dashboards.
+- **Chapter 28** returns to databases from the designer's side: normalization rules, indexes, and query performance.
+- **Interview preparation:** the SQL Question Bank (Chapter 71) tests everything in this chapter, from "explain the difference between WHERE and HAVING" to live join and NULL puzzles, with graded model answers.

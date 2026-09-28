@@ -1,7 +1,7 @@
 # ADR-023: Support assistant refusal threshold
 
 **Status:** Accepted
-**Date:** (Part VI, Chapter 55)
+**Date:** (Part 6, Chapter 55)
 **Owner:** AI applications team
 
 ## Context

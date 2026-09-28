@@ -1,6 +1,6 @@
 # Chapter 41. NLP Foundations
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -779,7 +779,7 @@ This is precisely the idea, scaled up enormously and made contextual (so "crate"
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -811,7 +811,11 @@ Her report to Priya doesn't recommend a sixth category in the ticketing system. 
 
 ---
 
-## Tools
+## Project: classify and summarize Riverstone support tickets by topic
+
+**Goal:** a working ticket classifier, an honest sentiment comparison, and a topic-discovery pass that finds something the official categories miss.
+
+### Tools you'll need
 
 - **NLTK** 3.10.3 (`pip install nltk`; needs `nltk.download(...)` for `punkt`, `stopwords`, `wordnet`, and `vader_lexicon` on first use): tokenization, stop words, stemming, lemmatization, VADER sentiment.
 - **scikit-learn** 1.8.0: `CountVectorizer`, `TfidfVectorizer`, `MultinomialNB`, `LogisticRegression`, `LatentDirichletAllocation`, `NMF`, `cosine_similarity` — the same classes used in Chapters 36–38, now applied to text.
@@ -819,12 +823,6 @@ Her report to Priya doesn't recommend a sixth category in the ticketing system. 
 - Not used here but worth knowing for production text work: **spaCy** (faster, more modern tokenization and lemmatization, named-entity recognition), **sentence-transformers** (pretrained sentence embeddings, far stronger than a word2vec model trained on 3,000 tickets), and **Hugging Face transformers** (pretrained classifiers and modern language models, Chapter 54).
 - Everything ran on one CPU core, Python 3.12.3, on 18 September 2026.
 - **Companion files:** `companion/generate_riverstone_tickets.py` (seed 20241) builds `companion/tickets/tickets.csv`. Run the chapter's code from `companion/ch41/`. Data spec: `planning/data/riverstone-tickets.md`.
-
----
-
-## The project: classify and summarize Riverstone support tickets by topic
-
-**Goal:** a working ticket classifier, an honest sentiment comparison, and a topic-discovery pass that finds something the official categories miss.
 
 **Option A: your own text.** Any collection of short documents with at least one label you can check against: emails, reviews, survey responses.
 
@@ -851,7 +849,26 @@ Her report to Priya doesn't recommend a sixth category in the ticketing system. 
 
 ---
 
-## You've got it when…
+## Recap
+
+- Text becomes usable data through **cleaning**: lowercasing, **tokenization**, optional stop-word removal, and **stemming** or **lemmatization**. Every choice is a modeling decision.
+- **Bag of words** counts words per document, ignoring order; **TF-IDF** reweights those counts by how distinctive each word is across the collection, and documents become comparable with **cosine similarity**.
+- **Text classification** reuses Naive Bayes and logistic regression unchanged, fed TF-IDF features; evaluate it with the same confusion-matrix habits as any classifier, and be suspicious of scores that look too good.
+- **Lexicon-based sentiment** (VADER) needs no training data and doesn't know your business; a **trained sentiment classifier** learns your specific language and beats a generic lexicon once you have labels.
+- **Topic modeling** (LDA, NMF) finds word co-occurrence patterns with no labels; check discovered topics against real categories before trusting them, and expect them to find something different, not confirm what you already know.
+- **Word embeddings** place words in space so that similar usage means nearby vectors, extending TF-IDF's simple co-occurrence counting; this idea, scaled up, underlies modern language models.
+
+---
+
+## Key terms
+
+unstructured text · tokenization · stop words · stemming · Porter stemmer · lemmatization · lemma · bag of words · vocabulary · term frequency (TF) · inverse document frequency (IDF) · TF-IDF · cosine similarity (text) · text classification · confusion matrix (multi-class) · macro F1 · sentiment analysis · sentiment lexicon · VADER · polarity score · trained sentiment classifier · topic modeling · Latent Dirichlet Allocation (LDA) · non-negative matrix factorization (NMF) · document-topic distribution · topic-word distribution · word embedding · word2vec · context window · nearest neighbors (embedding space) · pretrained embeddings · n-gram · bigram
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can tokenize text and explain what stop-word removal, stemming, and lemmatization each do and don't do.
 - [ ] I can build a bag-of-words table and a TF-IDF table by hand for a handful of short documents.
@@ -865,18 +882,7 @@ Her report to Priya doesn't recommend a sixth category in the ticketing system. 
 
 ---
 
-## Recap
-
-- Text becomes usable data through **cleaning**: lowercasing, **tokenization**, optional stop-word removal, and **stemming** or **lemmatization**. Every choice is a modeling decision.
-- **Bag of words** counts words per document, ignoring order; **TF-IDF** reweights those counts by how distinctive each word is across the collection, and documents become comparable with **cosine similarity**.
-- **Text classification** reuses Naive Bayes and logistic regression unchanged, fed TF-IDF features; evaluate it with the same confusion-matrix habits as any classifier, and be suspicious of scores that look too good.
-- **Lexicon-based sentiment** (VADER) needs no training data and doesn't know your business; a **trained sentiment classifier** learns your specific language and beats a generic lexicon once you have labels.
-- **Topic modeling** (LDA, NMF) finds word co-occurrence patterns with no labels; check discovered topics against real categories before trusting them, and expect them to find something different, not confirm what you already know.
-- **Word embeddings** place words in space so that similar usage means nearby vectors, extending TF-IDF's simple co-occurrence counting; this idea, scaled up, underlies modern language models.
-
----
-
-## Practice exercises
+## Exercises
 
 Code exercises run from `companion/ch41/` after the chapter's code (they use `tickets`, `train`, `test`, `topic_pipeline`, `lr_topic`, `lexicon_pred`, `model` [the word2vec model], and the rest). Predict each answer before running it.
 
@@ -910,26 +916,7 @@ Code exercises run from `companion/ch41/` after the chapter's code (they use `ti
 
 ---
 
-## Key terms
-
-unstructured text · tokenization · stop words · stemming · Porter stemmer · lemmatization · lemma · bag of words · vocabulary · term frequency (TF) · inverse document frequency (IDF) · TF-IDF · cosine similarity (text) · text classification · confusion matrix (multi-class) · macro F1 · sentiment analysis · sentiment lexicon · VADER · polarity score · trained sentiment classifier · topic modeling · Latent Dirichlet Allocation (LDA) · non-negative matrix factorization (NMF) · document-topic distribution · topic-word distribution · word embedding · word2vec · context window · nearest neighbors (embedding space) · pretrained embeddings · n-gram · bigram
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 38, Unsupervised Learning,** supplied the judgment habits (stability, external checks, "is this real?") this chapter applied to topic models.
-- **Chapter 42, Recommender Systems & Ranking,** reuses TF-IDF and cosine similarity directly for content-based recommendations.
-- **Chapter 54, Generative AI & Large Language Models,** picks up word embeddings exactly where this chapter leaves them: contextual, much larger, and wired into attention and generation.
-- **Chapter 55 and 58** use document embeddings (a whole-ticket version of section 41.7's word vectors) for search and retrieval.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** is exactly what governs the classifiers in this chapter; nothing about text changes how you should evaluate them.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers TF-IDF versus embeddings, bag-of-words limitations, when to use a lexicon versus a trained model, and "how would you find the topics in a pile of customer feedback?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1230,3 +1217,13 @@ Adding `resolution_hours` and ticket length changes nothing here (99.9% either w
 
 **16.** The main risk is treating **high textual similarity as proof the tickets are about the same issue**, when two customers can describe unrelated problems in nearly identical boilerplate language (this chapter's mini-example ticket 0 and its "duplicates" are literally different customers, different order numbers, different actual invoices — similar only because they used the same template). Merging on text alone could hide a second customer's genuine, distinct complaint inside a closed ticket. Before turning it on: check that a matched pair also shares something that should be shared for a true duplicate (same customer, same order ID, tickets close together in time), read a sample of pairs above the proposed threshold by hand, and make the system suggest a merge for a human to confirm rather than merging automatically.
 
+---
+
+## Where this leads
+
+- **Chapter 38, Unsupervised Learning,** supplied the judgment habits (stability, external checks, "is this real?") this chapter applied to topic models.
+- **Chapter 42, Recommender Systems & Ranking,** reuses TF-IDF and cosine similarity directly for content-based recommendations.
+- **Chapter 54, Generative AI & Large Language Models,** picks up word embeddings exactly where this chapter leaves them: contextual, much larger, and wired into attention and generation.
+- **Chapter 55 and 58** use document embeddings (a whole-ticket version of section 41.7's word vectors) for search and retrieval.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** is exactly what governs the classifiers in this chapter; nothing about text changes how you should evaluate them.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers TF-IDF versus embeddings, bag-of-words limitations, when to use a lexicon versus a trained model, and "how would you find the topics in a pile of customer feedback?"

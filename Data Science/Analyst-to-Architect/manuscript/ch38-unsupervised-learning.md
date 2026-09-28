@@ -1,6 +1,6 @@
 # Chapter 38. Unsupervised Learning
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -740,7 +740,7 @@ Chapter 42 builds the next step: a recommender that scores products for each cus
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -784,7 +784,11 @@ Six months later, two of the four groups have been renamed by the sales team, wh
 
 ---
 
-## Tools
+## Project: customer segmentation and a product-bundle analysis
+
+**Goal:** a segmentation a sales team could use, and a short list of product bundles worth testing, both defended with evidence rather than a chart.
+
+### Tools you'll need
 
 - **scikit-learn** (tested on 1.8.0; current release at the time of writing 1.9.1): `KMeans`, `AgglomerativeClustering`, `DBSCAN`, `silhouette_score`, `adjusted_rand_score`, `PCA`, `TSNE`, `IsolationForest`. `MiniBatchKMeans` handles millions of rows.
 - **SciPy** for `linkage`, `dendrogram`, and `fcluster`, which give the tree that scikit-learn's version doesn't draw.
@@ -793,12 +797,6 @@ Six months later, two of the four groups have been renamed by the sales team, wh
 - **In SQL:** basket counts are a self-join of order lines on `order_id` with a `product_a < product_b` filter, which is often how a first pass is done on data too large to bring into pandas (Chapter 13's patterns).
 - Everything ran on one CPU core, Python 3.12.3, on 18 September 2026. The slowest step is t-SNE on 1,500 accounts, a few seconds.
 - **Companion files:** `companion/generate_riverstone_accounts.py` (Chapter 37) and `companion/generate_riverstone_baskets.py` (seed 20238) build the two datasets. Run the chapter's code from `companion/ch38/`. Data spec: `planning/data/riverstone-baskets.md`.
-
----
-
-## The project: customer segmentation and a product-bundle analysis
-
-**Goal:** a segmentation a sales team could use, and a short list of product bundles worth testing, both defended with evidence rather than a chart.
 
 **Option A: your own data.** Any customer, product, or transaction table you can use. Remove personal details first.
 
@@ -826,22 +824,6 @@ Six months later, two of the four groups have been renamed by the sales team, wh
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain the two steps of k-means and run them by hand on a handful of rows.
-- [ ] I always scale (and log skewed money) before any distance-based method.
-- [ ] I choose *k* using the elbow, the silhouette, stability, and business usefulness together, and I say when the data has no natural groups.
-- [ ] I compare two clusterings with the adjusted Rand index rather than by cluster number.
-- [ ] I profile and name clusters so that someone who has never seen the model can use them.
-- [ ] I can read a dendrogram and say what cutting it at a given height does.
-- [ ] I know what DBSCAN's noise label means and when density-based clustering is the right tool.
-- [ ] I can explain why t-SNE and UMAP pictures shouldn't be read for distances, and why PCA components can be used as features but t-SNE coordinates shouldn't.
-- [ ] I can use an isolation forest to build a review queue, and I never let it make the decision.
-- [ ] I can calculate support, confidence, and lift by hand, and explain why a high-confidence rule can still be worthless.
-- [ ] I judge an unsupervised result by stability, an external check, and whether anything changes because of it.
-
----
-
 ## Recap
 
 - **Unsupervised learning** finds structure without a target, and has no test set to prove it right.
@@ -857,7 +839,31 @@ Six months later, two of the four groups have been renamed by the sales team, wh
 
 ---
 
-## Practice exercises
+## Key terms
+
+unsupervised learning · clustering · k-means · centroid · inertia · assignment step · update step · `n_init` · elbow method · silhouette score · adjusted Rand index (ARI) · stability · cluster profiling · hierarchical clustering · agglomerative · dendrogram · linkage (Ward, complete, average, single) · cutting the tree · DBSCAN · density · core point · `eps` · `min_samples` · noise points · dimensionality reduction · PCA · explained variance · t-SNE · perplexity · UMAP · local versus global structure · anomaly detection · isolation forest · contamination · local outlier factor · market basket analysis · basket (transaction) · item set · support · confidence · lift · Apriori · FP-Growth · trivial rule · external validation · Gaussian mixture model · RFM
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain the two steps of k-means and run them by hand on a handful of rows.
+- [ ] I always scale (and log skewed money) before any distance-based method.
+- [ ] I choose *k* using the elbow, the silhouette, stability, and business usefulness together, and I say when the data has no natural groups.
+- [ ] I compare two clusterings with the adjusted Rand index rather than by cluster number.
+- [ ] I profile and name clusters so that someone who has never seen the model can use them.
+- [ ] I can read a dendrogram and say what cutting it at a given height does.
+- [ ] I know what DBSCAN's noise label means and when density-based clustering is the right tool.
+- [ ] I can explain why t-SNE and UMAP pictures shouldn't be read for distances, and why PCA components can be used as features but t-SNE coordinates shouldn't.
+- [ ] I can use an isolation forest to build a review queue, and I never let it make the decision.
+- [ ] I can calculate support, confidence, and lift by hand, and explain why a high-confidence rule can still be worthless.
+- [ ] I judge an unsupervised result by stability, an external check, and whether anything changes because of it.
+
+---
+
+## Exercises
 
 Code exercises run from `companion/ch38/` after the chapter's code (they use `accounts`, `X`, `FEATURES`, `base`, `lines`, `baskets`, `matrix`, and the rest). Predict each answer before running it.
 
@@ -891,27 +897,7 @@ Code exercises run from `companion/ch38/` after the chapter's code (they use `ac
 
 ---
 
-## Key terms
-
-unsupervised learning · clustering · k-means · centroid · inertia · assignment step · update step · `n_init` · elbow method · silhouette score · adjusted Rand index (ARI) · stability · cluster profiling · hierarchical clustering · agglomerative · dendrogram · linkage (Ward, complete, average, single) · cutting the tree · DBSCAN · density · core point · `eps` · `min_samples` · noise points · dimensionality reduction · PCA · explained variance · t-SNE · perplexity · UMAP · local versus global structure · anomaly detection · isolation forest · contamination · local outlier factor · market basket analysis · basket (transaction) · item set · support · confidence · lift · Apriori · FP-Growth · trivial rule · external validation · Gaussian mixture model · RFM
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** takes the churn and lead models and turns their scores into decisions with costs, and covers the fairness checks that segmentation work also needs.
-- **Chapter 40, Time Series & Forecasting,** detects anomalies over time, where an isolation forest on static features can't help.
-- **Chapter 41, NLP Foundations,** clusters support tickets by topic, using the same k-means on text features.
-- **Chapter 42, Recommender Systems & Ranking,** goes beyond global basket rules to per-customer recommendations, reusing this chapter's basket data.
-- **Chapter 30, Experiments,** is how a bundle or a win-back campaign is proved to work.
-- **Chapters 55 and 58** cluster embeddings of documents, which is this chapter's k-means on a different kind of feature.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers k-means, choosing *k*, DBSCAN versus k-means, PCA versus t-SNE, and "how do you know your clusters are any good?", which is the question most candidates answer badly.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1180,3 +1166,14 @@ The pairs that are planted in the data (chairs with tables, drums with taps, cra
 
 **16.** The rule is **trivial**: people who buy a printer need paper, so the association tells you nothing you didn't know, and the buyer probably already adds paper without prompting. Lift measures association, not the effect of an intervention, so it can't say whether the promotion changes behavior. Better proposals: target printer buyers who **didn't** buy paper (section 38.9's approach), promote paper at the right *time* (weeks after purchase, when the first ream runs out), or find the non-obvious partner products that also have high lift with printers. And whichever is chosen, test it on half the customers first (Chapter 30).
 
+---
+
+## Where this leads
+
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** takes the churn and lead models and turns their scores into decisions with costs, and covers the fairness checks that segmentation work also needs.
+- **Chapter 40, Time Series & Forecasting,** detects anomalies over time, where an isolation forest on static features can't help.
+- **Chapter 41, NLP Foundations,** clusters support tickets by topic, using the same k-means on text features.
+- **Chapter 42, Recommender Systems & Ranking,** goes beyond global basket rules to per-customer recommendations, reusing this chapter's basket data.
+- **Chapter 30, Experiments,** is how a bundle or a win-back campaign is proved to work.
+- **Chapters 55 and 58** cluster embeddings of documents, which is this chapter's k-means on a different kind of feature.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers k-means, choosing *k*, DBSCAN versus k-means, PCA versus t-SNE, and "how do you know your clusters are any good?", which is the question most candidates answer badly.

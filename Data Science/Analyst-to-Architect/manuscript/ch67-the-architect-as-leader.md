@@ -1,6 +1,6 @@
 # Chapter 67. The Architect as Leader
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
@@ -40,7 +40,7 @@ The foundational shift, and the one every other idea in this chapter builds on: 
 
 *Figure 67.1 — Neither replaces the other. The shift is where your time goes, not whether the underlying skill stops mattering.*
 
-This is a genuinely disorienting change for most people, because everything that made you good enough to be trusted with architecture in the first place was individual technical excellence — the queries in Part I, the pipelines in Part V, the models in Part VI, the platform design in this Part. That excellence doesn't become worthless. **It becomes the foundation your judgment stands on, rather than the thing you spend most of your week producing.** An architect who can no longer read the code, no longer understand what a real query against a real table looks like, has lost the thing that made their opinions worth more than anyone else's in the room. The shift is not abandoning the craft — it's spending less of your week practicing it directly and more of it multiplying its effect through decisions and other people.
+This is a genuinely disorienting change for most people, because everything that made you good enough to be trusted with architecture in the first place was individual technical excellence — the queries in Part 1, the pipelines in Part 5, the models in Part 6, the platform design in this Part. That excellence doesn't become worthless. **It becomes the foundation your judgment stands on, rather than the thing you spend most of your week producing.** An architect who can no longer read the code, no longer understand what a real query against a real table looks like, has lost the thing that made their opinions worth more than anyone else's in the room. The shift is not abandoning the craft — it's spending less of your week practicing it directly and more of it multiplying its effect through decisions and other people.
 
 **A useful, honest test of whether the shift has actually happened:** count how much of your value last month came from something you personally built versus something you decided, unblocked, or taught someone else to build well. Neither answer is wrong at every career stage — but if you're in an architecture role and the honest answer is still "almost entirely what I built," the shift hasn't happened yet, whatever the title says.
 

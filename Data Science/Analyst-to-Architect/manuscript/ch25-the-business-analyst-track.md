@@ -1,6 +1,6 @@
 # Chapter 25. The Business Analyst Track
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -489,7 +489,7 @@ And one question before any of it: **how often does the exception happen?** If n
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -531,7 +531,9 @@ Three things are worth taking from this. **UAT did its job**: a build passed eve
 
 ---
 
-## Tools
+## Project: map order-to-cash, and specify one data product
+
+### Tools you'll need
 
 No software to install for this chapter.
 
@@ -546,10 +548,6 @@ No software to install for this chapter.
 | Interview notes | anything, as long as it is dated and kept |
 
 Draw the first version of any process map by hand, in the room, with the people who run the process. A tidy diagram invites agreement; a messy one on a whiteboard invites correction, and correction is what you are there for.
-
----
-
-## The project: map order-to-cash, and specify one data product
 
 Work on Riverstone's order-to-cash process from Chapter 3, section 3.2. Everything you need is in that chapter.
 
@@ -571,23 +569,6 @@ You have done this well if somebody who has not read Chapter 3 could take your p
 
 ---
 
-## You've got it when…
-
-- You can say in one sentence how a business analyst's output differs from a data analyst's, a data scientist's, and a data engineer's.
-- You can name the six SDLC phases and say what the BA does in each, including the three after sign-off.
-- You can explain what a swimlane adds to a flowchart, and why every handoff is also a future data quality problem.
-- You never propose a to-be without having drawn the as-is.
-- You can take "we need a way to see X" and produce four questions that have to be answered before anything is written down.
-- You can tell a business requirement from a functional one from a non-functional one, and you write freshness, grain, completeness, and reconciliation into the first draft rather than the last.
-- Given a request, you can say which of the four data products it is, and name the questions that product specifically needs answered.
-- You can pick between a BRD, an FRD, and an SRS by naming who will read it.
-- You can write a user story with acceptance criteria that include an edge case and a reconciliation check.
-- Your gap analysis rows end in numbered requirements and name root causes rather than symptoms.
-- You can explain why QA passing does not mean UAT will, and why a data UAT has to reconcile as well as test.
-- You can look at a process map and point at the steps worth automating, and at the ones that should stay manual.
-
----
-
 ## Recap
 
 A business analyst works out what a business needs, writes it down so it can be built, and stays until what was built is what was needed. Four verbs: elicit, analyze, specify, validate. On a data team the BA sits beside the data analyst, the data scientist, and the data engineer, and the four verbs are the part of all four jobs that happens before the code.
@@ -606,7 +587,32 @@ For automation, find the re-keying, the copy-paste, the emailed files, the manua
 
 ---
 
-## Practice exercises
+## Key terms
+
+business analyst · elicitation · software development life cycle (SDLC) · waterfall · Agile · flowchart · swimlane diagram · handoff · BPMN · as-is · to-be · business requirement · functional requirement · non-functional requirement · freshness · grain · completeness · reconciliation · timeliness · access control · data product · BRD · FRD · SRS · requirements traceability matrix · use case · main flow · alternative flow · user story · acceptance criteria · Given/When/Then · baseline · gap analysis · root cause · user acceptance testing (UAT) · sign-off · re-keying · copy-paste integration · manual matching · shadow system · tolerance · exception path · audit trail
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- You can say in one sentence how a business analyst's output differs from a data analyst's, a data scientist's, and a data engineer's.
+- You can name the six SDLC phases and say what the BA does in each, including the three after sign-off.
+- You can explain what a swimlane adds to a flowchart, and why every handoff is also a future data quality problem.
+- You never propose a to-be without having drawn the as-is.
+- You can take "we need a way to see X" and produce four questions that have to be answered before anything is written down.
+- You can tell a business requirement from a functional one from a non-functional one, and you write freshness, grain, completeness, and reconciliation into the first draft rather than the last.
+- Given a request, you can say which of the four data products it is, and name the questions that product specifically needs answered.
+- You can pick between a BRD, an FRD, and an SRS by naming who will read it.
+- You can write a user story with acceptance criteria that include an edge case and a reconciliation check.
+- Your gap analysis rows end in numbered requirements and name root causes rather than symptoms.
+- You can explain why QA passing does not mean UAT will, and why a data UAT has to reconcile as well as test.
+- You can look at a process map and point at the steps worth automating, and at the ones that should stay manual.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -637,31 +643,7 @@ For automation, find the re-keying, the copy-paste, the emailed files, the manua
 
 ---
 
-## Key terms
-
-business analyst · elicitation · software development life cycle (SDLC) · waterfall · Agile · flowchart · swimlane diagram · handoff · BPMN · as-is · to-be · business requirement · functional requirement · non-functional requirement · freshness · grain · completeness · reconciliation · timeliness · access control · data product · BRD · FRD · SRS · requirements traceability matrix · use case · main flow · alternative flow · user story · acceptance criteria · Given/When/Then · baseline · gap analysis · root cause · user acceptance testing (UAT) · sign-off · re-keying · copy-paste integration · manual matching · shadow system · tolerance · exception path · audit trail
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 26, The Professional Toolkit,** covers Agile, Scrum, Kanban, and Jira as they are actually run, plus Git for the documents and queries this chapter produces.
-- **Chapter 27** turns your Part II projects, including this chapter's requirements pack, into a portfolio.
-- **Chapter 14** cleans the data that the handoffs on your process map created.
-- **Chapter 16** builds the dashboard you specified, on a shared model that holds the metric definition.
-- **Chapters 36 and 39** measure whether a model is good enough, which is the number your requirement has to name in advance.
-- **Chapters 45 and 46** build the pipeline, with the late-data and backfill behavior you specified.
-- **Chapter 47** turns your business rules and non-functional requirements into automated data-quality tests and data contracts.
-- **Chapter 51** builds the system integrations that close the gaps this chapter finds.
-- **Chapter 60** takes non-functional requirements to architecture scale, where they decide the shape of the whole system.
-- **Chapter 63** governs a portfolio of automations once there are more than a few.
-- **Chapter 76B** is the business analyst question bank: requirements, BRD against FRD against SRS, user stories, process mapping, SDLC, gap analysis, UAT, and full worked interview scenarios.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** A business analyst produces a specification: process maps, requirements, and acceptance criteria precise enough that somebody can build the right thing. A data analyst produces an answer: a number, a chart, or a memo that helps someone decide. A data scientist produces a model and an honest estimate of how well it works. A data engineer produces a pipeline, a table, and a contract that make the data arrive reliably.
 
@@ -717,3 +699,19 @@ Owning it first is not politeness. It moves the meeting from blame to scope in o
 **14.** Because the people who run a process usually know only their own step and the two next to it, so the end-to-end picture is new information to everybody in the room, including the person who owns the process. It suggests you should run the session with the people who do the work rather than their managers, draw it roughly and in public so it invites correction, and expect the argument in the room to be more valuable than the diagram you leave with.
 
 **15.** What the 12% consists of, and how visible it is. Twelve percent that fails loudly, where the system says it could not read the email, is a manageable exception route. Twelve percent that fails quietly, where the system reads the email wrongly and books a plausible but incorrect order, is a different thing: it produces errors that look like data. You would also want to know the cost of one silent error, whether the failures cluster in one customer or format, and whether a person downstream would catch them.
+
+---
+
+## Where this leads
+
+- **Chapter 26, The Professional Toolkit,** covers Agile, Scrum, Kanban, and Jira as they are actually run, plus Git for the documents and queries this chapter produces.
+- **Chapter 27** turns your Part 2 projects, including this chapter's requirements pack, into a portfolio.
+- **Chapter 14** cleans the data that the handoffs on your process map created.
+- **Chapter 16** builds the dashboard you specified, on a shared model that holds the metric definition.
+- **Chapters 36 and 39** measure whether a model is good enough, which is the number your requirement has to name in advance.
+- **Chapters 45 and 46** build the pipeline, with the late-data and backfill behavior you specified.
+- **Chapter 47** turns your business rules and non-functional requirements into automated data-quality tests and data contracts.
+- **Chapter 51** builds the system integrations that close the gaps this chapter finds.
+- **Chapter 60** takes non-functional requirements to architecture scale, where they decide the shape of the whole system.
+- **Chapter 63** governs a portfolio of automations once there are more than a few.
+- **Chapter 76B** is the business analyst question bank: requirements, BRD against FRD against SRS, user stories, process mapping, SDLC, gap analysis, UAT, and full worked interview scenarios.

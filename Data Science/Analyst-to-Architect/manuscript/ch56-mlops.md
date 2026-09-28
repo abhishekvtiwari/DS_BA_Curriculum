@@ -1,6 +1,6 @@
 # Chapter 56. MLOps: Making Models Survive Production
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -300,6 +300,7 @@ a 50-feature request -> HTTP 422: List should have at least 108 items after vali
 Measured on the author's machine, the model itself takes about 0.2 ms per part and the whole HTTP round trip about 1.8 ms at the median, 2.1 ms at the 95th percentile. That is far inside the camera's budget, and the useful lesson is the ratio: **the model is a small fraction of the latency**, and most optimization effort in serving goes into everything around it.
 
 ---
+
 ## 56.6 Deployment patterns
 
 | Pattern | What happens | Buys you | Costs |
@@ -562,7 +563,8 @@ Is that shippable? Chapter 53's arithmetic answers it: at ₹4,000 a miss and �
 What does not scale down, and is worth doing at every level: **version the artifact with its metadata, track the runs, log structured predictions, monitor in three layers, and be able to roll back.** None of that needs a platform. All of it can be done in a week.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -609,7 +611,11 @@ The pattern is worth carrying into any ML project: **the failures are rarely in 
 
 ---
 
-## Tools
+## Project: run a model for six months in an afternoon
+
+**Goal:** take a model you have trained and put it through a full production lifecycle, with every decision written down.
+
+### Tools you'll need
 
 Versions used, checked in September 2026:
 
@@ -621,12 +627,6 @@ Versions used, checked in September 2026:
 - **Companion files** in `ch56/`: `simulate_production.py` (the 24-week stream, seed 56), `train.py` (tracked training runs), `serve.py` (the FastAPI service), `models/defect_v1.joblib`, and `ch56_check.py`.
 
 > **Simplification note.** This is a one-machine simulation of production: no cloud, no container, no real traffic, and a "line" that is a NumPy array. The code, the metrics, and the failures are real; the scale is not. What changes at real scale: the serving layer gets containers and a load balancer, the store gets a database, monitoring gets a time-series system, and the audit sample gets a workflow tool. What does not change: any of section 56.11's level-2 practices.
-
----
-
-## The project: run a model for six months in an afternoon
-
-**Goal:** take a model you have trained and put it through a full production lifecycle, with every decision written down.
 
 **Option A: your own model.** Any model you built in Chapters 38 to 53, with a stream of data you can replay in time order.
 
@@ -656,22 +656,6 @@ Versions used, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can name the five things that must be versioned, and I version all of them.
-- [ ] My models are packaged with metadata, including the threshold.
-- [ ] I track experiments, and I log the business metric alongside the statistical ones.
-- [ ] My service validates inputs, returns its model version, and logs structured predictions.
-- [ ] I can choose between batch, online, shadow, canary, and blue-green, for a reason.
-- [ ] I monitor in three layers and know which layer catches which failure.
-- [ ] I can compute PSI and the KS statistic by hand, and I calibrate thresholds on my own data.
-- [ ] I know that input drift is not model decay, and I have a sampled ground-truth stream.
-- [ ] I have a retraining trigger written down, with guardrails and a regression check.
-- [ ] I have practiced a rollback and know how long it takes.
-- [ ] I can say where on the maturity ladder my company should stop.
-
----
-
 ## Recap
 
 - A model in production fails in four ways: **the world moves, nobody notices, nobody can reproduce it, nobody can roll it back.**
@@ -688,7 +672,31 @@ Versions used, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+MLOps · model lifecycle · data versioning · feature versioning · model artifact · model registry · stage (staging, production, archived) · experiment tracking · run · parameter · metric · business metric · packaging · metadata · data hash · pickle risk · trusted types · batch serving · online serving · streaming serving · endpoint · input validation · health check · structured logging · big bang deployment · shadow mode · canary release · blue-green deployment · rollback · three-layer monitoring · service metrics · input monitoring · outcome monitoring · ground-truth delay · fast proxy metric · sampled audit · data drift · concept drift · population stability index · Kolmogorov-Smirnov statistic · alert fatigue · retraining trigger · regression check · threshold re-tuning · feedback loop · runbook · incident · post-mortem · MLOps maturity ladder · feature store
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can name the five things that must be versioned, and I version all of them.
+- [ ] My models are packaged with metadata, including the threshold.
+- [ ] I track experiments, and I log the business metric alongside the statistical ones.
+- [ ] My service validates inputs, returns its model version, and logs structured predictions.
+- [ ] I can choose between batch, online, shadow, canary, and blue-green, for a reason.
+- [ ] I monitor in three layers and know which layer catches which failure.
+- [ ] I can compute PSI and the KS statistic by hand, and I calibrate thresholds on my own data.
+- [ ] I know that input drift is not model decay, and I have a sampled ground-truth stream.
+- [ ] I have a retraining trigger written down, with guardrails and a regression check.
+- [ ] I have practiced a rollback and know how long it takes.
+- [ ] I can say where on the maturity ladder my company should stop.
+
+---
+
+## Exercises
 
 Work in `companion/ch56`, with the stream built by `simulate_production.py`.
 
@@ -724,27 +732,7 @@ Work in `companion/ch56`, with the stream built by `simulate_production.py`.
 
 ---
 
-## Key terms
-
-MLOps · model lifecycle · data versioning · feature versioning · model artifact · model registry · stage (staging, production, archived) · experiment tracking · run · parameter · metric · business metric · packaging · metadata · data hash · pickle risk · trusted types · batch serving · online serving · streaming serving · endpoint · input validation · health check · structured logging · big bang deployment · shadow mode · canary release · blue-green deployment · rollback · three-layer monitoring · service metrics · input monitoring · outcome monitoring · ground-truth delay · fast proxy metric · sampled audit · data drift · concept drift · population stability index · Kolmogorov-Smirnov statistic · alert fatigue · retraining trigger · regression check · threshold re-tuning · feedback loop · runbook · incident · post-mortem · MLOps maturity ladder · feature store
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 57, LLMOps,** applies all of this to language models, where the monitoring is harder because there is no accuracy to measure.
-- **Chapter 53, Deep Learning in Depth,** trained the model this chapter operates, and chose the threshold that section 56.9 re-tunes.
-- **Chapter 46, Pipelines & Orchestration,** schedules the batch scoring, the retraining, and the monitoring jobs.
-- **Chapter 47, Data Quality, Observability & Contracts,** is the same discipline one layer down, for the data feeding the model.
-- **Chapter 32, Analytics Engineering with dbt,** is where the CI habits came from; a model repository deserves the same treatment.
-- **Chapter 64, Responsible AI & Governance,** covers model cards, audit trails, and who is accountable when an automated decision is wrong.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you know your model has gone stale?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -895,3 +883,15 @@ Run it in CI on every change to the model or the feature code (Chapter 32's pipe
 **17.** Before automating the approval you need: an evaluation set the retrain cannot see, including old data; a **business-metric floor** that blocks the release; a regression check against the original data; automatic threshold re-tuning with its own floor; shadow or canary deployment with a rollback that has been timed; a data-quality gate so a corrupt week cannot become training data; and an audit log of what shipped, when, and on which data. Then automate, and keep a human approval for the first several releases anyway.
 
 **18.** When the decision is rare enough that a person can make it well; when an error is catastrophic and the model's failure mode is silent; when the data needed to monitor it will never exist, so you could never tell whether it still works; when the rule is already known and writing it down is cheaper (Chapter 53's section 53.10); and when nobody will own it. That last one is the most common in practice: **a model with no owner degrades to a liability**, and the most valuable thing this chapter teaches is that the ownership, the monitoring, and the runbook are the deployment, not the extras.
+
+---
+
+## Where this leads
+
+- **Chapter 57, LLMOps,** applies all of this to language models, where the monitoring is harder because there is no accuracy to measure.
+- **Chapter 53, Deep Learning in Depth,** trained the model this chapter operates, and chose the threshold that section 56.9 re-tunes.
+- **Chapter 46, Pipelines & Orchestration,** schedules the batch scoring, the retraining, and the monitoring jobs.
+- **Chapter 47, Data Quality, Observability & Contracts,** is the same discipline one layer down, for the data feeding the model.
+- **Chapter 32, Analytics Engineering with dbt,** is where the CI habits came from; a model repository deserves the same treatment.
+- **Chapter 64, Responsible AI & Governance,** covers model cards, audit trails, and who is accountable when an automated decision is wrong.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you know your model has gone stale?"

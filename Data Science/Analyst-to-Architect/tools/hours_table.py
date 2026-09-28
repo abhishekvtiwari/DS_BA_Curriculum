@@ -8,7 +8,7 @@ contain exactly what this script prints. Re-run it whenever a chapter's "Time ne
 and paste the result into both chapters (theme T12: one source for the hours).
 
 How the lines are read (the rules Chapter 83 used for its 764–980 hours):
-- The teaching chapters are 1 to 67. Part VIII (68–82) and the Closing (83) are not counted.
+- The teaching chapters are 1 to 67. Part 8 (68–82) and the Closing (83) are not counted.
 - Every "N–M hours" range in the line is added up. So Chapter 8's "3–4 hours, including the
   exercises. Allow another 2–3 hours for the project" counts as 5–7.
 - Chapter 67 has no range ("Reading it once will take about two hours; living it will take
@@ -26,8 +26,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MS = ROOT / 'manuscript'
 
-PARTS = [('Part 0', 1, 6), ('Part I', 7, 9), ('Part II', 10, 27), ('Part III', 28, 34),
-         ('Part IV', 35, 44), ('Part V', 45, 52), ('Part VI', 53, 59), ('Part VII', 60, 67)]
+PARTS = [('Part 0', 1, 6), ('Part 1', 7, 9), ('Part 2', 10, 27), ('Part 3', 28, 34),
+         ('Part 4', 35, 44), ('Part 5', 45, 52), ('Part 6', 53, 59), ('Part 7', 60, 67)]
 LAST_TEACHING = 67
 RATES = (6, 8, 10)
 
@@ -90,10 +90,10 @@ def totals():
 
 
 def ch06_table(t):
-    rows = [('Parts 0 and I', '1–9', t['foundations'], 'weeks', False),
-            ('Part II', '10–27', t['part2'], 'weeks', False),
-            ('Job-ready: Parts 0 to II', '1–27', t['job_ready'], 'job', True),
-            ('Parts III to VII', '28–67', t['after'], 'years', False),
+    rows = [('Parts 0 and 1', '1–9', t['foundations'], 'weeks', False),
+            ('Part 2', '10–27', t['part2'], 'weeks', False),
+            ('Job-ready: Parts 0 to 2', '1–27', t['job_ready'], 'job', True),
+            ('Parts 3 to 7', '28–67', t['after'], 'years', False),
             ('All of it', '1–67', t['all'], 'years', True)]
     out = ['| | Hours | 6 hours a week | 8 hours a week | 10 hours a week |',
            '|---|---|---|---|---|']
@@ -113,21 +113,21 @@ def ch06_table(t):
     return '\n'.join(out)
 
 
-LONG_NAMES = {'Part II': 'Part II, The Analyst', 'Part III': 'Part III, advanced analytics',
-              'Part IV': 'Part IV, machine learning', 'Part V': 'Part V, data engineering',
-              'Part VI': 'Part VI, production ML and GenAI', 'Part VII': 'Part VII, architecture and leadership'}
+LONG_NAMES = {'Part 2': 'Part 2, The Analyst', 'Part 3': 'Part 3, advanced analytics',
+              'Part 4': 'Part 4, machine learning', 'Part 5': 'Part 5, data engineering',
+              'Part 6': 'Part 6, production ML and GenAI', 'Part 7': 'Part 7, architecture and leadership'}
 
 
 def ch83_table(t):
     out = ['| | Chapters | Hours | At 6 hours a week |', '|---|---|---|---|']
     lo, hi = t['foundations']
-    out.append(f"| Parts 0 and I, the foundations | 1–9 | {lo}–{hi} | {span(lo, hi, 6, 'weeks')} |")
+    out.append(f"| Parts 0 and 1, the foundations | 1–9 | {lo}–{hi} | {span(lo, hi, 6, 'weeks')} |")
     for name, a, b, lo, hi in t['parts'][2:]:
         row = [LONG_NAMES[name], f'{a}–{b}', f'{lo}–{hi}', span(lo, hi, 6, 'weeks')]
-        if name == 'Part II':
+        if name == 'Part 2':
             out.append('| ' + ' | '.join(f'**{c}**' for c in row) + ' |')
             lo2, hi2 = t['job_ready']
-            out.append(f"| **Parts 0 to II: job-ready** | **1–27** | **{lo2}–{hi2}** | **{span(lo2, hi2, 6, 'months')}** |")
+            out.append(f"| **Parts 0 to 2: job-ready** | **1–27** | **{lo2}–{hi2}** | **{span(lo2, hi2, 6, 'months')}** |")
         else:
             out.append('| ' + ' | '.join(row) + ' |')
     lo, hi = t['all']
@@ -144,8 +144,8 @@ if __name__ == '__main__':
     print('By part:')
     for name, a, b, lo, hi in t['parts']:
         print(f'  {name:9} Ch {a}–{b}: {lo}–{hi} hours')
-    for key, label in [('foundations', 'Parts 0 and I (1–9)'), ('part2', 'Part II (10–27)'),
-                       ('job_ready', 'Job-ready, Parts 0 to II (1–27)'), ('after', 'Parts III to VII (28–67)'),
+    for key, label in [('foundations', 'Parts 0 and 1 (1–9)'), ('part2', 'Part 2 (10–27)'),
+                       ('job_ready', 'Job-ready, Parts 0 to 2 (1–27)'), ('after', 'Parts 3 to 7 (28–67)'),
                        ('all', 'All teaching chapters (1–67)')]:
         print(f'  {label}: {t[key][0]}–{t[key][1]} hours')
     print('\nChapter 6, section 6.1:\n')

@@ -1,18 +1,18 @@
 # Chapter 60. Designing Whole Systems
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
 > **You will learn to:** explain what "architecture" means once a decision affects more than one team's tools · draw and read a C4 diagram at the zoom level a conversation actually needs · turn a vague wish ("make it fast", "make it secure") into a number someone can test against · write an architecture decision record (ADR) that a stranger could read in two years and understand why · design a whole system by composing the pieces earlier parts of this book built separately · evolve a design under real constraints — budget, headcount, a legacy system nobody is allowed to touch · recognize the failure patterns of over-engineering, resume-driven design, and the big-bang rewrite.
 >
-> **Before you start:** this chapter assumes you've read enough of the book to recognize the pieces it assembles: the warehouse and orchestration from Part V, the AI systems from Part VI, and the dashboards and automations from Part II. You don't need to remember every detail — each piece is reintroduced in one line before it's used.
+> **Before you start:** this chapter assumes you've read enough of the book to recognize the pieces it assembles: the warehouse and orchestration from Part 5, the AI systems from Part 6, and the dashboards and automations from Part 2. You don't need to remember every detail — each piece is reintroduced in one line before it's used.
 >
 > **Time needed:** 12–15 hours, spread over two weeks.
 >
 > **Tools:** nothing new to install. Diagrams in this chapter are drawn with a free tool (Mermaid, diagrams.net, or even a whiteboard); the companion files show the same diagrams as plain text so you can redraw them yourself.
 >
-> **Practice data:** `companion/ch60/`: the full worked design document for a Riverstone Analytics & AI Platform, five architecture decision records, and a non-functional-requirements worksheet — all built from the real systems described in Parts II, V, and VI of this book.
+> **Practice data:** `companion/ch60/`: the full worked design document for a Riverstone Analytics & AI Platform, five architecture decision records, and a non-functional-requirements worksheet — all built from the real systems described in Parts 2, 5, and VI of this book.
 
 ---
 
@@ -36,7 +36,7 @@ A brilliant kitchen, on its own, doesn't need an architect. But the moment there
 
 Nobody asks these questions while admiring one perfect room. They come from stepping back and looking at the whole house — and from having been the person who, at 2 a.m., got the call that the upstairs bathroom is now the downstairs kitchen's ceiling.
 
-That step-back view — the whole house, not one room — is what this chapter, and this Part of the book, is about. The individual rooms (the pipelines, the models, the dashboards) were Parts II through VI. Part VII is the plumbing diagram, the load-bearing walls, and the decision about which walls can move.
+That step-back view — the whole house, not one room — is what this chapter, and this Part of the book, is about. The individual rooms (the pipelines, the models, the dashboards) were Parts 2 through 6. Part 7 is the plumbing diagram, the load-bearing walls, and the decision about which walls can move.
 
 ---
 
@@ -87,7 +87,7 @@ At this level, a new employee, a manager, or an auditor can understand the whole
 
 *Figure 60.3 — Opening the context box. This is the level where "what talks to what, and how" gets decided — and where most of this book's later chapters live.*
 
-Notice what the container diagram makes visible that the context diagram hid: there are **four AI-adjacent containers** (the defect model, the support assistant, the PO-intake pipeline, and the reverse-ETL sync) sitting alongside the four data-platform containers from Part V. A reader who only saw the context diagram would have no idea the system had grown this complex inside; a reader who only saw a component-level diagram of one container would have no idea it was one piece of eight.
+Notice what the container diagram makes visible that the context diagram hid: there are **four AI-adjacent containers** (the defect model, the support assistant, the PO-intake pipeline, and the reverse-ETL sync) sitting alongside the four data-platform containers from Part 5. A reader who only saw the context diagram would have no idea the system had grown this complex inside; a reader who only saw a component-level diagram of one container would have no idea it was one piece of eight.
 
 **Level 3: Component.** Open one container and show the modules inside it and how they call each other — for example, the PO-intake pipeline's read/extract/parse/validate/decide/write/report stages from Chapter 58. You draw this level for the team that owns that one container, not for the whole company.
 
@@ -105,7 +105,7 @@ The problem is that non-functional requirements almost always arrive as adjectiv
 
 ![Five vague requirements turned into precise, testable ones: "make it fast" becomes a 10-minute p95 delivery time; "make it reliable" becomes a 99.5% monthly success rate; "make it secure" becomes a concrete access rule; "make it scale" becomes a 5x volume target; "keep it cheap" becomes a per-1,000-lines cost ceiling](figures/fig60-5-nfr-precision.svg)
 
-*Figure 60.4 — Every one of these vague requirements was actually said, in some form, about a real Riverstone system in Parts II, V, or VI. The right-hand column is what an architect writes down instead.*
+*Figure 60.4 — Every one of these vague requirements was actually said, in some form, about a real Riverstone system in Parts 2, 5, or VI. The right-hand column is what an architect writes down instead.*
 
 **A template for turning any adjective into a requirement:**
 
@@ -134,7 +134,7 @@ Almost no architectural choice is strictly better than its alternative — if it
 
 ![A filled-in ADR: ADR-014, choosing Delta Lake for the sensor archive over plain Parquet, Iceberg, or Postgres, with status, context, decision, alternatives considered, consequences, and an owner](figures/fig60-4-adr-example.svg)
 
-*Figure 60.5 — One real decision from Part V, written up properly. Two years from now, nobody has to guess why the sensor archive uses a format the rest of the warehouse doesn't.*
+*Figure 60.5 — One real decision from Part 5, written up properly. Two years from now, nobody has to guess why the sensor archive uses a format the rest of the warehouse doesn't.*
 
 **The six parts of an ADR:**
 
@@ -151,7 +151,7 @@ Almost no architectural choice is strictly better than its alternative — if it
 
 ## 60.5 The worked example: designing the Riverstone Analytics & AI Platform
 
-Everything so far has been vocabulary. This section uses it on a real design problem: by early 2026, Riverstone has built a warehouse and orchestrator (Part V), a defect-detection model, a document assistant, and an email-reading order pipeline (Part VI), and a set of dashboards and automations (Part II) — separately, by different people, at different times, for different immediate needs. Nobody has ever drawn what all of it looks like *together*, and two incidents in one month (a pipeline collision at 6 a.m., and a support-assistant answer that quoted a superseded policy the RAG system happened to rank first) made clear that "together" is now a real system, whether anyone designed it as one or not.
+Everything so far has been vocabulary. This section uses it on a real design problem: by early 2026, Riverstone has built a warehouse and orchestrator (Part 5), a defect-detection model, a document assistant, and an email-reading order pipeline (Part 6), and a set of dashboards and automations (Part 2) — separately, by different people, at different times, for different immediate needs. Nobody has ever drawn what all of it looks like *together*, and two incidents in one month (a pipeline collision at 6 a.m., and a support-assistant answer that quoted a superseded policy the RAG system happened to rank first) made clear that "together" is now a real system, whether anyone designed it as one or not.
 
 **The design document below is what an architect produces in that situation** — not to invent new systems, but to describe, constrain, and connect the ones that already exist. The full version, with every section expanded, is `companion/ch60/design-document.md`; what follows is the document's spine.
 
@@ -198,7 +198,7 @@ A real design document doesn't re-argue each decision inline; it links to the AD
 | ADR-023 | Support assistant: absolute confidence floor for refusal, not a normalized one, after a scoring bug ranked a superseded policy first | 55 |
 | ADR-026 | CRM writes: `PATCH` only, one system of record per field, after a prior sync's `PUT` erased a negotiated discount | 51 |
 
-Reading down this table is, itself, a compressed history of Parts V and VI: almost every decision traces to an incident, a measurement, or a finding that a simpler approach didn't hold up. **That's what a healthy ADR index looks like** — not a list of things that sounded good, but a list of things that were tested against reality and survived.
+Reading down this table is, itself, a compressed history of Parts 5 and 6: almost every decision traces to an incident, a measurement, or a finding that a simpler approach didn't hold up. **That's what a healthy ADR index looks like** — not a list of things that sounded good, but a list of things that were tested against reality and survived.
 
 ### Data flow: one request, traced end to end
 
@@ -233,7 +233,7 @@ The design in section 60.5 describes what Riverstone's platform *should* look li
 - **Headcount.** A four-person data team cannot operate the same number of moving parts as a forty-person one, no matter how good the architecture diagram looks. Fewer, more standardized containers usually beat more, more specialized ones, for a small team.
 - **Legacy systems nobody can touch.** The ERP is a vendor system; Riverstone can integrate with it but not redesign it. Good architecture works *around* that constraint openly (as the PO-intake pipeline does, treating the ERP as a system of record it writes to carefully) rather than pretending the constraint doesn't exist.
 
-**A pattern for evolving safely, used throughout Parts V and VI without always naming it:**
+**A pattern for evolving safely, used throughout Parts 5 and 6 without always naming it:**
 
 1. **Run the old and new side by side** before switching (Chapter 56's shadow-mode comparison of two model versions is this pattern applied to a model; the same idea applies to a new pipeline or a new table format).
 2. **Migrate the lowest-risk piece first**, to learn the real cost of the change before betting something important on it.
@@ -243,7 +243,8 @@ The design in section 60.5 describes what Riverstone's platform *should* look li
 **Resisting the urge to redesign everything at once** is itself a skill. The temptation, once you can see the whole system clearly for the first time, is to fix all of it — new orchestrator, new warehouse, new everything, all at once, on the strength of one good diagram. This almost never survives contact with a real company's calendar, and it's the subject of this chapter's mistakes table below.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -291,7 +292,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: design document for Riverstone's platform
+
+**Goal:** produce a real design document — context diagram, container diagram, non-functional requirements, an ADR index, and a traced data flow — for a system you actually work with.
+
+### Tools you'll need
 
 - **Diagramming:** Mermaid (text-based, renders in many tools including GitHub and this book's own published pages), diagrams.net (formerly draw.io, free and works offline), or a whiteboard photographed and cleaned up. No paid tool is required for anything in this chapter.
 - **ADR templates:** Michael Nygard's original ADR format (the one this chapter uses) is a short Markdown template; `adr-tools` is a free command-line helper for numbering and indexing them, if you want automation.
@@ -300,12 +305,6 @@ What made the difference:
   - `adr-template.md`: a blank, six-part ADR template.
   - `adr-examples/`: five filled-in ADRs from the platform's real index (orchestrator, cloud region, table format, PO-intake mode, CRM write rule).
   - `nfr-worksheet.md`: the adjective-to-number worksheet from section 60.3, blank and ready to fill in for your own system.
-
----
-
-## The project: design document for Riverstone's platform
-
-**Goal:** produce a real design document — context diagram, container diagram, non-functional requirements, an ADR index, and a traced data flow — for a system you actually work with.
 
 **Option A: your own system.** Pick something at your workplace that has grown past one person's or one team's full understanding — exactly the situation this chapter's worked example describes.
 
@@ -332,7 +331,27 @@ What made the difference:
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Architecture is any decision that's hard to reverse and affects more than one part of a system** — not a title, a habit available to anyone whose choices reach beyond their own code.
+- **The C4 model** gives four fixed zoom levels — context, container, component, code — so a diagram matches what its reader actually needs to decide.
+- **Non-functional requirements** must become numbers ("p95 under 200ms," "99.5% success, measured monthly"), or they're wishes, not requirements — and every NFR needs a stated owner and measurement method.
+- **An ADR** captures a decision's context, the decision itself, the alternatives considered and rejected, and its consequences — so the reasoning outlives the meeting where it happened.
+- **The worked Riverstone platform** ties together Part 5's data infrastructure and Part 6's AI systems into one described whole, with a traceable data flow and an honest risks section.
+- **Evolving a real system** means working within budget, headcount, and legacy constraints — migrating the lowest-risk piece first, running old and new side by side, and keeping a rollback path.
+- **The temptation to rewrite everything** after finally seeing the whole picture is common and usually wrong: fix what's actually broken, not what merely looks untidy on a new diagram.
+
+---
+
+## Key terms
+
+architecture · non-functional requirement (NFR) · functional requirement · C4 model · context diagram · container diagram · component diagram · code diagram · zoom level · architecture decision record (ADR) · system of record · availability ("nines") · freshness · trade-off · resume-driven design · big-bang rewrite · shadow mode (Chapter 56) · rollback path
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can say, for any decision, whether it's architectural using the "hard to reverse, crosses boundaries, expensive to get wrong late" test.
 - [ ] You draw C4 diagrams at the zoom level the audience needs, and never mix levels on one diagram.
@@ -345,19 +364,7 @@ What made the difference:
 
 ---
 
-## Recap
-
-- **Architecture is any decision that's hard to reverse and affects more than one part of a system** — not a title, a habit available to anyone whose choices reach beyond their own code.
-- **The C4 model** gives four fixed zoom levels — context, container, component, code — so a diagram matches what its reader actually needs to decide.
-- **Non-functional requirements** must become numbers ("p95 under 200ms," "99.5% success, measured monthly"), or they're wishes, not requirements — and every NFR needs a stated owner and measurement method.
-- **An ADR** captures a decision's context, the decision itself, the alternatives considered and rejected, and its consequences — so the reasoning outlives the meeting where it happened.
-- **The worked Riverstone platform** ties together Part V's data infrastructure and Part VI's AI systems into one described whole, with a traceable data flow and an honest risks section.
-- **Evolving a real system** means working within budget, headcount, and legacy constraints — migrating the lowest-risk piece first, running old and new side by side, and keeping a rollback path.
-- **The temptation to rewrite everything** after finally seeing the whole picture is common and usually wrong: fix what's actually broken, not what merely looks untidy on a new diagram.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -391,26 +398,7 @@ What made the difference:
 
 ---
 
-## Key terms
-
-architecture · non-functional requirement (NFR) · functional requirement · C4 model · context diagram · container diagram · component diagram · code diagram · zoom level · architecture decision record (ADR) · system of record · availability ("nines") · freshness · trade-off · resume-driven design · big-bang rewrite · shadow mode (Chapter 56) · rollback path
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 61, Distributed Systems & Trade-offs:** what happens when the container diagram's boxes are on different machines — consistency, availability, and the failures Part V's stack has actually had.
-- **Chapter 62, Data Architecture Patterns:** naming and comparing the shapes (Lambda, Kappa, medallion, data mesh) that a warehouse-and-pipeline design like section 60.5's actually follows.
-- **Chapter 63, Automation Architecture & Governance:** the eight-container platform, inventoried, owned, and governed at company scale — building directly on the container diagram this chapter drew.
-- **Chapter 64, Security, Privacy, Governance & Responsible AI:** closing the "access control model not yet defined" risk this chapter's design document left open.
-- **Chapter 67, The Architect as Leader:** the conversation between Meera and Vikram in this chapter's story — influencing a decision without unilateral authority — done properly.
-- **Interview preparation:** the System Design Question Bank (Chapter 77) uses C4-style diagrams and NFR framing directly; "walk me through how you'd design X" is answered with this chapter's method.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -441,3 +429,14 @@ architecture · non-functional requirement (NFR) · functional requirement · C4
 **17.** Explain, briefly, what the ADR protects against — not disagreement now, but the same conversation happening again in eight months with nobody remembering why. Offer to write a genuinely short version (a title, one-sentence decision, and a two-line "why," which takes five minutes) rather than insisting on the full six-part template every time — a short ADR that exists beats a thorough one that doesn't get written because it seemed like too much overhead.
 
 **18.** A big-bang rewrite can be the right call when the existing system is actively unsafe to keep running (a security vulnerability with no incremental patch path), when it's built on infrastructure that's being discontinued with a hard deadline, or when the team and budget genuinely support running two full systems in parallel for the migration period. The "migrate lowest-risk piece first" advice doesn't apply when there's no way to run part of the old system and part of the new one at once — some technology changes are genuinely all-or-nothing — but this is rarer than most rewrite proposals assume, and the burden of proof should be on showing that a piecewise migration is truly impossible, not merely inconvenient.
+
+---
+
+## Where this leads
+
+- **Chapter 61, Distributed Systems & Trade-offs:** what happens when the container diagram's boxes are on different machines — consistency, availability, and the failures Part 5's stack has actually had.
+- **Chapter 62, Data Architecture Patterns:** naming and comparing the shapes (Lambda, Kappa, medallion, data mesh) that a warehouse-and-pipeline design like section 60.5's actually follows.
+- **Chapter 63, Automation Architecture & Governance:** the eight-container platform, inventoried, owned, and governed at company scale — building directly on the container diagram this chapter drew.
+- **Chapter 64, Security, Privacy, Governance & Responsible AI:** closing the "access control model not yet defined" risk this chapter's design document left open.
+- **Chapter 67, The Architect as Leader:** the conversation between Meera and Vikram in this chapter's story — influencing a decision without unilateral authority — done properly.
+- **Interview preparation:** the System Design Question Bank (Chapter 77) uses C4-style diagrams and NFR framing directly; "walk me through how you'd design X" is answered with this chapter's method.

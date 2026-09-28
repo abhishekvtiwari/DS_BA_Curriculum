@@ -1,6 +1,6 @@
 # Chapter 54. Generative AI & Large Language Models
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -323,6 +323,7 @@ temperature 1.0, top_p 0.9            0.580          0.420          0.000       
 > **Watch out: temperature 0 is not a guarantee of identical output.** Providers batch requests, use non-deterministic floating-point kernels on GPUs, and change model versions underneath a name. If reproducibility matters, pin the model version, set temperature 0, request a seed if the API offers one, and **store the output you validated**, because you may not be able to regenerate it exactly.
 
 ---
+
 ## 54.6 Prompting, measured
 
 Prompting advice is usually a list of tips with no evidence. Here it is as an experiment: the same 60 emails, the same model, three prompts, and one number that says which is better.
@@ -624,6 +625,7 @@ nearest emails to 'lunch boxes delivered to the warehouse':
 **Where embeddings are used, beyond search:** deduplicating customer records that don't match on name, clustering support tickets to find themes nobody labeled, routing an email to a team, recommending "similar products", and detecting drift in incoming text (Chapter 56).
 
 ---
+
 ## 54.9 Prompt, retrieve, or fine-tune?
 
 Three ways to make a general model do your specific job. Teams reach for the expensive one first far too often.
@@ -726,7 +728,8 @@ print(f"tokens in {response.usage.input_tokens}, out {response.usage.output_toke
 **Line by line:** the key comes from an environment variable (Chapter 34), the model name is pinned rather than aliased, `temperature=0` matches the task, the prompt is the one you measured in section 54.6, and `response.usage` is where your cost tracking starts. Every other provider's SDK has the same four parts with different names.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -765,7 +768,11 @@ The lesson is the one that separates AI projects that survive from ones that get
 
 ---
 
-## Tools
+## Project: order extraction you can defend
+
+**Goal:** a pipeline that turns order emails into validated records, with a measured accuracy number and an exception path.
+
+### Tools you'll need
 
 Checked in September 2026. This area moves faster than any other in the book: verify versions and prices before quoting them.
 
@@ -777,12 +784,6 @@ Checked in September 2026. This area moves faster than any other in the book: ve
 - **Running open models locally**: Ollama (simplest), vLLM (fast serving), llama.cpp (quantized, CPU-friendly; Chapter 53's quantization is what makes it possible).
 - **Watching cost**: every provider's usage dashboard, plus your own token counter per call. Chapter 57 does this properly.
 - **Companion files** in `ch54/`: `generate_order_emails.py` (60 emails and ground truth, seed 54), `mock_llm.py` (the local stand-in, with its limitations documented in the file), `api_example.py` (the real provider call), and `ch54_check.py`.
-
----
-
-## The project: order extraction you can defend
-
-**Goal:** a pipeline that turns order emails into validated records, with a measured accuracy number and an exception path.
 
 **Option A: your own inbox.** Any repetitive reading task: invoices, CVs, support tickets, expense claims. Use anonymized copies, and check what your employer allows to leave the building before you send anything to a hosted model.
 
@@ -811,21 +812,6 @@ Checked in September 2026. This area moves faster than any other in the book: ve
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain next-token prediction, and use it to predict where a model will fail.
-- [ ] I know what a token is, why billing uses them, and why models struggle with spelling and long numbers.
-- [ ] I can describe pretraining, supervised fine-tuning, and preference tuning, and say what each contributes.
-- [ ] I can reason about context windows in cost, latency, and accuracy.
-- [ ] I set temperature and top-p deliberately, and know why temperature 0 still isn't a guarantee.
-- [ ] I improve prompts against an evaluation set and can show the number moving.
-- [ ] My pipelines ask for structure, validate it, retry with specifics, and escalate the rest.
-- [ ] I can explain embeddings and cosine similarity, and use them for search.
-- [ ] I choose between prompting, retrieval, and fine-tuning for a reason.
-- [ ] I can name the risks, including prompt injection, and the defense for each.
-
----
-
 ## Recap
 
 - A language model predicts the next **token** from the text so far. Fluency is the objective; truth is a side effect, which is why **hallucination** is structural rather than a bug.
@@ -841,7 +827,30 @@ Checked in September 2026. This area moves faster than any other in the book: ve
 
 ---
 
-## Practice exercises
+## Key terms
+
+large language model · next-token prediction · logits · softmax · token · tokenizer · byte-pair encoding · vocabulary · merge · context window · pretraining · supervised fine-tuning · preference tuning (RLHF, DPO) · knowledge cutoff · temperature · top-p (nucleus sampling) · top-k · greedy decoding · prompt · system prompt · few-shot · chain of thought · decomposition · structured output · JSON mode · schema validation · retry loop · escalation · hallucination · grounding · embedding · vector · cosine similarity · semantic search · retrieval-augmented generation · fine-tuning · LoRA · QLoRA · parameter-efficient fine-tuning · distillation · multimodal · prompt injection · non-determinism · prompt caching · batch API · open-weight model · evaluation set · golden set
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain next-token prediction, and use it to predict where a model will fail.
+- [ ] I know what a token is, why billing uses them, and why models struggle with spelling and long numbers.
+- [ ] I can describe pretraining, supervised fine-tuning, and preference tuning, and say what each contributes.
+- [ ] I can reason about context windows in cost, latency, and accuracy.
+- [ ] I set temperature and top-p deliberately, and know why temperature 0 still isn't a guarantee.
+- [ ] I improve prompts against an evaluation set and can show the number moving.
+- [ ] My pipelines ask for structure, validate it, retry with specifics, and escalate the rest.
+- [ ] I can explain embeddings and cosine similarity, and use them for search.
+- [ ] I choose between prompting, retrieval, and fine-tuning for a reason.
+- [ ] I can name the risks, including prompt injection, and the defense for each.
+
+---
+
+## Exercises
 
 Work in `companion/ch54`, with the emails built by `generate_order_emails.py`. Predict each answer before you run it.
 
@@ -877,26 +886,7 @@ Work in `companion/ch54`, with the emails built by `generate_order_emails.py`. P
 
 ---
 
-## Key terms
-
-large language model · next-token prediction · logits · softmax · token · tokenizer · byte-pair encoding · vocabulary · merge · context window · pretraining · supervised fine-tuning · preference tuning (RLHF, DPO) · knowledge cutoff · temperature · top-p (nucleus sampling) · top-k · greedy decoding · prompt · system prompt · few-shot · chain of thought · decomposition · structured output · JSON mode · schema validation · retry loop · escalation · hallucination · grounding · embedding · vector · cosine similarity · semantic search · retrieval-augmented generation · fine-tuning · LoRA · QLoRA · parameter-efficient fine-tuning · distillation · multimodal · prompt injection · non-determinism · prompt caching · batch API · open-weight model · evaluation set · golden set
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 55, Building AI Applications,** turns this chapter's embeddings and validation into retrieval, tools, agents, and a properly evaluated assistant.
-- **Chapter 56, MLOps,** and **Chapter 57, LLMOps,** run all of this in production: versioning, monitoring, cost control, and what to do when the model changes underneath you.
-- **Chapter 58, Intelligent Automation,** takes the order pipeline the rest of the way into Riverstone's ERP.
-- **Chapter 53, Deep Learning in Depth,** is the attention and quantization underneath everything here.
-- **Chapter 64, Responsible AI & Governance,** covers privacy, bias, disclosure, and the policies a business needs before this reaches customers.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you evaluate an LLM feature?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1042,3 +1032,14 @@ Run it in CI on every prompt change and nightly against the live provider (Chapt
 **17.** Three questions: (1) **What data was it trained on, and who owns the result?** A model fine-tuned on your data may be yours, theirs, or shared, and the answer belongs in the contract. (2) **How do we evaluate it against the base model on our own set?** If they can't hand you a way to compare, the claim is unverifiable. (3) **What happens at the next base-model upgrade?** A fine-tune is tied to a version; when that version is retired, someone pays to redo it. A fourth, if they're still standing: what would it cost to get the same result with retrieval and a good prompt?
 
 **18.** Sixty days is enough if you prepared. The plan: run the evaluation set against the replacement version immediately; if it passes, pin the new version and ship, keeping the old outputs for comparison. If it fails, spend the time on the prompt rather than panicking, since most regressions are format drift that instructions can fix. Meanwhile check whether the replacement's pricing and context differ, because those change the cost model. The reason this is a two-day job rather than a crisis is entirely the evaluation set: **the deprecation notice is a regression test away from being a non-event.**
+
+---
+
+## Where this leads
+
+- **Chapter 55, Building AI Applications,** turns this chapter's embeddings and validation into retrieval, tools, agents, and a properly evaluated assistant.
+- **Chapter 56, MLOps,** and **Chapter 57, LLMOps,** run all of this in production: versioning, monitoring, cost control, and what to do when the model changes underneath you.
+- **Chapter 58, Intelligent Automation,** takes the order pipeline the rest of the way into Riverstone's ERP.
+- **Chapter 53, Deep Learning in Depth,** is the attention and quantization underneath everything here.
+- **Chapter 64, Responsible AI & Governance,** covers privacy, bias, disclosure, and the policies a business needs before this reaches customers.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you evaluate an LLM feature?"

@@ -92,6 +92,11 @@ Plus the **visual standard** (see `review/briefs/VISUAL_BRIEF.md`):
   - A new **unnumbered front section, "How to Use This Book"**, goes before Chapter 1 (4–6 pages). It covers how each chapter is laid out, how to read the code cells and their outputs, the four exercise groups and the answers, how the parts climb, a rough sense of time (pointing to Ch 6), and where the companion files are. It takes old §6.9 (chapter anatomy, exercises) and adds the rest new.
   - **Chapter 6 keeps its number and becomes "Planning Your Learning"**: the honest hours table, the weekly rhythm, a tool timeline (no installs), learning with AI assistants, reading documentation, and a project to plan your route and first 90 days.
   - Also update the Part 0 contents, Ch 5's "Where this leads" and Ch 9's references to Ch 6. The spec is Chapter 6 of `review/part-0-and-I/fix-instructions-DRAFT-parked.md`.
+- **D8 (Abhishek, 28 Sep): how the book is divided and named.**
+  - Every chapter reads in six stages: **Start** (Why this matters, In plain English) · **Learn** (numbered sections) · **Apply** (Common mistakes, In the real world, Project with *Tools you'll need* inside it, Timed challenge) · **Review** (Recap, Key terms, Check yourself, Final-week revision list) · **Practise** (Exercises, Answers) · **Next** (Where this leads). `tools/restructure.py` puts a chapter in this order; the builder labels each stage and adds the chapter map. Ch 67 and Ch 83 have their own closing sections and are placed in their part builds.
+  - Reader text numbers the parts **0 to 8** ("Part 2", "Parts 3 to 7"); `tools/part_numerals.py` converts. Internal files (the register's `part` column, review files, branch names) keep the Roman numerals.
+  - Navigation: a chapter map ("In this chapter") with page numbers under each chapter's glance box; two-level contents in part builds; one page count per part package (front matter i, ii …). Build a part package with a `package-…` job in `tools/pdf/build.py` (e.g. `package-0-1`).
+  - New or rewritten chapter text must use the new section names and the stage order.
 - Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. (Kept by Abhishek, 28 Sep.)
 - A one-page NumPy basics section goes in Ch 18.
 - Part 0 and Part I findings are approved (status `Approved` in the CSV).
@@ -150,6 +155,7 @@ Order:
    Never type an output by hand.
 3. Redraw the chapter's figures from the figure scripts at print width (text ≥ 7 pt). Check each figure against its caption and the text.
 4. Build the chapter PDF into `build/`. Then:
+   - check `tools/restructure.py --check` reports the chapter in stage order (D8);
    - run `python review/briefs/prescan.py build/<file>.pdf build/<file>.json` and `python "Data Science/Analyst-to-Architect/tools/pdf/layout_check.py" build/<file>.pdf` (contents numbers, stranded headings and lead-ins, half-empty pages, clipped list numbers, draft labels);
    - render the pages that had visual findings (`pdftoppm -r 110`) and look at them;
    - confirm each visual finding is gone.

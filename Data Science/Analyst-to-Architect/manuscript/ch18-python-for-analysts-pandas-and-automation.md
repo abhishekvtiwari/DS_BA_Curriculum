@@ -1,6 +1,6 @@
 # Chapter 18. Python for Analysts: pandas & Automation
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -22,7 +22,7 @@ Chapter 17 gave you Python. This chapter gives you the reason analysts use it.
 
 **pandas** is a table in memory with a hundred useful verbs attached. It reads almost any format, groups and joins like SQL, reshapes like a pivot table, cleans like Power Query, charts like Excel, and writes a formatted workbook at the end — all in code you can rerun, schedule, review, and version.
 
-That combination is what makes the difference in a job. The monthly pack that took a day becomes a script that takes four seconds and never forgets a step. The question "can you do this for all three years and every branch?" stops being a problem. And the boundary between analyst work and data engineering (Part III) or data science (Part IV) is mostly this library and the habits around it.
+That combination is what makes the difference in a job. The monthly pack that took a day becomes a script that takes four seconds and never forgets a step. The question "can you do this for all three years and every branch?" stops being a problem. And the boundary between analyst work and data engineering (Part 3) or data science (Part 4) is mostly this library and the habits around it.
 
 pandas also has sharp edges: the same task can be written five ways, four of which are slow or subtly wrong, and its error messages are not kind. This chapter teaches the way that scales, and names the traps as they arrive.
 
@@ -940,7 +940,7 @@ with engine.begin() as conn:
 2  Hospitality  2.774767e+08
 ```
 
-`to_sql` is fine for small results (a summary, a mapping table, a list of exceptions) into a schema you're allowed to write to. It is not a data-loading tool: for volume, use the database's own loader (Chapter 14's `COPY` and `LOAD DATA`), and for anything that becomes a permanent table, talk to whoever owns the warehouse (Part III).
+`to_sql` is fine for small results (a summary, a mapping table, a list of exceptions) into a schema you're allowed to write to. It is not a data-loading tool: for volume, use the database's own loader (Chapter 14's `COPY` and `LOAD DATA`), and for anything that becomes a permanent table, talk to whoever owns the warehouse (Part 3).
 
 **Where should the work happen?** In the database when it's filtering, joining large tables, and aggregating: it has indexes and it's designed for it. In pandas when you need reshaping, string handling, charts, Excel output, or anything statistical. The pattern that scales is a query that returns thousands of rows, not millions.
 
@@ -1234,14 +1234,15 @@ The habits that matter, roughly in order of payoff:
 |---|---|
 | The data is larger than memory | Chunked reading, DuckDB, Polars, or push the work to the database |
 | The work is filtering and aggregating a huge table | SQL, where the indexes are |
-| Several people need the same numbers | A semantic model (Chapter 16) or a warehouse table (Part III) |
+| Several people need the same numbers | A semantic model (Chapter 16) or a warehouse table (Part 3) |
 | The output is a shared dashboard | Power BI, not a script that mails a workbook |
 | The pipeline has many steps, dependencies, and schedules | An orchestrator (Chapter 46) |
 
 **DuckDB** deserves a mention: it runs SQL directly over Parquet and CSV files, in-process, and often replaces a memory-hungry pandas step with a query that reads only the columns it needs. **Polars** is a faster DataFrame library with a similar mental model. Both are worth an afternoon once pandas is comfortable, and both make the same point: pandas is a tool, not the whole job.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1289,19 +1290,17 @@ Her own summary of the change: *"I used to produce the report. Now I own it."*
 
 ---
 
-## Tools
+## Project: automate Riverstone's monthly report
+
+**Goal:** one command that turns the database into a formatted workbook and a written summary, with checks that stop it when the data is wrong.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** in a virtual environment (Chapter 17, section 17.3). Everything here was run on **Python 3.12** with **pandas 3.0.2**, **numpy 2.4.4**, **matplotlib 3.10.8**, **seaborn 0.13.2**, **SQLAlchemy 2.0.54**, **psycopg 3.3.5**, **openpyxl 3.1.5**, **xlsxwriter 3.2.9**, **pyarrow 25.0.1**.
 - `pip install pandas pyarrow matplotlib seaborn openpyxl xlsxwriter sqlalchemy "psycopg[binary]" requests python-dotenv`
 - A database with `riverstone_full` loaded (Chapter 14), or the CSV and Parquet files in `companion/full/`.
 - **Companion files (`companion/ch18/`):** `build_ch18_files.py`, `api_response.json` (a sample API payload), `report_template.md`, and `monthly_report.py` (written and run by section 18.15). The chapter also reads `companion/full/`, `companion/ch14/orders_q4_2025_export.csv`, and `companion/ch17/sales_exports/`.
 - **Worth knowing about:** `ruff` (formatting and linting), `duckdb` and `polars` (section 18.16), and `great-expectations` or plain assertions for data checks (Chapter 47).
-
----
-
-## The project: automate Riverstone's monthly report
-
-**Goal:** one command that turns the database into a formatted workbook and a written summary, with checks that stop it when the data is wrong.
 
 **Option A: your own report.** Pick the report you produce most often. Time yourself doing it manually once, then automate it.
 
@@ -1342,23 +1341,6 @@ Use `companion/full/` (Parquet or CSV) and pandas only; no SQL. Answers at the e
 
 ---
 
-## You've got it when…
-
-- [ ] You reach for a whole-column operation before a loop, and can explain why.
-- [ ] You load CSV, Excel, JSON, Parquet, and SQL results with the types and dates you intended.
-- [ ] You profile a new DataFrame in five lines and can state its grain.
-- [ ] You filter with masks and `.loc`, and never write chained assignment.
-- [ ] You use `groupby` with named aggregations, and `transform` when the result must line up with the rows.
-- [ ] You check row counts and match rates on every merge.
-- [ ] You move between wide and long with `pivot_table` and `melt` without guessing.
-- [ ] You resample, roll, and shift a time series to get year-over-year and moving averages.
-- [ ] You can rewrite a cleaning pipeline in pandas and reconcile it to another tool's answer.
-- [ ] Your charts come out of a style function, and your Excel files have formats, widths, and a frozen header.
-- [ ] Your database code uses bound parameters and credentials from the environment.
-- [ ] Your script has arguments, checks, logging, and an exit code, and you'd be comfortable if it ran without you.
-
----
-
 ## Recap
 
 - **pandas is a table with verbs.** A DataFrame holds columns (Series); you operate on whole columns, which is faster and clearer than looping.
@@ -1379,7 +1361,32 @@ Use `companion/full/` (Parquet or CSV) and pandas only; no SQL. Answers at the e
 
 ---
 
-## Practice exercises
+## Key terms
+
+pandas · DataFrame · Series · index · vectorized operation · dtype · `read_csv` parameters · Parquet · `json_normalize` · profiling · `value_counts` · `describe` · boolean mask · `.loc` · `.iloc` · `query` · chained assignment · `SettingWithCopyWarning` · `.str` accessor · `.dt` accessor · `.map` · `np.where` · `np.select` · `pd.cut` · `.apply` · `groupby` · named aggregation · `transform` · `merge` · join type · `indicator` · fan-out · `concat` · `merge_asof` · `pivot_table` · `melt` · wide and long · tidy data · datetime index · `resample` · `rolling` · `shift` · matplotlib · figure and axes · seaborn · `ExcelWriter` · xlsxwriter · openpyxl · SQLAlchemy engine · bound parameters · `to_sql` · `requests` · timeout · `raise_for_status` · paging · rate limit · environment variable · logging · exit code · categorical dtype · downcasting · chunking · DuckDB · Polars
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You reach for a whole-column operation before a loop, and can explain why.
+- [ ] You load CSV, Excel, JSON, Parquet, and SQL results with the types and dates you intended.
+- [ ] You profile a new DataFrame in five lines and can state its grain.
+- [ ] You filter with masks and `.loc`, and never write chained assignment.
+- [ ] You use `groupby` with named aggregations, and `transform` when the result must line up with the rows.
+- [ ] You check row counts and match rates on every merge.
+- [ ] You move between wide and long with `pivot_table` and `melt` without guessing.
+- [ ] You resample, roll, and shift a time series to get year-over-year and moving averages.
+- [ ] You can rewrite a cleaning pipeline in pandas and reconcile it to another tool's answer.
+- [ ] Your charts come out of a style function, and your Excel files have formats, widths, and a frozen header.
+- [ ] Your database code uses bound parameters and credentials from the environment.
+- [ ] Your script has arguments, checks, logging, and an exit code, and you'd be comfortable if it ran without you.
+
+---
+
+## Exercises
 
 Use `companion/full/`, `companion/ch14/`, and `companion/ch17/`. Check totals against Chapters 14–16 where they overlap.
 
@@ -1427,27 +1434,7 @@ Use `companion/full/`, `companion/ch14/`, and `companion/ch17/`. Check totals ag
 
 ---
 
-## Key terms
-
-pandas · DataFrame · Series · index · vectorized operation · dtype · `read_csv` parameters · Parquet · `json_normalize` · profiling · `value_counts` · `describe` · boolean mask · `.loc` · `.iloc` · `query` · chained assignment · `SettingWithCopyWarning` · `.str` accessor · `.dt` accessor · `.map` · `np.where` · `np.select` · `pd.cut` · `.apply` · `groupby` · named aggregation · `transform` · `merge` · join type · `indicator` · fan-out · `concat` · `merge_asof` · `pivot_table` · `melt` · wide and long · tidy data · datetime index · `resample` · `rolling` · `shift` · matplotlib · figure and axes · seaborn · `ExcelWriter` · xlsxwriter · openpyxl · SQLAlchemy engine · bound parameters · `to_sql` · `requests` · timeout · `raise_for_status` · paging · rate limit · environment variable · logging · exit code · categorical dtype · downcasting · chunking · DuckDB · Polars
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 19, Spreadsheet Automation:** when the work must stay inside Excel or Google Sheets.
-- **Chapter 20, Automating Reports & Delivering Insights:** scheduling this script, HTML email, alerts, failure handling, and handover.
-- **Chapter 21 and 22:** statistics with pandas and simulations.
-- **Chapter 26, Git:** versioning scripts, and keeping `.env` out of the repository.
-- **Chapter 30, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool.
-- **Part IV:** scikit-learn and modelling, all of which start from a DataFrame.
-- **Interview preparation:** the Python & pandas Question Bank (Chapter 72) covers `groupby`, `merge`, reshaping, and "make this faster".
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1512,3 +1499,15 @@ pandas · DataFrame · Series · index · vectorized operation · dtype · `read
 **30.** When the audience needs to explore it themselves (Power BI), when the process is truly one-off, when the numbers must live inside a workbook that other people edit, or when nobody but you could maintain the script. Automation that only one person understands is a risk, not an asset; Chapter 20's handover section says what to write down before it becomes one.
 
 **Timed challenge answers.** Level 1: ₹1,146,641,651.25 · 46,356 orders · 4,599 customers · ₹24,735.56. Level 2: Retail ₹556,436,453.75 (48.5%) · Wholesale ₹312,728,492.50 (27.3%) · Hospitality ₹277,476,705.00 (24.2%). Level 3: Storage Box 25L ₹231,104,138 · Food Container Set ₹214,380,655 · Storage Box 10L ₹196,381,989. Level 4: best October ₹180,620,103; worst July ₹40,028,093. Level 5: **+27.0%** on 2024's ₹903,015,475. Level 6: medians Wholesale ₹25,762.50 · Retail ₹19,425.00 · Hospitality ₹19,121.88; 90th percentile of all 2025 orders ₹49,550.00. Level 7: about 0.4% of the year between them. Bonus: the three-month rolling average peaks in November 2025.
+
+---
+
+## Where this leads
+
+- **Chapter 19, Spreadsheet Automation:** when the work must stay inside Excel or Google Sheets.
+- **Chapter 20, Automating Reports & Delivering Insights:** scheduling this script, HTML email, alerts, failure handling, and handover.
+- **Chapter 21 and 22:** statistics with pandas and simulations.
+- **Chapter 26, Git:** versioning scripts, and keeping `.env` out of the repository.
+- **Chapter 30, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool.
+- **Part 4:** scikit-learn and modelling, all of which start from a DataFrame.
+- **Interview preparation:** the Python & pandas Question Bank (Chapter 72) covers `groupby`, `merge`, reshaping, and "make this faster".

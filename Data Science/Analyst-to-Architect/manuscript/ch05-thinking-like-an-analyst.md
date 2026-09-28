@@ -140,6 +140,7 @@ Some hypotheses can't be tested with the data you have. H5 needs March in earlie
 Every analysis in this book follows the loop in Figure 5.2, whether the test is a pivot table, a SQL query, or a machine learning model.
 
 ---
+
 ## 5.4 Breaking problems down: issue trees and MECE
 
 A list of six hypotheses is a start. But lists get long, overlap, and miss things. An **issue tree** organizes a question into branches, each branch into smaller branches, until every leaf is small enough to check with one piece of data.
@@ -313,7 +314,8 @@ Three principles sit behind the table:
 > **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank) have practice cases with model answers.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -370,18 +372,16 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Tools
+## Project: an issue tree for a real question
+
+**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
+
+### Tools you'll need
 
 - **Pen and paper, or a whiteboard.** Issue trees are fastest by hand. Draw the first version in five minutes; tidy it later.
 - **A spreadsheet or document** for the hypothesis log: one row per hypothesis, with the data needed, the result, and the status (supported, rejected, open).
 - **A diagram tool** (optional): diagrams.net, PowerPoint, or Google Slides for sharing a tree.
 - **SQL and spreadsheets** for the tests, from Chapter 10 onward. This chapter's numbers came from short queries on the Riverstone databases.
-
----
-
-## The project: an issue tree for a real question
-
-**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
 
 **Step 1. Choose a question** from your work, a local business, or your Chapter 4 project: turn one checked claim into an analyst's question. *"Sales up 40% in three years"* becomes *"Did the company's revenue grow faster than its market over those three years, and where did the growth come from?"*
 
@@ -410,20 +410,6 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## You've got it when…
-
-- [ ] I ask what an analysis is for before I start it.
-- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
-- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
-- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
-- [ ] I label statements as fact, opinion, or assumption.
-- [ ] I check claims for reverse causation, common causes, selection, and chance.
-- [ ] I can name the common biases and the habit that counters each one.
-- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
-- [ ] I've built an issue tree for a real question, with the data for every branch.
-
----
-
 ## Recap
 
 - Questions are **descriptive, diagnostic, predictive, or prescriptive**. Most requests are diagnostic or prescriptive underneath.
@@ -439,7 +425,29 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Practice exercises
+## Key terms
+
+descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I ask what an analysis is for before I start it.
+- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
+- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
+- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
+- [ ] I label statements as fact, opinion, or assumption.
+- [ ] I check claims for reverse causation, common causes, selection, and chance.
+- [ ] I can name the common biases and the habit that counters each one.
+- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
+- [ ] I've built an issue tree for a real question, with the data for every branch.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -470,29 +478,7 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Key terms
-
-descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
-- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
-- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
-- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
-- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
-- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
-- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Descriptive. (b) Prescriptive. (c) Diagnostic. (d) Predictive. (e) Descriptive.
 
@@ -533,3 +519,17 @@ The first split (not yet due / overdue / paid but unrecorded) is MECE for the mo
 **14.** Don't cherry-pick; it risks your credibility and the manager's. Offer a fair picture instead: *"I'll look at Furniture's revenue, margin, and trend. If it supports cutting the range, that's a stronger case; if not, better you hear it from me than from the board."* Chapter 24 covers handling this kind of pressure.
 
 **15.** (1) **Are its numbers right?** Check the metric, definition, and figures against the database. (2) **Is it presenting hypotheses as facts?** Order tables can't tell you *why* customers behaved as they did. (3) **What has it left out?** Compare with your own issue tree: timing, mix, and the limits of the data. Chapter 26 covers working with AI assistants.
+
+---
+
+## Where this leads
+
+- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
+- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
+- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
+- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
+- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
+- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
+- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.

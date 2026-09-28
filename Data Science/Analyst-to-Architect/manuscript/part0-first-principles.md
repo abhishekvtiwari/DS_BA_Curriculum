@@ -15,7 +15,7 @@ Before Chapter 1, read **How to Use This Book** at the front: it shows how each 
 | **5. Thinking Like an Analyst** | turn vague requests into precise questions; build issue trees; test hypotheses; spot bias; decide with data | 3–4 hours |
 | **6. Planning Your Learning** | estimate your hours honestly; set a weekly rhythm; know which chapter brings each tool; read documentation; learn with AI assistants; plan your first 90 days | 2–3 hours |
 
-In total, allow 18–24 hours, including the exercises and projects. After Part 0, Part I (Chapters 7–9) shows the map of data careers, and Part II (Chapters 10–27) builds the analyst's toolkit.
+In total, allow 18–24 hours, including the exercises and projects. After Part 0, Part 1 (Chapters 7–9) shows the map of data careers, and Part 2 (Chapters 10–27) builds the analyst's toolkit.
 
 
 # Chapter 1. What Is Data?
@@ -370,7 +370,7 @@ Nothing in that table looks dramatic. Each problem is one small slip by a busy p
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -409,19 +409,17 @@ Look at what Anita received: a number she can use, the reason it differs from th
 
 ---
 
-## Tools
+## Project: a week of your own spending
+
+**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise in this chapter. Sketching a table by hand is still one of the best ways to think about data.
 - **Excel or Google Sheets** (optional). Chapter 10 teaches both from the beginning. If you already have either, use it for the project; Google Sheets is free with a Google account.
 - **Your phone.** It's full of data about you: steps, screen time, photos, payments. It's the most convenient practice dataset you own.
 
 Each tool is installed in the chapter that first uses it; Chapter 6 shows when.
-
----
-
-## The project: a week of your own spending
-
-**Goal:** collect a real dataset, describe it the way a data professional would, and turn it into one piece of insight about your own life.
 
 **Step 1. Collect.** For seven days, record every payment you make: cash, card, and UPI. Write one row per payment with these columns:
 
@@ -474,20 +472,6 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
-- [ ] I can turn a receipt, register, or form into a table and state its grain.
-- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
-- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
-- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
-- [ ] I can tell structured, semi-structured, and unstructured data apart.
-- [ ] I can write a data dictionary for a small table.
-- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
-- [ ] I've logged a week of my own spending and turned it into one insight.
-
----
-
 ## Recap
 
 - **Data** is a recorded observation. **Information** is data organized to answer a question. **Knowledge** explains why. **Insight** points to an action. Analysts earn their value by climbing that ladder.
@@ -503,7 +487,29 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Practice exercises
+## Key terms
+
+data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain the difference between data, information, knowledge, and insight with an example from my own life or work.
+- [ ] I can turn a receipt, register, or form into a table and state its grain.
+- [ ] I name a column's type before I use it, and I treat codes and phone numbers as text.
+- [ ] I can say whether a column is qualitative or quantitative, and which level of measurement it is.
+- [ ] I don't average ratings or codes without thinking, and I don't say "twice as hot".
+- [ ] I can tell structured, semi-structured, and unstructured data apart.
+- [ ] I can write a data dictionary for a small table.
+- [ ] I check a small dataset against the six quality dimensions before trusting a number from it.
+- [ ] I've logged a week of my own spending and turned it into one insight.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -547,30 +553,7 @@ For Kavya's three days: she spent ₹1,779 in total, about ₹593 a day. Transpo
 
 ---
 
-## Key terms
-
-data · datum · information · knowledge · insight · DIKW · table · row / record · column / field / variable / attribute · value · dataset · grain · data type · number · text / string · date and time · Boolean · identifier · ISO 8601 date · missing value / NULL · quantitative · qualitative / categorical · discrete · continuous · levels of measurement · nominal · ordinal · interval · ratio · mode · median · mean · structured data · semi-structured data · JSON · unstructured data · flattening · metadata · data dictionary · primary data · secondary data · first-party data · third-party data · personal data · data quality · accuracy · completeness · consistency · validity · uniqueness · timeliness · fit for use
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
-- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
-- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
-- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
-- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
-- **Chapter 18** flattens semi-structured data such as JSON into tables.
-- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
-- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
-- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Yes: it's recorded information about trains and times. (b) No, not until it's recorded, for example as an audio file or written music. (c) Yes: a recorded count. (d) No, until you write it in a to-do list or set a reminder; then it's a recorded note. (e) Yes: it's recorded, even though it's handwritten and unstructured, which makes it harder to use.
 
@@ -613,6 +596,21 @@ The last row is the kind of detail that prevents arguments later: a blank `minut
 **12.** Good questions include: *"Bad for what decision? What were you trying to do when the data let you down?"* (fit for use), *"Which fields matter most: names, contact details, cities, or something else?"* (scope), and *"Who enters and updates customer data today, and how?"* (the source, because fixing the data without fixing how it's captured means it will be bad again in six months).
 
 **13.** The blank could mean *no discount was given*, *a discount was given but not recorded*, or *the discount wasn't decided yet* (for example, pending approval). The treatment should be decided by the people who own the rule: usually finance, together with sales. The analyst's job is to raise the question, document the answer in the data dictionary, and apply it consistently in every report.
+
+---
+
+## Where this leads
+
+- **Chapter 2, How Computers Store, Move and Protect Data,** shows where data lives: files and formats (CSV, Excel, JSON, Parquet), databases, the cloud, and APIs.
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order from enquiry to cash, and shows every system that records data along the way.
+- **Chapter 4, Numbers Without Fear,** builds the everyday math for working with quantitative data: percentages, growth, and averages.
+- **Chapters 10 and 12** put this chapter's ideas into tools: data types and tables in spreadsheets, including how to check what a cell really contains, then in databases, including how getting the grain wrong makes totals double-count.
+- **Chapter 14, Data Cleaning & Preparation,** fixes the quality problems from section 1.10 at scale, and **Chapter 47** shows how data teams catch them automatically before a report goes out.
+- **Chapter 15** matches each kind of data to the chart that fits it, and **Chapter 21, Descriptive Statistics & Probability,** explains which averages suit each level of measurement.
+- **Chapter 18** flattens semi-structured data such as JSON into tables.
+- **Chapter 24** shows how to write the "so what" that turns a number into a decision.
+- **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
+- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
 
 
 # Chapter 2. How Computers Store, Move and Protect Data
@@ -1131,7 +1129,7 @@ Some data is about **people**: names, phone numbers, addresses, ID numbers, heal
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1170,18 +1168,16 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Tools
+## Project: one dataset, five formats
+
+**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
+
+### Tools you'll need
 
 - **A plain-text editor.** Notepad (Windows), TextEdit in plain-text mode (Mac), or a free code editor such as Visual Studio Code. Opening a CSV or JSON file in a text editor shows you what's really inside, without a spreadsheet's guesses.
 - **Excel or Google Sheets**, for the project. Learn the *import* routes (*Data → From Text/CSV* in Excel; *File → Import* in Google Sheets), not just double-clicking.
 - **A password manager and an authenticator app.** Set them up for your own accounts this week.
 - **The companion files** (Appendix E): `orders_feb_2026` in five formats, for the project.
-
----
-
-## The project: one dataset, five formats
-
-**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
 
 **Option A:** use the companion files `orders_feb_2026.csv`, `.xlsx`, `.json`, and `.xml`.
 **Option B:** use your spending log from Chapter 1's project, and create the formats yourself: save it from your spreadsheet as `.xlsx` and as CSV (UTF-8), then type a JSON version of the first three rows by hand in a text editor, using section 2.5 as your model.
@@ -1204,21 +1200,6 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain bits, bytes, and why `₹` takes more space than `R`.
-- [ ] I can convert between KB, MB, GB, and TB, and between Mbps and MB/s, and I know why a 1 TB drive shows 931 GB.
-- [ ] I know the difference between memory and storage, and what "saved" means for my work.
-- [ ] I name files so they sort by date and never need the word "final".
-- [ ] I can say which format I'd use for a person, an app, or a large dataset, and why.
-- [ ] I import CSV files instead of double-clicking them when codes or IDs are involved.
-- [ ] I can explain a server, the cloud, and an API to a non-technical colleague.
-- [ ] I can read an API response and tell from its status code whether the problem is mine or the server's.
-- [ ] My own accounts use unique passwords from a password manager, with MFA.
-- [ ] I can explain the 3-2-1 rule and why syncing isn't a backup.
-
----
-
 ## Recap
 
 - Computers store everything as **bits** (0s and 1s), grouped into **bytes**. Text is stored through an **encoding** such as **UTF-8**; the wrong encoding produces garbled characters. Decimals are usually stored approximately, which is why money needs exact types.
@@ -1233,7 +1214,30 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Practice exercises
+## Key terms
+
+bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain bits, bytes, and why `₹` takes more space than `R`.
+- [ ] I can convert between KB, MB, GB, and TB, and between Mbps and MB/s, and I know why a 1 TB drive shows 931 GB.
+- [ ] I know the difference between memory and storage, and what "saved" means for my work.
+- [ ] I name files so they sort by date and never need the word "final".
+- [ ] I can say which format I'd use for a person, an app, or a large dataset, and why.
+- [ ] I import CSV files instead of double-clicking them when codes or IDs are involved.
+- [ ] I can explain a server, the cloud, and an API to a non-technical colleague.
+- [ ] I can read an API response and tell from its status code whether the problem is mine or the server's.
+- [ ] My own accounts use unique passwords from a password manager, with MFA.
+- [ ] I can explain the 3-2-1 rule and why syncing isn't a backup.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -1265,29 +1269,7 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Key terms
-
-bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
-- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
-- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
-- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
-- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
-- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
-- **Chapter 26** uses Git to keep versions of queries and code.
-- **Part V (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
-- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Counting in steps of 1,024 instead, as Windows does, the answers would be 3,584, about 244, and 2,048. Either is acceptable if you say which you used.)
 
@@ -1319,6 +1301,20 @@ bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (
 **14.** *Own server:* direct physical control of where the data is; can work on the office network even when the internet is down. *Cloud:* no hardware to buy or maintain, with backups, updates, and failover handled by the provider; easy to scale up as data grows, and reachable securely from anywhere. Useful questions include: *"What happens if our office server fails at 2 a.m., and who fixes it?"*, *"Are there rules about which country our customer data must stay in?"*, and *"What would the cloud cost each month at our size, compared with buying and running our own server?"*
 
 **15.** Check the **sender's real email address**, not just the display name; check whether the attachment is really a PDF, with extensions visible, because `Payment_Details.pdf.exe` is a program; notice the **pressure** ("urgent", "today", "cancelled"), a classic phishing sign; and **confirm by phone**, using a number you already have rather than one in the email, before opening the attachment or acting on it. If in doubt, report it to IT without opening it.
+
+---
+
+## Where this leads
+
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
+- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
+- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
+- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
+- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
+- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
+- **Chapter 26** uses Git to keep versions of queries and code.
+- **Part 5 (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
+- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
 
 
 # Chapter 3. How a Business Runs on Data
@@ -1672,7 +1668,7 @@ Anita approving a 12% discount is a judgment, and it should stay with a person; 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1724,18 +1720,16 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 
 ---
 
-## Tools
+## Project: map the data flow of one process
+
+**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise, and the best way to draw your first process map.
 - **A spreadsheet** (Excel or Google Sheets, optional). Useful for the project's step table and time estimates. Chapter 10 teaches both from the beginning.
 - **A diagram tool** (optional). diagrams.net (also called draw.io) is free and runs in a browser; PowerPoint, Google Slides, and Google Drawings work too. Boxes and arrows are all you need.
 - **The Riverstone mini database.** Not needed yet; Chapter 12 installs it and queries the orders, invoices, and payments you followed here.
-
----
-
-## The project: map the data flow of one process
-
-**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
 
 **Step 1. Choose a process** you can observe or ask about: an expense claim, a customer return, a monthly report, or outside work, how a local shop restocks or a clinic books appointments.
 
@@ -1776,19 +1770,6 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## You've got it when…
-
-- [ ] I can name the main departments of a company and one kind of data each creates.
-- [ ] I can walk through lead to cash for one order and say what record each step leaves, and in which system.
-- [ ] I can explain what an ERP, CRM, HRMS, POS, e-commerce platform, and support desk are for.
-- [ ] I can tell a transaction from a report, and I know what a system of record is.
-- [ ] I never say "sales" without saying booked, billed, or collected, and I can reconcile the three.
-- [ ] I can write a KPI definition that two people would calculate the same way.
-- [ ] I can find re-keying, copy-paste, emailed files, manual matching, and shadow systems in a process, and estimate their cost in hours.
-- [ ] I've mapped the data flow of one real process and proposed one improvement.
-
----
-
 ## Recap
 
 - A company is a chain of departments handing work to each other. **Every handover leaves data**, and data created in one department is almost always used in another.
@@ -1803,7 +1784,28 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Practice exercises
+## Key terms
+
+department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can name the main departments of a company and one kind of data each creates.
+- [ ] I can walk through lead to cash for one order and say what record each step leaves, and in which system.
+- [ ] I can explain what an ERP, CRM, HRMS, POS, e-commerce platform, and support desk are for.
+- [ ] I can tell a transaction from a report, and I know what a system of record is.
+- [ ] I never say "sales" without saying booked, billed, or collected, and I can reconcile the three.
+- [ ] I can write a KPI definition that two people would calculate the same way.
+- [ ] I can find re-keying, copy-paste, emailed files, manual matching, and shadow systems in a process, and estimate their cost in hours.
+- [ ] I've mapped the data flow of one real process and proposed one improvement.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -1834,30 +1836,7 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Key terms
-
-department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
-- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
-- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
-- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
-- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
-- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
-- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
-- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
-- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Warehouse and dispatch. (b) Purchasing. (c) HR (payroll). (d) Customer support. (e) Sales. (f) Production. (g) Marketing.
 
@@ -1904,6 +1883,21 @@ When collections drop, you can ask which branch moved, and each branch has an ow
 **14.** The managing director, because the definition affects everyone who reads the pack (often finance proposes and management approves). Meanwhile, don't pick a winner: show **booked, billed, and collected** as labeled lines with definitions and sources, reconciled, as Meera did.
 
 **15.** People fill mandatory fields with anything that gets past the screen: "0", "NA", or a guess at turnover. The fields become full but untrustworthy, which is worse than blank (Chapter 1 lists this problem for data typed by people). Better: require only what's known at that stage (name, contact, interest), collect the rest later, use pick-lists, and offer an "unknown" option.
+
+---
+
+## Where this leads
+
+- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
+- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
+- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
+- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
+- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
+- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
+- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
+- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
+- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
 
 
 # Chapter 4. Numbers Without Fear
@@ -2124,6 +2118,7 @@ Two tempting shortcuts both get the plan wrong:
 - **Rounding down to a nice number.** 10% a year for three years reaches ₹57,70,512, which is ₹2,29,488 short. Over several years, one percentage point matters.
 
 ---
+
 ## 4.5 Averages: mean, median, mode, and weighted
 
 An **average** is one number that stands for many. There are three common kinds, and Chapter 1 (section 1.6) showed that the level of measurement decides which ones make sense. This section shows how to choose between them for amounts, like order values, where all three are allowed.
@@ -2334,7 +2329,8 @@ A good habit is to rewrite a headline number into a plain sentence with both num
 > **Interview extra point.** When a case interview gives you a growth figure or a percentage, restate it with its base and period before you use it: *"So revenue went from ₹20 lakh to ₹32 lakh over four years, which is about 12.5% a year compounded."* It shows you check numbers before trusting them, which is what interviewers for analyst roles are testing. Chapter 73 (statistics and probability) and Chapter 75 (metrics, case studies, and guesstimates) have practice questions.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -2380,16 +2376,14 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Tools
+## Project: check five statistics
+
+**Goal:** take five numbers from the real world and check each one the way Meera checked the board slide.
+
+### Tools you'll need
 
 - **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (xʸ or ^) for compound growth.
 - **A pen and a notebook.** Write each calculation out in full, with its units, so you can check it later. When spreadsheets arrive in Chapter 10, you'll redo this chapter's numbers there.
-
----
-
-## The project: check five statistics
-
-**Goal:** take five numbers from the real world and check each one the way Meera checked the board slide.
 
 **Step 1. Collect five statistics.** Find them in news articles, company annual reports or investor presentations, advertisements, or presentations at your workplace. Aim for variety: at least one growth figure, one percentage or share, one average, one chart, and one comparison between two groups. Copy the exact wording and note the source and date.
 
@@ -2418,23 +2412,6 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## You've got it when…
-
-- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
-- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
-- [ ] I say "percentage points" for the difference between two percentages.
-- [ ] I ask what the denominator is before comparing ratios or rates.
-- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
-- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
-- [ ] I don't average averages.
-- [ ] I round only at the end, and I don't write more digits than the data supports.
-- [ ] I check a chart's units, period, and axis before reading its bars.
-- [ ] I can work out "at least one" and conditional probabilities by counting.
-- [ ] I sanity-check numbers by estimating them another way.
-- [ ] I've checked five real statistics and rewritten each one fairly.
-
----
-
 ## Recap
 
 - **Every percentage is a percentage of something.** Ask *of what?* and *compared with what?*
@@ -2451,7 +2428,32 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Practice exercises
+## Key terms
+
+percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
+- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
+- [ ] I say "percentage points" for the difference between two percentages.
+- [ ] I ask what the denominator is before comparing ratios or rates.
+- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
+- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
+- [ ] I don't average averages.
+- [ ] I round only at the end, and I don't write more digits than the data supports.
+- [ ] I check a chart's units, period, and axis before reading its bars.
+- [ ] I can work out "at least one" and conditional probabilities by counting.
+- [ ] I sanity-check numbers by estimating them another way.
+- [ ] I've checked five real statistics and rewritten each one fairly.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -2482,28 +2484,7 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Key terms
-
-percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
-- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
-- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
-- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
-- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
-- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) 0.05 × ₹14,550 = **₹727.50**. (b) ₹26,220 ÷ ₹58,020 = 0.452, so **45.2%**. (c) ₹780 × 0.92 = **₹717.60**.
 
@@ -2534,6 +2515,19 @@ percentage · percent of · share / proportion · percent change · reverse perc
 **14.** A cumulative line rises whenever a month's revenue is positive, so a month that fell sharply (like December 2025, down 30.6%) still shows as the line going up, only less steeply. Put a monthly bar chart next to it (starting at zero), ideally with each month's target or the same month last year, so a bad month is visible as a short bar.
 
 **15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads raises the win rate without any change in selling.
+
+---
+
+## Where this leads
+
+- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
+- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
+- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
+- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
+- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
+- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
 
 
 # Chapter 5. Thinking Like an Analyst
@@ -2676,6 +2670,7 @@ Some hypotheses can't be tested with the data you have. H5 needs March in earlie
 Every analysis in this book follows the loop in Figure 5.2, whether the test is a pivot table, a SQL query, or a machine learning model.
 
 ---
+
 ## 5.4 Breaking problems down: issue trees and MECE
 
 A list of six hypotheses is a start. But lists get long, overlap, and miss things. An **issue tree** organizes a question into branches, each branch into smaller branches, until every leaf is small enough to check with one piece of data.
@@ -2849,7 +2844,8 @@ Three principles sit behind the table:
 > **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank) have practice cases with model answers.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -2906,18 +2902,16 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Tools
+## Project: an issue tree for a real question
+
+**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
+
+### Tools you'll need
 
 - **Pen and paper, or a whiteboard.** Issue trees are fastest by hand. Draw the first version in five minutes; tidy it later.
 - **A spreadsheet or document** for the hypothesis log: one row per hypothesis, with the data needed, the result, and the status (supported, rejected, open).
 - **A diagram tool** (optional): diagrams.net, PowerPoint, or Google Slides for sharing a tree.
 - **SQL and spreadsheets** for the tests, from Chapter 10 onward. This chapter's numbers came from short queries on the Riverstone databases.
-
----
-
-## The project: an issue tree for a real question
-
-**Goal:** take one real business question, make it precise, and build an issue tree that shows exactly which data would answer each branch.
 
 **Step 1. Choose a question** from your work, a local business, or your Chapter 4 project: turn one checked claim into an analyst's question. *"Sales up 40% in three years"* becomes *"Did the company's revenue grow faster than its market over those three years, and where did the growth come from?"*
 
@@ -2946,20 +2940,6 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## You've got it when…
-
-- [ ] I ask what an analysis is for before I start it.
-- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
-- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
-- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
-- [ ] I label statements as fact, opinion, or assumption.
-- [ ] I check claims for reverse causation, common causes, selection, and chance.
-- [ ] I can name the common biases and the habit that counters each one.
-- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
-- [ ] I've built an issue tree for a real question, with the data for every branch.
-
----
-
 ## Recap
 
 - Questions are **descriptive, diagnostic, predictive, or prescriptive**. Most requests are diagnostic or prescriptive underneath.
@@ -2975,7 +2955,29 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Practice exercises
+## Key terms
+
+descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I ask what an analysis is for before I start it.
+- [ ] I can turn a vague request into a precise question with a metric, period, comparison, scope, and decision.
+- [ ] I write hypotheses before looking at the data, and each one could be proved wrong.
+- [ ] I can build an issue tree with MECE branches, and I know four reliable ways to split.
+- [ ] I label statements as fact, opinion, or assumption.
+- [ ] I check claims for reverse causation, common causes, selection, and chance.
+- [ ] I can name the common biases and the habit that counters each one.
+- [ ] I can structure a decision with options, criteria, evidence, reversibility, confidence, and what would change my mind.
+- [ ] I've built an issue tree for a real question, with the data for every branch.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -3006,29 +3008,7 @@ The request was a solution ("hire"). Meera turned it into a question about a cau
 
 ---
 
-## Key terms
-
-descriptive question · diagnostic question · predictive question · prescriptive question · habit questions · precise question · hypothesis · testable · falsifiable · issue tree · MECE · mutually exclusive · collectively exhaustive · decomposition (count × size) · fact · opinion · assumption · claim · correlation · causation · reverse causation · common cause · selection · chance · cognitive bias · confirmation bias · anchoring · regression to the mean · survivorship bias · availability bias · recency · small-numbers bias · decision rights · reversibility · confidence · "what would change my mind"
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
-- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
-- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
-- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
-- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
-- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
-- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Descriptive. (b) Prescriptive. (c) Diagnostic. (d) Predictive. (e) Descriptive.
 
@@ -3069,6 +3049,20 @@ The first split (not yet due / overdue / paid but unrecorded) is MECE for the mo
 **14.** Don't cherry-pick; it risks your credibility and the manager's. Offer a fair picture instead: *"I'll look at Furniture's revenue, margin, and trend. If it supports cutting the range, that's a stronger case; if not, better you hear it from me than from the board."* Chapter 24 covers handling this kind of pressure.
 
 **15.** (1) **Are its numbers right?** Check the metric, definition, and figures against the database. (2) **Is it presenting hypotheses as facts?** Order tables can't tell you *why* customers behaved as they did. (3) **What has it left out?** Compare with your own issue tree: timing, mix, and the limits of the data. Chapter 26 covers working with AI assistants.
+
+---
+
+## Where this leads
+
+- **Chapter 6, Planning Your Learning,** turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses.
+- **Chapters 10–13** give you the tests: spreadsheets and SQL to count, compare, and break down numbers the way section 5.4 did.
+- **Chapter 14, Data Cleaning & Preparation,** handles the "is the data even right?" branch that every issue tree should include.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows whether a pattern like "3 of 8 versus 3 of 14" is bigger than chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds full KPI trees for Riverstone and diagnoses a revenue dip with more careful breakdowns.
+- **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
+- **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
+- **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
+- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
 
 
 # Chapter 6. Planning Your Learning
@@ -3116,21 +3110,21 @@ Every chapter's *Time needed* line estimates its **study hours**: the reading, t
 
 | | Hours | 6 hours a week | 8 hours a week | 10 hours a week |
 |---|---|---|---|---|
-| Parts 0 and I (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
-| Part II (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
-| **Job-ready: Parts 0 to II (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
-| Parts III to VII (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
+| Parts 0 and 1 (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
+| Part 2 (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
+| **Job-ready: Parts 0 to 2 (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
+| Parts 3 to 7 (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
 | **All of it (<span class="nobr">Chapters 1–67</span>)** | **<span class="nobr">762–978</span>** | **2.4 to 3.1 years** | **1.8 to 2.4 years** | **1.5 to 1.9 years** |
 
 These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9).
 
-**Read the bold job-ready row first.** Parts 0 to II, the **job-ready path**, are what a first analyst job asks for. Parts III to VII are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
+**Read the bold job-ready row first.** Parts 0 to 2, the **job-ready path**, are what a first analyst job asks for. Parts 3 to 7 are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
 
 **To turn the table into your own plan, divide.** Weeks = hours ÷ your hours a week. At 6 hours a week, the job-ready path is 317 ÷ 6 = 52.8, about 53 weeks, at the low end and 394 ÷ 6 = 65.7, about 66 weeks, at the high end: a year to fifteen months. Months are weeks × 12 ÷ 52, so 53 weeks is about 12 months and 66 weeks is about 15. The same arithmetic works for any number of hours; use the hours you really have, not the hours you wish you had.
 
 That's longer than many courses promise, and it's honest. A plan built on the real number survives a bad month; a plan built on a hopeful one fails in week three and takes your confidence with it.
 
-**One more thing about Parts 0 and I.** Each of their nine chapters has a project, and together they're more than a month's work if you do them all at once. Do three of them properly as you go: Chapter 1's spending log (it runs for a week while you read on), this chapter's plan, and Chapter 8's door plan. Start Chapter 9's learning system and carry it alongside the book for its twelve weeks. Come back to the others (Chapters 2, 3, 4, 5, and 7) in a review week. Their hours are already in the table, so doing them later doesn't change your total.
+**One more thing about Parts 0 and 1.** Each of their nine chapters has a project, and together they're more than a month's work if you do them all at once. Do three of them properly as you go: Chapter 1's spending log (it runs for a week while you read on), this chapter's plan, and Chapter 8's door plan. Start Chapter 9's learning system and carry it alongside the book for its twelve weeks. Come back to the others (Chapters 2, 3, 4, 5, and 7) in a review week. Their hours are already in the table, so doing them later doesn't change your total.
 
 ---
 
@@ -3158,7 +3152,7 @@ You will miss weeks. Everyone does. When it happens, don't try to catch up by do
 
 ### The computer
 
-You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to II runs comfortably on an ordinary laptop from the last five or six years: Windows 10 or 11, or a recent macOS; **8 GB of memory (RAM)** to start, 16 GB to be comfortable; 20 GB of free disk space, 50 GB or more to be comfortable; and an internet connection good enough to download software. A second monitor helps, so the book or the documentation sits next to your work, but a laptop screen is enough.
+You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to 2 runs comfortably on an ordinary laptop from the last five or six years: Windows 10 or 11, or a recent macOS; **8 GB of memory (RAM)** to start, 16 GB to be comfortable; 20 GB of free disk space, 50 GB or more to be comfortable; and an internet connection good enough to download software. A second monitor helps, so the book or the documentation sits next to your work, but a laptop screen is enough.
 
 Three situations need a little planning:
 
@@ -3225,7 +3219,7 @@ AI assistants can explain a concept five different ways, spot the typo in a quer
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -3265,19 +3259,17 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Tools
+## Project: plan your route and your first 90 days
+
+**Goal:** a study plan you can keep, built from arithmetic, not hope.
+
+### Tools you'll need
 
 - **A notebook or a notes app** for your plan (`notes/plan.md`) and your study log. A plain text file is enough.
 - **A calendar**, paper or on your phone, for your study sessions as named appointments.
 - **Each chapter's *Time needed* line**, which is where the hours in section 6.1 come from.
 
----
-
-## The project: plan your route and your first 90 days
-
-**Goal:** a study plan you can keep, built from arithmetic, not hope.
-
-**Step 1. Count your hours.** Write down the hours you really studied, or could have studied, last week. Using section 6.1's table, work out how many weeks the job-ready path takes at that pace, and the month you expect to finish Part II. Show your division.
+**Step 1. Count your hours.** Write down the hours you really studied, or could have studied, last week. Using section 6.1's table, work out how many weeks the job-ready path takes at that pace, and the month you expect to finish Part 2. Show your division.
 
 **Step 2. Put your rhythm in a calendar.** Adapt Figure 6.1 to your hours and your days, and put each session in your calendar as a named appointment for the next four weeks.
 
@@ -3303,7 +3295,28 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## You've got it when…
+## Recap
+
+- **The book's hours are known.** Parts 0 to 2, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
+- **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
+- **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
+- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
+- **Each tool arrives in the chapter that first uses it:** a spreadsheet in Chapter 10, the databases in 12, Power BI in 16, Python in 17, and Git in 26. Nothing needs installing before then.
+- **Official sources settle disagreements.** Go in with a question and find the exact rule, every word, an example, the exceptions, and the date or version.
+- **AI assistants are tutors, not substitutes:** try first, ask why, check against sources, never paste data you don't own, and explain it back.
+- **Attempt every exercise before reading its answer**, and redo the ones you missed.
+
+---
+
+## Key terms
+
+study hours · job-ready path · weekly rhythm · review from memory · study log · study plan · RAM (memory) · tool timeline · official documentation · AI assistant
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I know how many hours the job-ready path takes, and how many weeks that is at my real weekly hours.
 - [ ] My finish date comes from arithmetic, not hope.
@@ -3317,20 +3330,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Recap
-
-- **The book's hours are known.** Parts 0 to II, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
-- **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
-- **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
-- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
-- **Each tool arrives in the chapter that first uses it:** a spreadsheet in Chapter 10, the databases in 12, Power BI in 16, Python in 17, and Git in 26. Nothing needs installing before then.
-- **Official sources settle disagreements.** Go in with a question and find the exact rule, every word, an example, the exceptions, and the date or version.
-- **AI assistants are tutors, not substitutes:** try first, ask why, check against sources, never paste data you don't own, and explain it back.
-- **Attempt every exercise before reading its answer**, and redo the ones you missed.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -3342,7 +3342,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 4. You can study 5 hours a week. Adapt Figure 6.1's weekly rhythm to 5 hours, keeping reading, exercises, review, and project work. Then use section 6.1's table to estimate how long the job-ready path would take at that pace.
 5. Your company uses a customer list with names, phone numbers, and outstanding balances. You want an AI assistant's help writing a formula that flags overdue customers. Describe how you'd get the help without sharing the real data.
-6. Using the table in section 6.1 and the hours you really studied last week, write the month you expect to finish Part II. Show your division.
+6. Using the table in section 6.1 and the hours you really studied last week, write the month you expect to finish Part 2. Show your division.
 7. Find the official page for one rule that affects you (your phone plan's data limit, a bank fee) and write down the exact rule, one example, one exception, and the date or version.
 
 ### Stretch
@@ -3358,28 +3358,9 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Key terms
+## Answers
 
-study hours · job-ready path · weekly rhythm · review from memory · study log · study plan · RAM (memory) · tool timeline · official documentation · AI assistant
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're planning for lead, and which roles use which tools.
-- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.2 (practice, review from memory, and feedback), and why chapter hours are not fluency hours.
-- **The chapters that bring each tool:** Chapter 10 (a spreadsheet), Chapter 12 (the databases and DBeaver), Chapter 16 (Power BI Desktop), Chapter 17 (Python, VS Code, and Jupyter), and Chapter 26 (Git, and AI assistants in a professional setting). Each starts by installing its tool.
-- **Chapter 83, The Long Game,** returns to the same hours at the end of the book, and to the pace that survives a bad month.
-- **Appendix B** gathers every install step in one place.
-- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.
-
----
-
-## Answers to practice exercises
-
-**1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and I, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and I straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
+**1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and 1, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and 1 straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
 
 **2.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my 90-day plan and my available hours. What's unrealistic about it?"*
 
@@ -3389,7 +3370,7 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 
 **5.** Describe the structure, not the data: *"I have a table with a customer name column, a due date column, and a balance column. How do I flag rows where the due date is before today and the balance is above zero?"* Or build a small made-up sample (three fake customers with invented numbers) and share that. Test the formula on the fake data, then apply it to the real file on your own computer. If your company has approved an AI tool for internal data, follow its rules instead.
 
-**6.** Answers vary. A worked example: last week you studied 5 hours, and you've finished Chapters 1 to 6. What's left is Chapters 7 to 9 (9–13 hours, from their *Time needed* lines) plus Part II (290–357 hours): 299–370 hours. 299 ÷ 5 = 59.8, about 60 weeks; 370 ÷ 5 = 74 weeks. In months, 60 × 12 ÷ 52 = 13.8 and 74 × 12 ÷ 52 = 17.1: about 14 to 17 months. If you start Chapter 7 in October, you'd finish Part II between December of the following year and March of the year after. A good answer shows the division and gives a range, not a single hopeful date.
+**6.** Answers vary. A worked example: last week you studied 5 hours, and you've finished Chapters 1 to 6. What's left is Chapters 7 to 9 (9–13 hours, from their *Time needed* lines) plus Part 2 (290–357 hours): 299–370 hours. 299 ÷ 5 = 59.8, about 60 weeks; 370 ÷ 5 = 74 weeks. In months, 60 × 12 ÷ 52 = 13.8 and 74 × 12 ÷ 52 = 17.1: about 14 to 17 months. If you start Chapter 7 in October, you'd finish Part 2 between December of the following year and March of the year after. A good answer shows the division and gives a range, not a single hopeful date.
 
 **7.** Answers vary. A complete answer names the rule exactly as the page does (for example, "Daily data: 2 GB"), gives one example worked from the page (what happens on a day you use 2.5 GB), quotes one exception or piece of small print (for example, that unused data doesn't carry forward, or that roaming is charged separately), and records the page's "last updated" date or the plan's name and version.
 
@@ -3402,3 +3383,14 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 **11.** Reading answers you haven't attempted feels like learning because the answers make sense, but it doesn't build the skill of producing them. The exercises are where most of the learning happens, especially the core group. Suggest a compromise: attempt every warm-up and core exercise, even partially, before reading its answer, and redo the missed ones at the end of the week.
 
 **12.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for an app you use, or for a first version of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.
+
+---
+
+## Where this leads
+
+- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're planning for lead, and which roles use which tools.
+- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.2 (practice, review from memory, and feedback), and why chapter hours are not fluency hours.
+- **The chapters that bring each tool:** Chapter 10 (a spreadsheet), Chapter 12 (the databases and DBeaver), Chapter 16 (Power BI Desktop), Chapter 17 (Python, VS Code, and Jupyter), and Chapter 26 (Git, and AI assistants in a professional setting). Each starts by installing its tool.
+- **Chapter 83, The Long Game,** returns to the same hours at the end of the book, and to the pace that survives a bad month.
+- **Appendix B** gathers every install step in one place.
+- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.

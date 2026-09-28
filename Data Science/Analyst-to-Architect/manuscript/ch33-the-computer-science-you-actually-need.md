@@ -1,6 +1,6 @@
 # Chapter 33. The Computer Science You Actually Need
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -338,6 +338,7 @@ cycle in the broken data: True
 ```
 
 ---
+
 ## 33.5 Searching and sorting
 
 ### Linear and binary search
@@ -697,7 +698,8 @@ Analytics engineering and data engineering interviews include a coding round, us
 Chapter 72's Python and pandas bank has the questions themselves, and Chapter 69 covers how to talk through a problem under pressure.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -743,7 +745,11 @@ Notice the order she worked in: measure, find the real cost, fix the structure, 
 
 ---
 
-## Tools
+## Project: make the matching script fast, and prove it
+
+**Goal:** take a working but slow script, make it fast by changing structures rather than cleverness, and measure every step.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -753,12 +759,6 @@ Versions used for this chapter, checked in September 2026:
 - **Companion files** in `ch33/`: `generate_ch33_data.py` (176,110 order lines and 20,000 invoice lines, seed 33), `match_slow.py` and `match_fast.py` (the project's before and after), and `ch33_timings.py`, which reproduces every timing in the chapter.
 
 > **Tool note: profile before you optimize.** `python3 -m cProfile -s cumtime script.py | head -20` names the functions where the time actually goes. Analysts routinely discover that 90% of a "slow algorithm" is CSV parsing, date conversion, or a database round trip in a loop. The algorithm is what's left after the measurement, not before it.
-
----
-
-## The project: make the matching script fast, and prove it
-
-**Goal:** take a working but slow script, make it fast by changing structures rather than cleverness, and measure every step.
 
 **Option A: your own slow script.** Anything that loops over rows and looks something up. Time it before you touch it.
 
@@ -786,22 +786,6 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can name the complexity of a loop I wrote, and say what happens when the data doubles.
-- [ ] I reach for a dictionary or a set the moment I see a lookup inside a loop.
-- [ ] I can say why `x in a_set` is instant and `x in a_list` isn't.
-- [ ] I use `deque` for queues and know why `pop(0)` is a trap.
-- [ ] I can walk a tree depth-first and breadth-first, and guard against cycles.
-- [ ] I know what `sorted(key=...)` costs and when sorting first makes everything easier.
-- [ ] I can write a recursive function with a base case, and say when a loop would be clearer.
-- [ ] I can explain a hash table, and connect it to a database hash join.
-- [ ] I recognize memoization, dynamic programming, and greedy, and know greedy needs checking.
-- [ ] I think about memory as well as time, and use generators for big files.
-- [ ] I measure before optimizing, and state complexity out loud in interviews.
-
----
-
 ## Recap
 
 - **Big-O** describes how work grows: O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ). It's a shape, not a stopwatch, and quadratic is the shape that kills scripts.
@@ -817,7 +801,31 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+algorithm · complexity · Big-O · constant time · logarithmic time · linear time · linearithmic · quadratic · exponential · data structure · list · dictionary · set · tuple · immutability · index (in-memory) · hash function · hash table · bucket · collision · hash join · stack · queue · `deque` · last in first out · first in first out · tree · graph · node · edge · depth-first search · breadth-first search · cycle detection · linear search · binary search · `bisect` · sorting · Timsort · stable sort · sort key · heap · `heapq` · recursion · base case · recursive case · call stack · recursion limit · memoization · `lru_cache` · dynamic programming · subproblem · greedy algorithm · generator · lazy evaluation · profiling · `cProfile` · `timeit` · `tracemalloc` · vectorization
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can name the complexity of a loop I wrote, and say what happens when the data doubles.
+- [ ] I reach for a dictionary or a set the moment I see a lookup inside a loop.
+- [ ] I can say why `x in a_set` is instant and `x in a_list` isn't.
+- [ ] I use `deque` for queues and know why `pop(0)` is a trap.
+- [ ] I can walk a tree depth-first and breadth-first, and guard against cycles.
+- [ ] I know what `sorted(key=...)` costs and when sorting first makes everything easier.
+- [ ] I can write a recursive function with a base case, and say when a loop would be clearer.
+- [ ] I can explain a hash table, and connect it to a database hash join.
+- [ ] I recognize memoization, dynamic programming, and greedy, and know greedy needs checking.
+- [ ] I think about memory as well as time, and use generators for big files.
+- [ ] I measure before optimizing, and state complexity out loud in interviews.
+
+---
+
+## Exercises
 
 Work in `companion/ch33`, with the data built by `generate_ch33_data.py`. Predict each answer before running it.
 
@@ -853,25 +861,7 @@ Work in `companion/ch33`, with the data built by `generate_ch33_data.py`. Predic
 
 ---
 
-## Key terms
-
-algorithm · complexity · Big-O · constant time · logarithmic time · linear time · linearithmic · quadratic · exponential · data structure · list · dictionary · set · tuple · immutability · index (in-memory) · hash function · hash table · bucket · collision · hash join · stack · queue · `deque` · last in first out · first in first out · tree · graph · node · edge · depth-first search · breadth-first search · cycle detection · linear search · binary search · `bisect` · sorting · Timsort · stable sort · sort key · heap · `heapq` · recursion · base case · recursive case · call stack · recursion limit · memoization · `lru_cache` · dynamic programming · subproblem · greedy algorithm · generator · lazy evaluation · profiling · `cProfile` · `timeit` · `tracemalloc` · vectorization
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is the database version of this chapter: indexes are hash tables and B-trees, and a hash join is section 33.2's dictionary.
-- **Chapter 29, Python as Software, Not Scripts,** is how a fast script becomes a maintained one.
-- **Chapter 17, Python for Data Analysis,** covers the vectorized alternatives that often beat any loop you could write.
-- **Chapter 46, Pipelines & Orchestration,** and **Chapter 49, Storage, Warehouses & Lakehouses,** are where these costs meet distributed systems and cloud bills.
-- **Chapter 72, Python & pandas Question Bank,** has the coding questions; **Chapter 69** covers how to talk through them.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1224,3 +1214,13 @@ Same answers, same complexity: with the cache, each amount is solved once, which
 **17.** In order: (1) **Do it in one query.** Fetch all 5,000 customers' rows in a single statement with `WHERE customer_id IN (...)` or a join, then index the result in Python. That removes 4,999 round trips. (2) **Push the work into SQL entirely.** If the loop is computing something the database could compute, let it (Chapter 28). (3) **If the loop must stay, batch it**: 50 queries of 100 ids beat 5,000 of one. A fourth, only if the first three aren't available: cache repeated lookups. Network round trips inside loops are the single most common performance bug in analyst code, and they don't show up in a Big-O count at all.
 
 **18.** When n is small and stays small: ranking ten regions, comparing eight products, reconciling two dozen accounts. When it runs once, by hand, and finishing in a minute is fine. When the quadratic version is plainly correct and the linear one would need an index that complicates the code for a file that will never grow. The judgment is about **n and its future**, not about the notation: write the simple version, measure it on real data, and change it when the measurement says so.
+
+---
+
+## Where this leads
+
+- **Chapter 28, Advanced SQL, Performance & Data Modeling,** is the database version of this chapter: indexes are hash tables and B-trees, and a hash join is section 33.2's dictionary.
+- **Chapter 29, Python as Software, Not Scripts,** is how a fast script becomes a maintained one.
+- **Chapter 17, Python for Data Analysis,** covers the vectorized alternatives that often beat any loop you could write.
+- **Chapter 46, Pipelines & Orchestration,** and **Chapter 49, Storage, Warehouses & Lakehouses,** are where these costs meet distributed systems and cloud bills.
+- **Chapter 72, Python & pandas Question Bank,** has the coding questions; **Chapter 69** covers how to talk through them.

@@ -1,12 +1,12 @@
 # Chapter 63. Automation Architecture & Governance
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
 > **You will learn to:** design the flow from source to delivered result as one architecture instead of a pile of independent scripts · discover and prioritize automation opportunities by value, risk, and effort, with a real worked ROI comparison · choose the right tool for a given job from a full decision matrix — macro, scheduled script, BI subscription, low-code flow, orchestrated pipeline, integration platform, RPA, or an AI agent · apply a reference architecture that every automation in this book turns out to be a specialization of · decide between scheduled and event-driven designs · build the shared services every automation needs rather than reinventing them each time · assign ownership, write runbooks, and support what you've automated · find and control shadow IT before it becomes an unowned, business-critical liability · apply the controls — approvals, segregation of duties, audit trails, change management — that keep automation trustworthy at scale · retire an automation safely.
 >
-> **Before you start:** this chapter governs automations built earlier in this book: Chapter 19 (VBA and Apps Script macros), Chapter 20 (the Daily Sales Flash), Chapter 46 (Dagster orchestration, Part V), Chapter 51 (the CRM reverse-ETL sync, Part V), and Chapter 58 (the PO-intake pipeline, Part VI). You don't need to reread any of them — each is reintroduced with the one fact this chapter needs from it.
+> **Before you start:** this chapter governs automations built earlier in this book: Chapter 19 (VBA and Apps Script macros), Chapter 20 (the Daily Sales Flash), Chapter 46 (Dagster orchestration, Part 5), Chapter 51 (the CRM reverse-ETL sync, Part 5), and Chapter 58 (the PO-intake pipeline, Part 6). You don't need to reread any of them — each is reintroduced with the one fact this chapter needs from it.
 >
 > **Time needed:** 12–14 hours, spread over a week and a half.
 >
@@ -22,7 +22,7 @@ By this point in the book, Riverstone has a lot of automation: a handful of VBA 
 
 Look at all of them together, for the first time, and a different picture appears — the one Chapter 60 first surfaced when Meera drew the whole platform as a diagram and found it "genuinely alarming." Some of these automations have an owner who can explain them in one sentence. Some don't. Some were built once and never touched again. At least one, per Chapter 19's own story, ran silently wrong for years before anyone checked. Multiply Riverstone's eight or nine well-documented systems by every branch's own macro, every analyst's personal script, every one-off Apps Script project built to solve a Tuesday-afternoon problem and never revisited — and the real number of things quietly running the business is far larger than any diagram anyone has drawn.
 
-**This chapter is about that larger number.** Not building new automations — Parts II, V, and VI already taught that — but governing the ones that exist: knowing they exist, knowing who owns them, knowing what happens when they break, and having a disciplined way to decide what gets built next and what gets shut down. It's the difference between a company that has automated some things and a company that has an automation *capability* — one that scales, survives people leaving, and doesn't quietly cost more than it saves.
+**This chapter is about that larger number.** Not building new automations — Parts 2, 5, and VI already taught that — but governing the ones that exist: knowing they exist, knowing who owns them, knowing what happens when they break, and having a disciplined way to decide what gets built next and what gets shut down. It's the difference between a company that has automated some things and a company that has an automation *capability* — one that scales, survives people leaving, and doesn't quietly cost more than it saves.
 
 ---
 
@@ -42,9 +42,9 @@ The starting failure this chapter addresses isn't any single bad automation — 
 
 - **Chapter 19's branch consolidation macro** and its Apps Script sibling — spreadsheet-bound, built by an analyst, living inside one workbook.
 - **Chapter 20's Daily Sales Flash** — a scheduled Python script with its own logging and its own failure alert.
-- **Chapter 46's Dagster pipeline** (Part V) — a properly orchestrated system with dependencies, retries, and a real run history.
-- **Chapter 51's CRM reverse-ETL sync** (Part V) — a scheduled write-back with its own idempotency and reconciliation logic.
-- **Chapter 58's PO-intake pipeline** (Part VI) — an AI-assisted extraction system writing into the ERP.
+- **Chapter 46's Dagster pipeline** (Part 5) — a properly orchestrated system with dependencies, retries, and a real run history.
+- **Chapter 51's CRM reverse-ETL sync** (Part 5) — a scheduled write-back with its own idempotency and reconciliation logic.
+- **Chapter 58's PO-intake pipeline** (Part 6) — an AI-assisted extraction system writing into the ERP.
 
 Each was designed well, in its own chapter, against its own requirements. **None of them was designed with the others in mind**, because at the time each was built, "the others" mostly didn't exist yet. That's not a criticism of any individual chapter's work — it's the normal, expected way automation accumulates in any real company, and it's exactly why a dedicated architectural pass, done deliberately rather than accidentally, matters.
 
@@ -74,8 +74,8 @@ Before building anything new, an architect needs an honest answer to a harder qu
 | Branch macro consolidation (Ch 19) | ~4 min → 9 sec per run, hundreds of runs/year | Low (days) | Low — source_file column and checks catch a bad consolidation |
 | PO-intake, assisted mode (Ch 58) | ~₹198/day at 40 emails, vs. ₹600/day fully manual | Medium (weeks) | Medium — a missed confirmation delays one order, doesn't ship it wrong |
 | PO-intake, straight-through (Ch 58, rejected) | Looks like ~₹0/day labor cost, but ~₹13,380/day in hidden error cost | Medium (weeks) | HIGH — 19% silent error rate, ~₹2,000 per wrong order, discovered only after the fact |
-| Dagster ingestion pipeline (Ch 46, Part V) | Enables everything downstream; hard to price | High (months) | Medium — well-tested, but a platform-wide dependency |
-| CRM reverse-ETL sync (Ch 51, Part V) | Keeps sales data current, avoids manual re-entry | Medium (weeks) | Low — deliberately eventual consistency (Ch 61); safe to lag |
+| Dagster ingestion pipeline (Ch 46, Part 5) | Enables everything downstream; hard to price | High (months) | Medium — well-tested, but a platform-wide dependency |
+| CRM reverse-ETL sync (Ch 51, Part 5) | Keeps sales data current, avoids manual re-entry | Medium (weeks) | Low — deliberately eventual consistency (Ch 61); safe to lag |
 
 **The finding the table makes obvious, that a value-and-effort-only view would miss entirely:** PO-intake's straight-through mode has *better* raw economics than its assisted alternative on labor cost alone — that's precisely why the pilot was tempting. Its risk column is what actually decided the question, and Chapter 58's own conclusion (assisted, not straight-through) is this exact prioritization framework, run for real, landing on the answer its raw ROI number argued against.
 
@@ -93,7 +93,7 @@ Every automation in this book used one of eight tool categories, and Riverstone 
 | **Scheduled script** | Regular, self-contained jobs with clear inputs and outputs | Chapter 20's Daily Sales Flash | No orchestration, dependency tracking, or shared monitoring at scale |
 | **BI subscription / alert** | Delivering an existing report or dashboard on a schedule | Chapter 16's Power BI subscriptions | Can't transform data — only delivers what already exists |
 | **Low-code / integration flow** | Connecting SaaS tools, business-owned, no dedicated engineer | Power Automate / Zoho flows mentioned in Chapter 20 | A forty-step flow with no version control, effectively unmaintainable |
-| **Orchestrated pipeline** | Multi-step, dependency-aware, production data workloads | Chapter 46's Dagster ingestion (Part V) | Overkill — and a real operational burden — for a single weekly report |
+| **Orchestrated pipeline** | Multi-step, dependency-aware, production data workloads | Chapter 46's Dagster ingestion (Part 5) | Overkill — and a real operational burden — for a single weekly report |
 | **Integration / iPaaS platform** | Enterprise system-to-system sync, vendor-supported | Chapter 51's CRM reverse-ETL pattern | Licensing cost that dwarfs a simpler script for low volume |
 | **RPA (robotic process automation)** | A legacy system with no API, screen-based only | *Not yet used at Riverstone* — the honest gap below | Fragile: breaks on every UI change, expensive to maintain |
 | **AI agent / LLM pipeline** | Unstructured input (email, documents), judgment-shaped tasks | Chapter 58's PO-intake extraction, Chapter 55's RAG assistant | Confident, wrong answers if not paired with human confirmation and refusal logic |
@@ -230,7 +230,8 @@ Every automation eventually outlives its usefulness — the report it produces s
 The alternative — automations that nobody dares to turn off because nobody's sure what depends on them — is its own form of sprawl, arguably a more expensive one than an unowned macro, because it actively consumes maintenance effort for a benefit nobody can name. **A platform that can retire things safely is what makes it safe to build new things aggressively**: teams experiment more freely when they trust that yesterday's experiment can be cleanly removed if it doesn't pan out.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -277,19 +278,17 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: a design document for Riverstone's reporting and automation platform
+
+**Goal:** replace 40 manual reports, legacy VBA macros, Apps Script projects, and scattered scripts with one governed platform — a design document in Chapter 60's format, applied to automation specifically.
+
+### Tools you'll need
 
 - No new software this chapter — every tool named in section 63.3's decision matrix was introduced earlier in this book.
 - **Companion files (`companion/ch63/`):**
   - `automation-inventory.csv`: the full 24-automation inventory behind Figure 63.4, with type, owner, value/risk/effort scores, and status for each.
   - `center-of-excellence-charter.md`: a template for the standing group and its responsibilities, from section 63.8.
   - `runbook-template.md`: a blank runbook, expanding Chapter 20's handover note with the step-by-step failure playbook section 63.7 describes.
-
----
-
-## The project: a design document for Riverstone's reporting and automation platform
-
-**Goal:** replace 40 manual reports, legacy VBA macros, Apps Script projects, and scattered scripts with one governed platform — a design document in Chapter 60's format, applied to automation specifically.
 
 **Option A: your own workplace.** Run the section 63.8 inventory exercise for real: ask every team what they depend on weekly that isn't a known, owned system.
 
@@ -316,20 +315,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You can look at any automation and place it on the six-layer reference architecture, even if it compresses several layers into one.
-- [ ] You score value, effort, and risk separately, and let a large risk finding override an otherwise-attractive prioritization.
-- [ ] You choose a tool from the full decision matrix based on fit — API availability, structured versus judgment-based logic, who has to maintain it — not familiarity.
-- [ ] You default to scheduled automation and can name the specific cost of delay that would justify event-driven instead.
-- [ ] You build shared services once rather than letting every automation reinvent logging, alerting, and credential handling.
-- [ ] Every automation you're responsible for has a named owner, a handover note, and a runbook for its most likely failures.
-- [ ] You've run, or would know how to run, a real company-wide automation inventory — not just a review of what your own team built.
-- [ ] You scale controls (approvals, segregation of duties, audit trails, change management) to risk, not to visibility or size.
-- [ ] You can retire an automation safely, with a real checklist, rather than either never touching it again or deleting it blind.
-
----
-
 ## Recap
 
 - **Automation accumulates into an architecture whether anyone designs it that way or not** — Riverstone's real inventory spans macros, scheduled scripts, orchestrated pipelines, and AI-assisted systems, each built well individually and never designed together.
@@ -345,7 +330,29 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+automation architecture · process discovery · value/risk/effort prioritization · tool decision matrix · RPA (robotic process automation) · reference architecture · sources / ingestion / warehouse / semantic layer / delivery and activation / monitoring · scheduled automation · event-driven automation · shared services · notification service · credential vault · run log · alerting · ownership · handover note · runbook · shadow IT · automation inventory · center of excellence · approvals · segregation of duties · audit trail · change management · safe retirement
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can look at any automation and place it on the six-layer reference architecture, even if it compresses several layers into one.
+- [ ] You score value, effort, and risk separately, and let a large risk finding override an otherwise-attractive prioritization.
+- [ ] You choose a tool from the full decision matrix based on fit — API availability, structured versus judgment-based logic, who has to maintain it — not familiarity.
+- [ ] You default to scheduled automation and can name the specific cost of delay that would justify event-driven instead.
+- [ ] You build shared services once rather than letting every automation reinvent logging, alerting, and credential handling.
+- [ ] Every automation you're responsible for has a named owner, a handover note, and a runbook for its most likely failures.
+- [ ] You've run, or would know how to run, a real company-wide automation inventory — not just a review of what your own team built.
+- [ ] You scale controls (approvals, segregation of duties, audit trails, change management) to risk, not to visibility or size.
+- [ ] You can retire an automation safely, with a real checklist, rather than either never touching it again or deleting it blind.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -378,26 +385,7 @@ What made the difference:
 
 ---
 
-## Key terms
-
-automation architecture · process discovery · value/risk/effort prioritization · tool decision matrix · RPA (robotic process automation) · reference architecture · sources / ingestion / warehouse / semantic layer / delivery and activation / monitoring · scheduled automation · event-driven automation · shared services · notification service · credential vault · run log · alerting · ownership · handover note · runbook · shadow IT · automation inventory · center of excellence · approvals · segregation of duties · audit trail · change management · safe retirement
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 19 and 20:** the specific automations this chapter governs, revisited from a company-wide rather than single-automation view.
-- **Chapter 60, Designing Whole Systems:** the container diagram and shared-services band this chapter's reference architecture directly extends.
-- **Chapter 61, Distributed Systems & Trade-offs:** the scheduled-versus-event-driven choice applies PACELC directly; the reliability toolkit underlies section 63.6's shared services.
-- **Chapter 62, Data Architecture Patterns:** the duplicated-macro finding in this chapter's story is section 62.5's "no contract, no shared definition" failure mode, found in spreadsheets rather than warehouse tables.
-- **Chapter 64, Security, Privacy, Governance & Responsible AI:** the controls in section 63.9 (approvals, audit trails) are this chapter's entry point into a much fuller governance and compliance treatment.
-- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about automation governance and shadow IT — "how would you find out what's actually running in a company you just joined" is this chapter's method, asked as an interview question.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -434,3 +422,14 @@ automation architecture · process discovery · value/risk/effort prioritization
 **16.** There's no fixed headcount threshold — the right trigger is the same one Chapter 62 used for data mesh readiness: when the number of automations, or the cost of one going wrong, grows past what one or two people can hold in their heads without a formal inventory. A two-person team with three scripts genuinely doesn't need a center of excellence; the same two-person team with thirty scripts, several touching money, does — the governance investment should track the actual risk and scale, not a company's headcount alone.
 
 **17.** Show, don't mandate: build the shared service well enough that adopting it is genuinely less work than maintaining their own version — easier logging, alerting that actually pages someone reliably, credential handling that survives a password rotation without editing code. Migrate one of their existing automations onto it as a demonstration, with their cooperation, rather than requiring migration of everything at once; a team that sees their own ad-hoc pain solved by the shared version adopts the rest voluntarily, which is a far more durable outcome than a mandate that gets quietly worked around.
+
+---
+
+## Where this leads
+
+- **Chapter 19 and 20:** the specific automations this chapter governs, revisited from a company-wide rather than single-automation view.
+- **Chapter 60, Designing Whole Systems:** the container diagram and shared-services band this chapter's reference architecture directly extends.
+- **Chapter 61, Distributed Systems & Trade-offs:** the scheduled-versus-event-driven choice applies PACELC directly; the reliability toolkit underlies section 63.6's shared services.
+- **Chapter 62, Data Architecture Patterns:** the duplicated-macro finding in this chapter's story is section 62.5's "no contract, no shared definition" failure mode, found in spreadsheets rather than warehouse tables.
+- **Chapter 64, Security, Privacy, Governance & Responsible AI:** the controls in section 63.9 (approvals, audit trails) are this chapter's entry point into a much fuller governance and compliance treatment.
+- **Interview preparation:** the Architecture & Leadership Question Bank asks directly about automation governance and shadow IT — "how would you find out what's actually running in a company you just joined" is this chapter's method, asked as an interview question.

@@ -1,6 +1,6 @@
 # Chapter 14. Data Cleaning & Preparation
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -419,7 +419,7 @@ Figure 14.2 gives a decision path for each missing (or clearly wrong) value.
 3. **Quarantine**, when the value is needed for the number you report and can't be recovered. Fourteen lines have a blank quantity. Revenue can't be calculated for them, and there's no honest way to guess. Move them to a **quarantine** list with the reason, exclude them from revenue, and **report the gap**: "14 lines (₹X of list value, to be confirmed by the ERP team) are excluded."
 4. **Keep and label**, when the value isn't needed for the result. A missing sales rep doesn't stop revenue from being counted; it only means the line can't be credited to a person.
 
-> **Simplification note: imputation.** Statistical and machine-learning work sometimes **imputes** missing values: fills them with a median, a group average, or a model's prediction. It can be the right call for building a model (Part IV covers it). For business reporting, where each line is a real transaction, don't invent values. Quarantine and report instead.
+> **Simplification note: imputation.** Statistical and machine-learning work sometimes **imputes** missing values: fills them with a median, a group average, or a model's prediction. It can be the right call for building a model (Part 4 covers it). For business reporting, where each line is a real transaction, don't invent values. Quarantine and report instead.
 
 ### Missing values in each tool
 
@@ -1290,7 +1290,7 @@ Run the whole script with `python3 clean_orders_pandas.py`; it prints the same 3
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1373,7 +1373,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: clean Riverstone's operations export and write a data-quality report
+
+**Goal:** turn a messy export into a trusted, repeatable clean table, and write a one-page report that a manager can act on.
+
+### Tools you'll need
 
 - **PostgreSQL 16** and **MySQL 8.0** (tested on 16.15 and 8.0.46), with DBeaver or MySQL Workbench. The `pg_trgm` extension ships with PostgreSQL (`CREATE EXTENSION pg_trgm;`).
 - **Excel for Windows** (Microsoft 365) with Power Query; Power Query on Mac has fewer features. **Google Sheets** for smaller files.
@@ -1387,12 +1391,6 @@ What made the difference:
   - `companion/ch14/answer_key.json` and `clean_truth_orders_q4_2025.csv`: every planted problem and the correct clean table, for checking your work.
   - `companion/ch14/build_ch14_files.py`: rebuilds the exports from the full dataset (seed 20251014).
   - `checks/ch14_compare_clean.py`: compares your cleaned table with the truth, column by column.
-
----
-
-## The project: clean Riverstone's operations export and write a data-quality report
-
-**Goal:** turn a messy export into a trusted, repeatable clean table, and write a one-page report that a manager can act on.
 
 **Option A: your own data.** Use an export you receive regularly. Remove or mask personal and confidential data first. You won't have a truth file, so reconcile to the best independent total you can find (the system's own summary screen, finance, or last period's approved report).
 
@@ -1440,21 +1438,6 @@ In the style of Chapter 11's competition cases: one file, a clock, and answers t
 - **Bonus:** How many Hospitality records are in Bengaluru after cleaning?
 
 ---
-## You've got it when…
-
-- [ ] You load unfamiliar data as text and convert each column deliberately.
-- [ ] You can profile a new file in twenty minutes: rows and grain, key uniqueness, non-data rows, blanks and placeholders, distinct values, patterns, ranges, and relationships, over the whole file.
-- [ ] You recognize every form of missing and choose between standardize, repair, quarantine, and keep, with a reason for each.
-- [ ] You find exact duplicates on the key, check that copies are identical, and find fuzzy duplicates with match keys and similarity, without auto-merging.
-- [ ] You standardize categories with a normalize-then-map approach and a mapping table that fails loudly on new values.
-- [ ] You investigate outliers with business limits and history, and never delete or cap real transactions.
-- [ ] You parse mixed date formats explicitly, catch impossible dates, convert UTC to local time before grouping, and convert units and currency text safely.
-- [ ] You measure join match rates from both sides before trusting a join.
-- [ ] You write validation rules that return zero, and reconcile the clean table to an independent total until every difference is explained.
-- [ ] You keep a cleaning log that someone else can approve, repeat, and challenge.
-- [ ] You can do the core steps in at least two of Power Query, SQL (PostgreSQL or MySQL), and pandas.
-
----
 
 ## Recap
 
@@ -1472,7 +1455,31 @@ In the style of Chapter 11's competition cases: one file, a clock, and answers t
 
 ---
 
-## Practice exercises
+## Key terms
+
+data cleaning · data preparation · staging table · profiling · grain · non-data row · pattern profile · placeholder value · missing value · missing completely at random · missing at random · missing not at random · imputation · standardize · repair · quarantine · fill down · exact duplicate · fuzzy duplicate · match key · similarity · trigram · Jaccard similarity · fuzzy merge · category · normalize · mapping table (crosswalk) · outlier · business limit · IQR rule · z-score · Excel serial date · impossible date · UTC · IST · time zone · unit conversion · fraction vs percentage · currency text · thousands separator · locale · join key · match rate · anti-join · fan-out · validation rule · referential integrity · cross-field rule · reconciliation · cleaning log · data-quality report · collation
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You load unfamiliar data as text and convert each column deliberately.
+- [ ] You can profile a new file in twenty minutes: rows and grain, key uniqueness, non-data rows, blanks and placeholders, distinct values, patterns, ranges, and relationships, over the whole file.
+- [ ] You recognize every form of missing and choose between standardize, repair, quarantine, and keep, with a reason for each.
+- [ ] You find exact duplicates on the key, check that copies are identical, and find fuzzy duplicates with match keys and similarity, without auto-merging.
+- [ ] You standardize categories with a normalize-then-map approach and a mapping table that fails loudly on new values.
+- [ ] You investigate outliers with business limits and history, and never delete or cap real transactions.
+- [ ] You parse mixed date formats explicitly, catch impossible dates, convert UTC to local time before grouping, and convert units and currency text safely.
+- [ ] You measure join match rates from both sides before trusting a join.
+- [ ] You write validation rules that return zero, and reconcile the clean table to an independent total until every difference is explained.
+- [ ] You keep a cleaning log that someone else can approve, repeat, and challenge.
+- [ ] You can do the core steps in at least two of Power Query, SQL (PostgreSQL or MySQL), and pandas.
+
+---
+
+## Exercises
 
 Unless an exercise says otherwise, use the staging tables and cleaned tables in `riverstone_full` (PostgreSQL or MySQL), Power Query, or pandas, and the files in `companion/ch14/`.
 
@@ -1520,27 +1527,7 @@ Unless an exercise says otherwise, use the staging tables and cleaned tables in 
 
 ---
 
-## Key terms
-
-data cleaning · data preparation · staging table · profiling · grain · non-data row · pattern profile · placeholder value · missing value · missing completely at random · missing at random · missing not at random · imputation · standardize · repair · quarantine · fill down · exact duplicate · fuzzy duplicate · match key · similarity · trigram · Jaccard similarity · fuzzy merge · category · normalize · mapping table (crosswalk) · outlier · business limit · IQR rule · z-score · Excel serial date · impossible date · UTC · IST · time zone · unit conversion · fraction vs percentage · currency text · thousands separator · locale · join key · match rate · anti-join · fan-out · validation rule · referential integrity · cross-field rule · reconciliation · cleaning log · data-quality report · collation
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 15, Data Visualization Principles:** box plots and histograms for spotting outliers, and charts that show data-quality gaps clearly.
-- **Chapter 16, Business Intelligence with Power BI:** the same Power Query steps feeding a data model, with scheduled refresh.
-- **Chapter 18, Python for Analysts:** pandas properly: reading every format, cleaning with vectorized operations, `merge`, and fuzzy matching libraries.
-- **Chapter 20, Automating Reports & Delivering Insights:** running the cleaning and validation rules as the first step of an automated report, and alerting when a rule fails.
-- **Chapter 21, Descriptive Statistics & Probability:** percentiles, the IQR, and z-scores behind the outlier methods in section 14.6.
-- **Chapter 47:** data-quality testing in pipelines (dbt tests, Great Expectations), where this chapter's rules run on every load.
-- **Interview preparation:** the SQL Question Bank (Chapter 71) and the Business Analyst bank (Chapter 76) include "here's a messy dataset; walk me through what you'd check" and deduplication with window functions.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1605,3 +1592,15 @@ data cleaning · data preparation · staging table · profiling · grain · non-
 **30.** A reasonable answer: normalize email (trim, lower case) and phone (digits only, with country code) and use them as the primary keys; for leads without either, use a match key on company name (case, spaces, legal suffix) plus city, and a person's name. Keep the source and date of each record so the earliest or richest record survives. For leads, it's usually better to **miss** some duplicates (a salesperson may call the same person twice) than to **merge** different people (losing a real prospect's details or attributing one person's consent to another). Measure the error on a hand-checked sample before applying the rule to all 40,000.
 
 **Timed challenge answers.** Level 1: **357** exactly `Mumbai`; **409** after cleaning. Level 2: **64** distinct values as exported; **39** cities after cleaning. Level 3: **Retail 2,791**, **Hospitality 1,513**, **Wholesale 723**. Level 4: **100** with no usable city; **150** missing emails; **58** without `@`. Level 5: **400** dates as `DD/MM/YYYY`; **5** after 2025, earliest **2060-05-03**. Level 6: **48** duplicate groups; **4,979** businesses. Level 7: **Retail 2,756**, **Hospitality 1,505**, **Wholesale 718**; **405** in Mumbai. Bonus: **88**.
+
+---
+
+## Where this leads
+
+- **Chapter 15, Data Visualization Principles:** box plots and histograms for spotting outliers, and charts that show data-quality gaps clearly.
+- **Chapter 16, Business Intelligence with Power BI:** the same Power Query steps feeding a data model, with scheduled refresh.
+- **Chapter 18, Python for Analysts:** pandas properly: reading every format, cleaning with vectorized operations, `merge`, and fuzzy matching libraries.
+- **Chapter 20, Automating Reports & Delivering Insights:** running the cleaning and validation rules as the first step of an automated report, and alerting when a rule fails.
+- **Chapter 21, Descriptive Statistics & Probability:** percentiles, the IQR, and z-scores behind the outlier methods in section 14.6.
+- **Chapter 47:** data-quality testing in pipelines (dbt tests, Great Expectations), where this chapter's rules run on every load.
+- **Interview preparation:** the SQL Question Bank (Chapter 71) and the Business Analyst bank (Chapter 76) include "here's a messy dataset; walk me through what you'd check" and deduplication with window functions.

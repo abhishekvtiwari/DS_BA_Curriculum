@@ -1,6 +1,6 @@
 # Chapter 35. The Math Under the Models
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -1033,7 +1033,7 @@ Every idea in this chapter reappears. Use this table as a map for the rest of th
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1079,7 +1079,11 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 
 ---
 
-## Tools
+## Project: gradient descent and PCA from scratch
+
+**Goal:** a short notebook or script, written by you without machine learning libraries, that trains a model with gradient descent and compresses a table with PCA, and checks both against a library. It's a small, honest portfolio piece that shows you know what `.fit()` does.
+
+### Tools you'll need
 
 - **Python 3 with NumPy and pandas.** Every example ran on Python 3.12.3, NumPy 2.4.4, and pandas 3.0.2. The features used (arrays, `@`, `np.linalg.norm`, `np.linalg.eigh`, `np.polyfit`, `read_csv`) have been stable for many years, so older versions give the same results. Chapter 17 covers installation.
 - **scikit-learn** (1.8.0 here) for two cross-checks: `sklearn.metrics.log_loss` and `sklearn.decomposition.PCA`. Chapter 36 introduces it properly.
@@ -1088,12 +1092,6 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 - **Pen and paper.** The hand calculations are the point. Do them before running the code.
 - **Visual explainers.** 3Blue1Brown's free *Essence of Linear Algebra* and *Essence of Calculus* video series animate vectors, matrices, and derivatives, and pair well with this chapter.
 - **Companion files** (`companion/ch35/`): `make_ch35_data.py` (rebuilds the three CSV files from the seeded one-year generator, `companion/generate_riverstone_2025.py`), `customers_2025.csv`, `orders_2025.csv`, and `leads_2025.csv`. Run the chapter's code from that folder.
-
----
-
-## The project: gradient descent and PCA from scratch
-
-**Goal:** a short notebook or script, written by you without machine learning libraries, that trains a model with gradient descent and compresses a table with PCA, and checks both against a library. It's a small, honest portfolio piece that shows you know what `.fit()` does.
 
 **Option A: your own data.** Use a table from your work or life with at least 20 rows and 4 numeric columns (for example, monthly figures for a set of products or branches). Remove names and anything confidential first, and check you're allowed to use it.
 
@@ -1118,23 +1116,6 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 
 ---
 
-## You've got it when…
-
-- [ ] I can compute a distance, a dot product, and a cosine similarity by hand, and explain why scaling changes distances.
-- [ ] I can say what shape `X @ weights` returns before running it.
-- [ ] I can explain in one sentence what a derivative tells me about a loss, and check a derivative formula by nudging a parameter.
-- [ ] I can do a step of gradient descent on paper and get the same numbers as my code.
-- [ ] Looking at a loss curve, I can tell a learning rate that's too small from one that's too large.
-- [ ] I know that a flat loss curve doesn't prove the parameters have settled, and that scaling features often fixes slow training.
-- [ ] I can name a distribution for yes-or-no outcomes, for counts per period, and for symmetric measurements, and I check the shape of data before assuming normal.
-- [ ] I can explain maximum likelihood, and why minimizing log loss is the same thing for a classifier.
-- [ ] I can calculate entropy, information gain, and log loss, and compare a model against the base-rate benchmark.
-- [ ] I can run PCA by hand on two features and in NumPy on many, standardizing first, and describe a component from its weights.
-
-When someone says "the model learns", and you can picture the parameters, the loss, and the downhill step, this chapter has done its job.
-
----
-
 ## Recap
 
 - A **vector** is an ordered list of numbers; each row of a dataset is one. **Euclidean distance** compares positions, and it depends on units, so **scale** features first.
@@ -1152,7 +1133,32 @@ When someone says "the model learns", and you can picture the parameters, the lo
 
 ---
 
-## Practice exercises
+## Key terms
+
+vector · component · dimension · feature · Euclidean distance · length (norm) · element-by-element arithmetic · scaling · dot product · cosine similarity · matrix · shape · feature matrix (X) · target (y) · parameters (weights) · slope and intercept · matrix-times-vector (`@`) · transpose · mean-centering · loss function · mean squared error (MSE) · derivative · partial derivative · gradient · gradient descent · learning rate · hyperparameter · convergence · stochastic gradient descent · Adam · probability distribution · Bernoulli distribution · binomial distribution · Poisson distribution · normal distribution · skewed data · likelihood · maximum likelihood estimate (MLE) · log-likelihood · entropy · bit · information gain · cross-entropy · log loss (binary cross-entropy) · nat · base rate · principal component analysis (PCA) · principal component · variance · covariance · covariance matrix · eigenvector · eigenvalue · standardization · loadings · explained variance
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can compute a distance, a dot product, and a cosine similarity by hand, and explain why scaling changes distances.
+- [ ] I can say what shape `X @ weights` returns before running it.
+- [ ] I can explain in one sentence what a derivative tells me about a loss, and check a derivative formula by nudging a parameter.
+- [ ] I can do a step of gradient descent on paper and get the same numbers as my code.
+- [ ] Looking at a loss curve, I can tell a learning rate that's too small from one that's too large.
+- [ ] I know that a flat loss curve doesn't prove the parameters have settled, and that scaling features often fixes slow training.
+- [ ] I can name a distribution for yes-or-no outcomes, for counts per period, and for symmetric measurements, and I check the shape of data before assuming normal.
+- [ ] I can explain maximum likelihood, and why minimizing log loss is the same thing for a classifier.
+- [ ] I can calculate entropy, information gain, and log loss, and compare a model against the base-rate benchmark.
+- [ ] I can run PCA by hand on two features and in NumPy on many, standardizing first, and describe a component from its weights.
+
+When someone says "the model learns", and you can picture the parameters, the loss, and the downhill step, this chapter has done its job.
+
+---
+
+## Exercises
 
 Exercises marked *(hand)* need only a calculator. Code exercises use the companion files in `companion/ch35/` and the variables defined in the chapter (`x`, `y`, `customers`, `leads`, and so on); the answers repeat any setup they need. Predict each result before you calculate it.
 
@@ -1186,27 +1192,7 @@ Exercises marked *(hand)* need only a calculator. Code exercises use the compani
 
 ---
 
-## Key terms
-
-vector · component · dimension · feature · Euclidean distance · length (norm) · element-by-element arithmetic · scaling · dot product · cosine similarity · matrix · shape · feature matrix (X) · target (y) · parameters (weights) · slope and intercept · matrix-times-vector (`@`) · transpose · mean-centering · loss function · mean squared error (MSE) · derivative · partial derivative · gradient · gradient descent · learning rate · hyperparameter · convergence · stochastic gradient descent · Adam · probability distribution · Bernoulli distribution · binomial distribution · Poisson distribution · normal distribution · skewed data · likelihood · maximum likelihood estimate (MLE) · log-likelihood · entropy · bit · information gain · cross-entropy · log loss (binary cross-entropy) · nat · base rate · principal component analysis (PCA) · principal component · variance · covariance · covariance matrix · eigenvector · eigenvalue · standardization · loadings · explained variance
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 36, The Machine Learning Workflow & Feature Engineering,** turns this chapter's scaling lesson into a standard pipeline step, and builds the leakage-free lead-scoring features that Meera worried about.
-- **Chapter 37, Supervised Learning Algorithms,** uses every idea here: least squares and gradient descent in linear regression, log loss in logistic regression, likelihood in Naive Bayes, entropy in decision trees, and distance in k-nearest neighbors.
-- **Chapter 38, Unsupervised Learning,** applies distance and PCA to cluster Riverstone's customers, and adds t-SNE and UMAP.
-- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** evaluates a real lead-scoring model with log loss, calibration, and cost-based thresholds, starting from the base-rate benchmark.
-- **Chapter 43, A First Look at Deep Learning,** computes a neuron by hand and trains a network in PyTorch with the same loop as section 35.6, with gradients calculated automatically.
-- **Chapter 54, Generative AI & Large Language Models,** shows dot products between vectors at work inside embeddings and attention.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers gradient descent, learning rates, log loss, bias and variance, and PCA questions with graded answers; the Statistics, Probability & Experimentation Bank (Chapter 73) covers distributions and likelihood.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1407,3 +1393,15 @@ Referral and cold-call leads won 4 of 8 (50%); every other source won 2 of 22 (9
 **15.** "The method groups customers by how far apart they are, and a difference of ₹1 counted exactly as much as a difference of one order. Since revenue differences run into lakhs and order differences into single digits, revenue decided everything, and the order counts were effectively ignored." (The fix is to put both on the same scale first, section 35.10.)
 
 **16.** Most likely, **the learning rate is too high**: the loss grows each step until the numbers overflow to `inf` and then `nan`. Try dividing the learning rate by 10, and plot the loss for the first 12 steps to see whether it was already rising. Second, **a value that breaks a formula**: a missing value in the data, a division by zero, or a predicted probability of exactly 0 or 1 inside a log. Check the inputs for missing values, and check the batch or row being processed at step 12. (A third cause, features on very different scales, makes the first cause more likely; scaling often fixes both.)
+
+---
+
+## Where this leads
+
+- **Chapter 36, The Machine Learning Workflow & Feature Engineering,** turns this chapter's scaling lesson into a standard pipeline step, and builds the leakage-free lead-scoring features that Meera worried about.
+- **Chapter 37, Supervised Learning Algorithms,** uses every idea here: least squares and gradient descent in linear regression, log loss in logistic regression, likelihood in Naive Bayes, entropy in decision trees, and distance in k-nearest neighbors.
+- **Chapter 38, Unsupervised Learning,** applies distance and PCA to cluster Riverstone's customers, and adds t-SNE and UMAP.
+- **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** evaluates a real lead-scoring model with log loss, calibration, and cost-based thresholds, starting from the base-rate benchmark.
+- **Chapter 43, A First Look at Deep Learning,** computes a neuron by hand and trains a network in PyTorch with the same loop as section 35.6, with gradients calculated automatically.
+- **Chapter 54, Generative AI & Large Language Models,** shows dot products between vectors at work inside embeddings and attention.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers gradient descent, learning rates, log loss, bias and variance, and PCA questions with graded answers; the Statistics, Probability & Experimentation Bank (Chapter 73) covers distributions and likelihood.

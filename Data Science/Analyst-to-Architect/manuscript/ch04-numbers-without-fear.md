@@ -218,6 +218,7 @@ Two tempting shortcuts both get the plan wrong:
 - **Rounding down to a nice number.** 10% a year for three years reaches ₹57,70,512, which is ₹2,29,488 short. Over several years, one percentage point matters.
 
 ---
+
 ## 4.5 Averages: mean, median, mode, and weighted
 
 An **average** is one number that stands for many. There are three common kinds, and Chapter 1 (section 1.6) showed that the level of measurement decides which ones make sense. This section shows how to choose between them for amounts, like order values, where all three are allowed.
@@ -428,7 +429,8 @@ A good habit is to rewrite a headline number into a plain sentence with both num
 > **Interview extra point.** When a case interview gives you a growth figure or a percentage, restate it with its base and period before you use it: *"So revenue went from ₹20 lakh to ₹32 lakh over four years, which is about 12.5% a year compounded."* It shows you check numbers before trusting them, which is what interviewers for analyst roles are testing. Chapter 73 (statistics and probability) and Chapter 75 (metrics, case studies, and guesstimates) have practice questions.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -474,16 +476,14 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Tools
+## Project: check five statistics
+
+**Goal:** take five numbers from the real world and check each one the way Meera checked the board slide.
+
+### Tools you'll need
 
 - **A calculator.** Your phone's calculator in landscape (scientific) mode has a power key (xʸ or ^) for compound growth.
 - **A pen and a notebook.** Write each calculation out in full, with its units, so you can check it later. When spreadsheets arrive in Chapter 10, you'll redo this chapter's numbers there.
-
----
-
-## The project: check five statistics
-
-**Goal:** take five numbers from the real world and check each one the way Meera checked the board slide.
 
 **Step 1. Collect five statistics.** Find them in news articles, company annual reports or investor presentations, advertisements, or presentations at your workplace. Aim for variety: at least one growth figure, one percentage or share, one average, one chart, and one comparison between two groups. Copy the exact wording and note the source and date.
 
@@ -512,23 +512,6 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## You've got it when…
-
-- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
-- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
-- [ ] I say "percentage points" for the difference between two percentages.
-- [ ] I ask what the denominator is before comparing ratios or rates.
-- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
-- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
-- [ ] I don't average averages.
-- [ ] I round only at the end, and I don't write more digits than the data supports.
-- [ ] I check a chart's units, period, and axis before reading its bars.
-- [ ] I can work out "at least one" and conditional probabilities by counting.
-- [ ] I sanity-check numbers by estimating them another way.
-- [ ] I've checked five real statistics and rewritten each one fairly.
-
----
-
 ## Recap
 
 - **Every percentage is a percentage of something.** Ask *of what?* and *compared with what?*
@@ -545,7 +528,32 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Practice exercises
+## Key terms
+
+percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can calculate a percentage of a number, a share, a percent change, and a list price from a discounted price.
+- [ ] I know that a rise and an equal fall don't cancel, and that discounts stack by multiplying.
+- [ ] I say "percentage points" for the difference between two percentages.
+- [ ] I ask what the denominator is before comparing ratios or rates.
+- [ ] I calculate compound growth and CAGR, and I never average growth rates that compound.
+- [ ] I choose between mean, median, and mode for a purpose, and use weighted averages when items differ in size.
+- [ ] I don't average averages.
+- [ ] I round only at the end, and I don't write more digits than the data supports.
+- [ ] I check a chart's units, period, and axis before reading its bars.
+- [ ] I can work out "at least one" and conditional probabilities by counting.
+- [ ] I sanity-check numbers by estimating them another way.
+- [ ] I've checked five real statistics and rewritten each one fairly.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -576,28 +584,7 @@ Nothing Meera did needed more than a calculator and two questions. What it neede
 
 ---
 
-## Key terms
-
-percentage · percent of · share / proportion · percent change · reverse percentage · percentage point · ratio · rate · denominator · month-over-month growth · compound growth rate · compounding · rule of 72 · CAGR (compound annual growth rate) · average · mean · median · mode · right-skewed · weighted average · average of averages · rounding · significant figures · false precision · cumulative / running total · truncated axis · probability · independence · conditional probability · order of magnitude · lakh · crore · sanity check · Fermi estimate / guesstimate · base effect · relative vs absolute change
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
-- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
-- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
-- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
-- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
-- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
-- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) 0.05 × ₹14,550 = **₹727.50**. (b) ₹26,220 ÷ ₹58,020 = 0.452, so **45.2%**. (c) ₹780 × 0.92 = **₹717.60**.
 
@@ -628,3 +615,16 @@ percentage · percent of · share / proportion · percent change · reverse perc
 **14.** A cumulative line rises whenever a month's revenue is positive, so a month that fell sharply (like December 2025, down 30.6%) still shows as the line going up, only less steeply. Put a monthly bar chart next to it (starting at zero), ideally with each month's target or the same month last year, so a bad month is visible as a short bar.
 
 **15.** (1) *From what to what?* A rise from 10% to 15% is "up 50%" but only 5 points; a rise from 2% to 3% is also "up 50%". (2) *Out of how many leads, and were they counted the same way?* With a small number of leads, one or two extra wins can move the rate a lot, and a change such as removing duplicate leads raises the win rate without any change in selling.
+
+---
+
+## Where this leads
+
+- **Chapter 5, Thinking Like an Analyst,** turns the questions *of what?* and *compared with what?* into a method for breaking down any business question.
+- **Chapters 10 and 11** build these calculations into spreadsheets: percentages, weighted averages, and pivot tables of shares and averages.
+- **Chapter 13** calculates month-over-month growth, running totals, and moving averages in SQL on the same 2025 data you used here.
+- **Chapter 15, Data Visualization Principles,** goes deeper into honest charts: axes, chart choice, and the visual tricks from section 4.7.
+- **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
+- **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
+- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.

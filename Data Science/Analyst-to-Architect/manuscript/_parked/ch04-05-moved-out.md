@@ -1,7 +1,7 @@
 # Parked: blocks moved out of Chapters 4 and 5 (Part 0 + I build, 28 Sep 2026)
 
 These blocks were removed from Chapters 4 and 5 under rule R1/R2 (no code or tool preview boxes in
-Parts 0 and I; findings S.1, S.4) and fix instructions 4.1, 4.2 and 5.1. Each is kept **verbatim** below,
+Parts 0 and 1; findings S.1, S.4) and fix instructions 4.1, 4.2 and 5.1. Each is kept **verbatim** below,
 labelled with its destination. The destination part's build pulls the block from here, rewrites it to
 point **back** ("In Chapter 4 you worked this out by hand; here is the formula"), explains every line,
 and deletes it from this file. The rupee amounts are as they stood before the lakh-grouping pass

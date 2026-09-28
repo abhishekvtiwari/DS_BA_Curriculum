@@ -1,6 +1,6 @@
 # Chapter 23. Business Acumen, KPIs & Metrics
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -604,7 +604,8 @@ WHERE o.status <> 'Cancelled'
 Write the definition once, put it where both teams can see it (a data dictionary, a semantic layer, a pinned page — Chapter 16's shared semantic model is exactly this idea applied to a BI tool), and change it only with a note explaining why and from when. The alternative — every analyst quietly making their own reasonable choice — is how a company ends up with three different "revenue" figures in one meeting, all defensible, all disagreeing.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -650,7 +651,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: build Riverstone's KPI tree and diagnose a revenue dip
+
+**Goal:** one page that shows how Riverstone's revenue decomposes, and a second page that diagnoses a real change using that decomposition.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas` (run here on Python 3.12, pandas 3.0.2). Every calculation in this chapter is arithmetic simple enough for a spreadsheet, too.
 - **Excel:** every ratio here is one formula; a KPI tree is a natural fit for a linked set of cells, and Chapter 11's pivot tables handle the segment and monthly breakdowns.
@@ -660,12 +665,6 @@ What made the difference:
   - `monthly_revenue_2025.csv`: the real monthly revenue, orders, customers, and AOV series.
   - `marketing_2025.csv`: monthly marketing spend, leads, new customers, CAC, and ROAS (invented).
 - Also used: `companion/full/` (leads and lead-stage history, orders), `companion/ch21/delivery_times_2025.csv`, and `companion/ch14/orders_q4_2025_export.csv`.
-
----
-
-## The project: build Riverstone's KPI tree and diagnose a revenue dip
-
-**Goal:** one page that shows how Riverstone's revenue decomposes, and a second page that diagnoses a real change using that decomposition.
 
 **Option A: your own business.** Build the tree for a metric you actually own, using your own data.
 
@@ -707,21 +706,6 @@ Use `companion/ch23/financials_fy2025.md`, `monthly_revenue_2025.csv`, and the f
 
 ---
 
-## You've got it when…
-
-- [ ] You can explain the operating cycle and why a profitable company can run out of cash.
-- [ ] You can read a P&L, a balance sheet, and a cash flow statement and say what each answers.
-- [ ] You know the difference between gross, EBIT, and net margin, and between EBIT and EBITDA.
-- [ ] You can compute and interpret the core metrics of sales, marketing, finance, operations, and customer teams.
-- [ ] You never quote CAC or LTV without saying which population and which time horizon.
-- [ ] You can build a KPI tree that reconstructs a real total exactly, with each branch owned by a team.
-- [ ] You diagnose a metric change by decomposing it, not by guessing, and you check for a mix effect first.
-- [ ] You can name a vanity metric and its better replacement.
-- [ ] You can predict how a metric would be gamed if a bonus depended on it, and propose a guardrail.
-- [ ] You write metric definitions with a formula, a population, a time window, exclusions, and an owner.
-
----
-
 ## Recap
 
 - **The operating cycle** turns cash into stock into sales into cash again. Riverstone's cash conversion cycle is 59 days (55 DIO + 42 DSO − 38 DPO): profit and cash are not the same thing, and the gap between them is exactly this cycle.
@@ -739,7 +723,30 @@ Use `companion/ch23/financials_fy2025.md`, `monthly_revenue_2025.csv`, and the f
 
 ---
 
-## Practice exercises
+## Key terms
+
+operating cycle · DIO · DSO · DPO · cash conversion cycle · profit & loss (P&L) · income statement · revenue · cost of goods sold (COGS) · gross profit / margin · operating expenses (opex) · EBIT · EBITDA · net profit (PAT) · net margin · accrual accounting · balance sheet · assets · liabilities · equity · current assets / liabilities · working capital · current ratio · debt-to-equity · cash flow statement · CFO / CFI / CFF · fixed cost · variable cost · contribution margin · pipeline · win rate · sales cycle · quota attainment · funnel · CAC · ROAS · attribution (first-touch, last-touch, multi-touch) · payback period · return on assets (ROA) · return on equity (ROE) · OTIF · inventory turns · fill rate · OEE · retention rate · churn rate · customer lifetime value (LTV) · LTV:CAC · Net Promoter Score (NPS) · KPI tree · North Star metric · chain-linked (sequential) decomposition · mix effect · vanity metric · Goodhart's law · guardrail metric · metric definition · data dictionary
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can explain the operating cycle and why a profitable company can run out of cash.
+- [ ] You can read a P&L, a balance sheet, and a cash flow statement and say what each answers.
+- [ ] You know the difference between gross, EBIT, and net margin, and between EBIT and EBITDA.
+- [ ] You can compute and interpret the core metrics of sales, marketing, finance, operations, and customer teams.
+- [ ] You never quote CAC or LTV without saying which population and which time horizon.
+- [ ] You can build a KPI tree that reconstructs a real total exactly, with each branch owned by a team.
+- [ ] You diagnose a metric change by decomposing it, not by guessing, and you check for a mix effect first.
+- [ ] You can name a vanity metric and its better replacement.
+- [ ] You can predict how a metric would be gamed if a bonus depended on it, and propose a guardrail.
+- [ ] You write metric definitions with a formula, a population, a time window, exclusions, and an owner.
+
+---
+
+## Exercises
 
 Use `companion/ch23/`, `companion/full/`, and `companion/ch21/delivery_times_2025.csv`.
 
@@ -784,26 +791,7 @@ Use `companion/ch23/`, `companion/full/`, and `companion/ch21/delivery_times_202
 
 ---
 
-## Key terms
-
-operating cycle · DIO · DSO · DPO · cash conversion cycle · profit & loss (P&L) · income statement · revenue · cost of goods sold (COGS) · gross profit / margin · operating expenses (opex) · EBIT · EBITDA · net profit (PAT) · net margin · accrual accounting · balance sheet · assets · liabilities · equity · current assets / liabilities · working capital · current ratio · debt-to-equity · cash flow statement · CFO / CFI / CFF · fixed cost · variable cost · contribution margin · pipeline · win rate · sales cycle · quota attainment · funnel · CAC · ROAS · attribution (first-touch, last-touch, multi-touch) · payback period · return on assets (ROA) · return on equity (ROE) · OTIF · inventory turns · fill rate · OEE · retention rate · churn rate · customer lifetime value (LTV) · LTV:CAC · Net Promoter Score (NPS) · KPI tree · North Star metric · chain-linked (sequential) decomposition · mix effect · vanity metric · Goodhart's law · guardrail metric · metric definition · data dictionary
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 24, Requirements, Storytelling & Stakeholders:** turning a diagnosis like section 23.11's into a memo and a three-slide story someone will act on.
-- **Chapter 25, The Business Analyst Track:** process mapping and requirements gathering, which is how a KPI tree gets built collaboratively rather than assumed.
-- **Chapter 16, Business Intelligence with Power BI:** a KPI tree is naturally a dashboard, with the shared semantic model as the enforcement mechanism for section 23.13's metric definitions.
-- **Chapter 22, Statistics Without Fooling Yourself:** confirming a KPI move is real before diagnosing it, and checking for confounders and mix effects.
-- **Part IV:** LTV modelling, churn prediction, and marketing mix modelling all extend the ideas in sections 23.6 and 23.9 with statistical machinery.
-- **Interview preparation:** the Business Analyst bank (Chapter 76) and the Case Study & Guesstimate bank (Chapter 74) both lean heavily on exactly this chapter — "walk me through how you'd diagnose a revenue drop" is one of the most common analyst interview questions there is.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -862,3 +850,14 @@ operating cycle · DIO · DSO · DPO · cash conversion cycle · profit & loss (
 **27.** First question: "what's your exact definition — formula, time window, and what's excluded?" Very often the discrepancy is entirely explained by one team using calendar year and the other trailing twelve months, or one excluding cancelled orders and the other not. Going forward: write the six-part definition once, in a shared location, with an owner, so the next disagreement takes five minutes instead of a meeting.
 
 **Timed challenge answers.** Level 1: gross margin 27.5%, EBIT margin 15.0%, net margin 10.5%. Level 2: working capital ₹12.60 crore, current ratio 1.58, debt-to-equity 0.91. Level 3: CCC = 55 + 42 − 38 = 59 days. Level 4: cash rose by less than PAT because ₹5.16 crore was spent on capex and ₹4.23 crore paid out as dividend, both financing/investing outflows that don't appear in profit. Level 5: November→December, a fall from ₹15.60 crore to ₹8.73 crore, about 44.1% (the largest percentage fall of the year; May→June at −40.4% is a close second). Level 6: customer effect ≈ −₹1.26 crore, frequency effect ≈ −₹1.06 crore, AOV effect ≈ −₹4.55 crore, summing to the full −₹6.87 crore fall. Level 7: retention 93.3%, churn 6.7%, 5-year-capped LTV ≈ ₹2.17 lakh, LTV:CAC ≈ 26:1 — well above the 3:1 rule of thumb. Bonus: Contacted→Won using the funnel (6 Won of 22 that reached Contacted) ≈ 27%.
+
+---
+
+## Where this leads
+
+- **Chapter 24, Requirements, Storytelling & Stakeholders:** turning a diagnosis like section 23.11's into a memo and a three-slide story someone will act on.
+- **Chapter 25, The Business Analyst Track:** process mapping and requirements gathering, which is how a KPI tree gets built collaboratively rather than assumed.
+- **Chapter 16, Business Intelligence with Power BI:** a KPI tree is naturally a dashboard, with the shared semantic model as the enforcement mechanism for section 23.13's metric definitions.
+- **Chapter 22, Statistics Without Fooling Yourself:** confirming a KPI move is real before diagnosing it, and checking for confounders and mix effects.
+- **Part 4:** LTV modelling, churn prediction, and marketing mix modelling all extend the ideas in sections 23.6 and 23.9 with statistical machinery.
+- **Interview preparation:** the Business Analyst bank (Chapter 76) and the Case Study & Guesstimate bank (Chapter 74) both lean heavily on exactly this chapter — "walk me through how you'd diagnose a revenue drop" is one of the most common analyst interview questions there is.

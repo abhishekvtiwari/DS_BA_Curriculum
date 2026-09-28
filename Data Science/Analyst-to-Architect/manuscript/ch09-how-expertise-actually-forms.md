@@ -1,6 +1,6 @@
 # Chapter 9. How Expertise Actually Forms
 
-*Part I — The Map*
+*Part 1 — The Map*
 
 > **Chapter at a glance**
 >
@@ -64,7 +64,7 @@ Now divide by the hours you can *really* give each week, not the hours you wish 
 | 6 | 34 ÷ 6 = 5.7 to 43 ÷ 6 = 7.2 weeks |
 | 10 | 34 ÷ 10 = 3.4 to 43 ÷ 10 = 4.3 weeks |
 
-At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part II has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
+At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part 2 has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
 
 > **Watch out: chapter hours are not fluency hours.** Finishing Chapters 12 and 13 means you can write the queries they teach. Being quick and confident on a messy real dataset takes more: many more questions, answered on data you didn't design. Plan for the chapter hours, then plan for practice beyond them. Section 9.4 shows how to make those hours count.
 
@@ -298,7 +298,7 @@ Every remaining chapter gives you study *and* a project, on purpose, because the
 In practice, that means:
 
 - **Do the exercises before reading the answers,** and predict results before running code.
-- **Keep a practice log** from Part II onward: minutes, a weekly check, and your mistakes list.
+- **Keep a practice log** from Part 2 onward: minutes, a weekly check, and your mistakes list.
 - **Turn at least one project per part into a portfolio piece** with the seven-part write-up.
 - **Show your work early** to at least one other person each month.
 - **Expect plateaus,** and treat them as instructions to change your practice.
@@ -307,7 +307,7 @@ Be patient with the third ingredient, feedback and time. It's the one this book 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -364,19 +364,17 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 
 ---
 
-## Tools
+## Project: a 12-week learning system
+
+**Goal:** a simple system that makes your learning measurable, turns it into evidence, and brings you feedback. Start it now and run it alongside Part 2.
+
+### Tools you'll need
 
 - **A practice log,** in a spreadsheet or notebook. Columns: date, minutes, what you practiced, weekly check score, mistakes and their causes.
 - **A weekly check:** a fixed set of new problems at a steady difficulty. The exercises in later chapters, used for the first time, work well; don't reuse problems you've already practiced.
 - **A place for your portfolio:** a GitHub account (Chapter 26 shows how to use it), a shared folder, or a simple free web page.
 - **A timer,** for short focused practice blocks.
 - **Companion file:** practice_log_template.xlsx, with Farah's 12 weeks already filled in and a chart that updates as you add your own weeks.
-
----
-
-## The project: a 12-week learning system
-
-**Goal:** a simple system that makes your learning measurable, turns it into evidence, and brings you feedback. Start it now and run it alongside Part II.
 
 **Option A: your own learning.** Use the next skill on your door plan from Chapter 8.
 
@@ -403,7 +401,29 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Expertise takes years, not weeks.** Estimate your own timeline with numbers: chapter hours divided by the hours you can really give each week.
+- The long timeline is an advantage: skills that take years are **defensible**, they **compound**, and every tier is a real job, so you're employable as you climb.
+- Expertise combines three ingredients: **study** (knowledge), **projects** (skill), and **feedback and time** (judgment). Most people who stall have too much of the first.
+- **Deliberate practice** has a specific goal, difficulty slightly beyond your ability, full attention, immediate feedback, and repetition with refinement. **Naive practice** counts hours.
+- Research shows practice matters but isn't everything; the popular **10,000-hour** rule misreads it. In professions, real problems and real feedback matter a great deal.
+- **Retrieval** and **spacing** beat rereading and cramming, even though rereading feels more productive.
+- Build a **portfolio** while you learn: a few one-page pieces with a question, data, approach, result, check, decision, and next step.
+- Get **feedback** from several sources, ask for help with a five-part request, and find **mentors** with small, specific asks.
+- A **plateau** is flat results despite steady effort. Measure it with a fixed **weekly check**, then change the practice rather than only adding hours.
+
+---
+
+## Key terms
+
+honest timeline · study · project · feedback · knowledge · skill · judgment · deliberate practice · naive practice · 10,000-hour rule · meta-analysis · retrieval practice · spaced repetition · portfolio · portfolio piece · mentor · plateau · practice log · weekly check · mistakes list
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can estimate how long a stage of your learning will take from chapter hours and your real weekly hours.
 - [ ] You can explain why a long timeline is defensible, compounding, and layered.
@@ -419,21 +439,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 
 ---
 
-## Recap
-
-- **Expertise takes years, not weeks.** Estimate your own timeline with numbers: chapter hours divided by the hours you can really give each week.
-- The long timeline is an advantage: skills that take years are **defensible**, they **compound**, and every tier is a real job, so you're employable as you climb.
-- Expertise combines three ingredients: **study** (knowledge), **projects** (skill), and **feedback and time** (judgment). Most people who stall have too much of the first.
-- **Deliberate practice** has a specific goal, difficulty slightly beyond your ability, full attention, immediate feedback, and repetition with refinement. **Naive practice** counts hours.
-- Research shows practice matters but isn't everything; the popular **10,000-hour** rule misreads it. In professions, real problems and real feedback matter a great deal.
-- **Retrieval** and **spacing** beat rereading and cramming, even though rereading feels more productive.
-- Build a **portfolio** while you learn: a few one-page pieces with a question, data, approach, result, check, decision, and next step.
-- Get **feedback** from several sources, ask for help with a five-part request, and find **mentors** with small, specific asks.
-- A **plateau** is flat results despite steady effort. Measure it with a fixed **weekly check**, then change the practice rather than only adding hours.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -463,26 +469,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 
 ---
 
-## Key terms
-
-honest timeline · study · project · feedback · knowledge · skill · judgment · deliberate practice · naive practice · 10,000-hour rule · meta-analysis · retrieval practice · spaced repetition · portfolio · portfolio piece · mentor · plateau · practice log · weekly check · mistakes list
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Part II, The Analyst (Chapters 10–27),** is where you'll use this chapter first. Start your practice log with Chapter 10.
-- **Chapter 6, Planning Your Learning,** turns this chapter's timeline into hours and weeks for your own plan, and covers learning with AI assistants without letting them think for you.
-- **Chapter 12, section 12.10,** teaches how to keep the rows that have no match in another table, the idea that stalled Farah.
-- **Chapter 26** covers Git and GitHub, where your portfolio can live; **Chapter 27** turns your projects into a finished analyst portfolio.
-- **Chapter 83, The Long Game,** returns to learning over a whole career, including the plateaus of later years.
-- **Part VIII, Chapter 68, How Data Hiring Works,** shows how portfolios are read in hiring, and **Chapter 81** helps you turn your projects and plateaus into strong behavioral interview answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** **Study** produces knowledge (understanding the concepts). **Projects** produce skill (being able to do the work on real, messy data). **Feedback and time** produce judgment (knowing which approach to use, and when it will mislead).
 
@@ -498,7 +485,7 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 **7.** A sample answer: *"(Goal) I'm building a pivot table in Google Sheets that totals revenue by month. (Attempt) I selected the data down to row 200 and added Month as rows and Revenue as values, summarized by SUM. (Result) The March total is ₹48,200, but adding the March rows by hand gives ₹52,700. (Expectation) I expected the two to match. (Example) Here's a copy of the sheet with invented data, 12 rows, that shows the same difference."* Writing this often reveals the cause, for example rows outside the selected range or revenue stored as text in some rows.
 
-**8.** Sample outline. **Question:** which products sell best to hospitality customers, and should promotion change? **Data:** Riverstone one-year database (fictional), orders and products for 2025, hospitality segment only; note it excludes returns and tax. **Approach:** revenue and quantity by product for hospitality customers, compared with all customers; share of hospitality revenue per product. **Result:** one table of products ranked by hospitality revenue, with each product's share compared with its share overall. **Check:** hospitality product revenues add up to total hospitality revenue; one order hand-checked. **Decision:** promote the products where hospitality's share is high but sales are still small, and stop promoting products hospitality customers rarely buy. **Next:** repeat by quarter to see seasonality, and send it to the hospitality sales executive monthly. Any outline with all seven parts, a check, and a decision is acceptable; the analysis itself is built in Part II.
+**8.** Sample outline. **Question:** which products sell best to hospitality customers, and should promotion change? **Data:** Riverstone one-year database (fictional), orders and products for 2025, hospitality segment only; note it excludes returns and tax. **Approach:** revenue and quantity by product for hospitality customers, compared with all customers; share of hospitality revenue per product. **Result:** one table of products ranked by hospitality revenue, with each product's share compared with its share overall. **Check:** hospitality product revenues add up to total hospitality revenue; one order hand-checked. **Decision:** promote the products where hospitality's share is high but sales are still small, and stop promoting products hospitality customers rarely buy. **Next:** repeat by quarter to see seasonality, and send it to the hospitality sales executive monthly. Any outline with all seven parts, a check, and a decision is acceptable; the analysis itself is built in Part 2.
 
 **9.** The log shows a **plateau**: scores rose from 4 to 6 by week 4, then stayed at 5–6 for six weeks while practice minutes kept rising. Likely causes: practice has become **comfortable** (repeating problems already mastered), or a **missing underlying idea** is blocking a family of problems; tool-hopping or fatigue are also possible. Three changes: (1) review the mistakes list and look for a shared cause, then rebuild that section's examples without looking; (2) replace repeated exercises with new, harder problems, ideally the learner's own real questions; (3) get outside feedback, for example solving one problem aloud for a peer each week, and reduce minutes if fatigue is part of it.
 
@@ -511,3 +498,14 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 **13.** Start a small project now, alongside the courses. Knowledge without projects doesn't turn into skill, and it's hard to know what "enough" is until a real problem shows you what's missing. With 8 hours a week, a split such as 5 hours of study and practice and 3 hours on a small project on their own domain gives them all three ingredients, and the project becomes a portfolio piece. The feeling of "not knowing enough" never fully goes away; it's a reason to build, not to wait.
 
 **14.** A **mentor** can give judgment from experience: which skills matter in your company or city, which role fits you, how to handle a stakeholder, when your question is the wrong question, introductions to people, and encouragement from someone who has been through the same plateaus. An **AI assistant** can give instant, patient explanations at any hour, many variations of practice problems, and a quick first review of code, without using up anyone's time. The assistant can be confidently wrong and doesn't know your situation; the mentor's time is limited and their experience is one path. Use both, and check both.
+
+---
+
+## Where this leads
+
+- **Part 2, The Analyst (Chapters 10–27),** is where you'll use this chapter first. Start your practice log with Chapter 10.
+- **Chapter 6, Planning Your Learning,** turns this chapter's timeline into hours and weeks for your own plan, and covers learning with AI assistants without letting them think for you.
+- **Chapter 12, section 12.10,** teaches how to keep the rows that have no match in another table, the idea that stalled Farah.
+- **Chapter 26** covers Git and GitHub, where your portfolio can live; **Chapter 27** turns your projects into a finished analyst portfolio.
+- **Chapter 83, The Long Game,** returns to learning over a whole career, including the plateaus of later years.
+- **Part 8, Chapter 68, How Data Hiring Works,** shows how portfolios are read in hiring, and **Chapter 81** helps you turn your projects and plateaus into strong behavioral interview answers.

@@ -1,7 +1,7 @@
 # Parked: blocks moved out of Chapters 7 and 8 (Part 0 + I build, 28 Sep 2026)
 
 These blocks were removed from Chapters 7 and 8 under rule R1/R2 (no code or tool preview boxes in
-Parts 0 and I; findings S.1, S.4, I.3) and fix instructions 7.1, 7.4 and 8.7 (finding I.6). Each is kept
+Parts 0 and 1; findings S.1, S.4, I.3) and fix instructions 7.1, 7.4 and 8.7 (finding I.6). Each is kept
 **verbatim** below, labelled with its destination. The destination part's build pulls the block from here,
 rewrites it to point **back** where needed ("In Chapter 7 you saw the analyst's answer; here is the query
 behind it"), and deletes it from this file. Rupee amounts are as they stood before the lakh-grouping pass
@@ -11,7 +11,7 @@ behind it"), and deletes it from this file. Rupee amounts are as they stood befo
 
 ## 1. Ch 7 §7.6 Step 2: the PostgreSQL query and its output
 
-**Destination:** Ch 12 (Part II build), next to the mini-database version in §12.15, as "the query behind
+**Destination:** Ch 12 (Part 2 build), next to the mini-database version in §12.15, as "the query behind
 Chapter 7's five quiet customers". Rechecked on 28 Sep 2026 against `companion/riverstone_2025_setup.sql`
 (loaded into SQLite): the same five customers, 284 / 204 / 162 / 66 days, Home Plus with no order.
 
@@ -98,7 +98,7 @@ ORDER BY last_order_date IS NOT NULL, last_order_date;
 ## 4. Ch 7 Tools: companion file line
 
 **Destination:** Ch 12's companion list (fix instruction 7.4). The file itself stays where it is:
-`companion/mysql/ch07_queries_mysql.sql` (consider renaming it for Ch 12 in the Part II build).
+`companion/mysql/ch07_queries_mysql.sql` (consider renaming it for Ch 12 in the Part 2 build).
 
 > - **Companion file (optional):** `companion/mysql/ch07_queries_mysql.sql` holds the section 7.6 query in PostgreSQL and MySQL form, for readers who already have the practice databases loaded (Chapter 12, section 12.3, explains the setup).
 

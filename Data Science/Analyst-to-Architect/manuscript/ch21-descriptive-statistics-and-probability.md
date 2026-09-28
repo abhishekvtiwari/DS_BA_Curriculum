@@ -1,6 +1,6 @@
 # Chapter 21. Descriptive Statistics & Probability
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -24,7 +24,7 @@ Two examples from the last few chapters. Chapter 15's box plots showed that Rive
 
 That question — **how much variation is normal?** — is the one this chapter answers. Without it, you can't tell a real change from noise, you can't set a threshold, you can't promise a delivery time, and you can't say whether a test worked. Chapter 22 is about the ways people fool themselves with these tools; this chapter is the tools themselves.
 
-It's also the part of the analyst's job that transfers furthest. Every forecasting, experimentation, and machine-learning chapter in Parts IV and V assumes the ideas here: distributions, sampling, and the difference between what you measured and what's true.
+It's also the part of the analyst's job that transfers furthest. Every forecasting, experimentation, and machine-learning chapter in Parts 4 and 5 assumes the ideas here: distributions, sampling, and the difference between what you measured and what's true.
 
 ---
 
@@ -413,7 +413,7 @@ Read those last three lines carefully, because they're the most misread numbers 
 
 They answer different questions and they're not interchangeable. The first is a statement about Kolkata's process; the second is a statement about where your late deliveries come from. Confusing them is called the **base rate fallacy**, and it's the engine of the next section.
 
-And because P(late) × P(Kolkata) ≠ P(late and Kolkata), lateness and branch are **not independent**: knowing the branch changes the odds. That's exactly what makes branch a useful column in a model (Part IV).
+And because P(late) × P(Kolkata) ≠ P(late and Kolkata), lateness and branch are **not independent**: knowing the branch changes the odds. That's exactly what makes branch a useful column in a model (Part 4).
 
 ---
 
@@ -570,7 +570,7 @@ That paragraph is what statistics is for: six numbers, chosen deliberately, that
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -616,18 +616,16 @@ Six months later the tail had shortened and the promise held at 92% company-wide
 
 ---
 
-## Tools
+## Project: profile Riverstone's order values and delivery times
+
+**Goal:** a one-page statistical profile that changes what a meeting argues about.
+
+### Tools you'll need
 
 - **Python 3.13 or 3.14** with `pandas`, `numpy`, `scipy`, `matplotlib`. Run here on Python 3.12, pandas 3.0.2, numpy 2.4.4, scipy 1.17.1, matplotlib 3.10.8.
 - **Excel equivalents:** `AVERAGE`, `MEDIAN`, `MODE.SNGL`, `STDEV.S`/`STDEV.P`, `VAR.S`, `QUARTILE.INC`, `PERCENTILE.INC`/`.EXC`, `SKEW`, `KURT`, `NORM.DIST`, `NORM.INV`, `BINOM.DIST`, `POISSON.DIST`, `RAND`, `RANDBETWEEN`, and the Analysis ToolPak's Descriptive Statistics and Random Number Generation.
 - **SQL:** `AVG`, `STDDEV_SAMP`, `PERCENTILE_CONT`, `PERCENTILE_DISC`, `NTILE` (Chapter 13).
 - **Companion files (`companion/ch21/`):** `build_ch21_files.py` and `delivery_times_2025.csv` (45,040 delivered 2025 orders with order value, branch, promised days, actual delivery days, and an on-time flag). The delivery times are generated from a documented seeded model, because Riverstone's ERP data has no delivery dates; everything else comes from the full dataset.
-
----
-
-## The project: profile Riverstone's order values and delivery times
-
-**Goal:** a one-page statistical profile that changes what a meeting argues about.
 
 **Option A: your own data.** Any measure you report regularly: ticket resolution time, days sales outstanding, machine downtime, basket size.
 
@@ -671,7 +669,29 @@ Use `delivery_times_2025.csv`. Answers at the end of the chapter.
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Centre:** mean uses everything and is dragged by extremes; median is the middle and isn't; mode is for categories. On Riverstone's orders the mean is ₹24,840 and the median ₹20,700, and the gap is the story.
+- **Spread:** range is fragile, variance is in squared units, standard deviation is the default for symmetric data, IQR is the honest choice for skewed data. Two branches with similar averages can have very different experiences.
+- **Percentiles** describe what customers actually get, which is why service levels use them: 95% of Riverstone's orders arrive within 8.2 days.
+- **Shape:** positive skew is the norm for money and durations. Compare mean with median as a quick test. Outlier rules (IQR, z-score) produce candidates, not verdicts.
+- **Distributions:** normal for many small influences, binomial for counts of yes/no trials, Poisson for event counts at a steady rate, uniform for equal likelihood. Each answers "how unusual is this?" with a formula.
+- **Probability rules:** complement, addition (subtract the overlap), multiplication (with conditioning), and conditional probability. P(A | B) ≠ P(B | A).
+- **Bayes' rule** updates a prior with evidence, and the base rate usually dominates: with a 2% defect rate and a 5% false-positive rate, most flagged crates are fine.
+- **Sampling:** sample means are unbiased, their spread is the standard error, it shrinks with √n, and the central limit theorem makes them roughly normal even when the data is not.
+- **A profile** is n, mean, median, sd, IQR, p90, p99, min, max, skew, CV — and then two or three sentences that tell someone what to do.
+
+---
+
+## Key terms
+
+descriptive statistics · mean · median · mode · weighted average · average of averages · spread · range · variance · standard deviation · sample versus population (ddof) · interquartile range · quartile · percentile · interpolation method · service level · skew · kurtosis · tail · outlier · IQR rule · z-score · coefficient of variation · distribution · probability density · probability mass · normal distribution · 68–95–99.7 rule · binomial distribution · Poisson distribution · uniform distribution · rate (λ) · probability · complement rule · addition rule · multiplication rule · conditional probability · independence · base rate · base rate fallacy · Bayes' rule · prior · likelihood · posterior · sensitivity · false-positive rate · population · sample · random sample · stratified sample · sampling error · unbiased estimate · standard error · central limit theorem · seed
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You choose between mean, median, and mode for a reason you can state.
 - [ ] You never quote a centre without a spread.
@@ -687,21 +707,7 @@ Use `delivery_times_2025.csv`. Answers at the end of the chapter.
 
 ---
 
-## Recap
-
-- **Centre:** mean uses everything and is dragged by extremes; median is the middle and isn't; mode is for categories. On Riverstone's orders the mean is ₹24,840 and the median ₹20,700, and the gap is the story.
-- **Spread:** range is fragile, variance is in squared units, standard deviation is the default for symmetric data, IQR is the honest choice for skewed data. Two branches with similar averages can have very different experiences.
-- **Percentiles** describe what customers actually get, which is why service levels use them: 95% of Riverstone's orders arrive within 8.2 days.
-- **Shape:** positive skew is the norm for money and durations. Compare mean with median as a quick test. Outlier rules (IQR, z-score) produce candidates, not verdicts.
-- **Distributions:** normal for many small influences, binomial for counts of yes/no trials, Poisson for event counts at a steady rate, uniform for equal likelihood. Each answers "how unusual is this?" with a formula.
-- **Probability rules:** complement, addition (subtract the overlap), multiplication (with conditioning), and conditional probability. P(A | B) ≠ P(B | A).
-- **Bayes' rule** updates a prior with evidence, and the base rate usually dominates: with a 2% defect rate and a 5% false-positive rate, most flagged crates are fine.
-- **Sampling:** sample means are unbiased, their spread is the standard error, it shrinks with √n, and the central limit theorem makes them roughly normal even when the data is not.
-- **A profile** is n, mean, median, sd, IQR, p90, p99, min, max, skew, CV — and then two or three sentences that tell someone what to do.
-
----
-
-## Practice exercises
+## Exercises
 
 Use `companion/ch21/delivery_times_2025.csv` and the full dataset.
 
@@ -748,26 +754,7 @@ Use `companion/ch21/delivery_times_2025.csv` and the full dataset.
 
 ---
 
-## Key terms
-
-descriptive statistics · mean · median · mode · weighted average · average of averages · spread · range · variance · standard deviation · sample versus population (ddof) · interquartile range · quartile · percentile · interpolation method · service level · skew · kurtosis · tail · outlier · IQR rule · z-score · coefficient of variation · distribution · probability density · probability mass · normal distribution · 68–95–99.7 rule · binomial distribution · Poisson distribution · uniform distribution · rate (λ) · probability · complement rule · addition rule · multiplication rule · conditional probability · independence · base rate · base rate fallacy · Bayes' rule · prior · likelihood · posterior · sensitivity · false-positive rate · population · sample · random sample · stratified sample · sampling error · unbiased estimate · standard error · central limit theorem · seed
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 22, Statistics Without Fooling Yourself:** confidence intervals, hypothesis tests, p-values, A/B tests, and the traps around all of them.
-- **Chapter 15** already used these ideas visually: histograms, box plots, and the quartiles behind them.
-- **Chapter 20:** thresholds and alerts that are set from a distribution rather than a round number.
-- **Chapter 24, Forecasting:** trend, seasonality, and prediction intervals, which are standard errors in a different coat.
-- **Part IV:** every model assumes distributions, sampling, and the difference between training data and the world.
-- **Interview preparation:** the Statistics & Analytics Question Bank (Chapter 73) covers exactly this ground, including Bayes and the central limit theorem.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -830,3 +817,14 @@ descriptive statistics · mean · median · mode · weighted average · average 
 **29.** Yes. A 95% on-time rate measures **orders**; the survey measures **customers**, and a customer who places twenty orders a year has a much higher chance of seeing at least one late delivery: 1 − 0.95²⁰ ≈ 64%. Per-order and per-customer metrics answer different questions, and the customer's experience is usually the one that drives complaints.
 
 **Timed challenge answers.** Level 1: order value mean ₹24,839.53, median ₹20,700.00, mode ₹1,725.00; delivery days mean 4.37, median 3.8. Level 2: sd 2.28 days, IQR 2.10 days (Q1 3.0, Q3 5.1). Level 3: p90 6.8 days, p99 13.1 days, slowest 37.9 days. Level 4: medians 3.2 / 3.8 / 4.4 / 5.7 and IQRs 1.4 / 1.9 / 2.2 / 3.5 for Mumbai HO, Bengaluru, Delhi, Kolkata; p95s 5.7 / 6.9 / 8.4 / 12.0. Level 5: 81.8% company-wide; Mumbai HO 90.8%, Delhi 80.0%, Bengaluru 78.0%, Kolkata 68.1%. Level 6: 2,220 orders, 4.9%. Level 7: P(late) 18.2%, P(late | Kolkata) 31.9%, P(Kolkata | late) 21.8%. Bonus: around ₹1,270–1,290 depending on the seed, against a formula value of ₹1,288.
+
+---
+
+## Where this leads
+
+- **Chapter 22, Statistics Without Fooling Yourself:** confidence intervals, hypothesis tests, p-values, A/B tests, and the traps around all of them.
+- **Chapter 15** already used these ideas visually: histograms, box plots, and the quartiles behind them.
+- **Chapter 20:** thresholds and alerts that are set from a distribution rather than a round number.
+- **Chapter 24, Forecasting:** trend, seasonality, and prediction intervals, which are standard errors in a different coat.
+- **Part 4:** every model assumes distributions, sampling, and the difference between training data and the world.
+- **Interview preparation:** the Statistics & Analytics Question Bank (Chapter 73) covers exactly this ground, including Bayes and the central limit theorem.

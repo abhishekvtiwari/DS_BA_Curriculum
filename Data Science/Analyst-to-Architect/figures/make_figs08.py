@@ -36,12 +36,12 @@ def door(x,y,label,c,size=11.5):
 # ---------- Figure 8.1: the career tree as tiers and doors ----------
 def fig_tiers():
     o=[]
-    tiers=[(6,"Architecture & leadership","Part VII",ORANGE,["Data architect"]),
-           (5,"Production ML & AI","Part VI",PURPLE,["ML engineer","AI engineer"]),
+    tiers=[(6,"Architecture & leadership","Part 7",ORANGE,["Data architect"]),
+           (5,"Production ML & AI","Part 6",PURPLE,["ML engineer","AI engineer"]),
            ("3|4",None,None,None,None),
-           (2,"Advanced analytics & analytics engineering","Part III",ACC,["Analytics engineer","BI developer","Senior analyst","RPA developer"]),
-           (1,"The analyst core","Part II",ACC,["Data analyst","Business analyst","BI analyst","Automation analyst"]),
-           (0,"Foundations","Parts 0–I",MUTED,["Reporting / MIS assistant"])]
+           (2,"Advanced analytics & analytics engineering","Part 3",ACC,["Analytics engineer","BI developer","Senior analyst","RPA developer"]),
+           (1,"The analyst core","Part 2",ACC,["Data analyst","Business analyst","BI analyst","Automation analyst"]),
+           (0,"Foundations","Parts 0–1",MUTED,["Reporting / MIS assistant"])]
     X=16; W=688; y=16; H=88
     def band(xx,w,num,name,part,c,roles):
         b=[rect(xx,y,w,H,fill="#fbfcfe",stroke=c,sw=1.6,rx=8), rect(xx,y,8,H,fill=c,rx=3),
@@ -54,8 +54,8 @@ def fig_tiers():
     for t in tiers:
         if t[0]=="3|4":
             half=(W-20)/2
-            o.append(band(X,half,3,"Data science & ML","Part IV",PURPLE,["Data scientist"]))
-            o.append(band(X+half+20,half,4,"Engineering & integration","Part V",GREEN,["Data engineer","Integration engineer"]))
+            o.append(band(X,half,3,"Data science & ML","Part 4",PURPLE,["Data scientist"]))
+            o.append(band(X+half+20,half,4,"Engineering & integration","Part 5",GREEN,["Data engineer","Integration engineer"]))
             o.append(rect(X+half-18,y+H/2-12,56,24,fill="#fff4d6",stroke="#e2c46b",rx=12))
             o.append(text(X+half+10,y+H/2+4,"peers",11.5,INK,"bold",anchor="middle"))
         else:

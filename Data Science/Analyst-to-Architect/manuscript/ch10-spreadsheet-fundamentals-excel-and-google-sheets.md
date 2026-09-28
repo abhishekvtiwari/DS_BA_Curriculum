@@ -1,6 +1,6 @@
 # Chapter 10. Spreadsheet Fundamentals: Excel & Google Sheets
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -1067,7 +1067,7 @@ Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Ma
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1130,7 +1130,11 @@ What Meera did that the trainee didn't:
 
 ---
 
-## Tools
+## Project: a monthly sales tracker from a raw export
+
+**Goal:** turn a raw sales export into a monthly tracker that a sales head can read in a minute, that reconciles to the rupee, and that the next person can update without breaking it.
+
+### Tools you'll need
 
 - **Microsoft Excel**, Microsoft 365 for Windows (main version in this chapter). Excel for the web is free with a Microsoft account; Excel for Mac differences are noted in the text. `XLOOKUP` needs Microsoft 365, Excel 2021 or later, or Excel for the web; `IFS` and `TEXTJOIN` need Excel 2019 or later.
 - **Google Sheets**, free at sheets.google.com with a Google account. **Google Forms** at forms.google.com.
@@ -1141,12 +1145,6 @@ What Meera did that the trainee didn't:
   - `ch10_practice.xlsx`: Data, Customers, Products, Targets, and Cell detective sheets, with no formulas, for you to work in.
   - `ch10_tracker_solution.xlsx`: the finished tracker from the project, with every formula.
   - `build_ch10_files.py`: the Python script that builds all of the above from Riverstone's data (seed 20251), so the files can be regenerated.
-
----
-
-## The project: a monthly sales tracker from a raw export
-
-**Goal:** turn a raw sales export into a monthly tracker that a sales head can read in a minute, that reconciles to the rupee, and that the next person can update without breaking it.
 
 **Option A: your own data.** Use an export you work with, such as sales, expenses, or support tickets. Remove or replace customer names, employee names, phone numbers, and anything confidential before you practice on it or show it to anyone. Follow the same steps with your own columns.
 
@@ -1209,25 +1207,6 @@ The check: the Data sheet's non-cancelled total is ₹4,335,471; difference **0*
 
 ---
 
-## You've got it when…
-
-- [ ] You can create, save, rename, and copy a workbook in both apps, and insert, delete, hide, and resize rows and columns.
-- [ ] You know when to paste values, how to find and replace safely, and what each error value (`#N/A`, `#REF!`, `#VALUE!`, `#DIV/0!`, `#NAME?`) is telling you.
-- [ ] You can open the formula bar on a suspicious number and say whether it's a number, text, a date, or a formula.
-- [ ] You import CSV files with column types set, and check the row count, a code column, and `COUNT` of the dates afterward.
-- [ ] You know without thinking whether a formula needs `J2`, `$J$2`, `$J2`, or `J$2` before you copy it.
-- [ ] You can write `COUNTIFS`, `SUMIFS`, and `AVERAGEIFS` with several criteria, including dates, "not equal", wildcards, and blanks.
-- [ ] You can explain the difference between a number format and `ROUND`, and between a number format and `TEXT`.
-- [ ] You can fetch a value from another sheet with `XLOOKUP` (or `INDEX`/`MATCH`) and explain why a lookup says "not found".
-- [ ] You sort and filter without scrambling rows, and use `SUBTOTAL` when a filter is on.
-- [ ] You use data validation to prevent bad entries and conditional formatting to point at the cells that matter.
-- [ ] You can share a workbook safely, protect its formulas, and restore an earlier version.
-- [ ] You can set up a sheet to print or save as a readable PDF.
-- [ ] You can move a file between Excel and Google Sheets and know what might break.
-- [ ] Every breakdown you build has a check that adds the parts back to the total.
-
----
-
 ## Recap
 
 - A **workbook** holds **sheets**; each **cell** has an **address**, and a block of cells is a **range**. Excel and Google Sheets share this model; their menus and a few features differ.
@@ -1246,7 +1225,34 @@ The check: the Data sheet's non-cancelled total is ₹4,335,471; difference **0*
 
 ---
 
-## Practice exercises
+## Key terms
+
+spreadsheet application · workbook · worksheet (sheet) · cell · cell address · range · formula · function · argument · number format · data validation · conditional formatting · name box · formula bar · ribbon · headers · grain · number · text (string) · logical value · error · trailing space · date serial number · leading zeros · locale · fill handle · custom format · operator · relative reference · absolute reference · mixed reference · circular reference · test (condition) · criterion · wildcard · reconciliation · month key · lookup · exact match · sort · filter · filter view · `SUBTOTAL` · table · table reference · formula rule · co-authoring · comment · sheet protection · version history · Google Form · CSV UTF-8 · AutoSave · status bar · paste special · paste values · find and replace · series · Flash Fill · Smart Fill · Text to Columns · Format Painter · error value · named range · AutoSum · trace precedents · calculation mode · median · remove duplicates · print area · print titles
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can create, save, rename, and copy a workbook in both apps, and insert, delete, hide, and resize rows and columns.
+- [ ] You know when to paste values, how to find and replace safely, and what each error value (`#N/A`, `#REF!`, `#VALUE!`, `#DIV/0!`, `#NAME?`) is telling you.
+- [ ] You can open the formula bar on a suspicious number and say whether it's a number, text, a date, or a formula.
+- [ ] You import CSV files with column types set, and check the row count, a code column, and `COUNT` of the dates afterward.
+- [ ] You know without thinking whether a formula needs `J2`, `$J$2`, `$J2`, or `J$2` before you copy it.
+- [ ] You can write `COUNTIFS`, `SUMIFS`, and `AVERAGEIFS` with several criteria, including dates, "not equal", wildcards, and blanks.
+- [ ] You can explain the difference between a number format and `ROUND`, and between a number format and `TEXT`.
+- [ ] You can fetch a value from another sheet with `XLOOKUP` (or `INDEX`/`MATCH`) and explain why a lookup says "not found".
+- [ ] You sort and filter without scrambling rows, and use `SUBTOTAL` when a filter is on.
+- [ ] You use data validation to prevent bad entries and conditional formatting to point at the cells that matter.
+- [ ] You can share a workbook safely, protect its formulas, and restore an earlier version.
+- [ ] You can set up a sheet to print or save as a readable PDF.
+- [ ] You can move a file between Excel and Google Sheets and know what might break.
+- [ ] Every breakdown you build has a check that adds the parts back to the total.
+
+---
+
+## Exercises
 
 Use `ch10_practice.xlsx` in Excel or Google Sheets unless an exercise says otherwise. The Data sheet's rows 2 to 331 hold the 330 order lines.
 
@@ -1293,26 +1299,7 @@ Use `ch10_practice.xlsx` in Excel or Google Sheets unless an exercise says other
 
 ---
 
-## Key terms
-
-spreadsheet application · workbook · worksheet (sheet) · cell · cell address · range · formula · function · argument · number format · data validation · conditional formatting · name box · formula bar · ribbon · headers · grain · number · text (string) · logical value · error · trailing space · date serial number · leading zeros · locale · fill handle · custom format · operator · relative reference · absolute reference · mixed reference · circular reference · test (condition) · criterion · wildcard · reconciliation · month key · lookup · exact match · sort · filter · filter view · `SUBTOTAL` · table · table reference · formula rule · co-authoring · comment · sheet protection · version history · Google Form · CSV UTF-8 · AutoSave · status bar · paste special · paste values · find and replace · series · Flash Fill · Smart Fill · Text to Columns · Format Painter · error value · named range · AutoSum · trace precedents · calculation mode · median · remove duplicates · print area · print titles
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 11, The Spreadsheet, Mastered:** lookups in depth (`XLOOKUP` options, `INDEX`/`MATCH`), pivot tables, dynamic arrays (`FILTER`, `UNIQUE`, `SORT`), Power Query for refreshable imports, and Google Sheets' `QUERY` and `IMPORTRANGE`. The tracker you built becomes a one-click refresh.
-- **Chapter 12, Databases & SQL Foundations:** the same questions (net revenue, excluding cancelled orders, revenue by segment) answered with `WHERE`, `GROUP BY`, and `JOIN`, on data too large for a spreadsheet.
-- **Chapter 14, Data Cleaning & Preparation:** messy text, duplicates, mixed date formats, and missing values at scale, in spreadsheets, SQL, and pandas.
-- **Chapter 15, Data Visualization Principles:** choosing the right chart, titles that state the finding, and color with meaning.
-- **Chapter 19, Spreadsheet Automation:** macros, VBA, Office Scripts, and Google Apps Script, including the form-to-email workflow started in section 10.13.
-- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) tests this chapter's skills, from "what's the difference between `COUNT` and `COUNTA`?" to live `SUMIFS` and lookup tasks.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1394,3 +1381,14 @@ Wholesale ₹1,702,658.50, Retail ₹1,488,773.75, Hospitality ₹1,144,038.75. 
 **28.** `QUERY` and `IMPORTRANGE` are Google Sheets–only functions. In the downloaded `.xlsx`, those cells arrive as fixed values (or errors) and stop updating, so the Excel file is a snapshot. Tell finance it's a snapshot as of the download date, or rebuild those parts with functions both apps share (`SUMIFS`, lookups) or with Power Query in Excel (Chapter 11). Then check the totals in the Excel copy against the Sheets original.
 
 **29.** ₹62,650 is exactly the value of the two cancelled orders. The most likely explanation is that the sales head's figure *includes* cancelled orders and yours excludes them. Neither number is "wrong" until the rule is agreed. Ask: *"Should cancelled orders count in this report?"* Then write the agreed rule on the report, as Meera did. Chapter 24 covers how to have that conversation.
+
+---
+
+## Where this leads
+
+- **Chapter 11, The Spreadsheet, Mastered:** lookups in depth (`XLOOKUP` options, `INDEX`/`MATCH`), pivot tables, dynamic arrays (`FILTER`, `UNIQUE`, `SORT`), Power Query for refreshable imports, and Google Sheets' `QUERY` and `IMPORTRANGE`. The tracker you built becomes a one-click refresh.
+- **Chapter 12, Databases & SQL Foundations:** the same questions (net revenue, excluding cancelled orders, revenue by segment) answered with `WHERE`, `GROUP BY`, and `JOIN`, on data too large for a spreadsheet.
+- **Chapter 14, Data Cleaning & Preparation:** messy text, duplicates, mixed date formats, and missing values at scale, in spreadsheets, SQL, and pandas.
+- **Chapter 15, Data Visualization Principles:** choosing the right chart, titles that state the finding, and color with meaning.
+- **Chapter 19, Spreadsheet Automation:** macros, VBA, Office Scripts, and Google Apps Script, including the form-to-email workflow started in section 10.13.
+- **Interview preparation:** the Excel, Google Sheets, VBA & BI Question Bank (Chapter 70) tests this chapter's skills, from "what's the difference between `COUNT` and `COUNTA`?" to live `SUMIFS` and lookup tasks.

@@ -1,7 +1,7 @@
 # ADR-026: CRM write method and system-of-record rule
 
 **Status:** Accepted
-**Date:** (Part VI, Chapter 51)
+**Date:** (Part 6, Chapter 51)
 **Owner:** Automation team
 
 ## Context

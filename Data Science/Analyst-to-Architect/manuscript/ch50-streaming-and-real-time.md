@@ -1,6 +1,6 @@
 # Chapter 50. Streaming & Real-Time
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -20,7 +20,7 @@
 
 ## Why this matters
 
-Everything in Part V so far has been **batch**: a pipeline runs at 6:30, does a day's work, and stops. Batch is the right answer far more often than people admit. But some questions genuinely can't wait for tomorrow morning.
+Everything in Part 5 so far has been **batch**: a pipeline runs at 6:30, does a day's work, and stops. Batch is the right answer far more often than people admit. But some questions genuinely can't wait for tomorrow morning.
 
 Riverstone's plant is one of them. A machine running 12 °C hot produces scrap continuously, and the loss is per minute, not per day. By the time the nightly pipeline notices, a shift's output is ruined. The same shape appears in fraud detection, delivery tracking, stock levels during a sale, and any alert where the value of the answer decays in minutes.
 
@@ -494,7 +494,7 @@ Put the pieces together, as the plant team actually needs them.
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -538,19 +538,17 @@ The plant manager's verdict, at the review, was the sentence Meera kept: "The sy
 
 ---
 
-## Tools
+## Project: minute-level machine monitoring
+
+**Goal:** build the plant monitoring design from section 50.8 end to end, on the practice data, and decide whether it's worth running.
+
+### Tools you'll need
 
 - **Python 3.12** with `pyspark`, `deltalake`, `duckdb`, `pyarrow`, and **Java 17 or 21**.
 - **The Chapter 50 companion folder** (`companion/ch50/`): `mini_log.py` (the local message log) and `sensor_events.py` (replays the Chapter 48 archive as events). Generate the Chapter 48 dataset first.
 - **Versions used for the outputs shown:** Python 3.12.3, PySpark 4.2.0, deltalake 1.6.3, DuckDB 1.5.5, Java 21.
 - **For real Kafka, when you have a broker:** `kafka-python` or `confluent-kafka` for clients; managed services include Amazon MSK, Confluent Cloud, Azure Event Hubs, and Google Pub/Sub. Spark connects with `format("kafka")`.
 - **Other engines worth knowing:** Apache Flink (the strongest event-time engine), Kafka Streams, and cloud streaming services.
-
----
-
-## The project: minute-level machine monitoring
-
-**Goal:** build the plant monitoring design from section 50.8 end to end, on the practice data, and decide whether it's worth running.
 
 **Option A: Riverstone.** Use the companion scripts.
 
@@ -576,7 +574,30 @@ The plant manager's verdict, at the review, was the sentence Meera kept: "The sy
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Streaming is for decisions whose value decays in minutes.** Most "real-time" requests are answered better by a shorter batch schedule.
+- An event log is **append-only**, split into **partitions**; a **key** decides the partition, so order holds within a key, not across a topic.
+- **Consumer groups** track their own **offsets**; **lag** is the first metric to watch.
+- Delivery is **at-least-once** in practice: expect duplicates and de-duplicate by a key. Here a crash re-sent all 82 alerts until a key was added.
+- **Event time** is what you aggregate on; **processing time** is when you happened to see it.
+- **Windows** need a **watermark**: it sets how long you wait for stragglers and bounds state. Six late readings were counted inside a 10-minute watermark (456 readings instead of 450) and dropped once the watermark had moved on.
+- **Append mode emits only final windows**, which is why the first batch produced nothing.
+- Streaming sinks make **small files**: stream into a table format and compact on a schedule.
+- Operate a stream by watching **lag, watermark age, dropped rows, state size, batch duration, and restarts**, with a **dead-letter path** and a **schema contract**.
+- Pair streaming with a **daily batch correction**: speed from the stream, truth from the batch.
+
+---
+
+## Key terms
+
+batch · streaming · latency · event log · topic · partition · key · offset · consumer group · lag · retention · replay · producer · consumer · at-most-once · at-least-once · exactly-once · de-duplication key · idempotency key · Kafka · broker · schema registry · Structured Streaming · micro-batch · trigger · checkpoint · unbounded table · event time · processing time · window (tumbling, sliding, session) · watermark · lateness · output mode (append, update, complete) · state · dead-letter path · small files · compaction · dashboard refresh
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can turn "real-time" into a latency, a decision, and an owner.
 - [ ] You can explain topics, partitions, keys, offsets, consumer groups, lag, and retention.
@@ -594,22 +615,7 @@ The plant manager's verdict, at the review, was the sentence Meera kept: "The sy
 
 ---
 
-## Recap
-
-- **Streaming is for decisions whose value decays in minutes.** Most "real-time" requests are answered better by a shorter batch schedule.
-- An event log is **append-only**, split into **partitions**; a **key** decides the partition, so order holds within a key, not across a topic.
-- **Consumer groups** track their own **offsets**; **lag** is the first metric to watch.
-- Delivery is **at-least-once** in practice: expect duplicates and de-duplicate by a key. Here a crash re-sent all 82 alerts until a key was added.
-- **Event time** is what you aggregate on; **processing time** is when you happened to see it.
-- **Windows** need a **watermark**: it sets how long you wait for stragglers and bounds state. Six late readings were counted inside a 10-minute watermark (456 readings instead of 450) and dropped once the watermark had moved on.
-- **Append mode emits only final windows**, which is why the first batch produced nothing.
-- Streaming sinks make **small files**: stream into a table format and compact on a schedule.
-- Operate a stream by watching **lag, watermark age, dropped rows, state size, batch duration, and restarts**, with a **dead-letter path** and a **schema contract**.
-- Pair streaming with a **daily batch correction**: speed from the stream, truth from the batch.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -639,26 +645,7 @@ The plant manager's verdict, at the review, was the sentence Meera kept: "The sy
 
 ---
 
-## Key terms
-
-batch · streaming · latency · event log · topic · partition · key · offset · consumer group · lag · retention · replay · producer · consumer · at-most-once · at-least-once · exactly-once · de-duplication key · idempotency key · Kafka · broker · schema registry · Structured Streaming · micro-batch · trigger · checkpoint · unbounded table · event time · processing time · window (tumbling, sliding, session) · watermark · lateness · output mode (append, update, complete) · state · dead-letter path · small files · compaction · dashboard refresh
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 51, Data Activation,** sends results into business systems, where at-least-once delivery becomes idempotency keys against a CRM or ERP.
-- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers running a stream somewhere it can stay up: containers, restarts, secrets, and cost.
-- **Chapter 47** applies to streams: freshness on the sink, quality checks on the corrected table, and alerting that doesn't cry wolf.
-- **Chapter 49** is where the sink lives: table formats, compaction, and time travel.
-- **Chapter 58, Intelligent Automation,** revisits the alerting decision with AI in the loop, and Chapter 50's rule stands: the design matters more than the model.
-- **Part VIII:** streaming questions appear in the data engineering interview chapters, and "design a real-time alerting system" is a common case in Chapter 77.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -689,3 +676,14 @@ batch · streaming · latency · event log · topic · partition · key · offse
 **13.** It means correctness isn't the measure; **action** is. Measure an alerting system by: how many alerts fired, how many led to someone doing something (the useful ones), how many were ignored or muted, how long from the underlying event to the alert, and how many real events were **missed**. Report monthly: alerts per machine per week, the share acted on, median time to acknowledge, false-positive causes grouped, and any incident the system missed. A rising alert count with a falling action rate is the signal to change the design, exactly as in the story.
 
 **14.** Explain it in their terms: *"The 9 a.m. figure is what we know so far; some orders reach the system a few minutes late, so the number can still move. By 10 a.m. it's settled, and the end-of-day figure is final and reconciled with the ERP."* Then offer design choices: (1) label the live figure as provisional, with a "final at" time, which costs nothing; (2) delay the live figure by the watermark so it never changes, at the cost of being older; (3) show both a live and a confirmed number side by side; (4) keep the live number for direction only and put decisions on the daily corrected table. The choice depends on whether they act on the intraday number or only watch it.
+
+---
+
+## Where this leads
+
+- **Chapter 51, Data Activation,** sends results into business systems, where at-least-once delivery becomes idempotency keys against a CRM or ERP.
+- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers running a stream somewhere it can stay up: containers, restarts, secrets, and cost.
+- **Chapter 47** applies to streams: freshness on the sink, quality checks on the corrected table, and alerting that doesn't cry wolf.
+- **Chapter 49** is where the sink lives: table formats, compaction, and time travel.
+- **Chapter 58, Intelligent Automation,** revisits the alerting decision with AI in the loop, and Chapter 50's rule stands: the design matters more than the model.
+- **Part 8:** streaming questions appear in the data engineering interview chapters, and "design a real-time alerting system" is a common case in Chapter 77.

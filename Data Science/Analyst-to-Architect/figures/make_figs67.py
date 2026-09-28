@@ -40,11 +40,11 @@ def f2():  # first 90 days
 
 def f3():  # the arc of the book
     o=[text(30,30,"The arc of this book, in one line",14.5,INK,"bold",family=HEAD)]
-    milestones=[("Part I","Ch 1","One query\nagainst one table",MUTED),
-               ("Part II","Ch 20","One automation\nsomeone relies on",ACC),
-               ("Part V-VI","Ch 46-58","A pipeline and a model\nin production",GREEN),
-               ("Part VII","Ch 60-61","A whole platform,\ndesigned and stress-tested",GOLD),
-               ("Part VII","Ch 63-66","Governed, secured,\ncosted, and led",PURPLE),
+    milestones=[("Part 1","Ch 1","One query\nagainst one table",MUTED),
+               ("Part 2","Ch 20","One automation\nsomeone relies on",ACC),
+               ("Part 5-6","Ch 46-58","A pipeline and a model\nin production",GREEN),
+               ("Part 7","Ch 60-61","A whole platform,\ndesigned and stress-tested",GOLD),
+               ("Part 7","Ch 63-66","Governed, secured,\ncosted, and led",PURPLE),
                ("Now","Ch 67","Someone else's turn\nto learn from you",RED)]
     x0=60; gap=155
     o.append(path(f"M{x0},200 H{x0+5*gap}",stroke=LIGHT,sw=2))

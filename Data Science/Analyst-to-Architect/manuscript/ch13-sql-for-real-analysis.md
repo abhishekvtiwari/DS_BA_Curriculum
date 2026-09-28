@@ -1,6 +1,6 @@
 # Chapter 13. SQL for Real Analysis
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
@@ -1332,7 +1332,7 @@ FROM leads;
 
 **Reading it.** The structure is sound. But 11 orders have no sales rep, which will quietly understate every rep's numbers, and the lead table is inflated by 13 duplicate rows. Both belong in a footnote on any report that uses these tables, and in a conversation with the people who own the CRM.
 
-**Where else you'll use it.** Every pipeline you'll build in Part V starts with checks like these. Chapter 47 turns them into automated tests.
+**Where else you'll use it.** Every pipeline you'll build in Part 5 starts with checks like these. Chapter 47 turns them into automated tests.
 
 ---
 
@@ -1500,7 +1500,7 @@ One behavior to keep in mind from section 12.16: MySQL's default collation ignor
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1538,19 +1538,17 @@ Notice that the table's middle column is a list of *patterns*, not queries. That
 
 ---
 
-## Tools
+## Project: a monthly business review pack
+
+**Goal:** a set of saved, commented queries that produce Riverstone's monthly business review, ready to re-run every month.
+
+### Tools you'll need
 
 - **PostgreSQL** and **DBeaver**, as in Chapter 12. Every feature in this chapter is standard SQL except `generate_series`, `FILTER`, and the `::date` shorthand, which are flagged where they appear.
 - **MySQL 8.0 or later** (optional). Every window function, CTE, and view in this chapter works there; section 13.8 lists the few spellings that change. Companion files: `riverstone_2025_setup_mysql.sql` and `ch13_queries_mysql.sql`.
 - **A SQL formatter.** Long CTE queries are only readable if they're consistently laid out. DBeaver's *Format SQL* command is a good start; Chapter 32 introduces automatic formatting ("linting") for teams.
 - **A snippets file or repository.** Keep your pattern library in a Git repository (Chapter 26), one file per pattern, with a comment at the top saying what question it answers.
 - **Later:** Power BI's DAX language (Chapter 16) has its own versions of running totals, ranking, and time comparisons. Knowing the SQL versions makes the DAX versions much easier to understand.
-
----
-
-## The project: a monthly business review pack
-
-**Goal:** a set of saved, commented queries that produce Riverstone's monthly business review, ready to re-run every month.
 
 **Data:** the one-year database, or your own company's data, with permission. The patterns work on any orders data.
 
@@ -1573,22 +1571,6 @@ Notice that the table's middle column is a list of *patterns*, not queries. That
 
 ---
 
-## You've got it when…
-
-- [ ] I can rewrite a nested-subquery query as a CTE, and explain each step in one sentence.
-- [ ] I know when a view is a better choice than a CTE, and what business rule my view contains.
-- [ ] I can explain the difference between `GROUP BY` and a window function using a real example.
-- [ ] I choose between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` deliberately, and always add a tie-breaker to `ROW_NUMBER`.
-- [ ] I can write "top N per group" and "latest record per group" without looking anything up.
-- [ ] I can calculate month-over-month change, a running total, and a moving average, and I write frames explicitly.
-- [ ] I know why `LAG` needs a date spine when periods are missing.
-- [ ] I can recognize which of the ten patterns a new business question belongs to.
-- [ ] I've built a monthly review pack that reconciles to a known total.
-
-When a manager asks a question with *compared with*, *top*, *running*, *previous*, or *per group* in it, and you already know the shape of the query before you open the editor, this chapter has done its job.
-
----
-
 ## Recap
 
 - A **CTE** (`WITH name AS (…)`) names a step of a query. Chain steps with commas; later steps can use earlier ones. Debug by selecting from any step.
@@ -1604,7 +1586,31 @@ When a manager asks a question with *compared with*, *top*, *running*, *previous
 
 ---
 
-## Practice exercises
+## Key terms
+
+common table expression (CTE) · `WITH` · view · temporary table · window function · `OVER` · `PARTITION BY` · window `ORDER BY` · frame · `ROWS` vs `RANGE` · `UNBOUNDED PRECEDING` · `CURRENT ROW` · named window (`WINDOW`) · `QUALIFY` · `ROW_NUMBER` · `RANK` · `DENSE_RANK` · tie-breaker · `LAG` · `LEAD` · `FIRST_VALUE` · `LAST_VALUE` · running total · year-to-date (YTD) · moving average · month-over-month · date spine / calendar table · `generate_series` · recursive CTE · `cte_max_recursion_depth` · reserved word · top N per group · Pareto principle · ABC analysis · deduplication · funnel · conversion rate · cohort · retention · right-censoring · gaps and islands · pivot · `FILTER` · data-quality check
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can rewrite a nested-subquery query as a CTE, and explain each step in one sentence.
+- [ ] I know when a view is a better choice than a CTE, and what business rule my view contains.
+- [ ] I can explain the difference between `GROUP BY` and a window function using a real example.
+- [ ] I choose between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` deliberately, and always add a tie-breaker to `ROW_NUMBER`.
+- [ ] I can write "top N per group" and "latest record per group" without looking anything up.
+- [ ] I can calculate month-over-month change, a running total, and a moving average, and I write frames explicitly.
+- [ ] I know why `LAG` needs a date spine when periods are missing.
+- [ ] I can recognize which of the ten patterns a new business question belongs to.
+- [ ] I've built a monthly review pack that reconciles to a known total.
+
+When a manager asks a question with *compared with*, *top*, *running*, *previous*, or *per group* in it, and you already know the shape of the query before you open the editor, this chapter has done its job.
+
+---
+
+## Exercises
 
 Exercise 1 uses the **mini database**; all others use the **one-year database**. Both need the `sales_lines` view. Predict the shape of each result before running it.
 
@@ -1641,25 +1647,7 @@ Exercise 1 uses the **mini database**; all others use the **one-year database**.
 
 ---
 
-## Key terms
-
-common table expression (CTE) · `WITH` · view · temporary table · window function · `OVER` · `PARTITION BY` · window `ORDER BY` · frame · `ROWS` vs `RANGE` · `UNBOUNDED PRECEDING` · `CURRENT ROW` · named window (`WINDOW`) · `QUALIFY` · `ROW_NUMBER` · `RANK` · `DENSE_RANK` · tie-breaker · `LAG` · `LEAD` · `FIRST_VALUE` · `LAST_VALUE` · running total · year-to-date (YTD) · moving average · month-over-month · date spine / calendar table · `generate_series` · recursive CTE · `cte_max_recursion_depth` · reserved word · top N per group · Pareto principle · ABC analysis · deduplication · funnel · conversion rate · cohort · retention · right-censoring · gaps and islands · pivot · `FILTER` · data-quality check
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 14, Data Cleaning & Preparation,** goes deeper into duplicates, missing values, and messy text, the problems Patterns 3 and 10 only flag.
-- **Chapter 16, Business Intelligence with Power BI,** shows the same ideas (running totals, rankings, time comparisons) in DAX, and how to turn these queries into interactive dashboards.
-- **Chapter 20, Automating Reports & Delivering Insights,** schedules your review pack and emails the headline numbers every month.
-- **Chapter 28, Advanced SQL, Performance & Data Modeling,** covers recursive CTEs, advanced frames, indexes, and query plans, for when these queries meet millions of rows.
-- **Interview preparation:** the SQL Question Bank (Chapter 71) includes the classic window-function rounds: second-highest salary, top N per group, running totals, consecutive days, and deduplication, with graded model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every query below was run, and the outputs are real.)*
 
@@ -2113,3 +2101,13 @@ LEFT JOIN daily_sales AS s ON s.order_date = d.day;
 ```
 
 The revenue matches December in section 13.6 (₹439,824). ✓ Orders came in on only 14 of December's 31 days, which is normal for a B2B supplier whose customers order every few weeks, and a reason daily charts for this kind of business need a date spine: without one, the 17 empty days would simply vanish. `SUM(CASE WHEN s.order_date IS NULL THEN 1 ELSE 0 END)` counts the unmatched days. A 31-row spine is well within MySQL's 1,000-step recursion limit, so no setting needs changing.
+
+---
+
+## Where this leads
+
+- **Chapter 14, Data Cleaning & Preparation,** goes deeper into duplicates, missing values, and messy text, the problems Patterns 3 and 10 only flag.
+- **Chapter 16, Business Intelligence with Power BI,** shows the same ideas (running totals, rankings, time comparisons) in DAX, and how to turn these queries into interactive dashboards.
+- **Chapter 20, Automating Reports & Delivering Insights,** schedules your review pack and emails the headline numbers every month.
+- **Chapter 28, Advanced SQL, Performance & Data Modeling,** covers recursive CTEs, advanced frames, indexes, and query plans, for when these queries meet millions of rows.
+- **Interview preparation:** the SQL Question Bank (Chapter 71) includes the classic window-function rounds: second-highest salary, top N per group, running totals, consecutive days, and deduplication, with graded model answers.

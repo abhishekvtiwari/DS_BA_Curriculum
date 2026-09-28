@@ -1,6 +1,6 @@
 # Chapter 30. Inference & Experiments
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -257,6 +257,7 @@ the top 1% of enquiries hold 16.6% of the value
 That's the shape of data where a mean comparison can swing on a single row. Section 30.10 returns to it.
 
 ---
+
 ## 30.4 Effect size: how big, not just whether
 
 A p-value answers *"could this be nothing?"*. It says nothing about *how much*, and with a large enough sample almost any difference gets a small p-value. Watch that happen:
@@ -613,6 +614,7 @@ Everything above is arithmetic. The design is where tests are won or lost, and i
 > **Try it.** Write this table for a change you'd like to test where you work: a subject line, a page layout, a follow-up call within an hour. Most people find the *metric* and *decision rule* rows the hard ones, which is the point: they're where the disagreement lives, and it's cheaper to have it now.
 
 ---
+
 ## 30.9 Riverstone's website test, end to end
 
 The plan is written, the fortnight has passed. Analysis follows the plan, in order, starting with the checks that can invalidate everything else.
@@ -970,7 +972,8 @@ Notice what it doesn't do: it doesn't say "statistically significant" without a 
 | "Tablet users loved it (+20%)" | "Segments moved in the same direction; the test wasn't powered for individual devices" |
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1013,7 +1016,11 @@ Notice that the discipline was not statistical skill. It was a page written befo
 
 ---
 
-## Tools
+## Project: design and analyze an experiment
+
+**Goal:** a complete, honest experiment write-up: a plan agreed in advance, an analysis that follows it, and a recommendation someone can act on.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -1024,12 +1031,6 @@ Versions used for this chapter, checked in September 2026:
 - **Companion files** in `ch30/`: `generate_riverstone_web.py` (the dataset, seed 30) and `ch30_check.py` (checks the chapter's numbers).
 
 > **Tool note: Bayesian A/B testing.** Some teams report *"a 93% chance the variant is better, and a 7% chance it's worse by more than 0.2 points"* instead of a p-value. That's the Bayesian framing: it starts from a prior belief, updates it with the data, and produces a probability distribution for the effect. It's popular because its sentences match how people think, and because stopping early is less damaging when the method expects it. It needs a prior, and a prior is a judgment that has to be defensible. The design work in section 30.8 is identical either way: metric, randomization, guardrails, duration, decision rule.
-
----
-
-## The project: design and analyze an experiment
-
-**Goal:** a complete, honest experiment write-up: a plan agreed in advance, an analysis that follows it, and a recommendation someone can act on.
 
 **Option A: your own data.** Any A/B test, pilot, or before-and-after change at work. If you have no experiment, design one on paper and analyze a past change as best you can, saying clearly what the design couldn't rule out.
 
@@ -1057,21 +1058,6 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can compute a standard error and a confidence interval for a mean and for a proportion, by hand.
-- [ ] I report an effect size and an interval, never a p-value alone.
-- [ ] I can say what a p-value does and doesn't mean, in one sentence, to a non-technical colleague.
-- [ ] I choose the right test for the data: Welch's t-test, two proportions, chi-square, or ANOVA with a post-hoc correction.
-- [ ] I compute the sample size before a test, from an effect size the business chose.
-- [ ] I write the plan first: metric, guardrails, randomization unit, duration, stopping rule, decision rule.
-- [ ] I check the sample ratio before I look at the outcome.
-- [ ] I can explain peeking, multiple testing, and novelty, with numbers.
-- [ ] I read regression coefficients and odds ratios as statements about the business, with their intervals.
-- [ ] My write-ups say what would change my mind.
-
----
-
 ## Recap
 
 - **Standard error** measures how much a sample statistic wobbles; it shrinks with the square root of n. A **confidence interval** turns it into a range you can say out loud.
@@ -1087,7 +1073,30 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+inference · population · sample · standard error · confidence interval · t-distribution · proportion · unit of analysis · hypothesis test · null hypothesis · p-value · Type I error · Type II error · Welch's t-test · Mann-Whitney U · effect size · Cohen's d · relative lift · absolute difference · odds ratio · Cramér's V · two-proportion test · chi-square test of independence · expected counts · Fisher's exact test · ANOVA · F-statistic · post-hoc test · Tukey HSD · familywise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · statistical power · alpha · beta · minimum detectable effect · sample size calculation · A/B test · control · variant · randomization unit · guardrail metric · primary metric · stopping rule · decision rule · sample-ratio mismatch · peeking · sequential testing · novelty effect · winsorizing · linear regression for inference · logistic regression · log-odds · Bayesian A/B testing · prior
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can compute a standard error and a confidence interval for a mean and for a proportion, by hand.
+- [ ] I report an effect size and an interval, never a p-value alone.
+- [ ] I can say what a p-value does and doesn't mean, in one sentence, to a non-technical colleague.
+- [ ] I choose the right test for the data: Welch's t-test, two proportions, chi-square, or ANOVA with a post-hoc correction.
+- [ ] I compute the sample size before a test, from an effect size the business chose.
+- [ ] I write the plan first: metric, guardrails, randomization unit, duration, stopping rule, decision rule.
+- [ ] I check the sample ratio before I look at the outcome.
+- [ ] I can explain peeking, multiple testing, and novelty, with numbers.
+- [ ] I read regression coefficients and odds ratios as statements about the business, with their intervals.
+- [ ] My write-ups say what would change my mind.
+
+---
+
+## Exercises
 
 Work in `companion/ch30`, with the data built by `generate_riverstone_web.py`. Predict each answer before running it.
 
@@ -1123,26 +1132,7 @@ Work in `companion/ch30`, with the data built by `generate_riverstone_web.py`. P
 
 ---
 
-## Key terms
-
-inference · population · sample · standard error · confidence interval · t-distribution · proportion · unit of analysis · hypothesis test · null hypothesis · p-value · Type I error · Type II error · Welch's t-test · Mann-Whitney U · effect size · Cohen's d · relative lift · absolute difference · odds ratio · Cramér's V · two-proportion test · chi-square test of independence · expected counts · Fisher's exact test · ANOVA · F-statistic · post-hoc test · Tukey HSD · familywise error rate · Bonferroni correction · Benjamini-Hochberg · false discovery rate · statistical power · alpha · beta · minimum detectable effect · sample size calculation · A/B test · control · variant · randomization unit · guardrail metric · primary metric · stopping rule · decision rule · sample-ratio mismatch · peeking · sequential testing · novelty effect · winsorizing · linear regression for inference · logistic regression · log-odds · Bayesian A/B testing · prior
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 31, Causal Inference Without Experiments,** answers the same questions when you can't randomize: difference-in-differences, matching, and regression discontinuity.
-- **Chapter 22, Statistics Without Fooling Yourself,** is the intuition this chapter computes; reread its correlation-and-causation section after this one.
-- **Chapter 42, Digital & Web Analytics,** uses the same website data for funnels, attribution, and cohorts.
-- **Chapter 29, Python as Software, Not Scripts,** is how an analysis like this becomes a repeatable, tested pipeline instead of a notebook nobody can rerun.
-- **Chapter 55, Machine Learning in Production,** runs experiments on models, where the treatment is a model version and the guardrails are latency and fairness.
-- **Chapter 73, Statistics, Probability & Experimentation Bank,** has about 70 interview questions, including three A/B test debugging cases built on exactly the faults in section 30.10.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1420,3 +1410,14 @@ The variant, device, and channel coefficients keep their intervals away from 1; 
 **17.** *"If we keep looking until the numbers look good, we'll always find a moment when they do, even when the two forms are identical. I ran that experiment on data where nothing was different, and a quarter of the tests produced a 'winner' at some point."* Then offer the alternative: a fixed end date, or a method designed for stopping early, agreed now rather than mid-test.
 
 **18.** Ship on the evidence you have, and put the six-week check in the plan as a commitment with a threshold attached: *"We'll review enquiry-to-order rate on 31 March; if it has dropped by more than a fifth, we revert."* Two supporting moves: track a faster proxy in the meantime (whether the sales team can reach the enquirer, which is known within days), and keep the old form available so reverting is a configuration change rather than a project.
+
+---
+
+## Where this leads
+
+- **Chapter 31, Causal Inference Without Experiments,** answers the same questions when you can't randomize: difference-in-differences, matching, and regression discontinuity.
+- **Chapter 22, Statistics Without Fooling Yourself,** is the intuition this chapter computes; reread its correlation-and-causation section after this one.
+- **Chapter 42, Digital & Web Analytics,** uses the same website data for funnels, attribution, and cohorts.
+- **Chapter 29, Python as Software, Not Scripts,** is how an analysis like this becomes a repeatable, tested pipeline instead of a notebook nobody can rerun.
+- **Chapter 55, Machine Learning in Production,** runs experiments on models, where the treatment is a model version and the guardrails are latency and fairness.
+- **Chapter 73, Statistics, Probability & Experimentation Bank,** has about 70 interview questions, including three A/B test debugging cases built on exactly the faults in section 30.10.

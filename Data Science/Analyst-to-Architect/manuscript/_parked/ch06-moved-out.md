@@ -389,14 +389,14 @@ If the documentation doesn't answer it, try the tool's official forums, then a w
 
 *[Retired figure] A six-month plan: month 1, Chapters 1–9; month 2, spreadsheets (Chapters 10–11); month 3, SQL (Chapters 12–13); month 4, cleaning, charts, and Power BI (Chapters 14–16); month 5, Python and statistics (Chapters 17–18, 21–22); month 6, automation, business skills, and the portfolio (Chapters 19–20, 23–27), with interview practice starting.*
 
-*Figure 6.2 — One way through the analyst path (Parts 0 to II) in six months, at about 8 hours a week.*
+*Figure 6.2 — One way through the analyst path (Parts 0 to 2) in six months, at about 8 hours a week.*
 
 Figure 6.2 is a sample, not a rule. It's ambitious: about 8 hours a week for 26 weeks. At 5 hours a week, stretch it to nine or ten months, and nothing is lost. A few choices behind it:
 
 - **Spreadsheets before SQL, SQL before Python.** Each builds on the last, and together they cover most day-to-day analyst work.
 - **Power BI in month 4**, once you can shape data, so the dashboards have something good to show.
 - **Automation (Chapters 19–20) after Python**, because Chapter 20 uses it.
-- **Interview practice in month 6, not at the end.** Answering questions from Part VIII (Chapters 68–71) while you build your portfolio shows you what to revise.
+- **Interview practice in month 6, not at the end.** Answering questions from Part 8 (Chapters 68–71) while you build your portfolio shows you what to revise.
 - **Business analysts** can swap some Python time for Chapters 24 and 25, which cover requirements, stakeholders, and process mapping.
 
 ---

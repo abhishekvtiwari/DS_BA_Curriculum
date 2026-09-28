@@ -1,6 +1,6 @@
 # Chapter 7. The Data Landscape
 
-*Part I — The Map*
+*Part 1 — The Map*
 
 > **Chapter at a glance**
 >
@@ -68,22 +68,22 @@ Here are the ten roles this book follows, grouped by track in the same order as 
 
 | Track | Role | Center of gravity | What they typically produce | Core tools | Taught in |
 |---|---|---|---|---|---|
-| Analytics & BI | **Data analyst** | What happened, and why it probably happened | Answers to business questions, reports, analyses, recommendations | Excel or Google Sheets, SQL, a BI tool, some Python | Part II |
+| Analytics & BI | **Data analyst** | What happened, and why it probably happened | Answers to business questions, reports, analyses, recommendations | Excel or Google Sheets, SQL, a BI tool, some Python | Part 2 |
 | Analytics & BI | **Business analyst** | What the business needs, and how a process should change | Clear requirements, process maps, user stories, test plans, the case for a change | Spreadsheets, SQL, process-mapping and ticketing tools | Ch 24–25 |
 | Analytics & BI | **BI developer** | Making "what happened" available to everyone, all the time | Dashboards, data models behind them, scheduled reports | Power BI or similar, SQL, DAX | Ch 16, 28 |
-| Data science, ML & AI | **Data scientist** | What will happen, and what causes what | Models, forecasts, experiment results, recommendations | Python, statistics, scikit-learn, SQL | Part IV |
+| Data science, ML & AI | **Data scientist** | What will happen, and what causes what | Models, forecasts, experiment results, recommendations | Python, statistics, scikit-learn, SQL | Part 4 |
 | Data science, ML & AI | **ML engineer** | Keeping models working in the real world | Models running as services, with monitoring and retraining | Python, cloud services, MLOps tools | Ch 56 |
 | Data science, ML & AI | **AI engineer** | Building useful, safe products on top of AI models | Assistants, AI features, and AI steps inside business workflows, with evaluation | Python, LLM APIs, retrieval, evaluation tools | Ch 54–58 |
-| Engineering & integration | **Data engineer** | Getting data from every source, correct and on time | Pipelines, warehouses, data-quality checks | SQL, Python, orchestration tools, cloud | Part V |
+| Engineering & integration | **Data engineer** | Getting data from every source, correct and on time | Pipelines, warehouses, data-quality checks | SQL, Python, orchestration tools, cloud | Part 5 |
 | Engineering & integration | **Analytics engineer** | One trusted, tested version of the business's numbers | Clean, documented, tested tables that analysts and dashboards use | SQL, dbt, Git | Ch 32 |
 | Engineering & integration | **Automation analyst, RPA developer, integration engineer** | Removing manual steps, and connecting systems so data flows between them | Automated reports, low-code flows, bots, API integrations, data written back into business systems | Spreadsheet automation, Python, Power Automate or n8n, APIs | Ch 19–20, 51, 58 |
-| Architecture | **Data architect** | How the whole data system should be designed | Designs, standards, decision records, platform roadmaps | All of the above, at the level of design | Part VII |
+| Architecture | **Data architect** | How the whole data system should be designed | Designs, standards, decision records, platform roadmaps | All of the above, at the level of design | Part 7 |
 
 A few terms in that table will be new. A **dashboard** is a screen of charts and numbers that refreshes itself from the data. A **model**, in data science, is a set of rules learned from past data that makes predictions about new data. A **pipeline** is an automated series of steps that moves data from one place to another and changes it along the way. **BI** stands for business intelligence: the tools and practices for turning data into reports and dashboards people use to run the business. **MLOps** and **LLM** will each get full chapters; for now, MLOps is "keeping machine learning models healthy in production", and an LLM (large language model) is the kind of AI model behind chat assistants.
 
 ### The one skill every role shares
 
-Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part II teaches it at full depth, and why nothing you learn there goes to waste, whichever branch you climb.
+Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part 2 teaches it at full depth, and why nothing you learn there goes to waste, whichever branch you climb.
 
 > **Watch out: titles lie, outputs don't.** A "data scientist" at one company builds dashboards all day; a "business analyst" at another writes Python pipelines. Before you decide a job is (or isn't) for you, read what the person will *produce* each week. Chapter 8 shows how to decode a job description line by line.
 
@@ -97,16 +97,16 @@ The map has more cities than this book can visit in depth. **Data governance ana
 
 Here is the most important idea in this chapter: **the roles share a trunk and branch upward, and the branches rejoin at the top.**
 
-Everyone starts with the same foundations: understanding data (Part 0), a spreadsheet, SQL, and business sense. The analyst core grows straight up from there (Part II), and many people build a whole career on it. Then the field branches. After the advanced analytics and analytics engineering skills of Part III, one branch leads toward data science and machine learning (Part IV), and the other toward data engineering and integration (Part V). The two branches meet again when models and AI have to run inside a real business (Part VI), and they come together fully at the top, in architecture (Part VII). A data architect can't design a system without having walked at least partway down each branch.
+Everyone starts with the same foundations: understanding data (Part 0), a spreadsheet, SQL, and business sense. The analyst core grows straight up from there (Part 2), and many people build a whole career on it. Then the field branches. After the advanced analytics and analytics engineering skills of Part 3, one branch leads toward data science and machine learning (Part 4), and the other toward data engineering and integration (Part 5). The two branches meet again when models and AI have to run inside a real business (Part 6), and they come together fully at the top, in architecture (Part 7). A data architect can't design a system without having walked at least partway down each branch.
 
-![A tree drawn from the ground up. Foundations, Parts 0 and I, at the bottom. Above it the analyst core, Part II, then advanced analytics and analytics engineering, Part III, the branch point. Two branches rise from it: data science and ML, Part IV, on the left, and engineering and integration, Part V, on the right. The branches rejoin at production ML and AI, Part VI, and at the top is architecture and leadership, Part VII. A note beside the analyst core says most people enter here and SQL never leaves you. A note on the right says Part VIII has question banks for every level.](figures/fig7-2-the-field-as-a-tree.svg)
+![A tree drawn from the ground up. Foundations, Parts 0 and 1, at the bottom. Above it the analyst core, Part 2, then advanced analytics and analytics engineering, Part 3, the branch point. Two branches rise from it: data science and ML, Part 4, on the left, and engineering and integration, Part 5, on the right. The branches rejoin at production ML and AI, Part 6, and at the top is architecture and leadership, Part 7. A note beside the analyst core says most people enter here and SQL never leaves you. A note on the right says Part 8 has question banks for every level.](figures/fig7-2-the-field-as-a-tree.svg)
 
 *Figure 7.2 — The field grows like a tree, and this book follows it part by part. Read it from the bottom up: nobody starts at the top.*
 
 Two consequences follow, and they shape how you should use this book.
 
 - **You don't abandon lower levels when you climb.** A data scientist still writes SQL every week, and an architect still reads spreadsheets. Skills accumulate.
-- **Science and engineering are peers, not a ladder.** Neither branch is "above" the other. The book teaches data science (Part IV) before data engineering (Part V) because many analysts move toward science first, but plenty of excellent careers go straight from the analyst core to engineering. Chapter 8 turns this tree into tiers you can plan with, in the same order as the book's parts.
+- **Science and engineering are peers, not a ladder.** Neither branch is "above" the other. The book teaches data science (Part 4) before data engineering (Part 5) because many analysts move toward science first, but plenty of excellent careers go straight from the analyst core to engineering. Chapter 8 turns this tree into tiers you can plan with, in the same order as the book's parts.
 
 ---
 
@@ -297,7 +297,7 @@ Locate yourself truthfully, and you'll see that the next step is usually closer 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -349,18 +349,16 @@ They rewrote the advertisement together. The title became *Data Analyst (Sales A
 
 ---
 
-## Tools
+## Project: map the data work around you
+
+**Goal:** a one-page map that shows who does which data work in an organization, how a request travels, and where manual work hides. It's a small portfolio piece, and it's excellent preparation for "tell me about how your team works" in an interview.
+
+### Tools you'll need
 
 This chapter needs no software. For the project you'll need:
 
 - **Pen and paper**, or a free diagram tool such as **diagrams.net** (also called draw.io) or **Excalidraw**, to draw your team map and a request's journey.
 - **A few job postings** from any job portal, for the project's stretch goals. Save or print them; postings disappear.
-
----
-
-## The project: map the data work around you
-
-**Goal:** a one-page map that shows who does which data work in an organization, how a request travels, and where manual work hides. It's a small portfolio piece, and it's excellent preparation for "tell me about how your team works" in an interview.
 
 **Option A: your own workplace or college.** Use a real team you know.
 
@@ -386,7 +384,29 @@ This chapter needs no software. For the project you'll need:
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Orientation** comes before tools: know what each role does before choosing what to learn.
+- Every data job answers one of **four questions**: what happened; what will happen, and why; how data moves, gets served, and gets put to work; and how the whole system should be designed.
+- The book follows **ten roles**: data analyst, business analyst, BI developer, analytics engineer, data scientist, ML engineer, data engineer, AI engineer, automation analyst / RPA developer / integration engineer, and data architect. Judge roles by what they produce, not by title.
+- **SQL** is the one skill every role on the map uses.
+- The field grows like a **tree**: a shared trunk (foundations and the analyst core), a branch point (Part 3), two peer branches (science and engineering), and a top where they rejoin (production AI and architecture).
+- The **automation and integration track** removes manual steps and connects systems, using spreadsheet automation, low-code flows, **RPA**, APIs, and **reverse ETL**. Every data role includes some automation.
+- Data teams are **centralized**, **embedded**, or **hub-and-spoke**; each trades consistency, business context, and speed differently, and each has a typical failure.
+- Following one request through every role shows the right order: clarify, answer, share, standardize, supply trusted data, predict, then act, with the architect designing the whole.
+- **AI assistants** speed up tasks with a checkable answer; context, judgment, and accountability stay with you. You're responsible for every number you deliver.
+
+---
+
+## Key terms
+
+orientation · track · role · data analyst · business analyst · BI developer · analytics engineer · data scientist · ML engineer · data engineer · AI engineer · automation analyst · RPA developer · integration engineer · data architect · dashboard · model · pipeline · BI (business intelligence) · MLOps · LLM (large language model) · SQL · data governance analyst · data steward · data quality analyst · RPA (robotic process automation) · reverse ETL (data activation) · Daily Sales Flash · centralized team · embedded (decentralized) team · hub-and-spoke (federated) team
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can name the four questions and place any data job title under one of them.
 - [ ] You can describe what each of the ten roles produces, in one sentence each, without using its title.
@@ -401,21 +421,7 @@ This chapter needs no software. For the project you'll need:
 
 ---
 
-## Recap
-
-- **Orientation** comes before tools: know what each role does before choosing what to learn.
-- Every data job answers one of **four questions**: what happened; what will happen, and why; how data moves, gets served, and gets put to work; and how the whole system should be designed.
-- The book follows **ten roles**: data analyst, business analyst, BI developer, analytics engineer, data scientist, ML engineer, data engineer, AI engineer, automation analyst / RPA developer / integration engineer, and data architect. Judge roles by what they produce, not by title.
-- **SQL** is the one skill every role on the map uses.
-- The field grows like a **tree**: a shared trunk (foundations and the analyst core), a branch point (Part III), two peer branches (science and engineering), and a top where they rejoin (production AI and architecture).
-- The **automation and integration track** removes manual steps and connects systems, using spreadsheet automation, low-code flows, **RPA**, APIs, and **reverse ETL**. Every data role includes some automation.
-- Data teams are **centralized**, **embedded**, or **hub-and-spoke**; each trades consistency, business context, and speed differently, and each has a typical failure.
-- Following one request through every role shows the right order: clarify, answer, share, standardize, supply trusted data, predict, then act, with the architect designing the whole.
-- **AI assistants** speed up tasks with a checkable answer; context, judgment, and accountability stay with you. You're responsible for every number you deliver.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -446,27 +452,7 @@ This chapter needs no software. For the project you'll need:
 
 ---
 
-## Key terms
-
-orientation · track · role · data analyst · business analyst · BI developer · analytics engineer · data scientist · ML engineer · data engineer · AI engineer · automation analyst · RPA developer · integration engineer · data architect · dashboard · model · pipeline · BI (business intelligence) · MLOps · LLM (large language model) · SQL · data governance analyst · data steward · data quality analyst · RPA (robotic process automation) · reverse ETL (data activation) · Daily Sales Flash · centralized team · embedded (decentralized) team · hub-and-spoke (federated) team
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 8, The Career Tree: How Skills Unlock Roles,** turns this map into tiers in the book's part order, with a skills matrix per role, a day in the life of each role, how to decode a job description, the reader pathways table, and entry routes for freshers, career switchers, and internal moves.
-- **Chapter 9, How Expertise Actually Forms,** is honest about the timeline, and shows how to practice, build a portfolio, find feedback, and get through plateaus.
-- **Chapter 12** teaches you to write section 7.6's four-step method as a query yourself, first on the mini database (section 12.15). **Chapter 13** improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
-- **Chapters 19 and 20** start the automation thread in earnest: spreadsheet automation, and reports delivered by email and on schedule. **Chapter 25** covers the business analyst track, including finding automation opportunities.
-- The later steps of section 7.6 each have their own chapter: **Chapter 32** builds tested, shared definitions like the analytics engineer's; **Chapter 56** keeps models running, as the ML engineer does; **Chapters 55 and 58** build AI assistants with the safeguards in step 9.
-- **Chapter 51** teaches reverse ETL, and **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels; Chapter 63 also covers owning and governing every automation. **Chapter 66** returns to building and structuring data teams.
-- **Part VIII, Chapter 68, How Data Hiring Works,** explains the interview rounds for each of these roles. Every role in this chapter has matching question banks in Chapters 70–82.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Question 1, what happened: it describes last month. (b) Question 2, what will happen: it's a forecast. (c) Question 3, how data moves and gets put to work: it's an integration between two systems. (d) Question 4, how the whole system should be designed: shared IDs and ownership across systems are architecture decisions. (e) Question 2, *why*: it asks whether the discount *caused* the increase, which needs an experiment or a careful causal analysis. The common wrong answer is Question 1, because it sounds like "what happened to orders". Describing that orders rose is Question 1; proving the discount caused it is Question 2.
 
@@ -497,3 +483,15 @@ orientation · track · role · data analyst · business analyst · BI developer
 **14.** Because the architect's decisions sit where the branches meet, and each branch fails in different ways. Example from step 10: *"What happens if the CRM write-back fails halfway?"* Without engineering experience, an architect might not know that retries can create duplicate tasks unless each write can be safely repeated. Another example: *"Where does the risk score officially live?"* Without science experience, they might not realize the score needs to be stored with the model version and date that produced it, or nobody can later explain why a customer was flagged. An architect who has never met these problems tends to design systems that look clean on paper and break in production.
 
 **15.** *For a separate track:* automation at scale needs specialist knowledge of APIs, integration platforms, RPA, error handling, and governance, and companies with many systems benefit from people who do it full time and own the automations. *Against:* the best automations come from people who understand the work being automated, so every role should automate its own repeated tasks, and a separate team can become a bottleneck. For a company like Riverstone today, most automation should come from analysts who automate their own reports (as in the story), with a specialist integration role added when many systems need connecting. Any answer that weighs both sides and ties the choice to the company's size is acceptable.
+
+---
+
+## Where this leads
+
+- **Chapter 8, The Career Tree: How Skills Unlock Roles,** turns this map into tiers in the book's part order, with a skills matrix per role, a day in the life of each role, how to decode a job description, the reader pathways table, and entry routes for freshers, career switchers, and internal moves.
+- **Chapter 9, How Expertise Actually Forms,** is honest about the timeline, and shows how to practice, build a portfolio, find feedback, and get through plateaus.
+- **Chapter 12** teaches you to write section 7.6's four-step method as a query yourself, first on the mini database (section 12.15). **Chapter 13** improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
+- **Chapters 19 and 20** start the automation thread in earnest: spreadsheet automation, and reports delivered by email and on schedule. **Chapter 25** covers the business analyst track, including finding automation opportunities.
+- The later steps of section 7.6 each have their own chapter: **Chapter 32** builds tested, shared definitions like the analytics engineer's; **Chapter 56** keeps models running, as the ML engineer does; **Chapters 55 and 58** build AI assistants with the safeguards in step 9.
+- **Chapter 51** teaches reverse ETL, and **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels; Chapter 63 also covers owning and governing every automation. **Chapter 66** returns to building and structuring data teams.
+- **Part 8, Chapter 68, How Data Hiring Works,** explains the interview rounds for each of these roles. Every role in this chapter has matching question banks in Chapters 70–82.

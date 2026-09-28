@@ -84,3 +84,31 @@ p.leadin { break-after: avoid; }
 p.leadin + pre, p.leadin + table, p.leadin + ul, p.leadin + ol { break-before: avoid; }
 pre.sourceCode, pre[class]:not(.text) { border-left-color: var(--accent); }   /* every input block, whatever its language (V77.13) */
 code.nowrap { white-space: nowrap; }   /* short inline code stays on one line (V1.12, V2.11) */
+
+/* ---- Book structure (D8, 28 Sep 2026) ---- */
+/* Stage labels: the first heading of each stage carries its stage's name above it. The label is
+   drawn by CSS, so it stays glued to its heading and stays out of the bookmarks. */
+h2[data-stage] { margin-top: 11mm; }
+h2[data-stage]::before { content: attr(data-stage); display: block; width: fit-content; margin-bottom: 2.4mm;
+  font-family: "Poppins", "DejaVu Sans", sans-serif; font-size: 7.6pt; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #fff; background: var(--accent); padding: 0.7mm 2.6mm 0.5mm; border-radius: 2px; }
+/* "In this chapter": the chapter's stages and numbered sections, with page numbers */
+nav.chapmap { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 3px; padding: 3mm 4mm 2.4mm;
+  margin: 0 0 5mm; break-inside: avoid; font-family: "DejaVu Sans", sans-serif; font-size: 8.4pt; line-height: 1.35; }
+.chapmap-title { font-family: "Poppins", sans-serif; font-weight: 600; font-size: 9.5pt; margin-bottom: 1.6mm; }
+nav.chapmap ul { list-style: none; padding: 0; margin: 0; }
+nav.chapmap li { display: flex; align-items: flex-end; margin: 0.5mm 0; }
+nav.chapmap li .st { flex: 0 0 19mm; font-family: "Poppins", sans-serif; font-size: 7pt; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding-bottom: 0.3mm; }
+nav.chapmap li > a { display: flex; align-items: flex-end; flex: 1 1 auto; min-width: 0; color: var(--ink); }
+nav.chapmap li > a .toc-t { flex: 0 1 auto; min-width: 0; }
+nav.chapmap li > a .toc-dots { flex: 1 1 auto; border-bottom: 1px dotted #9aa3b2; margin: 0 1.5mm; transform: translateY(-0.8mm); min-width: 4mm; }
+nav.chapmap li > a .toc-pg { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+/* Two-level contents: chapters (and parts) bold, their numbered sections indented beneath */
+nav#TOC li.l1 { margin-top: 2mm; }
+nav#TOC li.l1 > a { font-weight: 600; }
+nav#TOC li.l2 { font-size: 8.4pt; margin: 0.2mm 0; }
+nav#TOC li.l2 > a { font-weight: 400; color: var(--ink); }
+/* A part's opening page reads as a divider */
+h1.part-title { font-size: 26pt; padding-top: 5mm; border-top: 4px solid var(--accent); margin-bottom: 8mm; }
+ul.list-tail, ol.list-tail { margin-top: -2mm; }   /* the split-off last item sits where it was */

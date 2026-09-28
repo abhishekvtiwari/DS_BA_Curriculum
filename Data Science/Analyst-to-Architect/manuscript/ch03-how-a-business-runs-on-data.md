@@ -351,7 +351,7 @@ Anita approving a 12% discount is a judgment, and it should stay with a person; 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -403,18 +403,16 @@ Meera used no tool or formula, only the order's journey, systems of record, thre
 
 ---
 
-## Tools
+## Project: map the data flow of one process
+
+**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
+
+### Tools you'll need
 
 - **A notebook and pen.** Enough for every exercise, and the best way to draw your first process map.
 - **A spreadsheet** (Excel or Google Sheets, optional). Useful for the project's step table and time estimates. Chapter 10 teaches both from the beginning.
 - **A diagram tool** (optional). diagrams.net (also called draw.io) is free and runs in a browser; PowerPoint, Google Slides, and Google Drawings work too. Boxes and arrows are all you need.
 - **The Riverstone mini database.** Not needed yet; Chapter 12 installs it and queries the orders, invoices, and payments you followed here.
-
----
-
-## The project: map the data flow of one process
-
-**Goal:** map one real process the way Figure 3.2 maps order 5001, find its manual work, and propose one improvement.
 
 **Step 1. Choose a process** you can observe or ask about: an expense claim, a customer return, a monthly report, or outside work, how a local shop restocks or a clinic books appointments.
 
@@ -455,19 +453,6 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## You've got it when…
-
-- [ ] I can name the main departments of a company and one kind of data each creates.
-- [ ] I can walk through lead to cash for one order and say what record each step leaves, and in which system.
-- [ ] I can explain what an ERP, CRM, HRMS, POS, e-commerce platform, and support desk are for.
-- [ ] I can tell a transaction from a report, and I know what a system of record is.
-- [ ] I never say "sales" without saying booked, billed, or collected, and I can reconcile the three.
-- [ ] I can write a KPI definition that two people would calculate the same way.
-- [ ] I can find re-keying, copy-paste, emailed files, manual matching, and shadow systems in a process, and estimate their cost in hours.
-- [ ] I've mapped the data flow of one real process and proposed one improvement.
-
----
-
 ## Recap
 
 - A company is a chain of departments handing work to each other. **Every handover leaves data**, and data created in one department is almost always used in another.
@@ -482,7 +467,28 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Practice exercises
+## Key terms
+
+department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can name the main departments of a company and one kind of data each creates.
+- [ ] I can walk through lead to cash for one order and say what record each step leaves, and in which system.
+- [ ] I can explain what an ERP, CRM, HRMS, POS, e-commerce platform, and support desk are for.
+- [ ] I can tell a transaction from a report, and I know what a system of record is.
+- [ ] I never say "sales" without saying booked, billed, or collected, and I can reconcile the three.
+- [ ] I can write a KPI definition that two people would calculate the same way.
+- [ ] I can find re-keying, copy-paste, emailed files, manual matching, and shadow systems in a process, and estimate their cost in hours.
+- [ ] I've mapped the data flow of one real process and proposed one improvement.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -513,30 +519,7 @@ Steps 1, 2, and 5 are manual, and step 5 re-keys what the bill already says. If 
 
 ---
 
-## Key terms
-
-department · lead · quote / quotation · order · delivery challan / delivery note · picking list · proof of delivery (POD) · invoice · due date · payment terms · payment · made to stock · lead to cash · order to cash · business system · ERP · CRM · HRMS · POS · e-commerce platform · support desk / ticketing system · ticket · system of record / source of truth · integration · transaction · report · data warehouse · bookings · billings · collections · receivables / accounts receivable · revenue · cut-off · metric · KPI · KPI definition · leading indicator · lagging indicator · gross margin · average order value (AOV) · cancellation rate · overdue · dashboard · decision rights · re-keying · copy-paste integration · reconciliation / manual matching · shadow system · KPI tree
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
-- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
-- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
-- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
-- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
-- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
-- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
-- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
-- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
-- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Warehouse and dispatch. (b) Purchasing. (c) HR (payroll). (d) Customer support. (e) Sales. (f) Production. (g) Marketing.
 
@@ -583,3 +566,18 @@ When collections drop, you can ask which branch moved, and each branch has an ow
 **14.** The managing director, because the definition affects everyone who reads the pack (often finance proposes and management approves). Meanwhile, don't pick a winner: show **booked, billed, and collected** as labeled lines with definitions and sources, reconciled, as Meera did.
 
 **15.** People fill mandatory fields with anything that gets past the screen: "0", "NA", or a guess at turnover. The fields become full but untrustworthy, which is worse than blank (Chapter 1 lists this problem for data typed by people). Better: require only what's known at that stage (name, contact, interest), collect the rest later, use pick-lists, and offer an "unknown" option.
+
+---
+
+## Where this leads
+
+- **Chapter 4, Numbers Without Fear,** teaches the percentages, averages, and growth rates behind every KPI in section 3.5.
+- **Chapter 5, Thinking Like an Analyst,** turns vague questions like "why is January low?" into precise ones, the way Meera did.
+- **Chapters 10 and 12** put the order-to-cash records into tools: a spreadsheet sales tracker, then the ERP's `orders`, `invoices`, and `payments` tables in SQL, where you'll calculate booked, billed, and collected yourself.
+- **Chapters 15 and 16** design and build dashboards like the ones in section 3.6.
+- **Chapters 19 and 20** automate reports: macros and Apps Script first, then scheduled email reports and alerts. Chapter 20 automates a report of exactly this kind, Riverstone's Daily Sales Flash.
+- **Chapter 23, Business Acumen, KPIs & Metrics,** builds a full KPI tree for Riverstone and adds finance and operations metrics such as days sales outstanding.
+- **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
+- **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
+- **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
+- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.

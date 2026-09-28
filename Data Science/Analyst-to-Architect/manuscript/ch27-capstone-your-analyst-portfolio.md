@@ -1,12 +1,12 @@
 # Chapter 27. Capstone: Your Analyst Portfolio
 
-*Part II — The Analyst*
+*Part 2 — The Analyst*
 
 > **Chapter at a glance**
 >
-> **You will learn to:** take one business question all the way from a database to a memo, using only what Part II taught · write down the cleaning decisions you made, and measure whether they changed the answer · find the check that turns a flattering result into an honest one, and report both · wrap the analysis in a function so it can be re-run and argued with · specify a one-page dashboard that serves a single decision · write the memo, including the part that says what you did not find · recognize selective reporting in your own portfolio, which is where it is most tempting · assemble three projects into a portfolio a hiring manager will actually open · tell the story of a project in two minutes and in ten · judge for yourself whether you are ready to apply.
+> **You will learn to:** take one business question all the way from a database to a memo, using only what Part 2 taught · write down the cleaning decisions you made, and measure whether they changed the answer · find the check that turns a flattering result into an honest one, and report both · wrap the analysis in a function so it can be re-run and argued with · specify a one-page dashboard that serves a single decision · write the memo, including the part that says what you did not find · recognize selective reporting in your own portfolio, which is where it is most tempting · assemble three projects into a portfolio a hiring manager will actually open · tell the story of a project in two minutes and in ten · judge for yourself whether you are ready to apply.
 >
-> **Before you start:** all of Part II. This chapter teaches almost nothing new. It uses Chapters 12 and 13 (SQL), 14 (cleaning), 17 and 18 (Python), 15 and 16 (visualization and Power BI), 20 (automation), 21 and 22 (statistics), 23 (metrics), 24 and 25 (requirements and stakeholders), and 26 (the repository this all lives in).
+> **Before you start:** all of Part 2. This chapter teaches almost nothing new. It uses Chapters 12 and 13 (SQL), 14 (cleaning), 17 and 18 (Python), 15 and 16 (visualization and Power BI), 20 (automation), 21 and 22 (statistics), 23 (metrics), 24 and 25 (requirements and stakeholders), and 26 (the repository this all lives in).
 >
 > **Time needed:** 8–12 hours for the project, spread over a week. The reading is about an hour.
 >
@@ -18,7 +18,7 @@
 
 ## Why this matters
 
-Seventeen chapters of Part II each taught one thing well. A hiring manager will not ask you about one thing. They will ask you to talk about something you built, and then they will find out, in about four minutes, whether you understand it.
+Seventeen chapters of Part 2 each taught one thing well. A hiring manager will not ask you about one thing. They will ask you to talk about something you built, and then they will find out, in about four minutes, whether you understand it.
 
 This chapter is one worked pass through the whole analyst arc on a single question, and then a second half that no other chapter in this book covers: what happens to that work when somebody else looks at it.
 
@@ -613,7 +613,7 @@ Have both versions ready, because you will be asked for the short one and then i
 
 ## 27.11 What job-ready actually looks like
 
-Not "have I finished Part II". The honest test is whether you could survive the first month, and it has six parts:
+Not "have I finished Part 2". The honest test is whether you could survive the first month, and it has six parts:
 
 | Ready means | Concretely |
 |---|---|
@@ -630,7 +630,7 @@ Three projects is the right number. **One deep**, like this chapter's, with the 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -672,7 +672,9 @@ Her practice log for that week has one line in it: *"the good version of the pro
 
 ---
 
-## Tools
+## Project: build the portfolio
+
+### Tools you'll need
 
 | Tool | What it is for in a portfolio |
 |---|---|
@@ -686,11 +688,7 @@ Her practice log for that week has one line in it: *"the good version of the pro
 | **GitHub Pages** | A one-page site over the repository, if you want a portfolio index. Optional, and never a substitute for the README |
 | **A plain text file of the questions you were asked** | After every interview. It is the highest-value study document you will ever own, and nobody keeps one |
 
----
-
-## The project: build the portfolio
-
-This is the capstone of Part II. Budget a week, not an evening.
+This is the capstone of Part 2. Budget a week, not an evening.
 
 **1. Choose three questions, not three datasets.** One for each project: the deep one, the technical one, the visual one. Each must pass the three tests in section 27.1. Write each as a sentence a named role would say out loud. If you cannot name the role, the question is not ready.
 
@@ -707,22 +705,6 @@ This is the capstone of Part II. Budget a week, not an evening.
 **Stretch.** Swap portfolios with someone else at your level and review theirs the way section 27.9 describes: ninety seconds, then write down what you concluded at each stage. Being on the other side of that table once is worth more than a month of polishing.
 
 **What "done" looks like:** three URLs, each of which answers a question a named person would care about, where a stranger can see what you found, what you checked, and what you did not find, without asking you anything.
-
----
-
-## You've got it when…
-
-- You can look at a question and say whether it belongs in a portfolio, using the three tests, before writing any code.
-- You write the analysis plan first, and you can prove you did.
-- Your headline finding survives being split by the confounder a reader would name first, or you report what happened when it did not.
-- You can tell the difference between a statistically significant result and an important one, and you say so in plain language.
-- Every threshold in your work has a reason, and you have measured what happens when it moves.
-- Your cleaning decisions are written down with the effect each had on the answer.
-- Your memo has a section for what did not support your conclusion, and it is in the body.
-- Your dashboard serves one named decision, and you can defend the removal of everything that is not on it.
-- Your README's first paragraph is the question and the answer, and your repository has a FINDINGS file.
-- You can tell a project in two minutes, ending on the turn rather than the technique.
-- You can say what you would do differently, what was hardest, and what you would need help with, without rehearsing.
 
 ---
 
@@ -744,7 +726,31 @@ Job-ready is not a syllabus. It is six things: you can get data out, you can tel
 
 ---
 
-## Practice exercises
+## Key terms
+
+portfolio project · analysis plan · decision log · confounder · segment effect · comparison group · discount band · threshold sensitivity · effect size · statistical significance · confidence interval · null result · selective reporting · garden of forking paths · denominator of the search · FINDINGS file · README first paragraph · commit history as evidence · ninety-second scan · the two-minute version · reconciliation · job-ready
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- You can look at a question and say whether it belongs in a portfolio, using the three tests, before writing any code.
+- You write the analysis plan first, and you can prove you did.
+- Your headline finding survives being split by the confounder a reader would name first, or you report what happened when it did not.
+- You can tell the difference between a statistically significant result and an important one, and you say so in plain language.
+- Every threshold in your work has a reason, and you have measured what happens when it moves.
+- Your cleaning decisions are written down with the effect each had on the answer.
+- Your memo has a section for what did not support your conclusion, and it is in the body.
+- Your dashboard serves one named decision, and you can defend the removal of everything that is not on it.
+- Your README's first paragraph is the question and the answer, and your repository has a FINDINGS file.
+- You can tell a project in two minutes, ending on the turn rather than the technique.
+- You can say what you would do differently, what was hardest, and what you would need help with, without rehearsing.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -759,7 +765,7 @@ Job-ready is not a syllabus. It is six things: you can get data out, you can tel
 6. Write the analysis plan for Vikram's question, as it should have been written before any query: the claim, the comparison that would test it, and the result that would make you drop it. Three sentences each at most.
 7. A colleague shows you this: *"Customers who open our marketing emails place 2.3 times more orders. We should send more emails."* Name the confounder, and describe the comparison you would run instead.
 8. Section 27.4 reports `r = -0.081` with `p = 0.038`. Write the one sentence you would put in a memo about that number, and the one sentence you would put in it if the sample had been 40 customers instead of 662 with the same r.
-9. Take one project you have already built in Part II. Write its README first paragraph in the section 27.9 form: the question, who asked it, and the answer, in under sixty words.
+9. Take one project you have already built in Part 2. Write its README first paragraph in the section 27.9 form: the question, who asked it, and the answer, in under sixty words.
 10. Write the four lines of a `FINDINGS.md` for this chapter's project.
 
 ### Stretch
@@ -775,30 +781,7 @@ Job-ready is not a syllabus. It is six things: you can get data out, you can tel
 
 ---
 
-## Key terms
-
-portfolio project · analysis plan · decision log · confounder · segment effect · comparison group · discount band · threshold sensitivity · effect size · statistical significance · confidence interval · null result · selective reporting · garden of forking paths · denominator of the search · FINDINGS file · README first paragraph · commit history as evidence · ninety-second scan · the two-minute version · reconciliation · job-ready
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 68, How Data Hiring Works,** is the other side of section 27.9: what the people reading your repository are being asked to decide, and when in the process they read it.
-- **Chapter 69, The Extra-Points Method,** turns the two-minute version into a repeatable way of answering any interview question.
-- **Chapter 82** sets take-home assignments, which are graded on exactly the standards in this chapter, and runs mock interviews on projects like this one.
-- **Chapter 28** is where the SQL in section 27.2 becomes the SQL of someone who designs the database, with window functions, performance, and modeling.
-- **Chapter 29** turns the script in section 27.5 into software: a package, tests, and a command-line interface.
-- **Chapter 30** builds the experiment the memo proposes, which is the only honest way to answer the causal question this chapter had to decline.
-- **Chapter 31** is what you reach for when the experiment is impossible, which at most companies it usually is.
-- **Chapter 39** takes the honesty discipline of section 27.8 into model evaluation, where the same five moves have machine learning names.
-- **Chapter 44** is Part IV's capstone: the same arc with a model in the middle, ending in a ranked call list rather than a recommendation.
-- **Chapter 83, The Long Game,** is about what happens after the first job, which the portfolio exists to get.
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) Fails the first test: no decision behind it. Nothing you find can be right or wrong. (b) Fails the second: the answer is fixed before the work starts, so the project is an illustration. The fix is the word "whether" in place of "that". (c) Fails the third, and arguably the first: nobody is annoyed if it is wrong, because nobody is deciding anything with it. It is a report, not an analysis, and it belongs in a dashboard rather than a portfolio.
 
@@ -879,3 +862,16 @@ Six lines rather than four, which is the right direction to be wrong in.
 **15.** Present it as a decision, not as a null result. "I was asked whether we should discount harder in Retail. The answer was no, and the analysis that showed why took four days." The value is the margin not spent, which is estimable: name it. On what it suggests about which projects are worth doing, the uncomfortable part is that a project that prevents a mistake is worth more and shows worse than one that ships a dashboard, so at work you have to make the prevention visible yourself, in writing, at the time. The habit of writing the memo, rather than sending the answer in a chat message, is most of what makes the difference between having done the work and being known to have done it.
 
 ---
+
+## Where this leads
+
+- **Chapter 68, How Data Hiring Works,** is the other side of section 27.9: what the people reading your repository are being asked to decide, and when in the process they read it.
+- **Chapter 69, The Extra-Points Method,** turns the two-minute version into a repeatable way of answering any interview question.
+- **Chapter 82** sets take-home assignments, which are graded on exactly the standards in this chapter, and runs mock interviews on projects like this one.
+- **Chapter 28** is where the SQL in section 27.2 becomes the SQL of someone who designs the database, with window functions, performance, and modeling.
+- **Chapter 29** turns the script in section 27.5 into software: a package, tests, and a command-line interface.
+- **Chapter 30** builds the experiment the memo proposes, which is the only honest way to answer the causal question this chapter had to decline.
+- **Chapter 31** is what you reach for when the experiment is impossible, which at most companies it usually is.
+- **Chapter 39** takes the honesty discipline of section 27.8 into model evaluation, where the same five moves have machine learning names.
+- **Chapter 44** is Part 4's capstone: the same arc with a model in the middle, ending in a ranked call list rather than a recommendation.
+- **Chapter 83, The Long Game,** is about what happens after the first job, which the portfolio exists to get.

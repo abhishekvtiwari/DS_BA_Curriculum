@@ -1,6 +1,6 @@
 # Chapter 68. How Data Hiring Works
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **Chapter at a glance**
 >
@@ -462,7 +462,7 @@ Four complete resumes, each paired with a condensed job description it was actua
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -485,15 +485,13 @@ By week eight, her must-have coverage, honestly re-scored the same way, had rise
 
 ---
 
-## Tools
-
-No software beyond what's already in your hands: the JD-scoring method from §8.5, the portfolio structure from §9.5, and whichever ATS your target companies use (worth a quick search for "how [Company]'s application system works," since a few, Workday and similar systems especially, have known formatting quirks worth checking before you apply).
-
----
-
-## The project: your own gate-by-gate plan
+## Project: your own gate-by-gate plan
 
 **Goal:** a written plan you'd actually follow, not a vague intention to "get ready."
+
+### Tools you'll need
+
+No software beyond what's already in your hands: the JD-scoring method from §8.5, the portfolio structure from §9.5, and whichever ATS your target companies use (worth a quick search for "how [Company]'s application system works," since a few, Workday and similar systems especially, have known formatting quirks worth checking before you apply).
 
 **Steps:**
 
@@ -502,17 +500,6 @@ No software beyond what's already in your hands: the JD-scoring method from §8.
 3. Decide your realistic runway: 30, 60, or 90 days, honestly.
 4. Write a week-by-week plan using this chapter's shape for that runway, naming which chapters of this book close which gap.
 5. Update your CV and LinkedIn headline now, this week, against the JD's actual language, whether or not you feel ready to apply yet.
-
----
-
-## You've got it when…
-
-- [ ] I can name every gate in the process, in order, and what each one actually tests.
-- [ ] My CV is in a format that survives an ATS, using the target JD's own keywords honestly.
-- [ ] I know which interview rounds to expect for my target role, and I'm not spending equal effort on all of them.
-- [ ] My portfolio and LinkedIn profile are current, linked from my CV, and structured around outputs, not duties.
-- [ ] I only ask for a referral once I've honestly scored myself against the JD.
-- [ ] I have a written, runway-appropriate plan, not just a study list.
 
 ---
 
@@ -527,19 +514,30 @@ No software beyond what's already in your hands: the JD-scoring method from §8.
 
 ---
 
-## Practice exercises
+## Key terms
+
+applicant tracking system (ATS) · resume screen · keyword match · recruiter call · hiring-manager round · take-home assignment · referral · must-have coverage · portfolio piece · runway · triage (in preparation)
+
+---
+
+## Check yourself
+
+- [ ] I can name every gate in the process, in order, and what each one actually tests.
+- [ ] My CV is in a format that survives an ATS, using the target JD's own keywords honestly.
+- [ ] I know which interview rounds to expect for my target role, and I'm not spending equal effort on all of them.
+- [ ] My portfolio and LinkedIn profile are current, linked from my CV, and structured around outputs, not duties.
+- [ ] I only ask for a referral once I've honestly scored myself against the JD.
+- [ ] I have a written, runway-appropriate plan, not just a study list.
+
+---
+
+## Exercises
 
 1. Find a real job posting for a role on your track (Chapter 7, §7.2) and score your must-have coverage using §8.5's method.
 2. List the three interview rounds you'd most likely face for that posting, and say why, based on its must-have list.
 3. Write your CV's top bullet for your strongest project using the "output, not duty" rule from 68.2.
 4. Draft the two-sentence referral request you'd actually send for that posting, once your must-have coverage clears 70%.
 5. Write your own 30-, 60-, and 90-day plan for the same posting, and say which one matches your real, honest runway.
-
----
-
-## Key terms
-
-applicant tracking system (ATS) · resume screen · keyword match · recruiter call · hiring-manager round · take-home assignment · referral · must-have coverage · portfolio piece · runway · triage (in preparation)
 
 ---
 

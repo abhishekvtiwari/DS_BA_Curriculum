@@ -1,6 +1,6 @@
 # Chapter 48. Big Data & Distributed Compute
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -505,7 +505,7 @@ The honest summary for a career: learn **SQL and one single-machine engine** dee
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -548,18 +548,16 @@ At the review, the contractor made the point that mattered most. "The 26 minutes
 
 ---
 
-## Tools
+## Project: three questions, three engines
+
+**Goal:** answer the plant team's questions on the sensor data, choose an engine with evidence, and be able to defend the choice.
+
+### Tools you'll need
 
 - **Python 3.12** with `pyspark`, `duckdb`, `polars`, `pyarrow`, and **Java 17 or 21** (Spark needs a Java runtime; check with `java -version`).
 - **The Chapter 48 companion folder** (`companion/ch48/`): `make_sensor_data.py` (generates the dataset) and `time_three_tools.py` (the timing script from section 48.6). Run Python from that folder.
 - **Versions used for the outputs shown:** Python 3.12.3, PySpark 4.2.0, DuckDB 1.5.5, Polars 1.44.2, PyArrow 25.0.1, Java 21, on a container with 1 CPU core and 3 GB of memory.
 - **Spark's web interface:** while a session is running, open `http://localhost:4040` to see stages, tasks, and the time spent in shuffles. It's the best way to see skew.
-
----
-
-## The project: three questions, three engines
-
-**Goal:** answer the plant team's questions on the sensor data, choose an engine with evidence, and be able to defend the choice.
 
 **Option A: Riverstone.** Use the generated sensor dataset.
 
@@ -586,7 +584,30 @@ At the review, the contractor made the point that mattered most. "The 26 minutes
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Most "big data" isn't.** Ask what the job actually reads, after filtering.
+- A distributed engine splits data into **partitions**, runs work on **workers**, and coordinates from the **driver**.
+- **Narrow** operations stay inside a partition and are cheap; **wide** operations need a **shuffle** and are expensive. Every `Exchange` in a plan is a shuffle.
+- **Lazy execution** means nothing runs until an **action**; the plan is built from the whole query.
+- **Partition pruning** (folders skipped) and **column pruning** (columns not read) remove work before it starts; check `PartitionFilters` and `ReadSchema`.
+- A **broadcast join** sends a small table to every worker so the big one never moves.
+- **Skew** makes one worker do most of the work; adaptive execution, salting, or special-casing the hot key fix it.
+- On one machine, at 19.87 million rows, **DuckDB (0.38 s) and Polars (0.47 s) beat Spark (2.01 s)**; the numbers are machine-specific, and Spark's advantage appears when data outgrows one machine.
+- Avoid `collect()` on large results, thousands of tiny files, careless caching, and Python UDFs in hot paths.
+- Learn SQL and one single-machine engine deeply, understand Spark's model, and add a platform when a job needs it.
+
+---
+
+## Key terms
+
+distributed computing · partition · worker (executor) · driver · narrow operation · wide operation · shuffle · exchange · lazy execution · action · query plan · physical plan · adaptive query execution (AQE) · partition pruning · column pruning · pushed filter · broadcast join · sort-merge join · skew · salting · cache · collect · small files problem · user-defined function (UDF) · local mode · DuckDB · Polars · PySpark · Databricks · EMR · Dataproc · Trino · Ray
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can argue, with numbers, whether a dataset needs a distributed engine.
 - [ ] You can explain partitions, workers, the driver, and narrow versus wide operations.
@@ -603,22 +624,7 @@ At the review, the contractor made the point that mattered most. "The 26 minutes
 
 ---
 
-## Recap
-
-- **Most "big data" isn't.** Ask what the job actually reads, after filtering.
-- A distributed engine splits data into **partitions**, runs work on **workers**, and coordinates from the **driver**.
-- **Narrow** operations stay inside a partition and are cheap; **wide** operations need a **shuffle** and are expensive. Every `Exchange` in a plan is a shuffle.
-- **Lazy execution** means nothing runs until an **action**; the plan is built from the whole query.
-- **Partition pruning** (folders skipped) and **column pruning** (columns not read) remove work before it starts; check `PartitionFilters` and `ReadSchema`.
-- A **broadcast join** sends a small table to every worker so the big one never moves.
-- **Skew** makes one worker do most of the work; adaptive execution, salting, or special-casing the hot key fix it.
-- On one machine, at 19.87 million rows, **DuckDB (0.38 s) and Polars (0.47 s) beat Spark (2.01 s)**; the numbers are machine-specific, and Spark's advantage appears when data outgrows one machine.
-- Avoid `collect()` on large results, thousands of tiny files, careless caching, and Python UDFs in hot paths.
-- Learn SQL and one single-machine engine deeply, understand Spark's model, and add a platform when a job needs it.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -648,26 +654,7 @@ At the review, the contractor made the point that mattered most. "The 26 minutes
 
 ---
 
-## Key terms
-
-distributed computing · partition · worker (executor) · driver · narrow operation · wide operation · shuffle · exchange · lazy execution · action · query plan · physical plan · adaptive query execution (AQE) · partition pruning · column pruning · pushed filter · broadcast join · sort-merge join · skew · salting · cache · collect · small files problem · user-defined function (UDF) · local mode · DuckDB · Polars · PySpark · Databricks · EMR · Dataproc · Trino · Ray
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 49, Storage, Warehouses & Lakehouses,** explains the layouts this chapter depends on: partitioning, file sizes, table formats with transactions and time travel, and cloud warehouse costs.
-- **Chapter 50, Streaming & Real-Time,** uses the same sensor data as a never-ending stream, with Spark Structured Streaming.
-- **Chapter 47** applies: tests and reconciliation matter more at this scale, not less, and they must be cheap to run.
-- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers running Spark somewhere other than your laptop, and what it costs.
-- **Chapter 56** uses distributed compute for model training and feature pipelines.
-- **Part VIII:** Spark questions appear in the data engineering interview chapters, and "how would you process X" design cases in Chapter 77.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -721,3 +708,14 @@ df.coalesce(1).write.mode("overwrite").parquet("mart/weekly_scrap")
 **13.** A specific answer: learn Spark's **model** rather than its operations catalogue: partitions, narrow versus wide, shuffles, joins, skew, and how to read a plan. Build **one** honest project: a few tens of millions of rows in local mode, with a plan you can explain, a broadcast join before and after, and measured timings against DuckDB. Read the Spark UI for a real job. Then be ready to say, in an interview, when you would *not* use Spark, and why, with your own numbers. That combination (model, one real project, and judgment about when it's the wrong tool) answers most interview questions, and it's honest about what you've done. Anything beyond that is best learned on a job that actually has the data.
 
 **14.** Using the analogy: the report is asking a question about one district's votes, but the ballots were sorted into boxes by candidate rather than by district. So whichever way you organize the counting officers, every box still has to be opened to find that district's ballots. Hiring more officers (a bigger machine or a cluster) means the opening happens in parallel, but the total work stays enormous, and coordination adds its own cost. If instead the ballots are stored in one box per district, a single officer answers the question in minutes by opening one box. The lesson for the manager: the way the data is organized decides how much work a question needs; the size of the machine only decides how fast that work gets done.
+
+---
+
+## Where this leads
+
+- **Chapter 49, Storage, Warehouses & Lakehouses,** explains the layouts this chapter depends on: partitioning, file sizes, table formats with transactions and time travel, and cloud warehouse costs.
+- **Chapter 50, Streaming & Real-Time,** uses the same sensor data as a never-ending stream, with Spark Structured Streaming.
+- **Chapter 47** applies: tests and reconciliation matter more at this scale, not less, and they must be cheap to run.
+- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** covers running Spark somewhere other than your laptop, and what it costs.
+- **Chapter 56** uses distributed compute for model training and feature pipelines.
+- **Part 8:** Spark questions appear in the data engineering interview chapters, and "how would you process X" design cases in Chapter 77.

@@ -6,17 +6,23 @@ This book starts from "what is data?" and ends with the work of a data architect
 
 One company runs through every chapter: **Riverstone Supplies**, a fictional company that makes and sells plastic storage boxes, kitchenware, crates, and furniture to shops, hotels, and wholesalers. You'll meet its people, follow its orders from enquiry to cash, and answer its questions, first by hand, then with each new tool. Because the company stays the same, each new skill lands on a problem you already understand, and you can check a new answer against one you worked out before.
 
-Tools arrive one at a time, in the chapter that first needs them. Parts 0 and I need no software at all. From Chapter 10 on, each chapter that brings a new tool starts by installing it and checking it works with one small first step. Every idea follows the same order: the plain idea first, then worked by hand, then in a tool you already know, and only then in a new tool, one line at a time.
+Tools arrive one at a time, in the chapter that first needs them. Parts 0 and 1 need no software at all. From Chapter 10 on, each chapter that brings a new tool starts by installing it and checking it works with one small first step. Every idea follows the same order: the plain idea first, then worked by hand, then in a tool you already know, and only then in a new tool, one line at a time.
 
 ---
 
 ## How each chapter is laid out
 
-Every teaching chapter has the same parts, in the same order, so you always know where you are.
+Every teaching chapter has the same six stages, in the same order, so you always know where you are. A coloured label at the top of each stage names it, and the box at the start of the chapter lists them with their page numbers.
 
-- **Chapter at a glance.** A box at the top with five lines: *You will learn to* (what you'll be able to do by the end), *Before you start* (the chapters it builds on), *Time needed* (an honest estimate, including the exercises and the project), *Tools* (what you need, often only a pen and paper), and *Practice data* (the files the chapter uses).
+- **Chapter at a glance.** A box at the top with five lines: *You will learn to* (what you'll be able to do by the end), *Before you start* (the chapters it builds on), *Time needed* (an honest estimate, including the exercises and the project), *Tools* (what you need, often only a pen and paper), and *Practice data* (the files the chapter uses). Under it, **In this chapter** maps the stages below, with page numbers.
+
+**Start**
+
 - **Why this matters.** Why the chapter's skill is worth your hours, in a work setting.
 - **In plain English.** The chapter's main idea through an everyday picture, such as a kitchen, a hospital, or a shop receipt, before any technical words.
+
+**Learn**
+
 - **Numbered sections** (1.1, 1.2, and so on). The teaching itself, one idea at a time, each worked through with Riverstone's data.
 - **Boxes** inside the sections, each with a label that tells you what kind it is:
   - **Watch out:** a mistake that's easy to make, and how to avoid it.
@@ -25,16 +31,27 @@ Every teaching chapter has the same parts, in the same order, so you always know
   - **Real-life example:** the idea at work in a real kind of job or company.
   - **Tool note:** a detail about one tool or version, such as a feature that only some versions have.
   - **Interview extra point:** something that sets an answer apart in a job interview.
-- **Common mistakes and how to spot them.** A table of the usual errors, the symptom each one shows, and the fix.
+
+**Apply**
+
+- **Common mistakes.** A table of the usual errors, the symptom each one shows, and the fix.
 - **In the real world.** A short story from Riverstone in which someone uses the chapter's ideas on a real problem.
-- **Tools.** The software and files the chapter used, and where to get them.
-- **The project.** A larger piece of work that uses the whole chapter, with a clear goal and a deliverable.
-- **You've got it when…** A checklist. If you can tick every line, you're ready for the next chapter.
+- **Project.** A larger piece of work that uses the whole chapter, with a clear goal and a deliverable. It opens with *Tools you'll need*: the software and files it uses, and where to get them.
+
+**Review**
+
 - **Recap.** The chapter's main points in a few lines, to revise from.
-- **Practice exercises.** Four groups of exercises (see the next section).
 - **Key terms.** Every new term the chapter introduced. Use it to test yourself: can you explain each one out loud?
+- **Check yourself.** A checklist. If you can tick every line, you're ready for the next chapter.
+
+**Practise**
+
+- **Exercises.** Four groups of exercises (see the next section).
+- **Answers.** Worked answers to every exercise.
+
+**Next**
+
 - **Where this leads.** Which later chapters build on this one, and which parts of the interview chapters it prepares you for.
-- **Answers to practice exercises.** Worked answers to every exercise.
 
 A few chapters, such as the capstones and the interview chapters, adapt this layout to their job. They say so at the start.
 
@@ -42,7 +59,7 @@ A few chapters, such as the capstones and the interview chapters, adapt this lay
 
 ## The four exercise groups, and the answers
 
-Every teaching chapter ends with practice exercises in four groups:
+Every teaching chapter's Practise stage has exercises in four groups:
 
 | Group | What it's for | How to use it |
 |---|---|---|
@@ -62,7 +79,7 @@ Each chapter's answers follow its exercises. To get the most from them:
 
 ## How to read code and its output
 
-Parts 0 and I contain no code. You'll work everything out by hand, with a pen, a calculator, and the tables on the page.
+Parts 0 and 1 contain no code. You'll work everything out by hand, with a pen, a calculator, and the tables on the page.
 
 From Chapter 10 on, you'll meet **code**: short instructions you type for a spreadsheet, a database, or a programming language. The book shows code the way you'll use it, one small step at a time. Each step has three parts, always in this order.
 
@@ -96,23 +113,23 @@ The best way to read a code block is to type it yourself, run it, and compare yo
 The book has nine parts and a closing chapter. Each part assumes the ones before it.
 
 - **Part 0 — First Principles: Data from Zero** (Chapters 1–6). What data is, how computers store and move it, how a business runs on it, numbers without fear, thinking like an analyst, and planning your learning.
-- **Part I — The Map** (Chapters 7–9). The data jobs, how skills unlock them, and how expertise forms.
-- **Part II — The Analyst** (Chapters 10–27). Spreadsheets, SQL (the language for asking a database questions), cleaning data, charts, Power BI dashboards, the Python programming language, statistics, business skills, and a portfolio. **The end of Part II is where "job-ready" ends**: it covers the skills of a first analyst job.
-- **Part III — Advanced Analytics & Analytics Engineering** (Chapters 28–34).
-- **Part IV — Machine Learning & Data Science** (Chapters 35–44).
-- **Part V — Data Engineering, Integration & Scale** (Chapters 45–52).
-- **Part VI — Production ML, Generative AI & MLOps** (Chapters 53–59).
-- **Part VII — Architecture, Governance & Leadership** (Chapters 60–67).
-- **Part VIII — The Interview Playbook** (Chapters 68–82). How data hiring works, and question banks for each role.
+- **Part 1 — The Map** (Chapters 7–9). The data jobs, how skills unlock them, and how expertise forms.
+- **Part 2 — The Analyst** (Chapters 10–27). Spreadsheets, SQL (the language for asking a database questions), cleaning data, charts, Power BI dashboards, the Python programming language, statistics, business skills, and a portfolio. **The end of Part 2 is where "job-ready" ends**: it covers the skills of a first analyst job.
+- **Part 3 — Advanced Analytics & Analytics Engineering** (Chapters 28–34).
+- **Part 4 — Machine Learning & Data Science** (Chapters 35–44).
+- **Part 5 — Data Engineering, Integration & Scale** (Chapters 45–52).
+- **Part 6 — Production ML, Generative AI & MLOps** (Chapters 53–59).
+- **Part 7 — Architecture, Governance & Leadership** (Chapters 60–67).
+- **Part 8 — The Interview Playbook** (Chapters 68–82). How data hiring works, and question banks for each role.
 - **Closing** (Chapter 83). The long game: what the whole path costs, and how to keep going.
 
-Parts III to VII are branches, not a ladder you must climb to the top. Which ones you need depends on the job you want, and Chapter 8 shows which parts lead to which roles. Complete beginners should start at Chapter 1 and read in order. If you already work as an analyst, skim Parts 0 to II and start fully at Part III. Chapter 8, section 8.7, has a route for each role.
+Parts 3 to 7 are branches, not a ladder you must climb to the top. Which ones you need depends on the job you want, and Chapter 8 shows which parts lead to which roles. Complete beginners should start at Chapter 1 and read in order. If you already work as an analyst, skim Parts 0 to 2 and start fully at Part 3. Chapter 8, section 8.7, has a route for each role.
 
 ---
 
 ## A rough sense of time
 
-Adding up every chapter's *Time needed* line, the book's own estimates put the end of Part II at **317 to 394 hours**: at six hours a week, about 12 to 15 months. Chapter 6 turns that into a plan for your week.
+Adding up every chapter's *Time needed* line, the book's own estimates put the end of Part 2 at **317 to 394 hours**: at six hours a week, about 12 to 15 months. Chapter 6 turns that into a plan for your week.
 
 ---
 

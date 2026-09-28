@@ -1,6 +1,6 @@
 # Chapter 8. The Career Tree: How Skills Unlock Roles
 
-*Part I — The Map*
+*Part 1 — The Map*
 
 > **Chapter at a glance**
 >
@@ -51,7 +51,7 @@ That idea changes how you study in three ways.
 - **It tells you when to stop.** When you hold the keys a door needs, you're ready to apply. You'll keep learning on the job, but you don't need to finish the whole book first.
 - **It protects you from fashion.** A tool that's trending this year might open no door you want. A skill that appears in every job description for your target role is worth more than ten trending ones.
 
-A **credible applicant** is someone who meets a role's must-have skills well enough to pass a screening and hold their own in a technical interview. It doesn't mean knowing everything, and it doesn't mean experience alone. Part VIII (from Chapter 68) shows what each interview round checks.
+A **credible applicant** is someone who meets a role's must-have skills well enough to pass a screening and hold their own in a technical interview. It doesn't mean knowing everything, and it doesn't mean experience alone. Part 8 (from Chapter 68) shows what each interview round checks.
 
 ---
 
@@ -59,25 +59,25 @@ A **credible applicant** is someone who meets a role's must-have skills well eno
 
 The career tree has seven tiers, numbered from 0. They match the parts of this book, in order, so the book *is* the tree.
 
-![Seven tier bands stacked from bottom to top. Tier 0, foundations, Parts 0 and I, with a door labeled reporting or MIS assistant. Tier 1, the analyst core, Part II, with doors for data analyst, business analyst, BI analyst and automation analyst. Tier 2, advanced analytics and analytics engineering, Part III, with doors for analytics engineer, BI developer, senior analyst and RPA developer. Tier 3, data science and ML, Part IV, with a data scientist door, sits side by side with tier 4, engineering and integration, Part V, with data engineer and integration engineer doors, joined by a label saying peers. Tier 5, production ML and AI, Part VI, with ML engineer and AI engineer doors. Tier 6, architecture and leadership, Part VII, with a data architect door.](figures/fig8-1-career-tree-tiers.svg)
+![Seven tier bands stacked from bottom to top. Tier 0, foundations, Parts 0 and 1, with a door labeled reporting or MIS assistant. Tier 1, the analyst core, Part 2, with doors for data analyst, business analyst, BI analyst and automation analyst. Tier 2, advanced analytics and analytics engineering, Part 3, with doors for analytics engineer, BI developer, senior analyst and RPA developer. Tier 3, data science and ML, Part 4, with a data scientist door, sits side by side with tier 4, engineering and integration, Part 5, with data engineer and integration engineer doors, joined by a label saying peers. Tier 5, production ML and AI, Part 6, with ML engineer and AI engineer doors. Tier 6, architecture and leadership, Part 7, with a data architect door.](figures/fig8-1-career-tree-tiers.svg)
 
 *Figure 8.1 — The career tree as tiers and doors. Tiers 3 and 4 sit side by side: they're peers, and you can climb either one first. Names in the tiers that aren't among Chapter 7's ten roles (reporting/MIS assistant, BI analyst, senior analyst) are common entry titles for those roles.*
 
-**Tier 0: Foundations (Parts 0 and I).** What data is, how computers store it, how a business runs on it, numbers without fear, thinking like an analyst, and the map you're reading now. *Unlocks:* reporting assistant and MIS (management information system) roles, where you prepare regular reports mostly by hand. Few people stay here long, and the skills matter mainly because everything above rests on them.
+**Tier 0: Foundations (Parts 0 and 1).** What data is, how computers store it, how a business runs on it, numbers without fear, thinking like an analyst, and the map you're reading now. *Unlocks:* reporting assistant and MIS (management information system) roles, where you prepare regular reports mostly by hand. Few people stay here long, and the skills matter mainly because everything above rests on them.
 
-**Tier 1: The analyst core (Part II).** Excel and Google Sheets in depth, SQL, cleaning data, visualization, Power BI, Python for analysis, spreadsheet and report automation, statistics, business metrics, working with stakeholders, and the professional toolkit. *Unlocks:* **data analyst**, **business analyst**, **BI analyst** (an analyst who mainly builds reports and dashboards), **automation analyst**, and the domain versions: sales, finance, marketing, operations, supply chain, and HR analyst. This is the single biggest unlock in the field. If you master only one tier, make it this one.
+**Tier 1: The analyst core (Part 2).** Excel and Google Sheets in depth, SQL, cleaning data, visualization, Power BI, Python for analysis, spreadsheet and report automation, statistics, business metrics, working with stakeholders, and the professional toolkit. *Unlocks:* **data analyst**, **business analyst**, **BI analyst** (an analyst who mainly builds reports and dashboards), **automation analyst**, and the domain versions: sales, finance, marketing, operations, supply chain, and HR analyst. This is the single biggest unlock in the field. If you master only one tier, make it this one.
 
-**Tier 2: Advanced analytics and analytics engineering (Part III).** Advanced SQL and data modeling, Python written as maintainable software, experiments and causal inference, dbt, the computer science you need, and the command line. *Unlocks:* **senior analyst**, **analytics engineer**, **BI developer** (who designs the data models and semantic layers behind dashboards, not only the visuals), and **RPA developer**. Tier 2 is the branch point: the skills here feed both branches above it.
+**Tier 2: Advanced analytics and analytics engineering (Part 3).** Advanced SQL and data modeling, Python written as maintainable software, experiments and causal inference, dbt, the computer science you need, and the command line. *Unlocks:* **senior analyst**, **analytics engineer**, **BI developer** (who designs the data models and semantic layers behind dashboards, not only the visuals), and **RPA developer**. Tier 2 is the branch point: the skills here feed both branches above it.
 
-**Tier 3: Data science and machine learning (Part IV).** The math under the models, the machine learning workflow, supervised and unsupervised learning, honest evaluation, forecasting, text, recommendations, and a first look at deep learning. *Unlocks:* **data scientist**, and specialist roles such as forecasting analyst or applied scientist.
+**Tier 3: Data science and machine learning (Part 4).** The math under the models, the machine learning workflow, supervised and unsupervised learning, honest evaluation, forecasting, text, recommendations, and a first look at deep learning. *Unlocks:* **data scientist**, and specialist roles such as forecasting analyst or applied scientist.
 
-**Tier 4: Engineering and integration (Part V).** Ingestion, pipelines and orchestration, data quality, distributed compute, warehouses and lakehouses, streaming, data activation and APIs, and the cloud. *Unlocks:* **data engineer**, **integration engineer**, and platform roles.
+**Tier 4: Engineering and integration (Part 5).** Ingestion, pipelines and orchestration, data quality, distributed compute, warehouses and lakehouses, streaming, data activation and APIs, and the cloud. *Unlocks:* **data engineer**, **integration engineer**, and platform roles.
 
 **Tiers 3 and 4 are peers.** They sit at the same height on the tree. The book teaches science first because many analysts move toward it first, but plenty of excellent careers go from tier 2 straight into engineering. Tier numbers match the book's part numbers, so the figure shows the two branches side by side.
 
-**Tier 5: Production ML and AI (Part VI).** Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry cases. *Unlocks:* **ML engineer**, **AI engineer**, and MLOps and ML platform roles. Most people arrive here from tier 3 (with engineering added) or from tier 4 (with machine learning added).
+**Tier 5: Production ML and AI (Part 6).** Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry cases. *Unlocks:* **ML engineer**, **AI engineer**, and MLOps and ML platform roles. Most people arrive here from tier 3 (with engineering added) or from tier 4 (with machine learning added).
 
-**Tier 6: Architecture and leadership (Part VII).** Designing whole systems, trade-offs, architecture patterns, automation architecture and governance, security and privacy, the economics of data platforms, data strategy, and leading as an architect. *Unlocks:* **data architect**, ML or AI architect, and the management ladder up to head of data or chief data officer.
+**Tier 6: Architecture and leadership (Part 7).** Designing whole systems, trade-offs, architecture patterns, automation architecture and governance, security and privacy, the economics of data platforms, data strategy, and leading as an architect. *Unlocks:* **data architect**, ML or AI architect, and the management ladder up to head of data or chief data officer.
 
 ### Where the automation roles sit
 
@@ -86,7 +86,7 @@ The automation and integration track from Chapter 7 doesn't fit neatly on one fl
 | Role | Tier | Why there |
 |---|---|---|
 | Automation analyst | 1 | Spreadsheet automation, scheduled reports, and low-code flows are analyst-core skills (Chapters 19–20) |
-| RPA developer | 2 | Needs maintainable, tested automation and command-line habits (Part III), plus RPA tools |
+| RPA developer | 2 | Needs maintainable, tested automation and command-line habits (Part 3), plus RPA tools |
 | Integration engineer | 4 | Needs APIs, pipelines, data quality, and reverse ETL (Chapters 45–51) |
 
 ### How the tree works: three rules
@@ -338,23 +338,23 @@ Indian offers are usually stated as **CTC** (cost to company): everything the em
 
 ## 8.7 Reader pathways: your route through this book
 
-Not everyone climbs to the top, and you shouldn't read every chapter with the same care. This table suggests a route for each goal. "Read fully" means work through the chapters, exercises, and projects. "Skim" means read to understand the ideas and vocabulary. "Interview chapters" lists the Part VIII chapters to prepare with.
+Not everyone climbs to the top, and you shouldn't read every chapter with the same care. This table suggests a route for each goal. "Read fully" means work through the chapters, exercises, and projects. "Skim" means read to understand the ideas and vocabulary. "Interview chapters" lists the Part 8 chapters to prepare with.
 
 | Goal | Read fully | Skim | Interview chapters |
 |---|---|---|---|
-| **Complete beginner, exploring** | Parts 0, I | Part II (first half) | — |
-| **Data analyst** | Parts 0, I, II (all) | Part III (Ch 28, 30) | 68, 69, 70, 71, 72, 73, 75, 78, 81, 82 |
-| **Business analyst** | Parts 0, I; Ch 10–16, 19–27 | Ch 17–18 | 68, 69, 70, 71, 75, 76, 78, 81 |
-| **BI developer** | Parts 0, I, II; Ch 28, 32 | Ch 45–49, 51, 63 | 68, 69, 70, 71, 77, 78, 81 |
-| **Analytics engineer** | Parts 0–III | Ch 45–49, 51 | 68, 69, 71, 72, 77, 81 |
-| **Automation / integration engineer** | Parts 0, I; Ch 10–20, 25, 29, 34, 45–47, 51, 58, 63 | Ch 52, 55 | 68, 69, 70, 71, 72, 76, 77, 78, 81, 82 |
-| **Data scientist** | Parts 0–IV | Part V; Ch 53–56, 58 | 68, 69, 71–75, 79, 81, 82 |
-| **Data engineer** | Parts 0–III, V | Part IV (Ch 35–39); Ch 56, 63 | 68, 69, 71, 72, 77, 78, 81, 82 |
-| **ML / AI engineer** | Parts 0–VI | Part VII | 68, 69, 71, 72, 74, 77, 78, 79, 81, 82 |
+| **Complete beginner, exploring** | Parts 0, 1 | Part 2 (first half) | — |
+| **Data analyst** | Parts 0, 1, 2 (all) | Part 3 (Ch 28, 30) | 68, 69, 70, 71, 72, 73, 75, 78, 81, 82 |
+| **Business analyst** | Parts 0, 1; Ch 10–16, 19–27 | Ch 17–18 | 68, 69, 70, 71, 75, 76, 78, 81 |
+| **BI developer** | Parts 0, 1, 2; Ch 28, 32 | Ch 45–49, 51, 63 | 68, 69, 70, 71, 77, 78, 81 |
+| **Analytics engineer** | Parts 0–3 | Ch 45–49, 51 | 68, 69, 71, 72, 77, 81 |
+| **Automation / integration engineer** | Parts 0, 1; Ch 10–20, 25, 29, 34, 45–47, 51, 58, 63 | Ch 52, 55 | 68, 69, 70, 71, 72, 76, 77, 78, 81, 82 |
+| **Data scientist** | Parts 0–4 | Part 5; Ch 53–56, 58 | 68, 69, 71–75, 79, 81, 82 |
+| **Data engineer** | Parts 0–3, 5 | Part 4 (Ch 35–39); Ch 56, 63 | 68, 69, 71, 72, 77, 78, 81, 82 |
+| **ML / AI engineer** | Parts 0–6 | Part 7 | 68, 69, 71, 72, 74, 77, 78, 79, 81, 82 |
 | **Data / ML architect** | Everything | — | 68, 69, 77, 78, 79, 80, 81 |
-| **Already an analyst** | Skim Parts 0–II; start fully at Part III | — | Per target role |
+| **Already an analyst** | Skim Parts 0–2; start fully at Part 3 | — | Per target role |
 
-Two things are worth noticing. First, **every route reads Parts 0 and I fully**, including this chapter, and every route except the beginner's goes through the analyst core. Second, the **automation and integration route** is the most spread out: it takes the spreadsheet and report automation chapters from Part II, the software habits from Part III, the integration chapters from Part V, and the automation chapters from Parts VI and VII.
+Two things are worth noticing. First, **every route reads Parts 0 and 1 fully**, including this chapter, and every route except the beginner's goes through the analyst core. Second, the **automation and integration route** is the most spread out: it takes the spreadsheet and report automation chapters from Part 2, the software habits from Part 3, the integration chapters from Part 5, and the automation chapters from Parts 6 and 7.
 
 ### The automation thread, tier by tier
 
@@ -386,7 +386,7 @@ Most people enter the tree at tier 1. How they get there depends on where they s
 A **fresher** is someone applying for their first job, usually straight from a degree or course. Your challenge is evidence: the employer can't see work you've done, so you have to show it.
 
 - **Build the tier 1 keys properly,** not a little of everything. SQL, a spreadsheet, a BI tool, and one automated report beat a certificate in ten tools.
-- **Make projects that look like work.** Use realistic data (the Riverstone datasets, public government data, or a business you know), answer a real question, and write up what you'd tell a manager. The projects at the end of every chapter in Part II are designed for this, and Chapter 27 turns them into a portfolio.
+- **Make projects that look like work.** Use realistic data (the Riverstone datasets, public government data, or a business you know), answer a real question, and write up what you'd tell a manager. The projects at the end of every chapter in Part 2 are designed for this, and Chapter 27 turns them into a portfolio.
 - **Take internships seriously,** including short or unpaid-but-fair ones at small companies, where you often get real data and real responsibility.
 - **Apply to the doors with exceptions.** Postings that say "freshers with strong projects considered" are written for you.
 
@@ -425,7 +425,7 @@ Then apply when your must-have coverage is strong, and keep climbing on the job.
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -481,18 +481,16 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 
 ---
 
-## Tools
+## Project: your door plan
+
+**Goal:** a two-page plan for your next role, grounded in real job postings. It's the most useful document you'll write in Part 1, and a good one makes interviews easier, because you'll already know what the employer wants and what you can show.
+
+### Tools you'll need
 
 - **A spreadsheet** (Excel or Google Sheets) for your skills matrix and gap score, or paper if you prefer.
 - **Two or more job portals.** Save postings as PDFs or screenshots; they disappear.
 - **Two salary sources that use different methods,** such as PayScale (self-reported) and Indeed (job postings), plus your city filter. Note the date on every figure you record.
 - **Companion file:** `skills_matrix.xlsx`, the matrix in section 8.3 as a spreadsheet you can filter and extend.
-
----
-
-## The project: your door plan
-
-**Goal:** a two-page plan for your next role, grounded in real job postings. It's the most useful document you'll write in Part I, and a good one makes interviews easier, because you'll already know what the employer wants and what you can show.
 
 **Option A: your own target.** Use the role you want next, in the city or remote market you'll apply to.
 
@@ -520,7 +518,29 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Skills are keys; roles are doors.** Learn skills for the roles they unlock, not because they're popular.
+- The **career tree** has seven **tiers** that match the book's parts: foundations (0), the analyst core (1), advanced analytics and analytics engineering (2), data science (3), engineering and integration (4), production ML and AI (5), and architecture and leadership (6). **Tiers 3 and 4 are peers.**
+- A role sits at the **first tier that makes you a credible applicant**, and you keep every skill below it.
+- The **skills matrix** shows each role's **core** and **useful** skills. SQL helps open every door; machine learning is core for only two.
+- A **day in the life** matters as much as the matrix: choose work you'd enjoy on an ordinary day.
+- **Decoding a job description** means finding the track and tier, turning duties into outputs, spotting hidden skills, and separating **must-haves** from **nice-to-haves**. **Must-have coverage** is the most useful fit score.
+- **Salary figures** differ by method (self-reported versus job postings), date, sample size, city, and company. Read **percentiles** and **medians**, compare two sources, and know **CTC** from **in-hand** pay.
+- **Reader pathways** show which parts of this book to read fully or skim for each goal, and automation grows with every tier.
+- There are three **entry routes**: **fresher**, **career switcher**, and **internal move**. They end at the same door with different evidence.
+
+---
+
+## Key terms
+
+key · door · credible applicant · career tree · tier · MIS (management information system) · BI analyst · senior analyst · skills matrix · core skill · useful skill · leakage · data contract · architecture decision record · job description (JD) · must-have · nice-to-have · hidden skill · must-have coverage · self-reported salary · base salary · total pay · percentile · median · CTC (cost to company) · in-hand pay · reader pathway · fresher · career switcher · internal move
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can explain "skills are keys, roles are doors" and why it changes what you learn next.
 - [ ] You can name the seven tiers in order, say which part of the book teaches each, and explain why tiers 3 and 4 are peers.
@@ -536,21 +556,7 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 
 ---
 
-## Recap
-
-- **Skills are keys; roles are doors.** Learn skills for the roles they unlock, not because they're popular.
-- The **career tree** has seven **tiers** that match the book's parts: foundations (0), the analyst core (1), advanced analytics and analytics engineering (2), data science (3), engineering and integration (4), production ML and AI (5), and architecture and leadership (6). **Tiers 3 and 4 are peers.**
-- A role sits at the **first tier that makes you a credible applicant**, and you keep every skill below it.
-- The **skills matrix** shows each role's **core** and **useful** skills. SQL helps open every door; machine learning is core for only two.
-- A **day in the life** matters as much as the matrix: choose work you'd enjoy on an ordinary day.
-- **Decoding a job description** means finding the track and tier, turning duties into outputs, spotting hidden skills, and separating **must-haves** from **nice-to-haves**. **Must-have coverage** is the most useful fit score.
-- **Salary figures** differ by method (self-reported versus job postings), date, sample size, city, and company. Read **percentiles** and **medians**, compare two sources, and know **CTC** from **in-hand** pay.
-- **Reader pathways** show which parts of this book to read fully or skim for each goal, and automation grows with every tier.
-- There are three **entry routes**: **fresher**, **career switcher**, and **internal move**. They end at the same door with different evidence.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -580,29 +586,11 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 
 ---
 
-## Key terms
+## Answers
 
-key · door · credible applicant · career tree · tier · MIS (management information system) · BI analyst · senior analyst · skills matrix · core skill · useful skill · leakage · data contract · architecture decision record · job description (JD) · must-have · nice-to-have · hidden skill · must-have coverage · self-reported salary · base salary · total pay · percentile · median · CTC (cost to company) · in-hand pay · reader pathway · fresher · career switcher · internal move
+**1.** Tier 0, foundations (Parts 0 and 1); tier 1, the analyst core (Part 2); tier 2, advanced analytics and analytics engineering (Part 3); tier 3, data science and machine learning (Part 4); tier 4, engineering and integration (Part 5); tier 5, production ML and AI (Part 6); tier 6, architecture and leadership (Part 7). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3; the tier numbers follow the book's parts, and tiers 3 and 4 are peers.
 
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 9, How Expertise Actually Forms,** is honest about how long each tier takes, and shows how to practice deliberately, build a portfolio as you learn, find feedback and mentors, and get through plateaus.
-- **Part II, The Analyst (Chapters 10–27),** is tier 1: the keys for data analyst, business analyst, BI analyst, and automation analyst. **Chapter 27** turns your projects into a portfolio.
-- **Chapters 23–24** teach the stakeholder skills behind "hidden skill" lines in job descriptions; **Chapter 25** covers the business analyst track in depth.
-- **Chapter 66** returns to careers from the other side of the desk: building and hiring for data teams.
-- **Part VIII, Chapter 68, How Data Hiring Works,** explains the interview rounds for each role, CVs, portfolios, and referrals. **Chapter 81** covers behavioral questions and offer conversations, including negotiating on CTC. **Chapter 82** shows what fair take-home assignments look like.
-
----
-
-## Answers to practice exercises
-
-**1.** Tier 0, foundations (Parts 0 and I); tier 1, the analyst core (Part II); tier 2, advanced analytics and analytics engineering (Part III); tier 3, data science and machine learning (Part IV); tier 4, engineering and integration (Part V); tier 5, production ML and AI (Part VI); tier 6, architecture and leadership (Part VII). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3; the tier numbers follow the book's parts, and tiers 3 and 4 are peers.
-
-**2.** (a) Automation analyst: tier 1. (b) Analytics engineer: tier 2. (c) ML engineer: tier 5. (d) Data architect: tier 6. (e) Business analyst: tier 1. (f) Integration engineer: tier 4. The trap is (a) and (f): both are on the automation track, but at different tiers, because an integration engineer needs the pipeline and API skills of Part V.
+**2.** (a) Automation analyst: tier 1. (b) Analytics engineer: tier 2. (c) ML engineer: tier 5. (d) Data architect: tier 6. (e) Business analyst: tier 1. (f) Integration engineer: tier 4. The trap is (a) and (f): both are on the automation track, but at different tiers, because an integration engineer needs the pipeline and API skills of Part 5.
 
 **3.** (a) Data scientist and ML engineer. (b) Data scientist, ML engineer, data engineer, AI engineer, and the automation and integration roles. (c) SQL, which is core for six roles and useful for the other four.
 
@@ -616,7 +604,7 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 **8.** A sample answer: *"CTC is everything the company says it spends on you in a year, including things like the employer's provident fund share and bonuses that aren't guaranteed. In-hand pay is what actually reaches your bank account each month, after tax and your own deductions, so it's always less than CTC divided by 12. When you compare offers, ask for the breakup and compare the fixed, monthly in-hand amount, not only the CTC headline."*
 
-**9.** **Read fully:** Parts 0, I, and II, plus Chapters 28 and 32. **Skim:** Chapters 45–49, 51, and 63. **Interview chapters:** 68, 69, 70, 71, 77, 78, and 81.
+**9.** **Read fully:** Parts 0, 1, and II, plus Chapters 28 and 32. **Skim:** Chapters 45–49, 51, and 63. **Interview chapters:** 68, 69, 70, 71, 77, 78, and 81.
 
 **10.** Red flags: (1) a **tool list far longer than the duties**, covering every tier from spreadsheets to cloud to LLMs; (2) a **senior title with junior duties**: invoice data entry and MIS reports aren't data science; (3) a **fresher role expected to know tools from tiers 1–5**, which nobody entering the field has. The real job is closest to a **reporting or MIS assistant (tier 0 to tier 1)**, with some data entry. Useful questions: *"What would I produce in my first three months?"* and *"Which of the listed tools are used by the team today?"* Other good questions ask about who the role reports to, or whether there's a path into analysis. The job might still be a reasonable first step if the pay and learning are fair, but not under the belief that it's a data science role.
 
@@ -627,3 +615,13 @@ key · door · credible applicant · career tree · tier · MIS (management info
 **13.** Because it tells you when you can apply. If each role were placed where its best people end up, a data analyst would sit at tier 6 (some senior analysts have architect-level judgment), and every beginner would conclude they need years of study before applying for anything. Placing roles at the first credible tier gives each door a clear, reachable set of keys, and the rest can be learned on the job, which is how most people climb.
 
 **14.** Yes, it's possible, and common. A software engineer already has much of what data engineering needs: Python, Git, cloud, APIs, and software habits. They'd gain speed. They'd risk missing the tier 1 skills that make data engineering *useful*: business sense, understanding what the numbers mean, knowing what analysts need, and the habit of checking a total against a source. A data engineer without them can build fast, reliable pipelines that deliver the wrong numbers on time. The fix is to learn the analyst core alongside the move, not to skip it.
+
+---
+
+## Where this leads
+
+- **Chapter 9, How Expertise Actually Forms,** is honest about how long each tier takes, and shows how to practice deliberately, build a portfolio as you learn, find feedback and mentors, and get through plateaus.
+- **Part 2, The Analyst (Chapters 10–27),** is tier 1: the keys for data analyst, business analyst, BI analyst, and automation analyst. **Chapter 27** turns your projects into a portfolio.
+- **Chapters 23–24** teach the stakeholder skills behind "hidden skill" lines in job descriptions; **Chapter 25** covers the business analyst track in depth.
+- **Chapter 66** returns to careers from the other side of the desk: building and hiring for data teams.
+- **Part 8, Chapter 68, How Data Hiring Works,** explains the interview rounds for each role, CVs, portfolios, and referrals. **Chapter 81** covers behavioral questions and offer conversations, including negotiating on CTC. **Chapter 82** shows what fair take-home assignments look like.

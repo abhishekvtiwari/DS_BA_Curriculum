@@ -22,7 +22,7 @@ Removed from Ch 2 §2.1 "How numbers are stored". In Ch 17 the result must be pr
 
 Removed from Ch 2 §2.5: the longer Parquet explanation, the 500,000-row format test and the compression numbers from that test. Ch 2 keeps a short Parquet paragraph, Figure 2.2 (row vs column storage) and a short Compression note (lossless vs lossy). Ch 2's §2.2 sentence that pointed to the test file was also removed (last paragraph of this block). The timings were measured on "a small two-processor cloud computer"; re-run them in Ch 49 with the code shown before reusing the numbers.
 
-> **Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms (Part V). You can't read it as text: the file begins with the four letters `PAR1`, and the rest is compressed binary data. What makes it special is how it's laid out.
+> **Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms (Part 5). You can't read it as text: the file begins with the four letters `PAR1`, and the rest is compressed binary data. What makes it special is how it's laid out.
 >
 > A CSV stores **row by row**: order 1's date, customer, product, quantity; then order 2's. Parquet stores **column by column**: all the dates together, then all the customers, then all the quantities. Two big benefits follow. To total the quantity column, a program reads only that column and skips the rest. And values in one column are similar to each other (a column of dates, a column of product IDs), so they **compress** very well. Parquet also stores each column's **type**, so dates come back as dates.
 >

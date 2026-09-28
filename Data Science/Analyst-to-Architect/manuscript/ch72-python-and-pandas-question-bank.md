@@ -1,6 +1,6 @@
 # Chapter 72. Python & pandas Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the Python and pandas questions that come up across screening calls, live-coding rounds, and take-homes for every data role · recognize the classic Python gotchas (mutable defaults, `is` vs `==`, late-binding closures) before they bite you live · write idiomatic, correctly-vectorized pandas instead of slow, easy-to-get-wrong loops · debug broken pandas code the way a live round actually tests you.
 >
@@ -673,7 +673,7 @@ clean["quantity"] = pd.to_numeric(clean["quantity"], errors="coerce")
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -698,15 +698,13 @@ The lesson the hiring manager wrote in her notes afterward: *"Didn't guess. Adde
 
 ---
 
-## Tools
-
-**Python** 3.12 and **pandas** 3.0.2, the exact versions every snippet in this chapter was run against. `%timeit` in a Jupyter notebook (or the plain `time.perf_counter()` pattern used throughout this chapter) for any performance claim you make in an interview, rather than asserting a speedup from memory. **pandas' own release notes** are worth skimming before any interview at a company you know uses pandas heavily, since behavior (like Copy-on-Write, §72.4) does genuinely change between major versions.
-
----
-
-## The project
+## Project
 
 **Goal:** find and fix a real instance of at least three of this chapter's core bugs, in your own code or a public repository.
+
+### Tools you'll need
+
+**Python** 3.12 and **pandas** 3.0.2, the exact versions every snippet in this chapter was run against. `%timeit` in a Jupyter notebook (or the plain `time.perf_counter()` pattern used throughout this chapter) for any performance claim you make in an interview, rather than asserting a speedup from memory. **pandas' own release notes** are worth skimming before any interview at a company you know uses pandas heavily, since behavior (like Copy-on-Write, §72.4) does genuinely change between major versions.
 
 1. Search your own past projects for a mutable default argument (`def f(x, y=[])` or `y={}`) and fix it, the way Q72-001 does.
 2. Take one place in your own code using `.apply(axis=1)` and rewrite it as a vectorized operation; measure the real speedup, the way Q72-028 did, don't estimate it.
@@ -716,15 +714,15 @@ The lesson the hiring manager wrote in her notes afterward: *"Didn't guess. Adde
 
 ---
 
-## Final-week revision list
-
-Q72-001, Q72-002, Q72-003, Q72-004, Q72-010, Q72-011, Q72-016, Q72-017, Q72-022, Q72-023, Q72-028, Q72-029, Q72-034, Q72-035.
-
----
-
 ## Key terms
 
 mutable default argument · `is` vs. `==` · object identity · shallow copy · deep copy · closure · late binding · `*args` / `**kwargs` · list comprehension · generator · decorator · `functools.wraps` · positional-only / keyword-only arguments · pandas Series · pandas DataFrame · `.loc` vs. `.iloc` · Copy-on-Write · `SettingWithCopyWarning` (legacy) · `groupby().agg()` · named aggregation · `merge` (join types) · `pivot_table` · `concat` · `.transform()` vs. `.agg()` · vectorization · `.apply(axis=1)` · `.isna()` / `.fillna()` / `.dropna()` · `.str` accessor · `.dt` accessor · `chunksize` (large-file reading)
+
+---
+
+## Final-week revision list
+
+Q72-001, Q72-002, Q72-003, Q72-004, Q72-010, Q72-011, Q72-016, Q72-017, Q72-022, Q72-023, Q72-028, Q72-029, Q72-034, Q72-035.
 
 ---
 

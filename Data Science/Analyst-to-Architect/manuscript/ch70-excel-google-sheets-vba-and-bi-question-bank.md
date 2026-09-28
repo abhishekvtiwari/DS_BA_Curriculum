@@ -1,6 +1,6 @@
 # Chapter 70. Excel, Google Sheets, VBA & BI Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **Chapter at a glance**
 >
@@ -467,7 +467,7 @@ function sendConfirmations() {
 | Q70-054 | `MailApp` vs. `GmailApp`? | Simple, send-only / can also read, search, label, sends as the user's own Gmail | **[Trade-offs]** `MailApp` is enough for simple outbound notifications |
 | Q70-055 | Time-driven vs. "on edit" trigger? | Runs on a schedule / fires when a user edits a cell | **[Edge cases]** simple built-in `onEdit(e)` can't send email; needs an *installable* trigger for full permissions |
 | Q70-056 | Call an external API from Apps Script? | `UrlFetchApp.fetch(url, options)`, parse with `JSON.parse()` | **[Business]** the mechanism behind syncing a Sheet with a CRM with no backend (Chapter 78 goes deeper) |
-| Q70-057 | Execution quota: what if a task exceeds it? | ~6 min/run limit; checkpoint progress to a property, then re-trigger to continue | **[Scale]** the same "checkpoint and resume" idea as Part V's pipelines, smaller scale |
+| Q70-057 | Execution quota: what if a task exceeds it? | ~6 min/run limit; checkpoint progress to a property, then re-trigger to continue | **[Scale]** the same "checkpoint and resume" idea as Part 5's pipelines, smaller scale |
 | Q70-058 | `SpreadsheetApp.flush()`: when needed? | Forces pending writes immediately, instead of batching until the script ends | **[Edge cases]** without it, reading a cell right after writing it can return the stale, pre-write value |
 
 ---
@@ -523,7 +523,7 @@ Revenue YoY % = DIVIDE([Total Revenue] - [Revenue LY], [Revenue LY])
 
 **Likely follow-ups:** Snowflake schema, when to use it? Many-to-many relationships? Bridge table?
 **Red flag:** no mention of fact vs. dimension specifically; claiming flat is always simpler.
-**Learn it in:** Chapter 16 (and Part V for the warehouse version of the same idea).
+**Learn it in:** Chapter 16 (and Part 5 for the warehouse version of the same idea).
 
 ### Q70-062 · Row-level security (RLS): each rep sees only their own accounts
 
@@ -592,7 +592,7 @@ Revenue YoY % = DIVIDE([Total Revenue] - [Revenue LY], [Revenue LY])
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -617,15 +617,13 @@ He fixes the typo, and then adds one more line, unprompted: a message box report
 
 ---
 
-## Tools
-
-**Excel and Google Sheets** (both free at a basic level). **Power BI Desktop** (free to build; publishing has free/paid tiers). **VBA** ships inside Excel; **Google Apps Script** ships inside every Sheet (Extensions → Apps Script). Nothing beyond what Chapters 10, 11, 16, and 19 already covered.
-
----
-
-## The project
+## Project
 
 **Goal:** one worked example per major topic in this chapter, on your own data or Riverstone's.
+
+### Tools you'll need
+
+**Excel and Google Sheets** (both free at a basic level). **Power BI Desktop** (free to build; publishing has free/paid tiers). **VBA** ships inside Excel; **Google Apps Script** ships inside every Sheet (Extensions → Apps Script). Nothing beyond what Chapters 10, 11, 16, and 19 already covered.
 
 1. Write three `SUMIFS`/`COUNTIFS` formulas answering real questions, validated against a pivot table built the slow way.
 2. Build one Power Query combining multiple files (or simulate with multiple sheets), documenting every step's purpose in its name.
@@ -635,15 +633,15 @@ He fixes the typo, and then adds one more line, unprompted: a message box report
 
 ---
 
-## Final-week revision list
-
-Q70-001, Q70-002, Q70-003, Q70-005, Q70-016, Q70-018, Q70-027, Q70-028, Q70-034, Q70-035, Q70-040, Q70-041, Q70-043, Q70-052, Q70-053, Q70-059, Q70-060, Q70-061, Q70-062, Q70-069.
-
----
-
 ## Key terms
 
 ATS-safe formatting · `SUMIFS`/`COUNTIFS` · `XLOOKUP` · `INDEX`/`MATCH` · absolute vs. relative reference · `SUMPRODUCT` · dynamic array (`FILTER`, `UNIQUE`) · pivot table · calculated field vs. calculated column · Power Query · Merge vs. Append · `QUERY` (Sheets) · `ARRAYFORMULA` · `IMPORTRANGE` · VBA object model · Personal Macro Workbook · `On Error` · UserForm · Apps Script quota · `getValues()`/`setValues()` batching · installable trigger · DAX measure vs. calculated column · `CALCULATE` · filter context · star schema · row-level security (RLS) · Import mode vs. DirectQuery
+
+---
+
+## Final-week revision list
+
+Q70-001, Q70-002, Q70-003, Q70-005, Q70-016, Q70-018, Q70-027, Q70-028, Q70-034, Q70-035, Q70-040, Q70-041, Q70-043, Q70-052, Q70-053, Q70-059, Q70-060, Q70-061, Q70-062, Q70-069.
 
 ---
 

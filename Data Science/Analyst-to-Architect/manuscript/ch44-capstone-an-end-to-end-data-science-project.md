@@ -1,10 +1,10 @@
 # Chapter 44. Capstone: An End-to-End Data Science Project
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
-> **You will learn to:** walk one business question through the whole Part IV lifecycle — frame, prepare, model, evaluate, and communicate — without skipping a stage · combine a model's probability with the actual size of what's at stake, and see why ranking by probability alone can miss most of the value · wrap a multi-step analysis into one reusable function, the first step toward something you could actually hand off or schedule · write a one-page, non-technical summary that a leader can act on, and know what belongs in it and what doesn't.
+> **You will learn to:** walk one business question through the whole Part 4 lifecycle — frame, prepare, model, evaluate, and communicate — without skipping a stage · combine a model's probability with the actual size of what's at stake, and see why ranking by probability alone can miss most of the value · wrap a multi-step analysis into one reusable function, the first step toward something you could actually hand off or schedule · write a one-page, non-technical summary that a leader can act on, and know what belongs in it and what doesn't.
 >
 > **Before you start:** this chapter assumes everything from Chapters 35–43. It does not re-teach any of it; it uses it. If a step feels unfamiliar, the chapter says exactly which earlier chapter taught it, so you can go back rather than guess.
 >
@@ -18,7 +18,7 @@
 
 ## Why this matters
 
-Every chapter in Part IV taught one skill in isolation: a split, a model, a metric, an explanation. Real work rarely arrives in those tidy pieces. Someone asks a vague question, the data needs assembling, a dozen small decisions have to be made in order, and at the end somebody who has never heard of a confusion matrix needs to know what to do differently on Monday morning.
+Every chapter in Part 4 taught one skill in isolation: a split, a model, a metric, an explanation. Real work rarely arrives in those tidy pieces. Someone asks a vague question, the data needs assembling, a dozen small decisions have to be made in order, and at the end somebody who has never heard of a confusion matrix needs to know what to do differently on Monday morning.
 
 This chapter is one worked pass through that whole arc, start to finish, on a single question: ***which of Riverstone's at-risk accounts should the sales team call this month, and why those and not others?*** Nothing here is a new technique. What's new is the order, the joins between stages, and one habit most tutorials skip entirely: turning a probability into a decision that accounts for how much is actually at stake.
 
@@ -421,7 +421,7 @@ Notice what's absent: no AUC in the second paragraph (it's mentioned once, plain
 
 ---
 
-## 44.8 The Part IV toolkit, applied
+## 44.8 The Part 4 toolkit, applied
 
 Every chapter in this part shows up somewhere in the six steps above:
 
@@ -441,7 +441,7 @@ Nothing here required a new algorithm. It required using the ones already learne
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -462,15 +462,13 @@ That's not a flaw in the list; it's exactly why the list is a starting point for
 
 ---
 
-## Tools
-
-Nothing new. Every tool used in this chapter — scikit-learn's pipeline and gradient boosting, shap's `TreeExplainer` — was introduced and explained in Chapters 36, 37, and 39.
-
----
-
-## The project: your own end-to-end pass
+## Project: your own end-to-end pass
 
 **Goal:** run this chapter's six-step lifecycle on a question of your own, ending in a one-page summary someone outside data science could act on.
+
+### Tools you'll need
+
+Nothing new. Every tool used in this chapter — scikit-learn's pipeline and gradient boosting, shap's `TreeExplainer` — was introduced and explained in Chapters 36, 37, and 39.
 
 **Steps:**
 
@@ -484,16 +482,6 @@ Nothing new. Every tool used in this chapter — scikit-learn's pipeline and gra
 
 ---
 
-## You've got it when…
-
-- [ ] I can name, for any model I've built, what decision it actually feeds — not just what it predicts.
-- [ ] I never rank purely by probability when the things being ranked have different value.
-- [ ] I can wrap a multi-step analysis into one function with sensible defaults.
-- [ ] I write a one-page summary that leads with the decision, not the metric, and always states a limitation.
-- [ ] I can point to which earlier chapter taught any given step in my own pipeline.
-
----
-
 ## Recap
 
 - A **probability is not a decision**; multiplying it by what's genuinely at stake (a value at risk) can completely reorder a priority list, as it did here: three times the value protected, from the same model.
@@ -501,15 +489,6 @@ Nothing new. Every tool used in this chapter — scikit-learn's pipeline and gra
 - **Wrapping repeated steps in one function** is the first move toward something reusable, schedulable, or handed to someone else.
 - A **one-page summary** leads with the decision, states the model's quality once, and always includes what the analysis does *not* prove.
 - An end-to-end project is not a new skill; it's the discipline of using Chapters 35–43's tools in the right order and not skipping the step that turns a number into an action.
-
----
-
-## Practice exercises
-
-1. *(hand)* An account has a 30% churn probability and ₹500,000 in 2024 revenue. At a 15% margin, what's its value at risk? Is it worth a ₹1,200 call by the per-account break-even rule from section 44.3?
-2. Rebuild the call list with `MARGIN` set to 0.25 instead of 0.15. Does the same set of 40 accounts appear, or does the ranking change? Why might margin differ by segment in reality, and what would that do to the list?
-3. Using `build_call_list`, produce a call list with `capacity=40` and `call_cost=15000`. How many of the 40 accounts now fail the per-account break-even test from section 44.3, even though they're still in the top 40 by value at risk? What does that tell you about the difference between *ranking* by value and *filtering* by break-even?
-4. Write the one-paragraph "what this list is not" limitation section for your own project from this chapter's project brief. What is the one thing a reader might wrongly conclude from your summary if you left that paragraph out?
 
 ---
 
@@ -521,13 +500,26 @@ value at risk · break-even per row · capacity constraint · reusable pipeline 
 
 ---
 
-## Where this leads
+## Check yourself
 
-This chapter closes Part IV. Part V moves from single models to the systems and habits that keep them honest and useful over time: business metrics that connect a model's output to money (Chapter 45), experiments that prove whether an intervention like a retention call actually works (Chapter 30, referenced throughout this chapter), and deploying and monitoring models once they leave a notebook for good (Chapter 52). The call list this chapter built is exactly the kind of thing those later chapters take further: from a one-off analysis to a system that runs every month, is tested rather than assumed to work, and is watched for when it starts to drift.
+- [ ] I can name, for any model I've built, what decision it actually feeds — not just what it predicts.
+- [ ] I never rank purely by probability when the things being ranked have different value.
+- [ ] I can wrap a multi-step analysis into one function with sensible defaults.
+- [ ] I write a one-page summary that leads with the decision, not the metric, and always states a limitation.
+- [ ] I can point to which earlier chapter taught any given step in my own pipeline.
 
 ---
 
-## Answers to practice exercises
+## Exercises
+
+1. *(hand)* An account has a 30% churn probability and ₹500,000 in 2024 revenue. At a 15% margin, what's its value at risk? Is it worth a ₹1,200 call by the per-account break-even rule from section 44.3?
+2. Rebuild the call list with `MARGIN` set to 0.25 instead of 0.15. Does the same set of 40 accounts appear, or does the ranking change? Why might margin differ by segment in reality, and what would that do to the list?
+3. Using `build_call_list`, produce a call list with `capacity=40` and `call_cost=15000`. How many of the 40 accounts now fail the per-account break-even test from section 44.3, even though they're still in the top 40 by value at risk? What does that tell you about the difference between *ranking* by value and *filtering* by break-even?
+4. Write the one-paragraph "what this list is not" limitation section for your own project from this chapter's project brief. What is the one thing a reader might wrongly conclude from your summary if you left that paragraph out?
+
+---
+
+## Answers
 
 **1.** value at risk = 0.30 × ₹500,000 × 0.15 = **₹22,500**. Since ₹22,500 is well above the ₹1,200 call cost, yes — by a wide margin, this account clears the per-account break-even test from section 44.3.
 
@@ -568,3 +560,8 @@ At a ₹15,000 call cost, 13 of the top 40 accounts by value at risk would actua
 
 **4.** *(No single correct answer — this asks you to write your own project's limitations paragraph.)* Whatever the specific project, the paragraph should distinguish between what the analysis shows (a risk estimate, a ranking, a pattern in past data) and what it does not prove (that acting on it changes the outcome, that the pattern will hold as conditions change, that no other factor explains what the model found). Without it, the most common wrong conclusion a reader draws is treating a **correlational risk score** as if it were a **measured effect of taking action** — exactly the gap this chapter's own summary calls out in its final paragraph, and exactly what a proper experiment (Chapter 30) is needed to close.
 
+---
+
+## Where this leads
+
+This chapter closes Part 4. Part 5 moves from single models to the systems and habits that keep them honest and useful over time: business metrics that connect a model's output to money (Chapter 45), experiments that prove whether an intervention like a retention call actually works (Chapter 30, referenced throughout this chapter), and deploying and monitoring models once they leave a notebook for good (Chapter 52). The call list this chapter built is exactly the kind of thing those later chapters take further: from a one-off analysis to a system that runs every month, is tested rather than assumed to work, and is watched for when it starts to drift.

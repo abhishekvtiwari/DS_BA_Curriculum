@@ -1,6 +1,6 @@
 # Chapter 57. LLMOps
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -293,6 +293,7 @@ cost with cache:    Rs 4.52 (81% saved)
 > **Watch out: cache invalidation is a business rule.** A cached answer about the delivery policy is wrong the day the policy changes. Key the cache on the prompt *and* the corpus version, expire it on a schedule you choose deliberately, and never cache anything that includes live data (an order status) at all.
 
 ---
+
 ## 57.7 Latency
 
 A support answer should arrive in about two seconds; an extraction job that runs overnight can take minutes. The budget is made of parts you can measure and parts you can only manage.
@@ -475,7 +476,8 @@ With no accuracy metric, **the humans are the metric**, and the job is to make t
 **What this looks like after six months:** a golden set that started at 30 cases and holds 120, a prompt at version 9 with a score attached to each version, a cost per email that has fallen as caching improved, and a support lead who trusts the system because they have seen it refuse rather than guess. None of that is model work.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -520,7 +522,11 @@ The habit worth taking from this: **assume the model will change without telling
 
 ---
 
-## Tools
+## Project: instrument an LLM feature
+
+**Goal:** take an LLM feature (yours or Chapter 54's) and give it the operational apparatus to survive a year.
+
+### Tools you'll need
 
 Checked in September 2026; this area changes faster than any other in the book.
 
@@ -533,12 +539,6 @@ Checked in September 2026; this area changes faster than any other in the book.
 - **Companion files** in `ch57/`: `provider.py` (the metered, failure-simulating wrapper around Chapter 54's stand-in), `pipeline.py` (prompt registry, tolerant parser, cache, fallback, evaluation), `questions_stream.py` (eight weeks of questions with topic drift), and `ch57_check.py`.
 
 > **Simplification note.** The provider here is a local stand-in with a simulated version change and a simulated failure rate, because no reader should need a paid key. What that changes: real providers fail in more varied ways, and a real model upgrade can shift meaning as well as format. What it doesn't change: pinning versions, golden sets in CI, tolerant parsing, metering, caching, backoff and fallback, and every monitoring signal in section 57.9.
-
----
-
-## The project: instrument an LLM feature
-
-**Goal:** take an LLM feature (yours or Chapter 54's) and give it the operational apparatus to survive a year.
 
 **Steps:**
 
@@ -565,22 +565,6 @@ Checked in September 2026; this area changes faster than any other in the book.
 
 ---
 
-## You've got it when…
-
-- [ ] My prompts are versioned in Git, each with a golden-set score.
-- [ ] The golden set runs in CI with a floor, and fails on any unparseable reply.
-- [ ] The model version is pinned, and a scheduled job tests the next version before I switch.
-- [ ] My parser survives fences, comments, and a changed date format.
-- [ ] I can state the cost per request and the monthly projection without looking anything up.
-- [ ] I cache what repeats, and I know what must never be cached.
-- [ ] I retry rate limits with backoff, fall back for timeouts, and have a degraded mode.
-- [ ] `failed` is a counted outcome that reaches a person with a reason.
-- [ ] I monitor refusal, escalation, citation, length, cost, and topic drift.
-- [ ] I log versions, chunk ids and decisions, not customer text by default.
-- [ ] Every complaint becomes a test case.
-
----
-
 ## Recap
 
 - LLMOps is Chapter 56's discipline plus two things to version: **the prompt**, and **a model you don't control**.
@@ -597,7 +581,31 @@ Checked in September 2026; this area changes faster than any other in the book.
 
 ---
 
-## Practice exercises
+## Key terms
+
+LLMOps · prompt registry · prompt version · golden set · evaluation floor · unparseable rate · pinned model version · floating alias · provider upgrade · tolerant parsing · output normalization · token meter · cost per request · monthly projection · prompt caching · exact-match cache · semantic cache · cache invalidation · corpus version key · latency budget · time to first token · streaming · rate limit · exponential backoff · timeout · circuit breaker · fallback model · degraded mode · idempotency · escalation queue · refusal rate · citation rate · thumbs-down rate · topic drift · content gap · proxy metric · trace · structured log · retention period · injection monitoring · audit trail · human review loop · complaint-to-test-case
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] My prompts are versioned in Git, each with a golden-set score.
+- [ ] The golden set runs in CI with a floor, and fails on any unparseable reply.
+- [ ] The model version is pinned, and a scheduled job tests the next version before I switch.
+- [ ] My parser survives fences, comments, and a changed date format.
+- [ ] I can state the cost per request and the monthly projection without looking anything up.
+- [ ] I cache what repeats, and I know what must never be cached.
+- [ ] I retry rate limits with backoff, fall back for timeouts, and have a degraded mode.
+- [ ] `failed` is a counted outcome that reaches a person with a reason.
+- [ ] I monitor refusal, escalation, citation, length, cost, and topic drift.
+- [ ] I log versions, chunk ids and decisions, not customer text by default.
+- [ ] Every complaint becomes a test case.
+
+---
+
+## Exercises
 
 Work in `companion/ch57`.
 
@@ -633,27 +641,7 @@ Work in `companion/ch57`.
 
 ---
 
-## Key terms
-
-LLMOps · prompt registry · prompt version · golden set · evaluation floor · unparseable rate · pinned model version · floating alias · provider upgrade · tolerant parsing · output normalization · token meter · cost per request · monthly projection · prompt caching · exact-match cache · semantic cache · cache invalidation · corpus version key · latency budget · time to first token · streaming · rate limit · exponential backoff · timeout · circuit breaker · fallback model · degraded mode · idempotency · escalation queue · refusal rate · citation rate · thumbs-down rate · topic drift · content gap · proxy metric · trace · structured log · retention period · injection monitoring · audit trail · human review loop · complaint-to-test-case
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 58, Intelligent Automation,** connects this pipeline to systems that write, where a wrong answer creates a record rather than a sentence.
-- **Chapter 56, MLOps,** is the same discipline for models you own; read the two together.
-- **Chapter 55, Building AI Applications,** built the assistant and the golden set this chapter operates.
-- **Chapter 54, Generative AI & LLMs,** is where the prompts, tokens, and prices come from.
-- **Chapter 47, Data Quality, Observability & Contracts,** treats the corpus as data with owners, statuses, and freshness.
-- **Chapter 64, Responsible AI & Governance,** covers disclosure, retention, and accountability for automated answers.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you know the provider changed the model?"
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -809,3 +797,15 @@ Because this stand-in fails *deterministically* on a given prompt, extra attempt
 **17.** In order: (1) **cache**, the largest single lever, and it changes nothing about quality; (2) **shorten what is re-sent every call**, meaning the system prompt and the number of retrieved chunks, with the golden set confirming quality holds; (3) **cap output length**, since output costs several times input; (4) **route easy requests to a cheaper model**, measured for accuracy per rupee. Only then consider a cheaper model for everything, and re-run the golden set before promising anything. Also check the boring possibility: development and evaluation runs are sometimes most of a small bill.
 
 **18.** When the volume is so low that a person does it in ten minutes a week; when a wrong answer is expensive and the failure is silent, and no validation can catch it; when nobody will own the golden set, the prompts, or the complaints, so the system will decay unobserved; when the data cannot leave the building and a local model is not viable; and when the process it automates is broken, because automating a broken process just produces wrong answers faster. **The operating cost of an LLM feature is mostly human attention**, and a feature nobody has time to watch should not be running.
+
+---
+
+## Where this leads
+
+- **Chapter 58, Intelligent Automation,** connects this pipeline to systems that write, where a wrong answer creates a record rather than a sentence.
+- **Chapter 56, MLOps,** is the same discipline for models you own; read the two together.
+- **Chapter 55, Building AI Applications,** built the assistant and the golden set this chapter operates.
+- **Chapter 54, Generative AI & LLMs,** is where the prompts, tokens, and prices come from.
+- **Chapter 47, Data Quality, Observability & Contracts,** treats the corpus as data with owners, statuses, and freshness.
+- **Chapter 64, Responsible AI & Governance,** covers disclosure, retention, and accountability for automated answers.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "how would you know the provider changed the model?"

@@ -4,7 +4,8 @@
 
 Checks, per PDF (page 1 is the cover and is skipped):
   toc_numbers      contents entries that end in a page number / all contents entries (V2)
-  toc_wrong        contents entries whose page number does not show that heading (V2)
+  map_numbers      the same for the chapter maps, "In this chapter" (D8)
+  toc_wrong        contents or map entries whose page number does not show that heading (V2, D8)
   stranded_heads   a heading with no body text after it on its page (V7)
   stranded_leadins the last line on a page ends with ":" and the next page starts with a block (V7)
   sparse_pages     body text ends above 60% of the page, not counting the last page or a page
@@ -51,25 +52,61 @@ def check(path):
         r['tofu'] += txt.count('�')
         for m in re.findall(r'(?i)\b(draft( v?\d[\w.]*)?|v\d+\.\d+|for review|coordinator|this chat)\b', txt):
             r['draft_labels'].append((i + 1, m[0]))
-    # contents: every entry should end in a page number, and that page should show the heading
-    lay = subprocess.run(['pdftotext', '-layout', '-f', '2', '-l', '3', path, '-'], capture_output=True, text=True).stdout
-    toc = lay.split('\f')[0] if 'Contents' in lay.split('\f')[0] else ''
-    entries, withnum, wrong = 0, 0, []
+    # contents and chapter maps ("In this chapter", D8): every entry should end in a page number, and
+    # the page printed with that number should show the heading. Page numbers are read from each
+    # page's footer, because a package numbers its front matter i, ii … and starts 1 at Part 0.
     squash = lambda s: re.sub(r'\s+', '', s)
-    for line in toc.splitlines():
-        s = line.strip()
-        if not s or s == 'Contents' or s.startswith('Analyst to Architect'):
-            continue
-        entries += 1
-        m = re.match(r'(.+?)\s{2,}(\d+)$', s)
-        if not m:
-            continue
-        withnum += 1
-        title, n = m.group(1), int(m.group(2))
-        if n >= len(doc) or squash(title)[:25] not in squash(doc[n].get_text()):
-            wrong.append((title[:40], n))
-    r['toc_numbers'] = f"{withnum}/{entries}"
-    r['toc_wrong'] = wrong
+    PG = r'(\d+|[ivxl]+)'
+    printed = {}
+    for i, page in enumerate(doc):
+        foot = [l for l in lines_of(page) if l['y0'] >= H * FOOTER_TOP_FRAC]
+        m = re.search(PG + r'(\s*/\s*\d+)?$', foot[-1]['text']) if foot else None
+        if m: printed.setdefault(m.group(1), i)
+    if not printed:                      # no footers: page n is the n-th page after the cover
+        printed = {str(i): i for i in range(len(doc))}
+    def verify(entries_text, kind):
+        entries, withnum, wrong = 0, 0, []
+        for line in entries_text:
+            s = re.sub(r'^(START|LEARN|APPLY|REVIEW|PRACTISE|NEXT)\s+', '', line.strip())
+            if not s or s in ('Contents', 'In this chapter') or s.startswith('Analyst to Architect'):
+                continue
+            entries += 1
+            m = re.match(r'(.+?)\s{2,}' + PG + r'$', s)
+            if not m:
+                continue
+            withnum += 1
+            title, n = m.group(1), m.group(2)
+            key = squash(title.split(' · ')[0])[:25]
+            idx = printed.get(n)
+            if idx is None or key not in squash(doc[idx].get_text()):
+                wrong.append((kind, title[:40], n))
+        return entries, withnum, wrong
+    lay = subprocess.run(['pdftotext', '-layout', path, '-'], capture_output=True, text=True).stdout.split('\f')
+    toc_lines, in_toc = [], False
+    for k, pg in enumerate(lay[1:6], start=1):
+        body_lines = [l for l in pg.splitlines() if l.strip() and not l.strip().startswith('Analyst to Architect')]
+        if not body_lines: continue
+        if body_lines[0].strip() == 'Contents': in_toc = True
+        elif in_toc and sum(bool(re.search(r'\s{2,}' + PG + r'$', l.strip())) for l in body_lines) < 0.7 * len(body_lines):
+            break
+        if in_toc: toc_lines += body_lines
+    e, w, wrong = verify(toc_lines, 'contents')
+    r['toc_numbers'] = f"{w}/{e}"
+    maps = []
+    for pg in lay:
+        for part in pg.split('In this chapter')[1:]:
+            ls = part.splitlines()
+            first = next((l.strip() for l in ls if l.strip()), '')
+            if not re.match(r'(START|LEARN)\b', first): continue      # prose that mentions the map
+            block = []
+            for l in ls:
+                if not l.strip(): continue
+                block.append(l)
+                if l.strip().startswith('NEXT'): break
+            maps += block
+    me, mw, mwrong = verify(maps, 'map')
+    r['map_numbers'] = f"{mw}/{me}"
+    r['toc_wrong'] = wrong + mwrong
     for i in range(1, len(body)):
         ls = body[i]
         if not ls:

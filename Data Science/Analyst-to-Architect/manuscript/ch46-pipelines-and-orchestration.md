@@ -1,6 +1,6 @@
 # Chapter 46. Pipelines & Orchestration
 
-*Part V — Data Engineering, Integration & Scale*
+*Part 5 — Data Engineering, Integration & Scale*
 
 > **Chapter at a glance**
 >
@@ -814,7 +814,7 @@ A pipeline that runs is not the same as a pipeline that's operated well. A few h
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -863,19 +863,17 @@ The next month, the warehouse connection dropped again during a run. The retry s
 
 ---
 
-## Tools
+## Project: orchestrate Riverstone's ingestion
+
+**Goal:** turn your Chapter 45 ingestion job into an orchestrated, partitioned, tested pipeline that delivers the Daily Sales Flash only when the data is right. Chapter 47 will add a fuller set of quality checks and monitoring on top.
+
+### Tools you'll need
 
 - **Dagster** (`pip install dagster`); `dagster dev -f yourfile.py` opens the local web interface. For deployed use, Dagster also needs its daemon for schedules and sensors.
 - **Python 3.12**, **DuckDB**, **psycopg2**, **requests**, and **PostgreSQL 16**, as in Chapter 45.
 - **The Chapter 46 companion folder** (`companion/ch46/`): `reset_ch46.py`, `ingest.py`, and the three helpers copied from Chapter 45. Run Python from that folder. Set `RIVERSTONE_SOURCE` if your PostgreSQL needs a user or password.
 - **Versions used for the outputs shown:** Python 3.12.3, Dagster 1.13.23, DuckDB 1.5.5, psycopg2 2.9.13, requests 2.33.1, PostgreSQL 16.
 - **Apache Airflow** (not needed for this chapter): the official quick-start runs it locally with a single command; managed versions exist on the major clouds.
-
----
-
-## The project: orchestrate Riverstone's ingestion
-
-**Goal:** turn your Chapter 45 ingestion job into an orchestrated, partitioned, tested pipeline that delivers the Daily Sales Flash only when the data is right. Chapter 47 will add a fuller set of quality checks and monitoring on top.
 
 **Option A: Riverstone.** Use the companion environment and your Chapter 45 project.
 
@@ -903,7 +901,31 @@ The next month, the warehouse connection dropped again during a run. The retry s
 
 ---
 
-## You've got it when…
+## Recap
+
+- An **orchestrator** runs pipeline steps in dependency order, on schedule, with retries, history, backfills, and alerts. **Cron** is enough for simple, independent jobs.
+- A pipeline is a **DAG**. **Task-based** tools (Airflow) describe what to run; **asset-based** tools (Dagster) describe what data should exist.
+- **Schedules** use **cron expressions** and need explicit **time zones**. **Partitions** split runs by day, so each run knows exactly what it's building.
+- **Idempotency** must be proven with a **failure test**. An append step retried after a crash doubled revenue to ₹77,420.00; **partition overwrite in a transaction** kept it at ₹38,710.00.
+- **Side effects** (emails, syncs) can't be rolled back: put them last, behind checks, with a **delivery log**.
+- **Backfills** rebuild history; exclude delivery. **Late corrections** re-run one partition and send a labeled correction.
+- **Retries** handle transient failures, and can hide bugs; log them. **Timeouts** stop runs that never end.
+- **Checks that block delivery** catch failures that don't crash: an order-line load that loaded nothing raised no error, and only the reconciliation check stopped a ₹0 Flash reaching managers.
+- Good **alerts** are actionable, rare, routed, and linked to a **runbook**.
+- Airflow expresses the same design with tasks, `ds`, retries, and a check task before delivery.
+- Operate pipelines with **owners**, **SLAs**, **runbooks**, recorded re-runs, and code review.
+
+---
+
+## Key terms
+
+orchestrator · pipeline · cron · directed acyclic graph (DAG) · task · asset · dependency · schedule · cron expression · time zone (UTC, IST) · partition · partition key · job · retry policy · asset check · blocking check · idempotent · failure test · transaction (BEGIN, COMMIT, ROLLBACK) · partition overwrite · delivery log · idempotency key · side effect · backfill · late-arriving data · look-back window · transient failure · timeout · alert · runbook · run failure sensor · logical date (Airflow `ds`) · catchup · service-level agreement (SLA) · write–audit–publish
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can explain what an orchestrator adds to cron, with at least four examples.
 - [ ] You can draw a pipeline as a DAG and explain why only real dependencies belong in it.
@@ -922,23 +944,7 @@ The next month, the warehouse connection dropped again during a run. The retry s
 
 ---
 
-## Recap
-
-- An **orchestrator** runs pipeline steps in dependency order, on schedule, with retries, history, backfills, and alerts. **Cron** is enough for simple, independent jobs.
-- A pipeline is a **DAG**. **Task-based** tools (Airflow) describe what to run; **asset-based** tools (Dagster) describe what data should exist.
-- **Schedules** use **cron expressions** and need explicit **time zones**. **Partitions** split runs by day, so each run knows exactly what it's building.
-- **Idempotency** must be proven with a **failure test**. An append step retried after a crash doubled revenue to ₹77,420.00; **partition overwrite in a transaction** kept it at ₹38,710.00.
-- **Side effects** (emails, syncs) can't be rolled back: put them last, behind checks, with a **delivery log**.
-- **Backfills** rebuild history; exclude delivery. **Late corrections** re-run one partition and send a labeled correction.
-- **Retries** handle transient failures, and can hide bugs; log them. **Timeouts** stop runs that never end.
-- **Checks that block delivery** catch failures that don't crash: an order-line load that loaded nothing raised no error, and only the reconciliation check stopped a ₹0 Flash reaching managers.
-- Good **alerts** are actionable, rare, routed, and linked to a **runbook**.
-- Airflow expresses the same design with tasks, `ds`, retries, and a check task before delivery.
-- Operate pipelines with **owners**, **SLAs**, **runbooks**, recorded re-runs, and code review.
-
----
-
-## Practice exercises
+## Exercises
 
 Run `reset()` and re-run the definitions blocks before each exercise that uses the companion environment, unless it says otherwise.
 
@@ -970,28 +976,7 @@ Run `reset()` and re-run the definitions blocks before each exercise that uses t
 
 ---
 
-## Key terms
-
-orchestrator · pipeline · cron · directed acyclic graph (DAG) · task · asset · dependency · schedule · cron expression · time zone (UTC, IST) · partition · partition key · job · retry policy · asset check · blocking check · idempotent · failure test · transaction (BEGIN, COMMIT, ROLLBACK) · partition overwrite · delivery log · idempotency key · side effect · backfill · late-arriving data · look-back window · transient failure · timeout · alert · runbook · run failure sensor · logical date (Airflow `ds`) · catchup · service-level agreement (SLA) · write–audit–publish
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 47, Data Quality, Observability & Contracts,** turns this chapter's checks into a full testing and monitoring layer: freshness, volume, and validity checks, write–audit–publish, data contracts, and alert fatigue.
-- **Chapter 48, Big Data & Distributed Compute,** runs heavier steps on Spark and DuckDB at scale, inside pipelines like this one.
-- **Chapter 49, Storage, Warehouses & Lakehouses,** explains the transactions (ACID) and table formats that make partition overwrites safe at scale.
-- **Chapter 50, Streaming & Real-Time,** covers pipelines that run continuously instead of once a day.
-- **Chapter 51, Data Activation,** adds CRM and ERP syncs as downstream steps, gated by checks and made idempotent with delivery logs and idempotency keys.
-- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** deploys pipelines like this one: containers, secrets, and environments.
-- **Chapter 63, Designing Automation & Integration Architecture,** looks at orchestration across a whole company: ownership, governance, and choosing tools.
-- **Part VIII:** pipeline and orchestration questions appear in the data engineering and system design interview chapters (Chapter 77).
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1034,3 +1019,16 @@ It's useful because it names the problem precisely. `flash_matches_erp` also fai
 **13.** *Stay with cron:* six jobs and one part-time engineer means an orchestrator adds a system to install, upgrade, and learn; if the jobs are independent and each has alerts and a runbook, the risk is low, and the engineer's time may be better spent on checks. *Move now:* the Flash already depends on several loads, cron spacing will fail on a busy day, and adding checks, retries, and backfills by hand in six scripts costs more than adopting a tool once; a managed or simple local deployment keeps the operational burden small. A reasonable choice is to move the Flash's steps to an orchestrator now and leave truly independent jobs on cron. The incident that would change a "stay" decision: any day when a report goes out built on half-loaded or stale data because a job ran long.
 
 **14.** Because anything that leaves the pipeline changes something outside it, and many of those changes can't be undone. Examples: (1) syncing **credit limits** from the warehouse into the ERP: a failed load that sets limits to zero would block real customers' orders until someone notices; (2) pushing **lead scores** or "customer at risk" flags into the CRM: wrong scores would send sales reps to the wrong customers and trigger automated emails, and the CRM keeps the history. Other good examples include reorder flags that trigger purchase orders, and marketing lists that send messages. In each case, a check that blocks the sync costs minutes; a wrong sync can cost orders, money, or customer trust.
+
+---
+
+## Where this leads
+
+- **Chapter 47, Data Quality, Observability & Contracts,** turns this chapter's checks into a full testing and monitoring layer: freshness, volume, and validity checks, write–audit–publish, data contracts, and alert fatigue.
+- **Chapter 48, Big Data & Distributed Compute,** runs heavier steps on Spark and DuckDB at scale, inside pipelines like this one.
+- **Chapter 49, Storage, Warehouses & Lakehouses,** explains the transactions (ACID) and table formats that make partition overwrites safe at scale.
+- **Chapter 50, Streaming & Real-Time,** covers pipelines that run continuously instead of once a day.
+- **Chapter 51, Data Activation,** adds CRM and ERP syncs as downstream steps, gated by checks and made idempotent with delivery logs and idempotency keys.
+- **Chapter 52, The Cloud, Containers & Infrastructure as Code,** deploys pipelines like this one: containers, secrets, and environments.
+- **Chapter 63, Designing Automation & Integration Architecture,** looks at orchestration across a whole company: ownership, governance, and choosing tools.
+- **Part 8:** pipeline and orchestration questions appear in the data engineering and system design interview chapters (Chapter 77).

@@ -1,6 +1,6 @@
 # Chapter 61. Distributed Systems & Trade-offs
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
@@ -20,7 +20,7 @@
 
 Every distributed system — which is to say, at this point, every real system — is built out of parts that can fail independently, connected by a network that can lose messages, delay them, duplicate them, or deliver them out of order. This isn't a special hazard that occasionally applies. It's the physics of the environment every architect works in, in the same way gravity is the physics a civil engineer works in.
 
-Chapter 60 drew Riverstone's platform as eight containers connected by arrows. Every one of those arrows is a promise that data will move from one machine to another, over a network, and every such promise can be broken. The orchestrator can lose its connection to the warehouse mid-run. The CRM's API can time out. Two containers can each believe they hold the authoritative version of a customer's address. None of this is a sign that Parts V and VI were built badly — it's what happens to *any* system once it stops fitting on one machine, and the discipline of distributed systems is entirely about building something reliable out of parts that, individually, are not.
+Chapter 60 drew Riverstone's platform as eight containers connected by arrows. Every one of those arrows is a promise that data will move from one machine to another, over a network, and every such promise can be broken. The orchestrator can lose its connection to the warehouse mid-run. The CRM's API can time out. Two containers can each believe they hold the authoritative version of a customer's address. None of this is a sign that Parts 5 and 6 were built badly — it's what happens to *any* system once it stops fitting on one machine, and the discipline of distributed systems is entirely about building something reliable out of parts that, individually, are not.
 
 This chapter gives you the vocabulary and the reflexes: the CAP theorem and its quieter, more useful cousin PACELC, the spectrum of consistency guarantees and when each one is the right choice, the standard toolkit for building resilience, and — as the chapter's spine — a real failure analysis of the exact platform Chapter 60 designed. By the end, "what happens when this fails?" should be a question you ask automatically, before something fails, not a question you're forced to answer afterward.
 
@@ -180,11 +180,11 @@ This is what "eventually" concretely means: not "soon," not "usually," but *give
 
 ## 61.5 The reliability toolkit
 
-None of the following ideas are new to this book — every one of them already appeared, doing real work, somewhere in Parts V and VI. This section names them together as a reusable kit, because recognizing "oh, this is sharding" is what lets you reach for it deliberately the next time, instead of reinventing it under pressure.
+None of the following ideas are new to this book — every one of them already appeared, doing real work, somewhere in Parts 5 and 6. This section names them together as a reusable kit, because recognizing "oh, this is sharding" is what lets you reach for it deliberately the next time, instead of reinventing it under pressure.
 
 ![Five cards: sharding, replication, load balancing, caching, and message queues, each with what it does and a real example already used somewhere in Riverstone's platform](figures/fig61-3-reliability-toolkit.svg)
 
-*Figure 61.3 — The standard kit. Parts V and VI already use every piece of it; this section is where the pieces get names you can say out loud in a design review.*
+*Figure 61.3 — The standard kit. Parts 5 and 6 already use every piece of it; this section is where the pieces get names you can say out loud in a design review.*
 
 - **Sharding** splits data across multiple machines by some key, so no single machine has to hold or serve all of it. Riverstone's sensor archive is partitioned by `reading_date` (Chapter 49) — a form of sharding that also happens to make old-data queries fast, because they only need to touch the relevant partitions.
 - **Replication** keeps more than one copy of data, for availability (if one copy's machine dies, another can serve) and durability (a copy surviving a disk failure). It costs consistency, exactly as PACELC predicts — keeping replicas in perfect lockstep costs latency, so most replication schemes accept some lag.
@@ -242,7 +242,8 @@ This is the chapter's project done as a worked example, applied to the exact sys
 5. **Look at the pattern across the whole table**, not just each row alone. The single point of failure and the deliberate CAP choices are findings that only appear once you see all the rows together.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -280,7 +281,11 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: failure analysis for a real system
+
+**Goal:** produce a container-by-container failure analysis for a system you actually depend on, following section 61.7's method.
+
+### Tools you'll need
 
 - No new software this chapter — the reasoning applies to whatever distributed systems you already run.
 - **Companion files (`companion/ch61/`):**
@@ -288,12 +293,6 @@ What made the difference:
   - `failure-analysis-worksheet.md`: a blank version of the section 61.7 table, ready to fill in for your own system.
   - `failure-analysis-riverstone.md`: the full worked failure analysis behind Figure 61.4, with one paragraph of reasoning per container.
 - **Worth reading further:** the original CAP theorem papers (Brewer's conjecture, Gilbert and Lynch's proof) and Daniel Abadi's writing on PACELC, which this chapter's section 61.3 follows closely.
-
----
-
-## The project: failure analysis for a real system
-
-**Goal:** produce a container-by-container failure analysis for a system you actually depend on, following section 61.7's method.
 
 **Option A: your own system.** Anything with more than one moving part you can name — a personal project, a team's pipeline, an app you use daily and happen to know the architecture of.
 
@@ -333,7 +332,27 @@ Use `companion/ch61/eventual_consistency_sim.py` and the failure analysis worksh
 
 ---
 
-## You've got it when…
+## Recap
+
+- **Any system with more than one machine is a distributed system**, and networks lose, delay, duplicate, and reorder messages as a matter of course — the discipline is building something reliable from parts that individually aren't.
+- **The CAP theorem** says that during a network partition, a system must choose consistency or availability — partition tolerance itself isn't optional at any real scale.
+- **PACELC** extends this to the far more common case with no partition at all: even then, a system trades latency against consistency, and "just make it consistent" always has a latency cost attached.
+- **The consistency spectrum** runs from strong to eventual, and the right point on it depends on who's harmed by staleness and by how much — not on which sounds more rigorous.
+- **The reliability toolkit** — sharding, replication, load balancing, caching, message queues — is already in use throughout Parts 5 and 6; naming it lets you reach for it deliberately and weigh its real costs.
+- **Designing for failure by default** means idempotency (safe retries), timeouts (bounded waits), circuit breakers (failing fast instead of piling on), and graceful degradation (a reduced service instead of no service).
+- **A failure analysis**, run container by container against Chapter 60's diagram, finds the platform's one genuine single point of failure (the warehouse) and shows that most containers already degrade safely — a finding that justifies where to actually invest, rather than spreading effort evenly.
+
+---
+
+## Key terms
+
+distributed system · network partition · CAP theorem · consistency · availability · partition tolerance · PACELC · latency/consistency trade-off · consistency spectrum · strong consistency · snapshot isolation · bounded staleness · eventual consistency · last-write-wins · sharding · replication · load balancing · caching · cache invalidation · message queue · idempotency · timeout · circuit breaker · graceful degradation · failure analysis · single point of failure (SPOF) · chaos test
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] You can state the CAP theorem correctly, including what most people get wrong about it.
 - [ ] You can explain PACELC and name a real system that trades latency for consistency, or the reverse, even with no partition happening.
@@ -345,19 +364,7 @@ Use `companion/ch61/eventual_consistency_sim.py` and the failure analysis worksh
 
 ---
 
-## Recap
-
-- **Any system with more than one machine is a distributed system**, and networks lose, delay, duplicate, and reorder messages as a matter of course — the discipline is building something reliable from parts that individually aren't.
-- **The CAP theorem** says that during a network partition, a system must choose consistency or availability — partition tolerance itself isn't optional at any real scale.
-- **PACELC** extends this to the far more common case with no partition at all: even then, a system trades latency against consistency, and "just make it consistent" always has a latency cost attached.
-- **The consistency spectrum** runs from strong to eventual, and the right point on it depends on who's harmed by staleness and by how much — not on which sounds more rigorous.
-- **The reliability toolkit** — sharding, replication, load balancing, caching, message queues — is already in use throughout Parts V and VI; naming it lets you reach for it deliberately and weigh its real costs.
-- **Designing for failure by default** means idempotency (safe retries), timeouts (bounded waits), circuit breakers (failing fast instead of piling on), and graceful degradation (a reduced service instead of no service).
-- **A failure analysis**, run container by container against Chapter 60's diagram, finds the platform's one genuine single point of failure (the warehouse) and shows that most containers already degrade safely — a finding that justifies where to actually invest, rather than spreading effort evenly.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -390,25 +397,7 @@ Use `companion/ch61/eventual_consistency_sim.py` and the failure analysis worksh
 
 ---
 
-## Key terms
-
-distributed system · network partition · CAP theorem · consistency · availability · partition tolerance · PACELC · latency/consistency trade-off · consistency spectrum · strong consistency · snapshot isolation · bounded staleness · eventual consistency · last-write-wins · sharding · replication · load balancing · caching · cache invalidation · message queue · idempotency · timeout · circuit breaker · graceful degradation · failure analysis · single point of failure (SPOF) · chaos test
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 62, Data Architecture Patterns:** naming the shapes (Lambda, Kappa, medallion, data mesh) that a system like Riverstone's platform actually follows — this chapter's consistency and failure reasoning applies inside every one of those patterns.
-- **Chapter 60, Designing Whole Systems:** the container diagram this chapter analyzed, and the ADRs (Chapter 60's decision index) that recorded the CAP choices this chapter made explicit.
-- **Chapter 63, Automation Architecture & Governance:** operating this platform day to day, including who gets paged when the warehouse — this chapter's one true single point of failure — actually goes down.
-- **Chapter 56 and 57 (MLOps, LLMOps):** the caching, retry, and fallback patterns in those chapters are this chapter's reliability toolkit, already applied to model serving specifically.
-- **Interview preparation:** the System Design Question Bank (Chapter 77) leans heavily on CAP, PACELC, and "design for failure" reasoning — this chapter's method is close to word-for-word what a system design interview is testing.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -445,3 +434,13 @@ distributed system · network partition · CAP theorem · consistency · availab
 **17.** Life-safety systems (an emergency stop signal, a medical alert) generally should favor availability with a strong bias, because "the system didn't respond" is often worse than "the system responded with slightly stale information." Systems handling money movement between two parties generally should favor consistency, because an available-but-wrong balance can cause real, hard-to-reverse harm. What would change the answer in either case: the actual cost of being wrong versus the actual cost of being unavailable, measured for the specific system, not assumed from the category it belongs to.
 
 **Timed challenge answers.** Level 1: all three agree from tick 12 onward; the replicas disagree for ticks 1 through 11 (11 ticks) in the default run. Level 2: results vary by seed, but yes, the system should still converge with any seed, since the delay distribution always eventually delivers every write to every replica — convergence is guaranteed by the simulation's design (last-write-wins, no message ever permanently lost), not by luck. Level 3: with more replicas, the *maximum* delay among all of them tends to be larger (more chances to draw a long delay), so convergence generally takes at least as long, and often a bit longer. Level 4: it chooses latency (fast, cheap reads and writes against the semantic layer) over strong consistency (numbers can lag briefly), because nobody's decision depends on millisecond-fresh aggregate metrics. Level 5: the warehouse — every other container either has no persistent state to lose, retries and recovers automatically, or was explicitly designed to fail safe rather than fail entirely. Level 6: if the ERP link were flaky but orders were low-value and easily corrected after the fact (rather than costing ~Rs 2,000 each to unwind), loading immediately and reconciling afterward could be more defensible — the calculus changes when the cost of a wrong write drops below the cost of the delay caused by refusing to write. Bonus: a permanently dropped message (not delayed) means that replica never receives write 3 at all — it will apply write 4 when it arrives (since 4 > its last-known write id of 2), and will still converge to the final value, but it skipped an intermediate state entirely rather than merely seeing it late. This is the real distinction between "delayed" and "lost": delayed messages still arrive and matter for anyone reading in between; lost messages are invisible unless a later message's write id is high enough to paper over the gap — which last-write-wins happens to handle safely here, but wouldn't if the system needed every intermediate value, not just the final one.
+
+---
+
+## Where this leads
+
+- **Chapter 62, Data Architecture Patterns:** naming the shapes (Lambda, Kappa, medallion, data mesh) that a system like Riverstone's platform actually follows — this chapter's consistency and failure reasoning applies inside every one of those patterns.
+- **Chapter 60, Designing Whole Systems:** the container diagram this chapter analyzed, and the ADRs (Chapter 60's decision index) that recorded the CAP choices this chapter made explicit.
+- **Chapter 63, Automation Architecture & Governance:** operating this platform day to day, including who gets paged when the warehouse — this chapter's one true single point of failure — actually goes down.
+- **Chapter 56 and 57 (MLOps, LLMOps):** the caching, retry, and fallback patterns in those chapters are this chapter's reliability toolkit, already applied to model serving specifically.
+- **Interview preparation:** the System Design Question Bank (Chapter 77) leans heavily on CAP, PACELC, and "design for failure" reasoning — this chapter's method is close to word-for-word what a system design interview is testing.

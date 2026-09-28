@@ -1,10 +1,10 @@
 # Chapter 74. Machine Learning Question Bank
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** answer the ML questions that come up across screening calls, live-coding rounds, and case interviews for Data Scientist, ML Engineer, and analytics-adjacent roles · explain bias-variance, not just define it · spot data leakage before a model's score fools you · read a confusion matrix, an ROC curve, and a calibration plot the way an interviewer actually wants · debug a model that "worked in training and broke in production."
 >
-> **How this chapter is built.** Same format as Chapters 70–73: every core question leads with a **"Remember it as…"** hook, a one-line answer, a compact tier table. Rapid-fire sections are scan tables. **This chapter draws directly on Part IV of this same book** (Chapters 35–43), which this author wrote earlier and has exact, verified section numbers and real, already-checked results for, not "chapter-level, to be confirmed" pointers like several other banks in this part. Every "Learn it in" reference below is precise. New claims specific to this chapter were freshly computed and verified the same way.
+> **How this chapter is built.** Same format as Chapters 70–73: every core question leads with a **"Remember it as…"** hook, a one-line answer, a compact tier table. Rapid-fire sections are scan tables. **This chapter draws directly on Part 4 of this same book** (Chapters 35–43), which this author wrote earlier and has exact, verified section numbers and real, already-checked results for, not "chapter-level, to be confirmed" pointers like several other banks in this part. Every "Learn it in" reference below is precise. New claims specific to this chapter were freshly computed and verified the same way.
 >
 > **A note on scope.** This is an *interview* bank, testing whether you can explain and reason about ML concepts under time pressure, not a re-teaching of the algorithms themselves (that's Chapters 35–43 in full). Read this chapter after those, not instead of them.
 
@@ -352,7 +352,7 @@ tuned gradient boosting (test): 0.839
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -376,15 +376,13 @@ The interviewer's note afterward: *"Went straight to feature importance, and rea
 
 ---
 
-## Tools
-
-**scikit-learn**, **pandas**, and **NumPy**, the same stack used throughout Chapters 35–43; every number in this chapter was computed with them, not recalled from memory. No new tools beyond what those chapters already introduced.
-
----
-
-## The project
+## Project
 
 **Goal:** reproduce this chapter's core demonstrations on your own model or data.
+
+### Tools you'll need
+
+**scikit-learn**, **pandas**, and **NumPy**, the same stack used throughout Chapters 35–43; every number in this chapter was computed with them, not recalled from memory. No new tools beyond what those chapters already introduced.
 
 1. Run your own bias-variance sweep (varying max depth, regularization strength, or a similar complexity knob) on a real model, and identify where the sweet spot actually sits, not where you'd guess it sits.
 2. Deliberately leak a feature into a model you control (a noisy copy of the target, or a feature computed after the outcome) and measure exactly how much the score inflates.
@@ -393,15 +391,15 @@ The interviewer's note afterward: *"Went straight to feature importance, and rea
 
 ---
 
-## Final-week revision list
-
-Q74-001, Q74-002, Q74-007, Q74-008, Q74-013, Q74-014, Q74-015, Q74-019, Q74-020, Q74-021, Q74-025, Q74-030, Q74-031, Q74-035, Q74-036.
-
----
-
 ## Key terms
 
 bias-variance trade-off · underfitting · overfitting · regularization (L1/L2) · learning curve · curse of dimensionality · base rate · confusion matrix · precision · recall · F1 score · ROC-AUC · PR-AUC · calibration · target leakage · temporal leakage · target encoding leakage · training-serving skew · data drift · concept drift · feature importance · one-hot encoding · frequency encoding · feature hashing · interaction feature · missing-value indicator
+
+---
+
+## Final-week revision list
+
+Q74-001, Q74-002, Q74-007, Q74-008, Q74-013, Q74-014, Q74-015, Q74-019, Q74-020, Q74-021, Q74-025, Q74-030, Q74-031, Q74-035, Q74-036.
 
 ---
 

@@ -1,7 +1,7 @@
 # ADR-021: PO-intake pipeline operating mode
 
 **Status:** Accepted
-**Date:** (Part VI, Chapter 58)
+**Date:** (Part 6, Chapter 58)
 **Owner:** Automation team
 
 ## Context

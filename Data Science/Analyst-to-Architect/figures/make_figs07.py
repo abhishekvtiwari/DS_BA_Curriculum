@@ -32,13 +32,13 @@ def wrapc(s,n,sep=" "):
 def fig_questions():
     o=[]
     cols=[("Question 1",ACC,["What happened?"],"Analytics & BI",
-           ["Data analyst","Business analyst","BI developer"],"Parts II–III"),
+           ["Data analyst","Business analyst","BI developer"],"Parts 2–3"),
           ("Question 2",PURPLE,["What will happen,","and why?"],"Data science, ML & AI",
-           ["Data scientist","ML engineer","AI engineer"],"Parts IV and VI"),
+           ["Data scientist","ML engineer","AI engineer"],"Parts 4 and 6"),
           ("Question 3",GREEN,["How does data move,","and get put to work?"],"Engineering & integration",
-           ["Data engineer","Analytics engineer","Automation analyst,","  RPA developer,","  integration engineer"],"Parts II, III and V"),
+           ["Data engineer","Analytics engineer","Automation analyst,","  RPA developer,","  integration engineer"],"Parts 2, 3 and 5"),
           ("Question 4",ORANGE,["How should the whole","system be designed?"],"Architecture",
-           ["Data architect"],"Part VII")]
+           ["Data architect"],"Part 7")]
     W=336; G=16; h=300; x0=16; y0=16
     for i,(qn,c,q,track,roles,part) in enumerate(cols):
         x=x0+(i%2)*(W+G); top=y0+(i//2)*(h+G)
@@ -69,13 +69,13 @@ def fig_tree():
         x=cx-w/2
         return header_card(x,y,w,h,c,title,tsize=13)+wrap(x+12,y+54,lines,12,INK,18)
     R=[20,132,244,356,468,580]   # row tops, top of the tree first
-    top=box(360,R[0],340,BH,ORANGE,"Architecture & leadership · Part VII",["Designs the whole system; has walked","part of every branch below"])
-    ai=box(360,R[1],340,BH,PURPLE,"Production ML & AI · Part VI",["Models, AI applications, and automations","running inside the business"])
-    ds=box(190,R[2],300,BH,PURPLE,"Data science & ML · Part IV",["Prediction, experiments, models"])
-    de=box(530,R[2],300,BH,GREEN,"Engineering & integration · Part V",["Pipelines, platforms, pushing data","into other systems"])
-    br=box(360,R[3],400,BH,ACC,"Advanced analytics & analytics engineering",["Part III · the branch point: statistics,","tested models of data, software habits"])
-    tr=box(360,R[4],300,BH,ACC,"The analyst core · Part II",["Spreadsheets, SQL, BI, Python,","automation, statistics, business sense"])
-    gr=box(360,R[5],420,68,MUTED,"Foundations · Parts 0 and I",["What data is, how a business runs on it"])
+    top=box(360,R[0],340,BH,ORANGE,"Architecture & leadership · Part 7",["Designs the whole system; has walked","part of every branch below"])
+    ai=box(360,R[1],340,BH,PURPLE,"Production ML & AI · Part 6",["Models, AI applications, and automations","running inside the business"])
+    ds=box(190,R[2],300,BH,PURPLE,"Data science & ML · Part 4",["Prediction, experiments, models"])
+    de=box(530,R[2],300,BH,GREEN,"Engineering & integration · Part 5",["Pipelines, platforms, pushing data","into other systems"])
+    br=box(360,R[3],400,BH,ACC,"Advanced analytics & analytics engineering",["Part 3 · the branch point: statistics,","tested models of data, software habits"])
+    tr=box(360,R[4],300,BH,ACC,"The analyst core · Part 2",["Spreadsheets, SQL, BI, Python,","automation, statistics, business sense"])
+    gr=box(360,R[5],420,68,MUTED,"Foundations · Parts 0 and 1",["What data is, how a business runs on it"])
     con=[path(f"M360,{R[5]} V{R[4]+BH}",stroke=RULE,sw=10),
          path(f"M360,{R[4]} V{R[3]+BH}",stroke=RULE,sw=10),
          path(f"M300,{R[3]} C300,{R[3]-24} 190,{R[2]+BH+24} 190,{R[2]+BH}",stroke=RULE,sw=8),
@@ -88,7 +88,7 @@ def fig_tree():
     o.append(rect(16,R[4]-6,184,96,fill="#f6f9fc",stroke=RULE,rx=6))
     o.append(wrap(26,R[4]+14,["Most people enter here.","Every branch above","keeps using these skills:","SQL never leaves you."],11.5,INK,20))
     o.append(rect(520,R[4]-6,184,96,fill="#fff4d6",stroke="#e2c46b",rx=6))
-    o.append(wrap(530,R[4]+14,["Part VIII, the interview","playbook, has question","banks for every level","of the tree."],11.5,INK,20))
+    o.append(wrap(530,R[4]+14,["Part 8, the interview","playbook, has question","banks for every level","of the tree."],11.5,INK,20))
     return svg(CW_,R[5]+68+16,"".join(o))
 
 # ---------- Figure 7.3: from source to action (stages top to bottom) ----------

@@ -1,6 +1,6 @@
 # Chapter 62. Data Architecture Patterns
 
-*Part VII — Architecture, Governance & Leadership*
+*Part 7 — Architecture, Governance & Leadership*
 
 > **Chapter at a glance**
 >
@@ -182,7 +182,8 @@ Applied to this chapter's two questions:
 The design-tool version of the advice: **decide the organizational boundary you want, on purpose, before the architecture drifts into mirroring whatever boundary already exists by accident.**
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -221,19 +222,17 @@ What made the difference:
 
 ---
 
-## Tools
+## Project: choose and justify a complete data architecture
 
-- No new software this chapter — every pattern here names something already built in Parts V and VI.
+**Goal:** for a real or given organization, choose both a processing pattern and an organizational pattern, and defend the fit against the alternatives — not describe the patterns, *argue for the specific fit*.
+
+### Tools you'll need
+
+- No new software this chapter — every pattern here names something already built in Parts 5 and 6.
 - **Companion files (`companion/ch62/`):**
   - `lambda-kappa-comparison.md`: the full worked comparison from section 62.2, with the specific trade-offs written out for each of the three approaches.
   - `mesh-maturity-scorecard-template.md`: a blank version of the section 62.6 scorecard, ready to score for your own organization.
   - `mesh-maturity-riverstone.md`: the full worked scorecard behind Figure 62.4, with reasoning for each score.
-
----
-
-## The project: choose and justify a complete data architecture
-
-**Goal:** for a real or given organization, choose both a processing pattern and an organizational pattern, and defend the fit against the alternatives — not describe the patterns, *argue for the specific fit*.
 
 **Option A: your own organization.** Score it honestly against section 62.6's five questions, and separately decide which processing pattern (Lambda, Kappa, or a deliberate hybrid) fits your most demanding real-time-versus-historical scenario.
 
@@ -259,19 +258,6 @@ What made the difference:
 
 ---
 
-## You've got it when…
-
-- [ ] You can compare Lambda and Kappa on a real scenario and state which one fits, based on whether the consumers need the same guarantees — not from memory of the definitions.
-- [ ] You recognize medallion as a name for a layering you may have already built, not a new system to construct.
-- [ ] You can explain what a data mesh actually requires — a self-serve platform, federated governance, domain teams with real capacity — not just its diagram.
-- [ ] You score an organization's mesh readiness honestly, including uncomfortable low scores, rather than steering the scorecard toward a preferred answer.
-- [ ] You can tell a genuine data product from a table with a description field, using the four-property test.
-- [ ] You can explain why decentralized ownership without a data contract and a shared semantic layer isn't a mesh — it's several teams each confidently publishing a different truth.
-- [ ] You use Conway's Law as a design tool: deciding the organizational boundary on purpose, rather than discovering it by accident once the architecture already reflects it.
-- [ ] You match a pattern to an organization's actual size and maturity, and can name the specific trigger that would justify changing it later.
-
----
-
 ## Recap
 
 - **Lambda architecture** runs separate batch and speed layers for accuracy and immediacy, at the cost of maintaining the same logic twice. **Kappa** unifies both into one stream, at the cost of needing real streaming infrastructure. Riverstone's real system is a deliberate hybrid, because its fast-path (a line alert) and slow-path (historical analysis) consumers have genuinely different guarantees.
@@ -285,7 +271,28 @@ What made the difference:
 
 ---
 
-## Practice exercises
+## Key terms
+
+data architecture pattern · Lambda architecture · batch layer · speed layer · Kappa architecture · stream replay · medallion architecture · bronze / silver / gold · raw / staging / modelled · centralized ownership · data mesh · domain ownership · data as a product · self-serve platform · federated governance · data fabric · data mesh maturity · data contract (Chapter 47) · semantic layer (Chapter 23) · shared vocabulary · data product · discoverability · Conway's Law
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] You can compare Lambda and Kappa on a real scenario and state which one fits, based on whether the consumers need the same guarantees — not from memory of the definitions.
+- [ ] You recognize medallion as a name for a layering you may have already built, not a new system to construct.
+- [ ] You can explain what a data mesh actually requires — a self-serve platform, federated governance, domain teams with real capacity — not just its diagram.
+- [ ] You score an organization's mesh readiness honestly, including uncomfortable low scores, rather than steering the scorecard toward a preferred answer.
+- [ ] You can tell a genuine data product from a table with a description field, using the four-property test.
+- [ ] You can explain why decentralized ownership without a data contract and a shared semantic layer isn't a mesh — it's several teams each confidently publishing a different truth.
+- [ ] You use Conway's Law as a design tool: deciding the organizational boundary on purpose, rather than discovering it by accident once the architecture already reflects it.
+- [ ] You match a pattern to an organization's actual size and maturity, and can name the specific trigger that would justify changing it later.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -324,25 +331,7 @@ What made the difference:
 
 ---
 
-## Key terms
-
-data architecture pattern · Lambda architecture · batch layer · speed layer · Kappa architecture · stream replay · medallion architecture · bronze / silver / gold · raw / staging / modelled · centralized ownership · data mesh · domain ownership · data as a product · self-serve platform · federated governance · data fabric · data mesh maturity · data contract (Chapter 47) · semantic layer (Chapter 23) · shared vocabulary · data product · discoverability · Conway's Law
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 60, Designing Whole Systems:** the container diagram this chapter's Lambda/Kappa/hybrid comparison and medallion mapping both draw directly on.
-- **Chapter 61, Distributed Systems & Trade-offs:** the consistency and failure reasoning that applies inside whichever processing pattern you choose.
-- **Chapter 63, Automation Architecture & Governance:** operating and governing this architecture at company scale, including the automation inventory and ownership model a data mesh would eventually need.
-- **Chapter 66, Data Strategy, Maturity & Building Data Teams:** the organizational side of the centralized-versus-mesh decision, including how and when to actually hire the domain-team capacity section 62.6's scorecard says is missing.
-- **Interview preparation:** the System Design Question Bank (Chapter 77) and the Architecture & Leadership bank both ask "how would you architect data for a growing company" — this chapter's method, fit over fashion, is the answer they're looking for.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -385,3 +374,13 @@ data architecture pattern · Lambda architecture · batch layer · speed layer �
 **19.** It would need to be published somewhere other domains could actually discover it — a catalog entry, not just code living inside one pipeline's repository — and its definitions (what counts as a "dispatch," what date field is authoritative) would need to be registered in the shared semantic layer rather than living only in that one pipeline's own logic, so a second domain building something related doesn't have to reverse-engineer the first domain's assumptions from scratch.
 
 **20.** Something close to: *"`active_customer` is defined as: placed a non-cancelled order in the trailing 90 days. This definition is owned by the Analytics team. Any domain needing a different status — for example, an account with an outstanding balance — must name it differently (e.g., `customer_with_balance`) rather than redefining `active_customer` itself."* The clause works by making the *name* itself owned and protected, so a second meaning can't quietly attach itself to the same label.
+
+---
+
+## Where this leads
+
+- **Chapter 60, Designing Whole Systems:** the container diagram this chapter's Lambda/Kappa/hybrid comparison and medallion mapping both draw directly on.
+- **Chapter 61, Distributed Systems & Trade-offs:** the consistency and failure reasoning that applies inside whichever processing pattern you choose.
+- **Chapter 63, Automation Architecture & Governance:** operating and governing this architecture at company scale, including the automation inventory and ownership model a data mesh would eventually need.
+- **Chapter 66, Data Strategy, Maturity & Building Data Teams:** the organizational side of the centralized-versus-mesh decision, including how and when to actually hire the domain-team capacity section 62.6's scorecard says is missing.
+- **Interview preparation:** the System Design Question Bank (Chapter 77) and the Architecture & Leadership bank both ask "how would you architect data for a growing company" — this chapter's method, fit over fashion, is the answer they're looking for.

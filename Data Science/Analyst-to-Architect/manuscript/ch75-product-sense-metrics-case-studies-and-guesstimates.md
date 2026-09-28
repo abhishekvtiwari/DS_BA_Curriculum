@@ -1,6 +1,6 @@
 # Chapter 75. Product Sense, Metrics, Case Studies & Guesstimates
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **You will learn to:** structure an ambiguous business case the way an interviewer actually wants, instead of jumping straight to an answer · diagnose a metric that moved, systematically, not by guessing at causes · design a KPI dashboard that answers real decisions, not just displays numbers · size a market or estimate a quantity with a defensible structure, not a guessed final number.
 >
@@ -285,7 +285,7 @@ average annual spend per buying household:    ~₹400
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -309,15 +309,13 @@ The interviewer's note afterward: *"Most candidates ask five generic clarifying 
 
 ---
 
-## Tools
-
-No software specific to this chapter. A notebook or whiteboard to sketch a structure before speaking is the single most useful habit; interviewers consistently rate a candidate who visibly organizes their thinking (even three bullet points jotted down) higher than one who reasons entirely out loud with no visible structure.
-
----
-
-## The project
+## Project
 
 **Goal:** run this chapter's full method on cases of your own choosing.
+
+### Tools you'll need
+
+No software specific to this chapter. A notebook or whiteboard to sketch a structure before speaking is the single most useful habit; interviewers consistently rate a candidate who visibly organizes their thinking (even three bullet points jotted down) higher than one who reasons entirely out loud with no visible structure.
 
 1. Pick a real metric from your own work that changed recently, and run the full verify → external → internal → segment funnel on it, even if you already know the answer, to practice the structure itself.
 2. Design a one-page dashboard for a real team you're familiar with, starting explicitly from the decisions it needs to support, and cut anything that doesn't serve one.
@@ -326,15 +324,15 @@ No software specific to this chapter. A notebook or whiteboard to sketch a struc
 
 ---
 
-## Final-week revision list
-
-Q75-001, Q75-002, Q75-007, Q75-008, Q75-013, Q75-014, Q75-017, Q75-019, Q75-024, Q75-025, Q75-030, Q75-031.
-
----
-
 ## Key terms
 
 MECE (Mutually Exclusive, Collectively Exhaustive) · diagnostic case · product-decision case · leading indicator · lagging indicator · North Star metric · vanity metric · guardrail metric · Fermi estimation · top-down vs. bottom-up estimate · pilot (as a decision-testing step)
+
+---
+
+## Final-week revision list
+
+Q75-001, Q75-002, Q75-007, Q75-008, Q75-013, Q75-014, Q75-017, Q75-019, Q75-024, Q75-025, Q75-030, Q75-031.
 
 ---
 

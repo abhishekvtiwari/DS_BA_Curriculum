@@ -45,21 +45,21 @@ Every chapter's *Time needed* line estimates its **study hours**: the reading, t
 
 | | Hours | 6 hours a week | 8 hours a week | 10 hours a week |
 |---|---|---|---|---|
-| Parts 0 and I (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
-| Part II (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
-| **Job-ready: Parts 0 to II (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
-| Parts III to VII (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
+| Parts 0 and 1 (<span class="nobr">Chapters 1–9</span>) | <span class="nobr">27–37</span> | 5–6 weeks | 3–5 weeks | 3–4 weeks |
+| Part 2 (<span class="nobr">Chapters 10–27</span>) | <span class="nobr">290–357</span> | 48–60 weeks | 36–45 weeks | 29–36 weeks |
+| **Job-ready: Parts 0 to 2 (<span class="nobr">Chapters 1–27</span>)** | **<span class="nobr">317–394</span>** | **53–66 weeks, or 12 to 15 months** | **40–49 weeks, or 9 to 11 months** | **32–39 weeks, or 7 to 9 months** |
+| Parts 3 to 7 (<span class="nobr">Chapters 28–67</span>) | <span class="nobr">445–584</span> | 1.4 to 1.9 years | 1.1 to 1.4 years | 0.9 to 1.1 years |
 | **All of it (<span class="nobr">Chapters 1–67</span>)** | **<span class="nobr">762–978</span>** | **2.4 to 3.1 years** | **1.8 to 2.4 years** | **1.5 to 1.9 years** |
 
 These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9).
 
-**Read the bold job-ready row first.** Parts 0 to II, the **job-ready path**, are what a first analyst job asks for. Parts III to VII are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
+**Read the bold job-ready row first.** Parts 0 to 2, the **job-ready path**, are what a first analyst job asks for. Parts 3 to 7 are the rest of a career, and they're optional branches: Chapter 8 shows which of them each role needs.
 
 **To turn the table into your own plan, divide.** Weeks = hours ÷ your hours a week. At 6 hours a week, the job-ready path is 317 ÷ 6 = 52.8, about 53 weeks, at the low end and 394 ÷ 6 = 65.7, about 66 weeks, at the high end: a year to fifteen months. Months are weeks × 12 ÷ 52, so 53 weeks is about 12 months and 66 weeks is about 15. The same arithmetic works for any number of hours; use the hours you really have, not the hours you wish you had.
 
 That's longer than many courses promise, and it's honest. A plan built on the real number survives a bad month; a plan built on a hopeful one fails in week three and takes your confidence with it.
 
-**One more thing about Parts 0 and I.** Each of their nine chapters has a project, and together they're more than a month's work if you do them all at once. Do three of them properly as you go: Chapter 1's spending log (it runs for a week while you read on), this chapter's plan, and Chapter 8's door plan. Start Chapter 9's learning system and carry it alongside the book for its twelve weeks. Come back to the others (Chapters 2, 3, 4, 5, and 7) in a review week. Their hours are already in the table, so doing them later doesn't change your total.
+**One more thing about Parts 0 and 1.** Each of their nine chapters has a project, and together they're more than a month's work if you do them all at once. Do three of them properly as you go: Chapter 1's spending log (it runs for a week while you read on), this chapter's plan, and Chapter 8's door plan. Start Chapter 9's learning system and carry it alongside the book for its twelve weeks. Come back to the others (Chapters 2, 3, 4, 5, and 7) in a review week. Their hours are already in the table, so doing them later doesn't change your total.
 
 ---
 
@@ -87,7 +87,7 @@ You will miss weeks. Everyone does. When it happens, don't try to catch up by do
 
 ### The computer
 
-You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to II runs comfortably on an ordinary laptop from the last five or six years: Windows 10 or 11, or a recent macOS; **8 GB of memory (RAM)** to start, 16 GB to be comfortable; 20 GB of free disk space, 50 GB or more to be comfortable; and an internet connection good enough to download software. A second monitor helps, so the book or the documentation sits next to your work, but a laptop screen is enough.
+You don't need a new or high-end computer to become a data analyst. Almost everything in Parts 0 to 2 runs comfortably on an ordinary laptop from the last five or six years: Windows 10 or 11, or a recent macOS; **8 GB of memory (RAM)** to start, 16 GB to be comfortable; 20 GB of free disk space, 50 GB or more to be comfortable; and an internet connection good enough to download software. A second monitor helps, so the book or the documentation sits next to your work, but a laptop screen is enough.
 
 Three situations need a little planning:
 
@@ -154,7 +154,7 @@ AI assistants can explain a concept five different ways, spot the typo in a quer
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -194,19 +194,17 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Tools
+## Project: plan your route and your first 90 days
+
+**Goal:** a study plan you can keep, built from arithmetic, not hope.
+
+### Tools you'll need
 
 - **A notebook or a notes app** for your plan (`notes/plan.md`) and your study log. A plain text file is enough.
 - **A calendar**, paper or on your phone, for your study sessions as named appointments.
 - **Each chapter's *Time needed* line**, which is where the hours in section 6.1 come from.
 
----
-
-## The project: plan your route and your first 90 days
-
-**Goal:** a study plan you can keep, built from arithmetic, not hope.
-
-**Step 1. Count your hours.** Write down the hours you really studied, or could have studied, last week. Using section 6.1's table, work out how many weeks the job-ready path takes at that pace, and the month you expect to finish Part II. Show your division.
+**Step 1. Count your hours.** Write down the hours you really studied, or could have studied, last week. Using section 6.1's table, work out how many weeks the job-ready path takes at that pace, and the month you expect to finish Part 2. Show your division.
 
 **Step 2. Put your rhythm in a calendar.** Adapt Figure 6.1 to your hours and your days, and put each session in your calendar as a named appointment for the next four weeks.
 
@@ -232,7 +230,28 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## You've got it when…
+## Recap
+
+- **The book's hours are known.** Parts 0 to 2, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
+- **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
+- **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
+- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
+- **Each tool arrives in the chapter that first uses it:** a spreadsheet in Chapter 10, the databases in 12, Power BI in 16, Python in 17, and Git in 26. Nothing needs installing before then.
+- **Official sources settle disagreements.** Go in with a question and find the exact rule, every word, an example, the exceptions, and the date or version.
+- **AI assistants are tutors, not substitutes:** try first, ask why, check against sources, never paste data you don't own, and explain it back.
+- **Attempt every exercise before reading its answer**, and redo the ones you missed.
+
+---
+
+## Key terms
+
+study hours · job-ready path · weekly rhythm · review from memory · study log · study plan · RAM (memory) · tool timeline · official documentation · AI assistant
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I know how many hours the job-ready path takes, and how many weeks that is at my real weekly hours.
 - [ ] My finish date comes from arithmetic, not hope.
@@ -246,20 +265,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Recap
-
-- **The book's hours are known.** Parts 0 to II, the job-ready path, are 317 to 394 hours; the whole book is 762 to 978. At 6 hours a week, job-ready is 12 to 15 months.
-- **Divide to plan.** Weeks = hours ÷ your hours a week. Use the hours you really have. Chapter hours are reading-and-exercise hours; fluency takes more practice on top.
-- **A rhythm finishes books.** Short regular sessions, one longer project session, and a weekly review from memory. A missed week moves the plan back; it never doubles the load.
-- **You don't need a high-end computer.** 8 GB of memory is enough to start, 16 GB is comfortable. Power BI Desktop and Power Pivot are Windows only; Chromebooks cover spreadsheets and online SQL practice, not Python or Power BI.
-- **Each tool arrives in the chapter that first uses it:** a spreadsheet in Chapter 10, the databases in 12, Power BI in 16, Python in 17, and Git in 26. Nothing needs installing before then.
-- **Official sources settle disagreements.** Go in with a question and find the exact rule, every word, an example, the exceptions, and the date or version.
-- **AI assistants are tutors, not substitutes:** try first, ask why, check against sources, never paste data you don't own, and explain it back.
-- **Attempt every exercise before reading its answer**, and redo the ones you missed.
-
----
-
-## Practice exercises
+## Exercises
 
 ### Warm-up
 
@@ -271,7 +277,7 @@ She matched tools to computers without installing anything yet, turned hours int
 
 4. You can study 5 hours a week. Adapt Figure 6.1's weekly rhythm to 5 hours, keeping reading, exercises, review, and project work. Then use section 6.1's table to estimate how long the job-ready path would take at that pace.
 5. Your company uses a customer list with names, phone numbers, and outstanding balances. You want an AI assistant's help writing a formula that flags overdue customers. Describe how you'd get the help without sharing the real data.
-6. Using the table in section 6.1 and the hours you really studied last week, write the month you expect to finish Part II. Show your division.
+6. Using the table in section 6.1 and the hours you really studied last week, write the month you expect to finish Part 2. Show your division.
 7. Find the official page for one rule that affects you (your phone plan's data limit, a bank fee) and write down the exact rule, one example, one exception, and the date or version.
 
 ### Stretch
@@ -287,28 +293,9 @@ She matched tools to computers without installing anything yet, turned hours int
 
 ---
 
-## Key terms
+## Answers
 
-study hours · job-ready path · weekly rhythm · review from memory · study log · study plan · RAM (memory) · tool timeline · official documentation · AI assistant
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're planning for lead, and which roles use which tools.
-- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.2 (practice, review from memory, and feedback), and why chapter hours are not fluency hours.
-- **The chapters that bring each tool:** Chapter 10 (a spreadsheet), Chapter 12 (the databases and DBeaver), Chapter 16 (Power BI Desktop), Chapter 17 (Python, VS Code, and Jupyter), and Chapter 26 (Git, and AI assistants in a professional setting). Each starts by installing its tool.
-- **Chapter 83, The Long Game,** returns to the same hours at the end of the book, and to the pace that survives a bad month.
-- **Appendix B** gathers every install step in one place.
-- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.
-
----
-
-## Answers to practice exercises
-
-**1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and I, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and I straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
+**1.** (a) Every chapter, including Power BI Desktop in Chapter 16; 8 GB is enough to start, and closing unused apps helps. (b) Every chapter except the Power BI parts of Chapter 16 and the Power Pivot section of Chapter 11; for those, run Windows 11 in a virtual machine, or use a Windows computer at work or college. (c) Parts 0 and 1, the spreadsheet chapters with Google Sheets or Excel for the web, and some early SQL practice on online practice sites; plan to use a laptop before the Python chapters and for the databases and Power BI. (d) Parts 0 and 1 straight away, since they need no software; for later chapters, nothing until IT approves. Ask for Power BI Desktop from the Microsoft Store (no admin rights needed) and for the other tools as you reach their chapters, and meanwhile use a home computer or the web tools with practice data.
 
 **2.** (a) Does the learning for you. Better: *"I got a different answer for Chapter 4, exercise 6. Here's my working; where did my reasoning go wrong?"* (b) Helps you learn. (c) Helps you learn. (d) Does the planning for you. Better: *"Here's my 90-day plan and my available hours. What's unrealistic about it?"*
 
@@ -318,7 +305,7 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 
 **5.** Describe the structure, not the data: *"I have a table with a customer name column, a due date column, and a balance column. How do I flag rows where the due date is before today and the balance is above zero?"* Or build a small made-up sample (three fake customers with invented numbers) and share that. Test the formula on the fake data, then apply it to the real file on your own computer. If your company has approved an AI tool for internal data, follow its rules instead.
 
-**6.** Answers vary. A worked example: last week you studied 5 hours, and you've finished Chapters 1 to 6. What's left is Chapters 7 to 9 (9–13 hours, from their *Time needed* lines) plus Part II (290–357 hours): 299–370 hours. 299 ÷ 5 = 59.8, about 60 weeks; 370 ÷ 5 = 74 weeks. In months, 60 × 12 ÷ 52 = 13.8 and 74 × 12 ÷ 52 = 17.1: about 14 to 17 months. If you start Chapter 7 in October, you'd finish Part II between December of the following year and March of the year after. A good answer shows the division and gives a range, not a single hopeful date.
+**6.** Answers vary. A worked example: last week you studied 5 hours, and you've finished Chapters 1 to 6. What's left is Chapters 7 to 9 (9–13 hours, from their *Time needed* lines) plus Part 2 (290–357 hours): 299–370 hours. 299 ÷ 5 = 59.8, about 60 weeks; 370 ÷ 5 = 74 weeks. In months, 60 × 12 ÷ 52 = 13.8 and 74 × 12 ÷ 52 = 17.1: about 14 to 17 months. If you start Chapter 7 in October, you'd finish Part 2 between December of the following year and March of the year after. A good answer shows the division and gives a range, not a single hopeful date.
 
 **7.** Answers vary. A complete answer names the rule exactly as the page does (for example, "Daily data: 2 GB"), gives one example worked from the page (what happens on a day you use 2.5 GB), quotes one exception or piece of small print (for example, that unused data doesn't carry forward, or that roaming is charged separately), and records the page's "last updated" date or the plan's name and version.
 
@@ -331,3 +318,14 @@ study hours · job-ready path · weekly rhythm · review from memory · study lo
 **11.** Reading answers you haven't attempted feels like learning because the answers make sense, but it doesn't build the skill of producing them. The exercises are where most of the learning happens, especially the core group. Suggest a compromise: attempt every warm-up and core exercise, even partially, before reading its answer, and redo the missed ones at the end of the week.
 
 **12.** It's reasonable when the task isn't the skill you're trying to learn, or when you already understand it and are saving time, and you'll check the result. Fine: asking for a list of keyboard shortcuts for an app you use, or for a first version of an IT request that you then edit. Not fine: asking for the answer to a SQL exercise while you're learning SQL, because producing that answer is exactly the skill you need.
+
+---
+
+## Where this leads
+
+- **Chapter 7, The Data Landscape,** and **Chapter 8, The Career Tree,** show where the skills you're planning for lead, and which roles use which tools.
+- **Chapter 9, How Expertise Actually Forms,** explains the learning science behind section 6.2 (practice, review from memory, and feedback), and why chapter hours are not fluency hours.
+- **The chapters that bring each tool:** Chapter 10 (a spreadsheet), Chapter 12 (the databases and DBeaver), Chapter 16 (Power BI Desktop), Chapter 17 (Python, VS Code, and Jupyter), and Chapter 26 (Git, and AI assistants in a professional setting). Each starts by installing its tool.
+- **Chapter 83, The Long Game,** returns to the same hours at the end of the book, and to the pace that survives a bad month.
+- **Appendix B** gathers every install step in one place.
+- **Interview preparation:** Chapter 81 (behavioral, HR, and offer conversations) covers how to talk about how you learned and what you've built, and Chapter 68 explains how data hiring works.

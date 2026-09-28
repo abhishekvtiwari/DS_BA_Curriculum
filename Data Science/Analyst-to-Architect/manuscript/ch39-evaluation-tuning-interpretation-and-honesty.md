@@ -1,6 +1,6 @@
 # Chapter 39. Evaluation, Tuning, Interpretation & Honesty
 
-*Part IV — Machine Learning & Data Science*
+*Part 4 — Machine Learning & Data Science*
 
 > **Chapter at a glance**
 >
@@ -862,7 +862,7 @@ The card is short on purpose. Its value is that the "known limitations" and "do 
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -897,7 +897,11 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 
 ---
 
-## Tools
+## Project: cost-based evaluation and explanation of the lead-scoring model
+
+**Goal:** an evaluation report for a model that a sales head could act on: how many leads to work, what it's worth, where it's uncertain, whom it might treat unfairly, and a model card.
+
+### Tools you'll need
 
 - **scikit-learn** (tested on 1.8.0; current release 1.9.1): `confusion_matrix`, `precision_score`, `recall_score`, `f1_score`, `roc_curve`, `roc_auc_score`, `precision_recall_curve`, `average_precision_score`, `mean_absolute_error`, `root_mean_squared_error`, `mean_absolute_percentage_error`, `r2_score`, `calibration_curve`, `brier_score_loss`, `CalibratedClassifierCV`, `partial_dependence`, and `permutation_importance`.
 - **shap** 0.52.0 (`pip install shap`): `LinearExplainer`, `TreeExplainer`, `KernelExplainer`, and its plotting functions (`summary_plot`, `waterfall`), which are the usual way to show SHAP values in a report.
@@ -905,12 +909,6 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 - **fairlearn** (not used here) provides group-metric tables and mitigation methods if fairness checks become routine.
 - Everything ran on one CPU core, Python 3.12.3, on 18 September 2026.
 - **Companion files:** `companion/ch39/lead_data.py` (a copy of Chapter 37's helper) rebuilds the lead table. Run the chapter's code from `companion/ch39/`; it also reads `../accounts/accounts.csv`.
-
----
-
-## The project: cost-based evaluation and explanation of the lead-scoring model
-
-**Goal:** an evaluation report for a model that a sales head could act on: how many leads to work, what it's worth, where it's uncertain, whom it might treat unfairly, and a model card.
 
 **Option A: your own data.** Any classifier you built with Chapter 36's workflow, plus two cost numbers you can defend.
 
@@ -938,7 +936,29 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 
 ---
 
-## You've got it when…
+## Recap
+
+- The **confusion matrix** (TP, FP, FN, TN) is the source of **precision**, **recall**, **F1**, and **specificity**. **Accuracy** is misleading whenever classes are imbalanced.
+- **ROC-AUC** measures ranking and ignores the base rate; **PR-AUC** (average precision) reflects what users experience. The **top-N table** is the most useful evaluation for a list.
+- **MAE** is the plain-language error; **RMSE** punishes outliers; **MAPE** breaks near zero and is biased; **R²** depends on the scale. Match the metric to the cost of errors.
+- **Calibration** asks whether predicted probabilities are honest. Check with a **reliability curve** and the **Brier score**; fix with `CalibratedClassifierCV` (Platt or isotonic). Calibration fixes numbers, not rankings.
+- Choose the **threshold** from **break-even** (cost ÷ value), a **profit curve**, or **capacity**. Quote the range, and re-test.
+- **Imbalance** tools (class weights, over- and undersampling, **SMOTE**) mostly inflate probabilities; on a cost-chosen threshold they add little. Fix the threshold first.
+- **SHAP** explains predictions as base value plus feature contributions; **partial dependence** shows a feature's average effect. Both explain the model, not the world.
+- **Fairness**: check flag rate, recall, and precision by group; with different base rates, the fairness definitions conflict, and choosing is a policy decision.
+- A **model card** records purpose, data, performance, limitations, and what the model must not be used for.
+
+---
+
+## Key terms
+
+confusion matrix · true positive · false positive · false negative · true negative · threshold · accuracy · precision · recall (sensitivity, true positive rate) · specificity · false positive rate · F1 score · harmonic mean · ROC curve · ROC-AUC · precision–recall curve · PR-AUC (average precision) · base rate · top-N table · MAE · RMSE · MAPE · WAPE · R² · calibration · reliability curve · Brier score · Platt scaling · isotonic regression · `CalibratedClassifierCV` · break-even threshold · profit curve · capacity constraint · expected value · class imbalance · class weights · undersampling · oversampling · SMOTE · SHAP · Shapley value · base value · local explanation · global importance · permutation importance · partial dependence · ICE plot · fairness · demographic parity · equal opportunity · predictive parity · calibration within groups · feedback loop · model card · monitoring · drift
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can fill in a confusion matrix from a threshold and compute precision, recall, F1, and specificity by hand.
 - [ ] I never report accuracy alone on an imbalanced problem, and I always state the base rate.
@@ -954,21 +974,7 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 
 ---
 
-## Recap
-
-- The **confusion matrix** (TP, FP, FN, TN) is the source of **precision**, **recall**, **F1**, and **specificity**. **Accuracy** is misleading whenever classes are imbalanced.
-- **ROC-AUC** measures ranking and ignores the base rate; **PR-AUC** (average precision) reflects what users experience. The **top-N table** is the most useful evaluation for a list.
-- **MAE** is the plain-language error; **RMSE** punishes outliers; **MAPE** breaks near zero and is biased; **R²** depends on the scale. Match the metric to the cost of errors.
-- **Calibration** asks whether predicted probabilities are honest. Check with a **reliability curve** and the **Brier score**; fix with `CalibratedClassifierCV` (Platt or isotonic). Calibration fixes numbers, not rankings.
-- Choose the **threshold** from **break-even** (cost ÷ value), a **profit curve**, or **capacity**. Quote the range, and re-test.
-- **Imbalance** tools (class weights, over- and undersampling, **SMOTE**) mostly inflate probabilities; on a cost-chosen threshold they add little. Fix the threshold first.
-- **SHAP** explains predictions as base value plus feature contributions; **partial dependence** shows a feature's average effect. Both explain the model, not the world.
-- **Fairness**: check flag rate, recall, and precision by group; with different base rates, the fairness definitions conflict, and choosing is a policy decision.
-- A **model card** records purpose, data, performance, limitations, and what the model must not be used for.
-
----
-
-## Practice exercises
+## Exercises
 
 Code exercises run from `companion/ch39/` after the chapter's code (they use `p_valid`, `y_valid`, `valid`, `model`, `profit_at`, `WIN_VALUE`, `WORK_COST`, `probs`, `shap_values`, `feature_names`, and the rest). Predict each answer before running it.
 
@@ -1002,28 +1008,7 @@ Code exercises run from `companion/ch39/` after the chapter's code (they use `p_
 
 ---
 
-## Key terms
-
-confusion matrix · true positive · false positive · false negative · true negative · threshold · accuracy · precision · recall (sensitivity, true positive rate) · specificity · false positive rate · F1 score · harmonic mean · ROC curve · ROC-AUC · precision–recall curve · PR-AUC (average precision) · base rate · top-N table · MAE · RMSE · MAPE · WAPE · R² · calibration · reliability curve · Brier score · Platt scaling · isotonic regression · `CalibratedClassifierCV` · break-even threshold · profit curve · capacity constraint · expected value · class imbalance · class weights · undersampling · oversampling · SMOTE · SHAP · Shapley value · base value · local explanation · global importance · permutation importance · partial dependence · ICE plot · fairness · demographic parity · equal opportunity · predictive parity · calibration within groups · feedback loop · model card · monitoring · drift
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 40, Time Series & Forecasting,** measures forecast accuracy with MAPE and WAPE, and backtests over time instead of a single split.
-- **Chapter 42, Recommender Systems & Ranking,** uses precision@k and NDCG, the ranking cousins of the top-N table.
-- **Chapter 44, Capstone,** ends with a model card and a presentation to non-technical leaders.
-- **Chapter 52, Deploying and Monitoring Models,** turns the monitoring row of the model card into dashboards and retraining rules.
-- **Chapter 30, Experiments,** is how threshold changes, fairness fixes, and win-back campaigns are proved to work.
-- **Chapter 31, Causal Inference,** is the answer when someone reads a SHAP plot as a cause.
-- **Chapter 61, Ethics and Responsible Data Practice,** covers fairness and model documentation in depth.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers precision versus recall, ROC versus PR, calibration, threshold selection, SMOTE, SHAP, and "how would you explain this model to a manager?", which is asked in nearly every data science interview.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
@@ -1259,3 +1244,15 @@ Per lead, the test profit is higher than validation's, because the test period's
 
 **16.** One option: **a separate threshold for inside-desk leads**, set so their recall matches the reps' (around 91%). Cost: the desk would work many more leads with lower precision, so the follow-up cost per win rises; at a 3.7% base rate that may mean working most desk leads, which is what happened before the model. A cheaper alternative is a **floor**: the desk always works its top 15% of leads by score, whatever the threshold says, which bounds the cost. The honest answer to "what does it cost" is a number from `profit_at` under each policy, which is exercise 7's method applied to one group.
 
+---
+
+## Where this leads
+
+- **Chapter 40, Time Series & Forecasting,** measures forecast accuracy with MAPE and WAPE, and backtests over time instead of a single split.
+- **Chapter 42, Recommender Systems & Ranking,** uses precision@k and NDCG, the ranking cousins of the top-N table.
+- **Chapter 44, Capstone,** ends with a model card and a presentation to non-technical leaders.
+- **Chapter 52, Deploying and Monitoring Models,** turns the monitoring row of the model card into dashboards and retraining rules.
+- **Chapter 30, Experiments,** is how threshold changes, fairness fixes, and win-back campaigns are proved to work.
+- **Chapter 31, Causal Inference,** is the answer when someone reads a SHAP plot as a cause.
+- **Chapter 61, Ethics and Responsible Data Practice,** covers fairness and model documentation in depth.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers precision versus recall, ROC versus PR, calibration, threshold selection, SMOTE, SHAP, and "how would you explain this model to a manager?", which is asked in nearly every data science interview.

@@ -1,6 +1,6 @@
 # Chapter 53. Deep Learning in Depth
 
-*Part VI — Production ML, Generative AI & MLOps*
+*Part 6 — Production ML, Generative AI & MLOps*
 
 > **Chapter at a glance**
 >
@@ -308,6 +308,7 @@ but look at what both models predict: 0 and 0 defects out of 119 real ones
 That last line is the point of the next section, and one of the most important lessons in applied machine learning: **both models score about 92% accuracy by predicting that every part is good.** On data where 92% of parts *are* good, accuracy is a useless measure, and a network given raw pixels has found the laziest possible solution.
 
 ---
+
 ## 53.4 The architectures, and what each is for
 
 | Architecture | Built for | The idea in one line | Where you'll meet it |
@@ -542,6 +543,7 @@ cheapest threshold on this test set: 0.01 at a cost of 13,840 rupees for 1,500 p
 > **Watch out: a model trained on generated images has learned generated images.** These pictures have clean lighting, one part per frame, and three defect types drawn by a program. A real line has glare, parts at angles, dust on the lens, and defects nobody thought to label. Everything about the method here transfers; none of the numbers do. Chapter 56 is about what happens to a model's accuracy after it meets reality, and how you find out before your customer does.
 
 ---
+
 ## 53.7 Attention, step by step
 
 Every large language model in Chapter 54 is a stack of **transformer** blocks, and the engine inside each block is **attention**. It answers one question for every word: *given all the other words, which ones should I pay attention to while deciding what this one means?*
@@ -778,7 +780,8 @@ The honest summary: **deep learning earns its place where the input is unstructu
 > **Interview extra point.** Asked "would you use deep learning for this?", the answer that impresses is the one that starts with the data: *"it's tabular with 40,000 rows, so I'd start with gradient boosting and only reach for a network if the residuals showed structure it couldn't capture."* Saying no to deep learning, with a reason, signals more experience than saying yes.
 
 ---
-## Common mistakes and how to spot them
+
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -820,7 +823,11 @@ The lesson generalizes past vision: **a model learns whatever correlates with th
 
 ---
 
-## Tools
+## Project: a defect detector with an operating point
+
+**Goal:** a model whose output the plant can act on, with its threshold justified in money and its failure modes written down.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -832,12 +839,6 @@ Versions used for this chapter, checked in September 2026:
 - **Companion files** in `ch53/`: `generate_defect_images.py` (the 6,000 images, seed 53) and `ch53_check.py` (the chapter's numbers).
 
 > **Simplification note.** This chapter's vision model uses three hand-written kernels rather than learned convolutional layers, because that runs in seconds anywhere and makes the mechanism visible. A real CNN learns its kernels, uses dozens per layer, and stacks several layers; it would score higher here. What would not change: the class imbalance, the failure of raw pixels, the threshold-by-cost decision, and every lesson in the real-world story above.
-
----
-
-## The project: a defect detector with an operating point
-
-**Goal:** a model whose output the plant can act on, with its threshold justified in money and its failure modes written down.
 
 **Option A: your own images.** Any two-class visual inspection task, even photographed with a phone: good against damaged packaging, filled against unfilled forms. Fifty of each is enough to start.
 
@@ -865,7 +866,29 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
+## Recap
+
+- A **neuron** is Chapter 19's linear model plus an **activation**; a **layer** is a row of them; **deep** means several layers. All of a model's knowledge is in its **weights and biases**.
+- **Training** is four steps repeated: forward pass, **loss**, **backpropagation** to get **gradients**, and a step of **gradient descent** scaled by the **learning rate**. Section 53.2 does one step by hand.
+- Training works in practice because of **scaling, initialization, batch normalization, dropout, learning-rate schedules, early stopping, and augmentation**.
+- **Convolution** slides a small kernel over an image; **shared weights**, **many kernels**, and **pooling** are what a CNN adds. Computing one kernel by hand shows where "edge detection" comes from.
+- On imbalanced data, **accuracy hides everything**. Riverstone's raw-pixel network scored 92% and caught no defects; convolution features caught 92% of them, and the **threshold chosen by cost** caught 97.5%.
+- **Attention** gives every token a **query**, a **key**, and a **value**; scores are dot products, softmaxed into weights, and the output is a weighted blend of values. Transformers add multi-head attention, positional encoding, feed-forward layers, residuals, and depth.
+- Transformers won because they **parallelize**, keep **long-range context**, and **transfer**. They cost **O(n²)** in sequence length.
+- **Quantization** to int8 made the defect model four times smaller and changed one decision in 1,500. **Pruning** and **distillation** are the other two ways to shrink a model.
+- **Deep learning is for unstructured inputs.** For tables, start with gradient boosting.
+
+---
+
+## Key terms
+
+neuron · weight · bias · activation function · ReLU · layer · hidden layer · deep network · parameters · forward pass · loss function · squared error · cross-entropy · gradient · backpropagation · chain rule · gradient descent · learning rate · optimizer · Adam · epoch · batch · feature scaling · initialization · batch normalization · dropout · learning-rate schedule · early stopping · data augmentation · overfitting · MLP · CNN · convolution · kernel (filter) · feature map · shared weights · pooling · stride · padding · RNN · LSTM · transformer · attention · query · key · value · softmax · scaled dot-product attention · multi-head attention · positional encoding · residual connection · masking · context window · class imbalance · confusion matrix · precision · recall · threshold · operating point · quantization · dequantization · post-training quantization · quantization-aware training · pruning · distillation · bfloat16 · model card
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
 
 - [ ] I can describe a neuron, a layer, and what "deep" buys you, without hand-waving.
 - [ ] I can walk through one training step: forward pass, loss, gradients, update.
@@ -881,21 +904,7 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Recap
-
-- A **neuron** is Chapter 19's linear model plus an **activation**; a **layer** is a row of them; **deep** means several layers. All of a model's knowledge is in its **weights and biases**.
-- **Training** is four steps repeated: forward pass, **loss**, **backpropagation** to get **gradients**, and a step of **gradient descent** scaled by the **learning rate**. Section 53.2 does one step by hand.
-- Training works in practice because of **scaling, initialization, batch normalization, dropout, learning-rate schedules, early stopping, and augmentation**.
-- **Convolution** slides a small kernel over an image; **shared weights**, **many kernels**, and **pooling** are what a CNN adds. Computing one kernel by hand shows where "edge detection" comes from.
-- On imbalanced data, **accuracy hides everything**. Riverstone's raw-pixel network scored 92% and caught no defects; convolution features caught 92% of them, and the **threshold chosen by cost** caught 97.5%.
-- **Attention** gives every token a **query**, a **key**, and a **value**; scores are dot products, softmaxed into weights, and the output is a weighted blend of values. Transformers add multi-head attention, positional encoding, feed-forward layers, residuals, and depth.
-- Transformers won because they **parallelize**, keep **long-range context**, and **transfer**. They cost **O(n²)** in sequence length.
-- **Quantization** to int8 made the defect model four times smaller and changed one decision in 1,500. **Pruning** and **distillation** are the other two ways to shrink a model.
-- **Deep learning is for unstructured inputs.** For tables, start with gradient boosting.
-
----
-
-## Practice exercises
+## Exercises
 
 Work in `companion/ch53`, with the images built by `generate_defect_images.py`. Predict each answer before running it.
 
@@ -931,27 +940,7 @@ Work in `companion/ch53`, with the images built by `generate_defect_images.py`. 
 
 ---
 
-## Key terms
-
-neuron · weight · bias · activation function · ReLU · layer · hidden layer · deep network · parameters · forward pass · loss function · squared error · cross-entropy · gradient · backpropagation · chain rule · gradient descent · learning rate · optimizer · Adam · epoch · batch · feature scaling · initialization · batch normalization · dropout · learning-rate schedule · early stopping · data augmentation · overfitting · MLP · CNN · convolution · kernel (filter) · feature map · shared weights · pooling · stride · padding · RNN · LSTM · transformer · attention · query · key · value · softmax · scaled dot-product attention · multi-head attention · positional encoding · residual connection · masking · context window · class imbalance · confusion matrix · precision · recall · threshold · operating point · quantization · dequantization · post-training quantization · quantization-aware training · pruning · distillation · bfloat16 · model card
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 54, Generative AI & Large Language Models,** takes section 53.7's attention and scales it: tokens, context windows, sampling, prompting, embeddings, and fine-tuning.
-- **Chapter 55, Building AI Applications,** puts a model behind a product: retrieval, tools, evaluation, and guardrails.
-- **Chapter 56, MLOps,** is what happens to the defect model after the trial: serving, monitoring, drift, and retraining.
-- **Chapter 38, Machine Learning Foundations,** is the evaluation vocabulary this chapter leaned on, and the gradient boosting that beats networks on tables.
-- **Chapter 33, The Computer Science You Actually Need,** explains the O(n²) that limits context windows.
-- **Chapter 64, Responsible AI & Governance,** covers explainability, bias, and the model card properly.
-- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "explain backpropagation" and "why transformers".
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1230,3 +1219,15 @@ Four-bit quantization halves the memory again and costs more decisions. For a sm
 **17.** Three fixes: (a) **collect night-shift images and retrain**, which addresses the cause; (b) **augment brightness and contrast during training**, which makes the model robust to the next lighting change nobody warned you about; (c) **normalize each image** before it reaches the model (subtract its own mean, divide by its own standard deviation), which removes the global lighting signal entirely. Do (c) first, because it's an hour's work and often fixes most of the gap, then (a) and (b) properly. And add the input-brightness monitor whatever you do, because the fourth lighting condition is already out there.
 
 **18.** Fine-tune a pretrained model when your images look at all like natural photographs, when you have hundreds rather than tens of thousands of labeled examples, and when you can afford a GPU for an hour. You need: the labeled images, a framework (PyTorch with torchvision), the pretrained weights, and a validation set you trust. The reason it wins is **transfer**: the pretrained network already knows edges, textures, and shapes from millions of images, so your few hundred examples only have to teach it the last step. Train from scratch only when your images are nothing like natural photographs (X-rays, spectrograms, this chapter's synthetic lids) *and* you have the data volume to support it.
+
+---
+
+## Where this leads
+
+- **Chapter 54, Generative AI & Large Language Models,** takes section 53.7's attention and scales it: tokens, context windows, sampling, prompting, embeddings, and fine-tuning.
+- **Chapter 55, Building AI Applications,** puts a model behind a product: retrieval, tools, evaluation, and guardrails.
+- **Chapter 56, MLOps,** is what happens to the defect model after the trial: serving, monitoring, drift, and retraining.
+- **Chapter 38, Machine Learning Foundations,** is the evaluation vocabulary this chapter leaned on, and the gradient boosting that beats networks on tables.
+- **Chapter 33, The Computer Science You Actually Need,** explains the O(n²) that limits context windows.
+- **Chapter 64, Responsible AI & Governance,** covers explainability, bias, and the model card properly.
+- **Chapter 74, Machine Learning & AI Question Bank,** has the interview questions, including "explain backpropagation" and "why transformers".

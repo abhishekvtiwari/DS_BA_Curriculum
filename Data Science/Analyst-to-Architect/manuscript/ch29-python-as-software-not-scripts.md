@@ -1,6 +1,6 @@
 # Chapter 29. Python as Software, Not Scripts
 
-*Part III — Advanced Analytics & Analytics Engineering*
+*Part 3 — Advanced Analytics & Analytics Engineering*
 
 > **Chapter at a glance**
 >
@@ -1193,7 +1193,7 @@ Arguments about spacing and quote styles waste review time, so teams hand them t
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -1248,7 +1248,11 @@ Notice that the fix wasn't clever code. It was ordinary habits: explicit failure
 
 ---
 
-## Tools
+## Project: turn a script into a tested package
+
+**Goal:** a script you (or your team) depend on becomes a package that someone else can install and run with one command, with tests that protect its business rules.
+
+### Tools you'll need
 
 Versions used for this chapter, checked in September 2026:
 
@@ -1259,12 +1263,6 @@ Versions used for this chapter, checked in September 2026:
 - **Ruff** (optional) for formatting and linting.
 - **Git** (Chapter 26) for version control and pull requests.
 - **Companion files** in `ch29/`: `start/monthly_report.py` (the starting script), `riverstone-report/` (the finished package with `pyproject.toml`, `uv.lock`, source, and 23 tests), `mock_crm_api.py` and `leads.json` (the practice API), and `ch29_check.py` (checks the chapter's numbers).
-
----
-
-## The project: turn a script into a tested package
-
-**Goal:** a script you (or your team) depend on becomes a package that someone else can install and run with one command, with tests that protect its business rules.
 
 **Option A: your own script.** Choose a real script or notebook that produces something people use. Work in a private copy; remove passwords, server names, and personal data before sharing it with anyone, including in a portfolio.
 
@@ -1294,22 +1292,6 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## You've got it when…
-
-- [ ] I can say when a script should become a package, and when it shouldn't.
-- [ ] My business calculations are pure functions that I can run on a five-row DataFrame.
-- [ ] My projects have a `src/` layout, a `pyproject.toml`, and a committed lockfile.
-- [ ] I can recreate a project's exact environment on a new machine with one command.
-- [ ] No password or key appears in my code, my Git history, or my logs.
-- [ ] I use data classes for bundles of settings and results, and classes only when data and behavior belong together.
-- [ ] I add type hints and fix what `mypy` finds, especially `None` cases.
-- [ ] I write tests for business rules, edge cases, and failures, using fixtures and parametrize.
-- [ ] My scheduled code logs with levels and exits with a non-zero code on failure.
-- [ ] My API clients set timeouts, follow pages, retry only transient errors with backoff, and respect `Retry-After`.
-- [ ] I review code with a checklist, and write pull requests that are quick to review.
-
----
-
 ## Recap
 
 - **Software** is code others can install, run, understand, change, and trust. The time to write it is when people depend on the output, it runs on a schedule, or someone else will change it.
@@ -1325,7 +1307,31 @@ Versions used for this chapter, checked in September 2026:
 
 ---
 
-## Practice exercises
+## Key terms
+
+software · script · pure function · module · package · `__name__` · SQL injection · query parameter · `src/` layout · `pyproject.toml` · entry point · environment variable · `.env` file · secrets manager · virtual environment · `venv` · lockfile · pinned requirements · `uv` · `uv.lock` · dependency group · class · data class · immutable · property · alternative constructor · type hint · type checker · `mypy` · test · `pytest` · assertion · fixture · parametrize · unit test · integration test · coverage · exception · custom exception · exit code · logging · log level · logger · pagination · transient failure · rate limit · HTTP 429 · `Retry-After` · timeout · retry · exponential backoff · jitter · session · generator · idempotent · idempotency key · code review · pull request · formatter · linter · Ruff
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can say when a script should become a package, and when it shouldn't.
+- [ ] My business calculations are pure functions that I can run on a five-row DataFrame.
+- [ ] My projects have a `src/` layout, a `pyproject.toml`, and a committed lockfile.
+- [ ] I can recreate a project's exact environment on a new machine with one command.
+- [ ] No password or key appears in my code, my Git history, or my logs.
+- [ ] I use data classes for bundles of settings and results, and classes only when data and behavior belong together.
+- [ ] I add type hints and fix what `mypy` finds, especially `None` cases.
+- [ ] I write tests for business rules, edge cases, and failures, using fixtures and parametrize.
+- [ ] My scheduled code logs with levels and exits with a non-zero code on failure.
+- [ ] My API clients set timeouts, follow pages, retry only transient errors with backoff, and respect `Retry-After`.
+- [ ] I review code with a checklist, and write pull requests that are quick to review.
+
+---
+
+## Exercises
 
 Run code exercises from the companion folder `ch29/`, with `riverstone-report/src` on the path (as in section 29.2) or inside the package with `uv run`. Exercises that need the database say so.
 
@@ -1358,26 +1364,7 @@ Run code exercises from the companion folder `ch29/`, with `riverstone-report/sr
 
 ---
 
-## Key terms
-
-software · script · pure function · module · package · `__name__` · SQL injection · query parameter · `src/` layout · `pyproject.toml` · entry point · environment variable · `.env` file · secrets manager · virtual environment · `venv` · lockfile · pinned requirements · `uv` · `uv.lock` · dependency group · class · data class · immutable · property · alternative constructor · type hint · type checker · `mypy` · test · `pytest` · assertion · fixture · parametrize · unit test · integration test · coverage · exception · custom exception · exit code · logging · log level · logger · pagination · transient failure · rate limit · HTTP 429 · `Retry-After` · timeout · retry · exponential backoff · jitter · session · generator · idempotent · idempotency key · code review · pull request · formatter · linter · Ruff
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 30, Inference & Experiments,** uses Python for statistics; write its analyses as tested functions from the start.
-- **Chapter 20, Automating Reports & Delivering Insights,** schedules this package and emails people when its exit code says it failed.
-- **Chapter 33, The Computer Science You Actually Need,** explains why some Python code is slow and how to measure and fix it.
-- **Chapter 32, Analytics Engineering with dbt,** applies these habits to SQL: version control, tests, review, and automated checks.
-- **Chapter 46, Pipelines & Orchestration,** and **Chapter 56, MLOps,** build on packages, lockfiles, logging, and retries at production scale.
-- **Chapter 72, Python & pandas Question Bank,** has interview questions on project structure, testing, error handling, and API clients.
-
----
-
-## Answers to practice exercises
+## Answers
 
 *(In the finished book these move to Appendix G.)*
 
@@ -1625,3 +1612,14 @@ The three warnings show the growing waits; the fourth failure ends the attempts.
 **14.** Two of: a one-off analysis for a single question that won't be repeated; exploring a new dataset in a notebook to decide whether it's worth anything; a throwaway conversion of a file that will be deleted afterwards; a quick prototype whose purpose is to find out whether an idea works at all. The test is whether anyone will run, depend on, or change it again. When the answer changes to yes, that's the moment to refactor.
 
 **15.** Whether the business decision has been made and by whom (Anita? finance?); whether "discontinued" means past Furniture revenue should disappear from historical reports too, or only future sales stop; whether this should be a filter in the report at all, or a product status in the data so every report agrees; and whether the total revenue on the Summary sheet will still reconcile with the categories. Updating a test to match changed code proves only that the code does what it now says, not that it should.
+
+---
+
+## Where this leads
+
+- **Chapter 30, Inference & Experiments,** uses Python for statistics; write its analyses as tested functions from the start.
+- **Chapter 20, Automating Reports & Delivering Insights,** schedules this package and emails people when its exit code says it failed.
+- **Chapter 33, The Computer Science You Actually Need,** explains why some Python code is slow and how to measure and fix it.
+- **Chapter 32, Analytics Engineering with dbt,** applies these habits to SQL: version control, tests, review, and automated checks.
+- **Chapter 46, Pipelines & Orchestration,** and **Chapter 56, MLOps,** build on packages, lockfiles, logging, and retries at production scale.
+- **Chapter 72, Python & pandas Question Bank,** has interview questions on project structure, testing, error handling, and API clients.

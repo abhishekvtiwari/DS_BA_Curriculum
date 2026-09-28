@@ -1,6 +1,6 @@
 # Chapter 82. Take-Home Assignments & Mock Interviews
 
-*Part VIII — The Interview Playbook*
+*Part 8 — The Interview Playbook*
 
 > **A scope note.** The blueprint calls for 6 take-homes and 8 mock scripts across six roles. This chapter delivers **3 complete take-home assignments with real, verified model submissions** and **3 full mock interview scripts with interviewer notes and scoring**, one each for Data Analyst, Data Scientist, and Data Engineer, matching this chat's confirmed DA/DS/DE focus rather than spreading thinner across all six roles the blueprint names. Same depth-over-count trade-off as every other bank in this part.
 >
@@ -310,7 +310,7 @@ I used `NOT IN` here, but I want to flag, if that subquery could ever return a N
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -322,15 +322,13 @@ I used `NOT IN` here, but I want to flag, if that subquery could ever return a N
 
 ---
 
-## Tools
-
-**PostgreSQL 16** and **Python**, the same environment used throughout this part; every SQL and data quality claim in this chapter's take-homes was actually run against live Riverstone data. A timer, for practicing take-homes and mock answers under the same time pressure a real interview or assignment actually imposes.
-
----
-
-## The project
+## Project
 
 **Goal:** complete one of this chapter's three take-homes yourself, from scratch, before reading the model submission again.
+
+### Tools you'll need
+
+**PostgreSQL 16** and **Python**, the same environment used throughout this part; every SQL and data quality claim in this chapter's take-homes was actually run against live Riverstone data. A timer, for practicing take-homes and mock answers under the same time pressure a real interview or assignment actually imposes.
 
 1. Set a timer matching the stated time limit, and attempt the assignment cold.
 2. Compare your submission against this chapter's scoring table, dimension by dimension, not just "was I right."
@@ -348,5 +346,5 @@ take-home assignment · model submission · mock interview · interviewer scorin
 ## Where this leads
 
 - **Chapter 69, The Extra-Points Method,** is the rubric every scoring table in this chapter is built from.
-- **Every other chapter in Part VIII** supplied the actual content these take-homes and mocks draw on: Chapter 71 (SQL), Chapter 74 (ML evaluation), Chapter 77 (pipeline design), Chapter 44 (expected-value ranking), Chapter 76A/76B (project narrative structure).
-- This is the last chapter in Part VIII, The Interview Playbook. The reader who's worked through this part end to end has, in effect, already sat through the mocks in this chapter once, for real, one question at a time.
+- **Every other chapter in Part 8** supplied the actual content these take-homes and mocks draw on: Chapter 71 (SQL), Chapter 74 (ML evaluation), Chapter 77 (pipeline design), Chapter 44 (expected-value ranking), Chapter 76A/76B (project narrative structure).
+- This is the last chapter in Part 8, The Interview Playbook. The reader who's worked through this part end to end has, in effect, already sat through the mocks in this chapter once, for real, one question at a time.

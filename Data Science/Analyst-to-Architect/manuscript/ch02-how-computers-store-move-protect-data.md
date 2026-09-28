@@ -516,7 +516,7 @@ Some data is about **people**: names, phone numbers, addresses, ID numbers, heal
 
 ---
 
-## Common mistakes and how to spot them
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -555,18 +555,16 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Tools
+## Project: one dataset, five formats
+
+**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
+
+### Tools you'll need
 
 - **A plain-text editor.** Notepad (Windows), TextEdit in plain-text mode (Mac), or a free code editor such as Visual Studio Code. Opening a CSV or JSON file in a text editor shows you what's really inside, without a spreadsheet's guesses.
 - **Excel or Google Sheets**, for the project. Learn the *import* routes (*Data → From Text/CSV* in Excel; *File → Import* in Google Sheets), not just double-clicking.
 - **A password manager and an authenticator app.** Set them up for your own accounts this week.
 - **The companion files** (Appendix E): `orders_feb_2026` in five formats, for the project.
-
----
-
-## The project: one dataset, five formats
-
-**Goal:** see with your own eyes what each format stores, what it loses, and how each program treats it.
 
 **Option A:** use the companion files `orders_feb_2026.csv`, `.xlsx`, `.json`, and `.xml`.
 **Option B:** use your spending log from Chapter 1's project, and create the formats yourself: save it from your spreadsheet as `.xlsx` and as CSV (UTF-8), then type a JSON version of the first three rows by hand in a text editor, using section 2.5 as your model.
@@ -589,21 +587,6 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## You've got it when…
-
-- [ ] I can explain bits, bytes, and why `₹` takes more space than `R`.
-- [ ] I can convert between KB, MB, GB, and TB, and between Mbps and MB/s, and I know why a 1 TB drive shows 931 GB.
-- [ ] I know the difference between memory and storage, and what "saved" means for my work.
-- [ ] I name files so they sort by date and never need the word "final".
-- [ ] I can say which format I'd use for a person, an app, or a large dataset, and why.
-- [ ] I import CSV files instead of double-clicking them when codes or IDs are involved.
-- [ ] I can explain a server, the cloud, and an API to a non-technical colleague.
-- [ ] I can read an API response and tell from its status code whether the problem is mine or the server's.
-- [ ] My own accounts use unique passwords from a password manager, with MFA.
-- [ ] I can explain the 3-2-1 rule and why syncing isn't a backup.
-
----
-
 ## Recap
 
 - Computers store everything as **bits** (0s and 1s), grouped into **bytes**. Text is stored through an **encoding** such as **UTF-8**; the wrong encoding produces garbled characters. Decimals are usually stored approximately, which is why money needs exact types.
@@ -618,7 +601,30 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Practice exercises
+## Key terms
+
+bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+- [ ] I can explain bits, bytes, and why `₹` takes more space than `R`.
+- [ ] I can convert between KB, MB, GB, and TB, and between Mbps and MB/s, and I know why a 1 TB drive shows 931 GB.
+- [ ] I know the difference between memory and storage, and what "saved" means for my work.
+- [ ] I name files so they sort by date and never need the word "final".
+- [ ] I can say which format I'd use for a person, an app, or a large dataset, and why.
+- [ ] I import CSV files instead of double-clicking them when codes or IDs are involved.
+- [ ] I can explain a server, the cloud, and an API to a non-technical colleague.
+- [ ] I can read an API response and tell from its status code whether the problem is mine or the server's.
+- [ ] My own accounts use unique passwords from a password manager, with MFA.
+- [ ] I can explain the 3-2-1 rule and why syncing isn't a backup.
+
+---
+
+## Exercises
 
 ### Warm-up
 
@@ -650,29 +656,7 @@ None of those changes required a data engineer. They required someone who unders
 
 ---
 
-## Key terms
-
-bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (mojibake) · floating point · kilobyte (KB) · megabyte (MB) · gigabyte (GB) · terabyte (TB) · petabyte (PB) · megabits per second (Mbps) · memory (RAM) · storage (SSD, hard disk) · file · folder / directory · path · extension · CSV · Excel workbook (.xlsx) · JSON · XML · PDF · Parquet · compression · lossless · lossy · database · database server · client · server · data center · internet · IP address · DNS · HTTP / HTTPS · cloud · SaaS · API · request · response · header · body · status code · API key · rate limit · webhook · CIA triad · confidentiality · integrity · availability · password manager · multi-factor authentication (MFA) · phishing · least privilege · encryption in transit · encryption at rest · hash · ransomware · backup · 3-2-1 rule · sync · version history · personal data
-
-*(All terms are defined in the Glossary, Appendix A.)*
-
----
-
-## Where this leads
-
-- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
-- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
-- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
-- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
-- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
-- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
-- **Chapter 26** uses Git to keep versions of queries and code.
-- **Part V (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
-- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
-
----
-
-## Answers to practice exercises
+## Answers
 
 **1.** (a) 3.5 × 1,000 = **3,500 MB**. (b) 250,000 ÷ 1,000 = **250 MB**. (c) 2 × 1,000 = **2,000 GB**. (Counting in steps of 1,024 instead, as Windows does, the answers would be 3,584, about 244, and 2,048. Either is acceptable if you say which you used.)
 
@@ -704,3 +688,17 @@ bit · byte · binary · ASCII · Unicode · UTF-8 · encoding · garbled text (
 **14.** *Own server:* direct physical control of where the data is; can work on the office network even when the internet is down. *Cloud:* no hardware to buy or maintain, with backups, updates, and failover handled by the provider; easy to scale up as data grows, and reachable securely from anywhere. Useful questions include: *"What happens if our office server fails at 2 a.m., and who fixes it?"*, *"Are there rules about which country our customer data must stay in?"*, and *"What would the cloud cost each month at our size, compared with buying and running our own server?"*
 
 **15.** Check the **sender's real email address**, not just the display name; check whether the attachment is really a PDF, with extensions visible, because `Payment_Details.pdf.exe` is a program; notice the **pressure** ("urgent", "today", "cancelled"), a classic phishing sign; and **confirm by phone**, using a number you already have rather than one in the email, before opening the attachment or acting on it. If in doubt, report it to IT without opening it.
+
+---
+
+## Where this leads
+
+- **Chapter 3, How a Business Runs on Data,** follows one Riverstone order through every system that stores and passes along its data.
+- **Chapters 10 and 11** teach spreadsheets properly, including importing CSV files without damage.
+- **Chapter 12, Databases & SQL Foundations,** turns the one-page preview in section 2.6 into a full, hands-on skill, including the exact decimal type databases use for money, and read-only accounts for analysts.
+- **Chapter 17** shows the 0.1 + 0.2 surprise from section 2.1 in Python, with the code you run yourself.
+- **Chapter 18** reads CSV, Excel, JSON, and Parquet files in Python, and calls real APIs, including the demonstration API from section 2.8.
+- **Chapter 20** automates a report of exactly the Friday file's kind, Riverstone's Daily Sales Flash, including storing API keys safely.
+- **Chapter 26** uses Git to keep versions of queries and code.
+- **Part 5 (Chapters 45–52)** builds on formats, compression, the cloud, and APIs at company scale: hashes that detect changed files (Chapter 45), Parquet and columnar storage tested at scale (Chapter 49), how whole systems exchange data (Chapter 51), and the levels of cloud service (Chapter 52). **Chapter 58** extracts tables from PDFs with AI tools, with checks. **Chapter 64** covers security, privacy, and governance in depth, and **Chapter 65** keeps cloud bills under control.
+- **Interview preparation:** file formats, APIs, and data security questions appear in the Data Engineering bank (Chapter 77) and the Automation & Integration bank (Chapter 78).
