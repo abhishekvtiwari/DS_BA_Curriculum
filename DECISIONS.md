@@ -5,7 +5,7 @@ Claude Code reads this file before every fix session and copies your decisions i
 
 Allowed words in the **Decision** column: **Approve** · **Modify** (write what to do in Notes) · **Reject** · **Defer** (later edition).
 
-> **Approved by Abhishek on 28 Sep 2026, in the Claude Code session ("This message is my approval").** This file records that message. Where it differs from the earlier draft, the message wins: no A3, V12 Approve, option picks strictly by "recommended, else (a)", reading order = `planning/chapter-map.md`, Reader's Journey rows approved.
+> **Approved by Abhishek on 28 Sep 2026, in the Claude Code session ("This message is my approval").** This file records that message. Where it differs from the earlier draft, the message wins: no A3, V12 Modify (see its row), option picks strictly by "recommended, else (a)", reading order = `planning/chapter-map.md`, Reader's Journey rows approved.
 
 ## A. Global rule
 
@@ -44,7 +44,7 @@ Tick **A1 or A2** by putting an `x` in the brackets, like `- [x]`. Tick **A3** a
 | V9 | Two-digit list numbers clipped: widen list indent | Approve | One CSS change (wider list indent). |
 | V10 | Tables: no-wrap for code/IDs, right-aligned numbers, keep short tables together, fix white-on-white headers | Approve | CSS for tables (no mid-token wraps, right-aligned numbers, keep short tables together, header contrast). |
 | V11 | Rendering: escape $, render formulas properly, lint Markdown/HTML, font with ₹ | Approve | Escape $, render formulas, font with ₹; mostly build and CSS fixes. |
-| V12 | Scale/resolution: Ch 19 at 100%, screenshots at 2×, rasters ≥ 300 ppi | Approve | Approved by Abhishek (28 Sep). Screenshots that can't be retaken in the fix environment (Excel, Power BI, VBA on Windows) are listed in the part PR for recapture. |
+| V12 | Scale/resolution: Ch 19 at 100%, screenshots at 2×, rasters ≥ 300 ppi | Modify | Abhishek, 28 Sep: Claude Code does everything it can (Ch 19 rebuilt at 100%, every generated image re-exported at 300 ppi). The layout PR lists every screenshot Abhishek must retake (chapter, page, figure number, what it must show, required size) so they can be done in one sitting. |
 
 ## C. Structural decisions
 

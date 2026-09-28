@@ -96,7 +96,7 @@ Plus the **visual standard** (see `review/briefs/VISUAL_BRIEF.md`):
 ## 4. What you may fix: the approval gate
 
 **In force since 28 Sep 2026:**
-- **Global rules:** A1 is ticked and A3 is not. All themes T1–T14 and V1–V12 are Approve.
+- **Global rules:** A1 is ticked and A3 is not. All themes T1–T14 and V1–V11 are Approve; V12 is Modify (see `DECISIONS.md`: Claude Code does what it can, and screenshots are listed for Abhishek to retake).
 - **Structural decisions:** D2–D7 are Approve.
 - **Option picks:** strictly the recommended option, else (a).
 - **Reader's Journey rows:** approved.
