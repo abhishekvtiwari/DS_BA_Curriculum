@@ -23,7 +23,7 @@ In total, allow 7–10 hours, including the exercises and projects. After Part I
 >
 > **Tools:** a pen and paper, or any free drawing tool for the project. No software to install.
 >
-> **Practice data:** one short query on the Riverstone one-year database (`riverstone_2025`), shown so you can see what an analyst's answer looks like. You don't need to run it yet; Chapter 12 teaches every line. Every result and number shown is real.
+> **Practice data:** one result from the Riverstone one-year database (2025), so you can see what an analyst's answer looks like. Every number shown is real.
 
 ---
 
@@ -63,7 +63,7 @@ Strip away the tools and the titles, and every data role exists to help answer o
 
 Almost every data job is a specialization of one of these. When you meet an unfamiliar title, ask *"Which of the four questions does this person spend most of their day on?"* The title then stops being confusing.
 
-![Four columns, one per question. Question 1, What happened, maps to the analytics and BI track with data analyst, business analyst and BI developer. Question 2, What will happen and why, maps to data science, ML and AI with data scientist, ML engineer and AI engineer. Question 3, How does data move and get put to work, maps to engineering and integration with data engineer, analytics engineer, and automation analyst, RPA developer or integration engineer. Question 4, How should the whole system be designed, maps to architecture with data architect. A band underneath says governance and data quality support all four, and SQL, business context and some automation are shared by every role.](figures/fig7-1-four-questions-and-roles.svg)
+![Four panels, one per question. Question 1, What happened, maps to the analytics and BI track with data analyst, business analyst and BI developer. Question 2, What will happen and why, maps to data science, ML and AI with data scientist, ML engineer and AI engineer. Question 3, How does data move and get put to work, maps to engineering and integration with data engineer, analytics engineer, and automation analyst, RPA developer or integration engineer. Question 4, How should the whole system be designed, maps to architecture with data architect. A band underneath says governance and data quality support all four, and SQL, business context and some automation are shared by every role.](figures/fig7-1-four-questions-and-roles.svg)
 
 *Figure 7.1 — The four questions, the tracks that answer them, and the ten roles this book follows. Notice the band at the bottom: some skills belong to everyone.*
 
@@ -94,7 +94,7 @@ A few terms in that table will be new. A **dashboard** is a screen of charts and
 
 ### The one skill every role shares
 
-Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part II teaches it at full depth in Chapters 12 and 13, and why nothing you learn there goes to waste, whichever branch you climb.
+Look down the *Core tools* column and one name keeps appearing: **SQL**. It's the language for asking questions of a database, and every role on this map writes it, often every day. The analyst uses it to answer questions. The BI developer uses it to feed dashboards. The analytics engineer builds whole tested models of the business in it. The data scientist pulls training data with it. The data engineer moves and checks data with it. The integration engineer uses it to choose which records to push into the CRM. The architect reads it to understand what the system is really doing. That's why Part II teaches it at full depth, and why nothing you learn there goes to waste, whichever branch you climb.
 
 > **Watch out: titles lie, outputs don't.** A "data scientist" at one company builds dashboards all day; a "business analyst" at another writes Python pipelines. Before you decide a job is (or isn't) for you, read what the person will *produce* each week. Chapter 8 shows how to decode a job description line by line.
 
@@ -131,17 +131,17 @@ The track has three common roles, and the lines between them are blurry.
 
 - An **automation analyst** finds manual, repeated work in business processes and automates it, often with spreadsheet automation (macros, VBA, Office Scripts, Google Apps Script), low-code tools such as Power Automate or n8n, and Python scripts. The role often grows out of an analyst or operations job.
 - An **RPA developer** builds software "robots" that click through screens the way a person would. **RPA** stands for robotic process automation. It's the right tool when an old system has no other way in, and the wrong tool when a proper connection exists, because a robot breaks whenever the screen changes.
-- An **integration engineer** connects systems directly, usually through APIs (Chapter 2), so data flows between them: new orders from the website into the ERP, payment status from finance into the CRM, a risk flag from the data warehouse back into the sales team's tools. Writing data from the warehouse back into business systems is called **reverse ETL** or **data activation**, and Chapter 51 teaches it.
+- An **integration engineer** connects systems directly, usually through APIs (Chapter 2), so data flows between them: new orders from the website into the ERP, payment status from finance into the CRM, a risk flag from the data warehouse back into the sales team's tools. Writing data from the warehouse back into business systems is called **reverse ETL** or **data activation**.
 
 Here's what makes this track different from the others: **every data role includes some automation.** The analyst schedules a refreshable report instead of rebuilding it. The BI developer sets up a dashboard subscription. The data engineer's whole job is automated pipelines. The ML engineer automates retraining. The architect decides which automations the company should build, own, and eventually retire. The automation roles specialize in it, but nobody in data is exempt.
 
 Take a simple example. Riverstone's **Daily Sales Flash**, a one-page summary of yesterday's orders, could start as a manual report that takes someone 40 minutes each working day. If it's produced on 250 working days a year, that's 40 × 250 = 10,000 minutes, or about 167 hours: more than four working weeks spent re-typing the same report. Over the course of this book, that report becomes a SQL query (Chapter 12), a Python script (Chapter 18), a VBA macro and an Apps Script project (Chapter 19), a scheduled email in every manager's inbox (Chapter 20), a monitored pipeline (Chapters 46–47), a source of flags pushed into the CRM (Chapter 51), and finally part of a designed reporting platform (Chapter 63). The business need never changes. The way it's met gets better at each level, which is exactly how the job grows in real life.
 
-![Four stages from left to right: sources (orders in the ERP, leads in the CRM, payments, support tickets), move and check (scheduled loads, quality checks, warehouse), shape and predict (shared definitions, risk score, forecasts), and deliver and act (dashboard, report in the email body, task written into the CRM, alert when a rule trips). Under each stage, a row names who automates it: the business systems record it; data engineer and integration engineer; analytics engineer, data scientist and ML engineer; analyst, BI developer, integration engineer and AI engineer. A red row at the bottom shows the manual version: export by hand, copy-paste into one file, formulas re-typed each week, emailed attachment re-keyed into the CRM.](figures/fig7-3-source-to-action.svg)
+![Four stages from top to bottom, joined by arrows: sources (orders in the ERP, leads in the CRM, payments, support tickets), move and check (scheduled loads, quality checks, warehouse), shape and predict (shared definitions, risk score, forecasts), and deliver and act (dashboard, report in the email body, task written into the CRM, alert when a rule trips). Beside each stage, a middle column names who automates it: the business systems record it; data engineer and integration engineer; analytics engineer, data scientist and ML engineer; analyst, BI developer, integration engineer and AI engineer. A red right-hand column, labelled "by hand", shows the manual version: export by hand, copy-paste into one file, formulas re-typed each week, emailed attachment re-keyed into the CRM.](figures/fig7-3-source-to-action.svg)
 
-*Figure 7.3 — The flow from source to action, with the roles that automate each stage. The red row is what the same flow looks like when people do it by hand.*
+*Figure 7.3 — The flow from source to action, with the roles that automate each stage. The red "by hand" column is what the same flow looks like when people do it by hand.*
 
-> **Real-life example: the report nobody owns.** Many companies run an important report on a macro written years ago by someone who has since left. It works until the source file's columns change, and then it fails quietly or, worse, produces wrong numbers that look right. Automating a report is only half the job. Someone has to own it, monitor it, and know what to do when it breaks. Chapter 63 covers that governance at the architect level.
+> **Real-life example: the report nobody owns.** Many companies run an important report on a macro written years ago by someone who has since left. It works until the source file's columns change, and then it fails quietly or, worse, produces wrong numbers that look right. Automating a report is only half the job. Someone has to own it, monitor it, and know what to do when it breaks.
 
 ---
 
@@ -155,7 +155,7 @@ In an **embedded** (or **decentralized**) setup, data people sit inside the depa
 
 In a **hub-and-spoke** (sometimes called **federated**) structure, a central hub owns the shared platform, the standards, and the common definitions of key numbers, while analysts in each department (the spokes) do the day-to-day work. Spokes often report to their department but follow the hub's standards and meet with the hub regularly.
 
-![Three panels. Centralized: a data team box in the middle with arrows out to sales, finance, operations and marketing; strength one version of the numbers, risk can feel far from the business, often the first setup. Embedded: an analyst inside each department and no central team; strength deep business context and speed, risk definitions drift apart, common where departments differ a lot. Hub-and-spoke: a hub owning platform and standards, linked by dashed lines to analysts inside each department; strength context and consistency, risk needs clear ownership rules, common as companies grow.](figures/fig7-4-three-team-structures.svg)
+![Three panels, one above the other. Centralized: a data team box in the middle with arrows out to sales, finance, operations and marketing; strength one version of the numbers, risk can feel far from the business, often the first setup. Embedded: an analyst inside each department and no central team; strength deep business context and speed, risk definitions drift apart, common where departments differ a lot. Hub-and-spoke: a hub owning platform and standards, linked by dashed lines to analysts inside each department; strength context and consistency, risk needs clear ownership rules, common as companies grow.](figures/fig7-4-three-team-structures.svg)
 
 *Figure 7.4 — Three ways to organize a data team. The same people can be arranged very differently, and each arrangement has a typical failure.*
 
@@ -168,7 +168,7 @@ In a **hub-and-spoke** (sometimes called **federated**) structure, a central hub
 | **Career growth for data people** | Clear; you learn from other data people | Harder; your manager may not understand your work | Clearer, through the hub's community and standards |
 | **Typical failure** | The bottleneck: "the data team never gets to our request" | "Why do sales and finance report different revenue?" | Nobody is sure who owns a definition |
 
-No structure is right for every company. Small companies often start with one or two data people who behave like a tiny central team. As departments grow, analysts get hired into them, and inconsistent numbers start to hurt. Many companies then move toward hub-and-spoke to keep local speed while fixing definitions centrally. Chapter 66 goes deeper into building and structuring data teams.
+No structure is right for every company. Small companies often start with one or two data people who behave like a tiny central team. As departments grow, analysts get hired into them, and inconsistent numbers start to hurt. Many companies then move toward hub-and-spoke to keep local speed while fixing definitions centrally.
 
 > **Try it.** Think of a company you know, or your college's administration. Where do the people who make reports sit? Which of the three structures is it closest to, and which typical failure have you heard people complain about?
 
@@ -178,7 +178,7 @@ No structure is right for every company. Small companies often start with one or
 
 Roles make the most sense in motion. So let's follow a single business request through all ten of them.
 
-> **Simplification note.** Riverstone is a mid-sized company, and in real life one or two people would cover most of these roles. To see each role clearly, imagine a larger version of Riverstone with one specialist in every seat. The data in step 2 is the real one-year database; the later steps describe what each role would build, and the chapters named teach you to build it.
+> **Simplification note.** Riverstone is a mid-sized company, and in real life one or two people would cover most of these roles. To see each role clearly, imagine a larger version of Riverstone with one specialist in every seat. The data in step 2 is the real one-year database; the later steps describe what each role would build, and "Where this leads" names the chapters that teach you to build it.
 
 It's the year-end review, and Anita Rao, the Sales Head, says:
 
@@ -192,103 +192,56 @@ The answers become a short requirement: **"List every customer with no non-cance
 
 ### Step 2: The data analyst answers it
 
-The data analyst writes a query against the one-year database. You don't need to read SQL yet; look at the shape of the question in the code, then at the answer.
+The data analyst turns the requirement into a method before touching the data. In plain words, it has four steps:
 
-<!-- db: riverstone_2025 -->
+1. Start from every customer, including those who never ordered.
+2. For each one, find the latest order that wasn't cancelled.
+3. Count the days from that date to 31 December.
+4. Keep those over 60 days, or with no order at all.
 
-```sql
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                     AS last_order_date,
-       DATE '2025-12-31' - MAX(o.order_date) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < DATE '2025-11-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date NULLS FIRST;
-```
+Run against the one-year database, the method gives five customers.
 
-```
-   customer_name   |   segment   | last_order_date | days_since_last_order
--------------------+-------------+-----------------+-----------------------
- Home Plus         | Retail      |                 |
- City Needs Store  | Retail      | 2025-03-22      |                   284
- Sunrise Caterers  | Hospitality | 2025-06-10      |                   204
- Om Sai Provisions | Retail      | 2025-07-22      |                   162
- Tasty Tiffins     | Hospitality | 2025-10-26      |                    66
-(5 rows)
-```
+| Customer | Segment | Latest order that wasn't cancelled | Days since that order |
+|---|---|---|---|
+| Home Plus | Retail | none | none |
+| City Needs Store | Retail | 22 March 2025 | 284 |
+| Sunrise Caterers | Hospitality | 10 June 2025 | 204 |
+| Om Sai Provisions | Retail | 22 July 2025 | 162 |
+| Tasty Tiffins | Hospitality | 26 October 2025 | 66 |
 
-**How it works, in plain words.**
+*One-year database (2025). The customer with no order comes first, then the longest silence.*
 
-- The query starts from every customer, then looks up each one's orders, ignoring cancelled ones.
-- For each customer, it finds the latest order date, and counts the days from that date to 31 December 2025.
-- It keeps only customers whose latest order was before 1 November, plus customers with no orders at all.
-- The blank dates are Home Plus: it signed up on 18 June 2025 and has never ordered, so there's no date to show.
+Home Plus signed up on 18 June 2025 and has never ordered, so there's no date to count from. That's exactly the customer step 1 of the method is there to keep.
 
 **Check one row by hand.** Tasty Tiffins last ordered on 26 October 2025. From 26 to 31 October is 5 days, November has 30, and December has 31: 5 + 30 + 31 = 66 days. ✓
 
-A good analyst doesn't stop at the list. Looking closer, City Needs Store and Tasty Tiffins have placed only two orders each, so it's hard to call them "regulars". Sunrise Caterers and Om Sai Provisions placed four orders each, roughly every five to six weeks, and then went silent. Together those two brought in ₹114,072.50 of revenue in 2025, about 2.6% of Riverstone's ₹4,335,471 for the year.
+A good analyst doesn't stop at the list. Looking closer, City Needs Store and Tasty Tiffins have placed only two orders each, so it's hard to call them "regulars". Sunrise Caterers and Om Sai Provisions placed four orders each, roughly every five to six weeks, and then went silent. Together those two brought in ₹1,14,072.50 of revenue in 2025, about 2.6% of Riverstone's ₹43,35,471 for the year.
 
 **What to tell Anita.** Five customers haven't ordered in 60 days. Two of them, Sunrise Caterers and Om Sai Provisions, used to order regularly, so they're the most urgent calls: find out what went wrong. Home Plus signed up in June and never ordered: a lead that was never converted. The other two ordered only twice, so they may be occasional buyers.
 
-> **SQL link.** Chapter 12 teaches every clause in this query and includes a version of it on the mini database (section 12.15). Chapter 13 improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
-
-> **Dialect note.** The same question in MySQL needs two changes: `DATEDIFF` instead of subtracting dates, and a manual sort to put the blank dates first, because MySQL has no `NULLS FIRST`. The result is the same five customers.
-
-<!-- db: riverstone_2025 -->
-
-```mysql
-SELECT c.customer_name,
-       c.segment,
-       MAX(o.order_date)                         AS last_order_date,
-       DATEDIFF('2025-12-31', MAX(o.order_date)) AS days_since_last_order
-FROM customers AS c
-LEFT JOIN orders AS o
-       ON c.customer_id = o.customer_id
-      AND o.status <> 'Cancelled'
-GROUP BY c.customer_id, c.customer_name, c.segment
-HAVING MAX(o.order_date) < '2025-11-01'
-    OR MAX(o.order_date) IS NULL
-ORDER BY last_order_date IS NOT NULL, last_order_date;
-```
-
-```
-+-------------------+-------------+-----------------+-----------------------+
-| customer_name     | segment     | last_order_date | days_since_last_order |
-+-------------------+-------------+-----------------+-----------------------+
-| Home Plus         | Retail      | NULL            |                  NULL |
-| City Needs Store  | Retail      | 2025-03-22      |                   284 |
-| Sunrise Caterers  | Hospitality | 2025-06-10      |                   204 |
-| Om Sai Provisions | Retail      | 2025-07-22      |                   162 |
-| Tasty Tiffins     | Hospitality | 2025-10-26      |                    66 |
-+-------------------+-------------+-----------------+-----------------------+
-```
+In Chapter 12 you'll write this yourself.
 
 ### Step 3: The BI developer makes it available every day
 
-Anita likes the answer and wants it every week without asking. The BI developer adds an "At-risk customers" page to the sales dashboard. It refreshes from the database each morning, each rep can filter it to their own customers, and Anita gets it by email every Monday through a dashboard subscription. The analyst no longer has to re-run the query by hand.
+Anita likes the answer and wants it every week without asking. The BI developer adds an "At-risk customers" page to the sales dashboard. It refreshes from the database each morning, each rep can filter it to their own customers, and Anita gets it by email every Monday through a dashboard subscription. The analyst no longer has to re-run the list by hand.
 
 ### Step 4: The analytics engineer makes the definition trustworthy
 
 A month later, finance mentions that *their* "inactive customers" report uses 90 days, not 60. The customer-support team uses a third rule. Three reports, three answers, and every meeting starts with an argument about whose number is right.
 
-The analytics engineer agrees one definition with sales and finance, writes it once as a tested, documented table (a `customer_activity` model, in the style of Chapter 32), and points every report at it. Tests run automatically: no customer can appear twice, every customer must have a status, and the total number of customers must match the source system. "Active customer" now means one thing everywhere.
+The analytics engineer agrees one definition with sales and finance, writes it once as a tested, documented table (a `customer_activity` model), and points every report at it. Tests run automatically: no customer can appear twice, every customer must have a status, and the total number of customers must match the source system. "Active customer" now means one thing everywhere.
 
-### Step 5: The data scientist asks what will happen next
+### Step 5: The data engineer makes sure the data arrives
+
+Before anyone can predict, the data has to be complete: payments from finance, tickets from the support desk, and sales activity from the CRM, as well as orders, all fresh by 6 a.m. The data engineer builds pipelines that pull data from each system every night, check it (did yesterday's orders arrive? are there duplicate payments?), and load it into the warehouse. If a check fails, the pipeline stops and alerts someone *before* a wrong number reaches a sales rep.
+
+### Step 6: The data scientist asks what will happen next
 
 The list tells Riverstone who *has* gone quiet. The data scientist asks a better question: *can we tell who is **about to** go quiet, while there's still time to help?* They look for early warning signs in the history: orders getting smaller, gaps getting longer, late payments, complaints to support. They build a model that gives each customer a risk score, and test it fairly against past data: does it beat the simple 60-day rule, or is it an expensive way to get the same list? If it does beat it, they suggest a fair test: call half the high-risk customers, leave the other half alone for a month, and compare what happens. That test is how you learn whether the calls work.
 
-### Step 6: The ML engineer keeps the model running
+### Step 7: The ML engineer keeps the model running
 
-A model in a notebook helps nobody on Monday morning. The ML engineer turns it into a service that scores every customer each night, logs every score, and raises an alarm if the model's accuracy starts to slip, for example if customer behavior changes after a price increase. They also set up a way to retrain it safely. Chapter 56 covers this work.
-
-### Step 7: The data engineer makes sure the data arrives
-
-The model needs more than orders. It needs payments from finance, tickets from the support desk, and sales activity from the CRM, all fresh by 6 a.m. The data engineer builds pipelines that pull data from each system every night, check it (did yesterday's orders arrive? are there duplicate payments?), and load it into the warehouse. If a check fails, the pipeline stops and alerts someone *before* a wrong risk score reaches a sales rep.
+A model in a notebook helps nobody on Monday morning. The ML engineer turns it into a service that scores every customer each night, logs every score, and raises an alarm if the model's accuracy starts to slip, for example if customer behavior changes after a price increase. They also set up a way to retrain it safely.
 
 ### Step 8: The automation or integration engineer puts it to work
 
@@ -296,15 +249,15 @@ A score sitting in a warehouse changes nothing. The integration engineer writes 
 
 ### Step 9: The AI engineer helps the rep prepare
 
-Before calling Sunrise Caterers, a rep wants to know the story: last orders, open invoices, recent complaints. The AI engineer builds an assistant that drafts a short call brief from Riverstone's own data. The design matters more than the demo: the assistant may only use facts it retrieved from the company's systems, it shows where each fact came from, the rep reads and approves the brief before using it, and the team tests it regularly for invented facts. Chapters 55 and 58 teach this.
+Before calling Sunrise Caterers, a rep wants to know the story: last orders, open invoices, recent complaints. The AI engineer builds an assistant that drafts a short call brief from Riverstone's own data. The design matters more than the demo: the assistant may only use facts it retrieved from the company's systems, it shows where each fact came from, the rep reads and approves the brief before using it, and the team tests it regularly for invented facts.
 
 ### Step 10: The data architect designs how it all fits
 
 Stand back and look at everything that now exists: pipelines, a warehouse, a shared definition, a model service, a dashboard, CRM tasks, emails, an AI assistant. The data architect decides how these pieces should fit together, so the company doesn't end up with a tangle of scripts nobody understands. Where does the risk score officially live? Who owns the definition of "active"? Should reps see only their own customers? What happens if the CRM write-back fails halfway? What does the whole thing cost each month, and is it worth it? The architect writes these decisions down, with the reasons, so the next person can understand them.
 
-![A data architect bar across the top: designs how the pieces fit, where the score lives, who owns each definition, who may see what, what it costs. Below it, four phases from left to right. 1, clarify and answer: business analyst turns the request into a clear question; data analyst finds the five quiet customers. 2, share and standardize: BI developer builds an at-risk page on the sales dashboard; analytics engineer builds one tested definition of active. 3, predict: data scientist predicts who will go quiet next; ML engineer scores every customer each night. 4, run and act: data engineer delivers fresh, checked data by 6 a.m.; integration engineer creates tasks in the CRM and a Monday email; AI engineer drafts a call brief the rep approves. A footer shows the start, Anita's question, and the end: every Monday each sales rep knows which customers to call and why.](figures/fig7-5-one-request-every-role.svg)
+![A data architect bar across the top: designs how the pieces fit, where the score lives, who owns each definition, who may see what. Below it, five phases in order, top to bottom. 1, clarify and answer: business analyst makes the request a clear question; data analyst finds the five quiet customers. 2, share and standardize: BI developer builds an at-risk page on the sales dashboard; analytics engineer builds one tested definition of active. 3, supply trusted data: data engineer delivers fresh, checked data by 6 a.m. 4, predict: data scientist predicts who will go quiet next; ML engineer scores every customer each night. 5, act: integration engineer creates tasks in the CRM and a Monday email; AI engineer drafts a call brief the rep approves. A footer shows the start, Anita's question, and the end: every Monday each sales rep knows which customers to call and why.](figures/fig7-5-one-request-every-role.svg)
 
-*Figure 7.5 — One request, every role. Notice that the order matters: prediction is worth building only after the question is clear, the data is trusted, and the definition is agreed.*
+*Figure 7.5 — One request, every role. Notice that the order matters: prediction is worth building only after the question is clear, the definition is agreed and the data is trusted.*
 
 ### What the walk-through shows
 
@@ -365,7 +318,7 @@ Locate yourself truthfully, and you'll see that the next step is usually closer 
 | Skipping the analyst core to reach a "higher" branch | Models and pipelines built on questions you can't frame or data you can't check | Build the trunk first: spreadsheets, SQL, business sense |
 | Treating automation as someone else's job | The same report takes you hours every week | Every role automates; start with refreshable reports and scheduled delivery (section 7.4) |
 | Automating a report without owning it | It fails silently when a source file changes, and nobody notices for weeks | Assign an owner, add a check, and write down what to do when it breaks |
-| Jumping to prediction before the basics work | A churn model nobody uses, while "active customer" still has three definitions | Clarify, answer, share, and standardize before you predict (section 7.6) |
+| Jumping to prediction before the basics work | A churn model nobody uses, while "active customer" still has three definitions | Clarify, answer, share, standardize, and supply trusted data before you predict (section 7.6) |
 | Believing one team structure is always best | Endless reorganizations, same complaints | Match the structure to the company's size and pain; know each structure's typical failure (section 7.5) |
 | Assuming AI assistants make core skills unnecessary | You can't tell when a drafted query is wrong | Learn to read and check the work; use assistants to go faster, not to replace understanding |
 | Pasting AI output into a report unchecked | A plausible number that doesn't reconcile to any known total | Hand-check a row and reconcile to a total before anything leaves your hands |
@@ -394,7 +347,7 @@ Then she listed the manual work she did every week: 40 minutes each morning on t
 
 Anita was quiet for a moment. "The conference speaker made it sound like step one."
 
-"For a company with millions of customers and a data platform, it might be," Meera said. "For us, it's step five."
+"For a company with millions of customers and a data platform, it might be," Meera said. "For us, it's step six."
 
 They rewrote the advertisement together. The title became *Data Analyst (Sales Analytics and Automation)*. The responsibilities listed the Monday at-risk list, a sales dashboard, agreed definitions with finance, and automating recurring reports. The skills section asked for SQL, Excel or Google Sheets, a BI tool, and "experience automating a recurring report, with any tool". Under *Nice to have*, Meera added "interest in forecasting and customer analytics", so the new hire could grow toward the role Anita had first imagined.
 
@@ -412,8 +365,7 @@ They rewrote the advertisement together. The title became *Data Analyst (Sales A
 This chapter needs no software. For the project you'll need:
 
 - **Pen and paper**, or a free diagram tool such as **diagrams.net** (also called draw.io) or **Excalidraw**, to draw your team map and a request's journey.
-- **A few job postings** from any job portal, for exercise 2 and the stretch goal. Save or print them; postings disappear.
-- **Companion file (optional):** `companion/mysql/ch07_queries_mysql.sql` holds the section 7.6 query in PostgreSQL and MySQL form, for readers who already have the practice databases loaded (Chapter 12, section 12.3, explains the setup).
+- **A few job postings** from any job portal, for the project's stretch goals. Save or print them; postings disappear.
 
 ---
 
@@ -469,7 +421,7 @@ This chapter needs no software. For the project you'll need:
 - The field grows like a **tree**: a shared trunk (foundations and the analyst core), a branch point (Part III), two peer branches (science and engineering), and a top where they rejoin (production AI and architecture).
 - The **automation and integration track** removes manual steps and connects systems, using spreadsheet automation, low-code flows, **RPA**, APIs, and **reverse ETL**. Every data role includes some automation.
 - Data teams are **centralized**, **embedded**, or **hub-and-spoke**; each trades consistency, business context, and speed differently, and each has a typical failure.
-- Following one request through every role shows the right order: clarify, answer, share, standardize, predict, then run and act, with the architect designing the whole.
+- Following one request through every role shows the right order: clarify, answer, share, standardize, supply trusted data, predict, then act, with the architect designing the whole.
 - **AI assistants** speed up tasks with a checkable answer; context, judgment, and accountability stay with you. You're responsible for every number you deliver.
 
 ---
@@ -484,7 +436,7 @@ This chapter needs no software. For the project you'll need:
 
 ### Core
 
-4. In the section 7.6 result, Home Plus has blank `last_order_date` and `days_since_last_order` values. What do the blanks mean, and why would it be a mistake to leave Home Plus off Anita's list?
+4. In the section 7.6 result, Home Plus shows "none" for both its latest order and its days since that order. What do those gaps mean, and why would it be a mistake to leave Home Plus off Anita's list?
 5. Check by hand that City Needs Store's `days_since_last_order` of 284 is correct. Its last order was on 22 March 2025, and "today" is 31 December 2025.
 6. Anita can make two calls this afternoon. From the five customers in section 7.6, which two should she call, and why? Use the order counts given in the analyst's notes.
 7. Meera spends 25 minutes each working day copying overdue invoices from the finance system into emails for sales reps. Assuming 250 working days a year, how many hours is that per year? About how many 40-hour working weeks? Which role's skills would remove this work, and name one way they might do it.
@@ -495,7 +447,7 @@ This chapter needs no software. For the project you'll need:
 ### Stretch
 
 11. Finance says "inactive" should mean *no non-cancelled order in 90 days, including customers who never ordered*. Using only the section 7.6 result, how many customers would be on finance's list, and which one drops off? Which role would fix the problem of two definitions, and how?
-12. An AI assistant drafts a query that returns *four* quiet customers under the 60-day rule, not five. Without running anything, give three likely reasons for the difference and say how you'd check each one.
+12. An AI assistant's list shows four quiet customers, not five. Without looking at any code, give three reasons the list could differ (for example, never-ordered customers dropped, cancelled orders counted as activity, a different "today"), and how you'd check each against the result table.
 13. Trace a new request through the roles: *"Our deliveries to Chennai keep arriving late. Why, and can we stop it?"* Name the roles you'd involve, in order, what each produces, and which roles you'd leave out for now, with reasons.
 
 ### Think about it (no query needed)
@@ -517,28 +469,27 @@ orientation · track · role · data analyst · business analyst · BI developer
 
 - **Chapter 8, The Career Tree: How Skills Unlock Roles,** turns this map into tiers in the book's part order, with a skills matrix per role, a day in the life of each role, how to decode a job description, the reader pathways table, and entry routes for freshers, career switchers, and internal moves.
 - **Chapter 9, How Expertise Actually Forms,** is honest about the timeline, and shows how to practice, build a portfolio, find feedback, and get through plateaus.
-- **Chapters 12 and 13** teach the SQL behind section 7.6's query, and the better "customer rhythm" version of the at-risk list.
+- **Chapter 12** teaches you to write section 7.6's four-step method as a query yourself, first on the mini database (section 12.15). **Chapter 13** improves the rule itself, comparing each customer's silence with their own usual ordering rhythm (Pattern 6).
 - **Chapters 19 and 20** start the automation thread in earnest: spreadsheet automation, and reports delivered by email and on schedule. **Chapter 25** covers the business analyst track, including finding automation opportunities.
-- **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels. **Chapter 66** returns to building and structuring data teams.
+- The later steps of section 7.6 each have their own chapter: **Chapter 32** builds tested, shared definitions like the analytics engineer's; **Chapter 56** keeps models running, as the ML engineer does; **Chapters 55 and 58** build AI assistants with the safeguards in step 9.
+- **Chapter 51** teaches reverse ETL, and **Chapters 51, 58, and 63** take automation to the engineering, AI, and architect levels; Chapter 63 also covers owning and governing every automation. **Chapter 66** returns to building and structuring data teams.
 - **Part VIII, Chapter 68, How Data Hiring Works,** explains the interview rounds for each of these roles. Every role in this chapter has matching question banks in Chapters 70–82.
 
 ---
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
-**1.** (a) Question 1, what happened: it describes last month. (b) Question 2, what will happen: it's a forecast. (c) Question 3, how data moves and gets put to work: it's an integration between two systems. (d) Question 4, how the whole system should be designed: shared IDs and ownership across systems are architecture decisions. e. Question 2, *why*: it asks whether the discount *caused* the increase, which needs an experiment or a careful causal analysis. The common wrong answer is Question 1, because it sounds like "what happened to orders". Describing that orders rose is Question 1; proving the discount caused it is Question 2.
+**1.** (a) Question 1, what happened: it describes last month. (b) Question 2, what will happen: it's a forecast. (c) Question 3, how data moves and gets put to work: it's an integration between two systems. (d) Question 4, how the whole system should be designed: shared IDs and ownership across systems are architecture decisions. (e) Question 2, *why*: it asks whether the discount *caused* the increase, which needs an experiment or a careful causal analysis. The common wrong answer is Question 1, because it sounds like "what happened to orders". Describing that orders rose is Question 1; proving the discount caused it is Question 2.
 
 **2.** (a) Priya is an **analytics engineer**: tested, shared definitions used by every report. (b) Arjun is an **integration engineer**: API connections and duplicate-safe loading. (c) Sana is a **business analyst**: process mapping and requirements. (d) Karthik is an **ML engineer**: keeping a model running, monitored, and retrained. Titles at their companies might be anything; the outputs tell you the role.
 
 **3.** It's an **embedded** (decentralized) structure. Expect the typical failure from the table in section 7.5: the departments' numbers disagree ("why does finance's revenue differ from sales'?"), and similar reports get built more than once.
 
-**4.** The blanks are NULLs: Home Plus has no non-cancelled orders at all, so there's no latest order date and nothing to count days from. Leaving it off would be a mistake because a customer who signed up and never ordered is the easiest kind to miss and often the easiest to win: someone showed interest and nobody followed up. That's why the business analyst's requirement in step 1 explicitly included never-ordered customers, and why the query keeps rows where the latest order date is missing.
+**4.** The gaps mean Home Plus has no non-cancelled orders at all, so there's no latest order date and nothing to count days from. They aren't zero, and they aren't a mistake: they mean "no value here". Leaving it off would be a mistake because a customer who signed up and never ordered is the easiest kind to miss and often the easiest to win: someone showed interest and nobody followed up. That's why the business analyst's requirement in step 1 explicitly included never-ordered customers, and why the analyst's method starts from every customer and keeps those with no order at all.
 
 **5.** From 22 March to 31 March is 9 days. April 30, May 31, June 30, July 31, August 31, September 30, October 31, November 30, December 31. Total: 9 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31 = 284 days. ✓ The common slip is counting 22 March itself, which gives 285; days *since* the last order start counting the day after it.
 
-**6.** **Sunrise Caterers and Om Sai Provisions.** Each placed four orders at a regular rhythm (roughly every five to six weeks) and then went silent for 204 and 162 days, so something has probably gone wrong, and they were worth ₹114,072.50 together in 2025. City Needs Store and Tasty Tiffins ordered only twice each, so their silence may be their normal pattern. Home Plus is worth a call too, but as a sales lead to convert rather than a customer to win back, so it can go to a sales executive. A reasonable alternative answer puts Home Plus second, if Anita's priority is new business; what matters is giving a reason.
+**6.** **Sunrise Caterers and Om Sai Provisions.** Each placed four orders at a regular rhythm (roughly every five to six weeks) and then went silent for 204 and 162 days, so something has probably gone wrong, and they were worth ₹1,14,072.50 together in 2025. City Needs Store and Tasty Tiffins ordered only twice each, so their silence may be their normal pattern. Home Plus is worth a call too, but as a sales lead to convert rather than a customer to win back, so it can go to a sales executive. A reasonable alternative answer puts Home Plus second, if Anita's priority is new business; what matters is giving a reason.
 
 **7.** 25 × 250 = 6,250 minutes per year. 6,250 ÷ 60 ≈ **104.2 hours**, and 104.2 ÷ 40 ≈ **2.6 working weeks**. This is **automation analyst** (or integration engineer) work, and an analyst who automates could do it too. Possible approaches: a query or saved report that lists overdue invoices by rep, delivered as a scheduled email with each rep's list in the email body (Chapter 20); or a low-code flow in Power Automate or n8n that runs every morning (Chapter 20); or, at a later stage, overdue flags pushed straight into the CRM as tasks (Chapter 51).
 
@@ -550,7 +501,7 @@ orientation · track · role · data analyst · business analyst · BI developer
 
 **11.** Finance's rule keeps customers with more than 90 days since their last order, plus never-ordered customers: Home Plus (never), City Needs Store (284), Sunrise Caterers (204), and Om Sai Provisions (162). That's **4 customers**. **Tasty Tiffins drops off**, at 66 days. An **analytics engineer** would fix the problem of two definitions: agree one definition (or two clearly named ones, such as "quiet 60" for sales follow-up and "inactive 90" for finance), build it once as a tested, documented table, and point every report at it. The wrong fix is to let each team keep its own hidden rule and argue in meetings.
 
-**12.** Likely reasons: (1) **Never-ordered customers were dropped.** An inner join, or a filter written as a plain `WHERE` condition on orders, removes Home Plus. Check: does Home Plus appear? (2) **Cancelled orders were counted as activity.** A customer whose only recent order was cancelled would look active. Check: look for cancelled orders after 1 November for the missing customer. (3) **A different cut-off date or comparison.** For example `<=` instead of `<`, a cut-off of 60 days from a different "today", or `CURRENT_DATE` instead of 31 December 2025. Check: compare the dates in the query with the requirement. In every case, reconcile: list the customers in both results and investigate the one that differs. Here, reason (1) is the most likely, because Home Plus is exactly the kind of row that inner joins silently lose.
+**12.** Likely reasons: (1) **Never-ordered customers were dropped.** The assistant started from orders instead of from every customer, so a customer with no orders never appears. Check: is Home Plus on its list? (2) **Cancelled orders were counted as activity.** A customer whose only recent order was cancelled would look active. Check: find which of the five is missing, then look for a cancelled order after 1 November for that customer. (3) **A different "today" or a different edge.** Counting from the day the assistant ran instead of 31 December 2025, or keeping "60 days or more" instead of "over 60 days", moves customers near the line. Check: is Tasty Tiffins, the closest to the line at 66 days, the one missing? Ask the assistant which date it counted from and which rule it kept. In every case, reconcile by putting the two lists side by side and investigating the customer that differs. Here, reason (1) is the most likely, because a never-ordered customer like Home Plus is exactly the kind of row that's easy to lose without noticing.
 
 **13.** A sensible order: **Business analyst** first, to define "late" (against the promised date? by how many days?) and find who needs the answer. **Data analyst** next, to measure how often Chennai deliveries are late, compared with other cities, and by delivery partner, route, product, or day of the week, and to suggest the likely causes. **BI developer**, if it needs watching every week, to add an on-time delivery page to the operations dashboard. **Automation or integration engineer**, if delivery status has to be copied from the delivery partners' systems by hand, to connect those systems. Leave out the **data scientist** and **ML engineer** for now: prediction is premature until the cause is understood and the data is reliable; they might come in later to predict late deliveries before dispatch. The **data architect** isn't needed for one analysis, though they'd care if delivery data turned out to be missing from the platform. Other reasonable orders are fine if each step depends on the one before.
 
@@ -602,7 +553,7 @@ The building is the **career tree**. The floors are **tiers**. The rest of this 
 
 ## 8.1 Skills are keys; roles are doors
 
-The draft of this book introduced one idea that stays at the center of this chapter: **learn skills for the doors they open, not because they're popular.**
+One idea sits at the center of this chapter: **learn skills for the doors they open, not because they're popular.**
 
 That idea changes how you study in three ways.
 
@@ -620,7 +571,7 @@ The career tree has seven tiers, numbered from 0. They match the parts of this b
 
 ![Seven tier bands stacked from bottom to top. Tier 0, foundations, Parts 0 and I, with a door labeled reporting or MIS assistant. Tier 1, the analyst core, Part II, with doors for data analyst, business analyst, BI analyst and automation analyst. Tier 2, advanced analytics and analytics engineering, Part III, with doors for analytics engineer, BI developer, senior analyst and RPA developer. Tier 3, data science and ML, Part IV, with a data scientist door, sits side by side with tier 4, engineering and integration, Part V, with data engineer and integration engineer doors, joined by a label saying peers. Tier 5, production ML and AI, Part VI, with ML engineer and AI engineer doors. Tier 6, architecture and leadership, Part VII, with a data architect door.](figures/fig8-1-career-tree-tiers.svg)
 
-*Figure 8.1 — The career tree as tiers and doors. Tiers 3 and 4 sit side by side: they're peers, and you can climb either one first.*
+*Figure 8.1 — The career tree as tiers and doors. Tiers 3 and 4 sit side by side: they're peers, and you can climb either one first. Names in the tiers that aren't among Chapter 7's ten roles (reporting/MIS assistant, BI analyst, senior analyst) are common entry titles for those roles.*
 
 **Tier 0: Foundations (Parts 0 and I).** What data is, how computers store it, how a business runs on it, numbers without fear, thinking like an analyst, and the map you're reading now. *Unlocks:* reporting assistant and MIS (management information system) roles, where you prepare regular reports mostly by hand. Few people stay here long, and the skills matter mainly because everything above rests on them.
 
@@ -632,7 +583,7 @@ The career tree has seven tiers, numbered from 0. They match the parts of this b
 
 **Tier 4: Engineering and integration (Part V).** Ingestion, pipelines and orchestration, data quality, distributed compute, warehouses and lakehouses, streaming, data activation and APIs, and the cloud. *Unlocks:* **data engineer**, **integration engineer**, and platform roles.
 
-**Tiers 3 and 4 are peers.** They sit at the same height on the tree. The book teaches science first because many analysts move toward it first, but plenty of excellent careers go from tier 2 straight into engineering. This is the fix for the first edition's tier order, which put engineering before science while the book taught them the other way round. Now tier numbers, part numbers, and the tree agree, and the figure shows the two branches side by side.
+**Tiers 3 and 4 are peers.** They sit at the same height on the tree. The book teaches science first because many analysts move toward it first, but plenty of excellent careers go from tier 2 straight into engineering. Tier numbers match the book's part numbers, so the figure shows the two branches side by side.
 
 **Tier 5: Production ML and AI (Part VI).** Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry cases. *Unlocks:* **ML engineer**, **AI engineer**, and MLOps and ML platform roles. Most people arrive here from tier 3 (with engineering added) or from tier 4 (with machine learning added).
 
@@ -650,7 +601,7 @@ The automation and integration track from Chapter 7 doesn't fit neatly on one fl
 
 ### How the tree works: three rules
 
-These rules from the first edition still hold, and the rest of the chapter depends on them.
+Three rules make the tree work, and the rest of the chapter depends on them.
 
 1. **You keep every skill below your tier.** Climbing doesn't mean leaving skills behind. They accumulate.
 2. **A role sits at the first tier that makes you credible for it.** You don't need tier 6 to apply for a tier 1 job. Learn up to the door you want, apply, and keep climbing on the job.
@@ -668,25 +619,25 @@ The tiers tell you roughly where a role sits. The skills matrix tells you exactl
 |---|---|---|---|---|---|---|---|---|---|---|
 | Business and domain sense | ● | ● | ○ | ○ | ● | ○ | ○ | ○ | ● | ● |
 | Communication and storytelling | ● | ● | ○ | ○ | ● | ○ | ○ | ○ | ○ | ● |
-| Spreadsheets (Excel, Sheets) | ● | ● | ○ | · | ○ | · | · | · | ● | ○ |
+| Spreadsheets (Excel, Sheets) | ● | ● | ○ | – | ○ | – | – | – | ● | ○ |
 | SQL | ● | ○ | ● | ● | ● | ○ | ● | ○ | ○ | ● |
-| BI and dashboards | ● | ○ | ● | ○ | ○ | · | · | · | ○ | ○ |
-| Statistics | ○ | · | · | · | ● | ○ | · | ○ | · | · |
-| Python | ○ | · | · | ○ | ● | ● | ● | ● | ● | ○ |
-| Spreadsheet and report automation | ○ | ○ | ○ | · | · | · | · | · | ● | · |
-| Requirements and process mapping | ○ | ● | ○ | ○ | · | · | · | ○ | ● | ● |
-| Data modeling (incl. dbt) | · | · | ● | ● | · | · | ● | · | · | ● |
-| Machine learning | · | · | · | · | ● | ● | · | ○ | · | ○ |
-| Pipelines and orchestration | · | · | · | ○ | · | ● | ● | ○ | ○ | ● |
-| Cloud and infrastructure | · | · | · | ○ | ○ | ● | ● | ● | ○ | ● |
-| APIs and integration | · | · | · | · | · | ○ | ● | ● | ● | ● |
-| LLMs and AI applications | · | · | · | · | ○ | ○ | · | ● | ○ | ○ |
-| Git and version control | · | · | ○ | ● | ○ | ● | ● | ● | ○ | ○ |
-| System design and governance | · | · | · | ○ | · | ○ | ○ | ○ | ○ | ● |
+| BI and dashboards | ● | ○ | ● | ○ | ○ | – | – | – | ○ | ○ |
+| Statistics | ○ | – | – | – | ● | ○ | – | ○ | – | – |
+| Python | ○ | – | – | ○ | ● | ● | ● | ● | ● | ○ |
+| Spreadsheet and report automation | ○ | ○ | ○ | – | – | – | – | – | ● | – |
+| Requirements and process mapping | ○ | ● | ○ | ○ | – | – | – | ○ | ● | ● |
+| Data modeling (incl. dbt) | – | – | ● | ● | – | – | ● | – | – | ● |
+| Machine learning | – | – | – | – | ● | ● | – | ○ | – | ○ |
+| Pipelines and orchestration | – | – | – | ○ | – | ● | ● | ○ | ○ | ● |
+| Cloud and infrastructure | – | – | – | ○ | ○ | ● | ● | ● | ○ | ● |
+| APIs and integration | – | – | – | – | – | ○ | ● | ● | ● | ● |
+| LLMs and AI applications | – | – | – | – | ○ | ○ | – | ● | ○ | ○ |
+| Git and version control | – | – | ○ | ● | ○ | ● | ● | ● | ○ | ○ |
+| System design and governance | – | – | – | ○ | – | ○ | ○ | ○ | ○ | ● |
 
-*Key: ● core · ○ useful · · not needed to get in. DA data analyst · BA business analyst · BI BI developer · AE analytics engineer · DS data scientist · MLE ML engineer · DE data engineer · AIE AI engineer · AUT automation analyst, RPA developer, or integration engineer · ARC data architect.*
+*Key: ● core · ○ useful · – not needed to get in. DA data analyst · BA business analyst · BI BI developer · AE analytics engineer · DS data scientist · MLE ML engineer · DE data engineer · AIE AI engineer · AUT automation analyst, RPA developer, or integration engineer · ARC data architect.*
 
-![A heatmap with 17 skills down the left and the ten roles across the top. Dark cells mark core skills, light cells mark useful skills, blank cells mark skills not needed to get in. SQL is dark or light for every role. The data architect column is the darkest overall. Machine learning is dark only for data scientist and ML engineer.](figures/fig8-2-skills-matrix.svg)
+![A heatmap with 17 skills down the left and the ten roles across the top, using the same abbreviations as the table. Dark cells with a filled dot mark core skills, mid-blue cells with a hollow dot mark useful skills, and a dash marks skills not needed to get in. SQL is dark or light for every role. The data architect column is the darkest overall. Machine learning is dark only for data scientist and ML engineer.](figures/fig8-2-skills-matrix.svg)
 
 *Figure 8.2 — The same matrix as a heatmap. Read down a column to see a role; read across a row to see which doors a skill helps open.*
 
@@ -857,37 +808,33 @@ Salary websites build their figures in two main ways.
 
 Because they measure different things, the two can disagree for the same role, and neither is wrong.
 
-### Three roles, as published in 2026
+### One role, as published in 2026
 
-Here are figures for three roles, as shown on PayScale's India pages (updated in July 2026) when this chapter was written. **Base salary** is fixed yearly pay before bonuses; **total pay** adds bonuses and similar extras.
+Here is one role, data analyst, as a worked example of reading a salary page. The figures are from PayScale's India page for the title. **Base salary** is fixed yearly pay before bonuses; **total pay** adds bonuses and similar extras.
 
-| Role (PayScale title) | Salary profiles | Average total pay, under 1 year | Average total pay, 1–4 years | Base salary, 10th–90th percentile | Median base salary |
+| Role (PayScale title) | Salary profiles | Average total pay, under 1 year | Average total pay, 1–4 years | Base salary, 10th–90th percentile | Average base salary |
 |---|---|---|---|---|---|
-| Data Analyst | 2,389 | ₹413,462 | ₹565,999 | about ₹289,000 to ₹1 million | about ₹577,000 |
-| Data Scientist | 1,267 | ₹595,255 | ₹1,005,147 | about ₹312,000 to ₹2 million | about ₹1 million |
-| Data Engineer | 1,284 | ₹518,398 | ₹810,624 | about ₹410,000 to ₹2 million | about ₹975,000 |
+| Data Analyst | 2,389 | ₹4,13,462 | ₹5,65,999 | about ₹2,89,000 to ₹10,00,000 | ₹5,77,472 |
 
-*Source: PayScale India job pages for each title, pages updated 9–14 July 2026, retrieved 16 September 2026. PayScale rounds its percentile figures (for example "₹1m"), so those columns are approximate. Figures change often; check the live pages.*
+*As retrieved September 2026. Source: PayScale India, "Data Analyst Salary in India", page updated 10 July 2026. PayScale rounds its percentile figures (it shows "₹289k" and "₹1m"), so that column is approximate. Its chart also marks the average base salary, rounded to ₹577k, as the median. Figures change often; check the live page.*
 
-In Indian terms, a data analyst's average total pay in the first year works out to about ₹4.1 lakh, and a data scientist's average in years one to four to about ₹10.1 lakh.
+In Indian terms, a data analyst's average total pay in the first year works out to about ₹4.1 lakh, and the average base salary to about ₹5.8 lakh.
 
-A **percentile** tells you where a value sits in a sorted list. The 10th percentile is the value below which 10% of reported salaries fall; the 90th percentile is the value below which 90% fall. So "₹289,000 to ₹1 million" means the middle 80% of data analyst profiles reported base pay in that range. The **median** is the middle value: half earn less, half earn more.
+A **percentile** tells you where a value sits in a sorted list. The 10th percentile is the value below which 10% of reported salaries fall; the 90th percentile is the value below which 90% fall. So "about ₹2,89,000 to ₹10,00,000" means the middle 80% of data analyst profiles reported base pay in that range. The **median** is the middle value: half earn less, half earn more. An **average** (the mean) adds every salary and divides by how many there are, so a few very high salaries can pull it up; that's why salary pages often show both.
 
 ### Reading the table carefully
 
-**The pattern is clearer than the numbers.** Roles that need more tiers of skill (science and engineering) show higher medians and faster early growth than the analyst role in this data. The data scientist median base salary (about ₹1 million) is roughly 1.73 times the data analyst median (about ₹577,000).
-
-**Don't read growth as a promise.** Average total pay for data analysts with 1–4 years is 36.9% higher than for those under a year: (₹565,999 ÷ ₹413,462 − 1) × 100 = 36.9%. For data scientists the difference is 68.9%, and for data engineers 56.4%. But these are *different groups of people*, not the same people a few years later. People who left the field, or never reported, aren't in the data.
-
-**Sources disagree.** For data analysts, Indeed's India page (based on 681 salaries from job postings, updated 30 August 2026) showed an average of ₹633,625 a year. PayScale's average base salary for the same title was ₹577,472. The difference is ₹56,153, with Indeed about 9.7% higher. That's not an error: one counts advertised pay across all experience levels, the other counts reported base salaries.
+**Sources disagree.** For data analysts, Indeed's India page (based on 605 salaries from job postings, updated 20 September 2026) showed an average of ₹6,29,019 a year. PayScale's average base salary for the same title was ₹5,77,472. The difference is ₹51,547, with Indeed about 8.9% higher. That's not an error: one counts advertised pay across all experience levels, the other counts reported base salaries.
 
 **Some roles don't have reliable figures under their own title yet.** Analytics engineer, AI engineer, and integration engineer are newer titles, and many people doing that work are listed under older ones (data engineer, software engineer, BI developer). Business analyst figures mix IT business analysts, finance business analysts, and more. For these, look at live job postings for the work you'd do, not only the title, and compare several sources.
+
+Chapter 68 compares pay across roles, and how pay grows with experience, when you're preparing for the job search.
 
 ### CTC and in-hand pay
 
 Indian offers are usually stated as **CTC** (cost to company): everything the employer spends on you in a year. CTC often includes the employer's provident fund contribution, variable or performance pay that isn't guaranteed, and sometimes insurance, gratuity, or one-time bonuses. Your **in-hand** (take-home) pay is what reaches your bank account each month after income tax, your own provident fund contribution, and other deductions. In-hand pay is always lower than CTC ÷ 12, and how much lower depends on how the offer is structured and on tax rules at the time. Always ask for the breakup, and ask which parts are fixed.
 
-> **Watch out: what moves pay.** City, company type, industry, and your specific skills can move pay more than the job title does. Two "data analyst" offers in the same month can differ by more than the whole range between roles in the table above. Compare offers on fixed pay, the work you'll do, and what you'll learn, not on the headline CTC alone. This is general information, not financial advice.
+> **Watch out: what moves pay.** City, company type, industry, and your specific skills can move pay more than the job title does. Two "data analyst" offers in the same month can differ widely. Compare offers on fixed pay, the work you'll do, and what you'll learn, not on the headline CTC alone. This is general information, not financial advice.
 
 ### How to check salaries yourself
 
@@ -1049,7 +996,7 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 - **A spreadsheet** (Excel or Google Sheets) for your skills matrix and gap score, or paper if you prefer.
 - **Two or more job portals.** Save postings as PDFs or screenshots; they disappear.
 - **Two salary sources that use different methods,** such as PayScale (self-reported) and Indeed (job postings), plus your city filter. Note the date on every figure you record.
-- **Companion files:** none for this chapter. The skills matrix values are listed in `checks/ch08_check.py` and in `figures/make_figs08.py`, if you'd like to rebuild or change it.
+- **Companion file:** `skills_matrix.xlsx`, the matrix in section 8.3 as a spreadsheet you can filter and extend.
 
 ---
 
@@ -1124,16 +1071,16 @@ Six weeks later, the email worked. It wasn't sophisticated: a query, a sheet, an
 ### Core
 
 4. Classify each line from a job posting as a must-have, a nice-to-have, a hidden skill, or a signal about who can apply: (a) "Experience with Tableau or Power BI." (b) "Exposure to Python is an advantage." (c) "You'll work with regional managers to agree monthly targets." (d) "Final-year students with internship experience may apply." (e) "Strong SQL is essential."
-5. Rahul scores himself against the Riverstone posting in section 8.5. Must-haves: SQL 0, spreadsheets 2, BI tool 1, automated a report 1, written communication 1. Nice-to-haves: Python 1, VBA or Apps Script 0, forecasting 2, CRM or ERP 2. Calculate his total score out of 28, the percentage, and his must-have coverage. Which single gap would you tell him to close first, and why?
-6. Using the PayScale table in section 8.6, calculate how much higher average total pay is for data engineers with 1–4 years than for those under a year, as a percentage. Then give one reason why this isn't the pay rise a new data engineer should expect after a few years.
-7. A friend says: *"Indeed says data analysts earn ₹633,625 on average, but PayScale says ₹577,472. One of them must be wrong."* Explain why both can be right, giving two differences between the sources.
+5. Rahul Mehta, from Riverstone's sales team, scores himself against the Riverstone posting in section 8.5. Must-haves: SQL 0, spreadsheets 2, BI tool 1, automated a report 1, written communication 1. Nice-to-haves: Python 1, VBA or Apps Script 0, forecasting 2, CRM or ERP 2. Calculate his total score out of 28, the percentage, and his must-have coverage. Which single gap would you tell him to close first, and why?
+6. Using the data analyst row in section 8.6: (a) Say in one sentence what "about ₹2,89,000 to ₹10,00,000, 10th–90th percentile" tells you. (b) Calculate how much higher average total pay is for data analysts with 1–4 years than for those under a year, as a percentage. (c) PayScale's chart marks ₹577k as the median. What does a median tell you that an average doesn't?
+7. A friend says: *"Indeed says data analysts earn ₹6,29,019 on average, but PayScale says ₹5,77,472. One of them must be wrong."* Explain why both can be right, giving two differences between the sources.
 8. Explain the difference between CTC and in-hand pay in three sentences, as you would to a friend comparing two offers.
 9. Using the reader pathways table, list what someone aiming to be a BI developer should read fully, what they should skim, and which interview chapters they should prepare with.
 
 ### Stretch
 
 10. Here's a posting: *"Data Scientist (Fresher). Must know Excel, SQL, Power BI, Tableau, Python, R, Spark, Hadoop, Kafka, AWS, Azure, GCP, TensorFlow, PyTorch, and LLMs. Duties: daily data entry of invoices and preparing weekly MIS reports for the accounts team."* List at least three red flags, say what the job really is (role and tier), and write two questions you'd ask before applying.
-11. Neha, a sales executive with strong Excel skills and three years of customer contact, wants to become a data analyst. Recommend an entry route and write a five-step plan using section 8.8 and section 8.9. Include which chapters of this book close which gaps.
+11. Neha Kulkarni, one of Riverstone's sales executives, has strong Excel skills and three years of customer contact, and wants to become a data analyst. Recommend an entry route and write a five-step plan using section 8.8 and section 8.9. Include which chapters of this book close which gaps.
 12. Using the skills matrix, count the skills that data analyst and BI developer both need at least some of (core or useful in both columns), and do the same for data analyst and data engineer. What do the two counts suggest about which move is shorter, and which skills make the difference?
 
 ### Think about it (no calculation needed)
@@ -1163,9 +1110,7 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
-**1.** Tier 0, foundations (Parts 0 and I); tier 1, the analyst core (Part II); tier 2, advanced analytics and analytics engineering (Part III); tier 3, data science and machine learning (Part IV); tier 4, engineering and integration (Part V); tier 5, production ML and AI (Part VI); tier 6, architecture and leadership (Part VII). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3, as the first edition did; the tier numbers now follow the book's parts.
+**1.** Tier 0, foundations (Parts 0 and I); tier 1, the analyst core (Part II); tier 2, advanced analytics and analytics engineering (Part III); tier 3, data science and machine learning (Part IV); tier 4, engineering and integration (Part V); tier 5, production ML and AI (Part VI); tier 6, architecture and leadership (Part VII). **Tiers 3 and 4 are peers.** The common wrong answer puts data engineering at tier 3; the tier numbers follow the book's parts, and tiers 3 and 4 are peers.
 
 **2.** (a) Automation analyst: tier 1. (b) Analytics engineer: tier 2. (c) ML engineer: tier 5. (d) Data architect: tier 6. (e) Business analyst: tier 1. (f) Integration engineer: tier 4. The trap is (a) and (f): both are on the automation track, but at different tiers, because an integration engineer needs the pipeline and API skills of Part V.
 
@@ -1175,9 +1120,9 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 **5.** Must-have points: (0 + 2 + 1 + 1 + 1) × 2 = 5 × 2 = 10. Nice-to-have points: 1 + 0 + 2 + 2 = 5. Total **15 of 28 = 53.6%**. Must-have coverage: 5 of 10 = **50%**, the same as Farah's, even though his total is higher, because his extra points come from nice-to-haves. Close **SQL** first: it's a must-have, he scores 0, and it's the one skill every role on the tree uses. His forecasting score won't get him shortlisted without it. The common wrong answer is to celebrate the higher total; must-haves decide the shortlist.
 
-**6.** (₹810,624 ÷ ₹518,398 − 1) × 100 = **56.4%** higher. It isn't a promised rise because the two figures come from **different groups of people**, not the same people over time. The 1–4 year group also only includes people still in the role who chose to report, and pay depends heavily on city, company, and skills. Any one of these is a good reason.
+**6.** (a) The middle 80% of data analysts who reported their pay earn a base salary between about ₹2.89 lakh and ₹10 lakh a year: 10% earn less than the lower figure and 10% more than the upper one. (b) (₹5,65,999 ÷ ₹4,13,462 − 1) × 100 = **36.9%** higher. (c) The median is the middle salary: half earn less, half earn more. An average can be pulled up by a few very high salaries, so the median is often the better picture of a typical salary. Here PayScale's average and median round to the same ₹577k, so the few high earners aren't pulling the average far.
 
-**7.** Both can be right because they measure different things. (1) **Method:** Indeed's figure comes from salaries advertised in job postings; PayScale's comes from salaries people report themselves. (2) **What's counted:** the PayScale figure quoted is average base salary, while advertised figures may include other pay. The sources also differ in **sample** (681 postings versus 2,389 profiles), **date** (updated 30 August 2026 versus July 2026), and the mix of experience and cities. The gap is ₹56,153, about 9.7%, which is small next to the range within either source.
+**7.** Both can be right because they measure different things. (1) **Method:** Indeed's figure comes from salaries advertised in job postings; PayScale's comes from salaries people report themselves. (2) **What's counted:** the PayScale figure quoted is average base salary, while advertised figures may include other pay. The sources also differ in **sample** (605 postings versus 2,389 profiles), **date** (updated 20 September 2026 versus 10 July 2026), and the mix of experience and cities. The gap is ₹6,29,019 − ₹5,77,472 = ₹51,547, and ₹51,547 ÷ ₹5,77,472 = 8.9%, which is small next to the range within either source.
 
 **8.** A sample answer: *"CTC is everything the company says it spends on you in a year, including things like the employer's provident fund share and bonuses that aren't guaranteed. In-hand pay is what actually reaches your bank account each month, after tax and your own deductions, so it's always less than CTC divided by 12. When you compare offers, ask for the breakup and compare the fixed, monthly in-hand amount, not only the CTC headline."*
 
@@ -1185,7 +1130,7 @@ key · door · credible applicant · career tree · tier · MIS (management info
 
 **10.** Red flags: (1) a **tool list far longer than the duties**, covering every tier from spreadsheets to cloud to LLMs; (2) a **senior title with junior duties**: invoice data entry and MIS reports aren't data science; (3) a **fresher role expected to know tools from tiers 1–5**, which nobody entering the field has. The real job is closest to a **reporting or MIS assistant (tier 0 to tier 1)**, with some data entry. Useful questions: *"What would I produce in my first three months?"* and *"Which of the listed tools are used by the team today?"* Other good questions ask about who the role reports to, or whether there's a path into analysis. The job might still be a reasonable first step if the pay and learning are fair, but not under the belief that it's a data science role.
 
-**11.** Recommended route: **internal move** if Neha's company has analysis work she can take on, otherwise **career switcher** into a sales analyst role, using her customer knowledge as her advantage. A five-step plan: (1) **Pick the door:** data analyst, ideally sales analytics. (2) **Find the keys:** the data analyst column (business sense, communication, spreadsheets, SQL, BI) checked against five postings. (3) **Score and list gaps:** likely SQL (Chapters 12–13), a BI tool (Chapter 16), and one automated report (Chapters 19–20); her spreadsheets and business sense are strengths. (4) **Build evidence on her own domain:** automate her weekly customer report and build a dashboard of her region, using non-confidential or practice data if she'll show it publicly. (5) **Make it visible:** tell her manager her goal, volunteer for an analysis nobody owns, and re-score herself in three months. Any plan that orders must-have gaps first and ties each to a project is acceptable.
+**11.** Recommended route: an **internal move**. Neha already works at Riverstone, knows its customers, and has the posting in section 8.5 in front of her, as Farah did. If no role opens there, the same plan works as a **career switcher** route into a sales analyst role elsewhere, with her customer knowledge as her advantage. A five-step plan: (1) **Pick the door:** data analyst, ideally sales analytics. (2) **Find the keys:** the data analyst column (business sense, communication, spreadsheets, SQL, BI) checked against five postings. (3) **Score and list gaps:** likely SQL (Chapters 12–13), a BI tool (Chapter 16), and one automated report (Chapters 19–20); her spreadsheets and business sense are strengths. (4) **Build evidence on her own domain:** automate her weekly customer report and build a dashboard of her region, using non-confidential or practice data if she'll show it publicly. (5) **Make it visible:** tell her manager her goal, volunteer for an analysis nobody owns, and re-score herself in three months. Any plan that orders must-have gaps first and ties each to a project is acceptable.
 
 **12.** **Data analyst and BI developer: 7 shared skills** (business and domain sense, communication and storytelling, spreadsheets, SQL, BI and dashboards, spreadsheet and report automation, requirements and process mapping). **Data analyst and data engineer: 4** (business sense, communication, SQL, and Python). Analyst to BI developer is the shorter move: the analyst already has most of what's needed, and the main new core skill is data modeling. Analyst to data engineer needs several skills the analyst column doesn't have at all: data modeling, pipelines and orchestration, cloud, APIs and integration, and Git.
 
@@ -1258,7 +1203,7 @@ Now divide by the hours you can *really* give each week, not the hours you wish 
 | 6 | 34 ÷ 6 = 5.7 to 43 ÷ 6 = 7.2 weeks |
 | 10 | 34 ÷ 10 = 3.4 to 43 ÷ 10 = 4.3 weeks |
 
-At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part II has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar.
+At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part II has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
 
 > **Watch out: chapter hours are not fluency hours.** Finishing Chapters 12 and 13 means you can write the queries they teach. Being quick and confident on a messy real dataset takes more: many more questions, answered on data you didn't design. Plan for the chapter hours, then plan for practice beyond them. Section 9.4 shows how to make those hours count.
 
@@ -1268,7 +1213,7 @@ At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapter
 
 ## 9.2 Why the long timeline is good news
 
-Here's the reframe that makes the long timeline an advantage instead of a punishment. It's kept from the first edition of this book, because it's still true.
+Here's the reframe that makes the long timeline an advantage instead of a punishment.
 
 **Because it's slow, it's defensible.** A skill anyone can pick up in a weekend, everyone picks up in a weekend, and it earns no premium. The very thing that makes this career demanding is what makes it valuable. The years are the moat around your work.
 
@@ -1306,7 +1251,7 @@ The idea of **deliberate practice** comes from research on expert performers, mo
 
 It has five features.
 
-- **A specific goal.** Not "do some SQL", but "write a query that keeps customers who have never ordered".
+- **A specific goal.** Not "do some SQL", but "work out, by hand, which customers in a list of 20 have never ordered".
 - **Difficulty slightly beyond your current ability.** Hard enough that you might fail, not so hard that you can't tell why.
 - **Full attention,** for a limited time. Short, focused sessions beat long, distracted ones.
 - **Immediate feedback.** You find out quickly whether you were right, and *why* you weren't.
@@ -1314,7 +1259,7 @@ It has five features.
 
 **Naive practice** is the opposite: doing what's comfortable, without a goal or feedback, and counting the hours.
 
-![A comparison table with six rows. Goal: naive practice is "do some SQL tonight"; deliberate practice is "write a LEFT JOIN that keeps never-ordered customers". Difficulty: what already feels comfortable, versus slightly beyond what you can do unaided. Attention: half-watching a video with the phone nearby, versus full focus for a short fixed block. Feedback: none, or "it ran so it's right", versus comparing with a known answer and finding why it differs. Repetition: move on after one success, versus redo it tomorrow without looking and vary it. Record: nothing written down, versus a log of what was hard and what to try next.](figures/fig9-2-naive-vs-deliberate-practice.svg)
+![A comparison table with six rows. Goal: naive practice is "do some SQL tonight"; deliberate practice is "build a monthly total of your spending log and check it against the sum of every row". Difficulty: what already feels comfortable, versus slightly beyond what you can do unaided. Attention: half-watching a video with the phone nearby, versus full focus for a short fixed block. Feedback: none, or "it ran so it's right", versus comparing with a known answer and finding why it differs. Repetition: move on after one success, versus redo it tomorrow without looking and vary it. Record: nothing written down, versus a log of what was hard and what to try next.](figures/fig9-2-naive-vs-deliberate-practice.svg)
 
 *Figure 9.2 — Naive and deliberate practice. The hours can be identical; what you do in them is not.*
 
@@ -1378,7 +1323,7 @@ A strong piece reads like a short piece of real work, not a tour of a tool. It f
 | Stage | Pieces worth building | From chapters |
 |---|---|---|
 | Foundations | A classified personal dataset; a process map of a real workflow | 1, 3, 7 |
-| Analyst core | A cleaned dataset with a data-quality note; a SQL analysis answering three business questions; a dashboard; one automated report | 12–20, 27 |
+| Analyst core | A cleaned dataset with a data-quality note; a SQL analysis answering three business questions; a dashboard; one automated report | 12, 13, 14, 16, 20, 27 |
 | Advanced analytics | A tested dbt project; an A/B test analysis | 30, 32 |
 | Science or engineering | An end-to-end model with honest evaluation, or a monitored pipeline | 44, 46–47 |
 | Architecture | A design document with decision records | 60, 63 |
@@ -1387,7 +1332,7 @@ A strong piece reads like a short piece of real work, not a tour of a tool. It f
 
 - **Quality over count.** Three pieces that each answer a real question beat ten tutorial copies.
 - **Use realistic or public data,** never your employer's confidential data. The Riverstone datasets, public government data, and your own records (anonymized) are all fine.
-- **Put it where people can open it in one click:** a GitHub repository with a clear README, a shared folder, or a simple web page. Chapter 26 covers Git and GitHub.
+- **Put it where people can open it in one click:** a GitHub repository with a clear README, a shared folder, or a simple web page.
 - **Keep the write-up short,** and make the first paragraph readable by a manager who never opens the code.
 - **Update it as you climb.** Retire early pieces when better ones replace them.
 
@@ -1422,7 +1367,7 @@ People say yes to questions that respect their time. A good request for help has
 4. **What you expected,** and why.
 5. **A small example** someone can reproduce, with invented or public data.
 
-Compare *"My SQL join isn't working, please help"* with *"I'm trying to list every customer, including those with no orders. I used a LEFT JOIN with `WHERE o.status <> 'Cancelled'`, and customers with no orders disappear. I expected them to stay with blank order columns. Here are two small tables that show it."* The second question is often answered in minutes, and writing it frequently reveals the answer before you send it. (Chapter 12, section 12.10, explains this exact trap.)
+Compare *"My totals are wrong, please help"* with *"I'm totalling my spending log by category. My Food total is ₹1,230, but when I add the Food receipts by hand I get ₹1,380. I expected them to match. Here are the eight Food rows."* The second question is often answered in minutes, and writing it frequently reveals the answer before you send it.
 
 ### Finding a mentor
 
@@ -1440,7 +1385,7 @@ A **mentor** is someone further along the path who gives you occasional guidance
 
 ## 9.7 Handling plateaus
 
-Almost everyone who learns a difficult skill hits **plateaus**: stretches where effort continues and visible progress stops. The first edition of this book saved this topic for its closing chapter. It's here now, because you'll meet your first plateau long before the end of the book.
+Almost everyone who learns a difficult skill hits **plateaus**: stretches where effort continues and visible progress stops. This section comes early on purpose: you'll meet your first plateau long before the end of the book.
 
 ### What a plateau looks like in data
 
@@ -1451,17 +1396,17 @@ Farah Khan, the Riverstone sales executive from Chapter 8, kept a simple log whi
 | **Practice minutes** | 180 | 200 | 210 | 220 | 240 | 260 | 270 | 240 | 240 | 250 | 240 | 250 |
 | **Weekly check (of 10)** | 3 | 4 | 5 | 6 | 6 | 6 | 6 | 6 | 7 | 8 | 8 | 9 |
 
-![A combined chart for weeks 1 to 12. Grey bars show practice minutes per week, rising from 180 to 270 by week 7, then around 240 to 250. A blue line shows the weekly check score out of 10: 3, 4, 5, 6, then flat at 6 for weeks 4 to 8, then 7, 8, 8, 9. Weeks 4 to 8 are shaded and labeled: plateau, score stuck at 6 for five weeks. A note under week 8 says: from week 8, harder problems on her own questions, reviewed weekly.](figures/fig9-4-practice-log-plateau.svg)
+![A combined chart for weeks 1 to 12, with its two scales named at the top: bars for practice minutes per week, a line for the weekly check score out of 10. The bars rise from 180 minutes to 270 by week 7, then sit around 240 to 250. The line reads 3, 4, 5, 6, then stays at 6 through weeks 5 to 8, then 7, 8, 8, 9. Weeks 5 to 8 are shaded and labeled: plateau, weeks 5 to 8, score stuck at 6. A note under week 8 says: from week 8, harder problems on her own questions, reviewed weekly.](figures/fig9-4-practice-log-plateau.svg)
 
 *Figure 9.4 — Farah's practice log. During the plateau she practiced more, not less. The score moved again only when she changed how she practiced.*
 
 **Reading it.**
 
-- In weeks 1–4, Farah practiced 810 minutes in total, and her score rose from 3 to 6.
-- In weeks 4–8, she practiced 1,230 minutes, and her score didn't move. She responded the way most people do: she practiced *more*. Her weekly minutes rose from 220 in week 4 to 270 in week 7, an increase of 22.7%, with no gain.
-- In week 8, she changed *what* she practiced (the story in "In the real world" explains how). In weeks 9–12, she practiced 980 minutes, fewer than in the plateau weeks, and her score rose from 6 to 9.
+- In weeks 1–4, Farah practiced 810 minutes (180 + 200 + 210 + 220), and her score rose from 3 to 6.
+- In weeks 5–8, she practiced 1,010 minutes (240 + 260 + 270 + 240), and her score didn't move. She responded the way most people do: she practiced *more*, from 220 minutes in week 4 to 270 in week 7, an increase of 22.7% (50 ÷ 220), with no gain.
+- In week 8, she changed *what* she practiced (the story in "In the real world" explains how). In weeks 9–12, she practiced 980 minutes (240 + 250 + 240 + 250), slightly less than in the plateau, and her score rose from 6 to 9.
 
-Over the 12 weeks, she practiced 2,800 minutes, about 46.7 hours: slightly more than the 34–43 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
+Over the 12 weeks, she practiced 2,800 minutes (810 + 1,010 + 980), about 46.7 hours (2,800 ÷ 60): slightly more than the 34–43 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
 
 > **Simplification note.** Farah's log is fictional and deliberately tidy, to make the pattern clear. Real logs are noisier: a bad week, a holiday, a harder check. Look for a flat stretch over several weeks, not a single low score.
 
@@ -1507,7 +1452,7 @@ Be patient with the third ingredient, feedback and time. It's the one this book 
 |---|---|---|
 | Believing a timeline advertised by a course | Feeling like a failure in month three or four | Estimate from chapter hours and your real weekly hours (section 9.1) |
 | Planning with the hours you wish you had | Plans that collapse in the second week | Count last week's real hours; plan with those |
-| Studying without building | Can explain a JOIN, can't answer a question with one | Start a small project as soon as you've learned enough to begin |
+| Studying without building | Can explain a technique, can't answer a question with it | Start a small project as soon as you've learned enough to begin |
 | Rereading instead of testing yourself | Material feels familiar but won't come back without the book | Write what you remember first, then check (retrieval practice) |
 | Counting hours instead of designing practice | Many hours, little change | Use the five features of deliberate practice (section 9.4) |
 | Letting an AI assistant solve every hard step | Can read solutions, can't write them | Attempt first; use the assistant to compare and explain |
@@ -1535,19 +1480,19 @@ Farah opened the sheet. Meera looked at the minutes column, then at the problems
 
 "You're not bad at SQL," Meera said. "You've become very good at these exercises. You know the answers. Your check has new problems, and that's where you're stuck."
 
-She asked Farah to solve one of the week-7 check problems aloud. Farah got halfway and stopped: the problem needed customers with *no* orders, and her join kept dropping them. Meera recognized it immediately; she'd tripped over the same thing when she started. "Every one you missed last week has the same shape, doesn't it?"
+She asked Farah to solve one of the week-7 check problems aloud. Farah got halfway and stopped: the problem needed customers with *no* orders, and her answers kept leaving out customers who had never ordered. Meera recognized it immediately; she'd tripped over the same thing when she started. "Every one you missed last week has the same shape, doesn't it?"
 
-Farah checked her mistakes list. Eight of the twelve problems she'd got wrong in weeks 5 to 7 involved customers or products that didn't appear in another table. It wasn't a plateau in SQL. It was one idea, the difference between an inner and a left join and where the filter goes, that she'd been working around instead of learning.
+Farah checked her mistakes list. Eight of the twelve problems she'd got wrong in weeks 5 to 7 involved customers or products that didn't appear in another table. It wasn't a plateau in SQL. It was one idea, how to keep the rows that have no match in the other table, that she'd been working around instead of learning.
 
 They changed three things.
 
 - **Harder, real problems.** Instead of repeating chapter exercises, Farah wrote five questions a week about her own customers, the kind Anita actually asked, and answered them on the practice data.
-- **One missing idea, fixed properly.** She went back to Chapter 12, section 12.10, rebuilt its LEFT JOIN examples without looking, and did its trap examples until she could predict every result.
+- **One missing idea, fixed properly.** She went back to the section that teaches it, rebuilt that section's examples without looking, and did its trap examples until she could predict every result. (Chapter 12, section 12.10, teaches this exact idea.)
 - **Weekly feedback.** Every Friday, she showed Meera one query and explained it aloud, in the ten minutes before they started on the at-risk list.
 
-She also cut her minutes back. The late nights stopped.
+She kept her minutes about the same, but the late nights stopped.
 
-Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was 7. Week 10 was 8. By week 12 she scored 9, having practiced fewer minutes in weeks 9 to 12 than during the plateau. And one of her "own questions" (*which hospitality customers ordered before last year's wedding season but not this year?*) turned into the first portfolio piece she was proud of, written up on one page with the check and the decision.
+Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was 7. Week 10 was 8. By week 12 she scored 9, having practiced slightly fewer minutes in weeks 9 to 12 than during the plateau. And one of her "own questions" (*which hospitality customers ordered before last year's wedding season but not this year?*) turned into the first portfolio piece she was proud of, written up on one page with the check and the decision.
 
 **What made this work.**
 
@@ -1564,7 +1509,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 - **A weekly check:** a fixed set of new problems at a steady difficulty. The exercises in later chapters, used for the first time, work well; don't reuse problems you've already practiced.
 - **A place for your portfolio:** a GitHub account (Chapter 26 shows how to use it), a shared folder, or a simple free web page.
 - **A timer,** for short focused practice blocks.
-- **Companion files:** none for this chapter. Farah's log is listed in `checks/ch09_check.py` and `figures/make_figs09.py` if you'd like to chart your own the same way.
+- **Companion file:** practice_log_template.xlsx, with Farah's 12 weeks already filled in and a chart that updates as you add your own weeks.
 
 ---
 
@@ -1646,7 +1591,7 @@ Week 8's check was 6 again, and Farah nearly gave up on the new plan. Week 9 was
 ### Stretch
 
 9. A learner's weekly check scores over ten weeks are 4, 5, 5, 6, 6, 6, 6, 5, 6, 6, while their practice minutes rose every week. Describe what the log shows, list two likely causes from section 9.7, and propose three specific changes.
-10. Design one week of deliberate practice (five 40-minute sessions) for someone who has finished Chapter 13 and struggles with window functions. For each session, give the goal, the method, and the source of feedback.
+10. Design one week of deliberate practice (five 40-minute sessions) for someone who has finished Chapter 4 and struggles with percentage points versus percent change. For each session, give the goal, the method, and the source of feedback.
 11. A friend says: *"Deliberate practice only explains a small share of performance in professions, so practice doesn't matter for data jobs."* Using section 9.4, explain what's wrong with that conclusion, and what the research does suggest.
 
 ### Think about it (no calculation needed)
@@ -1668,8 +1613,8 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 ## Where this leads
 
 - **Part II, The Analyst (Chapters 10–27),** is where you'll use this chapter first. Start your practice log with Chapter 10.
-- **Chapter 6, Setting Up to Learn,** covers your study setup, a sample 6-month analyst plan, and learning with AI assistants without letting them think for you.
-- **Chapter 12, section 12.10,** teaches the LEFT JOIN trap that stalled Farah.
+- **Chapter 6, Planning Your Learning,** turns this chapter's timeline into hours and weeks for your own plan, and covers learning with AI assistants without letting them think for you.
+- **Chapter 12, section 12.10,** teaches how to keep the rows that have no match in another table, the idea that stalled Farah.
 - **Chapter 26** covers Git and GitHub, where your portfolio can live; **Chapter 27** turns your projects into a finished analyst portfolio.
 - **Chapter 83, The Long Game,** returns to learning over a whole career, including the plateaus of later years.
 - **Part VIII, Chapter 68, How Data Hiring Works,** shows how portfolios are read in hiring, and **Chapter 81** helps you turn your projects and plateaus into strong behavioral interview answers.
@@ -1678,11 +1623,9 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 ## Answers to practice exercises
 
-*(In the finished book these move to Appendix G.)*
-
 **1.** **Study** produces knowledge (understanding the concepts). **Projects** produce skill (being able to do the work on real, messy data). **Feedback and time** produce judgment (knowing which approach to use, and when it will mislead).
 
-**2.** Sample answers; any specific, checkable goal is acceptable. (a) *"Build a pivot table of Riverstone revenue by month and category, and reconcile its grand total to the total in the source data."* (b) *"Write three queries that keep customers with no orders, predicting each result before running it."* (c) *"Build a one-page Power BI report with revenue by month and a slicer by segment, from the Chapter 16 dataset, in 60 minutes."* The common weak answer names a topic ("learn LEFT JOINs") instead of a task with a checkable result.
+**2.** Sample answers; any specific, checkable goal is acceptable. (a) *"Build a pivot table of Riverstone revenue by month and category, and reconcile its grand total to the total in the source data."* (b) *"Answer three questions about customers with no orders on the practice data, predicting each result first."* (c) *"Build a one-page Power BI report with revenue by month and a slicer by segment, from the Chapter 16 dataset, in 60 minutes."* The common weak answer names a topic ("learn pivot tables") instead of a task with a checkable result.
 
 **3.** (a) Naive: rereading feels productive but doesn't test recall or give feedback. (b) Deliberate: a specific prediction with immediate feedback when the result differs. (c) Naive: divided attention and no feedback. (d) Deliberate: retrieval (rebuilding from memory) with feedback (compare with the worked example).
 
@@ -1692,13 +1635,13 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 **6.** From 3 to 9 is an increase of 6 points: (9 ÷ 3 − 1) × 100 = **200%**. Her rising minutes in weeks 5–7 (240, 260, 270) aren't evidence of bad work: she was putting in *more* effort. The log shows that the *kind* of practice had stopped working (she was repeating familiar exercises and working around one missing idea), not that she wasn't trying. The common wrong reading is that a plateau means low effort.
 
-**7.** A sample answer: *"(Goal) I'm building a pivot table in Google Sheets that totals revenue by month. (Attempt) I selected A1:F200 and added Month as rows and Revenue as values, summarized by SUM. (Result) The March total is ₹48,200, but adding the March rows by hand gives ₹52,700. (Expectation) I expected the two to match. (Example) Here's a copy of the sheet with invented data, 12 rows, that shows the same difference."* Writing this often reveals the cause, for example rows outside the selected range or revenue stored as text in some rows.
+**7.** A sample answer: *"(Goal) I'm building a pivot table in Google Sheets that totals revenue by month. (Attempt) I selected the data down to row 200 and added Month as rows and Revenue as values, summarized by SUM. (Result) The March total is ₹48,200, but adding the March rows by hand gives ₹52,700. (Expectation) I expected the two to match. (Example) Here's a copy of the sheet with invented data, 12 rows, that shows the same difference."* Writing this often reveals the cause, for example rows outside the selected range or revenue stored as text in some rows.
 
 **8.** Sample outline. **Question:** which products sell best to hospitality customers, and should promotion change? **Data:** Riverstone one-year database (fictional), orders and products for 2025, hospitality segment only; note it excludes returns and tax. **Approach:** revenue and quantity by product for hospitality customers, compared with all customers; share of hospitality revenue per product. **Result:** one table of products ranked by hospitality revenue, with each product's share compared with its share overall. **Check:** hospitality product revenues add up to total hospitality revenue; one order hand-checked. **Decision:** promote the products where hospitality's share is high but sales are still small, and stop promoting products hospitality customers rarely buy. **Next:** repeat by quarter to see seasonality, and send it to the hospitality sales executive monthly. Any outline with all seven parts, a check, and a decision is acceptable; the analysis itself is built in Part II.
 
 **9.** The log shows a **plateau**: scores rose from 4 to 6 by week 4, then stayed at 5–6 for six weeks while practice minutes kept rising. Likely causes: practice has become **comfortable** (repeating problems already mastered), or a **missing underlying idea** is blocking a family of problems; tool-hopping or fatigue are also possible. Three changes: (1) review the mistakes list and look for a shared cause, then rebuild that section's examples without looking; (2) replace repeated exercises with new, harder problems, ideally the learner's own real questions; (3) get outside feedback, for example solving one problem aloud for a peer each week, and reduce minutes if fatigue is part of it.
 
-**10.** Sample week (any design with specific goals, deliberate methods, and a feedback source is acceptable). **Monday:** goal: explain `PARTITION BY` versus `GROUP BY`; method: write a one-paragraph explanation from memory, then check against section 13.3; feedback: the chapter text. **Tuesday:** goal: predict the output of three window queries before running them; method: predict, then run; feedback: the real output. **Wednesday:** goal: rebuild the running-total example from its question alone; method: rebuild without looking; feedback: compare with the chapter's result. **Thursday:** goal: solve two new window problems on a different table; method: vary the problem; feedback: exercise answers. **Friday:** goal: explain one solution aloud to a peer or record it; method: explain it; feedback: the peer's questions, and a note of anything you couldn't explain.
+**10.** Sample week (any design with specific goals, deliberate methods, and a feedback source is acceptable). **Monday:** goal: explain the difference between a percentage-point change and a percent change in one paragraph; method: write it from memory, then check against section 4.2; feedback: the chapter text. **Tuesday:** goal: for five pairs of rates (for example, a market share that rises from 40% to 50%), write down both changes before working them out; method: predict, then calculate (50 − 40 = 10 points; 10 ÷ 40 = a 25% rise); feedback: the calculator. **Wednesday:** goal: rebuild section 4.2's worked example from its question alone; method: rebuild without looking; feedback: compare with the chapter's result. **Thursday:** goal: find three news sentences that report a change in a rate (an interest rate, an unemployment rate, a market share) and rewrite each one with both the points and the percent change; method: vary the problem; feedback: a study partner checks the arithmetic. **Friday:** goal: explain aloud why a loan rate going from 8% to 9% is a rise of 1 point but a 12.5% increase (1 ÷ 8) in the interest you pay; method: explain it to a peer or record it; feedback: the peer's questions, and a note of anything you couldn't explain.
 
 **11.** The friend misreads the finding. The meta-analysis measured how much of the *differences between people* was explained by the *amount* of deliberate practice they reported; a small share in professions doesn't mean practice is unimportant. Everyone in those professions had already practiced a great deal, which shrinks the differences practice can explain, and on-the-job learning is hard to measure as "deliberate practice". The research suggests that practice matters and its quality matters most, and that in professional work other things also matter: working on real problems, getting real feedback, and learning from experienced people. That's why the three ingredients include projects and feedback, not practice alone.
 

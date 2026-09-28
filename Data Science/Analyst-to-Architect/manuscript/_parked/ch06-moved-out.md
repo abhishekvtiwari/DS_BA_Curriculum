@@ -383,11 +383,11 @@ If the documentation doesn't answer it, try the tool's official forums, then a w
 
 ## 8. Old §6.8 sample six-month plan (Figure 6.2)
 
-**Retired: replaced by Ch 6 §6.1's hours table (findings 0.1, I.8).** Figure file `figures/fig6-2-six-month-plan.svg` is no longer used by Ch 6 (delete it once the Part 0 collated file is regenerated). RJ-S1-1 and RJ-S3-9 (redraw this plan to another reading order) are moot: the plan is gone.
+**Retired: replaced by Ch 6 §6.1's hours table (findings 0.1, I.8).** Its figure file, `figures/fig6-2-six-month-plan.svg`, was deleted in the Part 0/I build; the description below records what it showed. RJ-S1-1 and RJ-S3-9 (redraw this plan to another reading order) are moot: the plan is gone.
 
 ### A sample six-month plan
 
-![A six-month plan: month 1, Chapters 1–9; month 2, spreadsheets (Chapters 10–11); month 3, SQL (Chapters 12–13); month 4, cleaning, charts, and Power BI (Chapters 14–16); month 5, Python and statistics (Chapters 17–18, 21–22); month 6, automation, business skills, and the portfolio (Chapters 19–20, 23–27), with interview practice starting](figures/fig6-2-six-month-plan.svg)
+*[Retired figure] A six-month plan: month 1, Chapters 1–9; month 2, spreadsheets (Chapters 10–11); month 3, SQL (Chapters 12–13); month 4, cleaning, charts, and Power BI (Chapters 14–16); month 5, Python and statistics (Chapters 17–18, 21–22); month 6, automation, business skills, and the portfolio (Chapters 19–20, 23–27), with interview practice starting.*
 
 *Figure 6.2 — One way through the analyst path (Parts 0 to II) in six months, at about 8 hours a week.*
 
