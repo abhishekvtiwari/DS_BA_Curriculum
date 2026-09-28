@@ -33,6 +33,10 @@ RATES = (6, 8, 10)
 
 RANGE = re.compile(r'(\d+)\s*[–-]\s*(\d+)\s+hours?\b')
 SPECIAL = {67: (2, 4)}      # "about two hours" to read, counted as 2–4 (Chapter 83's rule)
+# Lines whose later ranges break the first one down (sittings, sections) rather than add to it
+# (Parts 2 and 3 build, 28 Sep 2026). Chapter 27 adds its two stated parts: reading and running the
+# worked project (2–3 h) and the reader's own portfolio (20–30 h, which includes the deep project).
+SPECIAL.update({11: (35, 45), 19: (25, 30), 27: (22, 33), 29: (20, 24), 32: (18, 22)})
 
 
 def chapter_file(n):
