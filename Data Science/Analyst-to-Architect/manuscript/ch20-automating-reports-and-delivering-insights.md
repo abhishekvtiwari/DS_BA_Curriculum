@@ -53,11 +53,11 @@ The mistake most first automations make is building a beautiful press with no ph
 
 | Rung | What it means | Right when |
 |---|---|---|
-| **1 Manual** | A person does every step | It's truly one-off, or the judgment is the work |
-| **2 Refreshable** | The steps are recorded: Power Query, a saved query, a model | The shape is stable; the data changes |
-| **3 Scheduled** | A script runs at a fixed time | The report is regular and the audience is fixed |
-| **4 Triggered** | It runs when something happens: a file lands, a form is submitted, a threshold breaks | Waiting until tomorrow morning would be too late |
-| **5 Self-serve** | People answer their own questions in a model or dashboard | The questions vary, and you're the bottleneck |
+| **1 Manual** | A person does every step | It's truly one-off, or the judgment is the work |
+| **2 Refreshable** | The steps are recorded: Power Query, a saved query, a model | The shape is stable; the data changes |
+| **3 Scheduled** | A script runs at a fixed time | The report is regular and the audience is fixed |
+| **4 Triggered** | It runs when something happens: a file lands, a form is submitted, a threshold breaks | Waiting until tomorrow morning would be too late |
+| **5 Self-serve** | People answer their own questions in a model or dashboard | The questions vary, and you're the bottleneck |
 
 Three practical rules:
 
@@ -131,6 +131,25 @@ Email clients are not browsers. Classic Outlook for Windows renders HTML with Mi
 - **Images with a `width` attribute and `alt` text**, because many clients block images by default: the email must still make sense with every image missing.
 - **No JavaScript**, ever. It's stripped, and it would be a security problem if it weren't.
 
+### What it looks like
+
+This section and the next build one email: the finished Flash, made by `companion/ch20/daily_flash.py` and shown in Figure 20.3 as the recipients see it, with its subject line above it.
+
+![The Riverstone Daily Sales Flash email under its subject line: a title, four KPI tiles (net revenue ₹2,511,819 up 2.3% on last year, 118 orders from 116 customers, average order ₹21,287 at 27.3% margin, month to date ₹5.71 crore), a 14-day revenue line chart titled "18 Dec, at ₹25.1 lakh, was the second-lowest day of the last 14", a table of today's revenue by segment, and a red low-movement exception box for Industrial Crate, 345 units](figures/fig20-3-daily-flash-email.png)
+
+*Figure 20.3 — Riverstone's Daily Sales Flash for 18 December 2025. Four numbers, a trend, a small table, one exception, and a line saying where it came from. Everything above the fold answers "was today good?".*
+
+Design rules for the body, which are Chapter 15's rules under email constraints:
+
+1. **Four tiles maximum**, each with a comparison. A number without a comparison is trivia.
+2. **The subject line carries the headline:** `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Many readers never open it, and that's a success, not a failure.
+3. **One chart**, small, with an action title or a heading that says what it shows.
+4. **A small table**, three to six rows. Anything longer belongs in an attachment or a dashboard.
+5. **Exceptions in a coloured box**, or a green line saying there are none. Silence is ambiguous.
+6. **A footer that says where it came from, who owns it, and how to stop receiving it.**
+
+The email writes money with Python's `,` format, which groups in thousands (₹2,511,819). This book writes rupees the Indian way (₹25,11,819); both are correct, and the email keeps Python's default.
+
 ### A KPI tile, by hand
 
 If HTML is new to you, read Chapter 19's box "HTML in ten minutes" (section 19.7) first: tags, attributes, `style`, and the `<table>`, `<tr>`, `<td>` trio are all there. Here is the Flash's KPI tile written by hand, with today's net revenue in it:
@@ -154,15 +173,15 @@ What each new piece does:
 - **`font:bold 20px Arial,sans-serif`** is shorthand for three settings at once: the weight (`bold`), the size, and the font, with `sans-serif` as the fallback if Arial is missing.
 - **`border-radius:6px`** rounds the corners. Classic Outlook ignores it and draws square corners, which is harmless.
 
-Figure 20.3 shows it as an email client draws it, on the left.
+Figure 20.4 shows it as an email client draws it, on the left.
 
-![Left: one KPI tile, Net revenue ₹2,511,819, +2.3% vs last year. Right: the same tile next to an Orders tile, 118, 116 customers, as a row built by the tile function](figures/fig20-3-kpi-tile.png)
+![Left: one KPI tile, Net revenue ₹2,511,819, +2.3% vs last year. Right: the same tile next to an Orders tile, 118, 116 customers, as a row built by the tile function](figures/fig20-4-kpi-tile.png)
 
-*Figure 20.3 — The tile written by hand (left), and the row of two tiles that `tile()` builds below (right), rendered by a browser.*
+*Figure 20.4 — The tile written by hand (left), and the row of two tiles that `tile()` builds below (right), rendered by a browser.*
 
 ### The same tile, from Python
 
-Typing that for every number would be slow and easy to get wrong, so the Flash has a function that fills in the label, value, and note:
+Typing that for every number would be slow and easy to get wrong, so the Flash has a function that fills in the label, value, and note.
 
 <!-- py: reset -->
 ```python
@@ -198,7 +217,7 @@ Line by line:
 - **`tile(label, value, note="", note_color=MUTED)`** takes the three texts and the note's colour, grey unless you say otherwise (Chapter 17's default values).
 - **Eight f-strings in a row, inside brackets.** Python joins string literals written next to each other into one string, so this is one long string, split over lines only so a person can read it. The brackets let it run over several lines. (You may also see a `\` at the end of a line, which continues it; brackets are the cleaner way.)
 - **Quotes inside quotes.** HTML attributes need quotes, so each f-string is written in single quotes `'…'` and the HTML inside uses double quotes `"…"`. The last line swaps them, which is fine as long as each string starts and ends with the same kind.
-- **Each tile is its own `<td>`,** holding the one-cell table from above, with 8 pixels of space on its right. `row` puts two of them side by side in one row of an outer table: that is how you get a "card row" that works in Outlook. The printed HTML is the whole of it, 1,035 characters, and Figure 20.3 (right) is what it looks like.
+- **Each tile is its own `<td>`,** holding the one-cell table from above, with 8 pixels of space on its right. `row` puts two of them side by side in one row of an outer table: that is how you get a "card row" that works in Outlook. The printed HTML is the whole of it, 1,035 characters, and Figure 20.4 (right) is what it looks like.
 
 ### Connecting without a password in the code
 
@@ -262,7 +281,7 @@ trend = pd.read_sql(text("""
 """), engine, params={"start": day - timedelta(days=13), "day": day}, parse_dates=["order_date"])
 trend["lakh"] = trend["net_revenue"].astype(float) / 1e5
 print(len(trend), "days")
-print(trend[["order_date", "lakh"]].round(1).to_string(index=False))
+print(trend[["order_date", "lakh"]].to_string(index=False, float_format="%.1f"))
 ```
 
 ```
@@ -285,7 +304,7 @@ order_date  lakh
 ```
 
 - **`day - timedelta(days=13)`** is 5 December: with `BETWEEN`, which includes both ends, that is 14 days ending on the 18th. The dates are passed as parameters (`:start`, `:day`), never pasted into the SQL (Chapter 18, section 18.13).
-- **`.astype(float)`**: the database returns exact decimal numbers, which pandas keeps as general Python objects; converting to `float` lets it divide and plot them. Dividing by `1e5` (100,000) gives lakh.
+- **`.astype(float)`**: the database returns exact decimal numbers, which pandas keeps as general Python objects; converting to `float` lets it divide and plot them. Dividing by `1e5` (100,000) gives lakh, and `float_format="%.1f"` prints one decimal place.
 
 The 18th, at 25.1 lakh, is the second-lowest day of the fortnight; only 9 December (24.9) was lower. That sentence is the chart's action title. Now the chart, drawn into memory rather than into a file:
 
@@ -328,7 +347,7 @@ bytes 31983 bytes, starting b'\x89PNG\r\n\x1a\n'
 
 - **`style_axes`** is Chapter 18's function (section 18.11), copied in, with a smaller title font so the title fits a 620-pixel image.
 - **`ax.set_ylim(0, …)`** starts the axis at zero, so a dip isn't exaggerated (Chapter 15), and leaves 20% headroom above the highest day.
-- **`DateFormatter("%d %b")`** labels the dates as `05 Dec` instead of `2025-12-05`, using the same format codes as `strftime` (Chapter 17, section 17.13).
+- **`DateFormatter("%d %b")`** labels the dates as `05 Dec` instead of `2025-12-05`, using the same format codes as `strftime` (Chapter 17, section 17.11).
 - **`BytesIO()`** is a file that lives in memory. `fig.savefig(buffer, format="png", …)` writes the picture into it exactly as it would into a file on disk; `format="png"` is needed because there's no file name to guess the format from. `dpi=150` keeps it sharp on phones.
 - **`buffer.getvalue()`** hands back the whole picture as **bytes**: raw numbers from 0 to 255, not text. Every PNG starts with the same eight bytes, which is why the output shows `PNG` near the start.
 
@@ -364,25 +383,6 @@ print(preview_tag[:70] + " …")
 
 - **`base64.b64encode(png)`** returns the encoded text still as bytes; **`.decode("ascii")`** turns it into an ordinary string. It comes out about a third longer than the picture.
 - **`replace`** swaps the `cid:` address for the data URI. The finished script writes this preview version to `out/daily_flash_<date>.html` and sends the `cid:` version.
-
-### What it looks like
-
-The finished Flash, built by `companion/ch20/daily_flash.py` and rendered here as the recipients see it, with its subject line above it:
-
-![The Riverstone Daily Sales Flash email under its subject line: a title, four KPI tiles (net revenue ₹2,511,819 up 2.3% on last year, 118 orders from 116 customers, average order ₹21,287 at 27.3% margin, month to date ₹5.71 crore), a 14-day revenue line chart titled "18 Dec, at ₹25.1 lakh, was the second-lowest day of the last 14", a table of today's revenue by segment, and a red low-movement exception box for Industrial Crate, 345 units](figures/fig20-4-daily-flash-email.png)
-
-*Figure 20.4 — Riverstone's Daily Sales Flash for 18 December 2025. Four numbers, a trend, a small table, one exception, and a line saying where it came from. Everything above the fold answers "was today good?".*
-
-Design rules for the body, which are Chapter 15's rules under email constraints:
-
-1. **Four tiles maximum**, each with a comparison. A number without a comparison is trivia.
-2. **The subject line carries the headline:** `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Many readers never open it, and that's a success, not a failure.
-3. **One chart**, small, with an action title or a heading that says what it shows.
-4. **A small table**, three to six rows. Anything longer belongs in an attachment or a dashboard.
-5. **Exceptions in a coloured box**, or a green line saying there are none. Silence is ambiguous.
-6. **A footer that says where it came from, who owns it, and how to stop receiving it.**
-
-The email writes money with Python's `,` format, which groups in thousands (₹2,511,819). This book writes rupees the Indian way (₹25,11,819); both are correct, and the email keeps Python's default.
 
 ---
 
@@ -458,8 +458,9 @@ text/csv 324 bytes
 ```
 
 - **`mimetypes.guess_type(path)`** returns two things, the type and the file's compression (`None` here); `kind, _ =` keeps the first and ignores the second. For a `.xlsx` workbook it would be the long `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`; for a file type it doesn't know, it returns `None`, and the finished script falls back to `application/octet-stream` ("some bytes").
+- **The first two lines after the imports** make an `out` folder (`exist_ok=True`: no error if it's already there) and save the 14-day table in it as a CSV (Chapter 18), so there's a real file to attach.
 - **`with open(path, "rb") as f:`** opens the file in binary mode (`"rb"`, read bytes) and closes it afterwards, the habit from Chapter 17.
-- **`add_attachment(...)`** wraps everything so far and the new file in a `multipart/mixed` message: "a message, plus files".
+- **`add_attachment(...)`** wraps everything so far and the new file in a `multipart/mixed` message: "a message, plus files". `filename=` is the name the recipient sees; `Path(path).name` is the file's name without its folder.
 
 ### Sending, and testing it on your own computer
 
@@ -487,7 +488,7 @@ print("refused:", refused)
 ```
 
 ```
-SMTPFILL
+refused: {}
 ```
 
 - **`smtplib.SMTP(host, port, timeout=30)`** opens the connection. `int(...)` is needed because every environment variable is text. `timeout=30` gives up after 30 seconds instead of hanging (Chapter 18, section 18.14). Used with `with`, the connection is closed properly even if something fails.
@@ -497,10 +498,21 @@ SMTPFILL
 The second terminal shows the email as it arrived. These are its first lines:
 
 ```text
-SERVERFILL
+---------- MESSAGE FOLLOWS ----------
+Subject: Riverstone Daily Flash =?utf-8?q?=E2=80=94_18_Dec_2025_=E2=80=94?=
+ test
+From: flash@riverstone.example
+To: you@riverstone.example
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============4515678096233146423=="
+X-Peer: ('127.0.0.1', 59298)
+
+--===============4515678096233146423==
+Content-Type: multipart/alternative;
+ boundary="===============2092394867852545785=="
 ```
 
-The subject looks scrambled because `₹` and `—` aren't plain English letters, so they travel encoded (`=?utf-8?…?=`) and your mail program decodes them. `X-Peer` is added by the test server: the address your script connected from. The `boundary` lines are the dividers between the parts you built. When this works, change the four `SMTP_` settings in `.env` to your service account's, and the same code sends real mail.
+The subject looks scrambled because `—` isn't a plain English character, so it travels encoded (`=?utf-8?q?…?=`) and your mail program decodes it. `X-Peer` is added by the test server: the address and port your script connected from. The long `boundary` numbers mark where each part you built starts and ends: `multipart/mixed` on the outside, because of the attachment, then the `multipart/alternative` inside it. They are random, so yours will differ. When this works, change the four `SMTP_` settings in `.env` to your service account's, and the same code sends real mail.
 
 Points that matter:
 
@@ -530,7 +542,7 @@ The honest progression: prove the value with your own mailbox for a week, then m
 
 ### Let the script work out the date
 
-A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. `argparse` (Chapter 17) does both with one setting:
+A scheduled job runs the same command every morning, so the command can't contain a date: `daily_flash.py 2025-12-18` would send 18 December every day. The script has to work out "today" itself, in the business's time zone, and still accept a date when a person wants to rerun an old day. Chapter 17's script read its arguments from `sys.argv` by hand. The standard library's **`argparse`** module does the same job with names, defaults, and switches, and writes a `--help` message for free:
 
 ```python
 import argparse
@@ -552,6 +564,7 @@ for command_line in (["--send"], ["2025-12-18"]):
 ['2025-12-18'] → send: False | day given: 2025-12-18 | used today's date: False
 ```
 
+- **`argparse.ArgumentParser()`** creates the parser. Each **`add_argument`** declares one thing the command line may contain. A plain name like `"day"` is a *positional* argument, taken from its place in the command; a name starting with `--` is an *option*, typed by name.
 - **`nargs="?"`** makes `day` optional: zero or one value. **`default=None`** is what it holds when it's left out.
 - **`--send`** with **`action="store_true"`** is a switch: `True` if it's typed, `False` if not. Sending is off unless you ask, so a test run can never email anyone by accident.
 - **`parser.parse_args(command_line)`** normally reads the real command line; handing it a list lets you try both cases in a notebook. `["--send"]` is what the scheduler will run; `["2025-12-18"]` is a person rerunning an old day.
@@ -595,7 +608,7 @@ Its `Time zone:` line says, for example, `Etc/UTC (UTC, +0000)`. On a UTC server
 | `>> logs/cron.log` | Add (`>>`) anything the job prints to the end of this file, instead of losing it; `>` would overwrite the file each time |
 | `2>&1` | Send error output (stream 2) to the same place as normal output (stream 1), so a crash is in the log too |
 
-Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv` reads the file. Chapter 26 teaches `&&`, `>>`, and `2>&1` properly.
+Two things you'll meet in other people's crontabs. `"$(date +\%F)"` pastes today's date into the command, but by the *server's* clock, and the `%` must be written `\%` because cron treats a bare `%` as a line break. And `set -a; . .env; set +a` loads a `.env` file into the environment before the command; the Flash doesn't need it, because `load_dotenv` reads the file. Chapter 26, section 26.0, teaches `&&`, `>>`, and `2>&1` properly.
 
 If the server is a Red Hat or Fedora machine, its cron (called *cronie*) also accepts a line `CRON_TZ=Asia/Kolkata` at the top of the crontab, and then the times below it are India time: `0 7 * * 1-5`. The cron on Ubuntu and Debian doesn't support this; there, the job runs by the server's clock, as above.
 
@@ -625,7 +638,7 @@ same calendar date? True
 ```
 
 - **`datetime(2025, 12, 18, 2, 30, tzinfo=timezone.utc)`** is 02:30 on 18 December in UTC; `timezone.utc` is UTC itself.
-- **`strftime("%Y-%m-%d %H:%M")`** formats it with the codes from Chapter 17, section 17.13: `%Y` year, `%m` month, `%d` day, `%H` hour (00–23), `%M` minute.
+- **`strftime("%Y-%m-%d %H:%M")`** formats it with the codes from Chapter 17, section 17.11: `%Y` year, `%m` month, `%d` day, `%H` hour (00–23), `%M` minute.
 
 Five and a half hours later it's 08:00 in India, still the 18th, so nothing goes wrong. Now run a job late in the UTC evening:
 
@@ -899,7 +912,7 @@ PASS  revenue within 60% of recent median  (₹2,511,819 vs median ₹3,209,520)
 - **`abs(revenue / median_recent - 1) < 0.6`**: today divided by the recent median is 1.0 on a typical day; subtracting 1 and taking the absolute value (`abs`) gives how far off it is, up or down. Today is 22% below, inside the 60% band.
 - **`day - timedelta(days=14)` to `day - timedelta(days=1)`** is the 14 days before the report's day (4 to 17 December here), so the window moves with the date.
 
-Now a date with no sales, 1 January 2026, which is what the Flash met on the morning the overnight load failed (the story later in this chapter):
+Now a date with no sales, 1 January 2026, which is what the Flash met on the morning the overnight load failed (the story later in this chapter). Before you run it, predict which of the four checks will fail:
 
 ```python
 lines, previous = load_for_checks(date(2026, 1, 1))
@@ -934,7 +947,9 @@ print(f"₹{float(month_to_date['net_revenue'].iloc[0]):,.0f}")
 
 ### Logging and run history
 
-Chapter 17's logging wrote to the screen. A scheduled job also needs a **log file**, so that next month you can read what happened this morning. Each place a log line goes is a **handler**, and each handler has its own format:
+A job that runs at 7 a.m. has nobody watching its screen, so instead of `print` it writes a **log**: short messages, each with a level and (in a file) a time, saved for later. Python's `logging` module does this. You ask it for a named **logger** with `logging.getLogger("flash")`, and write through it at one of four levels: `log.debug(...)` for detail, `log.info(...)` for normal progress, `log.warning(...)` for something odd but not fatal, `log.error(...)` for a failure. Setting `level=logging.INFO` shows INFO and above and hides DEBUG. The message can contain `%s` placeholders, filled in from the values after it.
+
+A scheduled job needs its log in two places: on the screen while you test, and in a **log file**, so that next month you can read what happened this morning. Each place a log line goes is a **handler**, and each handler has its own format:
 
 ```python
 import logging, sys
@@ -957,8 +972,9 @@ INFO loaded 213 lines for 2025-12-18
 WARNING 1 product(s) below 500 units
 ```
 
-- **`StreamHandler(sys.stdout)`** writes to the screen. In a notebook that has to be `sys.stdout` for you to see it; in the script, `StreamHandler()` with no argument writes to *stderr*, which keeps log lines apart from the report's own output, as Chapter 17 said.
-- **`FileHandler("logs/flash.log")`** adds each line to the end of a file. Its format adds **`%(asctime)s`**, the date and time, which the screen doesn't need but a file read next month does.
+- **`StreamHandler(sys.stdout)`** writes to the screen. Every program has two output streams: **standard output** (stdout), where `print` writes, and **standard error** (stderr), meant for messages about the run. In a notebook the handler has to use `sys.stdout` for you to see it; in the script, `StreamHandler()` with no argument writes to stderr, which keeps log lines apart from the report's own output.
+- **`Path("logs").mkdir(exist_ok=True)`** makes the `logs` folder if it isn't there. **`setFormatter(logging.Formatter(...))`** gives a handler its layout: `%(levelname)s` is the level's name and `%(message)s` the message.
+- **`FileHandler("logs/flash.log")`** adds each line to the end of a file. Its format adds **`%(asctime)s`**, the date and time, which the screen doesn't need but a file read next month does; `datefmt` writes it as `2026-01-05T07:00:12`, with no space inside, and `encoding="utf-8"` lets the file hold `₹`.
 - **`basicConfig(..., handlers=[screen, logfile], force=True)`** sends every log line to both. `force=True` replaces any setup from an earlier run, so rerunning the cell doesn't print every line twice.
 - **`log.warning("%s product(s) below %s units", len(low), 500)`** builds the message from the data (`low` from section 20.8), not from typed-in text.
 
@@ -1079,7 +1095,7 @@ Block by block:
 - **The report.** Headlines, the segment table, the exceptions, the chart with its action title, and the HTML with the `cid:` link. The **preview** copy swaps in a data URI and is written to `out/`, so you can always open what would have been sent.
 - **`if args.send:`** builds the multipart message with the chart attached, sends it, and records the run key. Without `--send`, it only prints the subject line.
 - **`except Exception:`** catches anything unexpected: `log.exception` writes the error and its traceback to the log, `alert_failure` emails the traceback to a person, and it returns **2**. If even the alert fails, that is logged too.
-- **`return 0`, `1`, `2`** become the program's **exit code** (Chapter 17): 0 for success, 1 for "a check stopped it", 2 for "it crashed". The last line of the file, `sys.exit(main())`, hands it to the scheduler.
+- **`return 0`, `1`, `2`** become the program's **exit code** (Chapter 17): 0 for success, 1 for "a check stopped it", 2 for "it crashed". The last line of the file, `sys.exit(main())`, hands it to the scheduler; it does the same as Chapter 17's `raise SystemExit(...)`.
 
 Run it the way a scheduler would, without `--send`, for the Flash's day and for a day with no data:
 
@@ -1105,7 +1121,7 @@ INFO wrote out/daily_flash_2026-01-01.html
 ```
 
 - **`subprocess.run([...], capture_output=True, text=True)`** runs the script as a separate program, as Chapter 18's monthly report did, and collects what it printed: `run.stdout` (the subject line) and `run.stderr` (the log lines). `sys.executable` is the Python running this notebook.
-- **The first run** loaded 213 lines, found one exception, wrote the preview, and printed the subject line; the preview is `out/daily_flash_2025-12-18.html`, the page in Figure 20.4. **The second** found no lines, took the "no data" branch, and still wrote an email, because silence would look like a broken job.
+- **The first run** loaded 213 lines, found one exception, wrote the preview, and printed the subject line; the preview is `out/daily_flash_2025-12-18.html`, the page in Figure 20.3. **The second** found no lines, took the "no data" branch, and still wrote an email, because silence would look like a broken job.
 
 With the test mail server from section 20.6 running, add `--send` and the email arrives in the second terminal. Run the same command again and the log says `flash_2025-12-18 already sent; nothing to do`: one email, however many times it runs.
 
@@ -1149,15 +1165,16 @@ Automation is one of the few analyst activities with a simple business case, and
 minutes_before, minutes_after, runs_per_year = 80, 2, 250
 hours_saved = (minutes_before - minutes_after) * runs_per_year / 60
 print(f"{hours_saved:,.0f} hours a year, about {hours_saved/8:,.0f} working days")
-print(f"At a fully-loaded ₹1,200 an hour, that is ₹{hours_saved*1200:,.0f} a year")
+hourly_cost = 300          # Riverstone's loaded staff cost: salary plus overheads, per hour
+print(f"At ₹{hourly_cost} an hour, that is ₹{hours_saved * hourly_cost:,.0f} a year")
 ```
 
 ```
 325 hours a year, about 41 working days
-At a fully-loaded ₹1,200 an hour, that is ₹390,000 a year
+At ₹300 an hour, that is ₹97,500 a year
 ```
 
-Record three things when you automate something: the time it took before (measured, not guessed), the time it takes now, and the errors it prevents. Then report it once a quarter, with the same discipline you'd apply to any other number. It's how the next automation gets approved, and how the work becomes visible to people who only see the output.
+At Riverstone's rate the money is modest; the forty-one working days are the point, because they go to work that wasn't getting done. Record three things when you automate something: the time it took before (measured, not guessed), the time it takes now, and the errors it prevents. Then report it once a quarter, with the same discipline you'd apply to any other number. It's how the next automation gets approved, and how the work becomes visible to people who only see the output.
 
 And keep a list of what to automate next, ordered by (time saved × frequency) ÷ effort. The top of that list is rarely the most interesting problem, which is exactly why it's worth writing down.
 
@@ -1172,10 +1189,12 @@ And keep a list of what to automate next, ordered by (time saved × frequency) �
 | The answer in an attachment | Low open rates, "can you tell me the number instead?" | Put the headline in the subject and the body |
 | Modern CSS in an email | Broken layout in Outlook | Tables, inline styles, 600–640 px |
 | Images without `alt` and `width` | A blank box in half the clients | Always set both; the email must work image-free |
+| The chart as a base64 data URI | No chart in Gmail or classic Outlook | Attach it as a related image and use `cid:` |
 | Credentials in the script | A password in Git forever | Environment variables, `.env` outside version control |
 | Sending from a personal mailbox | It stops when you leave or change your password | A service account or shared mailbox |
 | Scheduled on a laptop | Fails on leave, on updates, on sleep | A server, VM, container, or cloud scheduler |
-| Ignoring time zones | "Yesterday" differs from the reader's yesterday | Schedule in business time; pass the date explicitly |
+| Ignoring time zones | "Yesterday" differs from the reader's yesterday | Know the scheduler's clock; compute the date in the business time zone |
+| A date typed into the scheduled command | The same day's report, every day | Let the script default to today in the business time zone |
 | No checks | A wrong report, delivered on time | Checks that stop the send |
 | No failure alert | Nobody notices for three weeks | Alert a person, and exit non-zero |
 | Silence when there's no data | Indistinguishable from a broken job | Send "no sales were recorded" |
@@ -1199,7 +1218,7 @@ The cause was dull: the overnight ERP load had failed at 02:10, and the Flash re
 
 She changed four things that afternoon.
 
-1. **Checks before sending.** Rows returned, all rows are today's, no missing revenue, and revenue within 60% of the recent median. On 4 March, three of the four would have failed.
+1. **Checks before sending.** Rows returned, all rows are today's, no missing revenue, and revenue within 60% of the recent median. On 4 March, two of the four would have failed, and the first alone is enough.
 2. **A "no data" branch.** If there are no rows, the email says *"No sales were recorded on 4 March. If that looks wrong, check the overnight load"*, and the subject says so too. It's short, honest, and unmistakable.
 3. **A failure alert to a person.** Any exception, or any failed check, emails the analytics team with the traceback and exits non-zero, so the scheduler's own alerting fires as well.
 4. **A dependency, not a clock.** The Flash now waits for a row in a small `load_status` table saying the ERP load finished, retrying every ten minutes until 08:30, and alerts if it never arrives.
@@ -1223,13 +1242,13 @@ What made the difference:
 
 ### Tools you'll need
 
-- **Python 3.13 or 3.14** with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, and `requests`. Everything runnable in this chapter was executed on Python 3.12 with pandas 3.0.2, matplotlib 3.10.8, SQLAlchemy 2.0.54, psycopg 3.3.5.
-- **A mail route you're allowed to use:** SMTP with a service account, Microsoft Graph, the Gmail API, Apps Script's `MailApp` (Chapter 19), or a transactional provider.
+- **Python 3.13 or 3.14** with `pandas`, `matplotlib`, `SQLAlchemy`, a database driver, `python-dotenv`, `requests`, and `aiosmtpd`; on Windows, also `tzdata`. Everything runnable in this chapter was executed on Python 3.11 with pandas 3.0.6, matplotlib 3.10.8, SQLAlchemy 2.1.1, psycopg 3.3.6, python-dotenv 1.2.3, and aiosmtpd 1.4.6; nothing in it needs a newer Python than 3.9.
+- **A test mail server first:** `aiosmtpd` on your own computer (section 20.6). Then **a mail route you're allowed to use:** SMTP with a service account, Microsoft Graph, the Gmail API, Apps Script's `MailApp` (Chapter 19), or a transactional provider.
 - **A scheduler:** Windows Task Scheduler, cron, GitHub Actions, or a cloud scheduler.
 - **Optional:** Power Automate, n8n, Make, or Zapier for delivery; Teams or Slack incoming webhooks.
-- **Companion files (`companion/ch20/`):** `daily_flash.py` — the complete Daily Sales Flash: query, headline calculations, exception rule, 14-day chart, HTML builder, SMTP sender, failure alert, "no data" branch, logging, arguments, and exit codes. It writes the rendered email to `out/daily_flash_<date>.html`, which is the file shown in Figure 20.3.
+- **Companion files (`companion/ch20/`):** `daily_flash.py`, the complete Daily Sales Flash: queries, checks, headline calculations, exception rule, 14-day chart, HTML builder, multipart message with the chart attached by CID, SMTP sender, failure alert, "no data" branch, run key, logging, arguments, and exit codes. It writes a preview of the email to `out/daily_flash_<date>.html`, which is the page shown in Figure 20.3. `.env.example` lists the settings; copy it to `.env` and fill it in.
 
-> **Note on what was run.** The data work, the HTML, the chart, and the exception and check logic were executed against the real `riverstone_full` database, and Figure 20.3 is a screenshot of the actual email the script produced. The parts that need an account someone else controls — sending by SMTP or Graph, Teams and Slack webhooks, Task Scheduler and cron entries — are written out but could not be executed here, and are listed as manual checks.
+> **Before you send anything real.** Sending mail, posting to webhooks, and scheduling need accounts you control. Test the email with the local mail server from section 20.6, test a webhook on a channel you own, and run a scheduled job against the test server for a few days before you point it at real inboxes.
 
 **Option A: your own report.** Take the report you produce most often and put it on rungs 2 and 3 of the ladder.
 
@@ -1243,12 +1262,12 @@ What made the difference:
 4. **Four checks that can stop the send**, including one that compares today with the recent median.
 5. **The exception rule:** products below a threshold, with the threshold in one named constant and a plan to base it on history later.
 6. **The email:** subject line with the headline, four KPI tiles, a 14-day chart, a segment table, the exception box (or the green "none today" line), and a footer saying where it came from.
-7. **Sending:** SMTP or your workspace's API, credentials from the environment, recipients from config, `--send` off by default so you can look at the HTML first.
-8. **Failure handling:** try/except around everything, an alert to a person, a non-zero exit code, and a log line per run.
-9. **Schedule it** at 07:30 business time, with retries, and make it wait for (or check) the source load.
+7. **Sending:** SMTP or your workspace's API, credentials from `.env`, recipients from config, the chart attached by CID, and `--send` off by default so you can look at the HTML first. Test on the local mail server.
+8. **Failure handling:** try/except around everything, an alert to a person, a non-zero exit code, the "no data" branch, a run key so a second run sends nothing, and a log line per run.
+9. **Schedule it** so it arrives by 07:30 business time (07:00 on weekdays), with no date in the command, and make it wait for (or check) the source load.
 10. **Write the handover page** and the hours-saved calculation.
 
-**What good looks like (18 December 2025):** net revenue **₹2,511,819**, **118** orders from **116** customers, average order **₹21,287**, gross margin **27.3%**, **+2.3%** on the same day last year, month to date **₹5.71 crore**, and **one** exception (Industrial Crate, 345 units). Running it twice sends one email.
+**What good looks like (18 December 2025):** net revenue **₹25,11,819**, **118** orders from **116** customers, average order **₹21,287**, gross margin **27.3%**, **+2.3%** on the same day last year, month to date **₹5.71 crore**, and **one** exception (Industrial Crate, 345 units). Your email will show the revenue as `₹2,511,819`, Python's grouping. Running it twice sends one email.
 
 **Stretch goals**
 
@@ -1280,11 +1299,11 @@ Use `riverstone_full` and Python. Answers at the end of the chapter.
 - **Map the flow and time it** before automating. Automate the mechanical steps, keep the judgment, and give the judgment a place in the output.
 - **Choose the tool** from where the data lives and who will maintain it: VBA, Apps Script, Python, BI subscriptions, or a low-code flow.
 - **Put the answer in the email body**, with the headline in the subject. Attachments are for people who asked for them.
-- **Email HTML is old HTML:** tables, inline styles, 600–640 px, web-safe fonts, images with `alt` and `width`, no JavaScript. CID images are the reliable route for Outlook.
-- **Send from a service account**, with credentials in the environment, through SMTP, Graph, Gmail, or a provider.
-- **Schedule in business time**, pass the date explicitly, use absolute paths in cron, and prefer waiting for the source load over trusting the clock.
-- **Alerts are not reports:** thresholds based on history, persistence, materiality, an action, an owner, and a periodic review of whether anyone acted.
-- **Trustworthy means:** it logs, it checks before sending, it alerts a person when it breaks, it handles "no data today", it can run twice, and someone else can run it.
+- **Email HTML is old HTML:** tables, inline styles, 600–640 px, web-safe fonts, images with `alt` and `width`, no JavaScript. Attach the chart as a related image and point at it with `cid:`; a base64 data URI is only for previewing in a browser.
+- **Send from a service account**, with credentials in a `.env` file that is never committed, through SMTP, Graph, Gmail, or a provider. Build the multipart message, then test it on a local mail server before any real inbox.
+- **Schedule in business time:** know which clock the scheduler uses, let the script work out today in the business time zone (`zoneinfo`), use absolute paths in cron, and prefer waiting for the source load over trusting the clock.
+- **Alerts are not reports:** thresholds based on history (a per-product percentile, read before it's adopted), persistence, materiality, an action, an owner, and a periodic review of whether anyone acted.
+- **Trustworthy means:** it logs to the screen and a file, it checks before sending (rows first: `.all()` of nothing is `True`), it alerts a person when it breaks, it handles "no data today", it can run twice, and someone else can run it.
 - **Recipients and confidentiality** are where real incidents happen: config-driven lists, quarterly review, per-recipient filtering or row-level security, deliberate attachments, and a stop switch.
 - **Document and hand over**, then **measure**: 80 minutes to 2, 250 times a year, is 325 hours.
 
@@ -1292,7 +1311,7 @@ Use `riverstone_full` and Python. Answers at the end of the chapter.
 
 ## Key terms
 
-automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · data URI · CID attachment · SMTP · STARTTLS · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · working directory · cloud scheduler · time zone · reporting date · alert · exception report · threshold · persistence · materiality · alert fatigue · incoming webhook · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
+automation ladder · refreshable · scheduled · triggered · self-serve · report flow map · delivery tool · formatted Excel · PDF · CSV extract · HTML email · KPI tile · inline styles · table layout · web-safe font · `alt` text · environment variable · `.env` file · `load_dotenv` · bytes · `BytesIO` · base64 · data URI · Content-ID (`cid:`) · related image · SMTP · host and port · STARTTLS · MIME type · multipart message · `EmailMessage` · attachment · test mail server (`aiosmtpd`) · service account · shared mailbox · Microsoft Graph · Gmail API · transactional provider · Task Scheduler · cron · crontab · `CRON_TZ` · working directory · cloud scheduler · time zone · `zoneinfo` · `astimezone` · reporting date · alert · exception report · threshold · percentile threshold · persistence · materiality · alert fatigue · incoming webhook · Teams Workflows · Adaptive Card · Block Kit · WhatsApp Business API · low-code · Power Automate · n8n · Make · Zapier · logging · log handler · log file · run history · check · failure alert · exit code · "no data today" · retry · idempotency · run key · recipient list · row-level filtering · stop switch · handover note · hours saved
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -1304,9 +1323,9 @@ automation ladder · refreshable · scheduled · triggered · self-serve · repo
 - [ ] You map a flow and time the steps before writing code.
 - [ ] You choose the delivery tool from where the data and the maintainer are, not from preference.
 - [ ] You put the answer in the subject line and the body, and attach only what's actually needed.
-- [ ] You can build an HTML email that renders in Outlook: tables, inline styles, 640 px, `alt` text.
-- [ ] You send mail with credentials from the environment, from an account that isn't personal.
-- [ ] You schedule in business time, pass the reporting date explicitly, and know why cron needs absolute paths.
+- [ ] You can build an HTML email that renders in Outlook and Gmail: tables, inline styles, 640 px, `alt` text, and the chart attached by `cid:`.
+- [ ] You send mail with credentials from a `.env` file, from an account that isn't personal, and test it on a local mail server first.
+- [ ] You schedule in business time, know which clock your scheduler uses, let the script work out the reporting date, and know why cron needs absolute paths.
 - [ ] Your alerts have thresholds with a rationale, an action, and an owner, and you review whether anyone acts on them.
 - [ ] Your automations log every run, check before sending, alert a person on failure, say "no data today", and can be run twice safely.
 - [ ] Your recipient list lives in config with a review date, and you've thought about who may see what.
@@ -1337,10 +1356,10 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 11. Write the four checks from section 20.11 as a function and run them for 18 December 2025. What does each report?
 12. Deliberately break a check (for example, require revenue within 5% of the median) and confirm that nothing is sent and the log says why.
 13. Add a `run_history` table (or a CSV) that records the date, revenue, exceptions, and run time. Use it to make the job idempotent.
-14. Rewrite the exception rule to use the 10th percentile of the last 90 days for each product instead of a fixed number. Which products would be flagged on 18 December 2025?
+14. Move section 20.8's percentile rule into `daily_flash.py` in place of the fixed 500 units. Which products would be flagged on 18 December 2025, and which on 17 December?
 15. Write the subject line generator, including the "no data" case, and test it for both dates.
 16. Add a plain-text alternative to the email and confirm the message has both parts.
-17. Write the Task Scheduler or cron entry for 07:30 on weekdays, including the working folder and log redirection.
+17. Write the Task Scheduler or cron entry that runs the Flash at 07:00 India time on weekdays, on a server whose clock is UTC, including the working folder and log redirection.
 18. Write a `post_to_webhook` function for Teams or Slack and a two-line summary message. (Test it only against a channel you own.)
 19. Draft the one-page handover note for the Flash, using the seven headings in section 20.13.
 20. Calculate the hours saved for a report in your own work, and write the two sentences you'd put in a quarterly update.
@@ -1362,8 +1381,6 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 
 ## Answers
 
-*(In the finished book these move to Appendix G.)*
-
 **1.** Weekly stock count: rung 1 → rung 2 by making the paste a Power Query refresh. Power BI subscription: rung 3 already; rung 4 would be a data-driven alert, rung 5 is self-serve, which it partly is. Monthly macro pack: rung 3 if scheduled, rung 2 if someone clicks the button; move it up by scheduling it somewhere that isn't a laptop. Ad-hoc pricing analysis: rung 1, and it should stay there.
 
 **2.** (a) Move the schedule to 07:00 and hope; (b) check the data before reporting and fail if it's stale; (c) make the job wait for a "load finished" signal and retry. (c) is best, (b) is the minimum, and (a) is what most teams do until it bites.
@@ -1376,37 +1393,37 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 
 **6.** A report arrives on a schedule and shows the full picture; an alert arrives when something is wrong and names one problem and an action. Mixed, the alert becomes routine and gets ignored, and the report becomes noisy.
 
-**7.** Net revenue **₹2,511,819** (+2.3% vs last year) · **118** orders from 116 customers · average order **₹21,287** with 27.3% margin · month to date **₹5.71 crore**.
+**7.** The tiles show net revenue `₹2,511,819` (+2.3% vs last year) · **118** orders from 116 customers · average order `₹21,287` with 27.3% margin · month to date `₹5.71 cr`.
 
 **8.** At 800 units, four products are flagged: Industrial Crate (345), Storage Box 25L (575), Water Bottle 1L (600), and Lunch Box Set (790). That's the tuning problem in one experiment: the threshold decides whether the alert is useful or noise.
 
-**9.** It writes the "no sales were recorded on 1 January 2026" email, with that in the subject too, and logs a warning. It's better than silence because a missing email is indistinguishable from a broken job, and better than an empty table because it tells the reader what to check.
+**9.** It writes the "No sales were recorded on 01 Jan 2026" email, with "no sales recorded" in the subject too, logs a warning, and exits with code 0. It's better than silence because a missing email is indistinguishable from a broken job, and better than an empty table because it tells the reader what to check.
 
 **10.** Five tiles at 640 px are cramped; either drop to four, use two rows of two, or shorten the labels. The answer is a design decision, and the check is opening it on a phone.
 
-**11.** On 18 December 2025: rows returned PASS (213 lines), all rows are today's PASS, no missing revenue PASS, revenue within 60% of the recent median PASS (₹2,511,819 against a median of ₹3,209,520).
+**11.** On 18 December 2025: rows returned PASS (213 lines), all rows are today's PASS, no missing revenue PASS, revenue within 60% of the recent median PASS (₹25,11,819 against a median of ₹32,09,520 for 4–17 December).
 
-**12.** With a 5% band the median check fails, the job logs `FAIL revenue within 5% of recent median`, writes no email, alerts the owner, and exits non-zero. That's the behaviour you want; the lesson is that too tight a threshold turns a safety net into a blocker.
+**12.** Set `MEDIAN_BAND = 0.05`. The median check fails, the job logs `check failed: revenue within 5% of recent median (…)`, writes no email, alerts `FLASH_FAILURE_TO`, and exits with code 1. That's the behaviour you want; the lesson is that too tight a threshold turns a safety net into a blocker.
 
 **13.** Store `run_key`, date, revenue, exception count, and duration. At the start, `SELECT 1 FROM run_history WHERE run_key = :key`: if it exists, log and exit 0 without sending.
 
-**14.** With a per-product 10th percentile of the last 90 days, the fixed-threshold flags change: products with structurally low volumes (Industrial Crate) stop being flagged every day, and a genuine drop in a normally high-volume product is caught. That's the point of a relative threshold.
+**14.** On 18 December 2025, six of the seven products are below their own 10th percentile of the previous 90 days: Storage Box 25L (575 against 922.5), Water Bottle 1L (600 against 991), Lunch Box Set (790 against 811), Food Container Set (855 against 987), Storage Box 10L (1,005 against 1,232) and Stackable Bin (1,240 against 1,266). Industrial Crate, the only product under the fixed 500, is not flagged (345 against 267): it always sells little. On 17 December only Food Container Set is flagged (960 against 990). The relative rule stops flagging a product for being small and catches a normally busy product having a bad day, but on a generally quiet day it fires for almost everything, so pair it with persistence or a materiality floor.
 
 **15.** `f"Riverstone Daily Flash — {day:%d %b %Y} — ₹{revenue:,.0f} ({vs_ly:+.1f}% vs LY)"`, and for the empty case `f"Riverstone Daily Flash — {day:%d %b %Y} — no sales recorded"`.
 
 **16.** `message.set_content(...)` then `message.add_alternative(html, subtype="html")` gives a `multipart/alternative` message; check with `message.get_content_type()` and by viewing the source in the client.
 
-**17.** cron: `30 7 * * 1-5 cd /opt/riverstone && /opt/riverstone/.venv/bin/python daily_flash.py "$(date +\%F)" --send >> logs/flash.log 2>&1`. Task Scheduler: action = the venv's `python.exe`, arguments = `daily_flash.py %date% --send`, **Start in** = the script folder, trigger daily 07:30 weekdays, with restart on failure.
+**17.** cron, on a UTC server (07:00 India time is 01:30 UTC): `30 1 * * 1-5 cd /opt/riverstone && /opt/riverstone/.venv/bin/python daily_flash.py --send >> logs/cron.log 2>&1`. With cronie (Red Hat, Fedora) you can instead put `CRON_TZ=Asia/Kolkata` above `0 7 * * 1-5 …`. Task Scheduler: program = the venv's `python.exe`, arguments = `daily_flash.py --send` (no date: the script works out today in India), **Start in** = the script folder, trigger weekly on Monday to Friday at the local time that is 07:00 in India, with restart on failure. Never put a date in a scheduled command: a fixed one sends the same day forever, and `%date%` is not expanded by Task Scheduler and would be in the machine's local format in a batch file anyway.
 
 **18.** See section 20.9. The summary should be two lines: the headline number with the comparison, and the exception count, plus a link to the dashboard.
 
-**19.** The seven headings from section 20.13, filled in for the Flash: what and who asked; 07:30 IST weekdays on the reporting VM under the `svc-analytics` account; sources and credentials; outputs and recipients; the four checks; the three likely failures with commands to rerun; owner and deputy with a review date.
+**19.** The seven headings from section 20.13, filled in for the Flash: what and who asked; 07:00 IST on weekdays, arriving by 07:30, on the reporting VM under the `svc-analytics` account; sources and credentials; outputs and recipients; the four checks; the three likely failures with commands to rerun; owner and deputy with a review date.
 
-**20.** For example: *"Automating the daily flash replaced 80 minutes of manual work with 2, 250 times a year: about 325 hours, or 40 working days. It has also caught two data errors before they reached managers."*
+**20.** For example: *"Automating the daily flash replaced 80 minutes of manual work with 2, 250 times a year: about 325 hours, or 41 working days. It has also caught two data errors before they reached managers."*
 
 **21.** Loop the branches, filter the data, and send one email per branch, with the branch in the subject. Verify by logging, for each send, the recipient and a hash or total of the data sent, then spot-check three; and by sending the first run to yourself with the branch name in the body.
 
-**22.** Poll the `load_status` table every ten minutes from 07:30; if the row appears, run; if 08:30 passes without it, send a failure alert naming the missing load. Log each attempt so a late load is visible afterwards.
+**22.** Create a small `load_status` table (`load_date`, `status`) in a database you're allowed to write to, and have the load (or you, while testing) insert a `finished` row. `daily_flash.py --wait-for-load` already polls it every ten minutes: if the row appears, it runs; if 08:30 passes without it, it raises an error naming the missing load, and the `except` block sends the failure alert. Log each attempt so a late load is visible afterwards.
 
 **23.** A Monday job that reads `run_history` and the exception log for the previous week, groups by product and branch, and sends one digest. Daily alerts then carry only same-day actions, which is what keeps them credible.
 
@@ -1418,16 +1435,16 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 
 **27.** First hour: stop the schedule (the stop switch), find out exactly what was sent and to whom, tell your manager and whoever owns data protection, and don't try to recall the email quietly. Afterwards: recipient lists in config with an owner, a review date, and a check that every recipient is on an approved domain; a test send to yourself on every change; and sensitivity written into the handover note.
 
-**Timed challenge answers.** Level 1: ₹2,511,819 · 118 orders · 116 customers · ₹21,287 average order. Level 2: 27.3% gross margin; +2.3% against 18 December 2024's ₹2,454,466. Level 3: **₹57,069,985** (₹5.71 crore) from 1 to 18 December. If you get ₹4.45 crore, your window started on the 5th, not the 1st: reusing the 14-day series for month to date is the most common slip, and it was a real bug in the first version of `daily_flash.py`. Level 4: highest **7 December (₹3,782,009)**, lowest **9 December (₹2,488,217)**; the 18th itself is ₹2,511,819, a little above the low. Level 5: Industrial Crate, 345 units. Level 6: `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Level 7: all four pass for 18 December 2025; for 1 January 2026 the first check fails, nothing is sent, and the "no data" email goes out instead. Bonus: 325 hours, about 40 working days.
+**Timed challenge answers.** Level 1: ₹25,11,819 · 118 orders · 116 customers · ₹21,287 average order. Level 2: 27.3% gross margin; +2.3% against 18 December 2024's ₹24,54,466. Level 3: **₹5,70,69,985** (₹5.71 crore) from 1 to 18 December. If you get ₹4.45 crore, your window started on the 5th, not the 1st: reusing the 14-day series for month to date is the most common slip, and it was a real bug in the first version of `daily_flash.py`. Level 4: highest **7 December (₹37,82,009)**, lowest **9 December (₹24,88,217)**; the 18th itself is ₹25,11,819, a little above the low. Level 5: Industrial Crate, 345 units. Level 6: `Riverstone Daily Flash — 18 Dec 2025 — ₹2,511,819 (+2.3% vs LY)`. Level 7: all four pass for 18 December 2025; for 1 January 2026 the row check and the median check fail (the other two pass because there is nothing to test), so no report is sent, and the "no data" email goes out instead. Bonus: 325 hours, about 41 working days.
 
 ---
 
 ## Where this leads
 
 - **Chapter 21 and 22:** the statistics behind sensible thresholds, and why a single day's dip usually isn't a signal.
-- **Chapter 23, Data Storytelling:** what to write in the three sentences of commentary you kept.
-- **Chapter 26, Git:** versioning automations, and keeping `.env` out of the repository.
+- **Chapter 24, Requirements, Storytelling & Stakeholders:** what to write in the three sentences of commentary you kept.
+- **Chapter 26, The Professional Toolkit:** the terminal in more depth (section 26.0), versioning automations with Git, and keeping `.env` out of the repository.
 - **Chapter 30, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
 - **Chapter 46:** orchestration, when "run this at 7" becomes "run these eleven things in the right order, with retries".
 - **Chapter 47:** data-quality testing, which is the checks in this chapter done systematically.
-- **Interview preparation:** the Business Analyst bank (Chapter 76) asks how you'd automate and deliver a recurring report, and what you'd do when it fails.
+- **Interview preparation:** the Automation & Integration Question Bank (Chapter 78) and the Business Analyst bank (Chapter 76B) ask how you'd automate and deliver a recurring report, and what you'd do when it fails.

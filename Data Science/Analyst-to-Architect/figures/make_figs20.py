@@ -93,7 +93,7 @@ def shoot(html, out, width, scale=3):
         p.locator("#shot").screenshot(path=str(out)); b.close()
 
 def screens():
-    # Figure 20.3: the tile as plain HTML (left) and the row built by tile() in Python (right), as a browser draws them.
+    # Figure 20.4: the tile as plain HTML (left) and the row built by tile() in Python (right), as a browser draws them.
     sys.path.insert(0, str(COMPANION)); import daily_flash as f
     row = ("<table role='presentation'><tr>" + f.tile("Net revenue", "₹2,511,819", "+2.3% vs last year", f.GOOD)
            + f.tile("Orders", "118", "116 customers") + "</tr></table>")
@@ -101,8 +101,8 @@ def screens():
     page = (f"<body style='margin:0;background:#fff'><div id='shot' style='width:668px;padding:14px 16px;display:flex;gap:40px;"
             f"border:1px solid #c9d3df'><div><div style='{label}'>The plain HTML, as written by hand</div>{TILE_HTML}</div>"
             f"<div><div style='{label}'>row: two tiles built by tile()</div>{row}</div></div></body>")
-    shoot(page, HERE / "fig20-3-kpi-tile.png", 700)
-    # Figure 20.4: the Flash as a recipient sees it, framed as an email window with its real subject line.
+    shoot(page, HERE / "fig20-4-kpi-tile.png", 700)
+    # Figure 20.3: the Flash as a recipient sees it, framed as an email window with its real subject line.
     env = dict(os.environ)
     run = subprocess.run([sys.executable, "daily_flash.py", "2025-12-18"], cwd=COMPANION, env=env,
                          capture_output=True, text=True, check=True)
@@ -115,7 +115,7 @@ def screens():
             f"border:1px solid #9aa7b8;border-radius:6px;overflow:hidden'>"
             f"<div style='{chrome}'><b>Subject:</b> {subject}</div>"
             f"<div style='padding:16px'>{inner}</div></div></body>")
-    shoot(page, HERE / "fig20-4-daily-flash-email.png", 700, scale=3.2)
+    shoot(page, HERE / "fig20-3-daily-flash-email.png", 700, scale=3.2)
 
 if __name__ == "__main__":
     os.chdir(HERE)

@@ -38,12 +38,12 @@ def f1():
     o=[text(12,22,"Three ways to run Python, and what each is for",13,INK,"bold",family=HEAD)]
     cw, gap, top, h = 196, 14, 36, 150
     xs = [12, 12+cw+gap, 12+2*(cw+gap)]
-    o.append(card(xs[0],top,cw,h,"1. The REPL",ACC,["Type python, get >>>","Each line runs when you press Enter",
+    o.append(card(xs[0],top,cw,h,"1. The REPL",ACC,["Type python, get >>>","Each line runs as you press Enter",
              "Shows each expression's value","Nothing is saved","","Use for: trying one thing,","checking what a function does"]))
     o.append(card(xs[1],top,cw,h,"2. A notebook (Jupyter)",GREEN,["Cells of code, output underneath","Notes and charts in between",
              "Values stay between cells","Cells can run out of order","","Use for: exploring data,","showing your working"]))
     o.append(card(xs[2],top,cw,h,"3. A script (.py file)",PURPLE,["Runs top to bottom, every time","Only print() shows anything",
-             "Takes arguments, gives an exit code","Can be scheduled and versioned","","Use for: anything repeated,","shared, or run at 6 a.m."]))
+             "Arguments in, an exit code out","Can be scheduled and versioned","","Use for: anything repeated,","shared, or run at 6 a.m."]))
     y = top+h+20
     x1 = xs[1]+cw/2; x2 = xs[2]+cw/2
     o.append(path(f"M{x1},{top+h+3} V{y}",stroke=MUTED,sw=1.6))
