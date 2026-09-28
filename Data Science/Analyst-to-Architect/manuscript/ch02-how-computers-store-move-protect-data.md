@@ -4,11 +4,11 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** explain how a computer stores letters, numbers, and pictures as bits and bytes · read file sizes from bytes to terabytes, and work out how long a download takes · tell memory from storage · work with files, folders, paths, and extensions without surprises · choose between CSV, Excel, JSON, XML, PDF, and Parquet for a job, and avoid each format's traps · explain what a database, a server, the internet, and the cloud are · describe what an API does and read its replies · protect data with good passwords, encryption, access rules, and backups.
+> **You will learn to:** explain how a computer stores letters and numbers as bits and bytes · read file sizes from bytes to terabytes, and work out how long a download takes · tell memory from storage · work with files, folders, paths, and extensions without surprises · choose between CSV, Excel, JSON, XML, PDF, and Parquet for a job, and avoid each format's traps · explain what a database, a server, the internet, and the cloud are · describe what an API does and read its replies · protect data with good passwords, encryption, access rules, and backups.
 >
 > **Before you start:** Chapter 1 (what data is: rows, columns, types, and quality).
 >
-> **Time needed:** 4–5 hours, including the exercises and the project.
+> **Time needed:** 3–4 hours, including the exercises and the project.
 >
 > **Tools:** any computer. For the project: a spreadsheet program (Excel or Google Sheets) and a plain-text editor (Notepad on Windows, TextEdit on a Mac, or any code editor).
 >

@@ -126,10 +126,10 @@ def fig_three_forms():
 def fig_levels():
     o=[]
     W=720
-    lv=[("Nominal","Names or labels, no order","segment, city, payment method","count · most common value (mode)",ACC),
-        ("Ordinal","Order matters, gaps are unknown","T-shirt size, rating 1–5, High/Medium/Low","+ rank · median · \"higher than\"",PURPLE),
-        ("Interval","Equal gaps, but no true zero","temperature in °C, calendar dates","+ differences · mean",ORANGE),
-        ("Ratio","Equal gaps and a true zero","revenue, quantity, weight, age","+ \"twice as much\" · % change",GREEN)]
+    lv=[("Nominal","Names or labels, no order","segment, city, payment method","Allows: count · most common value (mode)",ACC),
+        ("Ordinal","Order matters, gaps are unknown","T-shirt size, rating 1–5, High/Medium/Low","Adds: rank · median · \"higher than\"",PURPLE),
+        ("Interval","Equal gaps, but no true zero","temperature in °C, calendar dates","Adds: differences · mean",ORANGE),
+        ("Ratio","Equal gaps and a true zero","revenue, quantity, weight, age","Adds: \"twice as much\" · % change",GREEN)]
     x0=20; y0=20; rowh=96; LW=150
     for i,(n,d,ex,ops,c) in enumerate(lv):
         y=y0+i*rowh
@@ -140,7 +140,7 @@ def fig_levels():
         o.append(text(bx+14,y+24,d,13.5,INK,"bold"))
         o.append(text(bx+14,y+45,"e.g. "+ex,12,MUTED,style="italic"))
         o.append(rect(bx+10,y+54,bw-20,22,fill="#f6f9fc",rx=5))
-        o.append(text(bx+18,y+70,"Allows: "+ops,12,c,"bold"))
+        o.append(text(bx+18,y+70,ops,12,c,"bold"))
     yb=y0+4*rowh
     o.append(text(x0,yb+10,"Each level keeps every calculation of the level before it and adds one more.",12.5,MUTED))
     return svg(W,yb+28,"".join(o))
