@@ -41,14 +41,21 @@ invoices = load(DATA / 'carrier_invoice_lines.csv')
 
 log()
 log('== naive matching: every invoice against every order line (median of 3 runs)')
+log('   (the chapter\'s cell, run at the top level of a notebook or script, as a reader runs it)')
+CELL = """
+matched = 0
+for invoice in invoices[:N]:
+    for line in order_lines:
+        if (line["order_id"] == invoice["order_id"]
+                and line["product_id"] == invoice["product_id"]):
+            matched += 1
+            break
+"""
 naive = {}
 for n in (250, 500, 1000, 2000):
-    subset = invoices[:n]
+    code = compile(CELL.replace('N', str(n)), 'cell', 'exec')
     def run():
-        for invoice in subset:
-            for line in order_lines:
-                if line['order_id'] == invoice['order_id'] and line['product_id'] == invoice['product_id']:
-                    break
+        exec(code, {'invoices': invoices, 'order_lines': order_lines})
     naive[n] = median_time(run, repeats=3)
     log(f'{n:>5} invoices x 176,110 order lines: {naive[n]:6.2f} s')
 log(f'predicted for 20,000 invoices: {naive[2000] * 10:.0f} s')
