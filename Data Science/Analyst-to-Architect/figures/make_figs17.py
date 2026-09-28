@@ -36,7 +36,7 @@ def card(x,y,w,h,title,c,lines,size=10):
 
 def f1():
     o=[text(12,22,"Three ways to run Python, and what each is for",13,INK,"bold",family=HEAD)]
-    cw, gap, top, h = 196, 14, 36, 168
+    cw, gap, top, h = 196, 14, 36, 150
     xs = [12, 12+cw+gap, 12+2*(cw+gap)]
     o.append(card(xs[0],top,cw,h,"1. The REPL",ACC,["Type python, get >>>","Each line runs when you press Enter",
              "Shows each expression's value","Nothing is saved","","Use for: trying one thing,","checking what a function does"]))

@@ -1,11 +1,16 @@
-// Analyst to Architect, Chapter 16 — every DAX measure used in the chapter.
-// Paste into Power BI Desktop (Home > New measure), one at a time. Table names: Sales, Product, Customer, Employee, 'Date', Targets.
+// Analyst to Architect, Chapter 16 — every DAX formula used in the chapter, in the order it appears.
+// Paste into Power BI Desktop one at a time: measures with Home > New measure (select the _Measures table first),
+// calculated tables with Modeling > New table, role rules in Modeling > Manage roles.
+// Table names: Sales (the sales_lines view), Customer, Product, Employee, 'Date', Targets, UserRegion, Refresh.
 // Riverstone Supplies is fictional; every name and number is invented.
 
-Net Revenue =
-SUMX ( Sales, Sales[quantity] * Sales[unit_price] * ( 1 - Sales[discount_pct] / 100 ) )
+// ---- Section 16.4: a calculated column, to see row context (delete it afterwards) ----
+// Unit Cost = RELATED ( Product[unit_cost] )            (Table tools > New column, on Sales)
 
-Product Cost = SUMX ( Sales, Sales[quantity] * RELATED ( Product[unit_cost] ) )
+// ---- Section 16.4: base measures ----
+Net Revenue = SUM ( Sales[net_revenue] )
+
+Product Cost = SUM ( Sales[product_cost] )
 
 Gross Margin = [Net Revenue] - [Product Cost]
 
@@ -17,12 +22,29 @@ Customers = DISTINCTCOUNT ( Sales[customer_id] )
 
 Average Order Value = DIVIDE ( [Net Revenue], [Orders] )
 
-Target = SUM ( Targets[target_revenue] )
+// ---- Section 16.5: CALCULATE and filter context ----
+Retail Revenue = CALCULATE ( [Net Revenue], Customer[Segment] = "Retail" )
 
-% of Target = DIVIDE ( [Net Revenue], [Target] )
+Retail Only = CALCULATE ( [Net Revenue], KEEPFILTERS ( Customer[Segment] = "Retail" ) )
 
-Gap to Target = [Net Revenue] - [Target]
+All-Customer Revenue = CALCULATE ( [Net Revenue], REMOVEFILTERS ( Customer ) )
 
+Share of Segment =
+DIVIDE (
+    [Net Revenue],
+    CALCULATE ( [Net Revenue], REMOVEFILTERS ( Customer[Customer] ) )
+)
+
+Share of Selection = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALLSELECTED ( Product ) ) )
+
+Avg Customer Revenue = AVERAGEX ( Customer, [Net Revenue] )
+
+Product Share % =
+VAR ThisProduct = [Net Revenue]
+VAR AllProducts = CALCULATE ( [Net Revenue], REMOVEFILTERS ( Product ) )
+RETURN DIVIDE ( ThisProduct, AllProducts )
+
+// ---- Section 16.6: time intelligence and targets ----
 Revenue YTD = TOTALYTD ( [Net Revenue], 'Date'[Date] )
 
 Revenue LY = CALCULATE ( [Net Revenue], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
@@ -34,26 +56,45 @@ YoY Growth % = DIVIDE ( [Net Revenue] - [Revenue LY], [Revenue LY] )
 Revenue 3M Rolling =
 CALCULATE ( [Net Revenue], DATESINPERIOD ( 'Date'[Date], MAX ( 'Date'[Date] ), -3, MONTH ) )
 
-Product Share % =
-VAR ThisProduct = [Net Revenue]
-VAR AllProducts = CALCULATE ( [Net Revenue], REMOVEFILTERS ( Product ) )
-RETURN DIVIDE ( ThisProduct, AllProducts )
+Target = SUM ( Targets[target_revenue] )
 
-Revenue no rep = CALCULATE ( [Net Revenue], ISBLANK ( Sales[sales_rep_id] ) )
+% of Target = DIVIDE ( [Net Revenue], [Target] )
+
+Gap to Target = [Net Revenue] - [Target]
+
+YoY Change = IF ( NOT ISBLANK ( [Revenue LY] ), [Net Revenue] - [Revenue LY] )
+
+// ---- Section 16.8: the dynamic page title ----
+Overview Title =
+"Riverstone sales — " & SELECTEDVALUE ( 'Date'[Year], "all years" )
+    & " — ₹" & FORMAT ( [Net Revenue] / 10000000, "#,##0.0" ) & " cr at "
+    & FORMAT ( [% of Target], "0.0%" ) & " of target"
+
+// ---- Section 16.10: row-level security rules (Modeling > Manage roles, all on the Customer table) ----
+// Role "South":           [Region] = "South"
+// Role "All regions":     TRUE ()
+// Role "Region manager":
+//     Customer[Region]
+//         IN CALCULATETABLE (
+//             VALUES ( UserRegion[region] ),
+//             UserRegion[email] = USERPRINCIPALNAME ()
+//         )
+
+// ---- Section 16.11: data date and refresh time ----
+// Calculated table (Modeling > New table), computed at each refresh:
+// Refresh = ROW ( "Refreshed IST", UTCNOW () + TIME ( 5, 30, 0 ) )
 
 Last Refreshed =
-"Data to " & FORMAT ( MAX ( 'Date'[Date] ), "d MMM yyyy" ) &
-" · report refreshed " & FORMAT ( NOW () + TIME ( 5, 30, 0 ), "d MMM yyyy HH:mm" ) & " IST"
+"Data to " & FORMAT ( CALCULATE ( MAX ( Sales[order_date] ), REMOVEFILTERS () ), "d MMM yyyy" )
+    & " · refreshed " & FORMAT ( MAX ( Refresh[Refreshed IST] ), "d MMM yyyy HH:mm" ) & " IST"
 
-Overview Title =
-"Riverstone sales — " & SELECTEDVALUE ( 'Date'[Year], "all years" ) &
-" — " & FORMAT ( [Net Revenue] / 10000000, "0.0" ) & " cr at " & FORMAT ( [% of Target], "0.0%" ) & " of target"
+// ---- Answers ----
+Revenue no rep = CALCULATE ( [Net Revenue], ISBLANK ( Sales[sales_rep_id] ) )
 
 Top Customer =
-IF (
-    HASONEVALUE ( Customer[Customer] ),
-    BLANK (),
-    SELECTEDVALUE ( TOPN ( 1, VALUES ( Customer[Customer] ), [Net Revenue], DESC ), BLANK () )
+MAXX (
+    TOPN ( 1, VALUES ( Customer[Customer] ), [Net Revenue], DESC ),
+    Customer[Customer]
 )
 
 Revenue FYTD =

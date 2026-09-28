@@ -32,6 +32,7 @@ from zoneinfo import ZoneInfo
 import matplotlib
 matplotlib.use("Agg")                      # draw to a file, not a window
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
@@ -144,7 +145,7 @@ def trend_chart(trend: pd.DataFrame, title: str) -> bytes:
     style_axes(ax, title, "₹ lakh")
     ax.set_ylim(0, float(trend["net_revenue"].max()) / 1e5 * 1.2)
     ax.tick_params(labelsize=8, colors=MUTED)
-    fig.autofmt_xdate(rotation=0, ha="center")
+    ax.xaxis.set_major_formatter(DateFormatter("%d %b"))        # 05 Dec, not 2025-12-05
     buffer = BytesIO()                                  # a file that lives in memory
     fig.savefig(buffer, format="png", dpi=150, bbox_inches="tight")
     plt.close(fig)
