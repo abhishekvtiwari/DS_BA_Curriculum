@@ -448,10 +448,10 @@ JOBS['ch25'] = lambda: build('ch25-the-business-analyst-track.md', 'Ch25-The-Bus
 
 JOBS['ch26'] = lambda: build('ch26-the-professional-toolkit-git-agile-documentation-and-ai-assistants.md', 'Ch26-The-Professional-Toolkit', '',
       'Chapter 26. The Professional Toolkit: Git, Agile, Documentation & AI Assistants',
-      'Analyst to Architect \u00b7 Chapter 26 \u00b7 The Professional Toolkit',
+      'Analyst to Architect \u00b7 Chapter 26 \u00b7 The Professional Toolkit: Git, Agile, Documentation & AI Assistants',
       dict(KICKER='Analyst to Architect \u00b7 Part 2 \u2014 The Analyst',
-           TITLE='Chapter 26<br>The Professional Toolkit',
-           SUB='Git, GitHub and pull requests; the four undos; keeping secrets out of a repository; one automated check; a README a stranger can follow; Agile, Scrum, Kanban and Jira; and working with an AI assistant.',
+           TITLE='Chapter 26<br>The Professional Toolkit: Git, Agile, Documentation &amp; AI Assistants',
+           SUB='The terminal in 20 minutes; Git, GitHub and pull requests; the four undos; keeping secrets out of a repository; one automated check; a README a stranger can follow; Agile, Scrum, Kanban and Jira; and working with an AI assistant.',
            DOC='Draft chapter \u00b7 v1', META='21 September 2026<br>Every terminal session was run and its output captured'), 2)
 
 JOBS['ch27'] = lambda: build('ch27-capstone-your-analyst-portfolio.md', 'Ch27-Capstone-Your-Analyst-Portfolio', '',
