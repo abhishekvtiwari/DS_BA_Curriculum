@@ -83,3 +83,4 @@ pre.lines .ln.colon { break-after: avoid; }
 p.leadin { break-after: avoid; }
 p.leadin + pre, p.leadin + table, p.leadin + ul, p.leadin + ol { break-before: avoid; }
 pre.sourceCode, pre[class]:not(.text) { border-left-color: var(--accent); }   /* every input block, whatever its language (V77.13) */
+code.nowrap { white-space: nowrap; }   /* short inline code stays on one line (V1.12, V2.11) */

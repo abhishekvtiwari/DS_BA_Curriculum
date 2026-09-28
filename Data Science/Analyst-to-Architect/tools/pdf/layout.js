@@ -59,6 +59,9 @@
     for (const s of lines) if (/:\s*$/.test(s.textContent)) s.classList.add('colon');   // don't break after "def f():"
   }
 
+  // ---- short inline code never breaks at a hyphen or dot ("2026-03-" / "05", V1.12, V2.11)
+  for (const c of document.querySelectorAll('code')) if (!c.closest('pre') && c.textContent.length <= 24) c.classList.add('nowrap');
+
   // ---- V10: tables. Right-align numeric columns, keep short tables whole, no wraps in short code.
   const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
   for (const table of document.querySelectorAll('table')) {
