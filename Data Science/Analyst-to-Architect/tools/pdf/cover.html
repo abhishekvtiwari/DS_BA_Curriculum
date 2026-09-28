@@ -3,11 +3,12 @@
 body { margin:0; font-family: "Poppins","DejaVu Sans",sans-serif; }
 .page { width:210mm; height:297mm; box-sizing:border-box; padding: 38mm 24mm 24mm; background: linear-gradient(160deg,#0f3d5c 0%,#0f5c8c 58%,#2b7fb3 100%); color:#fff; position:relative; }
 .kicker { letter-spacing: 3px; text-transform: uppercase; font-size: 10pt; opacity:.8; max-width: 145mm; line-height:1.5; }
-.title { font-size: 40pt; font-weight: 600; line-height:1.08; margin: 10mm 0 6mm; }
+.title { font-size: 40pt; font-weight: 600; line-height:1.08; margin: 10mm 0 6mm; text-wrap: balance; }
 .sub { font-family:"Lora","DejaVu Serif",serif; font-size: 14pt; line-height:1.45; max-width: 150mm; opacity:.95; }
 .doc { margin-top: 26mm; display:inline-block; border:1px solid rgba(255,255,255,.55); padding: 3mm 6mm; border-radius: 3px; font-size: 12pt; }
 .meta { position:absolute; left:24mm; bottom:24mm; font-size: 9.5pt; opacity:.85; line-height:1.6; }
-.bar { position:absolute; right:24mm; top:30mm; width: 22mm; height: 3px; background:#fff; opacity:.7; }
+.bar { position:absolute; left:24mm; top:28mm; width: 22mm; height: 3px; background:#fff; opacity:.7; }  /* above the kicker, never across it (V1) */
+.doc:empty, .meta:empty, .sub:empty { display:none; }
 </style></head><body><div class="page"><div class="bar"></div>
 <div class="kicker">{{KICKER}}</div>
 <div class="title">{{TITLE}}</div>

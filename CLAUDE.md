@@ -126,9 +126,9 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 Order:
 
 1. **Whole-book layout pass (once, before any part; one PR `style-pass`):**
-   - themes **V1–V12**: shared template and CSS fixes, plus the figure fixes (V3–V6) that the figure scripts can make without touching chapter text;
+   - themes **V1–V12** wherever one shared change fixes them: the builder (`tools/pdf/build.py`, `layout.js`), stylesheet and cover template, plus source fixes that change no wording (broken table pipes, escapes), and V12 (Ch 19 scale, rasters re-exported at 300 ppi). **Figure redraws (V3–V6: text under 7 pt, overlaps, colour-only meaning, figure order) are done per chapter in the part builds** (section 6 step 3), because each figure must be checked against its caption and text;
    - rebuild every chapter;
-   - run `review/briefs/prescan.py` on each rebuilt PDF, then spot-render and compare with the snapshots;
+   - run `review/briefs/prescan.py` and `tools/pdf/layout_check.py` on each rebuilt PDF, then spot-render and compare with the snapshots;
    - mark the fixed visual rows `Fixed`.
 2. **Riverstone fact sheet (D3):** draft `review/riverstone-facts.md` from the chapters and the findings under theme T10. Cover people and roles, the timeline, systems, rates, datasets, file names and the flash time. Open it as a PR for Abhishek to approve before Part II content work starts.
 3. **Content, part by part, one PR per part, in this order: Part 0 + Part I together** (branch `part-0-I`, which includes D6), then II, III, IV, V, VI, VII, VIII, Closing (branch `part-II`, etc.). Within a part, go chapter by chapter in reading order. Findings that depend on the Part II/III reading-order question (`review/reading-order-conflicts.md`) stay `Open` until Abhishek answers it.
@@ -146,7 +146,7 @@ Order:
    Never type an output by hand.
 3. Redraw the chapter's figures from the figure scripts at print width (text ≥ 7 pt). Check each figure against its caption and the text.
 4. Build the chapter PDF into `build/`. Then:
-   - run `python review/briefs/prescan.py build/<file>.pdf build/<file>.json`;
+   - run `python review/briefs/prescan.py build/<file>.pdf build/<file>.json` and `python "Data Science/Analyst-to-Architect/tools/pdf/layout_check.py" build/<file>.pdf` (contents numbers, stranded headings and lead-ins, half-empty pages, clipped list numbers, draft labels);
    - render the pages that had visual findings (`pdftoppm -r 110`) and look at them;
    - confirm each visual finding is gone.
 5. Re-read the chapter as the first-time reader against the seven tests.

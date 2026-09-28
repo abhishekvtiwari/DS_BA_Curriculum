@@ -18,7 +18,7 @@ def cr(v, _=None): return f"₹{v/1e7:,.1f} cr" if abs(v) >= 1e7 else f"₹{v/1e
 def crf(v, _=None): return f"{v/1e7:,.0f}"
 def save(fig, name):
     if len(fig.axes) > 1 and not fig.get_tight_layout(): fig.subplots_adjust(wspace=0.32)
-    fig.savefig(name, format="svg", bbox_inches="tight"); plt.close(fig)
+    fig.savefig(name, format="svg", bbox_inches="tight", dpi=300); plt.close(fig)   # 300 ppi for embedded rasters (V12)
 MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 seg = pd.read_csv(D/"segment_2025.csv"); mon = pd.read_csv(D/"monthly_2023_2025.csv"); ov = pd.read_csv(D/"order_values_2025.csv")

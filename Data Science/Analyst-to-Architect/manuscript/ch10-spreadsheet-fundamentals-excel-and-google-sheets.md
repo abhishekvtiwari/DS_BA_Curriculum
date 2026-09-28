@@ -210,7 +210,7 @@ Open the **Cell detective** sheet. Cells `A2` to `A7` look ordinary. Figure 10.2
 1. **Look at the formula bar.** Click `A7`. The cell shows `32,063`; the formula bar shows `32062.5`. A number format is rounding the display. Any formula that uses `A7` uses 32062.5.
 2. **Look at the alignment.** By default, numbers line up on the right of a cell and text lines up on the left. `A2` (2900, a number) sits on the right; `A3` (`2900` stored as text) sits on the left. Excel also marks numbers stored as text with a small green triangle in the corner; hover over the warning icon to convert them.
 3. **Ask with a function.** `ISNUMBER` returns `TRUE` for numbers, `ISTEXT` for text, and `LEN` counts characters.
-4. **Show every formula.** Press **Ctrl+`** (the key above Tab) in either app to switch between showing results and showing formulas. Press it again to switch back. In Excel the command is also at **Formulas → Formula Auditing → Show Formulas**; in Sheets, **View → Show → Formulas**.
+4. **Show every formula.** Press **Ctrl+\`** (the key above Tab) in either app to switch between showing results and showing formulas. Press it again to switch back. In Excel the command is also at **Formulas → Formula Auditing → Show Formulas**; in Sheets, **View → Show → Formulas**.
 
 Try these formulas in column C of the Cell detective sheet. The results are the same in Excel and Google Sheets:
 
@@ -501,7 +501,7 @@ Names are always absolute, so they don't slide when copied, and they make formul
 In long workbooks you'll want to see which cells feed a formula.
 
 - **Excel: Formulas → Formula Auditing → Trace Precedents** draws arrows from the cells a formula uses; **Trace Dependents** draws arrows to the formulas that use the selected cell; **Remove Arrows** clears them. **Evaluate Formula** steps through a formula one calculation at a time, which is the best way to find where a long formula goes wrong.
-- **Google Sheets** has no tracing arrows. Click into a formula and each referenced range is outlined in color on the sheet; press **Ctrl+`** to show all formulas at once.
+- **Google Sheets** has no tracing arrows. Click into a formula and each referenced range is outlined in color on the sheet; press **Ctrl+\`** to show all formulas at once.
 
 > **Watch out: calculation set to Manual.** If Excel stops updating results when you change inputs, someone has switched **Formulas → Calculation → Calculation Options** to **Manual** (it's a workbook setting that can travel with a file you open). Set it back to **Automatic**, or press **F9** to recalculate. A report printed while calculation was manual can show stale numbers.
 
@@ -1044,7 +1044,7 @@ Shortcuts save hours over a year. Learn five at a time. In Google Sheets on a Ma
 |---|---|---|---|
 | Edit the active cell | F2 | Ctrl+U | F2 or Enter |
 | Cycle `$` in a reference | F4 | Cmd+T | F4 |
-| Show formulas / results | Ctrl+` | Ctrl+` | Ctrl+` |
+| Show formulas / results | Ctrl+\` | Ctrl+\` | Ctrl+\` |
 | Save | Ctrl+S | Cmd+S | Saves automatically |
 | AutoSum | Alt+= | Cmd+Shift+T | Σ toolbar button |
 | Insert / delete row or column | Ctrl+Shift+= / Ctrl+- | Ctrl+Shift+= / Cmd+- | Right-click menu |

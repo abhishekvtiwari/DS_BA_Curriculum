@@ -5,11 +5,12 @@
 set -euo pipefail
 
 apt-get update -qq || true                      # a failing third-party PPA is harmless here
-apt-get install -y -qq pandoc poppler-utils fonts-dejavu-core fonts-dejavu-extra
+apt-get install -y -qq pandoc poppler-utils fonts-dejavu-core fonts-dejavu-extra fonts-noto-core   # Noto Serif supplies ₹ next to Lora
 
 # pypdf needs a working `cryptography`; the distro copy is broken on this image, so pip's wins.
 pip install -q --ignore-installed cryptography
-pip install -q pypdf pillow
+pip install -q pypdf pillow pymupdf fonttools            # pymupdf: tools/pdf/layout_check.py
+pip install -q "matplotlib==3.10.8" pandas numpy   # the version the figure scripts were drawn with
 
 # Playwright must match the Chromium on disk. The cloud container ships chromium-1194 in
 # /opt/pw-browsers, which is Playwright 1.56.0. Elsewhere, install any version and then run

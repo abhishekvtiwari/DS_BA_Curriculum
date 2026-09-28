@@ -1,4 +1,4 @@
-import re, subprocess, sys, html, pathlib, asyncio, os
+import re, subprocess, sys, html, pathlib, asyncio, os, json
 from playwright.sync_api import sync_playwright
 from pypdf import PdfWriter, PdfReader
 
@@ -12,10 +12,30 @@ OUT  = pathlib.Path(os.environ.get('BOOK_OUT_DIR', D))                          
 D.mkdir(parents=True, exist_ok=True)
 OUT.mkdir(parents=True, exist_ok=True)
 
+LABEL_LINE = re.compile(r'^(> )?\*\*[^*]{1,60}?(:|\.)\*\*|^(> )?\*\*[^*]{1,60}?\*\*:')
+LIST_LINE = re.compile(r'^(> )?(\s*[-*+]\s|\s*\d+\.\s)')
+
+def label_breaks(md):
+    """A line that starts with a bold label ("**Red flag:**", "**FR-02.**", "> **From:**") starts a new
+    line, as the author wrote it. Markdown would otherwise run it into the previous line's paragraph
+    (visual review: memo headers, requirement and use-case boxes, question-bank follow-ups)."""
+    L = md.split('\n'); fence = False
+    for i in range(1, len(L)):
+        if L[i - 1].lstrip('> ').startswith('```'): fence = not fence
+        if fence or not LABEL_LINE.match(L[i]): continue
+        prev = L[i - 1]
+        if prev.strip() in ('', '>') or re.match(r'^(> )?(\||#|```)', prev): continue
+        if LIST_LINE.match(prev):                       # end the list first, or the label joins its last item
+            L[i] = ('>\n' if L[i].startswith('>') else '\n') + L[i]
+        elif not prev.endswith('\\') and not prev.endswith('  '):
+            L[i - 1] = prev + '\\'
+    return '\n'.join(L)
+
 def md_to_html(src, out, bodyclass, title, toc_depth):
-    fmt = 'gfm+hard_line_breaks' if 'blueprint' in src else 'gfm'
+    # "$" is money in this book, never TeX maths (visual review V11: "$0.023 per GB" printed as maths)
+    fmt = 'gfm+hard_line_breaks-tex_math_dollars' if 'blueprint' in src else 'gfm-tex_math_dollars'
     tmp = D/(pathlib.Path(src).stem + '.build.md')
-    tmp.write_text(re.sub(r'^```mysql$', '```sql', pathlib.Path(src).read_text(), flags=re.M))
+    tmp.write_text(label_breaks(re.sub(r'^```mysql$', '```sql', pathlib.Path(src).read_text(), flags=re.M)))
     src = str(tmp)
     subprocess.run(['pandoc', '-f', fmt, '-t', 'html5', '-s', '--template', str(HERE/'template.html'),
                     '--toc', f'--toc-depth={toc_depth}', '-M', f'pagetitle={title}', '-V', f'bodyclass={bodyclass}',
@@ -26,34 +46,122 @@ def md_to_html(src, out, bodyclass, title, toc_depth):
     # script) and to figures/ (under the book root) would not resolve. Point them at the real files.
     h = h.replace('href="book.css"', f'href="{(HERE/"book.css").as_uri()}"')
     h = re.sub(r'src="(figures/[^"]+)"', lambda m: f'src="{(ROOT/m.group(1)).as_uri()}"', h)
+    # V11 glyphs: Lora has no superscript T (it fell back to a glyph that reads as "S"), and a
+    # combining macron lands on the wrong letter in Lora Italic. Draw both with markup instead.
+    h = prose_only(h, typeset)
+    h = prose_only(h, carets, split_tags=False)
     out.write_text(h)
 
-def render(pw, html_path, pdf_path, footer_text=None):
+SUP = dict(zip('⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵀ', '0123456789+−=()niT'))
+SUB = dict(zip('₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₒₓₙₛₜ', '0123456789+−=()aeoxnst'))
+
+def prose_only(h, fn, split_tags=True):
+    """Apply fn to text outside <pre> blocks and <code> spans (and outside tags, by default)."""
+    pat = r'(<pre\b.*?</pre>|<code\b.*?</code>|<[^>]+>)' if split_tags else r'(<pre\b.*?</pre>|<code\b.*?</code>|<(?!/?(?:em|strong)>)[^>]+>)'
+    parts = re.split(pat, h, flags=re.S)
+    return ''.join(p if i % 2 else fn(p) for i, p in enumerate(parts))
+
+def typeset(s):
+    # V11 glyphs. Unicode sub/superscript digits come from a fallback font and sit on the
+    # baseline (w₁x₁ reads as w1x1), and Lora has no superscript T: set them as real <sup>/<sub>.
+    s = re.sub('[' + ''.join(SUP) + ']+', lambda m: '<sup>' + ''.join(SUP[c] for c in m.group()) + '</sup>', s)
+    s = re.sub('[' + ''.join(SUB) + ']+', lambda m: '<sub>' + ''.join(SUB[c] for c in m.group()) + '</sub>', s)
+    # a combining macron lands on the wrong letter in Lora Italic: draw the bar with CSS
+    s = re.sub('(\\w)\u0304', r'<span class="ovl">\1</span>', s)
+    # identifiers and ISO dates never break at their hyphens (V3.10, V25.12, V73.10 …)
+    s = re.sub(r'\b(\d{4}-\d{2}-\d{2}|Q\d{2,3}[A-Z]?-\d{3}|[A-Z]{1,4}-\d{1,4})\b', r'<span class="nobr">\1</span>', s)
+    return s
+
+def carets(s):
+    """Caret powers in prose ("e^(−λ)", "2^16", "*p*^*k*") become superscripts (V35.3, V37.6, V43.7, V52.12).
+    Works on prose that may contain <em>/<strong>, never on code."""
+    base = r'(?<=[\w)>])'
+    s = re.sub(base + r'\^\(((?:[^()<]|<em>[^<]*</em>){1,40})\)', r'<sup>\1</sup>', s)
+    s = re.sub(base + r'\^(<em>[^<]{1,10}</em>)', r'<sup>\1</sup>', s)
+    s = re.sub(base + r'\^([−-]?(?:\w[\w.]{0,10})?\w)(?![\w.]*\w)', r'<sup>\1</sup>', s)
+    return s
+
+LAYOUT_JS = (HERE / 'layout.js').read_text()
+PRINT_W_PX = round((210 - 18 - 18) * 96 / 25.4)    # A4 minus the @page side margins, in CSS px
+
+def toc_numbers(html_text, pages):
+    """Write page numbers into the contents (V2). pages maps heading title -> list of page numbers."""
+    used = {}
+    def one(m):
+        attrs, inner = m.group(1), m.group(2)
+        if '<span class="toc-t">' in inner:
+            inner = re.search(r'<span class="toc-t">(.*?)</span>', inner, re.S).group(1)
+        key = norm_title(html.unescape(re.sub(r'<[^>]+>', '', inner)))
+        k = used.get(key, 0); used[key] = k + 1
+        lst = pages.get(key, [])
+        pg = str(lst[k]) if k < len(lst) else '00'
+        return f'<a{attrs}><span class="toc-t">{inner}</span><span class="toc-dots"></span><span class="toc-pg">{pg}</span></a>'
+    a, b = html_text.find('<nav id="TOC"'), html_text.find('</nav>')
+    if a < 0: return html_text
+    nav = re.sub(r'<a(\s+href="#[^"]*"[^>]*)>(.*?)</a>', one, html_text[a:b], flags=re.S)
+    return html_text[:a] + nav + html_text[b:]
+
+def norm_title(s):
+    return re.sub(r'\s+', '', s).lower()        # ignore spaces: a wrapped heading loses one in the PDF
+
+def outline_pages(pdf_path):
+    """Heading title -> [page numbers], from the bookmarks Chromium writes for every heading."""
+    r = PdfReader(str(pdf_path)); out = {}
+    def walk(items):
+        for it in items:
+            if isinstance(it, list): walk(it); continue
+            ti = it.title
+            if len(ti) % 2 == 0 and ti[:len(ti)//2] == ti[len(ti)//2:]:   # Chromium sometimes doubles a title
+                ti = ti[:len(ti)//2]
+            out.setdefault(norm_title(ti), []).append(r.get_destination_page_number(it) + 1)
+    walk(r.outline)
+    return out
+
+def render(pw, html_path, pdf_path, footer_text=None, layout=False):
     b = pw.chromium.launch()
-    p = b.new_page()
+    p = b.new_page(viewport={'width': PRINT_W_PX, 'height': 1100})
+    p.emulate_media(media='print')
     p.goto(f'file://{html_path}')
     p.wait_for_load_state('networkidle')
     p.evaluate('document.fonts.ready')
+    rep = p.evaluate(LAYOUT_JS) if layout else None
     kw = dict(path=str(pdf_path), prefer_css_page_size=True, print_background=True)
     if footer_text:
         kw.update(display_header_footer=True, header_template='<div></div>',
                   footer_template=f'<div style="width:100%;font-family:DejaVu Sans,sans-serif;font-size:7.5pt;color:#6b7383;padding:0 18mm;display:flex;justify-content:space-between;"><span>{html.escape(footer_text)}</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>')
     try:
-        p.pdf(outline=True, **kw)
+        p.pdf(outline=True, tagged=True, **kw)
     except TypeError:
         p.pdf(**kw)
     b.close()
+    return rep
 
 def build(src, name, bodyclass, title, footer, cover, toc_depth):
     src = str(src if os.path.isabs(str(src)) else MS / str(src))   # bare names resolve to manuscript/
     body_html = D/f'{name}.html'
     md_to_html(src, body_html, bodyclass, title, toc_depth)
+    # V1: one cover template for every chapter. No draft/approval badge, version or date on a
+    # reader-facing cover; "Chapter N." is written with its full stop, as in the headings (V12.27).
+    cover = dict(cover, DOC='', META='')
+    cover['TITLE'] = re.sub(r'^(Chapter \d+[A-Za-z]?)(<br>)', r'\1.\2', cover['TITLE'])
     c = (HERE/'cover.html').read_text()
     for k, v in cover.items(): c = c.replace('{{'+k+'}}', v)
     (D/f'{name}-cover.html').write_text(c)
     with sync_playwright() as pw:
         render(pw, D/f'{name}-cover.html', D/f'{name}-cover.pdf')
-        render(pw, body_html, D/f'{name}-body.pdf', footer)
+        # V2: render, read each heading's page from the PDF bookmarks, write the numbers into the
+        # contents, and render again until the numbers stop changing (usually two passes).
+        base = body_html.read_text()
+        pages, rep = {}, None
+        for attempt in range(4):
+            body_html.write_text(toc_numbers(base, pages))
+            rep = render(pw, body_html, D/f'{name}-body.pdf', footer, layout=True)
+            new = outline_pages(D/f'{name}-body.pdf')
+            if new == pages: break
+            pages = new
+        (D/f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
+        if rep and rep.get('overflow'):
+            print('  WARNING wider than the text block:', rep['overflow'][:3])
     w = PdfWriter()
     w.append(str(D/f'{name}-cover.pdf'))
     w.append(str(D/f'{name}-body.pdf'))

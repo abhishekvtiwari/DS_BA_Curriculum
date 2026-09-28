@@ -20,7 +20,7 @@ def fig_images():
         ax.set_xticks([]); ax.set_yticks([])
     fig.suptitle("What the model sees: 32x32 images of moulded lids", fontsize=12, y=0.98)
     fig.tight_layout()
-    fig.savefig(__file__.replace("make_figs53.py", "fig53-1-defect-images.svg"), format="svg")
+    fig.savefig(__file__.replace("make_figs53.py", "fig53-1-defect-images.svg"), format="svg", dpi=300)   # 300 ppi (V12)
     plt.close(fig)
 
 def fig_training_step():

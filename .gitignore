@@ -23,3 +23,6 @@ Thumbs.db
 # Local scratch
 /tmp/
 *.log
+
+# Generated companion data (rebuild with companion/ch53/generate_defect_images.py)
+Data Science/Analyst-to-Architect/companion/ch53/defect_data/
