@@ -6,41 +6,49 @@ from make_figs07 import arrow, header_card
 GREEN="#2f7d6d"; PURPLE="#7a4fa0"; ORANGE="#c0662b"; RED="#b23b3b"
 
 def fig_wap():
-    o=[]; y=70
-    o.append(header_card(30,y,280,150,ACC,"1 · Write"))
-    o.append(wrap(44,y+62,["Build the day's numbers into","audit.daily_flash_new","","Nobody reads this table."],12.5,INK,20))
-    o.append(arrow(314,y+75,354,y+75,c=INK,sw=2.2))
-    o.append(header_card(358,y,300,150,ORANGE,"2 · Audit"))
-    o.append(wrap(372,y+62,["one row per day","revenue not negative","matches the ERP (orders and","revenue recomputed from source)"],12.5,INK,20))
-    o.append(arrow(662,y+45,706,y-5,c=GREEN,sw=2.2)); o.append(text(640,y-28,"tests pass",12,GREEN,"bold"))
-    o.append(arrow(662,y+110,706,y+165,c=RED,sw=2.2)); o.append(text(636,y+206,"a test fails",12,RED,"bold"))
-    o.append(header_card(710,y-70,300,120,GREEN,"3 · Publish"))
-    o.append(wrap(724,y-14,["One transaction swaps the day into","mart.daily_flash, which dashboards","and analysts read."],12,INK,19))
-    o.append(rect(710,y+130,300,120,fill="#fbeaea",stroke=RED,sw=1.6,rx=8))
-    o.append(text(726,y+158,"Publish blocked",14,RED,"bold",family=HEAD))
-    o.append(wrap(726,y+182,["mart.daily_flash keeps its last","good data; an incident alert goes","to the owner."],12,INK,19))
-    o.append(rect(30,y+230,640,60,fill="#f6f9fc",stroke=RULE,rx=7))
-    o.append(text(46,y+256,"Readers of the published table only ever see data that passed its tests.",13,INK,"bold"))
-    o.append(text(46,y+276,"In Chapter 46 the same failure left a wrong row where anyone could query it.",12,MUTED))
-    return svg(1040,y+320,"".join(o))
+    # Canvas 720 px wide: 11 px text prints at 7.5 pt (V47.1).
+    o=[]; y=64
+    o.append(header_card(10,y,204,150,ACC,"1 · Write",tsize=14))
+    o.append(wrap(22,y+58,["Build the day's numbers","into audit.daily_flash_new.","","Nobody reads this table."],11.5,INK,19))
+    o.append(arrow(218,y+75,244,y+75,c=INK,sw=2))
+    o.append(header_card(248,y,204,150,ORANGE,"2 · Audit",tsize=14))
+    o.append(wrap(260,y+58,["Tests run on the new table:","- one row per day","- revenue not negative","- orders and revenue","  match the ERP"],11.5,INK,19))
+    o.append(arrow(456,y+48,486,y+2,c=GREEN,sw=2))
+    o.append(arrow(456,y+102,486,y+148,c=RED,sw=2))
+    o.append(header_card(490,y-54,222,128,GREEN,"3 · All pass: publish",tsize=13))
+    o.append(wrap(502,y-2,["One transaction replaces the","day in mart.daily_flash,","which dashboards and","analysts read."],11.5,INK,18))
+    o.append(header_card(490,y+100,222,128,RED,"Any error: blocked",tsize=13))
+    o.append(wrap(502,y+152,["mart.daily_flash keeps its","last good data; an incident","alert goes to the owner."],11.5,INK,18))
+    o.append(rect(10,y+246,702,56,fill="#f6f9fc",stroke=RULE,rx=7))
+    o.append(text(24,y+270,"Readers of the published table only ever see data that passed its tests.",12.5,INK,"bold"))
+    o.append(text(24,y+290,"In Chapter 46 the same failure left a wrong row where anyone could query it.",11.5,MUTED))
+    return svg(720,y+312,"".join(o))
 
 def fig_incident():
+    # Five steps as rows on a 720 px canvas: 11 px text prints at 7.5 pt (V47.2).
     o=[]
-    steps=[("1 · Detect",ACC,["Failed test, freshness","alert, or a person saying","the number looks wrong"]),
-           ("2 · Classify",ACC,["S1 wrong data reached","people or systems","S2 output late, nothing sent","S3 minor or warning-level"]),
-           ("3 · Contain",ORANGE,["Stop publishing and syncs","Tell the people who use it,","before they find out"]),
-           ("4 · Fix and verify",GREEN,["Repair the cause, re-run","the affected days, run the","same tests, publish"]),
-           ("5 · Review",PURPLE,["Blameless write-up:","timeline, cause, impact,","and the checks added","to catch it sooner"])]
-    W=186; G=16; y=40
+    steps=[("1 · Detect",ACC,["A failed test, a stale table, or a person saying a number looks wrong."]),
+           ("2 · Classify",ACC,["S1: wrong data reached people or systems.  S2: an output is late or blocked;",
+                                "nothing wrong was sent.  S3: a minor problem or a warning-level failure."]),
+           ("3 · Contain",ORANGE,["Stop publishing and syncs. Tell the people who use the data,",
+                                  "before they find out for themselves."]),
+           ("4 · Fix and verify",GREEN,["Repair the cause, re-run the affected days, run the same tests, then publish."]),
+           ("5 · Review",PURPLE,["A blameless write-up: timeline, cause, impact, and the checks added",
+                                 "to catch it sooner next time."])]
+    y=12; H=50; G=14
     for i,(t,c,lines) in enumerate(steps):
-        x=30+i*(W+G)
-        o.append(header_card(x,y,W,170,c,t,tsize=13))
-        o.append(wrap(x+12,y+62,lines,11.5,INK,19))
-        if i<4: o.append(arrow(x+W+2,y+90,x+W+G-2,y+90,c=INK,sw=2))
-    o.append(rect(30,y+192,5*W+4*G,58,fill="#fff4e8",stroke=ORANGE,rx=7))
-    o.append(text(46,y+216,"People forgive late data far more than wrong data they already acted on.",13,INK,"bold"))
-    o.append(text(46,y+238,"So communication happens at step 3, not after step 4.",12,MUTED))
-    return svg(1040,y+276,"".join(o))
+        yy=y+i*(H+G)
+        o.append(rect(10,yy,150,H,fill=c,rx=7))
+        o.append(text(22,yy+H/2+5,t,13,"#fff","bold",family=HEAD))
+        o.append(rect(166,yy,546,H,fill="#fff",stroke=c,sw=1.4,rx=7))
+        top=yy+H/2+4-(len(lines)-1)*8
+        o.append(wrap(178,top,lines,11.5,INK,17))
+        if i<4: o.append(arrow(85,yy+H+1,85,yy+H+G-1,c=INK,sw=1.8))
+    yb=y+5*(H+G)+4
+    o.append(rect(10,yb,702,56,fill="#fff4e8",stroke=ORANGE,rx=7))
+    o.append(text(24,yb+24,"People forgive late data far more than wrong data they already acted on.",12.5,INK,"bold"))
+    o.append(text(24,yb+44,"So communication happens at step 3, not after step 4.",11.5,MUTED))
+    return svg(720,yb+68,"".join(o))
 
 def fig_observability():
     o=[]

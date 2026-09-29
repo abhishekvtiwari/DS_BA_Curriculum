@@ -2,14 +2,18 @@
 Creates riverstone_source (a private copy of riverstone_2025 that plays the ERP and CRM),
 deletes the local warehouse, and writes the practice export files.
 Run: python3 reset_ch45.py     (PostgreSQL must be running; riverstone_2025 loaded)
+Connection: the same RIVERSTONE_SOURCE string as the chapter's notebook (default "dbname=riverstone_source");
+reset() swaps its dbname for the maintenance database "postgres", because a database can't be copied or dropped
+from inside itself. PostgreSQL copies a database only while nobody else is connected to it, so reset() first
+closes other connections to riverstone_2025 and riverstone_source (for example an open DBeaver tab).
 Riverstone Supplies is fictional; every name and number is invented."""
 import os, shutil, psycopg2
 import make_files
 
-PG = os.environ.get("RIVERSTONE_PG", "dbname=postgres")
-
 def reset():
-    conn = psycopg2.connect(PG); conn.autocommit = True
+    src = os.environ.get("RIVERSTONE_SOURCE", "dbname=riverstone_source")
+    conn = psycopg2.connect(src, dbname="postgres")      # same user, password and host; other database
+    conn.autocommit = True
     cur = conn.cursor()
     cur.execute("SELECT pg_drop_replication_slot(slot_name) FROM pg_replication_slots "
                 "WHERE slot_name = 'ch45_slot'")
