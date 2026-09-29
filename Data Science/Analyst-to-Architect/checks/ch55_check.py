@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """ch55_check.py - checks Chapter 55's numbers against the corpus, the retrieval module and the assistant."""
 import json, pathlib, sys
-C = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '/home/claude/book/companion/ch55')
+C = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1] / 'companion' / 'ch55')
 sys.path.insert(0, str(C))
 import os
 os.chdir(C)
-from retrieval import BM25, VectorIndex, build_chunks, chunk_fixed, chunk_sections, chunk_sentences, hybrid_scores, load_documents, rank
+import re
+from retrieval import (BM25, VectorIndex, build_chunks, chunk_fixed, chunk_sections, chunk_sentences,
+                       chunk_sentences_titled, hybrid_scores, load_documents, rank)
 from assistant import SupportAssistant
 from tools import propose_tool_call, run_tool_call
 ok = 0
@@ -38,10 +40,13 @@ def evaluate(chunker, method, k=5):
 for chunker, method, want in ((chunk_fixed, 'hybrid', (52, 0.85, 1.00, 0.918)),
                               (chunk_sentences, 'bm25', (70, 0.91, 1.00, 0.949)),
                               (chunk_sentences, 'vector', (70, 0.87, 1.00, 0.932)),
-                              (chunk_sections, 'vector', (60, 0.85, 0.98, 0.912))):
+                              (chunk_sections, 'vector', (60, 0.85, 0.98, 0.912)),
+                              (chunk_sections, 'bm25', (60, 0.89, 1.00, 0.938)),
+                              (chunk_sentences_titled, 'bm25', (70, 0.95, 1.00, 0.965)),
+                              (chunk_sentences_titled, 'hybrid', (70, 0.91, 1.00, 0.952))):
     check(f'{chunker.__name__} {method}', evaluate(chunker, method), want)
 assistant = SupportAssistant()
-answered = right_source = refused = 0
+answered = right_source = has_fact = refused = 0
 for q in questions:
     result = assistant.answer(q['question'])
     if q['doc'] is None:
@@ -49,13 +54,19 @@ for q in questions:
     else:
         if result['grounded']:
             answered += 1
-            right_source += result['source'] == q['doc']
-check('answered', answered, 50); check('right source', right_source, 38); check('correctly refused', refused, 7)
+            if result['source'] == q['doc']:
+                right_source += 1
+                key = re.escape(q['answer'].lower().replace('rs ', '').split()[0].strip('%,'))
+                has_fact += re.search(rf'\b{key}\b', result['answer'].lower()) is not None
+check('answered', answered, 50); check('right source', right_source, 38)
+check('contained the fact', has_fact, 12); check('correctly refused', refused, 7)
+check('score kept for Chapter 57', 'score' in assistant.answer('How long is the standard warranty?'), True)
 b, c = assistant.confidence('Do you accept cryptocurrency?')
 check('unanswerable scores low', b < 8 or c < 0.6, True)
 b, c = assistant.confidence('How long is the warranty on the Industrial Crate?')
 check('answerable scores high', b >= 8 and c >= 0.6, True)
 check('order tool', run_tool_call(propose_tool_call('Where is order SO-4472?'))['status'], 'packing')
+check('whitelist', 'error' in run_tool_call(propose_tool_call('What would 1200 units of product 102 cost?'), allowed={'order_status'}), True)
 quote = run_tool_call(propose_tool_call('What would 1200 units of product 102 cost?'))
 check('price tool discount', quote['discount_pct'], 8.0)
 check('price tool total', quote['total_with_gst'], 977040.0)

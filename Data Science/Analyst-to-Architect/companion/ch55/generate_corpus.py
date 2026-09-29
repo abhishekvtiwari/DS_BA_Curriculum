@@ -3,15 +3,15 @@
 Analyst to Architect · Chapter 55 · Building AI Applications: RAG, Agents & Evaluation
 File: generate_corpus.py - builds Riverstone's document corpus and the question set the chapter measures against.
 What: writes, under corpus/:
-        docs/*.md          Riverstone's own documents: 8 product spec sheets, 9 policies (one of them an
+        docs/*.md          Riverstone's own documents: 8 product spec sheets, 8 policies (one of them an
                            outdated version that is still in the folder, as in every real company),
-                           a price list, an escalation contact sheet, and 20 FAQ entries.
-        questions.json     50 support questions with the document each one should be answered from.
+                           a price list, an escalation contact sheet, and 10 FAQ entries.
+        questions.json     65 support questions with the document each one should be answered from.
                            Ten of them are deliberately unanswerable from this corpus, because the most
                            valuable thing a support assistant does is say so.
 How:  python3 generate_corpus.py
-Seed: 55 (fixed). Standard library only; nothing is downloaded.
-Tested on: Python 3.12.3 (Ubuntu 24.04).
+No randomness: every run writes the same files. Standard library only; nothing is downloaded.
+Tested on: Python 3.11 and 3.12.
 Riverstone Supplies is fictional; every product, policy and number here is invented.
 """
 import json, os, pathlib, textwrap
