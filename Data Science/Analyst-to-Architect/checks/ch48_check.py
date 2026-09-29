@@ -17,6 +17,10 @@ row=con.execute("""SELECT ROUND(AVG(temperature_c),2), ROUND(AVG(CAST(scrap_flag
 check('Bhiwandi hot readings summary', row, (203.43, 1.33, 23234149))
 check('supervisor rows per machine', con.execute("SELECT COUNT(*) FROM r WHERE machine_id='M-01'").fetchone()[0], 794880)
 # timing ratios quoted in 48.6 and exercise 8
-check('Ex8 ratio small', round(0.73/0.01), 73)
-check('Ex8 ratio large', round(2.01/0.38,1), 5.3)
+check('Ex8 ratio small (ms, section 48.6 table)', round(252.3/6.8), 37)
+check('Ex8 ratio large (ms, section 48.6 table)', round(1211.8/213.0,1), 5.7)
+check('salted/plain join rows = 3 machines x 794,880', con.execute("SELECT COUNT(*) FROM r WHERE machine_id IN ('M-01','M-02','M-03')").fetchone()[0], 2384640)
+check('Bhiwandi Main machines x 8,640 x 92', con.execute("SELECT COUNT(*) FROM r WHERE plant='Bhiwandi Main'").fetchone()[0], 15*8640*92)
+check('weekly summary rows (plant x ISO week)', con.execute("SELECT COUNT(*) FROM (SELECT DISTINCT plant, weekofyear(reading_date) FROM r)").fetchone()[0], 28)
+check('12 M readings/week = ~200 machines at 10 s', round(12_000_000/(8640*7)), 198)
 print('ALL CHECKS PASSED' if ok else 'SOME CHECKS FAILED')
