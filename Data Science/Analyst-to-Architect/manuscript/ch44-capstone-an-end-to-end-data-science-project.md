@@ -523,7 +523,7 @@ Here is where each step came from:
 | 36 | The framing table (section 36.1), the train/validation/test split (section 36.3), pipelines (section 36.9), and the leakage rule that every feature must be known at the prediction moment (section 36.7) |
 | 37 | The accounts, the split and the gradient-boosting model with its settings (sections 37.0 and 37.8); scoring the test set once (section 37.11) |
 | 39 | The calibration check (section 39.4), break-even from costs (section 39.5), and SHAP for one prediction (section 39.8) |
-| 42 | Judging a ranked list by what's at the top of it, as precision@k does (section 42.3), applied to a call list instead of a product list |
+| 42 | Judging a ranked list by what's at the top of it, as hit rate@k and precision@k do (section 42.3), applied to a call list instead of a product list |
 | 43 | The decision to stay with gradient boosting: on tabular data like this, a neural network wasn't worth its complexity (section 43.8) |
 | 30 | The experiment the summary recommends, to measure whether calls work |
 | 38, 40, 41 | Not needed for this question. Clustering, forecasting and text are the right tools for other questions; a capstone uses what its question needs, and that's normal |

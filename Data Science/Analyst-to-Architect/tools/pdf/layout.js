@@ -115,7 +115,9 @@
     const total = group.reduce((a, e) => a + h(e), 0);
     withCaption(group);
     if (group.length > 1) {
-      if (total < PAGE_H * KEEP) wrap(group);
+      // a heading, a lead-in ending in ":" and the code it introduces may take up to 45% of a page
+      const lim = group.length > 2 && (group[2].tagName === 'PRE' || group[2].querySelector(':scope > pre')) && /[:：]\s*$/.test(group[1].textContent) ? 0.45 : KEEP;
+      if (total < PAGE_H * lim) wrap(group);
       else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) wrap(group.slice(0, 2));
     }
   }

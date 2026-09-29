@@ -1,5 +1,5 @@
 """
-Analyst to Architect · Riverstone machine sensor readings (first used in Chapter 40; full size in Chapters 48 and 50)
+Analyst to Architect · Riverstone machine sensor readings (used in Chapter 40)
 generate_riverstone_sensors.py: one-minute readings from injection-moulding machines.
 
 Run:     python3 generate_riverstone_sensors.py            -> one week, one machine (10,080 rows) for Chapter 40
@@ -7,7 +7,6 @@ Run:     python3 generate_riverstone_sensors.py            -> one week, one mach
 Writes:  sensors/machine_readings_week.csv  (or sensors/machine_readings_full.parquet with --full)
 Seed:    20241 (the one-week file is exactly the first week of machine M01 in the full run)
 Tested:  Python 3.12.3, NumPy 2.4.4, pandas 3.0.2 (18 September 2026)
-Spec:    planning/data/riverstone-sensors.md
 
 Riverstone Supplies is fictional; every name and number is invented.
 """

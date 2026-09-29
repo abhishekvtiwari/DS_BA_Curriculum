@@ -37,6 +37,7 @@ SPECIAL = {67: (2, 4)}      # "about two hours" to read, counted as 2–4 (Chapt
 # (Parts 2 and 3 build, 28 Sep 2026). Chapter 27 adds its two stated parts: reading and running the
 # worked project (2–3 h) and the reader's own portfolio (20–30 h, which includes the deep project).
 SPECIAL.update({11: (35, 45), 19: (25, 30), 26: (9, 11), 27: (22, 33), 29: (20, 24), 32: (18, 22)})
+SPECIAL.update({36: (14, 18), 37: (20, 24), 39: (16, 20)})   # Part 4 build: later ranges are sittings
 
 
 def chapter_file(n):
