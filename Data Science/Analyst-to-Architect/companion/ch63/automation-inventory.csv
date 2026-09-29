@@ -1,15 +1,25 @@
-automation_name,type,owner,value_score,effort_score,risk_score,layer_coverage,status,notes
-Daily Sales Flash,scheduled script,Analytics team,4,1,1,full six layers,documented,325 hrs/yr saved; Ch 20
-Branch consolidation macro,spreadsheet macro,Data platform team,3,1,1,ingestion+warehouse+delivery compressed,documented,4min->9sec per run; Ch 19 rewrite
-PO-intake (assisted mode),AI agent + human confirmation,Automation team,5,3,2,full six layers,documented,Rs 198/day at 40 emails; Ch 58
-PO-intake (straight-through, rejected),AI agent,n/a - rejected,5,3,5,full six layers,rejected,19% silent error rate; Rs 13380/day hidden cost
-Dagster ingestion pipeline,orchestrated pipeline,Data platform team,5,5,3,sources+ingestion+warehouse,documented,Part 5; platform-wide dependency
-CRM reverse-ETL sync,integration platform pattern,Data platform team,3,3,1,warehouse+delivery,documented,eventual consistency by design; Ch 51
-Support RAG assistant,AI agent,AI applications team,4,3,2,sources+semantic+delivery,documented,Ch 55; refuses rather than guesses
-Defect detection model service,AI agent + MLOps,AI applications team,4,4,3,sources+delivery+monitoring,documented,Ch 53/56; real-time inference
-Bengaluru stock-count macro,spreadsheet macro,unassigned (branch staff),2,1,2,ingestion+delivery only,shadow IT - found in audit,discovered Apr 2026 audit
-Personal expense-filing Apps Script,low-code flow,unassigned (one analyst),1,1,2,ingestion+delivery only,shadow IT - found in audit,discovered Apr 2026 audit
-CRM-to-WhatsApp Power Automate flow,low-code flow,unassigned (3 dependents),2,1,3,delivery only,shadow IT - found in audit,original author unknown
-Delhi consolidation macro (duplicate),spreadsheet macro,unassigned,2,1,3,ingestion+warehouse+delivery compressed,duplicated logic - found in audit,disagrees with Kolkata version
-Kolkata consolidation macro (duplicate),spreadsheet macro,unassigned,2,1,3,ingestion+warehouse+delivery compressed,duplicated logic - found in audit,disagrees with Delhi version
-Stale Apps Script trigger (broken),event-driven flow,unassigned,1,1,4,ingestion only,actively broken - found in audit,silently stopped firing 5 months before discovery
+automation_name,tool_category,chapter,owner,audit_category,value_score,effort_score,risk_score,layers_covered,notes
+Daily Sales Flash,scheduled script,20,Analytics team,documented and owned,4,1,1,all six,325 hours a year saved (Ch 20 section 20.14); four checks stop a wrong send
+Dagster ingestion pipeline,orchestrated pipeline,46,Data platform team,documented and owned,5,5,3,sources+ingestion+warehouse+monitoring,every report downstream depends on it
+CRM reverse-ETL syncs,scheduled script,51,Data platform team,documented and owned,3,3,3,warehouse+delivery+monitoring,lag is harmless; a wrong write overwrites what a person typed (Ch 51 story)
+PO intake (assisted),AI agent or LLM pipeline,58,Automation team,documented and owned,4,3,3,all six,a named person confirms every order; value depends on the review catch rate
+Support assistant,AI agent or LLM pipeline,55,AI applications team,documented and owned,4,3,2,sources+semantic+delivery+monitoring,refuses rather than guesses
+Defect model service,AI agent or LLM pipeline,56,AI applications team,documented and owned,4,4,3,sources+delivery+monitoring,online answer per camera image
+Branch consolidation macro (MASTER_FINAL_v7),spreadsheet macro,19,Meera Iyer (since the Ch 19 rewrite),single point of failure,3,1,1,all six in one workbook,runs once a quarter; checks and a one-page note since Ch 19; no deputy has run it
+Enquiries digest,spreadsheet macro,19,none on record,working but no owner,2,1,1,sources+ingestion+delivery,Ch 19 Apps Script project; its builder moved teams
+Expense-receipt filer,spreadsheet macro,,none on record (one analyst's own),working but no owner,1,1,1,ingestion+delivery,personal Apps Script project
+CRM-to-WhatsApp flow,low-code flow,,none on record,working but no owner,2,1,3,delivery,three people depend on it; author unknown
+Branch dashboard PDF subscription,BI subscription or alert,16,none on record,working but no owner,2,1,1,delivery,set up by someone who has left
+Kolkata upload-sheet builder,spreadsheet macro,14,none on record,working but no owner,3,1,3,ingestion+delivery,fills the ERP upload spreadsheet from the day's orders
+Delhi top-customers email,spreadsheet macro,,none on record,working but no owner,2,1,1,ingestion+delivery,weekly email to the Delhi sales team
+Month-end receivables workbook,spreadsheet macro,,none on record,working but no owner,3,1,3,ingestion+warehouse+delivery,finance runs it at month-end
+Sales-target tracker refresh,spreadsheet macro,,none on record,working but no owner,2,1,2,ingestion+delivery,Apps Script time trigger
+New-customer welcome email,low-code flow,,none on record,working but no owner,1,1,2,delivery,Power Automate flow
+Price-list PDF export,spreadsheet macro,,none on record,working but no owner,2,1,3,delivery,Mumbai HO; customers receive the PDF
+Bank-statement download,scheduled script,,none on record,working but no owner,2,2,3,ingestion,Task Scheduler job on one finance PC
+Delhi consolidation macro,spreadsheet macro,19,none on record,duplicated logic,2,1,3,all six in one workbook,pair 1: disagrees with the Kolkata version
+Kolkata consolidation macro,spreadsheet macro,19,none on record,duplicated logic,2,1,3,all six in one workbook,pair 1: disagrees with the Delhi version
+Bengaluru stock-report reformatter,spreadsheet macro,,none on record,duplicated logic,2,1,2,ingestion+delivery,pair 2: reformats Bhiwandi's weekly stock report; disagrees with Mumbai HO's
+Mumbai HO stock-report reformatter,spreadsheet macro,,none on record,duplicated logic,2,1,2,ingestion+delivery,pair 2: reformats Bhiwandi's weekly stock report; disagrees with Bengaluru's
+Stock reorder reminder,spreadsheet macro,,none on record,actively broken,2,1,4,ingestion+delivery,Apps Script trigger stopped firing five months before the audit
+Weekly collections list,spreadsheet macro,,none on record,actively broken,2,1,4,ingestion+delivery,saves to a shared folder IT had moved; nobody reads the new copies

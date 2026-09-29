@@ -1,7 +1,7 @@
 # Automation Center of Excellence — charter template
 
 Companion to Chapter 63, section 63.8. Riverstone's own charter, established
-following the April 2026 audit, as a worked example.
+after its first automation audit (the chapter's story), as a worked example.
 
 ## Purpose
 Maintain a true, current inventory of every automation Riverstone depends on;
@@ -20,8 +20,8 @@ choose to use because it makes their own work easier and safer.
   logs, alerting (Chapter 63, section 63.6).
 - Publish the handover-note and runbook templates, and the risk-scoring
   method (section 63.2), for any team to use.
-- Run the company-wide "what do you depend on weekly?" inventory question
-  at least once a year, more often while sprawl is still being discovered.
+- Run the company-wide "what do you depend on, weekly or at month- or
+  quarter-end?" inventory question at least once a year, more often while sprawl is still being discovered.
 - Review any automation scoring high-risk (section 63.2) before it goes to
   production, applying the controls appropriate to its actual risk level
   (section 63.9) — not a blanket process for everything.
