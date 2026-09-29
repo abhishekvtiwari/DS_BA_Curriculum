@@ -159,7 +159,8 @@ def relu(z):
 
 for z in [-2, -0.1, 0, 0.5, 3]:
     sig = 1 / (1 + math.exp(-z))
-    print(f"z = {z:>4}   relu {relu(z):>4}   sigmoid {sig:.3f}   tanh {math.tanh(z):>6.3f}")
+    tanh = math.tanh(z)
+    print(f"z = {z:>4}   relu {relu(z):>4}   sigmoid {sig:.3f}   tanh {tanh:>6.3f}")
 ```
 
 ```
@@ -431,7 +432,9 @@ a1 = torch.tanh(z1)
 z2 = W2 @ a1 + b2
 a2 = torch.sigmoid(z2)
 
-print(f"hidden layer:  z1 = {[round(v, 4) for v in z1.tolist()]}   a1 = {[round(v, 4) for v in a1.tolist()]}")
+z1_rounded = [round(v, 4) for v in z1.tolist()]
+a1_rounded = [round(v, 4) for v in a1.tolist()]
+print(f"hidden layer:  z1 = {z1_rounded}   a1 = {a1_rounded}")
 print(f"output layer:  z2 = {z2.item():.4f}   a2 = {a2.item():.4f}")
 ```
 
@@ -583,8 +586,12 @@ def nudge_slope(W1, b1, W2, b2, x, target, epsilon=1e-4):
     W2_plus[0, 0] += epsilon
     W2_minus = W2.clone()
     W2_minus[0, 0] -= epsilon
-    loss_plus = nn.functional.binary_cross_entropy(tiny_forward(W1, b1, W2_plus, b2, x), target)
-    loss_minus = nn.functional.binary_cross_entropy(tiny_forward(W1, b1, W2_minus, b2, x), target)
+    loss_plus = nn.functional.binary_cross_entropy(
+        tiny_forward(W1, b1, W2_plus, b2, x), target
+    )
+    loss_minus = nn.functional.binary_cross_entropy(
+        tiny_forward(W1, b1, W2_minus, b2, x), target
+    )
     return ((loss_plus - loss_minus) / (2 * epsilon)).item()
 
 
@@ -603,7 +610,11 @@ nudge, 32-bit:      -0.13500452
 The nudge gives −0.13500 against the hand calculation's −0.13520: close, but only to three decimal places. Is `epsilon` too big? No. The losses here are 32-bit numbers, with about 7 significant digits (section 43.0), and the two losses differ only in their fifth decimal place; dividing that tiny difference by 0.0002 magnifies the rounding in the last digits. (Shrinking `epsilon` would make it *worse*: an even smaller difference, magnified more.) Redo it in 64-bit numbers:
 
 ```python
-print(f"nudge, 64-bit:      {nudge_slope(W1.double(), b1.double(), W2.double(), b2.double(), x_tiny.double(), target_tiny.double()):.8f}")
+slope_64 = nudge_slope(
+    W1.double(), b1.double(), W2.double(), b2.double(),
+    x_tiny.double(), target_tiny.double(),
+)
+print(f"nudge, 64-bit:      {slope_64:.8f}")
 ```
 
 ```
@@ -829,7 +840,8 @@ for name, pred, size in [
     ("small neural network", final_pred, "561"),
     ("gradient boosting", boosting_pred, "(300 trees)"),
 ]:
-    print(f"{name:<24} {roc_auc_score(y_valid, pred):.3f}   {log_loss(y_valid, pred):.4f}     {size}")
+    auc, loss = roc_auc_score(y_valid, pred), log_loss(y_valid, pred)
+    print(f"{name:<24} {auc:.3f}   {loss:.4f}     {size}")
 ```
 
 ```
@@ -858,7 +870,8 @@ for name, pred in [
     ("small neural network", network_test),
     ("gradient boosting", boosting_model.predict_proba(X_test)[:, 1]),
 ]:
-    print(f"{name:<24} test AUC {roc_auc_score(y_test, pred):.3f}   log loss {log_loss(y_test, pred):.4f}")
+    auc, loss = roc_auc_score(y_test, pred), log_loss(y_test, pred)
+    print(f"{name:<24} test AUC {auc:.3f}   log loss {loss:.4f}")
 ```
 
 ```
@@ -940,7 +953,8 @@ This patch sits on the *left side* of the "0", a vertical stroke, where ink decr
 feature_map = np.zeros((6, 6))
 for row in range(6):
     for col in range(6):
-        feature_map[row, col] = (images[0][row : row + 3, col : col + 3] * edge_kernel).sum()
+        window = images[0][row : row + 3, col : col + 3]
+        feature_map[row, col] = (window * edge_kernel).sum()
 print(np.round(feature_map, 1))
 ```
 
@@ -1116,7 +1130,8 @@ for epoch in range(60):
 with torch.no_grad():
     predicted = base_model(Xb_test_t).argmax(1)
 base_accuracy = (predicted == yb_test_t).float().mean().item()
-print(f"after 60 epochs: training loss {loss4.item():.4f}   test accuracy {base_accuracy:.1%}")
+print(f"after 60 epochs: training loss {loss4.item():.4f}")
+print(f"test accuracy: {base_accuracy:.1%}")
 ```
 
 ```
@@ -1159,13 +1174,13 @@ def small_training_set(n_per_class, seed):
 
 
 Xs, ys = small_training_set(10, seed=0)
-print(f"new task: {len(Xn_train)} training images available, {len(Xn_test)} test images")
-print(f"one small training set: {len(Xs)} images, labels {ys.tolist()}")
+print(f"new task: {len(Xn_train)} training images, {len(Xn_test)} test images")
+print(f"one small training set: {len(Xs)} images")
+print("images per digit:", [ys.tolist().count(d) for d in range(5)])
 ```
 
 ```
-new task: 672 training images available, 224 test images
-one small training set: 50 images, labels [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+FILL
 ```
 
 - `labels[new_mask] - 5` relabels 5, 6, 7, 8, 9 as 0 to 4.
@@ -1188,7 +1203,9 @@ for param in transfer_model.conv2.parameters():
 transfer_model.fc1 = nn.Linear(16 * 2 * 2, 32)
 transfer_model.fc2 = nn.Linear(32, 5)
 trainable = [p for p in transfer_model.parameters() if p.requires_grad]
-print(f"trainable parameters: {sum(p.numel() for p in trainable):,} of {sum(p.numel() for p in transfer_model.parameters()):,}")
+n_trainable = sum(p.numel() for p in trainable)
+n_all = sum(p.numel() for p in transfer_model.parameters())
+print(f"trainable parameters: {n_trainable:,} of {n_all:,}")
 ```
 
 ```
@@ -1275,7 +1292,8 @@ scratch,  seed 0: 94.6%
 One run of each is one draw: a different 50 images, or different starting weights, would give different numbers. So repeat each training-set size with five seeds (five different samples of images, and five different starting weights), give both methods the same sample each time, and report the average and the range:
 
 ```python
-print(f"{'examples/class':>14}   {'transfer: mean (range)':>24}   {'scratch: mean (range)':>23}")
+print(f"{'examples/class':>14}   {'transfer: mean (range)':>24}", end="")
+print(f"   {'scratch: mean (range)':>23}")
 sweep = {}
 for n in [3, 5, 10, 15, 30]:
     transfer_runs, scratch_runs = [], []
@@ -1670,7 +1688,9 @@ def train_transfer_partial(Xs, ys, seed, epochs=80):
         return (model(Xn_test_t).argmax(1) == yn_test_t).float().mean().item()
 
 
-partial_runs = [train_transfer_partial(*small_training_set(30, seed), seed) for seed in range(5)]
+partial_runs = [
+    train_transfer_partial(*small_training_set(30, seed), seed) for seed in range(5)
+]
 frozen_runs, scratch_runs = sweep[30]
 print(f"n=30, mean of 5 seeds:  conv2 fine-tuned {np.mean(partial_runs):.1%}")
 print(f"                        fully frozen     {np.mean(frozen_runs):.1%}")
@@ -1751,12 +1771,16 @@ def train_8_9(Xs, ys, seed, base=None, epochs=80):
         return (model(Xf_test_t).argmax(1) == yf_test_t).float().mean().item()
 
 
-results_8_9 = {"from scratch": [], "transfer from 0-4 base": [], "transfer from 0-7 base": []}
+bases = {
+    "from scratch": None,
+    "transfer from 0-4 base": base_model,
+    "transfer from 0-7 base": richer_base,
+}
+results_8_9 = {name: [] for name in bases}
 for seed in range(5):
     Xs, ys = sample_8_9(10, seed)
-    results_8_9["from scratch"].append(train_8_9(Xs, ys, seed))
-    results_8_9["transfer from 0-4 base"].append(train_8_9(Xs, ys, seed, base=base_model))
-    results_8_9["transfer from 0-7 base"].append(train_8_9(Xs, ys, seed, base=richer_base))
+    for name, base in bases.items():
+        results_8_9[name].append(train_8_9(Xs, ys, seed, base=base))
 print(f"8 vs 9, 10 per class, {len(Xf_test)} test images, mean of 5 seeds:")
 for name, runs in results_8_9.items():
     print(f"  {name:<24} {np.mean(runs):.1%}  ({min(runs):.0%}-{max(runs):.0%})")
@@ -1776,7 +1800,8 @@ No clear help. With the same five samples of 10 images per class and the same 89
 ```python
 torch.manual_seed(43)
 x_data = torch.linspace(0, 10, 50).unsqueeze(1)
-y_data = 3.0 * x_data + 7.0 + torch.randn(50, 1) * 0.5  # true line: y = 3x + 7, plus noise
+noise = torch.randn(50, 1) * 0.5
+y_data = 3.0 * x_data + 7.0 + noise  # true line: y = 3x + 7, plus noise
 
 w = torch.zeros(1, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
