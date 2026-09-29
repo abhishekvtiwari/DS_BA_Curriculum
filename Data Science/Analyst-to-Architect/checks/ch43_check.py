@@ -1,169 +1,104 @@
 """Analyst to Architect · Chapter 43 · number check.
-Recomputes the numbers quoted in Chapter 43's prose and writes checks/ch43_results.json for the figures.
-Run from checks/: python3 ch43_check.py   (about 30 seconds). Riverstone Supplies is fictional."""
-import copy, json, math, pathlib, warnings
-import numpy as np, pandas as pd, torch, torch.nn as nn
-from sklearn.compose import ColumnTransformer
-from sklearn.datasets import load_digits
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import log_loss, roc_auc_score
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-warnings.filterwarnings("ignore")
+
+Runs the chapter's Python cells in order (like a notebook, from companion/ch43/), then recomputes
+the numbers quoted in the prose and writes checks/ch43_results.json for figures/make_figs43.py.
+Run from anywhere: OMP_NUM_THREADS=1 python3 checks/ch43_check.py   (about 30 seconds).
+Riverstone Supplies is fictional."""
+import contextlib, io, json, math, os, pathlib, re
+
 HERE = pathlib.Path(__file__).resolve().parent
-COMP = HERE.parent / "companion"
+BOOK = HERE.parent
+CHAPTER = BOOK / "manuscript" / "ch43-a-first-look-at-deep-learning.md"
 fails = 0
+
+
 def ok(label, got, want):
     global fails
-    good = got == want; fails += not good
+    good = got == want
+    fails += not good
     print(("OK  " if good else "BAD ") + f"{label}: {got} (text: {want})")
 
-# 43.1 neuron by hand
-x = np.array([16, 5.03]); w = np.array([0.05, 0.9]); b = -1.2
-z = w @ x + b
-ok("neuron z", round(z, 3), 4.127); ok("neuron sigmoid", round(1 / (1 + math.exp(-z)), 3), 0.984)
 
-# 43.2 XOR
-torch.manual_seed(43)
-X_xor = torch.tensor([[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
-y_xor = torch.tensor([[0.0], [1.0], [1.0], [0.0]])
-single = nn.Sequential(nn.Linear(2, 1), nn.Sigmoid())
-opt = torch.optim.SGD(single.parameters(), lr=0.5)
-lf = nn.BCELoss()
-for _ in range(2000):
-    opt.zero_grad(); loss = lf(single(X_xor), y_xor); loss.backward(); opt.step()
-ok("single neuron XOR loss", round(loss.item(), 4), 0.6931)
-ok("ln2", round(math.log(2), 4), 0.6931)
+# Run every python cell of the chapter body (not the answers) in one namespace.
+md = CHAPTER.read_text(encoding="utf-8")
+body, answers = md.split("\n## Answers\n")
+os.chdir(BOOK / "companion" / "ch43")
+import torch
 
-torch.manual_seed(43)
-two_layer = nn.Sequential(nn.Linear(2, 4), nn.Tanh(), nn.Linear(4, 1), nn.Sigmoid())
-opt2 = torch.optim.SGD(two_layer.parameters(), lr=0.5)
-for _ in range(3000):
-    opt2.zero_grad(); pred = two_layer(X_xor); loss2 = lf(pred, y_xor); loss2.backward(); opt2.step()
-ok("two-layer XOR loss", round(loss2.item(), 5), 0.00097)
+torch.set_num_threads(1)
+ns = {"__name__": "__main__"}
+with contextlib.redirect_stdout(io.StringIO()):
+    for cell in re.findall(r"^```python\n(.*?)^```$", body, re.S | re.M):
+        exec(cell, ns)
+g = ns.__getitem__
+import numpy as np
+import torch.nn as nn
+from sklearn.metrics import roc_auc_score
 
-# 43.3 forward pass by hand
-x_t = torch.tensor([1.0, 0.5])
-W1 = torch.tensor([[0.3, -0.2], [0.4, 0.1]]); b1 = torch.tensor([0.1, -0.1])
-W2 = torch.tensor([[0.5, -0.6]]); b2 = torch.tensor([0.2])
-z1 = W1 @ x_t + b1; a1 = torch.tanh(z1); z2 = W2 @ a1 + b2; a2 = torch.sigmoid(z2)
-ok("z2", round(z2.item(), 4), 0.1438); ok("a2", round(a2.item(), 4), 0.5359)
-
-# 43.4 autograd check
-W2g = W2.clone().requires_grad_(); b1g = b1.clone().requires_grad_()
-W1g = W1.clone().requires_grad_(); b2g = b2.clone().requires_grad_()
-target = torch.tensor([1.0])
-pred_tiny = torch.sigmoid(W2g @ torch.tanh(W1g @ x_t + b1g) + b2g)
-loss_tiny = nn.functional.binary_cross_entropy(pred_tiny, target)
-loss_tiny.backward()
-ok("autograd grad", round(W2g.grad[0, 0].item(), 4), -0.1352)
-
-# 43.5 tabular
-accounts = pd.read_csv(COMP / "accounts" / "accounts.csv")
-accounts["rep_id"] = accounts["rep_id"].astype(str)
-CATS = ["segment", "city_tier", "company_size", "rep_id"]
-NUMS = ["tenure_months", "orders_2024", "units_2024", "revenue_2024", "avg_discount_pct",
-        "late_payment_days", "complaints_2024", "categories_bought", "days_since_last_order",
-        "website_logins_2024", "catalog_downloads_2024"]
-rest, test_acc = train_test_split(accounts, test_size=0.2, random_state=37, stratify=accounts["churned_2025"])
-train_acc, valid_acc = train_test_split(rest, test_size=0.25, random_state=37, stratify=rest["churned_2025"])
-prepare = ColumnTransformer([("cat", OneHotEncoder(handle_unknown="ignore"), CATS),
-    ("num", Pipeline([("fill", SimpleImputer(strategy="median", add_indicator=True)), ("scale", StandardScaler())]), NUMS)])
-X_train = prepare.fit_transform(train_acc[CATS + NUMS]).astype("float32")
-X_valid = prepare.transform(valid_acc[CATS + NUMS]).astype("float32")
-y_train = train_acc["churned_2025"].to_numpy().astype("float32")
-y_valid = valid_acc["churned_2025"].to_numpy().astype("float32")
-
-torch.manual_seed(43)
-Xtr_t = torch.tensor(X_train); ytr_t = torch.tensor(y_train).unsqueeze(1); Xva_t = torch.tensor(X_valid)
-network = nn.Sequential(nn.Linear(X_train.shape[1], 16), nn.ReLU(), nn.Linear(16, 8), nn.ReLU(), nn.Linear(8, 1))
-opt3 = torch.optim.Adam(network.parameters(), lr=0.01)
-lf3 = nn.BCEWithLogitsLoss()
-loss_curve = []
-for epoch in range(200):
-    opt3.zero_grad(); logits = network(Xtr_t); loss3 = lf3(logits, ytr_t); loss3.backward(); opt3.step()
+# 43.1
+ok("neuron z", round(0.05 * 16 + 0.9 * 5.03 - 1.2, 3), 4.127)
+ok("0.8 + 4.527", round(0.05 * 16 + 0.9 * 5.03, 3), 5.327)
+ok("0.25**10 about one millionth", f"{0.25 ** 10:.1e}", "9.5e-07")
+# 43.2
+ok("ln 2", round(math.log(2), 4), 0.6931)
+ok("single neuron loss", round(g("loss").item(), 4), 0.6931)
+ok("two-layer loss", round(g("loss2").item(), 5), 0.00097)
+ok("ReLU net loss", round(g("relu_loss").item(), 4), 0.3467)
+before, grad = -0.06509867310523987, 0.03870430588722229
+ok("one SGD step by hand", round(before - 0.5 * grad, 6), round(-0.08445082604885101, 6))
+# 43.3 / 43.4
+ok("a2", round(g("a2_hand"), 4), 0.5359)
+ok("loss -ln a2", round(-math.log(g("a2_hand")), 4), 0.6238)
+ok("dz2", round(g("a2_hand") - 1, 4), -0.4641)
+ok("dW2", [round(v, 4) for v in g("dW2")], [-0.1352, -0.1561])
+ok("dz1", [round(v, 4) for v in g("dz1")], [-0.2124, 0.247])
+ok("autograd = hand", torch.allclose(g("W2g").grad[0].double(), torch.tensor(g("dW2"), dtype=torch.float64), atol=1e-6), True)
+ok("64-bit nudge agrees to 7 decimals", abs(g("slope_64") - g("dW2")[0]) < 1e-7, True)
+ok("loss difference in 5th decimal", f"{2e-4 * 0.1352:.1e}", "2.7e-05")
+# 43.5
+ok("25 features = 13 one-hot + 11 + 1", 3 + 3 + 3 + 4 + 11 + 1, 25)
+ok("network params", 25 * 16 + 16 + 16 * 8 + 8 + 8 + 1, 561)
+ok("561 / 26 about twenty", round(561 / 26), 22)
+ok("network valid AUC", round(roc_auc_score(g("y_valid"), g("final_pred")), 3), 0.773)
+ok("logit valid AUC", round(roc_auc_score(g("y_valid"), g("logit_pred")), 3), 0.764)
+ok("boosting valid AUC", round(roc_auc_score(g("y_valid"), g("boosting_pred")), 3), 0.786)
+ok("network test AUC", round(roc_auc_score(g("y_test"), g("network_test")), 3), 0.818)
+ok("churn rate", round(g("accounts")["churned_2025"].mean(), 3), 0.097)
+ok("no-churn accuracy", round(1 - g("accounts")["churned_2025"].mean(), 3), 0.903)
+ok("valid churners", int(g("y_valid").sum()), 97)
+# 43.6
+fm = g("feature_map")
+ok("feature map max", round(float(fm.max()), 1), 1.3)
+ok("feature map min", round(float(fm.min()), 1), -2.0)
+ok("argmax of max is bottom (row 4)", int(np.unravel_index(fm.argmax(), fm.shape)[0]), 4)
+ok("CNN params", 80 + 1168 + 2080 + 165, 3493)
+ok("conv params", (1 * 8 * 9 + 8, 8 * 16 * 9 + 16, 64 * 32 + 32, 32 * 5 + 5), (80, 1168, 2080, 165))
+ok("base accuracy", round(g("base_accuracy"), 3), 0.987)
 with torch.no_grad():
-    final_pred = torch.sigmoid(network(Xva_t)).numpy().ravel()
-ok("nn AUC", round(roc_auc_score(y_valid, final_pred), 3), 0.773)
+    f = nn.functional.normalize(g("base_model").features(g("Xb_test_t")), dim=1)
+sim, y = f @ f.T, g("yb_test_t")
+same, eye = y[:, None] == y[None, :], torch.eye(len(y), dtype=torch.bool)
+ok("same-digit features more similar", bool(sim[same & ~eye].mean() > sim[~same].mean()), True)
+# 43.7
+sweep = g("sweep")
+means = {n: (np.mean(t), np.mean(s)) for n, (t, s) in sweep.items()}
+ok("scratch ahead at every size", all(s > t for t, s in means.values()), True)
+gaps = [round((s - t) * 100, 1) for t, s in means.values()]
+ok("gaps 2 to 3 points", all(2.0 <= gp <= 3.5 for gp in gaps), True)
+ok("trainable 2,245", 2080 + 165, 2245)
+ok("frozen 1,248", 80 + 1168, 1248)
 
-logit_model = LogisticRegression(max_iter=2000).fit(X_train, y_train)
-logit_pred = logit_model.predict_proba(X_valid)[:, 1]
-ok("logit AUC", round(roc_auc_score(y_valid, logit_pred), 3), 0.764)
-boosting_model = HistGradientBoostingClassifier(learning_rate=0.05, max_depth=3, min_samples_leaf=40, max_iter=300, random_state=37).fit(X_train, y_train)
-boosting_pred = boosting_model.predict_proba(X_valid)[:, 1]
-ok("boosting AUC", round(roc_auc_score(y_valid, boosting_pred), 3), 0.788)
-
-# 43.6/43.7 digits and transfer
-digits = load_digits(); images = digits.images.astype("float32") / 16.0; labels = digits.target
-base_mask = labels < 5
-X_base, y_base = images[base_mask], labels[base_mask]
-Xb_train, Xb_test, yb_train, yb_test = train_test_split(X_base, y_base, test_size=0.25, random_state=43, stratify=y_base)
-def to_tensors(im, lb): return torch.tensor(im).unsqueeze(1), torch.tensor(lb).long()
-Xb_train_t, yb_train_t = to_tensors(Xb_train, yb_train)
-Xb_test_t, yb_test_t = to_tensors(Xb_test, yb_test)
-
-class SmallCNN(nn.Module):
-    def __init__(self, n_classes):
-        super().__init__()
-        self.conv1 = nn.Conv2d(1, 8, 3, padding=1); self.conv2 = nn.Conv2d(8, 16, 3, padding=1)
-        self.pool = nn.MaxPool2d(2); self.fc1 = nn.Linear(16 * 2 * 2, 32); self.fc2 = nn.Linear(32, n_classes)
-    def features(self, x):
-        x = self.pool(torch.relu(self.conv1(x))); x = self.pool(torch.relu(self.conv2(x)))
-        return torch.relu(self.fc1(x.flatten(1)))
-    def forward(self, x): return self.fc2(self.features(x))
-
-torch.manual_seed(43)
-base_model = SmallCNN(5)
-opt4 = torch.optim.Adam(base_model.parameters(), lr=0.01)
-lf4 = nn.CrossEntropyLoss()
-for _ in range(60):
-    opt4.zero_grad(); loss4 = lf4(base_model(Xb_train_t), yb_train_t); loss4.backward(); opt4.step()
-with torch.no_grad():
-    base_accuracy = (base_model(Xb_test_t).argmax(1) == yb_test_t).float().mean().item()
-ok("base CNN accuracy", round(base_accuracy, 3), 0.987)
-
-new_mask = labels >= 5
-X_new, y_new = images[new_mask], labels[new_mask] - 5
-Xn_train, Xn_test, yn_train, yn_test = train_test_split(X_new, y_new, test_size=0.25, random_state=43, stratify=y_new)
-Xn_test_t, yn_test_t = to_tensors(Xn_test, yn_test)
-rng = np.random.default_rng(43)
-def small_training_set(n):
-    chosen = []
-    for c in range(5):
-        cand = np.where(yn_train == c)[0]; chosen.extend(rng.choice(cand, n, replace=False))
-    return to_tensors(Xn_train[chosen], yn_train[chosen])
-def train_transfer(n, epochs=80):
-    Xs, ys = small_training_set(n)
-    model = copy.deepcopy(base_model)
-    for p in model.conv1.parameters(): p.requires_grad = False
-    for p in model.conv2.parameters(): p.requires_grad = False
-    model.fc1 = nn.Linear(16 * 2 * 2, 32); model.fc2 = nn.Linear(32, 5)
-    o = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.01)
-    for _ in range(epochs):
-        o.zero_grad(); l = lf4(model(Xs), ys); l.backward(); o.step()
-    with torch.no_grad(): return (model(Xn_test_t).argmax(1) == yn_test_t).float().mean().item()
-def train_scratch(n, epochs=80):
-    Xs, ys = small_training_set(n)
-    model = SmallCNN(5)
-    o = torch.optim.Adam(model.parameters(), lr=0.01)
-    for _ in range(epochs):
-        o.zero_grad(); l = lf4(model(Xs), ys); l.backward(); o.step()
-    with torch.no_grad(): return (model(Xn_test_t).argmax(1) == yn_test_t).float().mean().item()
-
-results = {}
-for n in [3, 5, 10, 15, 30]:
-    results[n] = (train_transfer(n), train_scratch(n))
-ok("transfer/scratch n=3", tuple(round(v, 3) for v in results[3]), (0.844, 0.754))
-ok("transfer/scratch n=30", tuple(round(v, 3) for v in results[30]), (0.929, 0.982))
-
-json.dump({"transfer_scratch": {str(k): v for k, v in results.items()},
-           "tabular_comparison": {"logistic": float(roc_auc_score(y_valid, logit_pred)),
-                                  "network": float(roc_auc_score(y_valid, final_pred)),
-                                  "boosting": float(roc_auc_score(y_valid, boosting_pred))},
-           "xor": {"single_loss": loss.item(), "two_layer_loss": loss2.item()}},
-          open(HERE / "ch43_results.json", "w"))
+json.dump(
+    {
+        "xor_grid": [[float(v) for v in row] for row in
+                     g("two_layer")(torch.tensor([[a / 40, b / 40] for b in range(-8, 49) for a in range(-8, 49)],
+                                                 dtype=torch.float32)).detach().numpy().reshape(57, 57)],
+        "network": {"z1": [round(v, 4) for v in g("z1").tolist()], "a1": [round(v, 4) for v in g("a1").tolist()],
+                    "z2": round(g("z2").item(), 4), "a2": round(g("a2").item(), 4)},
+        "image": np.round(g("images")[0], 2).tolist(),
+        "feature_map": np.round(fm, 1).tolist(),
+    },
+    open(HERE / "ch43_results.json", "w"),
+)
 print("All checks passed." if not fails else f"FAILED: {fails}")
 raise SystemExit(1 if fails else 0)

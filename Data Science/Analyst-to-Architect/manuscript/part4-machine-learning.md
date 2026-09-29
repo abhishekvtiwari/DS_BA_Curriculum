@@ -6,15 +6,15 @@ Read the chapters in this order:
 
 | Chapter | Time needed |
 |---|---|
-| **35. The Math Under the Models** | 10–14 hours |
-| **36. The Machine Learning Workflow & Feature Engineering** | 8–12 hours |
-| **37. Supervised Learning Algorithms** | 14–18 hours |
-| **38. Unsupervised Learning** | 8–12 hours |
-| **39. Evaluation, Tuning, Interpretation & Honesty** | 10–14 hours |
-| **40. Time Series & Forecasting** | 10–14 hours |
-| **41. NLP Foundations** | 8–10 hours |
-| **42. Recommender Systems & Ranking** | 6–9 hours |
-| **43. A First Look at Deep Learning** | 8–12 hours |
-| **44. Capstone: An End-to-End Data Science Project** | 4–6 hours |
+| **35. The Math Under the Models** | 14–17 hours |
+| **36. The Machine Learning Workflow & Feature Engineering** | 14–18 hours |
+| **37. Supervised Learning Algorithms** | 20–24 hours |
+| **38. Unsupervised Learning** | 11–14 hours |
+| **39. Evaluation, Tuning, Interpretation & Honesty** | 16–20 hours |
+| **40. Time Series & Forecasting** | 16–20 hours |
+| **41. NLP Foundations** | 12–15 hours |
+| **42. Recommender Systems & Ranking** | 8–10 hours |
+| **43. A First Look at Deep Learning** | 12–15 hours |
+| **44. Capstone: An End-to-End Data Science Project** | 11–17 hours |
 
-In total, allow 86–121 hours, including the exercises and projects.
+In total, allow 134–170 hours, including the exercises and projects.
