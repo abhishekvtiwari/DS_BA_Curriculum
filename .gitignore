@@ -70,3 +70,7 @@ Data Science/Analyst-to-Architect/companion/ch50/spark-warehouse/
 # Written by Ch 51 code
 Data Science/Analyst-to-Architect/companion/ch51/sync_state/
 Data Science/Analyst-to-Architect/companion/ch51/webhook_inbox/
+# Terraform files a reader creates when running Ch 52
+**/.terraform/
+*.tfstate
+*.tfstate.backup

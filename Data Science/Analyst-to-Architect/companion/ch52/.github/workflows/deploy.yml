@@ -1,0 +1,66 @@
+# CI/CD for the Riverstone pipeline (Chapter 52, section 52.5).
+# The test job can run in your own GitHub repository; build-and-push and deploy need an AWS account.
+# Riverstone Supplies is fictional; every name and number is invented.
+name: Riverstone pipeline CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - run: python -m pip install -r pipeline_image/requirements.txt pytest
+      - run: python -m pytest tests/
+
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-south-1
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push the image
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/riverstone/pipeline:${{ github.sha }}
+        run: |
+          docker build -t "$IMAGE" pipeline_image/
+          docker push "$IMAGE"
+
+  deploy:
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-south-1
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - id: render
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-family: riverstone-daily-flash
+          container-name: pipeline
+          image: ${{ steps.ecr.outputs.registry }}/riverstone/pipeline:${{ github.sha }}
+      - uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render.outputs.task-definition }}

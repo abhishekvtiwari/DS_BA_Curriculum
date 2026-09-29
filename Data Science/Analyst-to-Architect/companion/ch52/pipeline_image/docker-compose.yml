@@ -1,22 +1,27 @@
-# Local development stack for the Riverstone pipeline: the pipeline container plus its PostgreSQL source.
-# Riverstone Supplies is fictional; every name and number is invented.
 services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"     # from a .env file, never committed (section 52.6)
+      POSTGRES_DB: riverstone_source
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
 
   pipeline:
     build: .
+    command: ["dagster", "dev", "-f", "riverstone_pipeline.py", "-h", "0.0.0.0", "-p", "3000"]
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       RIVERSTONE_SOURCE: "dbname=riverstone_source host=postgres user=postgres password=${POSTGRES_PASSWORD}"
-      CRM_API_TOKEN: "${CRM_API_TOKEN}"
+      CRM_API_TOKEN: ${CRM_API_TOKEN}
     ports:
       - "3000:3000"
     restart: unless-stopped

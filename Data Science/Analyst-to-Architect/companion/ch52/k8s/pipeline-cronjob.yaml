@@ -1,0 +1,38 @@
+# Chapter 52, section 52.3: the Daily Sales Flash as a Kubernetes CronJob.
+# Checked with PyYAML and kubeconform (Kubernetes' own schemas); not applied to a cluster in this book.
+# Riverstone Supplies is fictional; every name and number is invented.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-flash
+  namespace: riverstone
+spec:
+  schedule: "30 6 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pipeline
+              image: riverstone/pipeline:1.4.0
+              env:
+                - name: RIVERSTONE_SOURCE
+                  valueFrom:
+                    secretKeyRef:
+                      name: riverstone-db-secret
+                      key: connection-string
+                - name: CRM_API_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: riverstone-crm-secret
+                      key: token
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "1"
+                  memory: "1Gi"

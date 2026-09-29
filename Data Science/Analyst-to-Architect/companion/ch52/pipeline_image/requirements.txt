@@ -1,4 +1,6 @@
 dagster==1.13.23
-duckdb==1.5.5
+dagster-webserver==1.13.23
+duckdb==1.5.6
 psycopg2-binary==2.9.13
 requests==2.33.1
+python-dotenv==1.2.3
