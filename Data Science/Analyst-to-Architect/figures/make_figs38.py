@@ -61,8 +61,8 @@ def fig_choose_k():
             o.append(text(X(5) + 30, top + 28, "falls smoothly: no clear elbow", 14, MUTED, style="italic"))
         else:
             s2 = data[0][2]; s4 = data[2][2]
-            o.append(line(X(2) + 6, Y(s2) - 4, X(2) + 60, Y(s2) - 22, MUTED, 1))
-            o.append(text(X(2) + 64, Y(s2) - 20, f"highest at k = 2 ({s2:.3f})", 14, INK, "bold"))
+            o.append(line(X(2) + 7, Y(s2) - 2, X(2) + 34, Y(s2) - 8, MUTED, 1))
+            o.append(text(X(2) + 38, Y(s2) - 4, f"highest at k = 2 ({s2:.3f})", 14, INK, "bold"))
             o.append(text(X(4) + 10, Y(s4) + 26, f"{s4:.3f}", 13.5, INK))
     for k, *_ in data:
         o.append(text(X(k), 425, str(k), 14, INK, anchor="middle"))
@@ -124,10 +124,11 @@ def fig_six_dendro():
     cd = join(xs["C"], 0, xs["D"], 0, 3.00, right)
     cdf = join(cd, 3.00, xs["F"], 0, 3.16, right)
     join(abe, 1.30, cdf, 3.16, 7.12, INK)
-    for label, x, h in [("0.54", ab, 0.54), ("1.30", abe, 1.30), ("3.00", cd, 3.00), ("3.16", cdf, 3.16), ("7.12", (abe + cdf) / 2, 7.12)]:
-        o.append(text(x, Y(h) - 7, label, 13.5, INK, anchor="middle"))
+    # each height is written just right of its bar's left end, clear of the vertical line rising from the bar's middle
+    for label, x, h in [("0.54", xs["A"], 0.54), ("1.30", ab, 1.30), ("3.00", xs["C"], 3.00), ("3.16", cd, 3.16), ("7.12", abe, 7.12)]:
+        o.append(text(x + 8, Y(h) - 7, label, 13.5, INK))
     o.append(line(X0, Y(5), W - 30, Y(5), "#b23b3b", 1.6, dash="6 4"))
-    o.append(text(W - 32, Y(5) - 7, "cut at 5: two groups", 13.5, "#b23b3b", "bold", anchor="end"))
+    o.append(text(X0 + 6, Y(5) - 7, "cut at 5: two groups", 13.5, "#b23b3b", "bold"))
     for n, x in xs.items():
         o.append(text(x, Y0 + 22, n, 15, INK, "bold", anchor="middle", family=HEAD))
     o.append(text(xs["B"], Y0 + 44, "{A, B, E}", 13.5, left, "bold", anchor="middle"))
@@ -158,25 +159,16 @@ def fig_dendro():
         members = km[lab4 == g]
         top_c = int(np.bincount(members, minlength=4).argmax())
         groups[g] = (len(members), top_c, float((members == top_c).mean()))
-    # map scipy's branch colours (C1..C4, left to right) to hierarchical clusters by leaf order
-    leaf_groups = []
-    for leaf in d["leaves"]:
-        rows = [leaf] if leaf < len(km) else None
-        leaf_groups.append(leaf)
-    branch_colours = []
-    for ic, dc, col in zip(d["icoord"], d["dcoord"], d["color_list"]):
-        branch_colours.append(col)
+    # scipy colours each branch below the cut (C1, C2, ...); put those colours and the fcluster groups in
+    # left-to-right order, then pair them up
+    branch_colours = d["color_list"]
     order = []
     for col in branch_colours:
         if col != "k" and col not in order:
             order.append(col)
-    # left-to-right order of clusters in the drawing: sort clusters by the mean x of their branches
     xs_by_col = {c: np.mean([np.mean(ic) for ic, cc in zip(d["icoord"], branch_colours) if cc == c]) for c in order}
     cols_lr = sorted(order, key=lambda c: xs_by_col[c])
-    # fcluster numbers follow the same left-to-right leaf order, so zip them by position
-    g_lr = sorted(groups, key=lambda g: np.mean([i for i, l in enumerate(fcluster(Z, t=4, criterion="maxclust")) if l == g]))
-    leaf_ids = dendrogram(Z, no_plot=True)["leaves"]
-    pos = {leaf: i for i, leaf in enumerate(leaf_ids)}
+    pos = {leaf: i for i, leaf in enumerate(dendrogram(Z, no_plot=True)["leaves"])}
     g_lr = sorted(groups, key=lambda g: np.mean([pos[i] for i in np.where(lab4 == g)[0]]))
     colour_of = {c: CLUSTER_COLORS[groups[g][1]] for c, g in zip(cols_lr, g_lr)}
     for ic, dc, col in zip(d["icoord"], d["dcoord"], branch_colours):
