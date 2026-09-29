@@ -1,8 +1,9 @@
 """Chapter 48 companion: generate Riverstone's plant sensor dataset.
 25 machines across two plants, one reading every 10 seconds, 1 October to 31 December 2025:
 25 x 92 x 8,640 = 19,872,000 readings, written as Parquet partitioned by reading_date.
-Run: python3 make_sensor_data.py            (about 2-4 minutes, ~400 MB)
-     python3 make_sensor_data.py --small    (one day only, for quick experiments)
+Run: python make_sensor_data.py            (a few seconds to a minute or two; about 114 MB)
+     python make_sensor_data.py --small    (one day only, 216,000 readings, for quick experiments)
+The random numbers come from a fixed seed (48), so every run writes the same data.
 Riverstone Supplies is fictional; every name and number is invented."""
 import os, sys, shutil
 import numpy as np, pyarrow as pa, pyarrow.parquet as pq

@@ -36,5 +36,14 @@ check('dispatch age hours', round((now-datetime(2026,1,2)).total_seconds()/3600,
 check('Flash 2 Jan revenue', float(wh.execute("""SELECT SUM(i.quantity*i.unit_price*(1-i.discount_pct/100))
     FROM raw.orders o JOIN raw.order_items i ON i.order_id=o.order_id
     WHERE o.order_date=DATE '2026-01-02' AND o.status<>'Cancelled'""").fetchone()[0]), 38710.00)
+# freshness by working day (47.5, Answer 8)
+from datetime import date
+check('2 Jan 2026 is a Friday', date(2026,1,2).strftime('%A'), 'Friday')
+check('Monday run age of Friday data', round((datetime(2026,1,5,6,30)-datetime(2026,1,2)).total_seconds()/3600,1), 78.5)
+check('16 and 9 Nov 2025 are Sundays, 13 Sep a Saturday', [date(2025,11,16).strftime('%a'), date(2025,11,9).strftime('%a'), date(2025,9,13).strftime('%a')], ['Sun','Sun','Sat'])
+check('8 Jan 2026 is a Thursday, four days after 4 Jan', (date(2026,1,8).strftime('%A'), (date(2026,1,8)-date(2026,1,4)).days), ('Thursday', 4))
+check('fractional-paisa example (47.4)', 3*1234.50*(1-7.5/100), 3425.7375)
+check('every 2025 order has lines (47.24: no date filter needed)', wh.execute("""SELECT COUNT(*) FROM raw.orders o
+    WHERE NOT EXISTS (SELECT 1 FROM raw.order_items i WHERE i.order_id=o.order_id)""").fetchone()[0], 0)
 wh.close(); os.remove('warehouse/check47.duckdb')
 print('ALL CHECKS PASSED' if ok else 'SOME CHECKS FAILED')
