@@ -101,7 +101,7 @@ ok("lakh prose", (round(1079730 / 1e5, 1), round(2448060 / 1e5, 1), round(233001
 ok("answer 7 fall", (2448060 - 1633500, round((2448060 - 1633500) / 1e5, 1), round((2448060 - 1633500) / 2448060, 2)), (814560, 8.1, 0.33))
 # ---------- 39.6 balanced weights ----------
 ok("balanced weights", (round(7291 / (2 * 576), 2), round(7291 / (2 * 6715), 2), 576 * 7291 / (2 * 576), 6715 * 7291 / (2 * 6715)), (6.33, 0.54, 3645.5, 3645.5))
-# ---------- 39.7 by-hand examples ----------
+# ---------- 39.8 by-hand examples ----------
 ref, strong, won = np.array([1, 1, 1, 0, 0, 0]), np.array([1, 0, 1, 0, 1, 0]), np.array([1, 1, 0, 0, 0, 1])
 ok("permutation toy", (round((ref == won).mean(), 3), round((ref[::-1] == won).mean(), 3)), (0.667, 0.333))
 base = -3 + 1.2 * 0.1 + 0.8 * 0.3
@@ -113,7 +113,7 @@ three = test_acc[cols].head(3).copy(); avgs = []
 for d in [30, 120, 200]:
     three["days_since_last_order"] = d; avgs.append(round(float(churn.predict_proba(three)[:, 1].mean()), 3))
 ok("PD by hand", avgs, [0.056, 0.206, 0.348])
-# ---------- 39.8 fairness ----------
+# ---------- 39.9 fairness ----------
 called = p >= 0.05; desk = valid.inside_desk.to_numpy() == 1
 rd, rr = called[desk & (y == 1)].mean(), called[~desk & (y == 1)].mean()
 ok("recall desk/reps", (round(rd, 2), round(rr, 2)), (0.57, 0.91)); ok("miss rates, ratio", (round(1 - rd, 2), round(1 - rr, 2), round((1 - rd) / (1 - rr), 1)), (0.43, 0.09, 4.8))

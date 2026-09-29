@@ -8,9 +8,9 @@
 >
 > **Before you start:** Chapter 35 (log loss and the base-rate benchmark, section 35.9), Chapter 36 (the lead-scoring pipeline and validation set, scikit-learn's pieces in section 36.4, cross-validation and AUC in section 36.5), Chapter 37 (logistic regression, Naive Bayes, the churn models, and tuning in section 37.11). This chapter evaluates the models you already built.
 >
-> **Time needed:** 16–20 hours over two to three weeks, in four sittings: (1) sections 39.1–39.3, the metrics, each worked by hand before the code (4–5 hours); (2) sections 39.4–39.6a, calibration, thresholds, imbalance, and tuning (4–5 hours); (3) sections 39.7–39.9, interpretation, fairness, and model cards (4–5 hours); (4) the exercises and the project (4–5 hours).
+> **Time needed:** 16–20 hours over two to three weeks, in four sittings: (1) sections 39.1–39.3, the metrics, each worked by hand before the code (4–5 hours); (2) sections 39.4–39.7, calibration, thresholds, imbalance, and tuning (4–5 hours); (3) sections 39.8–39.10, interpretation, fairness, and model cards (4–5 hours); (4) the exercises and the project (4–5 hours).
 >
-> **Tools:** Python 3 with scikit-learn, plus two free libraries you install when you first need them: `imbalanced-learn` (section 39.6) and `shap` (section 39.7).
+> **Tools:** Python 3 with scikit-learn, plus two free libraries you install when you first need them: `imbalanced-learn` (section 39.6) and `shap` (section 39.8).
 >
 > **Practice data:** the lead-scoring model and validation set from Chapter 36 (2,225 leads, 146 won), and the accounts data behind Chapter 37's churn and revenue models. Every number in this chapter was calculated, and every output shown is real.
 
@@ -1055,7 +1055,7 @@ class weights + sigmoid calibration: ROC-AUC 0.821   log loss 0.1963   mean prob
 
 ---
 
-## 39.6a Tuning honestly
+## 39.7 Tuning honestly
 
 ### Two kinds of choice
 
@@ -1156,7 +1156,7 @@ On validation the default `C = 1` is a hair better, the opposite of cross-valida
 
 ---
 
-## 39.7 Interpretation: permutation importance, SHAP, and partial dependence
+## 39.8 Interpretation: permutation importance, SHAP, and partial dependence
 
 Three questions, three tools. *Which columns does the model rely on?* Permutation importance. *Why did this one lead get this score?* SHAP. *What does one feature do to the prediction, on average?* Partial dependence.
 
@@ -1206,7 +1206,7 @@ responded_24h                      0.0026  0.0009
 
 - The first argument is the **whole fitted pipeline**, `model`, not just its logistic regression step. So the shuffling happens on the raw columns (`source`, `company_size`, …), before any encoding, and each column is judged as one thing.
 - The data is the **validation** set, `valid[X_cols]` and `y_valid`. Importance on the training rows would partly measure what the model memorized; on validation it measures what the model uses on leads it hasn't seen.
-- `scoring="neg_log_loss"` scores the model by log loss. As in section 39.6a, scikit-learn wants higher to be better, so the score is minus log loss; `importances_mean` is the drop in that score, which is the **increase** in log loss when the column is scrambled.
+- `scoring="neg_log_loss"` scores the model by log loss. As in section 39.7, scikit-learn wants higher to be better, so the score is minus log loss; `importances_mean` is the drop in that score, which is the **increase** in log loss when the column is scrambled.
 - `n_repeats=10` shuffles each column ten times; `random_state=39` makes the shuffles repeatable.
 - `importances_mean` is the average over the ten shuffles and `importances_std` their spread, one value per column in the order of `X_cols`. The `DataFrame` labels them and sorts the largest first.
 
@@ -1457,7 +1457,7 @@ days since last order -> average predicted churn probability
 
 ---
 
-## 39.8 Fairness checks
+## 39.9 Fairness checks
 
 A model that scores one group of people systematically differently deserves a look, whether the group is defined by protected characteristics, by geography, or, as here, by who handles the lead.
 
@@ -1538,7 +1538,7 @@ By segment, the picture is what you'd expect from a calibrated model with differ
 
 ---
 
-## 39.9 Model cards
+## 39.10 Model cards
 
 A **model card** is a one-to-two-page document that travels with a model: what it's for, what it was trained on, how it performs, where it fails, and who to call. Here is the lead-scoring model's, condensed:
 
@@ -1547,10 +1547,10 @@ A **model card** is a one-to-two-page document that travels with a model: what i
 | **Purpose** | Rank incoming enquiries so reps work the most promising first. Not for pricing, not for deciding which leads to ignore permanently. |
 | **Owner** | Meera Iyer (analytics); business owner Anita Rao (sales) |
 | **Training data** | Riverstone CRM, enquiries created Jan 2023–Dec 2024 (7,291 leads, 7.9% won); features as of 24 hours after arrival; duplicates removed; outcome window 90 days |
-| **Evaluation** | Validation Jan–Jun 2025 (2,225 leads): ROC-AUC 0.823, PR-AUC 0.302, log loss 0.195, well calibrated. Test Jul–Sep 2025 (1,185 leads): ROC-AUC 0.838 (Chapter 37, section 37.12). Top 50 leads by score: 44% won. Tuning `C` made no real difference (section 39.6a) |
+| **Evaluation** | Validation Jan–Jun 2025 (2,225 leads): ROC-AUC 0.823, PR-AUC 0.302, log loss 0.195, well calibrated. Test Jul–Sep 2025 (1,185 leads): ROC-AUC 0.838 (Chapter 37, section 37.12). Top 50 leads by score: 44% won. Tuning `C` made no real difference (section 39.7) |
 | **Decision rule** | Work leads scoring ≥ 0.05 (break-even at ₹1,500 per lead, ₹30,255 per win), capped by team capacity of about 4 leads per working day (504 per six months). Threshold reviewed quarterly |
 | **Known limitations** | Lower recall on inside-sales-desk leads (57% vs 91%); trained before the 2025 marketplace change, which lowered marketplace conversion; assumes the outcome window and follow-up process stay the same |
-| **Fairness** | Checked by owner group (inside desk vs reps) and segment, including leads with no segment (section 39.8), and by source (exercise 10); city not yet checked. Inside-desk gap flagged for a policy decision |
+| **Fairness** | Checked by owner group (inside desk vs reps) and segment, including leads with no segment (section 39.9), and by source (exercise 10); city not yet checked. Inside-desk gap flagged for a policy decision |
 | **Monitoring** | Weekly: share of leads flagged, predicted vs actual win rate for closed leads; retrain if the calibration drift exceeds 2 points (Chapter 56) |
 | **Do not use for** | Individual performance reviews of reps; any decision without a human in the loop |
 
@@ -1606,7 +1606,7 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 
 - **scikit-learn** (tested on 1.9.1): `confusion_matrix`, `precision_score`, `recall_score`, `f1_score`, `roc_curve`, `roc_auc_score`, `precision_recall_curve`, `average_precision_score`, `mean_absolute_error`, `root_mean_squared_error`, `mean_absolute_percentage_error`, `r2_score`, `calibration_curve`, `brier_score_loss`, `log_loss`, `CalibratedClassifierCV`, `GridSearchCV`, `StratifiedKFold`, `permutation_importance`, and `partial_dependence`.
 - **imbalanced-learn** (tested on 0.14.2; installed in section 39.6): `RandomUnderSampler`, `RandomOverSampler`, `SMOTE`, and a `Pipeline` that resamples only during `fit`.
-- **shap** (tested on 0.51.0; installed in section 39.7): `LinearExplainer`, `TreeExplainer`, `KernelExplainer`, and its plotting functions (`summary_plot`, `waterfall`), which are the usual way to show SHAP values in a report.
+- **shap** (tested on 0.51.0; installed in section 39.8): `LinearExplainer`, `TreeExplainer`, `KernelExplainer`, and its plotting functions (`summary_plot`, `waterfall`), which are the usual way to show SHAP values in a report.
 - **matplotlib** (Chapter 18) for the curves.
 - **fairlearn** (not used here) provides group-metric tables and mitigation methods if fairness checks become routine.
 - Everything ran on one CPU core, with Python 3.11.15 and pandas 3.0.6, on 29 September 2026.
@@ -1633,7 +1633,7 @@ The lesson isn't that the model was right. It's that the evaluation work in this
 
 - Test the chosen threshold **on the test set once** and compare the profit with validation.
 - Build a **cost-sensitive** version by passing `sample_weight` during training and compare with threshold tuning.
-- Tune `C` with `scoring="average_precision"` and compare the winner with section 39.6a's.
+- Tune `C` with `scoring="average_precision"` and compare the winner with section 39.7's.
 - Draw **SHAP dependence plots** for the two most important features and look for interactions.
 
 ---
@@ -1696,12 +1696,12 @@ Code exercises run from `companion/ch39/` after the chapter's code (they use `p_
 7. Change `WORK_COST` to ₹3,000 (a more expensive follow-up process) and recompute the break-even threshold and the profit-maximizing threshold. How much does the best profit fall?
 8. Compute the Brier score for a model that predicts the base rate (0.066) for every lead, and for one that predicts 0.5 for every lead. Compare with the three models in section 39.4.
 9. Find the highest-scoring **lost** lead in the validation set and explain its score with SHAP. What pushed it up, and would you call the model wrong?
-10. Compute recall and precision by `source` at the 0.05 threshold. Which source has the lowest recall, and does the base-rate argument from section 39.8 explain it?
+10. Compute recall and precision by `source` at the 0.05 threshold. Which source has the lowest recall, and does the base-rate argument from section 39.9 explain it?
 
 ### Stretch
 
 11. Fit `CalibratedClassifierCV` with `method="sigmoid"` on Naive Bayes and compare its log loss and Brier score with the isotonic version. Which is better here, and why might sigmoid be safer with less data?
-12. Rerun section 39.7's permutation importance with `scoring="roc_auc"` instead of log loss. Does the order of the top columns change? Why are the numbers bigger?
+12. Rerun section 39.8's permutation importance with `scoring="roc_auc"` instead of log loss. Does the order of the top columns change? Why are the numbers bigger?
 13. Apply the 0.077 threshold to the **test** set (train on training plus validation, as Chapter 36 did) and compute profit, worked leads, and wins. How does it compare with validation?
 
 ### Think about it
@@ -1831,7 +1831,7 @@ num__activities_24h                 0.201
 cat__product_interest_Industrial   -0.213
 ```
 
-`np.where(y_valid == 0)[0]` gives the positions of the lost leads; `np.argmax(p_valid[lost])` finds the highest score among them, and `lost[...]` turns that back into a position in the whole validation set. The rest is section 39.7's local explanation, keeping pushes bigger than 0.2 and listing the largest first.
+`np.where(y_valid == 0)[0]` gives the positions of the lost leads; `np.argmax(p_valid[lost])` finds the highest score among them, and `lost[...]` turns that back into a position in the whole validation set. The rest is section 39.8's local explanation, keeping pushes bigger than 0.2 and listing the largest first.
 
 The lead has every sign of a good one, which is why it scored high: the same features that mark most won leads. It was still lost. That isn't a model error in any useful sense: a well-calibrated 50–60% prediction means the lead is lost about half the time, and this is one of those. "Wrong" would be a pattern: a group of high-scoring leads that lose far more often than their scores say, which is what the reliability curve checks.
 
@@ -1865,7 +1865,7 @@ Referral      194.0     0.211         0.928   1.000      0.228
 Partner       104.0     0.115         0.673   1.000      0.171
 ```
 
-The pattern is section 39.8's segment table. `if g["called"].any() else np.nan` guards against a source with no called leads, where precision would divide by zero; `np.nan` marks it as "not defined". `sort_values("recall")` puts the lowest recall first.
+The pattern is section 39.9's segment table. `if g["called"].any() else np.nan` guards against a source with no called leads, where precision would divide by zero; `np.nan` marks it as "not defined". `sort_values("recall")` puts the lowest recall first.
 
 Marketplace leads have the lowest recall by far, and the lowest base rate: a calibrated model gives most of them scores below 5%, so the winnable ones are missed along with the rest. The base-rate argument explains the number, and the equal-opportunity view still objects to it, exactly as with the inside sales desk (which handles most marketplace leads). The two findings are the same finding seen through two groupings.
 
@@ -1919,7 +1919,7 @@ responded_24h    0.0076
 gmail            0.0072
 ```
 
-`perm_auc` is section 39.7's `permutation_importance` call with only `scoring` changed; the same `n_repeats=10` and `random_state=39` keep the shuffles identical, so the difference is the score alone. The top four are the same, in the same order: `source`, `company_size`, `log_quantity`, `segment`. Below them the small features swap places, and their gaps are inside the shuffling noise. The numbers are bigger because they're on a different scale: scrambling `source` drops ROC-AUC from 0.823 by about 0.10, while it raised log loss (about 0.19) by 0.033. ROC-AUC importance asks "how much worse does the model *rank* without this column?", log-loss importance "how much worse are its *probabilities*?"; when a column affects both, as here, the orders agree.
+`perm_auc` is section 39.8's `permutation_importance` call with only `scoring` changed; the same `n_repeats=10` and `random_state=39` keep the shuffles identical, so the difference is the score alone. The top four are the same, in the same order: `source`, `company_size`, `log_quantity`, `segment`. Below them the small features swap places, and their gaps are inside the shuffling noise. The numbers are bigger because they're on a different scale: scrambling `source` drops ROC-AUC from 0.823 by about 0.10, while it raised log loss (about 0.19) by 0.033. ROC-AUC importance asks "how much worse does the model *rank* without this column?", log-loss importance "how much worse are its *probabilities*?"; when a column affects both, as here, the orders agree.
 
 **13.**
 
@@ -1952,7 +1952,7 @@ Per lead, the test profit is higher than validation's, because the test period's
 
 **14.** First question: *"What does predicting 'no churn' for everyone score?"* At a 9% churn rate, that's 91% accurate, the same as the model, so the headline says nothing. Ask for **recall at the threshold you'd act on** (what share of churners does it catch?) and **precision** (of the accounts flagged, how many churn?), or equivalently a top-N table: of the 100 highest-risk accounts, how many churned?
 
-**15.** Sections 39.4 and 39.8, at minimum: the probability must be **calibrated** (a reliability curve, and a Brier score against the base rate), and it must be calibrated **within each group** the customer might belong to, or the number is a lie to some of them. Section 39.9's model card should say what the number means and what it's not for. Monthly: the reliability curve on recently decided applications, the mean predicted against the actual approval rate overall and by group, and the share of customers shown each band of probability, since a drift in the applicant mix will move all of these before anyone notices.
+**15.** Sections 39.4 and 39.9, at minimum: the probability must be **calibrated** (a reliability curve, and a Brier score against the base rate), and it must be calibrated **within each group** the customer might belong to, or the number is a lie to some of them. Section 39.10's model card should say what the number means and what it's not for. Monthly: the reliability curve on recently decided applications, the mean predicted against the actual approval rate overall and by group, and the share of customers shown each band of probability, since a drift in the applicant mix will move all of these before anyone notices.
 
 **16.** One option: **a separate threshold for inside-desk leads**, set so their recall matches the reps' (around 91%). Cost: the desk would work many more leads with lower precision, so the follow-up cost per win rises; at a 3.7% base rate that may mean working most desk leads, which is what happened before the model. A cheaper alternative is a **floor**: the desk always works its top 15% of leads by score, whatever the threshold says, which bounds the cost. The honest answer to "what does it cost" is a number from `profit_at` under each policy, which is exercise 7's method applied to one group.
 

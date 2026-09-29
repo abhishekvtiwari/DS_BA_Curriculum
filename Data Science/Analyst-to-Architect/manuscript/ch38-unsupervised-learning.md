@@ -71,7 +71,7 @@ $ python -m pip install umap-learn mlxtend
 - **`python ../generate_riverstone_baskets.py`** builds `companion/baskets/order_lines.csv` and `products.csv`, the order data for section 38.9. It reads the accounts file, so run it second.
 - **`python -m pip install umap-learn mlxtend`** installs the two new libraries into your environment: `umap-learn` for section 38.6's pictures and `mlxtend` for section 38.9's Apriori. `umap-learn` pulls in a compiler library called `numba`, so this install takes a minute or two. It ends with a line starting `Successfully installed`. Then update your `requirements.txt` with `python -m pip freeze > requirements.txt`, as in Chapter 17.
 
-Finally, start Jupyter from this folder, create a notebook called `ch38.ipynb`, and choose the `.venv` kernel. Every cell in this chapter runs in that notebook, in order.
+Finally, open a notebook in this folder as Chapter 17 showed, save it as `ch38.ipynb`, and choose the `.venv` kernel. Every cell in this chapter runs in that notebook, in order.
 
 ### The seven features
 
@@ -779,9 +779,9 @@ plt.show()
 
 **How it works:** `tree[-3, 2]` is the height of the third-from-last merge, the one that would join four groups into three, and `tree[-4, 2]` the merge before it. A line halfway between them, drawn with `ax.axhline` (`linestyle="--"` makes it dashed), crosses exactly four branches: the cut into four clusters. `no_labels=True` hides the leaf labels, and `figsize=(9, 3.6)` is the picture's width and height in inches, as in Chapter 18. Figure 38.4 is this picture, redrawn in the book's style.
 
-![A dendrogram of 800 sampled accounts showing the last 30 merges, with the merge height on the vertical axis, a dashed line where a cut produces four clusters, and the four branches labeled with their sizes 147, 287, 50 and 316](figures/fig38-4-dendrogram.svg)
+![A dendrogram of 800 sampled accounts showing the last 30 merges, with the merge height on the vertical axis, a dashed line where a cut produces four clusters, and the four branches labeled with their sizes and main k-means group: 147 accounts, 88% key accounts; 287, 48% growing regulars; 50, 94% drifting away; 316, 85% occasional buyers](figures/fig38-4-dendrogram.svg)
 
-*Figure 38.4 — A dendrogram of 800 accounts (Ward linkage, last 30 merges). Each merge is drawn at the height that measures how different the merged groups were; cutting across the tree at a chosen height gives that many clusters.*
+*Figure 38.4 — A dendrogram of 800 accounts (Ward linkage, last 30 merges). Each merge is drawn at the height that measures how different the merged groups were; cutting across the tree at a chosen height gives that many clusters. Each of the four branches is coloured and marked like the k-means cluster most of its accounts belong to, with that share underneath.*
 
 **Reading it.** Cut into four, the tree gives clusters of 147, 287, 50, and 316 accounts, and it agrees with the k-means grouping to an ARI of 0.413: related, but far from the same. The two methods cut a continuous cloud in different places, another reminder that these groups are conveniences rather than discoveries. Hierarchical clustering earns its place when you want the tree itself: a picture of which groups sit inside which, which product ranges or store types nest together.
 
@@ -852,7 +852,7 @@ plt.show()
 
 **How it works:** `NearestNeighbors(n_neighbors=14)` finds each row's 14 nearest rows. Asked about the rows it was fitted on, the nearest of those is the row itself (distance 0), which matches DBSCAN counting the row itself toward `min_samples`. `kneighbors(X)` returns two arrays, the distances and the neighbours' row numbers; `dist, _ = …` keeps the first and throws the second away (`_` is Python's name for "not needed"). `dist[:, -1]` is each row's distance to its 14th neighbour, and `np.sort` puts them in order for the plot. `np.quantile(k_distance, share)` reads the curve at a few points, and `ax.plot(k_distance)` draws it on a 6 × 3 inch figure (`figsize`) (Figure 38.5 is the same curve in the book's style).
 
-![A rising curve of the 5,000 accounts' 14th-neighbour distances, sorted, climbing gently from about 0.4 to about 1.5 and then steeply at the far right, with dotted lines at eps values 0.5, 0.8, 1.0 and 1.2 crossing it at different points](figures/fig38-5-k-distance.svg)
+![A rising curve of the 5,000 accounts' 14th-neighbour distances, sorted, climbing gently from under 0.5 to about 1.5 over most of the accounts and then steeply at the far right, with dotted lines at eps values 0.5, 0.8, 1.0 and 1.2 crossing it at different points](figures/fig38-5-k-distance.svg)
 
 *Figure 38.5 — The k-distance curve for Riverstone's accounts. There's no sharp knee, only a gentle climb and a steep tail: a first sign that the accounts have no dense groups separated by empty space.*
 
@@ -1313,14 +1313,14 @@ print(top[["rule", "support", "confidence", "lift"]].round(3).to_string(index=Fa
 (34013, 24) baskets x products
 183 frequent item sets, 198 rules with lift above 1.2
                                        rule  support  confidence  lift
-               Garden Table -> Garden Chair    0.032       0.571 9.005
                Garden Chair -> Garden Table    0.032       0.508 9.005
+               Garden Table -> Garden Chair    0.032       0.571 9.005
           Chair Cushion Set -> Garden Chair    0.022       0.348 5.489
           Garden Chair -> Chair Cushion Set    0.022       0.353 5.489
-   Drum Tap Fitting, Pallet Box -> Drum 60L    0.011       0.484 4.812
    Drum 60L -> Drum Tap Fitting, Pallet Box    0.011       0.108 4.812
-Drum 60L -> Crate Trolley, Drum Tap Fitting    0.011       0.109 4.747
+   Drum Tap Fitting, Pallet Box -> Drum 60L    0.011       0.484 4.812
 Crate Trolley, Drum Tap Fitting -> Drum 60L    0.011       0.477 4.747
+Drum 60L -> Crate Trolley, Drum Tap Fitting    0.011       0.109 4.747
 ```
 
 **How it works:**
@@ -1813,8 +1813,8 @@ for segment in ["Wholesale", "Hospitality"]:
 ```
 --- Wholesale (16,744 baskets)
                              rule  support  confidence   lift
-     Garden Table -> Garden Chair    0.014       0.561 19.078
      Garden Chair -> Garden Table    0.014       0.480 19.078
+     Garden Table -> Garden Chair    0.014       0.561 19.078
 Chair Cushion Set -> Garden Chair    0.010       0.343 11.659
 --- Hospitality (7,952 baskets)
                                             rule  support  confidence  lift

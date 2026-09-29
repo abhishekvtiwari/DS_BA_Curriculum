@@ -214,8 +214,8 @@ for name, part in [("train", train_acc), ("valid", valid_acc), ("test", test_acc
 FILL
 ```
 
-- The first `train_test_split` keeps 20% of the 5,000 accounts, **1,000**, as `test_acc`, and returns the other 4,000 as `rest`.
-- The second takes 25% of those 4,000, again **1,000**, as `valid_acc`, and leaves **3,000** in `train_acc`.
+- The first `train_test_split`, with `test_size=0.2`, keeps 20% of the 5,000 accounts, **1,000**, as `test_acc`, and returns the other 4,000 as `rest`.
+- The second, with `test_size=0.25`, takes 25% of those 4,000, again **1,000**, as `valid_acc`, and leaves **3,000** in `train_acc`.
 - **`stratify=`** keeps the churn rate the same in every part (Chapter 36, section 36.3). With only 9.7% churners, an unstratified split could leave the validation set with noticeably more or fewer.
 - **`random_state=37`** fixes the shuffle, so you get exactly these accounts every time.
 - In the loop, `f"{name:<6}"` pads the name to 6 characters, left-aligned, and `{len(part):>5,}` right-aligns the count in 5 characters with a thousands comma, so the columns line up.
@@ -298,7 +298,7 @@ Two more facts you'll use in a moment:
 
 ### One feature: last year's revenue
 
-Split the stayed accounts, 75% for training and 25% for testing:
+Split the stayed accounts, 75% for training and 25% for testing (`test_size=0.25`):
 
 ```python
 reg_train, reg_test = train_test_split(stayed, test_size=0.25, random_state=37)
@@ -410,7 +410,7 @@ def reg_pipeline(model, nums=REG_NUMS):
 ```
 
 - `REG_NUMS` is `NUMS` with the three money-like columns replaced by their logs.
-- `reg_pipeline` is Chapter 36's pipeline (sections 36.4 and 36.9) with one difference, `drop="first"`, for the reason above. `numbers` fills blanks with the median and then standardizes; `categories` one-hot encodes; `prepare` sends each list of columns to its step; the final `Pipeline` puts the preparation in front of whatever `model` you pass in.
+- `reg_pipeline` is Chapter 36's pipeline (sections 36.4 and 36.9) with one difference, `drop="first"`, for the reason above. `numbers` fills blanks with the median (`strategy="median"`) and then standardizes; `categories` one-hot encodes, and `handle_unknown="ignore"` turns a category never seen in training into all zeros instead of an error (Chapter 36, section 36.4); `prepare` sends each list of columns to its step; the final `Pipeline` puts the preparation in front of whatever `model` you pass in.
 - `nums=REG_NUMS` is a **default argument**: call `reg_pipeline(model)` and it uses `REG_NUMS`; pass `nums=[...]` to use a different list. Exercise 8 uses that.
 
 Next, one function to fit a model and report both scores:
@@ -502,7 +502,7 @@ FILL
 
 - `resid` is actual minus predicted, one per test account, on the log scale.
 - `low` is True for the half of the accounts with the smaller predictions, so `resid[low].std()` and `resid[~low].std()` compare the spread of the misses for smaller and larger accounts (`~` flips True and False, Chapter 18).
-- The chart is section 22.10's: `ax.scatter(..., s=5)` draws small dots, one per account, and `ax.axhline(0, linestyle="--")` draws the dashed zero line.
+- The chart is section 22.10's: `plt.subplots(figsize=(6, 3.5))` makes one chart 6 inches wide and 3.5 tall, `ax.scatter(..., s=5)` draws small dots, one per account, and `ax.axhline(0, linestyle="--")` draws the dashed zero line.
 
 ![Scatter of 1,129 residuals against predicted log revenue for 2025: a horizontal band of dots centred on the dashed zero line, about equally wide from the smallest to the largest predictions, with no curve and no fan](figures/fig37-1-residuals.svg)
 
@@ -856,7 +856,7 @@ print(knn.predict_proba([[1.7, 1.6]]).round(3))
 FILL
 ```
 
-The two columns are P(stayed) and P(churned): 0.667 matches the hand answer. ✓
+`n_neighbors=3` is *k*. The two columns of the output are P(stayed) and P(churned): 0.667 matches the hand answer. ✓
 
 Now imagine feature 2 were revenue in rupees, with values in the lakhs. A difference of ₹10,000 would swamp every difference in feature 1, and the "nearest" accounts would simply be the ones with the most similar revenue. That makes two things critical: **the choice of *k*** (few neighbors gives noisy predictions; many gives blurry ones) and **scaling** (distance is meaningless across unscaled units).
 
@@ -1162,12 +1162,12 @@ The printed tree is readable by anyone: accounts with no order for more than 160
 
 A tree's main settings:
 
-| Setting | What it controls | Value here |
-|---|---|---|
-| `max_depth` | The most questions from the top to any leaf | 4 |
-| `min_samples_leaf` | The fewest training rows a leaf may hold; 20 to 100 is sensible for thousands of rows | 20 |
-| `criterion` | How purity is measured: `"gini"` (the default) or `"entropy"` | both, below |
-| `random_state` | Breaks ties between equally good splits the same way every run | 37 |
+| Setting | What it controls | Value here | What happens if you change it |
+|---|---|---|---|
+| `max_depth` | The most questions from the top to any leaf | 4 | Deeper: training AUC rises, validation falls after depth 3 (the table above) |
+| `min_samples_leaf` | The fewest training rows a leaf may hold; 20 to 100 is sensible for thousands of rows | 20 | Larger: fewer, bigger leaves and smoother probabilities |
+| `criterion` | How purity is measured: `"gini"` (the default) or `"entropy"` | both, below | Rarely matters (below) |
+| `random_state` | Breaks ties between equally good splits the same way every run | 37 | A different, equally good tree when splits tie |
 
 ```python
 for criterion in ["gini", "entropy"]:
@@ -1272,7 +1272,7 @@ FILL
 ```
 
 - `n_estimators=300` is the number of trees; `min_samples_leaf=5` stops each tree from making leaves of fewer than 5 rows; `random_state=37` fixes the bootstrap samples and feature choices.
-- `feature_importances_` has one number per column, and they add up to 1.
+- `feature_importances_` has one number per column, and they add up to 1; `sort_values(ascending=False)` puts the largest first.
 
 **Reading it.** AUC 0.785, the best so far and above logistic regression's 0.764. The forest can use thresholds and interactions without being told about them.
 
@@ -1979,7 +1979,18 @@ from sklearn.model_selection import TimeSeriesSplit
 leads_train, leads_valid, leads_test = load_leads()
 LX = LEAD_CATS + LEAD_NUMS
 print(f"{len(leads_train):,} training leads, {leads_train['won'].sum()} won")
+```
 
+```
+FILL
+```
+
+- `sys.path.append(".")` tells Python to look for `lead_data.py` in the current folder (a notebook opened in `companion/ch37/` already does).
+- `load_leads()` returns the three tables; `LX` is the list of all thirteen feature columns.
+
+Then the search, as in section 37.11 but with time-series folds:
+
+```python
 lead_search = RandomizedSearchCV(
     make_model(LEAD_CATS, LEAD_NUMS, HistGradientBoostingClassifier(random_state=37)),
     param_distributions={
@@ -2006,7 +2017,6 @@ print("its four folds, earliest first:", np.round(fold_aucs, 3))
 FILL
 ```
 
-- `sys.path.append(".")` tells Python to look for `lead_data.py` in the current folder (a notebook opened in `companion/ch37/` already does).
 - `TimeSeriesSplit(n_splits=4)` cuts the time-ordered training leads into five slices and makes four folds: train on slice 1 and score slice 2, then train on slices 1–2 and score slice 3, and so on. Every fold scores leads that came *after* the ones it learned from.
 - `best_index_` is the row of `cv_results_` for the winning settings, and `split0_test_score` to `split3_test_score` are its four fold scores.
 
