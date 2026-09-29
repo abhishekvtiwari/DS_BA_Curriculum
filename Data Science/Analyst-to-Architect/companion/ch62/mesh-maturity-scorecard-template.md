@@ -1,20 +1,25 @@
 # Data mesh maturity scorecard — template
 
-Score each dimension 1 (not present) to 5 (fully mature), with one sentence
-of evidence for the score. See Chapter 62, section 62.5, for the method.
+Companion to Chapter 62, section 62.6.
 
-| Dimension | Score (1-5) | Evidence |
+**Scale:** score each question from 1 to 5, with one sentence of evidence for
+the score. 1 = absent · 3 = partly in place · 5 = working company-wide.
+
+**Rule:** any question at 1, or a total under 15 out of 25, means not ready.
+
+| Question | Score (1–5) | Evidence |
 |---|---|---|
-| Multiple domain teams that could each own data | | |
-| A self-serve platform domains could use independently | | |
-| Federated governance (agreed standards, locally applied) | | |
-| A data-product mindset (owner + stated service level) | | |
-| Organizational appetite for the cultural change mesh requires | | |
+| Are there multiple domain teams that could each own data? | | |
+| Is there a self-serve platform domains could use independently? | | |
+| Is there federated governance (agreed standards, locally applied)? | | |
+| Is there a data-product mindset (a named owner and a stated service level)? | | |
+| Is there organizational appetite for the cultural change a mesh requires? | | |
+| **Total** | **/ 25** | |
 
 ## Verdict
 
 **Ready / Not ready / Ready for a specific first step:** _____________
 
-**Reasoning:** _____________
+**Reasoning (which questions are the blockers?):** _____________
 
 **The specific, observable trigger that would change this verdict:** _____________
