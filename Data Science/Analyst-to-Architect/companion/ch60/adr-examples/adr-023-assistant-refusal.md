@@ -1,35 +1,40 @@
-# ADR-023: Support assistant refusal threshold
+# ADR-023: Support assistant refusal and document status
 
 **Status:** Accepted
-**Date:** (Part 6, Chapter 55)
+**Date:** after the pilot's second week (Chapter 55)
 **Owner:** AI applications team
 
 ## Context
-An early version compared retrieval scores after normalizing them 0-1 per query. Because the
-top-ranked chunk always normalizes to 1.0 regardless of how relevant it actually is, the
-refusal logic never triggered — including on a delivery-policy question where the top-ranked
-chunk was a superseded policy document, confidently cited as current.
+Two findings from Chapter 55. First, hybrid search adds the keyword and meaning scores after
+rescaling each set for the question being asked (section 55.5), so the top result always
+scores 1.0: a refusal threshold on those rescaled scores can never trigger. Second, in the
+pilot, the assistant told a customer that delivery was free above ₹40,000. The threshold had
+been ₹25,000 since January; the answer came from `policy_delivery_rev3_superseded.md`, an old
+policy still in the shared folder, which the search ranked first because it really is about
+free-delivery thresholds.
 
 ## Decision
-Use an absolute confidence floor on raw retrieval scores for the refusal decision, not a
-per-query normalized score.
+Refuse when the raw (absolute) keyword or meaning score of the best passage is below its floor,
+not on rescaled scores. Give every document a status (current, superseded, draft) and an
+effective date at index time, and index only current documents.
 
 ## Alternatives considered
-1. **Keep normalized scores, lower the threshold** — rejected: doesn't fix the underlying
-   problem; a bad top result still normalizes to 1.0 no matter how low the threshold is set.
-2. **Always show the top result with a confidence caveat, never refuse** — rejected: a
-   confidently-worded wrong answer with a small caveat is not meaningfully safer than one
-   with no caveat; refusal is the correct behavior when no document clears the bar.
-3. **Remove the superseded document from the corpus instead** — done in addition to, not
-   instead of, this decision: fixes this one instance but not the general problem of low-
-   quality top results on other future questions.
+1. **Keep rescaled scores and lower the threshold** — rejected: the top result is 1.0 whatever
+   the threshold, so nothing changes.
+2. **Always answer, with a confidence caveat** — rejected: a confidently worded wrong answer
+   with a small caveat is not meaningfully safer; refusal is the right behavior when no
+   document clears the bar.
+3. **Delete the superseded file and do nothing else** — done as well, but not instead: it fixes
+   this one file, not the next document nobody thinks to delete.
 
 ## Consequences
-**Positive:** the assistant now refuses when nothing in the corpus genuinely answers the
-question, instead of confidently citing whatever ranked first.
-**Negative / costs:** the absolute floor must be re-tuned if the embedding or retrieval
-method changes, since raw scores aren't comparable across methods.
+**Positive:** the assistant refuses when nothing in the corpus answers the question, and a
+superseded policy can no longer be retrieved; the refusal log became a list of questions the
+documents don't answer.
+**Negative / costs:** the floors must be re-tuned whenever the retrieval method changes, since
+raw scores aren't comparable across methods; every document now needs a status and an owner
+before it can be indexed.
 
 ## Revisit when
 The retrieval method changes (a new embedding model, a different search algorithm), since the
-absolute floor is calibrated to the current method's score distribution.
+floors are calibrated to the current method's scores.

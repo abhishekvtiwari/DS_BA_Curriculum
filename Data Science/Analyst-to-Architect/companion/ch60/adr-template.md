@@ -1,5 +1,8 @@
 # ADR-NNN: [Short title of the decision]
 
+<!-- The seven parts of Chapter 60, section 60.4: title and number; status and date; context;
+     decision; alternatives considered; consequences; owner and revisit trigger. -->
+
 **Status:** Proposed | Accepted | Superseded by ADR-NNN
 **Date:** YYYY-MM-DD
 **Owner:** [team or person accountable for this decision]
