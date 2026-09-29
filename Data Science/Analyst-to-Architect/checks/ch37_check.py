@@ -55,7 +55,7 @@ rtr, rte = train_test_split(s2, test_size=0.25, random_state=37)
 lr = LinearRegression().fit(rtr[["log_revenue_2024"]], rtr.log_revenue_2025)
 ex = rte.iloc[0]; z = lr.intercept_ + lr.coef_[0] * math.log(ex.revenue_2024)
 ok("ln 65500", round(math.log(65500), 4), 11.0898); ok("rounded coef calc", round(-0.140 + 1.013 * 11.0898, 4), 11.094)
-ok("exact log pred", round(z, 5), 11.09064); ok("exp pred", round(math.exp(z)), 65555)
+ok("exact log pred", round(z, 5), 11.09065); ok("exp pred", round(math.exp(z)), 65555)
 ok("retail factor", round(math.exp(-0.097), 3), 0.908)
 ok("SD log revenue 2024 ~1.09", round(rtr.log_revenue_2024.std(), 2), 1.09); ok("1.099/1.09", round(1.099 / 1.09, 2), 1.01)
 

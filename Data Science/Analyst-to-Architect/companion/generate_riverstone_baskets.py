@@ -57,7 +57,7 @@ for acc_id, segment, revenue in zip(accounts["account_id"], accounts["segment"],
     for _ in range(n_orders):
         n_lines = 1 + rng.poisson(1.3)
         basket = set(rng.choice(ids, size=min(n_lines, 6), replace=False, p=weights))
-        for seed_product in list(basket):
+        for seed_product in sorted(basket):
             for partner, chance in RULES.get(seed_product, []):
                 if rng.random() < chance:
                     basket.add(partner)

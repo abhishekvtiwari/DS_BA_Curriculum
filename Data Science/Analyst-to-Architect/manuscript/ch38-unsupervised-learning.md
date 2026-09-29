@@ -83,7 +83,7 @@ Clustering measures distance, so scaling is not optional (Chapter 35). Only desc
 | `orders_2024` | Orders placed in 2024 |
 | `categories_bought` | How many of Riverstone's **four** product categories (storage, kitchen, industrial, furniture) the account buys: 1 to 4 |
 | `avg_discount_pct` | Average discount on its orders, in % |
-| `late_payment_days` | How many days late it pays its invoices; blank for a few accounts |
+| `late_payment_days` | Average days late paying invoices; blank for about 3% of accounts, which have no payment history |
 | `days_since_last_order` | Days from its last order to 31 December 2024. The file stops at 365, so **365 means "a year or more"** |
 | `tenure_months` | How many months it has been a customer |
 
@@ -110,8 +110,8 @@ median late_payment_days: 12.0
 
 **How it works:**
 
-- **`np.log(accounts["revenue_2024"])`** takes the natural log of every revenue at once. Revenue is skewed (a few accounts are enormous), and the log pulls the big values in, as Chapter 35 showed, so a ₹80 lakh account doesn't sit miles from everyone else.
-- **`.isna().sum()`** counts the blanks: 150 accounts, 3% of the file, have no `late_payment_days`. The file doesn't say why, so we don't guess.
+- **`np.log(accounts["revenue_2024"])`** takes the natural log of every revenue at once. Revenue is skewed (a few accounts are enormous), and the log pulls the big values in, as Chapter 36 did for skewed numbers (section 36.6), so a ₹80 lakh account doesn't sit miles from everyone else.
+- **`.isna().sum()`** counts the blanks: 150 accounts, 3% of the file, have no `late_payment_days`, because the finance system has no payment history for them (Chapter 37's data dictionary).
 - **`.fillna(...median())`** fills each blank with the median, 12 days, as Chapter 37's pipelines did with `SimpleImputer(strategy="median")`. k-means can't work with a blank: it needs a number in every column to measure a distance.
 
 Next, name the seven features and look at their raw scale. `describe()` gives many statistics; `.T` **transposes** the table (rows become columns), so each feature gets its own row and the output fits the page, and `[["mean", "std"]]` keeps two columns:
@@ -1456,7 +1456,7 @@ Six months later, two of the four groups have been renamed by the sales team, wh
 - **umap-learn** 0.5.12 for UMAP and **mlxtend** 0.25.0 for `TransactionEncoder`, `apriori`, and `association_rules`, both installed in section 38.0 (`python -m pip install umap-learn mlxtend`). For very large baskets, the FP-Growth implementation in mlxtend is faster than Apriori.
 - **In SQL:** basket counts are a self-join of order lines on `order_id` with a `product_a < product_b` filter (the self-join from section 12.10), which is often how a first pass is done on data too large to bring into pandas.
 - Everything ran on one CPU core, Python 3.11.15, on 29 September 2026. The slowest step is t-SNE on 1,500 accounts, a few seconds.
-- **Companion files:** `companion/generate_riverstone_accounts.py` (Chapter 37, seed 20237) and `companion/generate_riverstone_baskets.py` (seed 20238) build the two datasets; section 38.0 shows how to run them, and section 38.9 describes the basket files. Run the chapter's code from `companion/ch38/`.
+- **Companion files:** `companion/generate_riverstone_accounts.py` (Chapter 37, seed 20237) and `companion/generate_riverstone_baskets.py` (seed 20238) build the two datasets; section 38.0 shows how to run them, and section 38.9 describes the basket files. `companion/ch38/account_features.py` does section 38.0's preparation in one call (`accounts, X = load_accounts()`). Run the chapter's code from `companion/ch38/`.
 
 **Option A: your own data.** Any customer, product, or transaction table you can use. Remove personal details first.
 
