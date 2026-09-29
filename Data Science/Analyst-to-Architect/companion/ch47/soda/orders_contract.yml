@@ -1,0 +1,10 @@
+dataset: riverstone_wh/raw/orders
+columns:
+  - name: order_id
+    checks:
+      - missing:
+      - duplicate:
+  - name: status
+    checks:
+      - invalid:
+          valid_values: [Pending, Shipped, Delivered, Cancelled]

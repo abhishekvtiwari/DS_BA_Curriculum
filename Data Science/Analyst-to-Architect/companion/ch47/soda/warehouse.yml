@@ -1,0 +1,4 @@
+type: duckdb
+name: riverstone_wh
+connection:
+  database: warehouse/riverstone_wh.duckdb
