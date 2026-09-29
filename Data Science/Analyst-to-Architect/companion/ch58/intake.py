@@ -1,94 +1,155 @@
 #!/usr/bin/env python3
 """
-Analyst to Architect · Chapter 58 · the purchase-order intake pipeline, end to end.
-Email in, order in the ERP or in a human's queue, every step recorded. Assembles Chapter 54's extraction,
-Chapter 57's tolerant parsing and metering, and this chapter's writes to a system of record.
-Run: python3 intake.py
+Analyst to Architect · Chapter 58 · Intelligent Automation
+File: intake.py - the purchase-order intake pipeline, end to end (sections 58.3 to 58.6).
+What: email in; an order in the ERP, or a reason in a person's queue; every step in the audit log.
+  validate() is Chapter 54's (section 54.7), with the processing day set to this chapter's run.
+  decide(), write() and run() are written out in the chapter, cell by cell; this file keeps them
+  together so exercises and scripts can import them. run() includes section 58.6's circuit breaker.
+Needs: ../ch54 (mock_llm.py, extraction.py, order_data/ from generate_order_emails.py) and
+  ../ch57 (pipeline.py, provider.py). No model account: provider.call answers with Chapter 54's stand-in.
+How:  from intake import run;  import erp;  erp.rebuild();  result = run(emails)
+Run:  python intake.py   (rebuilds erp.db and runs the 60 practice emails once)
+Tested on: Python 3.11 and 3.12 (standard library only).
+Riverstone Supplies is fictional; every name and number here is invented.
 """
-from __future__ import annotations
-
-import datetime as dt
-import pathlib
+import sqlite3
 import sys
 from collections import Counter
+from datetime import date, timedelta
+from pathlib import Path
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'ch57'))
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "ch57"))       # Chapter 57's pipeline.py and provider.py
+sys.path.insert(0, str(HERE.parent / "ch54"))       # Chapter 54's stand-in and the 60 emails
 import erp
-from pipeline import PROMPTS, load_emails, parse
-from provider import Meter, call
+from pipeline import build_prompt, load_emails, tolerant_parse
+from provider import PINNED_MODEL, Meter, call
 
 PRODUCT_CODES = set(erp.PRICES)
-APPROVAL_LIMIT = 100_000          # rupees: above this, a person signs it off (section 58.5)
-PIPELINE_VERSION = 'intake-v1 (prompt v3, model v1)'
+TODAY = date(2026, 3, 2)          # the morning of this chapter's run; in production, date.today()
+FIRST_RUN = "2026-03-02T06:00:00"
 
 
-def validate(order: dict | None) -> list[str]:
-    """Business rules, not formats. Anything here sends the order to a person rather than the ERP."""
-    if order is None:
-        return ['the reply could not be parsed']
+def validate(order):
+    """Return a list of problems. An empty list means the order is safe to load."""
     problems = []
-    if not str(order.get('po_number') or '').startswith('PO-'):
-        problems.append('missing or malformed PO number')
-    if not order.get('customer'):
-        problems.append('missing customer')
-    delivery = order.get('delivery_date')
+    if not order.get("po_number") or not str(order["po_number"]).startswith("PO-"):
+        problems.append("po_number missing or malformed")
+    if not order.get("customer"):
+        problems.append("customer missing")
+    delivery = order.get("delivery_date")
     try:
-        parsed = dt.date.fromisoformat(delivery) if delivery else None
+        parsed = date.fromisoformat(delivery) if delivery else None
     except (TypeError, ValueError):
         parsed = None
-        problems.append(f'delivery date not YYYY-MM-DD: {delivery!r}')
-    if parsed and not (dt.date(2026, 1, 1) <= parsed <= dt.date(2027, 1, 1)):
-        problems.append(f'delivery date outside the plausible window: {parsed}')
-    items = order.get('items') or []
+        problems.append(f"delivery_date not YYYY-MM-DD: {delivery!r}")
+    if parsed and not (TODAY - timedelta(days=30) <= parsed <= TODAY + timedelta(days=365)):
+        problems.append(f"delivery_date outside the plausible window: {parsed}")
+    items = order.get("items") or []
     if not items:
-        problems.append('no order lines')
+        problems.append("no items")
     for item in items:
-        if str(item.get('product_code')) not in PRODUCT_CODES:
-            problems.append(f'unknown product code {item.get("product_code")!r}')
-        quantity = item.get('quantity')
-        if not isinstance(quantity, int) or not 1 <= quantity <= 10_000:
-            problems.append(f'implausible quantity {quantity!r}')
+        if str(item.get("product_code")) not in PRODUCT_CODES:
+            problems.append(f"unknown product code {item.get('product_code')!r}")
+        quantity = item.get("quantity")
+        if not isinstance(quantity, int) or isinstance(quantity, bool) or not 1 <= quantity <= 10_000:
+            problems.append(f"implausible quantity {quantity!r}")
     return problems
 
 
-def run(emails: dict, truth: dict | None = None, approval_limit: int = APPROVAL_LIMIT,
-        meter: Meter | None = None, at: str = '2026-03-02T06:00:00') -> dict:
-    """One morning's intake run. Returns the counts a dashboard would show."""
+APPROVAL_LIMIT = 100_000          # rupees: above this, a person signs the order off
+PIPELINE_VERSION = f"intake-v1 (prompt v3, {PINNED_MODEL})"
+
+def decide(order, problems, approval_limit=APPROVAL_LIMIT):
+    """Where one extracted order goes, and why: held, awaiting_approval, or loaded."""
+    if problems:
+        return "held", "; ".join(problems)
+    rupees = erp.order_value_paise(order["items"]) / 100
+    if rupees > approval_limit:
+        return "awaiting_approval", f"value ₹{rupees:,.0f} is over the ₹{approval_limit:,} limit"
+    return "loaded", ""
+
+
+def write(connection, run_id, name, order, status, reason):
+    """Write one order and its lines in one transaction. Returns (what happened, why)."""
+    try:
+        with connection:
+            cursor = connection.execute(
+                "INSERT INTO orders (po_number, customer, delivery_date, order_value_paise, "
+                "source_email, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (order["po_number"], order["customer"], order["delivery_date"],
+                 erp.order_value_paise(order["items"]), name, status, run_id))
+            order_id = cursor.lastrowid
+            for item in order["items"]:
+                connection.execute(
+                    "INSERT INTO order_lines (order_id, product_code, quantity, unit_price_paise) "
+                    "VALUES (?, ?, ?, ?)",
+                    (order_id, item["product_code"], item["quantity"],
+                     erp.PRICES[item["product_code"]] * 100))
+            detail = f"order {order_id}, {len(order['items'])} lines"
+            erp.log(connection, run_id, name, status, PIPELINE_VERSION, detail)
+        return status, reason
+    except sqlite3.IntegrityError:
+        same_email = connection.execute(
+            "SELECT order_id FROM orders WHERE source_email = ?", (name,)).fetchone()
+        if same_email:
+            status = "duplicate_ignored"
+            reason = f"this email is already order {same_email['order_id']}"
+        else:
+            status = "duplicate_po"
+            reason = f"{order['customer']} already has an order for {order['po_number']}"
+        with connection:
+            erp.log(connection, run_id, name, status, PIPELINE_VERSION, reason)
+        return status, reason
+
+
+QUEUED = ("held", "awaiting_approval", "duplicate_po")   # the outcomes a person must look at
+BREAKER_SHARE = 0.2               # stop when more than 20% of the batch has failed validation...
+BREAKER_MINIMUM = 10              # ...once at least 10 emails have been processed
+
+class BatchAborted(Exception):
+    """Raised when so much of a batch fails that the run should stop and a person should look."""
+
+
+def run(emails, run_id=FIRST_RUN, approval_limit=APPROVAL_LIMIT, meter=None):
+    """One intake run over a dictionary of emails. Returns the counts and the queue."""
     connection = erp.connect()
-    outcome = Counter()
+    counts = Counter()
     queue = []
     for name, text in emails.items():
-        reply = call(PROMPTS['v3'].format(name=name) + '\nEMAIL:\n' + text, model='v1', meter=meter)
-        order = parse(reply)
-        problems = validate(order)
-        erp.log(connection, name, 'proposed', PIPELINE_VERSION,
-                'clean' if not problems else '; '.join(problems[:2]), at)
-        if problems:
-            outcome['held_for_review'] += 1
-            queue.append({'email': name, 'reasons': problems})
-            connection.commit()
-            continue
-        value = erp.order_value(order['items'])
-        if value > approval_limit:
-            erp.write_order(connection, order, name, 'awaiting_approval', PIPELINE_VERSION, at)
-            outcome['awaiting_approval'] += 1
-            queue.append({'email': name, 'reasons': [f'order value Rs {value:,.0f} is above the '
-                                                     f'Rs {approval_limit:,} approval limit']})
+        order = tolerant_parse(call(build_prompt("v3", text), meter=meter))
+        problems = ["reply was not valid JSON"] if order is None else validate(order)
+        status, reason = decide(order, problems, approval_limit)
+        with connection:
+            erp.log(connection, run_id, name, "proposed", PIPELINE_VERSION,
+                    "; ".join(problems) or "clean")
+        if status == "held":
+            with connection:
+                erp.log(connection, run_id, name, "held", PIPELINE_VERSION, reason)
         else:
-            written = erp.write_order(connection, order, name, 'loaded', PIPELINE_VERSION, at)
-            outcome['loaded' if written else 'duplicate_ignored'] += 1
-    connection.commit()
+            status, reason = write(connection, run_id, name, order, status, reason)
+        counts[status] += 1
+        if status in QUEUED:
+            queue.append({"email": name, "status": status, "reason": reason})
+        processed = sum(counts.values())
+        if processed >= BREAKER_MINIMUM and counts["held"] > BREAKER_SHARE * processed:
+            message = f"{counts['held']} of {processed} emails failed validation"
+            with connection:
+                erp.log(connection, run_id, "(batch)", "batch_aborted", PIPELINE_VERSION, message)
+            connection.close()
+            raise BatchAborted(message)
     connection.close()
-    return {'counts': dict(outcome), 'queue': queue}
+    return {"counts": dict(counts), "queue": queue}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     erp.rebuild()
     truth, emails = load_emails()
     meter = Meter()
-    result = run(emails, truth, meter=meter)
-    total = sum(result['counts'].values())
-    loaded = result['counts'].get('loaded', 0)
-    print(f'{total} emails: ' + ', '.join(f'{k.replace("_", " ")} {v}' for k, v in sorted(result['counts'].items())))
-    print(f'straight-through rate: {loaded / total:.0%}')
-    print(f'model cost for the run: Rs {meter.cost_rupees():.2f}')
+    result = run(emails, meter=meter)
+    total = sum(result["counts"].values())
+    for status, count in sorted(result["counts"].items()):
+        print(f"{status.replace('_', ' '):<20}{count:>3}")
+    print(f"straight-through rate: {result['counts'].get('loaded', 0) / total:.0%}")
+    print(f"model cost of the run: ₹{meter.cost_rupees():.2f}")
