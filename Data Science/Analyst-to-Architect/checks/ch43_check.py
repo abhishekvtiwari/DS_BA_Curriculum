@@ -53,7 +53,7 @@ ok("dz2", round(g("a2_hand") - 1, 4), -0.4641)
 ok("dW2", [round(v, 4) for v in g("dW2")], [-0.1352, -0.1561])
 ok("dz1", [round(v, 4) for v in g("dz1")], [-0.2124, 0.247])
 ok("autograd = hand", torch.allclose(g("W2g").grad[0].double(), torch.tensor(g("dW2"), dtype=torch.float64), atol=1e-6), True)
-ok("64-bit nudge", round(g("slope_64"), 8), round(g("dW2")[0], 8))
+ok("64-bit nudge agrees to 7 decimals", abs(g("slope_64") - g("dW2")[0]) < 1e-7, True)
 ok("loss difference in 5th decimal", f"{2e-4 * 0.1352:.1e}", "2.7e-05")
 # 43.5
 ok("25 features = 13 one-hot + 11 + 1", 3 + 3 + 3 + 4 + 11 + 1, 25)

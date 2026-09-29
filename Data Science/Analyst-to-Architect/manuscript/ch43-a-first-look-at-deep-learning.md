@@ -201,11 +201,18 @@ ten sigmoid slopes of 0.25 multiplied together: 0.0000010
 **Reading it.** Section 43.4 shows that training multiplies the slopes of every layer the signal passes through. With sigmoid in ten stacked layers, even the *best* case multiplies ten slopes of 0.25, about one millionth, so the early layers get almost no signal and barely learn. That's the **vanishing gradient**. ReLU's slope is exactly 1 for positive inputs, so nothing shrinks, which is why hidden layers mostly use ReLU. The sigmoid is still used at a network's *output*, where you want a 0–1 probability.
 
 ---
+
 ## 43.2 Why one neuron isn't enough
 
 ### XOR: a pattern no straight line can separate
 
-A single neuron draws one straight decision boundary: on one side it predicts above 0.5, on the other below. Some patterns can't be separated by any straight line, however you set the weights. The classic example is **XOR** ("exclusive or"): *true if exactly one of two conditions holds*. Put the four possible cases into tensors:
+A single neuron draws one straight decision boundary: on one side it predicts above 0.5, on the other below. Some patterns can't be separated by any straight line, however you set the weights. The classic example is **XOR** ("exclusive or"): *true if exactly one of two conditions holds*. Figure 43.1 shows its four possible cases.
+
+![Left panel: the four XOR points on a square, 0 at bottom-left and top-right, 1 at top-left and bottom-right, with a dashed straight line that leaves a 1 and a 0 on each side. Right panel: the same four points over the two-layer network's learned regions: a diagonal band through the two 0s is predicted 0, and the two corners holding the 1s are predicted 1](figures/fig43-1-xor.svg)
+
+*Figure 43.1 — XOR. Left: any straight line leaves a 1 and a 0 on the same side. Right: the network with one hidden layer (end of this section) learns a bent boundary: a band for 0 through the middle, with 1 on both sides.*
+
+Put the four cases into tensors:
 
 ```python
 torch.manual_seed(43)
@@ -229,11 +236,7 @@ XOR: a customer gets a discount if exactly one of two conditions holds
 - `X_xor` is a 4 × 2 tensor: four rows, two inputs each. `y_xor` is 4 × 1: one target per row, kept as a column because the network will output a column.
 - `zip(X_xor.tolist(), y_xor.tolist())` pairs each row of inputs with its target, as `zip` does with two lists (Chapter 17); `target[0]` takes the one number out of each one-item target list.
 
-![Left panel: the four XOR points on a square, 0 at bottom-left and top-right, 1 at top-left and bottom-right, with a dashed straight line that leaves a 1 on the same side as a 0. Right panel: the same four points over the two-layer network's learned regions, a diagonal band predicted 1 between two regions predicted 0](figures/fig43-1-xor.svg)
-
-*Figure 43.1 — XOR. Left: any straight line leaves a 1 and a 0 on the same side. Right: the network with one hidden layer (end of this section) learns a bent boundary: a band for 1, with 0 on both sides.*
-
-Look at Figure 43.1's left panel and try to draw one straight line that puts the two 1s on one side and the two 0s on the other. It can't be done: the 1s sit on one diagonal and the 0s on the other. Now train a single neuron on it anyway, one piece at a time.
+Now look at Figure 43.1's left panel and try to draw one straight line that puts the two 1s on one side and the two 0s on the other. It can't be done: the 1s sit on one diagonal and the 0s on the other. Now train a single neuron on it anyway, one piece at a time.
 
 ### A single neuron in PyTorch
 
@@ -360,10 +363,30 @@ Now put a **hidden layer** of 4 neurons between the inputs and the output. "Hidd
 
 ```python
 torch.manual_seed(43)
-
 two_layer = nn.Sequential(nn.Linear(2, 4), nn.Tanh(), nn.Linear(4, 1), nn.Sigmoid())
-optimizer2 = torch.optim.SGD(two_layer.parameters(), lr=0.5)
+print(two_layer)
+print(f"total parameters: {sum(p.numel() for p in two_layer.parameters())}")
+```
 
+```
+Sequential(
+  (0): Linear(in_features=2, out_features=4, bias=True)
+  (1): Tanh()
+  (2): Linear(in_features=4, out_features=1, bias=True)
+  (3): Sigmoid()
+)
+total parameters: 17
+```
+
+- **`nn.Linear(2, 4)`** turns the 2 inputs into 4 weighted sums, one per hidden neuron: 2 × 4 = 8 weights and 4 biases.
+- **`nn.Tanh()`** applies tanh (section 43.1) to each of the 4.
+- **`nn.Linear(4, 1)`** combines the 4 hidden outputs into one weighted sum: 4 weights and 1 bias. `nn.Sigmoid()` turns it into a probability.
+- `p.numel()` counts the numbers in one parameter tensor, and `sum(...)` adds them up: 8 + 4 + 4 + 1 = **17**.
+
+Train it exactly as before, for 3,000 steps:
+
+```python
+optimizer2 = torch.optim.SGD(two_layer.parameters(), lr=0.5)
 for step in range(3000):
     optimizer2.zero_grad()
     prediction2 = two_layer(X_xor)
@@ -373,22 +396,16 @@ for step in range(3000):
 
 print(f"after 3000 steps, loss = {loss2.item():.5f}")
 print("predictions:", prediction2.detach().numpy().round(3).ravel())
-print(f"total parameters: {sum(p.numel() for p in two_layer.parameters())}")
 ```
 
 ```
 after 3000 steps, loss = 0.00097
 predictions: [0.001 0.999 0.999 0.001]
-total parameters: 17
 ```
 
-- **`nn.Linear(2, 4)`** turns the 2 inputs into 4 weighted sums, one per hidden neuron: 2 × 4 = 8 weights and 4 biases.
-- **`nn.Tanh()`** applies tanh (section 43.1) to each of the 4.
-- **`nn.Linear(4, 1)`** combines the 4 hidden outputs into one weighted sum: 4 weights and 1 bias. `nn.Sigmoid()` turns it into a probability.
-- The training loop is the one above, with new names.
-- `p.numel()` counts the numbers in one parameter tensor, and `sum(...)` adds them up: 8 + 4 + 4 + 1 = **17**.
+The loop is the one above, with new names (`optimizer2`, `prediction2`, `loss2`), so the single neuron's are kept.
 
-Why tanh and not ReLU, which section 43.1 said hidden layers usually use? On a four-row toy problem with only four hidden neurons, a ReLU neuron whose weighted sum is negative for all four rows outputs 0 and has a slope of 0, so it stops learning for good (a "dead" neuron). With the same seed, swap in ReLU and see:
+Why tanh and not ReLU, which section 43.1 said hidden layers usually use? What happens if you change it? On a four-row toy problem with only four hidden neurons, a ReLU neuron whose weighted sum is negative for all four rows outputs 0 and has a slope of 0, so it stops learning for good (a "dead" neuron). With the same seed, swap in ReLU and see:
 
 ```python
 torch.manual_seed(43)
@@ -406,9 +423,9 @@ print(f"ReLU hidden layer, after 3000 steps: loss = {relu_loss.item():.4f}")
 ReLU hidden layer, after 3000 steps: loss = 0.3467
 ```
 
-`nn.ReLU()` is the only change. The loss stops at 0.3467, well short of solving XOR: some of its four neurons died. With thousands of neurons and rows, a few dead ones don't matter, which is why ReLU works well in real networks; on this tiny problem, tanh is the safer choice.
+`nn.ReLU()` is the only change. The loss stops at 0.3467, well short of solving XOR: one of its four neurons died (it outputs 0 for all four rows), and the other three can't finish the job. With thousands of neurons and rows, a few dead ones don't matter, which is why ReLU works well in real networks; on this tiny problem, tanh is the safer choice.
 
-**Reading it.** With a hidden layer of just 4 tanh neurons, the network solves XOR almost perfectly (predictions of 0.001, 0.999, 0.999, 0.001 against targets of 0, 1, 1, 0). Each hidden neuron draws its own straight line, and the output layer combines them into a shape a single line never could: the diagonal band in Figure 43.1's right panel. **This is the reason depth exists**: layers with nonlinear activations between them let a network represent patterns a single layer structurally cannot, no matter how it's trained.
+**Reading it.** With a hidden layer of just 4 tanh neurons, the network solves XOR almost perfectly (predictions of 0.001, 0.999, 0.999, 0.001 against targets of 0, 1, 1, 0). Each hidden neuron draws its own straight line, and the output layer combines them into a shape a single line never could: the curved band in Figure 43.1's right panel. **This is the reason depth exists**: layers with nonlinear activations between them let a network represent patterns a single layer structurally cannot, no matter how it's trained.
 
 ---
 
@@ -416,9 +433,9 @@ ReLU hidden layer, after 3000 steps: loss = 0.3467
 
 Take the smallest multi-layer network, 2 inputs, 2 hidden neurons (tanh), and 1 output (sigmoid), and push one example through it, in PyTorch and by hand, to see that nothing is hidden. Figure 43.2 shows the network with the weights we'll use.
 
-![A network diagram: two input circles, x1 = 1.0 and x2 = 0.5, each connected to two hidden circles by arrows labelled with the weights 0.3, -0.2, 0.4 and 0.1; the hidden circles show z1 and a1 values 0.30 and 0.2913, and 0.35 and 0.3364; both connect to one output circle by weights 0.5 and -0.6, which shows z2 = 0.1438 and a2 = 0.5359](figures/fig43-2-network.svg)
+![A network diagram: two input circles, x1 = 1.0 and x2 = 0.5, each connected to two hidden circles by arrows labelled with the weights 0.3, -0.2, 0.4 and 0.1; the hidden circles show z = 0.30 and a = 0.2913, and z = 0.35 and a = 0.3364; both connect to one output circle by weights 0.5 and -0.6, which shows z = 0.1438 and a = 0.5359](figures/fig43-2-network.svg)
 
-*Figure 43.2 — The 2-2-1 network of sections 43.3 and 43.4. Each hidden neuron adds its bias (0.1 and −0.1) to its weighted sum, then applies tanh; the output neuron adds 0.2, then applies the sigmoid.*
+*Figure 43.2 — The 2-2-1 network of sections 43.3 and 43.4. Inside each neuron, z is its weighted sum plus its bias, and a is its activation: tanh in the hidden layer, the sigmoid at the output.*
 
 ```python
 x_tiny = torch.tensor([1.0, 0.5])
@@ -470,7 +487,7 @@ matches PyTorch to 9 decimal places: True
 - `z1_0` is the first hidden neuron: 0.3 × 1.0 − 0.2 × 0.5 + 0.1 = 0.30. `z1_1` is the second: 0.4 × 1.0 + 0.1 × 0.5 − 0.1 = 0.35.
 - `a1_0, a1_1 = ...` assigns two names at once (Chapter 17): tanh of each.
 - `z2_hand` is the output neuron: 0.5 × 0.2913 − 0.6 × 0.3364 + 0.2 = 0.1438, and `a2_hand` its sigmoid.
-- `abs(a2_hand - a2.item()) < 1e-9` checks that the two answers differ by less than one billionth. (`1e-9` is scientific notation for 0.000000001, Chapter 35.)
+- `abs(a2_hand - a2.item()) < 1e-9` checks that the two answers differ by less than one billionth. (`1e-9` is scientific notation for 0.000000001, Chapter 18, section 18.1.)
 
 **Reading it.** Every number matches PyTorch's to the precision shown, because it's the same calculation. This is what **forward pass** means: multiply, add a bias, activate, and repeat for each layer, ending at the output.
 
@@ -623,9 +640,10 @@ nudge, 64-bit:      -0.13519939
 
 - **`.double()`** makes a 64-bit (`torch.float64`) copy of a tensor, the same precision as plain Python numbers and NumPy's `float64`.
 
-**Reading it.** In 64-bit, the nudge agrees with the chain rule to 8 decimal places. So the three methods, by hand, autograd, and nudge-and-measure, give the same gradient; the earlier gap was 32-bit rounding. Neural networks still train in 32-bit, because gradient descent only needs the gradient's direction and rough size, not its eighth digit. **Backpropagation is the chain rule, automated**: exactly the answer a patient, tedious calculation would give, only far faster. You'll never write it by hand again; you now know what `.backward()` does.
+**Reading it.** In 64-bit, the nudge agrees with the chain rule to seven decimal places; the tiny difference in the eighth decimal place is the nudge's own error, which shrinks as `epsilon` does once rounding is out of the way. So the three methods, by hand, autograd, and nudge-and-measure, give the same gradient; the earlier gap was 32-bit rounding. Neural networks still train in 32-bit, because gradient descent only needs the gradient's direction and rough size, not its eighth digit. **Backpropagation is the chain rule, automated**: exactly the answer a patient, tedious calculation would give, only far faster. You'll never write it by hand again; you now know what `.backward()` does.
 
 ---
+
 ## 43.5 A network on tabular data
 
 ### The same data as Chapter 37
@@ -667,6 +685,9 @@ print(f"train {len(train_acc):,}   valid {len(valid_acc):,}   test {len(test_acc
 train 3,000   valid 1,000   test 1,000
 ```
 
+- `accounts["rep_id"].astype(str)` makes the rep numbers text, so they're treated as labels; `CATS` and `NUMS` name the 4 category columns and the 11 numeric ones (Chapter 37, section 37.0).
+- `test_size=0.2` holds out 1,000 accounts as the test set; `test_size=0.25` of the remaining 4,000 makes the 1,000 validation accounts; `stratify=` keeps the 9.7% churn rate in every part, and `random_state=37` picks exactly Chapter 37's accounts.
+
 The second cell is the preparation inside Chapter 37's `clf_pipeline` (section 37.3), used on its own: one-hot encode the categories; fill blanks with the median, add a "was blank" flag, and standardize the numbers. Two lines at the end are new:
 
 ```python
@@ -695,6 +716,7 @@ print(f"{X_train.shape[0]:,} training accounts, {X_train.shape[1]} features")
 3,000 training accounts, 25 features
 ```
 
+- `strategy="median"` fills blanks with each column's median, and `add_indicator=True` adds the 0/1 "was blank" column; `handle_unknown="ignore"` turns a category never seen in training into all zeros instead of an error (Chapter 37, section 37.3).
 - `prepare.fit_transform` learns the medians, means and categories from the training rows only and transforms them; `prepare.transform` applies what it learned to the validation rows (Chapter 36, section 36.9).
 - **`.astype("float32")`** is new: PyTorch works in 32-bit numbers (section 43.0), and scikit-learn gives 64-bit ones.
 - **`.to_numpy()`** is new too: it turns a pandas Series into a plain NumPy array, which `torch.tensor` can read.
@@ -819,7 +841,7 @@ after 200 epochs: validation AUC 0.773
 
 ### The honest comparison
 
-Now logistic regression and Chapter 37's tuned gradient boosting (`hgb_settings`, section 37.8), fitted on the same 3,000 rows and scored on the same 1,000 validation accounts:
+Now logistic regression and Chapter 37's tuned gradient boosting (`hgb_settings`, section 37.8), fitted on the same 3,000 rows and scored on the same 1,000 validation accounts. The next cell fits both and prints all three models side by side.
 
 ```python
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -840,8 +862,8 @@ for name, pred, size in [
     ("small neural network", final_pred, "561"),
     ("gradient boosting", boosting_pred, "(300 trees)"),
 ]:
-    auc, loss = roc_auc_score(y_valid, pred), log_loss(y_valid, pred)
-    print(f"{name:<24} {auc:.3f}   {loss:.4f}     {size}")
+    auc, logloss = roc_auc_score(y_valid, pred), log_loss(y_valid, pred)
+    print(f"{name:<24} {auc:.3f}   {logloss:.4f}     {size}")
 ```
 
 ```
@@ -851,7 +873,7 @@ small neural network     0.773   0.2812     561
 gradient boosting        0.786   0.2744     (300 trees)
 ```
 
-- Both models are Chapter 37's, with its settings; boosting's are the four in `hgb_settings`. They take the same prepared arrays as the network. (Boosting doesn't need the scaling, but it doesn't mind it: trees only compare values within one column.)
+- Both models are Chapter 37's, with its settings: `max_iter=2000` lets logistic regression's optimizer finish, and boosting's four settings are Chapter 37's `hgb_settings` (section 37.8): `learning_rate=0.05` (small steps), `max_depth=3` (shallow trees), `min_samples_leaf=40` (no tiny leaves), and `max_iter=300` (300 trees). They take the same prepared arrays as the network. (Boosting doesn't need the scaling, but it doesn't mind it: trees only compare values within one column.)
 - The loop goes through three (name, predictions, size) triples and prints one row each.
 
 **Reading it, plainly.** The small network (0.773) and logistic regression (0.764) are **effectively tied**: Chapter 37 (section 37.8) showed that with 1,000 validation accounts and 97 churners, differences of about 0.01 are noise. Tuned gradient boosting (0.786) is ahead of both, and Chapter 37's cross-validation (section 37.10) showed that boosting's lead over logistic regression on this data is real. So the network matches the simple model at twenty times the parameters, with more code, more settings, and more training time, and trails boosting. **On clean, modest-sized tabular data, deep learning has no automatic advantage** over the methods of earlier chapters; tuned gradient boosting remains the strongest default for tables of numbers.
@@ -870,8 +892,8 @@ for name, pred in [
     ("small neural network", network_test),
     ("gradient boosting", boosting_model.predict_proba(X_test)[:, 1]),
 ]:
-    auc, loss = roc_auc_score(y_test, pred), log_loss(y_test, pred)
-    print(f"{name:<24} test AUC {auc:.3f}   log loss {loss:.4f}")
+    auc, logloss = roc_auc_score(y_test, pred), log_loss(y_test, pred)
+    print(f"{name:<24} test AUC {auc:.3f}   log loss {logloss:.4f}")
 ```
 
 ```
@@ -883,7 +905,7 @@ gradient boosting        test AUC 0.821   log loss 0.2437
 - `prepare.transform` prepares the 1,000 test accounts with what it learned from the training rows, exactly as for validation.
 - Each model is scored once; nothing is changed after seeing these numbers.
 
-**Reading it.** On the test set the network (0.818) lands between logistic regression (0.797) and boosting (0.821), and much closer to boosting than on validation. That's the noise Chapter 37 warned about: on 1,000 accounts, a gap of 0.003 is a tie, and even 0.02 is only suggestive. Put the two scorings together and the honest summary is that the network is in the same range as the other two and **never clearly ahead of boosting**, for far more code, settings and training time. These are single scores on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts. on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts; the order is what matters. Where deep learning's advantage becomes overwhelming is where the simpler methods have no good equivalent at all: raw images, audio, and text at scale. That's where the next two sections go.
+**Reading it.** On the test set the network (0.818) lands between logistic regression (0.797) and boosting (0.821), and much closer to boosting than on validation. That's the noise Chapter 37 warned about: on 1,000 accounts, a gap of 0.003 is a tie, and even 0.02 is only suggestive. Put the two scorings together and the honest summary is that the network is in the same range as the other two and **never clearly ahead of boosting**, for far more code, settings and training time. These are single scores on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts. Where deep learning's advantage becomes overwhelming is where the simpler methods have no good equivalent at all: raw images, audio, and text at scale. That's where the next two sections go.
 
 ---
 
@@ -1060,7 +1082,7 @@ image tensor shape: torch.Size([675, 1, 8, 8])
 ```
 
 - `labels < 5` is a mask, True for the digits 0 to 4 (Chapter 18's boolean filtering); `images[base_mask]` keeps those images.
-- `train_test_split` holds out 25%, stratified so each digit keeps its share (Chapter 36).
+- `train_test_split` with `test_size=0.25` holds out 25%, and `stratify=y_base` keeps each digit's share the same in both parts (Chapter 36); `random_state=43` fixes the shuffle.
 - `to_tensors` does two conversions. **`.unsqueeze(1)`** adds the "input maps" dimension that `Conv2d` expects: shape (images, maps, rows, columns), with 1 map. **`.long()`** stores the labels as whole numbers (64-bit integers); the multi-class loss below needs class numbers, not decimals. The name `images_`, with a trailing underscore, just avoids reusing the name `images`.
 
 Follow one image through the network and watch its shape at every step:
@@ -1145,9 +1167,10 @@ test accuracy: 98.7%
 
 **Reading it.** With 675 training images and a network of only 3,493 parameters, tiny by deep-learning standards, the model classifies 98.7% of the 226 held-out images of the digits 0–4 correctly. Two rounds of convolution and pooling turn each 8 × 8 grid into a compact set of features that a small final layer can classify.
 
-> **Learned features are learned representations.** For each image, `base_model.features(...)` produces 32 numbers: the network's own description of that image, learned by gradient descent. It's the image version of Chapter 41's word embeddings (section 41.7), where each word became a vector learned from text. Nobody told the network what the 32 numbers should mean, yet images of the same digit end up with more similar vectors than images of different digits. Section 43.7 works by reusing exactly these 32-number descriptions on a new task.
+> **Learned features are learned representations.** For each image, `base_model.features(...)` produces 32 numbers: the network's own description of that image, learned by gradient descent. It's the image version of Chapter 41's word embeddings (section 41.7), where each word became a vector learned from text. Nobody told the network what the 32 numbers should mean, yet images of the same digit end up with more similar vectors than images of different digits. Section 43.7 reuses the convolutional layers that produce them on a new task.
 
 ---
+
 ## 43.7 Transfer learning
 
 ### The idea
@@ -1349,6 +1372,7 @@ One middle way deserves a name. **Fine-tuning** unfreezes some of the pretrained
 The pattern across this book has been consistent: try the simplest thing that could work, measure it honestly, and only add complexity that earns its place with evidence (Chapter 36's baselines, Chapter 37's algorithm comparisons). Deep learning is not an exception to that discipline; it's one more tool to test against it.
 
 ---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -1479,6 +1503,7 @@ Code exercises run in the chapter's notebook after the chapter's code (they use 
 16. A vendor says its transfer-learning product was "pretrained on millions of images" and should work well on Riverstone's own product-defect photos. What one question from this chapter would you ask before trusting that claim?
 
 ---
+
 ## Answers
 
 *Every calculation was checked, and every code output shown is real.*
