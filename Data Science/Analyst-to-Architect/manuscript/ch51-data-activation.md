@@ -97,7 +97,7 @@ print("riverstone_source ready")
 ```
 
 ```
-(pending)
+riverstone_source ready
 ```
 
 **How it works, line by line.**
@@ -122,11 +122,12 @@ print("the CRM holds", leads_n, "leads and", accounts_n, "customer accounts")
 ```
 
 ```
-(pending)
+CRM: ('127.0.0.1', 8051)  receiver: ('127.0.0.1', 8052)
+the CRM holds 43 leads and 23 customer accounts
 ```
 
 - `start_crm()` and `start_receiver()` start the two servers in the background of the notebook, at ports 8051 and 8052 on this computer, as Chapter 45's practice API did at 8045.
-- `seed_crm()` fills the sandbox from `riverstone_source`: all of Riverstone's leads, and an account for each customer except the newest, customer 24, who signed up in December and has no CRM account yet (section 51.4 creates it). It returns the two counts.
+- `seed_crm()` fills the sandbox from `riverstone_source`: all of Riverstone's leads, and an account for each customer except the newest, customer 24, who signed up in November and has no CRM account yet (section 51.4 creates it). It returns the two counts.
 - `BASE` is the start of every address the CRM answers on. `TOKEN` comes from the environment; the default after it is the sandbox's public token, so the notebook runs even without `.env`. `HEADERS` sends it as a bearer token.
 
 > **Tool note.** The outputs in this chapter were produced with Python 3.11.15, requests 2.33.1, psycopg2 2.9.13, python-dotenv 1.2.3, and PostgreSQL 16.13.
@@ -135,7 +136,7 @@ print("the CRM holds", leads_n, "leads and", accounts_n, "customer accounts")
 
 ## 51.1 The loop nobody finishes
 
-Chapter 7 drew the full flow from a question to an answer. Here's the piece most companies build and then stop before finishing:
+Chapter 7 drew the full flow from a question to an answer. Here's the piece most companies build, and then stop before finishing.
 
 ![A left to right flow of four boxes: source systems (ERP, CRM, marketing tools), ingestion (Chapter 45), the warehouse, and data products (reports, emails, dashboards). A label above data products says most companies stop here. A purple arrow labelled this chapter leaves the top of the warehouse and runs back into the source systems, closing the loop into the systems people work in.](figures/fig51-1-the-full-loop.svg)
 
@@ -208,11 +209,20 @@ ORDER BY l.lead_id;
 ```
 
 ```
-(pending sql)
+ lead_id |   company_name    |  source   |   stage   | stage_entered 
+---------+-------------------+-----------+-----------+---------------
+       1 | Anand Stores      | Referral  | Contacted | 2025-04-13
+       2 | Bright Kitchens   | Website   | Quoted    | 2025-06-29
+       3 | Bright Kitchens   | Website   | New       | 2025-06-12
+       4 | BRIGHT KITCHENS   | Website   | New       | 2025-06-12
+       5 | Cafe Mocha Lane   | Website   | New       | 2025-01-02
+       6 | Delta Hospitality | Cold call | Lost      | 2025-05-27
+       7 | Elite Mart        | Referral  | Won       | 2025-07-23
+(7 rows)
 ```
 
 - `ROW_NUMBER() OVER (PARTITION BY lead_id ORDER BY entered_at DESC)` numbers each lead's stages from the newest (Chapter 13), so `rn = 1` is the stage the lead is in now.
-- `::date` keeps only the date part of `entered_at` (Chapter 28's cast shorthand).
+- `::date` keeps only the date part of `entered_at` (Chapter 12's cast shorthand, section 12.8).
 - `WHERE l.lead_id <= 7` keeps the printout short; the real query scores every lead.
 
 Three of these, by hand:
@@ -278,10 +288,13 @@ for lead_id in ["2", "6", "7"]:
 ```
 
 ```
-(pending)
+43 leads scored
+2 {'company_name': 'Bright Kitchens', 'stage': 'Quoted', 'score': 65}
+6 {'company_name': 'Delta Hospitality', 'stage': 'Lost', 'score': 0}
+7 {'company_name': 'Elite Mart', 'stage': 'Won', 'score': 100}
 ```
 
-- `fetch_rows()` is a smaller version of Chapter 45's helper: it opens a connection, runs one query, and returns the rows as a list of tuples.
+- `fetch_rows()` is a smaller version of Chapter 45's helper: it opens a connection, runs one query, and returns the rows as a list of tuples. Its second argument, `params`, would fill `%s` placeholders in the query with values, as in Chapter 45; this chapter's queries have none, so it stays `None`.
 - `with open("lead_scores.sql") as f:` opens the file, and `f.read()` reads it as one string: the query.
 - The dictionary comprehension (Chapter 17) makes one entry per row. `for lead_id, name, source, stage, score in score_rows` unpacks each row's five columns into five names. The key is `str(lead_id)`, text, because the CRM's addresses and JSON use text ids.
 
@@ -311,7 +324,15 @@ ORDER BY c.customer_id;
 ```
 
 ```
-(pending sql)
+ customer_id |   customer_name   | last_order | last_delivered 
+-------------+-------------------+------------+----------------
+           2 | Patel Kitchenware | 2025-11-09 | 2025-11-09
+           8 | Blue Bay Cafe     | 2025-11-09 | 2025-11-09
+           9 | Lakeview Resorts  | 2025-12-21 | 2025-10-15
+          13 | Om Sai Provisions | 2025-07-22 | 2025-07-22
+          20 | Tasty Tiffins     | 2025-10-26 | 2025-10-26
+          22 | Festive Gifts Co  | 2025-11-19 | 2025-11-19
+(6 rows)
 ```
 
 - `MAX(CASE WHEN o.status = 'Delivered' THEN o.order_date END)` is the date of the latest delivered order. A `CASE` with no `ELSE` gives `NULL` for other orders, and `MAX` ignores `NULL`s.
@@ -331,10 +352,10 @@ print(len(follow_up), "customers,", sum(follow_up.values()), "follow-up due:", s
 ```
 
 ```
-(pending)
+24 customers, 6 follow-up due: ['2', '8', '9', '13', '20', '22']
 ```
 
-- `{str(row[0]) for row in ...}` is a **set** comprehension (Chapter 17): curly brackets with no `key: value`. `row[0]` is the first column, the customer id.
+- `{str(row[0]) for row in ...}` is a **set** comprehension: the shape of Chapter 17's dictionary comprehension, but with no `key: value`, so it builds a set (Chapter 17), where each id appears once. `row[0]` is the first column, the customer id.
 - `cid in due` is `True` or `False`, so `follow_up` maps every customer to its flag.
 - `sum()` of booleans counts the `True`s, because `True` counts as 1. `sorted(due, key=int)` sorts the ids as numbers, so "13" comes after "9".
 
@@ -350,7 +371,7 @@ Most write APIs use the same authentication as reads (Chapter 45's bearer tokens
 
 ### Four HTTP methods for writing
 
-Chapter 2 introduced requests, and Chapter 18 sent `GET` and `POST`. Writing uses four methods, and the difference between two of them causes real damage:
+Chapter 2 introduced requests, Chapter 18 sent `GET` requests, and Chapter 20 sent a `POST` to a chat channel's webhook. Writing uses four methods, and the difference between two of them causes real damage:
 
 | Method | What it asks the system to do |
 |---|---|
@@ -367,7 +388,7 @@ print(lead)
 ```
 
 ```
-(pending)
+{'lead_id': '1', 'company_name': 'Anand Stores', 'email': 'anandstores@example.com', 'source': 'Referral', 'owner_id': 3}
 ```
 
 Now send only a score, with `PUT`, and read the lead again:
@@ -379,7 +400,8 @@ print(requests.get(f"{BASE}/leads/1", headers=HEADERS, timeout=10).json())
 ```
 
 ```
-(pending)
+200 {'record': 'leads/1', 'action': 'replaced'}
+{'lead_id': '1', 'score': 45}
 ```
 
 - `requests.put(url, json=...)` sends a `PUT` with a JSON body. `json=` turns the dictionary into JSON text and tells the server so.
@@ -394,7 +416,8 @@ print(requests.get(f"{BASE}/leads/1", headers=HEADERS, timeout=10).json())
 ```
 
 ```
-(pending)
+200 {'record': 'leads/1', 'action': 'updated', 'fields': ['score'], 'replayed': False}
+{'lead_id': '1', 'company_name': 'Anand Stores', 'email': 'anandstores@example.com', 'source': 'Referral', 'owner_id': 3, 'score': 45}
 ```
 
 **Reading it.** `PATCH` changed one field, `score`, and left everything else alone. A reverse-ETL sync should almost always use `PATCH`, and name only the fields it owns. This chapter's closing story is what happens when it doesn't.
@@ -416,7 +439,9 @@ print(idempotency_key("leads/2", {"score": 66, "stage": "Quoted"}))
 ```
 
 ```
-(pending)
+d6f8907536e7b40d
+d6f8907536e7b40d
+50bbc6a7d7d61904
 ```
 
 - `record` is the record's address in the CRM, such as `"leads/2"`, so two records with the same values get different keys.
@@ -439,7 +464,8 @@ print({**HEADERS, "Idempotency-Key": key})
 ```
 
 ```
-(pending)
+{'score': 45, 'stage': 'Contacted', 'score_updated_at': '2026-01-06T06:30:00+05:30'}
+{'Authorization': 'Bearer practice-token-51', 'Idempotency-Key': 'b5564a8c80e53ded'}
 ```
 
 - `payload` holds the values the sync owns: the score and the stage it was computed from.
@@ -475,7 +501,7 @@ print(sync_record("leads/1", body, key))
 ```
 
 ```
-(pending)
+{'record': 'leads/1', 'action': 'updated', 'fields': ['score', 'score_updated_at', 'stage'], 'replayed': False}
 ```
 
 **How it works, line by line.** The loop is Chapter 45's `get_with_retry()` (section 45.9), turned into a write:
@@ -504,7 +530,8 @@ print(outcomes)
 ```
 
 ```
-(pending)
+  leads/4: 429 Too Many Requests, waiting 1s (attempt 1)
+{'new': 42, 'replayed': 1}
 ```
 
 - The loop goes through every scored lead, builds its payload and key, and sends it.
@@ -529,7 +556,8 @@ print(requests.get(f"{BASE}/accounts/24", headers=HEADERS, timeout=TIMEOUT).json
 ```
 
 ```
-(pending)
+{'record': 'accounts/24', 'action': 'created', 'fields': ['follow_up_due'], 'replayed': False}
+{'customer_id': '24', 'follow_up_due': False}
 ```
 
 **Reading it.** `"action": "created"`: the account didn't exist, so the upsert made it, with the flag. Sent again, the same write would be a replay, and the account would stay as it is. An upsert is safe to repeat in the same way Chapter 45's SQL upsert was.
@@ -545,10 +573,11 @@ print(sync_record("accounts/9", payload, idempotency_key("accounts/9", payload))
 ```
 
 ```
-(pending)
+  accounts/9: ReadTimeout, waiting 1s (attempt 1)
+{'record': 'accounts/9', 'action': 'updated', 'fields': ['follow_up_due'], 'replayed': True}
 ```
 
-**Reading it.** After 2 seconds with no answer, `requests` raised `ReadTimeout`, and the function waited a second and tried again. From the notebook's side, the first attempt might have failed on the way there or on the way back; there's no way to tell. In fact it had arrived and been applied. The retry carried the **same key**, so the CRM answered `"replayed": True` and applied nothing twice. For a flag, a double write would be harmless; for "add a ₹500 credit to this account", it would cost money. The key makes both cases safe, and the caller's code doesn't need to know which failure happened.
+**Reading it.** After 2 seconds with no answer, `requests` raised `ReadTimeout`, and the function waited a second and tried again. From the notebook's side, the first attempt might have failed on the way there or on the way back; there's no way to tell. In fact it had arrived and been applied. The retry carried the **same key**, so the CRM answered `"replayed": True` and applied nothing twice. For a flag, a double write would be harmless; for "add a ₹500 credit to this account", it would cost money. The key makes both cases safe, and the caller's code doesn't need to know which failure happened. (What if you change `TIMEOUT` to 5 seconds? The CRM's answer, 3 seconds late, would arrive in time, and there'd be no retry at all. A timeout shorter than the other system's slowest normal answer turns slow replies into retries.)
 
 Now sync every account's flag:
 
@@ -565,7 +594,7 @@ print(outcomes)
 ```
 
 ```
-(pending)
+{'new': 22, 'replayed': 2}
 ```
 
 **Reading it.** 24 accounts: 22 new writes, and two replays, accounts 24 and 9, which the two cells before had already written.
@@ -584,7 +613,9 @@ print("that change again:", sync_record("leads/4", changed, idempotency_key("lea
 ```
 
 ```
-(pending)
+same values again: {'record': 'leads/4', 'action': 'updated', 'fields': ['score', 'score_updated_at', 'stage'], 'replayed': True}
+a real change    : {'record': 'leads/4', 'action': 'updated', 'fields': ['score', 'stage'], 'replayed': False}
+that change again: {'record': 'leads/4', 'action': 'updated', 'fields': ['score', 'stage'], 'replayed': True}
 ```
 
 - `changed` copies `payload` and replaces one value: the score plus 1. It stands for a genuine change, such as tomorrow's score after the lead moves stage.
@@ -601,7 +632,8 @@ print("the CRM now says:", requests.get(f"{BASE}/leads/4", headers=HEADERS, time
 ```
 
 ```
-(pending)
+back to 20: {'record': 'leads/4', 'action': 'updated', 'fields': ['score', 'score_updated_at', 'stage'], 'replayed': True}
+the CRM now says: 21
 ```
 
 **Reading it.** This is a real bug. The key for "lead 4, score 20, stage New" was used in the first sync, so the CRM treats the new write as a repeat and ignores it. The warehouse says 20, the CRM says 21, and **every future sync with this key will be ignored too**: a value that goes back to an earlier value can never be sent again. A key built from content alone can't tell "the same write, retried" from "the same values, written again on purpose later".
@@ -621,12 +653,14 @@ print(run_key("leads/4", payload, "2026-01-07"))
 ```
 
 ```
-(pending)
+a5d6feaec99c52c8
+a5d6feaec99c52c8
+67329d74f025d291
 ```
 
 **Reading it.** Within one run, every retry of a write has the same key, so retries are still harmless. Tomorrow's run has a new key, so tomorrow's 20 is applied, even though 20 was sent before. Section 51.7 runs "tomorrow" with this key and checks the result.
 
-Real APIs also **forget** keys after a while. Stripe's API reference, for example, says its keys may be removed once they are at least 24 hours old (checked September 2026). That's one more reason not to depend on a content-only key: whether a revert is ignored would depend on how long the other system remembers.
+Real APIs also **forget** keys after a while. Stripe's API reference, for example, says its keys may be removed once they are at least 24 hours old (checked 29 September 2026). That's one more reason not to depend on a content-only key: whether a revert is ignored would depend on how long the other system remembers.
 
 > **Watch out: an idempotency key must stay the same across every retry of one operation.** Create it once, before the first attempt, and reuse it, as `sync_record()` does. A key built inside the retry loop from "now" or from a fresh random value changes on every attempt and protects nothing. Building it from the record, the values, and the run id guarantees that, and makes it reproducible.
 
@@ -680,7 +714,7 @@ print(resp.status_code, resp.json())
 ```
 
 ```
-(pending)
+201 {'registered': {'url': 'http://127.0.0.1:8052/', 'event': 'lead.created_high_value'}}
 ```
 
 `POST /api/webhooks` **registers** an address and the event that should trigger it. Real webhook providers work the same way: you tell them where to send things, usually in a settings screen or through their API. 201 means "created": the registration exists.
@@ -703,7 +737,9 @@ print("event:", read_inbox()[0]["body"])
 ```
 
 ```
-(pending)
+lead created: 9001 Grand Horizon Hotels
+webhook arrived in under a second: True
+event: {'event_id': 'evt_1', 'event': 'lead.created_high_value', 'lead': {'lead_id': '9001', 'company_name': 'Grand Horizon Hotels', 'email': 'procurement@grandhorizon.example', 'source': 'Trade fair', 'deal_value': 350000}}
 ```
 
 **How it works, line by line.**
@@ -739,7 +775,9 @@ print("same?   :", hmac.compare_digest(signature, hmac.new(SECRET, body, hashlib
 ```
 
 ```
-(pending)
+genuine : 4f679cd25f9d90b7
+forged  : 1d3d91ecca2d9904
+same?   : True
 ```
 
 - `b'...'` is a **bytes** value, the raw form a request body travels in. `.encode()` turns the secret's text into bytes too.
@@ -779,7 +817,10 @@ print("events in the inbox:", len(read_inbox()))
 ```
 
 ```
-(pending)
+genuine 200 {'ok': True}
+same again 200 {'ok': True, 'duplicate': True}
+forged 401 {'ok': False, 'error': 'bad signature'}
+events in the inbox: 2
 ```
 
 - **`data=`** sends the bytes exactly as they are. (`json=` would turn a dictionary into new bytes, and the signature must match the bytes that were signed.)
@@ -813,9 +854,11 @@ print("accounts:", len(crm_accounts), "in", pages, "pages")
 ```
 
 ```
-(pending)
+leads: 44 in 3 pages
+accounts: 24 in 2 pages
 ```
 
+- **`params={"page": page, "page_size": page_size}`** adds the two settings to the address, as `?page=1&page_size=20`. `page_size=20` asks for 20 records a page, so the 44 leads take three pages; with `page_size=50` (the sandbox's largest) they would take one, and with 10, five.
 - The `while` loop is Chapter 45's pagination: ask for page 1, then whatever `next_page` the CRM returns, until it's `None` on the last page. `pages` counts the requests.
 - The dictionary comprehension indexes the records by their id, so a lead can be looked up as `crm_leads["4"]`. `id_field` names the id column, which differs between leads and accounts.
 - The function returns two values, the records and the page count, and `crm_leads, pages = ...` unpacks them.
@@ -845,7 +888,8 @@ for record, warehouse_value, crm_value in find_mismatches():
 ```
 
 ```
-(pending)
+checked: 43 leads and 24 accounts
+MISMATCH leads/4: warehouse 20, CRM 21
 ```
 
 - `find_mismatches()` reads the CRM again each time it's called, so it always compares with the CRM as it is now. `_` is the usual name for a value you don't need, here the page count.
@@ -898,7 +942,13 @@ print("audit row :", log[3])
 ```
 
 ```
-(pending)
+attempted : 67
+confirmed : 67
+new       : 67
+replayed  : 0
+rejected  : 0
+mismatched: 0
+audit row : {'run': '2026-01-07', 'record': 'leads/4', 'sent': {'score': 20, 'stage': 'New'}, 'key': '67329d74f025d291', 'outcome': 'new'}
 ```
 
 - `sum(1 for o in outcomes if ...)` counts the items that pass the test: it adds 1 for each. `outcomes.count("new")` counts exact matches.
@@ -1133,17 +1183,21 @@ data activation · reverse ETL · lead score · customer health score · credit 
 
 **5.** Both keys were built from the record and the values only (section 51.3's `idempotency_key`). "Same values again" sent lead 4's score and stage exactly as the first sync had, so the key matched the one the CRM had stored, and it returned its earlier answer, `replayed: True`, without touching the record. That is correct: nothing needed to change. "Back to 20" also sent those same values, after the score had been changed to 21, so it produced the same old key and was ignored too. That is the bug: the CRM still says 21, and no later sync with a content-only key can ever set it back to 20. Adding the run id to the key (section 51.4's `run_key`) fixes it.
 
-**6.** A sample answer:
+**6.** A sample answer, the third row of the table in section 51.4, built like `run_key()` without the values:
 
 <!-- run: none -->
 
 ```python
-def run_scoped_key(lead_id, run_id):
-    content = f"{lead_id}:{run_id}"
+def run_scoped_key(record, run_id):
+    content = record + ":" + run_id
     return hashlib.sha256(content.encode()).hexdigest()[:16]
 ```
 
-This makes retries within the *same scheduled run* a no-op regardless of whether the score changed mid-run, but a *new run* always sends fresh content, even if the value happens to be identical to last time. You'd prefer this when you want a clean, auditable "one write per run" record, for example a compliance requirement that every nightly sync is logged exactly once per lead per night, rather than being silently skipped because the value hadn't moved.
+- `record` is the record's address, such as `"leads/4"`, and `run_id` is the run's day, such as `"2026-01-07"`. The payload is left out on purpose.
+- `content.encode()` turns the text into bytes, `hashlib.sha256(...).hexdigest()` fingerprints it, and `[:16]` keeps 16 characters, exactly as in `idempotency_key()`.
+- `return` hands the key back to the caller, which creates it once, before the first attempt.
+
+This makes retries within the *same scheduled run* a no-op regardless of whether the score changed mid-run, but a *new run* always gets a new key, so its write is applied even if the value happens to be identical to last time. You'd prefer this when you want a clean, auditable "one write per run" record, for example a compliance requirement that every nightly sync is logged exactly once per lead per night, rather than being silently skipped because the value hadn't moved.
 
 **7.** Section 51.4 pushed a "+1" test value into lead 4 (21), standing in for a genuine change, and then tried to send the warehouse's 20 again. With a key built from the values alone, that write had the same key as the first sync's, so the CRM replayed it and kept 21. Re-running the section 51.3 sync would produce exactly the same keys, so every write would be replayed and lead 4 would stay wrong forever. What repaired it was the next run with `run_key()`: a new run id gives new keys, so 20 was applied, and the next reconciliation was clean. The mismatch itself was the reconciliation **working as intended**: it caught the drift the same day. The bug was the key design, which is what to fix. In a real deployment the same report line needs investigating: was it a manual edit in the CRM (perhaps this field shouldn't be blindly overwritten), a partly failed sync, or a second job writing the same field (as in the closing story)? The report's job is to surface the question, not answer it.
 

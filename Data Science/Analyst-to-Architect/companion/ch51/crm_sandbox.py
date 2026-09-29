@@ -77,7 +77,10 @@ class Handler(BaseHTTPRequestHandler):
         for k, v in (headers or {}).items():
             self.send_header(k, v)
         self.end_headers()
-        self.wfile.write(raw)
+        try:
+            self.wfile.write(raw)
+        except (BrokenPipeError, ConnectionResetError):
+            pass                # the client stopped waiting (a timeout); the change is kept, like a real server
 
     def _route(self):
         """'/api/leads/4' -> ('leads', '4'); '/api/leads' -> ('leads', None)."""
@@ -207,7 +210,7 @@ def simulate_failure(path, kind):
 
 def seed_crm():
     """Fill the sandbox CRM from riverstone_source: every lead, and an account for every customer except
-    the newest one (customer 24 signed up in December and has no CRM account yet)."""
+    the newest one (customer 24 signed up in November and has no CRM account yet)."""
     conn = psycopg2.connect(SRC)
     with conn, conn.cursor() as cur:
         cur.execute("SELECT lead_id, company_name, email, source, owner_id FROM leads ORDER BY lead_id")
