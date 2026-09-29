@@ -1,17 +1,17 @@
 """Analyst to Architect · Chapter 36 · number check.
 Rebuilds the chapter's lead-scoring data and models from companion/crm/ and checks every number quoted in the prose.
-Run from checks/: python3 ch36_check.py  (exit code 0 = all checks pass). figures/make_figs36.py imports results().
+Run from checks/: python3 ch36_check.py  (set CRM_DIR to read the CRM export from another folder)  (exit code 0 = all checks pass). figures/make_figs36.py imports results().
 Riverstone Supplies is fictional; every name and number is invented."""
-import pathlib, warnings, numpy as np, pandas as pd
+import os, pathlib, warnings, numpy as np, pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, TargetEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, log_loss
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 warnings.filterwarnings("ignore")
-D = pathlib.Path(__file__).resolve().parent.parent / "companion" / "crm"
+D = pathlib.Path(os.environ.get("CRM_DIR", pathlib.Path(__file__).resolve().parent.parent / "companion" / "crm"))  # CRM_DIR overrides
 
 def make_model(cat, num, extra=None):
     parts = [("cat", Pipeline([("fill", SimpleImputer(strategy="constant", fill_value="Missing")), ("onehot", OneHotEncoder(handle_unknown="ignore"))]), cat)]
@@ -26,16 +26,20 @@ def results():
     q4 = raw[raw.created_at >= "2025-10-01"]; R["q4_closed_share"] = (q4.status != "Open").mean()
     L = raw.copy(); L["email_norm"] = L.email.str.lower().str.strip(); L = L.sort_values("created_at")
     gap = L.groupby("email_norm").created_at.diff(); dup = gap.notna() & (gap <= pd.Timedelta(days=2)); R["dups"] = int(dup.sum())
+    R["ch13_rule"] = int(L.email_norm.duplicated().sum())
     L = L[~dup]; R["real"] = len(L)
     L = L[L.created_at <= pd.Timestamp("2025-12-31 23:59") - pd.Timedelta(days=90)].copy(); L["won"] = (L.status == "Won").astype(int)
     R["mature"] = len(L); R["wins"] = int(L.won.sum())
+    S = pd.read_csv(D / "stage_history.csv", parse_dates=["entered_at"])
+    dtw = (S[S.stage == "Won"].set_index("lead_id").entered_at - L.set_index("lead_id").created_at).dt.days
+    R["wins_in_stages"] = int(dtw.notna().sum()); R["max_days_to_win"] = float(dtw.max())
     fix = {"bombay": "Mumbai", "mumbai.": "Mumbai", "bangalore": "Bengaluru", "b'lore": "Bengaluru", "new delhi": "Delhi", "delhi ncr": "Delhi",
            "poona": "Pune", "madras": "Chennai", "calcutta": "Kolkata", "panaji": "Goa"}
     cl = L.city.str.strip().str.lower(); L["city_clean"] = cl.map(fix).fillna(cl.str.title())
     t = L.enquiry_text.str.lower()
     L["text_strong"] = t.str.contains("bulk|tender|urgent|monthly|new outlet").astype(int)
     L["text_weak"] = t.str.contains("price list|sample|checking rates|catalogue|price please").astype(int)
-    L["free_email"] = L.email_norm.str.endswith("@gmail.com").astype(int)
+    L["gmail"] = L.email_norm.str.endswith("@gmail.com").astype(int)
     L["log_quantity"] = np.log1p(L.est_quantity.where(L.est_quantity <= 50_000))
     L["inside_desk"] = (L.owner_id == 9).astype(int); L["responded_24h"] = (L.first_response_hours <= 24).astype(int)
     L["has_quote"] = L.quote_sent_date.notna().astype(int)
@@ -46,7 +50,7 @@ def results():
     tr = L[L.created_at < "2025-01-01"]; va = L[(L.created_at >= "2025-01-01") & (L.created_at < "2025-07-01")]; te = L[L.created_at >= "2025-07-01"]
     R.update(n_train=len(tr), n_valid=len(va), n_test=len(te), r_train=tr.won.mean(), r_valid=va.won.mean(), r_test=te.won.mean())
     cats = ["source", "segment", "city_clean", "company_size", "product_interest"]
-    nums = ["log_quantity", "website_visits", "free_email", "text_strong", "text_weak", "inside_desk", "activities_24h", "responded_24h"]
+    nums = ["log_quantity", "website_visits", "gmail", "text_strong", "text_weak", "inside_desk", "activities_24h", "responded_24h"]
     def sc(c, n, a=None, b=None, extra=None):
         a = tr if a is None else a; b = va if b is None else b
         cols = c + n + ([extra[2][0]] if extra else [])
@@ -55,7 +59,7 @@ def results():
     R["honest"] = sc(cats, nums)[:2]
     for leak in ["has_quote", "days_in_pipeline", "first_response_hours"]: R[leak] = sc(cats, nums + [leak])[:2]
     R["te_wrong"] = sc(cats, nums + ["company_rate_wrong"])[:2]
-    R["te_right"] = sc(cats, nums, extra=("company", TargetEncoder(random_state=36), ["company_name"]))[:2]
+    R["te_right"] = sc(cats, nums, extra=("company", TargetEncoder(cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=36)), ["company_name"]))[:2]
     R["rule_valid"] = roc_auc_score(va.won, va.source.isin(["Referral", "Trade fair", "Partner"]))
     R["base_ll_valid"] = log_loss(va.won, np.full(len(va), tr.won.mean()))
     R["mean_pred_valid"] = sc(cats, nums)[2].mean()
@@ -92,4 +96,6 @@ if __name__ == "__main__":
     ok("random", r3(R["random"]), (0.791, 0.2269)); ok("qty missing", (round(R["qty_missing_win"] * 100, 2), round(R["qty_given_win"] * 100, 2)), (5.71, 8.06))
     ok("late logging ~1 in 10", round(R["late_log_share"], 1), 0.1); ok("wins in training ~580", round(R["n_train"] * R["r_train"], -1), 580.0)
     ok("has_quote jump", round(R["has_quote"][0] - R["honest"][0], 3), 0.155)
+    ok("Ch 13 rule removes", R["ch13_rule"], 403); ok("wins found in stage history", R["wins_in_stages"], 821)
+    ok("longest days to win", R["max_days_to_win"], 87.0); ok("first_response_hours jump", round(R["first_response_hours"][0] - R["honest"][0], 3), 0.008)
     print("All checks passed." if not fails else f"FAILED: {fails}"); raise SystemExit(1 if fails else 0)

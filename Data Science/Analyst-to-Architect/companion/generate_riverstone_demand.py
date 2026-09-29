@@ -1,12 +1,11 @@
 """
-Analyst to Architect · Riverstone demand history (first used in Chapter 40; reused in Chapters 44 and 48)
+Analyst to Architect · Riverstone demand history (used in Chapter 40)
 generate_riverstone_demand.py: units shipped per product category, weekly and monthly, 2019–2025.
 
 Run:     python3 generate_riverstone_demand.py      (writes into companion/demand/)
 Writes:  demand/weekly_demand.csv (365 weeks x 4 categories), demand/monthly_demand.csv (84 months x 4)
 Seed:    20240
 Tested:  Python 3.12.3, NumPy 2.4.4, pandas 3.0.2 (18 September 2026)
-Spec:    planning/data/riverstone-demand.md
 
 Riverstone Supplies is fictional; every name and number is invented.
 """

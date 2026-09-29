@@ -65,5 +65,45 @@ g, t = np.array([.386,.614]), np.array([.096,.904]); ok("ex1 cos", round(float(g
 ok("ex3 loss", float(np.mean((25*x-y)**2)), 292.5, 1e-9); ok("ex3 deriv", float(2*np.mean((25*x-y)*x)), 97.5, 1e-9)
 ok("ex4 H(.9)", round(H2(.9),3), 0.469, 1e-9); ok("ex7 at least one", round(1-exp(-3.33),3), 0.964, 1e-9); ok("ex7 month", round(exp(-1.5),3), 0.223, 1e-9)
 ok("ex8 ratio", round(exp(0.9078),1), 2.5, 1e-9); ok("ex9 B cost", round(-log(.05),2), 3.0, 1e-9)
+# Added in the Part 4 build (review fixes 35.3-35.31)
+ok("Sharma avg order", round(502775/16), 31423); ok("model avg order", round(4335471/173), 25061)
+ok("valley 10", round(float(np.mean((10*x-y)**2)),2), 14186.25, 1e-9); ok("valley 30", round(float(np.mean((30*x-y)**2)),2), 2486.25, 1e-9)
+ok("valley 24.29", round(float(np.mean((24.29*x-y)**2)),2), 257.68, 1e-9)
+ok("square slope", round((3.001**2-9)/0.001,3), 6.001, 1e-9); ok("14 nudge", round(14.001**2-14**2,6), 0.028001, 1e-9)
+xb, yb = x.mean(), y.mean(); sxy = float(((x-xb)*(y-yb)).sum()); sxx = float(((x-xb)**2).sum())
+ok("Sxy", sxy, 933.75, 1e-9); ok("Sxx", sxx, 32.75, 1e-9); ok("slope 22.10", round(sxy/sxx,4), 28.5115, 1e-9); ok("intercept 22.10", round(yb-sxy/sxx*xb,2), -37.21, 1e-9)
+cx = np.array([1,2,3.]); cy = np.array([2,4,6.]); e = -cy
+ok("checkpoint B loss", round(float(np.mean(e**2)),2), 18.67, 1e-9); ok("checkpoint B slope w", round(float(2*np.mean(e*cx)),2), -18.67, 1e-9)
+ok("checkpoint B new w", round(float(-0.05*2*np.mean(e*cx)),3), 0.933, 1e-9); ok("checkpoint B new b", round(float(-0.05*2*np.mean(e)),3), 0.4, 1e-9)
+ok("3 leads 1 won", round(3*.2*.8*.8,3), 0.384, 1e-9); ok("WLL", round(.2*.8*.8,3), 0.128, 1e-9)
+ok("P5 of 30", round(comb(30,5)*.2**5*.8**25,3), 0.172, 1e-9); ok("P7 of 30", round(comb(30,7)*.2**7*.8**23,3), 0.154, 1e-9)
+ok("rate 3.327", round(lam,3), 3.327, 1e-9); ok("e^-3.33", round(exp(-3.33),4), 0.0358, 1e-9)
+ok("P1", round(lam*exp(-lam),3), 0.119, 1e-9); ok("weeks 1", round(52*lam*exp(-lam),1), 6.2, 1e-9)
+ok("P2", round(lam**2/2*exp(-lam),3), 0.199, 1e-9); ok("weeks 2", round(52*lam**2/2*exp(-lam),1), 10.3, 1e-9)
+ok("ln 0.2", round(log(.2),4), -1.6094, 1e-9); ok("ln 0.8", round(log(.8),4), -0.2231, 1e-9); ok("ln 0.16", round(log(.16),4), -1.8326, 1e-9)
+ok("ln 2", round(log(2),4), 0.6931, 1e-9); ok("surprise win", round(-log2(.2),2), 2.32, 1e-9); ok("surprise loss", round(-log2(.8),2), 0.32, 1e-9)
+ok("three-lead .5", .5**3, 0.125); ok("ex7 at least one (3.327)", round(1-exp(-lam),3), 0.964, 1e-9)
+ok("checkpoint C entropy", round(H2(.25),3), 0.811, 1e-9); ok("checkpoint C log loss", round((-log(.5)*2-log(.75)*2)/4,3), 0.490, 1e-9)
+angles = {0:28.8, 30:175.47, 60:326.17, 75.7:351.23, 90:330.2, 120:183.53}
+for deg, want in angles.items():
+    u = np.array([math.cos(math.radians(deg)), math.sin(math.radians(deg))]); ok(f"variance at {deg}", round(float(np.var(Z@u, ddof=1)),2), want, 1e-9)
+ok("cov @ [1,0]", list((S@np.array([1.,0.])).round(2)), [28.8, 82.35])
+Fs = c[["orders","revenue","avg_order_value","avg_discount_pct","storage_share","kitchen_share","industrial_share"]].to_numpy(float)
+Fs = (Fs-Fs.mean(0))/Fs.std(0); ok("std cov diagonal", round(float(np.cov(Fs, rowvar=False)[0,0]),3), 1.045, 1e-9)
+# Story (In the real world): Riverstone's full CRM, 2025 leads created by 2 October 2025 (Chapter 36's 90-day rule)
+import subprocess
+CRM = D.parent / "crm" / "leads.csv"
+if not CRM.exists():
+    subprocess.run(["python3", str(D.parent / "generate_riverstone_crm.py")], check=True)
+cl = pd.read_csv(CRM, parse_dates=["created_at"]); cl["k"] = cl["email"].str.lower().str.strip()
+cl = cl.sort_values("created_at"); gap = cl.groupby("k")["created_at"].diff(); cl = cl[~(gap.notna() & (gap <= pd.Timedelta(days=2)))]
+ok("2025 enquiries per month", round((cl.created_at.dt.year == 2025).sum()/12), 394)
+m = cl[(cl.created_at.dt.year == 2025) & (cl.created_at <= pd.Timestamp("2025-12-31 23:59") - pd.Timedelta(days=90))]
+wins = int((m.status == "Won").sum()); r = wins/len(m)
+ok("2025 matured leads", len(m), 3410); ok("2025 wins", wins, 250); ok("2025 win rate", round(r,3), 0.073, 1e-9)
+ok("always-no accuracy", round(1-r,3), 0.927, 1e-9); ok("always-no right", len(m)-wins, 3160)
+ok("base-rate log loss", round(-(r*log(r)+(1-r)*log(1-r)),2), 0.26, 1e-9)
+per_week = (cl.created_at.dt.year == 2025).sum()/52
+ok("3-week pilot leads", round(3*per_week, -1), 270.0, 0.02); ok("3-week pilot wins", round(3*per_week*r), 20); ok("3-month pilot wins", round(3*394*r), 87)
 print("FAILED:" if fails else "All checks passed.", fails)
 raise SystemExit(1 if fails else 0)

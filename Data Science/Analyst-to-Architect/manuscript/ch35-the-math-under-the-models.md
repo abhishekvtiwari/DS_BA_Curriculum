@@ -6,13 +6,13 @@
 >
 > **You will learn to:** treat each row of a dataset as a vector and measure distance and similarity between rows · multiply a matrix of features by a vector of weights to predict every row at once · read a derivative and a gradient as "which way is downhill, and how steep" · run gradient descent by hand for three steps, then in NumPy, and spot a bad learning rate or unscaled feature from the loss alone · describe data with the Bernoulli, binomial, Poisson, and normal distributions, and say when a distribution doesn't fit · find a maximum likelihood estimate and connect it to the loss a classifier minimizes · calculate entropy, cross-entropy, and log loss, and use them to judge a probability score · work through principal component analysis (PCA) on a small example by hand, then on all Riverstone customers.
 >
-> **Before you start:** Chapter 4 (percentages, averages, compounding), Chapter 13 (the one-year database and the `sales_lines` view), Chapter 17 (running Python code, lists, loops), and Chapter 21 (mean, standard deviation, and basic probability). No calculus or linear algebra is assumed.
+> **Before you start:** Chapter 4 (percentages, averages), Chapter 13 (the one-year database), Chapters 17 and 18 (Python, pandas, and the NumPy basics in section 18.1), Chapter 21 (mean, standard deviation, z-scores, probability, and the normal, binomial, and Poisson distributions with `scipy.stats`), Chapter 22, section 22.10 (fitting a straight line), and Chapter 31, section 31.0 (natural logarithms). No calculus or linear algebra is assumed, and section 35.8 adds the two facts about logarithms this chapter needs beyond section 31.0.
 >
-> **Time needed:** 10–14 hours of reading and practice, spread over two weeks. Do the hand calculations with a pen before you run the code.
+> **Time needed:** 14–17 hours of reading and practice, spread over two to three weeks, in four sittings: **A**, sections 35.1–35.3 (vectors, dot products, matrices), about 3 hours; **B**, sections 35.4–35.6 (loss, derivatives, gradient descent), about 4 hours; **C**, sections 35.7–35.9 (distributions, likelihood, logarithms, entropy, log loss), about 4 hours; **D**, sections 35.10–35.11 (PCA), about 3 hours; then the project. Sittings B and C end with a ten-minute checkpoint. Do the hand calculations with a pen before you run the code.
 >
-> **Tools:** Python 3 with NumPy and pandas (Chapter 17 covers installation); scikit-learn for two cross-checks. A calculator or spreadsheet for the hand work.
+> **Tools:** Python in the virtual environment from Chapter 17, with NumPy, pandas, and matplotlib (installed in Chapter 18) and scipy (Chapter 21). You'll install **scikit-learn** in section 35.9, where it's first used, for two cross-checks. A calculator or spreadsheet for the hand work.
 >
-> **Practice data:** three small files built from the one-year Riverstone database (`riverstone_2025`) by `companion/ch35/make_ch35_data.py`: `customers_2025.csv`, `orders_2025.csv`, and `leads_2025.csv`. Every number in this chapter was calculated, and every output shown is real.
+> **Practice data:** three small files built from the one-year Riverstone database (`riverstone_2025`) by `companion/ch35/make_ch35_data.py`: `customers_2025.csv`, `orders_2025.csv`, and `leads_2025.csv`. If the three files aren't in your copy of the folder, run `python make_ch35_data.py` there once. Every number in this chapter was calculated, and every output shown is real.
 
 ---
 
@@ -22,7 +22,7 @@ You can train a machine learning model in three lines of Python. The trouble sta
 
 - The model's error stops falling after a few rounds of training, or shoots up to a number with 80 digits.
 - A colleague's clustering puts every customer in the same group, because one column is measured in rupees and the rest in counts.
-- A vendor tells your sales head their lead score is "91% accurate", and nobody in the room knows whether that is good.
+- A vendor tells your sales head their lead score is "91% accurate" (it gets 91 of every 100 leads right), and nobody in the room knows whether that is good.
 - Two models have the same accuracy, and someone asks which to trust.
 - An interviewer asks, *"Why do we use log loss for logistic regression and not squared error?"*
 
@@ -50,7 +50,7 @@ Vectors, matrices, gradients, distributions, likelihood, entropy, PCA: that's th
 
 ### A row is a list of numbers
 
-*"How do I describe a customer so a computer can compare them with another?"* Pick some measurements and write them in a fixed order. Here are two Riverstone customers from 2025, described by the number of orders they placed and their net revenue in ₹ lakh (₹100,000):
+*"How do I describe a customer so a computer can compare them with another?"* Pick some measurements and write them in a fixed order. Here are two Riverstone customers from 2025, described by the number of orders they placed and their net revenue in ₹ lakh (₹1,00,000):
 
 | Customer | Orders | Revenue (₹ lakh) |
 |---|---|---|
@@ -69,7 +69,7 @@ In machine learning, each component is usually called a **feature**. A model nev
 
 The **length** (or **norm**) of a single vector is its distance from zero. For Sharma: √(16² + 5.03²) = √(256 + 25.30) = √281.30 = **16.77**.
 
-Here is the same arithmetic in NumPy, the Python library for working with arrays of numbers:
+NumPy (Chapter 18, section 18.1) does this arithmetic on whole arrays at once. Here is the same calculation:
 
 ```python
 import numpy as np
@@ -95,11 +95,12 @@ length of sharma: 16.77
 
 **How it works:**
 
-- `np.array([16, 5.03])` makes a vector. Arithmetic on arrays happens **element by element**: `sharma - metro` subtracts 16 from 16 and 3.29 from 5.03 in one step, with no loop.
-- `difference ** 2` squares each component; `np.sum` adds them; `np.sqrt` takes the root. That's the formula, line for line.
-- `np.linalg.norm` does the same calculation in one call. Use it in real work, but know what it does.
+- `np.array([16, 5.03])` makes a vector, exactly as section 18.1 made an array of quantities. Arithmetic works position by position, as it did there: `sharma - metro` subtracts 16 from 16 and 3.29 from 5.03 in one step, with no loop. (`0.` is how NumPy prints the float 0.0.)
+- `difference ** 2` squares each component; `np.sum` adds them; `np.sqrt` takes the square root. That's the formula, line for line.
+- `np.linalg.norm` does the same calculation in one call (`linalg` is NumPy's linear algebra toolbox, and "norm" is the length). Use it in real work, but know what it does.
+- `round(distance, 2)` rounds to two decimals for printing, as in Chapter 17.
 
-> **Watch out: units decide distance.** Measure revenue in rupees instead of lakh and Sharma becomes [16, 502,775]. Now a difference of 1 order counts as much as a difference of ₹1, so distance is driven almost entirely by revenue, and orders might as well not exist. Any method built on distance (k-nearest neighbors, k-means clustering, PCA) is affected. The fix is **scaling**: put every feature on a comparable scale before measuring distance. Section 35.10 shows the damage with real numbers, and Chapter 36 turns scaling into a standard step.
+> **Watch out: units decide distance.** Measure revenue in rupees instead of lakh and Sharma becomes [16, 5,02,775]. Now a difference of 1 order counts as much as a difference of ₹1, so distance is driven almost entirely by revenue, and orders might as well not exist. Any method built on distance or spread (k-nearest neighbors, k-means clustering, PCA) is affected. The fix is **scaling**: put every feature on a comparable scale before measuring distance. Section 35.10 shows the damage with real numbers, and Chapter 36 turns scaling into a standard step.
 
 ### The whole customer table as vectors
 
@@ -124,7 +125,14 @@ Green Leaf Hotels      17   331389    0.386    0.614       0.000      0.000
        Metro Mart      16   329298    0.726    0.274       0.000      0.000
 ```
 
-The four share columns (named `storage_share`, `kitchen_share`, and so on in the file, shortened here to fit the page) give each customer's revenue split across Riverstone's four product categories. Sharma Hardware's split is 65.6% Storage, 31.0% Kitchen, 0% Industrial, and 3.4% Furniture. Check: 0.656 + 0.310 + 0.000 + 0.034 = 1.000. ✓ That split is a 4-dimensional vector, and it's the one the next section uses to ask which customers *buy like* each other.
+**How it works:**
+
+- `pd.read_csv` loads the file (Chapter 18, section 18.2), and `len(customers)` counts its rows.
+- `customers[[...]]` picks seven columns into a new table, `view` (Chapter 18, section 18.4).
+- `view.columns = [...]` renames them, in order, with shorter names so the table fits the page; the file keeps its own names, `storage_share`, `kitchen_share`, and so on.
+- `head(5)` keeps the first five rows, and `to_string(index=False)` prints them without the row numbers on the left.
+
+The four share columns give each customer's revenue split across Riverstone's four product categories. Sharma Hardware's split is 65.6% Storage, 31.0% Kitchen, 0% Industrial, and 3.4% Furniture. Check: 0.656 + 0.310 + 0.000 + 0.034 = 1.000. ✓ That split is a 4-dimensional vector, and it's the one the next section uses to ask which customers *buy like* each other.
 
 ---
 
@@ -168,7 +176,7 @@ For Sharma and Coastal, Coastal's length is √(0.481² + 0.519²) = 0.70762, an
 
 *Figure 35.1 — Product mixes as arrows (the Storage and Kitchen components only, two of the four). The smaller the angle between two arrows, the higher their cosine similarity, whatever their length.*
 
-Now let NumPy compare Sharma with all 23 customers at once:
+Now let NumPy compare Sharma with all 23 customers at once. First, the 23 dot products:
 
 ```python
 share_cols = ["storage_share", "kitchen_share", "industrial_share", "furniture_share"]
@@ -177,6 +185,24 @@ names = customers["customer_name"].to_numpy()
 
 sharma_mix = mix[0]
 dots = mix @ sharma_mix
+print(mix.shape, dots.shape)
+print(dots[:3].round(6))
+```
+
+```
+(23, 4) (23,)
+[0.527592 0.4273   0.443556]
+```
+
+**How it works:**
+
+- `.to_numpy()` turns the four share columns into a plain NumPy table of numbers (section 18.1): `mix` has shape `(23, 4)`, one row per customer and one column per category. `mix[0]` is the first row, Sharma Hardware.
+- `@` is Python's operator for matrix multiplication. `mix @ sharma_mix` takes the dot product of **every row** of `mix` with Sharma's vector: 23 dot products in one step, one per customer, so `dots` has shape `(23,)`. Section 35.3 names this "matrix times vector".
+- `dots[:3]` is the first three of them. The first, 0.527592, is Sharma's dot product with itself, which is its length squared: 0.656² + 0.310² + 0² + 0.034² = 0.527592. ✓ The second is Sharma · Patel Kitchenware. (NumPy drops trailing zeros, so 0.427300 prints as 0.4273.)
+
+Then divide by the lengths and sort:
+
+```python
 lengths = np.linalg.norm(mix, axis=1)
 cosine = dots / (lengths * np.linalg.norm(sharma_mix))
 
@@ -203,10 +229,10 @@ Deccan Packaging    0.4676
 
 **How it works:**
 
-- `mix` is a 23 × 4 table of numbers: one row per customer, one column per category. `mix[0]` is the first row, Sharma Hardware.
-- `@` is Python's operator for matrix multiplication. `mix @ sharma_mix` takes the dot product of **every row** with Sharma's vector, giving 23 numbers in one step. Section 35.3 explains why this works.
-- `np.linalg.norm(mix, axis=1)` computes the length of each row (`axis=1` means "across the columns of each row").
-- Dividing gives the 23 cosine similarities. Sharma's similarity with itself is 1, as it must be. ✓
+- `np.linalg.norm(mix, axis=1)` computes the length of each row (`axis=1` means "across the columns of each row"), 23 lengths.
+- `dots / (lengths * ...)` divides position by position, giving the 23 cosine similarities.
+- `pd.Series(cosine, index=names)` labels each number with its customer's name, and `sort_values(ascending=False)` puts the largest first. `head(5)` and `tail(3)` are the top five and the bottom three; `"\n"` in a string starts a new line.
+- Sharma's similarity with itself is 1, as it must be. ✓
 
 **Reading it.** The customer whose mix most resembles Sharma Hardware's is not another hardware retailer but **Royal Banquets**, a hospitality customer in Lucknow. Segment labels and buying behavior are different things. The least similar are two wholesalers who spend heavily on Industrial Crates, and Tasty Tiffins, which buys almost nothing but kitchenware. This exact calculation, on real purchase histories, is the engine of the "customers who bought this also bought" recommender you build in Chapter 42, and dot products between word vectors are how the language models in Chapter 54 measure meaning.
 
@@ -220,13 +246,22 @@ A **matrix** is a rectangular grid of numbers with rows and columns. Its **shape
 
 ### Matrix times vector
 
-*"If every order were worth the average, what revenue would each customer have brought in?"* In 2025, Riverstone's 173 orders brought in ₹4,335,471, an average of ₹4,335,471 ÷ 173 = ₹25,060.53 per order. A very simple model says:
+*"If every order were worth the average, what revenue would each customer have brought in?"* In 2025, Riverstone's 173 orders brought in ₹43,35,471, an average of ₹43,35,471 ÷ 173 = ₹25,060.53 per order. A very simple model says:
 
 > predicted revenue = ₹25,060.53 × orders + ₹0
 
-The two numbers the model uses, ₹25,060.53 and ₹0, are its **parameters** or **weights**: a slope *w* and an intercept *b*. To apply them to all 23 customers at once, write each customer's row as [1, orders]. The 1 is there so the intercept has something to multiply. Stack the rows into a matrix and put the weights in a vector [b, w] = [0, 25,060.53]. Then every prediction is the dot product of a row with the weight vector:
+The two numbers the model uses, ₹25,060.53 and ₹0, are its **parameters** or **weights**: a slope *w* and an intercept *b*.
 
-> Sharma: [1, 16] · [0, 25,060.53] = 1 × 0 + 16 × 25,060.53 = **₹400,968**
+You fitted a line like this in Chapter 22, section 22.10, where it was written ŷ = a + b × x, with *b* as the slope. Machine learning books write the slope as *w* (for **weight**) and the intercept as *b* (for **bias**), and this part of the book follows them. So watch the letter *b*: it changes meaning.
+
+| Meaning | Section 22.10 | This chapter | Excel and Sheets | scikit-learn (Chapter 37) |
+|---|---|---|---|---|
+| Slope | *b* | *w* | `SLOPE` | `coef_` |
+| Intercept | *a* | *b* | `INTERCEPT` | `intercept_` |
+
+To apply them to all 23 customers at once, write each customer's row as [1, orders]. The 1 is there so the intercept has something to multiply. Stack the rows into a matrix and put the weights in a vector [b, w] = [0, 25,060.53]. Then every prediction is the dot product of a row with the weight vector:
+
+> Sharma: [1, 16] · [0, 25,060.53] = 1 × 0 + 16 × 25,060.53 = **₹4,00,968**
 
 **Matrix-times-vector** means exactly this: take the dot product of each row of the matrix with the vector, and collect the answers. The number of columns in the matrix must equal the length of the vector (2 and 2 here), and the result has one number per row.
 
@@ -263,18 +298,49 @@ total predicted: 4335471
 
 **How it works:**
 
-- `np.column_stack` glues columns side by side: a column of 23 ones and the column of orders, making the 23 × 2 matrix **X**.
+- `np.ones(len(customers))` is 23 ones, the intercept's column. `np.column_stack` glues columns side by side: the ones and the orders, making the 23 × 2 matrix **X**.
+- `weights` holds [*b*, *w*] in that order, to match X's columns: ones first, then orders. `4335471 / 173` is the average order value.
 - `X @ weights` multiplies a (23 × 2) matrix by a vector of length 2 and returns a vector of length 23: one prediction per customer.
-- The **error** (prediction minus actual) is negative when the model under-predicts. Sharma Hardware is under-predicted by ₹101,807, because its orders are bigger than average.
+- `.shape` gives (rows, columns), as in section 18.1. A vector has one dimension, so its shape has one number, written `(2,)`; the comma just marks a one-item tuple (Chapter 17, section 17.4).
+- `X[:3]` means "the first three rows, all columns". It prints as rows of `1.` and the orders, because the ones made the whole array floats.
+- `predicted.round(0).astype(int)` rounds to whole rupees and then stores them as whole numbers, so the table prints `400968` instead of `400968.0`. `result["error"] = ...` adds a column, as in Chapter 18.
+- The **error** (prediction minus actual) is negative when the model under-predicts. Sharma Hardware is under-predicted by ₹1,01,807, because its average order (₹5,02,775 ÷ 16 = ₹31,423) is bigger than the ₹25,061 the model assumes.
 
-**Reconcile.** The predictions add up to ₹4,335,471, exactly Riverstone's 2025 net revenue. ✓ That isn't luck: the slope is total revenue ÷ total orders, so multiplying back by total orders returns the total. (The `actual` column adds up to ₹4,335,474 because the practice file rounds each customer's revenue to the nearest rupee; three rupees of rounding across 23 customers.)
+**Reconcile.** The predictions add up to ₹43,35,471, exactly Riverstone's 2025 net revenue. ✓ That isn't luck: the slope is total revenue ÷ total orders, so multiplying back by total orders returns the total. (The `actual` column adds up to ₹43,35,474, because the practice file rounds each customer's revenue to the nearest rupee; three rupees of rounding across 23 customers.)
 
 > **Spreadsheet link.** `=MMULT(A2:B24, D2:D3)` multiplies a 23 × 2 range by a 2 × 1 range in both Excel and Google Sheets, returning 23 predictions (entered as a dynamic array in Microsoft 365 and Sheets). It's the same `@`.
 
-### Two more matrix words
+### Three more matrix words
 
 - The **transpose** of a matrix, written **Xᵀ** (`X.T` in NumPy), flips rows into columns. A 23 × 2 matrix becomes 2 × 23. You'll see it in the gradient formula in section 35.5, and in PCA.
 - **Mean-centering** subtracts each column's average from that column, so every column averages zero. PCA starts with it (section 35.10).
+- **Matrix times matrix.** Treat each column of the second matrix as a vector, and do matrix-times-vector once per column. So a (*r* × *k*) matrix times a (*k* × *c*) matrix gives an *r* × *c* result. The **shape rule**: the inner numbers (*k* and *k*) must match, and the outer numbers (*r* and *c*) give the result's shape.
+
+Try the last two on a small matrix. Before you run it, predict the shapes of `A.T` and `A @ A.T`:
+
+```python
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+print(A.shape, A.T.shape)
+print(A.T)
+print(A @ A.T)
+```
+
+```
+(2, 3) (3, 2)
+[[1 4]
+ [2 5]
+ [3 6]]
+[[14 32]
+ [32 77]]
+```
+
+**How it works:**
+
+- `A` is 2 × 3: two rows, three columns. `A.T` is 3 × 2: the first row [1, 2, 3] has become the first column.
+- `A @ A.T` is (2 × 3) @ (3 × 2). The inner 3s match, and the outer numbers say the result is 2 × 2.
+- Each answer is a dot product of a row of `A` with a column of `A.T`, which is a row of `A` again. Top left: 1 × 1 + 2 × 2 + 3 × 3 = **14**. Top right: 1 × 4 + 2 × 5 + 3 × 6 = **32**. Bottom right: 4 × 4 + 5 × 5 + 6 × 6 = **77**. ✓
+- `A @ A` would fail: (2 × 3) @ (2 × 3) has inner numbers 3 and 2, which don't match. Try it: NumPy stops with an error that begins `ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0` and ends `(size 2 is different from 3)`.
 
 That's enough linear algebra for this part of the book. A neural network layer (Chapter 43) is this same `X @ weights` with a bigger weight matrix, followed by a small twist.
 
@@ -318,11 +384,7 @@ A **loss function** turns "how good is this model?" into a single number where l
 
 **Training a model means finding the parameter values that make the loss as small as possible.** Everything else in this section is about how to find them without trying every value.
 
-### The derivative: the slope of the loss
-
-Plot the loss for every *w* and you get a valley. You're standing at *w* = 20 and want to walk downhill. You need to know which direction is down, and how steep it is. That's what a **derivative** tells you: how much the loss changes for a tiny change in *w*. A negative derivative means increasing *w* lowers the loss; a positive one means increasing *w* raises it; zero means you're at the bottom (or a flat spot).
-
-You can measure it without any calculus. Nudge *w* by a tiny amount and see what happens to the loss:
+The same loss in Python, as a function you can call for any *w*:
 
 ```python
 x = np.array([4, 7, 8, 12], dtype=float)
@@ -331,6 +393,68 @@ y = np.array([66, 174, 198, 297], dtype=float)
 def loss(w):
     return np.mean((w * x - y) ** 2)
 
+print("loss(20) =", loss(20))
+```
+
+```
+loss(20) = 1511.25
+```
+
+**How it works:**
+
+- `x` and `y` are the four customers' orders and revenue. `dtype=float` stores them as decimals from the start (section 18.1's `float64`), so every result below is a decimal too.
+- `def loss(w):` defines a function (Chapter 17, section 17.8) that takes a weight and `return`s its loss. Inside, `w * x - y` is the four errors at once, `** 2` squares them, and `np.mean` averages them: the formula above, in one line.
+- `loss(20)` is 1,511.25, the same as the hand table. ✓
+
+### The valley
+
+Work out the loss for a few more values of *w*. Before you run it, predict: is the loss at *w* = 30 bigger or smaller than at 20?
+
+```python
+for w in [10, 15, 20, 24.29, 30, 35]:
+    print(f"w = {w:>5}: loss = {loss(w):9,.2f}")
+```
+
+```
+w =    10: loss = 14,186.25
+w =    15: loss =  6,142.50
+w =    20: loss =  1,511.25
+w = 24.29: loss =    257.68
+w =    30: loss =  2,486.25
+w =    35: loss =  8,092.50
+```
+
+The loss falls, bottoms out near *w* = 24, and rises again. (`{w:>5}` prints *w* right-aligned in 5 characters, and `{...:9,.2f}` prints the loss 9 characters wide with a thousands separator and two decimals; the next sections use more codes like these.) Plot the loss for every *w* between 10 and 35 and you get a **valley**:
+
+```python
+import matplotlib.pyplot as plt
+
+ws = np.linspace(10, 35, 101)
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.plot(ws, [loss(w) for w in ws])
+ax.plot([20, 24.29], [loss(20), loss(24.29)], "o")
+ax.set_xlabel("w (₹ thousand of revenue per order)")
+ax.set_ylabel("loss")
+plt.show()
+```
+
+**How it works:**
+
+- `np.linspace(10, 35, 101)` makes 101 evenly spaced values from 10 to 35 (10, 10.25, 10.5, …, 35): the points to draw.
+- `[loss(w) for w in ws]` is a list comprehension (Chapter 17, section 17.6): the loss at each of those 101 values.
+- `fig, ax = plt.subplots(figsize=(6, 3))` and `ax.plot(...)` draw a line chart, as in Chapter 18, section 18.11. The second `ax.plot` with `"o"` draws only round markers, no line, at *w* = 20 and 24.29. `plt.show()` displays the chart below the cell.
+
+![A U-shaped curve of the loss against w from 10 to 35, falling from about 14,000 at w = 10 to a minimum of 258 near w = 24.29 and rising to about 8,100 at w = 35; a marker at w = 20 is labeled "you are here: w = 20, loss 1,511.25" and a marker at the bottom is labeled "bottom: w = 24.29, loss 257.68"](figures/fig35-1b-loss-valley.svg)
+
+*Figure 35.2 — The loss for every value of w. You're standing at w = 20; the bottom of the valley is near 24.3.*
+
+### The derivative: the slope of the loss
+
+You're standing at *w* = 20 and want to walk downhill. You need to know which direction is down, and how steep it is. That's what a **derivative** tells you: how much the loss changes for a tiny change in *w*. A negative derivative means increasing *w* lowers the loss; a positive one means increasing *w* raises it; zero means you're at the bottom (or a flat spot).
+
+You can measure it without any calculus. Nudge *w* by a tiny amount and see what happens to the loss:
+
+```python
 h = 0.001
 print("loss(20)       =", round(loss(20), 4))
 print("loss(20.001)   =", round(loss(20 + h), 4))
@@ -345,19 +469,47 @@ measured slope = -584.93
 
 Raising *w* by 0.001 lowered the loss by about 0.585, so the slope is about −585 per unit of *w*. Negative, so *w* should go **up**.
 
-Calculus gives the exact slope as a formula. For mean squared error with one weight, the derivative is:
+### Where the slope formula comes from
+
+You can build the exact formula from the same nudging idea, in three small steps.
+
+**Warm-up: the slope of a square.** Take f(*w*) = *w*² at *w* = 3 and nudge by 0.001: (3.001² − 3²) ÷ 0.001 = (9.006001 − 9) ÷ 0.001 = 6.001, which is 6 = 2 × 3 plus a tiny bit that shrinks as the nudge shrinks. In general, **the slope of a square is 2 × the thing being squared.**
+
+Now follow one row, Om Sai Provisions (*x* = 4, *y* = 66), at *w* = 20, where its error is 20 × 4 − 66 = 14:
+
+1. **The square reacts to the error.** Nudge the error from 14 to 14.001 and its square changes by 14.001² − 14² = 0.028001, about 2 × 14 × 0.001. So the squared error changes by 2 × error for each unit the error moves.
+2. **The error reacts to *w*.** The prediction is *w* × 4, so nudging *w* by a small amount *h* moves the prediction, and the error, by 4 × *h*: *x* times the nudge.
+3. **Put them together.** Nudging *w* by *h* moves Om Sai's squared error by about 2 × 14 × 4 × *h*. Per unit of *w*, that's 2 × error × *x*.
+
+The loss is the average of the four rows' squared errors, so its slope is the average of the four rows' slopes:
 
 > derivative of loss with respect to *w* = 2 × average of (error × *x*)
+>
+> where, for each row, error = *w* × *x* − *y*; *x* is that row's orders; and "average of" means add the four rows and divide by 4.
 
 The error is multiplied by *x* because a weight's effect on a prediction is proportional to the feature it multiplies: nudging *w* moves Fresh Bowl's prediction (12 orders) three times as much as Om Sai's (4 orders). Check it at *w* = 20 using the error column above:
 
-> 2 × (14 × 4 + (−34) × 7 + (−38) × 8 + (−57) × 12) ÷ 4 = 2 × (56 − 238 − 304 − 684) ÷ 4 = 2 × (−1,170) ÷ 4 = **−585** ✓
+> 2 × (14 × 4 + (−34) × 7 + (−38) × 8 + (−57) × 12) ÷ 4
+>
+> = 2 × (56 − 238 − 304 − 684) ÷ 4
+>
+> = 2 × (−1,170) ÷ 4 = **−585** ✓
 
 The formula and the nudge agree. (The nudge gave −584.93 because 0.001 is small but not zero.)
 
-> **Simplification note.** You don't need to derive derivative formulas yourself. Libraries such as scikit-learn and PyTorch calculate them for you (PyTorch does it automatically for any model you write, which Chapter 43 shows). What you need is the meaning: *the derivative is the local slope of the loss, and its sign says which way to move.*
+> **Simplification note.** You won't need to work out derivative formulas for real models. Libraries such as scikit-learn and PyTorch calculate them for you (PyTorch does it automatically for any model you write, which Chapter 43 shows). What you need is the meaning: *the derivative is the local slope of the loss, and its sign says which way to move.*
 
-At the bottom of the valley the slope is zero. For this one-weight model you can solve for that point directly: *w* = (sum of *x* × *y*) ÷ (sum of *x*²) = 6,630 ÷ 273 = **24.29**, about ₹24,290 of revenue per order.
+### The bottom of the valley
+
+At the bottom of the valley the slope is zero. For this one-weight model you can solve for that point directly, using the Σ ("add up over the rows") notation from section 22.10:
+
+> 2 × average of ((*w* × *x* − *y*) × *x*) = 0
+>
+> so Σ(*w* × *x*² − *x* × *y*) = 0 (multiply both sides by 4 and divide by 2)
+>
+> so *w* × Σ*x*² = Σ*xy*, and *w* = Σ*xy* ÷ Σ*x*²
+
+With the four customers, Σ*xy* = 4 × 66 + 7 × 174 + 8 × 198 + 12 × 297 = 264 + 1,218 + 1,584 + 3,564 = 6,630, and Σ*x*² = 16 + 49 + 64 + 144 = 273. So *w* = 6,630 ÷ 273 = **24.29**, about ₹24,290 of revenue per order: the bottom of Figure 35.2's valley.
 
 ---
 
@@ -377,13 +529,34 @@ The intercept adds 1 to every prediction when it rises by 1, so its partial deri
 
 Work out the gradient at the start, *w* = 0 and *b* = 0. Every prediction is 0, so the errors are −66, −174, −198, and −297:
 
-> slope for *w* = 2 × (−66 × 4 − 174 × 7 − 198 × 8 − 297 × 12) ÷ 4 = 2 × (−264 − 1,218 − 1,584 − 3,564) ÷ 4 = 2 × (−6,630) ÷ 4 = **−3,315**
+> slope for *w* = 2 × (−66 × 4 − 174 × 7 − 198 × 8 − 297 × 12) ÷ 4
+>
+> = 2 × (−264 − 1,218 − 1,584 − 3,564) ÷ 4
+>
+> = 2 × (−6,630) ÷ 4 = **−3,315**
 >
 > slope for *b* = 2 × (−66 − 174 − 198 − 297) ÷ 4 = 2 × (−735) ÷ 4 = **−367.5**
 
 The gradient is **[−3,315, −367.5]**. Both components are negative, so both *w* and *b* should increase. The *w* component is nine times bigger: the loss is far more sensitive to the slope than to the intercept, because *w* is multiplied by orders of 4 to 12 and *b* by 1. Remember that; it causes trouble in section 35.6.
 
-> **Python link.** With a feature matrix **X** that includes a column of ones, the whole gradient is one line: `2 * X.T @ (X @ weights - y) / len(y)`. `X @ weights - y` is the error vector, and `X.T @ errors` takes the dot product of each column (the ones, then the orders) with the errors. That's why the transpose appears in machine learning formulas.
+With a feature matrix that includes a column of ones, as in section 35.3, the whole gradient is one line of NumPy:
+
+```python
+X4 = np.column_stack([np.ones(4), x])
+weights = np.zeros(2)                      # [b, w], both starting at 0
+print(2 * X4.T @ (X4 @ weights - y) / len(y))
+```
+
+```
+[ -367.5 -3315. ]
+```
+
+**How it works:**
+
+- `X4` is the 4 × 2 matrix of [1, orders] rows, and `np.zeros(2)` is the weight vector [*b*, *w*] = [0, 0].
+- `X4 @ weights - y` is the vector of four errors.
+- `X4.T @ errors` takes the dot product of each **column** of `X4` (first the ones, then the orders) with the errors: the sum of the errors, and the sum of error × *x*. Multiplying by 2 and dividing by `len(y)` (4) turns those sums into the two slopes. That's why the transpose appears in machine learning formulas.
+- The answer comes out in the order of X's columns, **ones first**, so the slope for *b* (−367.5) comes before the slope for *w* (−3,315). The hand calculation above listed *w* first. Same two numbers, different order: always check which column is which.
 
 ---
 
@@ -426,6 +599,10 @@ The **learning rate** is the size of the step, a setting you choose. A setting c
 
 Three things to notice. The loss fell from 40,511 to 316 in three steps. The steps get **smaller on their own**, even though the learning rate is fixed, because the slope flattens as you approach the bottom. And *b* has barely moved.
 
+![Two panels: on the left, four customers as dots with the fitted line after steps 1, 2 and 3 rising toward the best line; on the right, bars of the loss falling from 40,511 to 4,116 to 647 to 316](figures/fig35-2-gradient-steps.svg)
+
+*Figure 35.3 — Three steps of gradient descent by hand. Left: each step's line moves toward the least-squares line. Right: the loss before each step and after the third.*
+
 ### The same three steps in NumPy
 
 ```python
@@ -456,24 +633,26 @@ after 3: w= 23.279  b= 2.504  loss=    316.36
 
 - Each pass through the loop does exactly what you did by hand: predict, find errors, compute the loss and both slopes, then update.
 - `np.mean(error * x)` is "average of error × *x*", computed for all four customers at once.
+- `for step in range(1, 4)` runs the loop for steps 1, 2, and 3 (Chapter 17, section 17.6).
 - Printing *before* updating matches the hand table, where each row shows the parameters that produced that loss. Every number agrees with the table. ✓
+- **Format codes.** Inside an f-string, the part after the colon sets the layout: `:7.3f` means 7 characters wide with 3 decimals, `:10.2f` means 10 wide with 2 decimals. Fixed widths line the columns up. The two f-strings in the first `print` sit side by side inside the brackets, and Python joins them into one string; that's just a way to split a long line.
 
 ### Running it to the bottom
 
 Let the same loop run for 1,000 steps, and compare with the exact best line. NumPy's `np.polyfit(x, y, 1)` finds the least-squares line directly, without gradient descent:
 
 ```python
-def descend(x_values, learning_rate, steps):
+def descend(x_values, y_values, learning_rate, steps):
     w, b = 0.0, 0.0
     losses = []
     for _ in range(steps):
-        error = (w * x_values + b) - y
+        error = (w * x_values + b) - y_values
         losses.append(np.mean(error ** 2))
         w -= learning_rate * 2 * np.mean(error * x_values)
         b -= learning_rate * 2 * np.mean(error)
     return w, b, losses
 
-w, b, losses = descend(x, 0.005, 1000)
+w, b, losses = descend(x, y, 0.005, 1000)
 best_w, best_b = np.polyfit(x, y, 1)
 best_loss = np.mean((best_w * x + best_b - y) ** 2)
 print(f"gradient descent, 1000 steps: w={w:.2f}  b={b:.2f}  loss={losses[-1]:.2f}")
@@ -485,6 +664,21 @@ gradient descent, 1000 steps: w=27.12  b=-25.00  loss=109.48
 exact least squares:          w=28.51  b=-37.21  loss=91.55
 ```
 
+**How it works:**
+
+- `descend` wraps the loop in a function, so you can rerun it with other data and settings. It takes the feature (`x_values`), the target (`y_values`), the learning rate, and the number of steps, and returns the final *w*, the final *b*, and the list of losses. Pass everything a function uses as an argument: a function that quietly uses a variable from outside (say, the `y` defined earlier) will give wrong results, with no error, the day you call it with a different feature.
+- `for _ in range(steps)` repeats the loop `steps` times. `_` is a name for a value you don't need; here, the step number.
+- `w -= ...` is short for `w = w - ...`: the update rule. `losses.append(...)` records the loss before each step, so `losses[-1]` (the last item) is the loss at step 1,000.
+- `np.polyfit(x, y, 1)` fits a polynomial of degree 1, which is a straight line, by least squares. It returns the coefficients highest power first: the slope, then the intercept. That's the **reverse** of our `[b, w]` weight vector from section 35.3, so the unpacking order `best_w, best_b` matters.
+
+**Check it by hand.** Section 22.10 gave the least-squares line as a formula, and it agrees. The averages are x̄ = 31 ÷ 4 = 7.75 orders and ȳ = 735 ÷ 4 = 183.75. Then Σ(*x* − x̄)(*y* − ȳ) = 933.75 and Σ(*x* − x̄)² = 32.75, so:
+
+> slope = 933.75 ÷ 32.75 = **28.51**
+>
+> intercept = ȳ − slope × x̄ = 183.75 − 28.5115 × 7.75 = **−37.21** (using the unrounded slope, 933.75 ÷ 32.75 = 28.5115)
+
+That's exactly where gradient descent is heading.
+
 **Reading it.** After 1,000 steps the loss has fallen from 40,511 to 109.48, close to the best possible 91.55, but the parameters are further off than that suggests: *w* is 27.12 instead of 28.51, and *b* is −25.00 instead of −37.21. The loss surface is a long, narrow valley. It's steep across the *w* direction and almost flat along the *b* direction, so the descent races down the steep wall and then creeps along the flat floor. A small loss doesn't guarantee the parameters have settled.
 
 > **Watch out: a flat loss curve doesn't mean training has finished.** If you judge convergence only by "the loss stopped changing much", you can stop with parameters that are still far from their best values. Here the intercept is off by ₹12,000. Check the parameters too, or better, fix the cause below.
@@ -495,7 +689,7 @@ The valley is narrow because orders (4 to 12) are much larger than the constant 
 
 ```python
 x_centered = x - x.mean()
-w_c, b_c, losses_c = descend(x_centered, 0.05, 150)
+w_c, b_c, losses_c = descend(x_centered, y, 0.05, 150)
 print(f"centered, 150 steps: w={w_c:.2f}  b={b_c:.2f}  loss={losses_c[-1]:.2f}")
 print(f"back on the original scale: b = {b_c - w_c * x.mean():.2f}")
 ```
@@ -505,17 +699,17 @@ centered, 150 steps: w=28.51  b=183.75  loss=91.55
 back on the original scale: b = -37.21
 ```
 
-With the feature centered, 150 steps land exactly on the least-squares answer: a slope of 28.51 and, converted back, an intercept of −37.21. The intercept of the centered model, 183.75, has a plain meaning: the predicted revenue (₹183,750) for a customer with the average number of orders. About seven times fewer steps, and the right answer. This is why Chapter 36 treats scaling as a routine step before training.
+With the feature centered, 150 steps land exactly on the least-squares answer: a slope of 28.51 and, converted back, an intercept of −37.21. The intercept of the centered model, 183.75, has a plain meaning: it's ȳ, the average revenue of the four customers (₹1,83,750), which is the prediction for a customer with the average number of orders. `b_c - w_c * x.mean()` converts it back, exactly as section 22.10's intercept formula does. Centering is what makes a ten-times-bigger learning rate safe (the uncentered problem diverges above about 0.0145, as you'll see below), and together they need about seven times fewer steps, and land on the right answer. This is why Chapter 36 treats scaling as a routine step before training.
 
 **What to tell the sales head.** "Among these four customers, each extra order goes with about ₹28,500 of extra annual revenue." Don't read the intercept of −37.21 as "a customer with no orders brings in minus ₹37,210": no customer in the data has fewer than 4 orders, and a line is only trustworthy near the data it was fitted on. With four customers this is a teaching example, not a finding.
 
 ### The learning rate
 
-*"How do I pick the learning rate?"* Watch the loss. Run the original (uncentered) problem with three learning rates:
+*"How do I pick the learning rate?"* Watch the loss. What happens if you change the learning rate? Run the original (uncentered) problem with three of them:
 
 ```python
 for lr in [0.0005, 0.005, 0.015]:
-    _, _, run = descend(x, lr, 30)
+    _, _, run = descend(x, y, lr, 30)
     print(f"rate {lr:<6}: loss at steps 1-4 = "
           + ", ".join(f"{v:,.0f}" for v in run[:4])
           + f" ... step 30 = {run[-1]:,.0f}")
@@ -527,17 +721,42 @@ rate 0.005 : loss at steps 1-4 = 40,511, 4,116, 647, 316 ... step 30 = 270
 rate 0.015 : loss at steps 1-4 = 40,511, 46,679, 53,794, 61,999 ... step 30 = 2,521,040
 ```
 
+**How it works:**
+
+- `_, _, run = descend(...)` keeps only the list of losses; the two `_` names throw away *w* and *b*, which this comparison doesn't need.
+- `{lr:<6}` prints the rate left-aligned in 6 characters, so the colons line up.
+- `f"{v:,.0f}" for v in run[:4]` formats each of the first four losses with a thousands separator and no decimals, and `", ".join(...)` glues the four formatted numbers together with a comma and a space between them. The `+` signs join the three pieces of the line.
+
+**Reading it.**
+
 - **0.0005 is too small.** The loss falls steadily but slowly: still 913 at step 30, more than three times the loss of the better rate.
 - **0.005 is about right** for this problem. The loss falls from 40,511 to 316 in three steps and is at 270 by step 30.
-- **0.015 is too large.** Each step overshoots the bottom of the valley and lands higher up the other side, so the loss **grows**. By step 30 it has passed 2.5 million, and it keeps climbing. A loss that shoots up to enormous numbers, or to `nan` ("not a number"), almost always means the learning rate is too high.
+- **0.015 is too large.** Each step overshoots the bottom of the valley and lands higher up the other side, so the loss **grows**. By step 30 it has passed 2.5 million, and it keeps climbing. A loss that shoots up to enormous numbers, or to `nan` ("not a number", section 18.1), almost always means the learning rate is too high.
 
-![Two panels: on the left, four customers as dots with the fitted line after steps 1, 2 and 3 rising toward the best line; on the right, bars of the loss falling from 40,511 to 4,116 to 647 to 316](figures/fig35-2-gradient-steps.svg)
+Numbers are hard to compare by eye, so plot the three loss curves on one chart:
 
-*Figure 35.2 — Three steps of gradient descent by hand. Left: each step's line moves toward the least-squares line. Right: the loss before each step and after the third.*
+```python
+fig, ax = plt.subplots(figsize=(6, 3.5))
+for lr in [0.0005, 0.005, 0.015]:
+    _, _, run = descend(x, y, lr, 30)
+    ax.plot(range(1, 31), run, label=str(lr))
+ax.set_yscale("log")
+ax.set_xlabel("step")
+ax.set_ylabel("loss")
+ax.legend()
+plt.show()
+```
+
+**How it works:**
+
+- `ax.plot(range(1, 31), run, label=str(lr))` draws one line per learning rate: steps 1 to 30 across, the loss up. `label` names the line, and `ax.legend()` shows the names in a key.
+- `ax.set_yscale("log")` makes the vertical axis logarithmic, as in Chapter 15: each gridline is ten times the one below. Without it, the climbing line for 0.015 would squash the other two flat along the bottom.
+
+Figure 35.4 shows the result, with each line labeled directly.
 
 ![Loss over 30 steps on a logarithmic scale for three learning rates: 0.0005 falls slowly, 0.005 falls fast and levels off, 0.015 rises steadily](figures/fig35-3-learning-rates.svg)
 
-*Figure 35.3 — The same problem with three learning rates. Too small crawls, about right drops fast, too large climbs away from the answer. The vertical axis is logarithmic: each gridline is ten times the one below.*
+*Figure 35.4 — The same problem with three learning rates. Too small crawls, about right drops fast, too large climbs away from the answer. The vertical axis is logarithmic: each gridline is ten times the one below.*
 
 > **Try it.** In the learning-rate loop, try 0.014 and 0.0145. One of them converges, slowly, and one diverges, slowly. For this problem the dividing line is about 0.01447, which is 2 divided by the steepness of the valley's steepest direction. You don't need that formula at work; you need the habit of plotting the loss.
 
@@ -549,60 +768,108 @@ You've now seen the three ingredients of almost every machine learning model:
 2. **A loss function** that scores how wrong the parameters are (mean squared error).
 3. **An optimizer** that changes the parameters to lower the loss (gradient descent).
 
-Linear regression (Chapter 37) uses exactly these, with more features. Logistic regression swaps in a different loss (section 35.9). A neural network (Chapter 43) has thousands or millions of parameters and computes its gradient automatically, but the loop is the one you wrote above. Real libraries add improvements such as **stochastic gradient descent** (computing each step on a random batch of rows instead of all of them, which is much faster on large data) and optimizers such as **Adam** that adjust the step size per parameter. They all follow the downhill slope.
+Linear regression (section 22.10, and for prediction, Chapter 37) uses exactly these, with more features. Logistic regression swaps in a different loss (section 35.9). A neural network (Chapter 43) has thousands or millions of parameters and computes its gradient automatically, but the loop is the one you wrote above. Real libraries add improvements such as **stochastic gradient descent** (computing each step on a random batch of rows instead of all of them, which is much faster on large data) and optimizers such as **Adam** that adjust the step size per parameter. They all follow the downhill slope.
+
+> **Checkpoint (end of sitting B, ten minutes).** Three points, *x* = [1, 2, 3] and *y* = [2, 4, 6]. Start at *w* = 0, *b* = 0 with a learning rate of 0.05. On paper, find the loss, both slopes, and the new *w* and *b* after one step. Then check with `descend(np.array([1, 2, 3.]), np.array([2, 4, 6.]), 0.05, 1)`. *Answer:* errors −2, −4, −6; loss 56 ÷ 3 = 18.67; slope for *w* = 2 × (−28) ÷ 3 = −18.67; slope for *b* = 2 × (−12) ÷ 3 = −8; new *w* = 0.933, new *b* = 0.4.
 
 ---
 
 ## 35.7 Probability distributions: describing what's likely
 
-A model that predicts a number with a straight line gives one answer. Many models instead give a **probability**: "this lead has a 20% chance of being won". To build and judge those, you need a way to describe how likely every possible outcome is. That description is a **probability distribution**. Chapter 21 introduces probability; this section adds the four distributions you'll meet most often in machine learning, each on real Riverstone data.
+A model that predicts a number with a straight line gives one answer. Many models instead give a **probability**: "this lead has a 20% chance of being won". To build and judge those, you need a way to describe how likely every possible outcome is. That description is a **probability distribution**. Chapter 21 (section 21.5) met the normal, binomial, and Poisson distributions with `scipy.stats`, on Riverstone's deliveries. This section revisits them as a model-builder would, adds the simplest one of all, the Bernoulli, and asks when each one fits Riverstone's sales data.
 
 ### Bernoulli: one yes-or-no outcome
 
 In 2025 Riverstone received **30** real sales enquiries (after removing duplicate web-form submissions, as in Chapter 13), and **6** were won. One lead is a single trial with two outcomes: won (1) or not won (0). A **Bernoulli distribution** describes it with one parameter, *p*, the probability of a 1.
 
-> P(won) = *p*        P(not won) = 1 − *p*
+> P(won) = *p*
+>
+> P(not won) = 1 − *p*
 
 If *p* = 0.2, a lead is won with probability 0.2 and not won with probability 0.8. Every yes-or-no prediction in this book (will this customer churn, is this transaction fraud, will this lead convert) models the outcome as Bernoulli.
 
 ### Binomial: how many yeses out of *n*
 
-*"If each lead has a 20% chance, how likely is it that exactly 6 of 30 are won?"* Counting successes in *n* independent Bernoulli trials gives a **binomial distribution**:
+*"If each lead has a 20% chance, how likely is it that exactly 6 of 30 are won?"* Counting successes in *n* independent Bernoulli trials gives a **binomial distribution**. Start with a tiny case, as section 21.5 did with deliveries: 3 leads, exactly 1 won, at *p* = 0.2. Write W for won and L for lost. There are three ways, WLL, LWL, and LLW, and each has probability 0.2 × 0.8 × 0.8 = 0.128. You multiply because the leads are independent (Chapter 21's multiplication rule). So P(exactly 1 of 3) = 3 × 0.128 = **0.384**. The general formula does the same counting:
 
-> P(exactly *k* won out of *n*) = C(*n*, *k*) × *p*^*k* × (1 − *p*)^(*n* − *k*)
+> P(exactly *k* won out of *n*) = C(*n*, *k*) × *p*ᵏ × (1 − *p*)ⁿ⁻ᵏ
+>
+> where *n* is the number of leads, *k* the number won, and *p* the chance that each one is won.
 
-C(*n*, *k*), read "*n* choose *k*", counts how many different sets of *k* leads could be the winners. C(30, 6) = 593,775. So:
+*p*ᵏ is the chance that *k* particular leads are won, and (1 − *p*)ⁿ⁻ᵏ the chance that the other *n* − *k* are lost. C(*n*, *k*), read "*n* choose *k*", counts how many different sets of *k* leads could be the winners. It has a formula of its own: C(*n*, *k*) = *n*! ÷ (*k*! × (*n* − *k*)!), where *n*! ("*n* factorial") is 1 × 2 × … × *n*. For the tiny case, C(3, 1) = 3! ÷ (1! × 2!) = 6 ÷ 2 = 3: WLL, LWL, LLW. For 6 wins out of 30, let Python count:
+
+```python
+from math import comb
+from scipy import stats
+
+print(comb(3, 1), comb(30, 6))
+print(round(comb(30, 6) * 0.2**6 * 0.8**24, 4))
+print(round(stats.binom.pmf(6, 30, 0.2), 4))
+```
+
+```
+3 593775
+0.1795
+0.1795
+```
+
+**How it works:**
+
+- `comb(n, k)` from Python's built-in `math` module is C(*n*, *k*). There are 593,775 different ways to pick which 6 of 30 leads are the winners.
+- The second line is the formula typed out: `0.2**6` is 0.2⁶.
+- `stats.binom.pmf(k, n, p)` is the same probability from scipy (section 21.5). The two agree. ✓
 
 > P(6 of 30) = 593,775 × 0.2⁶ × 0.8²⁴ = 593,775 × 0.000064 × 0.0047224 = **0.179**
 
-Even when the true rate is exactly 20%, getting exactly 6 wins out of 30 happens only about 18% of the time. Five wins or seven are nearly as likely. Chapter 22 builds on this to ask whether a difference in win rates is real or noise.
+Even when the true rate is exactly 20%, getting exactly 6 wins out of 30 happens only about 18% of the time. Five wins (0.172) or seven (0.154) are nearly as likely. Chapter 22 used this idea to ask whether a difference in win rates is real or noise.
 
 ### Poisson: counts of events in a period
 
-*"How many orders should we expect in a week?"* Riverstone's 173 orders in 2025 fell into 52 weeks, an average of 173 ÷ 52 = **3.33** orders a week. When events arrive independently at a steady average rate, the number in a period follows a **Poisson distribution**, with one parameter, the average rate λ ("lambda"):
+*"How many orders should we expect in a week?"* Riverstone's 173 orders in 2025 fell into 52 weeks, an average of 173 ÷ 52 = **3.327** orders a week. When events arrive independently at a steady average rate, the number in a period follows a **Poisson distribution**, with one parameter, the average rate λ ("lambda"):
 
-> P(*k* events) = λ^*k* × e^(−λ) ÷ *k*!
+> P(*k* events) = λᵏ × e^(−λ) ÷ *k*!
 
-Here *e* is the mathematical constant 2.71828, and *k*! ("*k* factorial") is 1 × 2 × … × *k*. For zero orders in a week: P(0) = 3.33⁰ × e^(−3.33) ÷ 0! = e^(−3.33) = 0.0359. Over 52 weeks, that predicts 52 × 0.0359 = **1.9** weeks with no orders.
+Here *e* is the constant 2.71828 (section 21.5), and *k*! is *k* factorial. For zero orders in a week, λ⁰ = 1 and 0! = 1 (any number to the power 0 is 1, and 0! is 1 by definition), so P(0) = e^(−3.327) = **0.0359**. Over 52 weeks, that predicts 52 × 0.0359 = **1.9** weeks with no orders. Two more rows by hand, each built from the one before:
 
-Does the model describe Riverstone's real weeks? Count them:
+> P(1) = 3.327 × 0.0359 = 0.119, so 52 × 0.119 = **6.2** weeks
+>
+> P(2) = 3.327² ÷ 2 × 0.0359 = 0.199, so 52 × 0.199 = **10.3** weeks
+
+(Use the unrounded rate, 173 ÷ 52 = 3.327. Rounded to 3.33, e^(−3.33) is 0.0358, and the fourth decimal changes.)
+
+Does the model describe Riverstone's real weeks? First, count the orders in each week:
 
 ```python
 orders = pd.read_csv("orders_2025.csv", parse_dates=["order_date"])
 week = (orders["order_date"].dt.dayofyear - 1) // 7          # week 0 = 1-7 January
-counts = np.bincount(week, minlength=52)[:52]
+all_weeks = np.bincount(week, minlength=52)
+print(len(all_weeks), "weeks counted;", all_weeks[52:].sum(), "orders after week 51")
+counts = all_weeks[:52]
 rate = counts.mean()
-print(f"{counts.sum()} orders in 52 weeks, average {rate:.2f} a week")
+print(f"{counts.sum()} orders in 52 weeks, average {rate:.3f} a week")
+```
 
-from math import exp, factorial
+```
+52 weeks counted; 0 orders after week 51
+173 orders in 52 weeks, average 3.327 a week
+```
+
+**How it works:**
+
+- `parse_dates=["order_date"]` reads the column as dates (section 18.2). `.dt.dayofyear` numbers the days of 2025 from 1 to 365; subtracting 1 and dividing by 7 with `//` (whole-number division) gives a week number from 0.
+- `np.bincount(week, minlength=52)` counts how many orders fall into each week number. `minlength=52` asks for at least 52 counts, so a week with no orders still appears, as 0.
+- There's a trap in the calendar: 52 × 7 = 364, so 31 December (day 365) would be week 52, a 53rd, one-day "week". The first `print` checks it: `all_weeks` has only 52 entries, and `all_weeks[52:].sum()` (everything from position 52 on) is 0. No order fell on 31 December, so `counts = all_weeks[:52]`, the first 52 weeks, loses nothing, and the 173 orders confirm it.
+
+Then compare the real weeks with what Poisson expects:
+
+```python
 print("orders in a week | weeks observed | Poisson expects")
 for k in range(9):
-    expected = 52 * rate ** k * exp(-rate) / factorial(k)
+    expected = 52 * stats.poisson.pmf(k, rate)
     print(f"{k:>16} | {np.sum(counts == k):>14} | {expected:>15.1f}")
 ```
 
 ```
-173 orders in 52 weeks, average 3.33 a week
 orders in a week | weeks observed | Poisson expects
                0 |              1 |             1.9
                1 |              8 |             6.2
@@ -615,19 +882,21 @@ orders in a week | weeks observed | Poisson expects
                8 |              1 |             0.7
 ```
 
-**How it works:** `dayofyear` numbers the days of 2025 from 1 to 365; subtracting 1 and dividing by 7 with `//` (whole-number division) gives a week number from 0. `np.bincount` counts how many orders fall into each week. The loop compares the number of weeks with *k* orders against 52 × P(*k*).
+**How it works:**
 
-**Reading it.** The Poisson model tracks the real weeks closely: it expects 10.3 weeks with two orders and 11.5 with three, and Riverstone had 10 of each. That's useful. A demand planner who knows orders are roughly Poisson with a rate of 3.3 a week knows that a week with 8 or more orders happens about once a year by chance alone, and doesn't need an explanation. (Riverstone's rate isn't really constant, since the festive season in October and November is busier; Chapter 40 handles seasonality properly.)
+- `stats.poisson.pmf(k, rate)` is P(exactly *k*) at the weekly rate (section 21.5), and `52 *` turns it into a number of weeks.
+- `counts == k` gives `True` or `False` for each of the 52 weeks; `np.sum` counts the `True`s, because `True` counts as 1 (section 18.1's boolean mask).
+- `{k:>16}` prints *k* right-aligned in 16 characters, the width of the heading above it, so the columns line up.
+
+**Reading it.** The Poisson model tracks the real weeks closely: it expects 10.3 weeks with two orders and 11.5 with three, and Riverstone had 10 of each. The first three rows match the hand calculation. That's useful. A demand planner who knows orders are roughly Poisson with a rate of 3.3 a week knows that a week with 8 or more orders happens about once a year by chance alone, and doesn't need an explanation. (Riverstone's rate isn't really constant, since the festive season in October and November is busier; Chapter 40 handles seasonality properly.)
 
 ### Normal: the bell curve, and when it lies
 
-The **normal distribution** is the symmetric bell curve described by a mean and a standard deviation. Many methods assume it, often silently. Riverstone's order values have a mean of ₹25,060.53 and a standard deviation of ₹17,398.71. If order values were normal with those numbers, what would follow?
+The **normal distribution** is the symmetric bell curve described by a mean (μ, "mu") and a standard deviation (σ, "sigma"). Many methods assume it, often silently. Riverstone's order values have a mean of ₹25,060.53 and a standard deviation of ₹17,398.71. If order values were normal with those numbers, what would follow?
 
 ```python
-from statistics import NormalDist
-
 values = orders["order_value"]
-bell = NormalDist(mu=values.mean(), sigma=values.std())
+bell = stats.norm(values.mean(), values.std())
 print(f"mean ₹{values.mean():,.2f}  sd ₹{values.std():,.2f}  median ₹{values.median():,.0f}")
 above, below = 1 - bell.cdf(50000), bell.cdf(0)
 print(f"above ₹50,000: normal predicts {above:.1%}, actual {np.mean(values > 50000):.1%}")
@@ -640,14 +909,21 @@ above ₹50,000: normal predicts 7.6%, actual 9.2%
 below ₹0:      normal predicts 7.5%, actual 0.0%
 ```
 
-**Reading it.** The normal model says 7.5% of orders should have a **negative** value, which is impossible. It also underestimates large orders (7.6% predicted, 9.2% actual). Order values are **skewed**: most are moderate, a few are large, and none can be below zero, which is why the median (₹21,375) sits well below the mean. A normal distribution is a poor description of money amounts, counts of rare events, waiting times, and anything bounded at zero. Chapter 21 shows how to check the shape of data with a histogram before assuming.
+**How it works:**
+
+- `stats.norm(mean, sd)` builds a normal distribution with Riverstone's mean and standard deviation (pandas' `.std()`, which divides by *n* − 1 as in Chapter 21).
+- `cdf(x)`, the **cumulative distribution function** from section 21.5, is the share of the distribution at or below *x*. So `bell.cdf(0)` is the share below ₹0, and `1 - bell.cdf(50000)` is the share **above** ₹50,000: everything that isn't at or below it.
+- `values > 50000` is `True` or `False` for each order, and its mean is the share of `True`s, because `True` counts as 1: the actual share of large orders.
+- `{above:.1%}` prints a fraction as a percentage with one decimal: 0.0763 becomes 7.6%.
+
+**Reading it.** The normal model says 7.5% of orders should have a **negative** value, which is impossible. It also underestimates large orders (7.6% predicted, 9.2% actual). Order values are **skewed**: most are moderate, a few are large, and none can be below zero, which is why the median (₹21,375) sits well below the mean. A normal distribution is a poor description of money amounts, counts of rare events, waiting times, and anything bounded at zero. Chapter 21 (section 21.4) showed how to check the shape of data with a histogram before assuming.
 
 | Distribution | Describes | Parameters | Riverstone example | Used in |
 |---|---|---|---|---|
 | Bernoulli | one yes-or-no outcome | *p* | is this lead won? | logistic regression, classifiers (Ch 37) |
-| Binomial | number of yeses in *n* tries | *n*, *p* | leads won out of 30 | A/B tests (Ch 30), win-rate checks (Ch 22) |
-| Poisson | count of events in a period | λ | orders per week | demand and anomaly models (Ch 40) |
-| Normal | a measurement that clusters symmetrically | mean, standard deviation | *not* order values | linear regression errors (Ch 37), sampling (Ch 22) |
+| Binomial | number of yeses in *n* tries | *n*, *p* | leads won out of 30 | late deliveries (Ch 21), win-rate checks (Ch 22), A/B tests (Ch 30) |
+| Poisson | count of events in a period | λ | orders per week | complaints per week (Ch 21), demand and anomaly models (Ch 40) |
+| Normal | a measurement that clusters symmetrically | mean, standard deviation | *not* order values | crate weights (Ch 21), sampling (Ch 22), linear regression errors (Ch 37) |
 
 ---
 
@@ -657,7 +933,9 @@ below ₹0:      normal predicts 7.5%, actual 0.0%
 
 So far you've asked: *given* a parameter, how likely is the data? Machine learning asks the reverse: *given* the data, which parameter is most believable?
 
-The **likelihood** of a parameter value is the probability of the data you actually observed, calculated as if that value were true. For Riverstone's 30 leads with 6 won, and a win rate *p*, the probability of that exact sequence of wins and losses is:
+The **likelihood** of a parameter value is the probability of the data you actually observed, calculated as if that value were true. Start with three leads whose outcomes were won, lost, lost. If the win rate is 0.2, the chance of exactly that sequence is 0.2 × 0.8 × 0.8 = 0.128; if it's 0.5, it's 0.5 × 0.5 × 0.5 = 0.125. You multiply because the leads are independent (Chapter 21). So 0.2 explains these three outcomes slightly better than 0.5 does.
+
+For Riverstone's 30 leads with 6 won, the same multiplication gives six factors of *p* (one per win) and 24 factors of (1 − *p*) (one per loss):
 
 > likelihood(*p*) = *p*⁶ × (1 − *p*)²⁴
 
@@ -671,11 +949,49 @@ Try three values:
 | 0.2 | 0.000064 × 0.0047224 = 0.000000302 |
 | 0.3 | 0.000729 × 0.00019158 = 0.000000140 |
 
+Numbers this small are usually written in **scientific notation** (section 18.1): 0.000000302 is 3.02 × 10⁻⁷, "move the decimal point 7 places left", and Python prints it as `3.02e-07`.
+
 A win rate of 0.2 makes the observed data about 3.8 times as likely as 0.1 and about 2.2 times as likely as 0.3. The **maximum likelihood estimate (MLE)** is the parameter value that makes the observed data most likely.
 
 ### Why everyone uses the log
 
-Those likelihoods are tiny, and with 30,000 leads instead of 30 they'd be too small for a computer to store (they'd round to zero). So in practice you work with the **log-likelihood**: the natural logarithm of the likelihood. Logs turn multiplication into addition and keep numbers manageable, and because the log always rises when its input rises, the best *p* is the same.
+Those likelihoods are tiny, and with 30,000 leads instead of 30 they'd be too small for a computer to store (they'd round to zero). So in practice you work with the **log-likelihood**: the natural logarithm of the likelihood. Section 31.0 showed the one rule that makes this work: logs turn multiplication into addition, ln(a × b) = ln(a) + ln(b). They also keep numbers manageable, and because the log always rises when its input rises, the best *p* is the same.
+
+### Logarithms: four more facts
+
+Section 31.0 used logs of numbers bigger than 1, such as order counts. Probabilities are between 0 and 1, and this section and the next need four more facts.
+
+1. **Numbers below 1 have negative logs.** ln 1 = 0, and ln *e* = 1 (the natural log is the log "based on" *e* ≈ 2.718). Below 1 the log is negative: ln 0.2 = −1.6094 and ln 0.8 = −0.2231. So the log of every probability is negative, and a log-likelihood is always a negative number.
+2. **The power rule.** A power is repeated multiplication, and each multiplication becomes an addition, so ln(*p*⁶) = 6 × ln *p*. That's how the likelihood *p*⁶ × (1 − *p*)²⁴ becomes 6 × ln *p* + 24 × ln(1 − *p*).
+3. **ln 0 is minus infinity.** The closer a probability gets to 0, the more negative its log, with no limit. A predicted probability of exactly 0 (or 1, for the other outcome) breaks every formula in section 35.9.
+4. **Other bases.** The log **base 2**, written log₂, asks "2 to what power gives this number?" log₂ 8 = 3 because 2³ = 8, and log₂ 0.5 = −1 because 2⁻¹ = ½. You convert from the natural log by dividing by ln 2 = 0.6931: log₂ *x* = ln *x* ÷ ln 2. Section 35.9 uses base 2.
+
+Check all four in NumPy. Before you run it, predict the last line of output:
+
+```python
+print(np.log([1, np.e, 0.2, 0.8]).round(4))
+print(round(np.log(0.2 * 0.8), 4), round(np.log(0.2) + np.log(0.8), 4))
+print(round(np.log(0.2 ** 6), 4), round(6 * np.log(0.2), 4))
+print(np.log2([1, 2, 4, 8, 16, 0.5, 0.25]))
+print(round(np.log(0.2) / np.log(2), 4), round(np.log2(0.2), 4))
+```
+
+```
+[ 0.      1.     -1.6094 -0.2231]
+-1.8326 -1.8326
+-9.6566 -9.6566
+[ 0.  1.  2.  3.  4. -1. -2.]
+-2.3219 -2.3219
+```
+
+**How it works:**
+
+- `np.log` is the natural log, as in section 31.0; given a list, it takes the log of each value. `np.e` is the constant *e*.
+- The second line checks the product rule on two probabilities: ln(0.2 × 0.8) = ln 0.16 equals ln 0.2 + ln 0.8. The third checks the power rule.
+- `np.log2` is the log base 2: 1, 2, 4, 8, 16 give 0 to 4, and a half and a quarter give −1 and −2. The last line converts ln 0.2 to base 2 by dividing by ln 2, and matches `np.log2(0.2)`.
+- `np.log(0)` returns `-inf` (minus infinity), with a warning, `divide by zero encountered in log`. Python's `math.log(0)` stops with `ValueError: math domain error`. You'll also meet `np.log1p(x)`, which is ln(1 + *x*), in Chapter 36. In a spreadsheet, `LN(x)` is the natural log and `LOG(x, 2)` is base 2.
+
+Now the log-likelihood of the 30 leads:
 
 > log-likelihood(*p*) = 6 × ln(*p*) + 24 × ln(1 − *p*)
 >
@@ -703,13 +1019,18 @@ log-likelihood there: -15.0121
 sample win rate: 0.200
 ```
 
-**How it works:** `np.linspace(0.001, 0.999, 999)` makes 999 evenly spaced candidate values of *p* (0.001, 0.002, …, 0.999). The log-likelihood is computed for all of them at once, and `np.argmax` returns the position of the largest.
+**How it works:**
 
-The maximum likelihood estimate is **0.200**, exactly the sample win rate, 6 ÷ 30. That's not a coincidence: for a Bernoulli outcome, the MLE is always the observed proportion, and for a Poisson count it's the observed average (3.33 orders a week). The MLE confirms the obvious in simple cases. Its value is that the same principle works for models where there's no obvious answer, like a lead-scoring model with twenty features.
+- `leads["won"].to_numpy()` is the 30 outcomes as 1s and 0s, so `won.sum()` counts the wins and `won.mean()` is the win rate.
+- `np.linspace(0.001, 0.999, 999)` makes 999 evenly spaced candidate values of *p* (0.001, 0.002, …, 0.999), as it made the *w* values in section 35.4.
+- The log-likelihood line is the formula above, computed for all 999 values at once: wins × ln *p* + losses × ln(1 − *p*).
+- `np.argmax` returns the position of the largest value, and `p_grid[...]` looks up the *p* at that position.
+
+The maximum likelihood estimate is **0.200**, exactly the sample win rate, 6 ÷ 30. That's not a coincidence: for a Bernoulli outcome, the MLE is always the observed proportion, and for a Poisson count it's the observed average (3.327 orders a week). The MLE confirms the obvious in simple cases. Its value is that the same principle works for models where there's no obvious answer, like a lead-scoring model with twenty features.
 
 ![A curve of the likelihood of the lead win rate p, rising from zero to a single peak at p = 0.2 and falling back toward zero by p = 0.5, with points marked at 0.1, 0.2 and 0.3](figures/fig35-4-likelihood.svg)
 
-*Figure 35.4 — The likelihood of each possible win rate, given 6 wins in 30 leads. The peak, the maximum likelihood estimate, is at 0.2. The curve is wide: rates from about 0.1 to 0.35 remain fairly plausible with only 30 leads.*
+*Figure 35.5 — The likelihood of each possible win rate, given 6 wins in 30 leads. The peak, the maximum likelihood estimate, is at 0.2. The curve is wide: rates from about 0.1 to 0.35 remain fairly plausible with only 30 leads.*
 
 ### Why this matters for models
 
@@ -724,13 +1045,19 @@ The maximum likelihood estimate is **0.200**, exactly the sample win rate, 6 ÷ 
 
 ### Entropy: how uncertain is an outcome?
 
-*"Before we look at anything about a lead, how uncertain are we about whether it will be won?"* Information theory measures uncertainty with **entropy**. For a yes-or-no outcome with probability *p*:
+*"Before we look at anything about a lead, how uncertain are we about whether it will be won?"* Information theory answers with one idea, **surprise**, measured in **bits**.
+
+The **surprise** of an outcome that had probability *q* is −log₂ *q* bits. A coin landing heads (½) is 1 bit of surprise; a 1-in-4 event is 2 bits; a 1-in-8 event is 3 bits. The rarer the outcome, the bigger the surprise, and a certain outcome (*q* = 1) is no surprise at all: −log₂ 1 = 0. The minus sign is there because the log of a probability is negative (section 35.8), and a surprise should be a positive number.
+
+For a Riverstone lead at *p* = 0.2, a win is −log₂ 0.2 = **2.32 bits** of surprise, and a loss is −log₂ 0.8 = **0.32 bits**. **Entropy** is the average surprise, weighting each outcome by how often it happens: 0.2 × 2.32 + 0.8 × 0.32 = **0.722 bits**. As a formula, for a yes-or-no outcome with probability *p*:
 
 > entropy = −(*p* × log₂ *p* + (1 − *p*) × log₂ (1 − *p*))
+>
+> at *p* = 0.2: −(0.2 × (−2.3219) + 0.8 × (−0.3219))
+>
+> = −(−0.4644 − 0.2575) = **0.722 bits**
 
-Measured with log base 2, the unit is the **bit**. A fair coin (*p* = 0.5) has entropy −(0.5 × (−1) + 0.5 × (−1)) = **1 bit**, the most uncertain a yes-or-no outcome can be. Riverstone's lead outcome, at *p* = 0.2:
-
-> entropy = −(0.2 × log₂ 0.2 + 0.8 × log₂ 0.8) = −(0.2 × (−2.3219) + 0.8 × (−0.3219)) = −(−0.4644 − 0.2575) = **0.722 bits**
+A fair coin (*p* = 0.5) has entropy −(0.5 × (−1) + 0.5 × (−1)) = **1 bit**, the most uncertain a yes-or-no outcome can be.
 
 Less than 1 bit, because leads are usually not won, so you're less uncertain than with a coin. An outcome that's certain (*p* = 0 or 1) has entropy 0.
 
@@ -744,17 +1071,23 @@ Entropy lets you measure how much a piece of information reduces uncertainty. Sp
 | Website | 14 | 1 | 7.1% | 0.371 |
 | Every other source | 16 | 5 | 31.3% | 0.896 |
 
-Check the website entropy: −(1/14 × log₂(1/14) + 13/14 × log₂(13/14)) = −(0.0714 × (−3.8074) + 0.9286 × (−0.1069)) = 0.2720 + 0.0993 = 0.371. ✓
+Check the website entropy:
+
+> −(1/14 × log₂(1/14) + 13/14 × log₂(13/14))
+>
+> = −(0.0714 × (−3.8074) + 0.9286 × (−0.1069))
+>
+> = 0.2720 + 0.0993 = 0.371 ✓
 
 After the split, the average uncertainty, weighted by group size, is 14/30 × 0.371 + 16/30 × 0.896 = 0.173 + 0.478 = **0.651 bits**. Knowing whether a lead came through the website reduced uncertainty from 0.722 to 0.651 bits, an **information gain** of **0.071 bits**. A decision tree (Chapter 37) builds itself by trying every possible split and choosing the one with the biggest gain, then repeating inside each branch.
 
 ### Cross-entropy and log loss: scoring probability predictions
 
-Entropy measures uncertainty when you know the true probabilities. **Cross-entropy** measures how surprised you are, on average, when you use **predicted** probabilities and then see the real outcomes. For machine learning it's written with natural logs, averaged over rows, and called **log loss** (or **binary cross-entropy**):
+Entropy measures uncertainty when you know the true probabilities. **Cross-entropy** is the average surprise when you use **predicted** probabilities and then see the real outcomes: each outcome costs the surprise of the probability you gave it. For machine learning it's written with natural logs instead of log₂, averaged over rows, and called **log loss** (or **binary cross-entropy**). Measured with natural logs, the unit is the **nat** instead of the bit; dividing by ln 2 converts nats to bits (section 35.8).
 
 > log loss = −average of (*y* × ln(predicted *p*) + (1 − *y*) × ln(1 − predicted *p*))
 
-For each row, only one term is active. If the lead was won (*y* = 1), the cost is −ln(predicted *p*). If not (*y* = 0), it's −ln(1 − predicted *p*).
+For each row, only one term is active, because *y* is 1 or 0. If the lead was won (*y* = 1), the cost is −ln(predicted *p*). If not (*y* = 0), it's −ln(1 − predicted *p*).
 
 Suppose a scoring tool gave five past leads these probabilities of being won, and here's what happened:
 
@@ -768,7 +1101,35 @@ Suppose a scoring tool gave five past leads these probabilities of being won, an
 
 > log loss = (0.105 + 0.357 + 0.223 + 0.105 + 1.609) ÷ 5 = 2.399 ÷ 5 = **0.480**
 
-Look at lead E. The tool was 80% sure it would be won, and it wasn't. That one confident mistake costs more than the other four rows together. Log loss is harsh on confident wrong answers by design: a prediction of 0.99 for a lead that isn't won costs −ln 0.01 = 4.6, and a prediction of exactly 1.0 costs infinity. A model trained on log loss learns to say "80%" only when it has earned it.
+Look at lead E. The tool was 80% sure it would be won, and it wasn't. That one confident mistake costs more than the other four rows together. Log loss is harsh on confident wrong answers by design: a prediction of 0.99 for a lead that isn't won costs −ln 0.01 = 4.6, and a prediction of exactly 1.0 costs −ln 0, which is infinity (section 35.8). A model trained on log loss learns to say "80%" only when it has earned it.
+
+### Installing scikit-learn
+
+To check the hand calculation against a library, you need **scikit-learn**, Python's standard machine learning library. This chapter uses two of its functions as cross-checks; Chapter 36 teaches it properly, and every chapter from here to Chapter 44 uses it. It isn't among the packages installed so far. In a terminal, activate the book's virtual environment (Chapter 17, section 17.0), then install it and record it in `requirements.txt`, as in section 17.12:
+
+```bash
+python -m pip install scikit-learn
+python -m pip freeze > requirements.txt
+```
+
+- `python -m pip install scikit-learn` downloads scikit-learn and the packages it needs into the active environment.
+- `python -m pip freeze > requirements.txt` rewrites the list of installed packages, so the new one is recorded.
+
+(If you keep your work in a uv project, as in Chapter 30, `uv add scikit-learn` does both.) Then check it in your notebook:
+
+```python
+import sklearn
+print(sklearn.__version__)
+```
+
+```
+1.9.1
+```
+
+- The package is called `scikit-learn` when you install it and `sklearn` when you import it.
+- `__version__` confirms which version you have. This chapter's outputs were checked with 1.9.1; any recent version gives the same numbers for the two functions used here.
+
+### Log loss in code
 
 ```python
 from sklearn.metrics import log_loss
@@ -778,7 +1139,22 @@ y_pred = np.array([0.9, 0.7, 0.2, 0.1, 0.8])
 by_hand = -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
 print(f"log loss by hand:     {by_hand:.3f}")
 print(f"log loss, sklearn:    {log_loss(y_true, y_pred):.3f}")
+```
 
+```
+log loss by hand:     0.480
+log loss, sklearn:    0.480
+```
+
+**How it works:**
+
+- `from sklearn.metrics import log_loss` loads one function from scikit-learn's `metrics` module, where its scoring functions live.
+- `by_hand` is the formula above, for all five leads at once. `np.log` is the natural log, so the answer is in nats.
+- `log_loss(y_true, y_pred)` takes the real outcomes first and the predicted probabilities second, and agrees with the hand calculation. ✓
+
+Now the benchmark: a "model" that knows nothing except the overall win rate, and predicts 0.2 for every one of the 30 leads.
+
+```python
 base_rate = np.full(len(won), won.mean())                  # predict 0.2 for every lead
 print(f"always predicting 0.2 on the 30 leads: {log_loss(won, base_rate):.4f} nats"
       f" = {log_loss(won, base_rate) / np.log(2):.4f} bits")
@@ -786,13 +1162,11 @@ print(f"-(log-likelihood at p=0.2) / 30:       {-log_likelihood.max() / 30:.4f}"
 ```
 
 ```
-log loss by hand:     0.480
-log loss, sklearn:    0.480
 always predicting 0.2 on the 30 leads: 0.5004 nats = 0.7219 bits
 -(log-likelihood at p=0.2) / 30:       0.5004
 ```
 
-**How it works:** `np.log` is the natural log, so the hand formula gives log loss in **nats** (the natural-log unit); dividing by ln 2 converts nats to bits. `np.full(30, 0.2)` builds a "model" that predicts the base rate for every lead.
+**How it works:** `np.full(len(won), won.mean())` builds an array of 30 copies of the win rate, 0.2: the base-rate model. Dividing by `np.log(2)`, which is ln 2, converts nats to bits. The last line reuses `log_likelihood` from section 35.8.
 
 **Reconcile three ideas.** The three last numbers are the same quantity seen three ways:
 
@@ -800,9 +1174,11 @@ always predicting 0.2 on the 30 leads: 0.5004 nats = 0.7219 bits
 - In bits, that's **0.7219**, exactly the entropy of the outcome from earlier in this section. ✓ When your predictions match the true rate, cross-entropy equals entropy; any worse predictions give a higher cross-entropy.
 - It's also the negative log-likelihood at *p* = 0.2 (section 35.8), −(−15.0121) ÷ 30 = **0.5004**. ✓ **Minimizing log loss is maximizing likelihood.**
 
-That gives you a benchmark for any lead score at Riverstone: a model that doesn't beat a log loss of about 0.50 on these leads knows nothing beyond the overall win rate. Chapter 39 uses the same idea to evaluate a real lead-scoring model.
+That gives you a benchmark for these 30 leads: a model that doesn't beat a log loss of about 0.50 on them knows nothing beyond the overall win rate. Chapter 36 opens Riverstone's full CRM, where the win rate is about 7.7% and the base-rate benchmark on its 2025 leads is about 0.26; the method is the same. Chapter 39 uses the same idea to evaluate a real lead-scoring model.
 
-> **Watch out: accuracy hides what log loss shows.** A "model" that says *not won* for every lead is 24 ÷ 30 = **80% accurate** on Riverstone's leads, while being useless. Accuracy counts right and wrong answers; log loss scores how well the probabilities match reality, and punishes false confidence. When someone quotes an accuracy figure, ask for the base rate first.
+> **Watch out: accuracy hides what log loss shows.** **Accuracy** is the share of predictions that turn out right: correct ÷ all. A "model" that says *not won* for every lead is 24 ÷ 30 = **80% accurate** on Riverstone's 30 leads, while being useless. Accuracy only counts right and wrong answers; log loss scores how well the probabilities match reality, and punishes false confidence. When someone quotes an accuracy figure, ask for the base rate first.
+
+> **Checkpoint (end of sitting C, ten minutes).** Four leads, of which only the first was won, scored [0.5, 0.5, 0.25, 0.25]. By hand, find the entropy of a 1-in-4 win rate in bits, and the log loss of these four predictions in nats. Check the log loss with `log_loss([1, 0, 0, 0], [0.5, 0.5, 0.25, 0.25])`. *Answer:* entropy = 0.25 × 2 + 0.75 × 0.415 = 0.811 bits; log loss = (0.693 + 0.693 + 0.288 + 0.288) ÷ 4 = 0.490 nats.
 
 ---
 
@@ -816,7 +1192,7 @@ That gives you a benchmark for any lead score at Riverstone: a model that doesn'
 
 ### A small example by hand
 
-Five customers, two features: orders and revenue in ₹ ten-thousands (so Sharma Hardware's ₹502,775 becomes 50). Revenue is measured in ten-thousands so that the two columns have spreads of a similar size; the full example below shows what happens when they don't.
+Five customers, two features: orders and revenue in ₹ ten-thousands (so Sharma Hardware's ₹5,02,775 becomes 50). Revenue is measured in ten-thousands so that the two columns have spreads of a similar size; the full example below shows what happens when they don't.
 
 | Customer | Orders | Revenue (₹10k) |
 |---|---|---|
@@ -838,11 +1214,17 @@ Five customers, two features: orders and revenue in ₹ ten-thousands (so Sharma
 
 **Step 2: the covariance matrix.** The **covariance** of two columns is the average product of their centered values (dividing by *n* − 1 = 4, as for a sample standard deviation). It's positive when they rise together. The **covariance matrix** holds every column's variance on the diagonal and each pair's covariance off it.
 
-> variance of orders = (5.4² + 5.4² + 0.6² + 3.6² + 6.6²) ÷ 4 = (29.16 + 29.16 + 0.36 + 12.96 + 43.56) ÷ 4 = 115.2 ÷ 4 = **28.8**
+> variance of orders = (5.4² + 5.4² + 0.6² + 3.6² + 6.6²) ÷ 4
 >
-> variance of revenue = (20.8² + 3.8² + 11.8² + 12.2² + 24.2²) ÷ 4 = (432.64 + 14.44 + 139.24 + 148.84 + 585.64) ÷ 4 = 1,320.8 ÷ 4 = **330.2**
+> = (29.16 + 29.16 + 0.36 + 12.96 + 43.56) ÷ 4 = 115.2 ÷ 4 = **28.8**
 >
-> covariance = (5.4 × 20.8 + 5.4 × 3.8 + (−0.6) × 11.8 + (−3.6) × (−12.2) + (−6.6) × (−24.2)) ÷ 4 = (112.32 + 20.52 − 7.08 + 43.92 + 159.72) ÷ 4 = 329.4 ÷ 4 = **82.35**
+> variance of revenue = (20.8² + 3.8² + 11.8² + 12.2² + 24.2²) ÷ 4
+>
+> = (432.64 + 14.44 + 139.24 + 148.84 + 585.64) ÷ 4 = 1,320.8 ÷ 4 = **330.2**
+>
+> covariance = (5.4 × 20.8 + 5.4 × 3.8 + (−0.6) × 11.8 + (−3.6) × (−12.2) + (−6.6) × (−24.2)) ÷ 4
+>
+> = (112.32 + 20.52 − 7.08 + 43.92 + 159.72) ÷ 4 = 329.4 ÷ 4 = **82.35**
 
 So the covariance matrix is:
 
@@ -851,39 +1233,116 @@ So the covariance matrix is:
 | **Orders** | 28.8 | 82.35 |
 | **Revenue** | 82.35 | 330.2 |
 
-**Step 3: find the direction of most variance.** The principal components are the **eigenvectors** of the covariance matrix, and the variance along each is its **eigenvalue**. In words: an eigenvector is a direction that the matrix only stretches, without turning, and the eigenvalue is how much it stretches. For a 2 × 2 covariance matrix with variances *a* and *d* and covariance *c*, the larger eigenvalue has a formula:
-
-> largest eigenvalue = (*a* + *d*) ÷ 2 + √(((*a* − *d*) ÷ 2)² + *c*²)
->
-> = (28.8 + 330.2) ÷ 2 + √(((28.8 − 330.2) ÷ 2)² + 82.35²) = 179.5 + √(22,710.49 + 6,781.52) = 179.5 + √29,492.01 = 179.5 + 171.73 = **351.23**
-
-The total variance is 28.8 + 330.2 = 359.0, so the first component holds 351.23 ÷ 359.0 = **97.8%** of it. The second holds 359.0 − 351.23 = 7.77, or 2.2%.
-
-Its direction is found by solving (28.8 − 351.23) × *u* + 82.35 × *v* = 0, which gives *v* = 3.915 × *u*. Scaled to length 1, that's **[0.247, 0.969]**: a direction that is mostly revenue, with some orders. It's a "customer size" axis.
-
-**Step 4: project.** Each customer's **score** on the first component is the dot product of its centered row with the direction. Sharma: 5.4 × 0.247 + 20.8 × 0.969 = 1.34 + 20.15 = **21.49**. Blue Bay: −6.6 × 0.247 + (−24.2) × 0.969 = −1.63 − 23.45 = **−25.08**. One number per customer now says most of what the two columns said.
+The same three numbers in NumPy:
 
 ```python
 small = np.array([[16, 50], [16, 33], [10, 41], [7, 17], [4, 5]], dtype=float)
 centered = small - small.mean(axis=0)
 cov = centered.T @ centered / (len(small) - 1)
 print("covariance matrix:\n", cov)
-
-eigenvalues, eigenvectors = np.linalg.eigh(cov)     # returned smallest first
-order = np.argsort(eigenvalues)[::-1]
-eigenvalues, eigenvectors = eigenvalues[order], eigenvectors[:, order]
-pc1 = eigenvectors[:, 0] * np.sign(eigenvectors[1, 0])    # point it toward higher revenue
-print("eigenvalues:", eigenvalues.round(2))
-print("share of variance:", (eigenvalues / eigenvalues.sum()).round(3))
-print("first component direction:", pc1.round(3))
-print("scores on PC1:", (centered @ pc1).round(2))
 ```
 
 ```
 covariance matrix:
  [[ 28.8   82.35]
  [ 82.35 330.2 ]]
-eigenvalues: [351.23   7.77]
+```
+
+**How it works:**
+
+- `small` is the five customers as a 5 × 2 matrix. `small.mean(axis=0)` averages **down** each column (`axis=0`, the opposite of section 35.2's `axis=1`), giving [10.6, 29.2], and subtracting it takes those averages from every row: step 1.
+- `centered.T @ centered` is matrix times matrix (section 35.3): (2 × 5) @ (5 × 2) gives 2 × 2. Each entry is the dot product of one centered column with another, which is exactly the sum of products you did by hand. Dividing by `len(small) - 1`, 4, makes it the covariance matrix. Compare it with the three hand calculations. ✓
+
+**Step 3: find the direction of most variance.** A direction is an arrow of length 1. Give each customer a **score** along it: the dot product of its centered row with the direction. The variance of the five scores is the spread of the data along that direction. So try some directions, measured as angles from the orders axis: 0° points along orders, 90° along revenue.
+
+```python
+for deg in [0, 30, 60, 75.7, 90, 120]:
+    u = np.array([np.cos(np.radians(deg)), np.sin(np.radians(deg))])
+    print(f"{deg:>5}°  direction {u.round(3)}  variance {np.var(centered @ u, ddof=1):7.2f}")
+```
+
+```
+    0°  direction [1. 0.]  variance   28.80
+   30°  direction [0.866 0.5  ]  variance  175.47
+   60°  direction [0.5   0.866]  variance  326.17
+ 75.7°  direction [0.247 0.969]  variance  351.23
+   90°  direction [0. 1.]  variance  330.20
+  120°  direction [-0.5    0.866]  variance  183.53
+```
+
+**How it works:**
+
+- `np.radians`, `np.cos`, and `np.sin` turn an angle into the arrow of length 1 that points that way. You don't need the trigonometry: 0° gives [1, 0], pure orders, and 90° gives [0, 1], pure revenue.
+- `centered @ u` is the five customers' scores along `u`, a matrix times a vector.
+- `np.var(..., ddof=1)` is their variance, dividing by *n* − 1 like the hand calculation (`ddof=1` means "take 1 off *n*"; NumPy's default divides by *n*).
+
+**Reading it.** Along 0° the variance is 28.8, the variance of orders; along 90° it's 330.2, the variance of revenue. ✓ The spread peaks near **75.7°**, at **351.23**, more than either column alone, in the direction **[0.247, 0.969]**: mostly revenue, with some orders. That's the first principal component. It's a "customer size" axis.
+
+Trying angles works for two columns, but not for seven. Linear algebra has a shortcut, because the best direction has a special property: multiplying it by the covariance matrix only **stretches** it, without turning it. Check it:
+
+```python
+best = np.array([0.247, 0.969])
+print("cov @ best:    ", (cov @ best).round(2))
+print("351.23 * best: ", (351.23 * best).round(2))
+print("cov @ [1, 0]:  ", cov @ np.array([1.0, 0.0]))
+```
+
+```
+cov @ best:     [ 86.91 340.3 ]
+351.23 * best:  [ 86.75 340.34]
+cov @ [1, 0]:   [28.8  82.35]
+```
+
+`cov @ best` is 351.23 times `best`, to within the rounding of 0.247 and 0.969: the same direction, stretched. `cov @ [1, 0]` gives [28.8, 82.35], which points somewhere quite different from [1, 0]: that direction was turned. A direction the matrix only stretches is an **eigenvector** of the matrix, and the stretch factor is its **eigenvalue**. For a covariance matrix, the eigenvectors are the **principal components**, and each eigenvalue is the variance along its component: 351.23 for the first.
+
+Written out, "stretch without turning" is cov × direction = eigenvalue × direction. With the direction written [*u*, *v*] (its orders and revenue parts), the first row says 28.8 × *u* + 82.35 × *v* = 351.23 × *u*, which is (28.8 − 351.23) × *u* + 82.35 × *v* = 0. That gives *v* = 3.915 × *u*, and scaled to length 1, **[0.247, 0.969]**, the direction the table found.
+
+For reference, and for a 2 × 2 covariance matrix only (with variances *a* and *d* and covariance *c*), the larger eigenvalue has a formula. NumPy does the same job for a matrix of any size.
+
+> largest eigenvalue = (*a* + *d*) ÷ 2 + √(((*a* − *d*) ÷ 2)² + *c*²)
+>
+> = (28.8 + 330.2) ÷ 2 + √(((28.8 − 330.2) ÷ 2)² + 82.35²)
+>
+> = 179.5 + √(22,710.49 + 6,781.52) = 179.5 + √29,492.01
+>
+> = 179.5 + 171.73 = **351.23**
+
+The total variance is 28.8 + 330.2 = 359.0, so the first component holds 351.23 ÷ 359.0 = **97.8%** of it. The second holds 359.0 − 351.23 = 7.77, or 2.2%.
+
+NumPy finds every eigenvalue and eigenvector at once:
+
+```python
+eigenvalues, eigenvectors = np.linalg.eigh(cov)
+print(eigenvalues.round(2))
+print(eigenvectors.round(3))
+```
+
+```
+[  7.77 351.23]
+[[-0.969  0.247]
+ [ 0.247  0.969]]
+```
+
+**How it works:**
+
+- `np.linalg.eigh` finds the eigenvalues and eigenvectors of a symmetric matrix (a covariance matrix is always symmetric: the top right equals the bottom left). It returns two things, unpacked into two names.
+- The eigenvalues come **smallest first**: 7.77, then 351.23.
+- Each **column** of `eigenvectors` is one direction, in the same order: the second column, [0.247, 0.969], goes with 351.23.
+
+**Step 4: project.** Each customer's **score** on the first component is the dot product of its centered row with the direction. Sharma: 5.4 × 0.247 + 20.8 × 0.969 = 1.34 + 20.15 = **21.49**. Blue Bay: −6.6 × 0.247 + (−24.2) × 0.969 = −1.63 − 23.45 = **−25.08**. One number per customer now says most of what the two columns said. In code, after putting the largest eigenvalue first:
+
+```python
+order = np.argsort(eigenvalues)[::-1]
+print("order:", order)
+eigenvalues, eigenvectors = eigenvalues[order], eigenvectors[:, order]
+pc1 = eigenvectors[:, 0] * np.sign(eigenvectors[1, 0])    # point it toward higher revenue
+print("share of variance:", (eigenvalues / eigenvalues.sum()).round(3))
+print("first component direction:", pc1.round(3))
+print("scores on PC1:", (centered @ pc1).round(2))
+```
+
+```
+order: [1 0]
 share of variance: [0.978 0.022]
 first component direction: [0.247 0.969]
 scores on PC1: [ 21.49   5.02  11.28 -12.71 -25.08]
@@ -891,13 +1350,14 @@ scores on PC1: [ 21.49   5.02  11.28 -12.71 -25.08]
 
 **How it works:**
 
-- `centered.T @ centered / 4` is the covariance matrix in one line: the dot product of each centered column with each other column, divided by *n* − 1. Compare it with the three hand calculations. ✓
-- `np.linalg.eigh` finds eigenvalues and eigenvectors of a symmetric matrix (a covariance matrix is always symmetric). It returns them smallest first, so `argsort(...)[::-1]` reorders them largest first.
-- An eigenvector's sign is arbitrary: [0.247, 0.969] and [−0.247, −0.969] describe the same axis. Multiplying by the sign of the revenue component makes "higher score = bigger customer" so the output is stable and readable.
+- `np.argsort(eigenvalues)` gives the **positions** of the values from smallest to largest, here [0, 1]. `[::-1]` reverses any array or list, so `order` is [1, 0]: largest first.
+- `eigenvalues[order]` puts the values in that order. `eigenvectors[:, order]` means "all rows, columns in this order", so the columns (the directions) move with their eigenvalues.
+- `eigenvectors[:, 0]` is the first column, PC1. `eigenvectors[1, 0]` is row 1, column 0: its revenue part. An eigenvector's sign is arbitrary: [0.247, 0.969] and [−0.247, −0.969] describe the same axis. `np.sign` gives +1 or −1, so multiplying by the sign of the revenue part makes "higher score = bigger customer", and the output is stable and readable.
+- `centered @ pc1` is the five scores, matching the hand values for Sharma (21.49) and Blue Bay (−25.08). ✓
 
-![Five customers plotted by orders and revenue, with a long arrow through their center along the first principal component and a short arrow at right angles for the second](figures/fig35-5-pca-small.svg)
+![Five customers plotted by orders and revenue, orders drawn three times wider than revenue, with a long arrow through their center along the first principal component and a short arrow at right angles for the second](figures/fig35-5-pca-small.svg)
 
-*Figure 35.5 — The five customers and their principal components. The first component runs along the "customer size" direction and holds 97.8% of the variance; the short second component holds the rest.*
+*Figure 35.6 — The five customers and their principal components. The first component runs along the "customer size" direction and holds 97.8% of the variance; the short second component holds the rest.*
 
 ### All 23 customers, seven features
 
@@ -932,30 +1392,59 @@ kitchen_share       0.000
 industrial_share    0.000
 ```
 
+**How it works:**
+
+- `features` lists seven columns, and `.to_numpy(dtype=float)` turns them into a 23 × 7 matrix of decimals, `F`.
+- `pca` packs section 35.10's steps into a function: center, covariance matrix, eigenvectors, largest first. `np.cov(centered, rowvar=False)` is the covariance matrix; `rowvar=False` says the **columns** are the variables (NumPy's default is rows). It divides by *n* − 1, like the hand calculation.
+- The function returns three things: each component's share of the variance, the directions (one per column), and every customer's scores. `share_raw, vectors_raw, _ = pca(F)` unpacks them and throws away the scores with `_`.
+- `vectors_raw[:, 0]` is PC1's weights, one per feature. `np.abs` drops their signs, since only their size matters here, and `pd.Series(..., index=features)` labels each weight with its feature's name.
+
 **Reading the wrong version.** The first component "explains" 99.8% of the variance, which sounds wonderful and means nothing. Its weights are almost entirely on revenue. Revenue is measured in rupees and varies by hundreds of thousands, while shares vary between 0 and 1, so revenue's variance swamps everything. This unscaled PCA has rediscovered "revenue" and thrown away the other six features.
 
-The fix is to **standardize** each column first: subtract the mean and divide by the standard deviation, so every feature has a standard deviation of 1 and an equal chance to matter.
+The fix is to **standardize** each column first: subtract the mean and divide by the standard deviation, so every feature has a standard deviation of 1 and an equal chance to matter. Each value becomes a z-score (Chapter 21, section 21.4): how many standard deviations it sits from its column's mean.
 
 ```python
 F_std = (F - F.mean(axis=0)) / F.std(axis=0)
+print("means:", F_std.mean(axis=0).round(2))
+print("standard deviations:", F_std.std(axis=0))
+```
+
+```
+means: [ 0.  0.  0. -0. -0. -0. -0.]
+standard deviations: [1. 1. 1. 1. 1. 1. 1.]
+```
+
+**How it works:**
+
+- `F.mean(axis=0)` and `F.std(axis=0)` are each column's mean and standard deviation; subtracting and dividing works column by column, as in the small example.
+- Every column now has a mean of 0 and a standard deviation of 1. `-0.` is zero too: a tiny negative number, such as −0.000000000000001, rounded to two decimals keeps its minus sign.
+- NumPy's `.std()` divides by *n*, while pandas' `.std()` (Chapter 21, and section 35.7) and `np.cov` divide by *n* − 1. Either works for PCA, and scikit-learn's `StandardScaler` (Chapter 36) divides by *n*. The only visible effect: the standardized covariance matrix has 23 ÷ 22 = 1.045 on its diagonal instead of exactly 1, and the shares of variance don't change.
+
+Now run the same `pca` function on the standardized columns:
+
+```python
 share, vectors, scores = pca(F_std)
-signs = np.sign(vectors[features.index("industrial_share"), :])
-signs[1] = np.sign(vectors[features.index("storage_share"), 1])
-vectors = vectors * signs       # PC1 toward industrial buyers, PC2 toward storage
-scores = F_std @ vectors
 print("share of variance:", share.round(3))
 print(f"first two components together: {share[:2].sum():.1%}")
-loadings = pd.DataFrame(vectors[:, :2], index=features, columns=["PC1", "PC2"])
-print(loadings.round(2).to_string())
-
-from sklearn.decomposition import PCA
-check = PCA().fit(F_std)
-print("scikit-learn agrees:", np.allclose(check.explained_variance_ratio_, share))
 ```
 
 ```
 share of variance: [0.535 0.205 0.154 0.084 0.02  0.002 0.   ]
 first two components together: 73.9%
+```
+
+Before reading the weights, fix their signs by a rule, as in the small example, so every run reads the same way. Here the rule is: flip PC1 so that industrial share has a positive weight, and PC2 so that storage share does.
+
+```python
+signs = np.sign(vectors[features.index("industrial_share"), :])
+signs[1] = np.sign(vectors[features.index("storage_share"), 1])
+vectors = vectors * signs
+scores = F_std @ vectors
+loadings = pd.DataFrame(vectors[:, :2], index=features, columns=["PC1", "PC2"])
+print(loadings.round(2).to_string())
+```
+
+```
                    PC1   PC2
 orders            0.30 -0.58
 revenue           0.40 -0.47
@@ -964,14 +1453,34 @@ avg_discount_pct  0.44  0.15
 storage_share     0.21  0.53
 kitchen_share    -0.45 -0.35
 industrial_share  0.42 -0.06
+```
+
+**How it works:**
+
+- `features.index("industrial_share")` is that feature's position in the list (6), which is its row in `vectors`. `vectors[6, :]` is industrial share's weight in every component, and `np.sign` turns each into +1 or −1.
+- `signs[1] = ...` replaces the sign for PC2 (position 1) with the sign of storage share's weight in PC2.
+- `vectors * signs` multiplies each column by its +1 or −1, flipping the components that pointed the "wrong" way. `F_std @ vectors` recomputes every customer's scores with the flipped directions.
+- `vectors[:, :2]` is the first two columns, PC1 and PC2, put in a labeled table.
+
+Finally, check the shares against scikit-learn, which you installed in section 35.9:
+
+```python
+from sklearn.decomposition import PCA
+
+check = PCA().fit(F_std)
+print("scikit-learn agrees:", np.allclose(check.explained_variance_ratio_, share))
+```
+
+```
 scikit-learn agrees: True
 ```
 
 **How it works:**
 
-- `F.std(axis=0)` is each column's standard deviation; after dividing, every column has a spread of 1.
-- `np.cov(centered, rowvar=False)` is the covariance matrix, with columns as variables.
-- `np.allclose` checks that scikit-learn's `PCA` gives the same shares, allowing for tiny rounding differences. It does. (Its component signs can differ from ours, which is why the shares are compared, not the directions.)
+- `PCA()` creates an unfitted PCA object: its settings, but no results yet.
+- `.fit(F_std)` learns the components from the data, doing everything `pca` did.
+- What it learned is stored in **attributes** whose names end in `_`. `explained_variance_ratio_` is our "share of variance", which is also called **explained variance**. Chapter 36 uses this fit-then-use pattern for every model.
+- `np.allclose` checks that two arrays are equal, allowing for tiny rounding differences. They are. (scikit-learn's component signs can differ from ours, which is why the shares are compared, not the directions.)
 
 **Reading it.** With every feature on the same scale, the first component holds 53.5% of the variance and the first two hold 73.9%. Read the component by its **weights** (also called **loadings**):
 
@@ -1001,9 +1510,9 @@ Retail      -0.38  0.22
 Wholesale    2.71  0.42
 ```
 
-![Scatter plot of 23 customers on the first two principal components, colored by segment: wholesale customers form a group on the right, hospitality customers on the left, retail customers in between, with Prime Wholesale and City Needs Store high on the second component](figures/fig35-6-pca-customers.svg)
+![Scatter plot of 23 customers on the first two principal components, with a different color and marker shape per segment (orange triangles for wholesale, blue circles for retail, purple squares for hospitality): wholesale customers form a group on the right, hospitality customers on the left, retail customers in between, with Prime Wholesale and City Needs Store high on the second component](figures/fig35-6-pca-customers.svg)
 
-*Figure 35.6 — All 23 customers on the first two principal components of seven standardized features. The five regular wholesale buyers sit together on the right; Prime Wholesale, a wholesaler with only two storage-only orders, sits apart, high on PC2.*
+*Figure 35.7 — All 23 customers on the first two principal components of seven standardized features. The five regular wholesale buyers sit together on the right; Prime Wholesale, a wholesaler with only two storage-only orders, sits apart, high on PC2.*
 
 **What to tell the sales head.** "Two combined measures describe about three-quarters of how our customers differ: how much they buy like a wholesale crate buyer, and whether they place a few storage-only orders. Prime Wholesale is labeled Wholesale but doesn't yet buy like one; it's worth a conversation." Chapter 38 uses PCA with clustering to build proper customer segments.
 
@@ -1061,17 +1570,17 @@ It's the first week of February 2026. Anita Rao, Riverstone's Sales Head, forwar
 
 Meera starts where this chapter taught her to start: **what would a model that knows nothing score?**
 
-**The base rate.** From the CRM export behind Chapter 13, Riverstone had 30 real enquiries in 2025 and won 6, a win rate of 20%. A "model" that says *not won* for every lead is right 24 times out of 30: 80% accurate. The vendor's 91% is an improvement on that, but not the improvement it sounds like. And the vendor's figure comes from its other clients. Meera asks the vendor's account manager what share of leads those clients win. The answer is about 8%. At an 8% win rate, answering *not won* for every lead is 92% accurate, **better than the vendor's model**. The headline number, on its own, says nothing about whether the model has learned anything.
+**The base rate.** The 30 enquiries in the one-year database (this chapter's `leads_2025.csv`) are only the ones reps logged themselves. A lead score would work on every enquiry, so Meera opens Riverstone's full CRM export, taken at the end of 2025, which Chapter 36 works with in detail. It holds about 400 enquiries a month in 2025. Of the 3,410 that arrived between January and 2 October, old enough for their outcome to be known, 250 were won: a win rate of **7.3%**. A "model" that says *not won* for every lead is right 3,160 times out of 3,410: **92.7% accurate**, already better than the vendor's 91%. The headline number, on its own, doesn't show that the model beats doing nothing at all.
 
-**A measure that can't be gamed that way.** Meera asks for probabilities instead of yes-or-no labels, and for **log loss** on held-out leads. Then she works out Riverstone's benchmark herself: a model that predicts 20% for every lead scores 0.50 on Riverstone's 2025 leads (section 35.9). Any score worth ₹40,000 a month has to beat 0.50 clearly on *Riverstone's* leads, not the vendor's clients'.
+**A measure that can't be gamed that way.** Meera asks for probabilities instead of yes-or-no labels, and for **log loss** on held-out leads. Then she works out Riverstone's benchmark herself, as in section 35.9: a model that predicts 7.3% for every lead scores a log loss of **0.26** on Riverstone's 2025 leads. Any score worth ₹40,000 a month has to beat 0.26 clearly on *Riverstone's* leads, not the vendor's other clients'.
 
-**How much can 30 leads tell anyone?** Meera looks back at the likelihood curve for the win rate (Figure 35.4). With 30 leads, win rates from about 10% to 35% are all reasonably believable. If a whole year of leads can't pin down the win rate more tightly than that, a test on a few weeks of leads can't tell a good score from a lucky one. She notes it plainly: the evaluation needs more leads than Riverstone gets in a month.
+**How much can a small test tell anyone?** Meera looks back at the likelihood curve for the win rate (Figure 35.5). With 30 leads, win rates from about 10% to 35% are all reasonably believable. What matters in a test is the number of **wins**, not leads, and wins are rare. A three-week pilot would see about 275 leads, with only about 20 wins among them. With so few wins, the pilot's log loss would wobble from one three weeks to the next, and a lucky score would look like a good one. She notes it plainly: the pilot should run for three months, long enough for close to 90 wins.
 
 **What's inside it.** Finally, she asks the three questions every model can answer: *What are the parameters? What loss was minimized? What does it learn from?* The vendor explains it's a gradient-boosted model (Chapter 37) trained with log loss on activity data: email opens, website visits, and how quickly a rep responds. That last feature makes Meera pause. At Riverstone, reps respond fastest to leads they *already* think are promising, so a model can learn "fast response means likely win" from the reps' own judgment, and then look clever by repeating it. Chapter 36 calls this leakage.
 
 Her reply to Anita, on Thursday evening:
 
-> *"The 91% accuracy figure doesn't tell us much. At our 20% win rate, predicting 'no' for every lead is already 80% accurate, and at the vendor's clients' 8% win rate it's 92%. What matters is whether the probabilities beat a simple benchmark on our own leads. My recommendation: ask for a three-month pilot where the tool scores new leads but reps don't see the scores, so they can't influence the result. At the end, we compare its log loss with our benchmark of 0.50. If it isn't clearly better, we don't buy. I've also asked them to confirm the model doesn't use rep response time, which would make it look better than it is."*
+> *"The 91% accuracy figure doesn't tell us much. We win about 7% of our enquiries, so predicting 'no' for every lead is already about 93% accurate, better than their model. What matters is whether its probabilities beat a simple benchmark on our own leads. My recommendation: ask for a three-month pilot where the tool scores new leads but reps don't see the scores, so they can't influence the result. At the end, we compare its log loss with our benchmark of 0.26. If it isn't clearly better, we don't buy. I've also asked them to confirm the model doesn't use rep response time, which would make it look better than it is."*
 
 Anita takes the pilot proposal to the vendor. It is accepted, at no charge.
 
@@ -1081,13 +1590,13 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 
 ## Project: gradient descent and PCA from scratch
 
-**Goal:** a short notebook or script, written by you without machine learning libraries, that trains a model with gradient descent and compresses a table with PCA, and checks both against a library. It's a small, honest portfolio piece that shows you know what `.fit()` does.
+**Goal:** a short notebook or script, written by you without machine learning libraries, that trains a model with gradient descent and compresses a table with PCA, and checks both against a library. It's a small, honest portfolio piece that shows you know what `.fit()` does (section 35.10).
 
 ### Tools you'll need
 
-- **Python 3 with NumPy and pandas.** Every example ran on Python 3.12.3, NumPy 2.4.4, and pandas 3.0.2. The features used (arrays, `@`, `np.linalg.norm`, `np.linalg.eigh`, `np.polyfit`, `read_csv`) have been stable for many years, so older versions give the same results. Chapter 17 covers installation.
-- **scikit-learn** (1.8.0 here) for two cross-checks: `sklearn.metrics.log_loss` and `sklearn.decomposition.PCA`. Chapter 36 introduces it properly.
-- **Python's standard library:** `math` (`exp`, `factorial`, `comb`) and `statistics.NormalDist`. Nothing to install.
+- **Python** in the virtual environment from Chapter 17, with **NumPy**, **pandas**, and **matplotlib** (installed in Chapter 18, section 18.1) and **scipy** (Chapter 21). Every output in this chapter was checked on Python 3.11.15 with NumPy 2.4.6, pandas 3.0.6, scipy 1.17.1, and matplotlib 3.11.2. The features used (arrays, `@`, `np.linalg.norm`, `np.linalg.eigh`, `np.polyfit`, `read_csv`, `stats.binom`, `stats.poisson`, `stats.norm`) have been stable for many years, so the Python 3.14 from Chapter 17 and newer library versions give the same results.
+- **scikit-learn** (1.9.1 here), installed in section 35.9, for two cross-checks: `sklearn.metrics.log_loss` and `sklearn.decomposition.PCA`. Chapter 36 introduces it properly.
+- **Python's standard library:** `math.comb`. Nothing to install.
 - **Excel and Google Sheets** have every calculation in this chapter: `SUMPRODUCT` (dot product), `MMULT` and `TRANSPOSE` (matrices), `BINOM.DIST`, `POISSON.DIST`, and `NORM.DIST` (distributions; Google Sheets also lists them under the older names `BINOMDIST` and `NORMDIST`), `LN` and `LOG` (logs, with `LOG(x, 2)` for bits), and `COVARIANCE.S` (covariance). Doing section 35.6's three steps in a spreadsheet, one row per step, is a good way to check your hand work.
 - **Pen and paper.** The hand calculations are the point. Do them before running the code.
 - **Visual explainers.** 3Blue1Brown's free *Essence of Linear Algebra* and *Essence of Calculus* video series animate vectors, matrices, and derivatives, and pair well with this chapter.
@@ -1102,7 +1611,7 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 1. **Pick a prediction.** Choose one numeric target and one feature (Option B: predict each customer's revenue from their units bought). Write the question in one sentence.
 2. **Hand-check first.** Take four rows and do two steps of gradient descent on paper, exactly as in section 35.6.
 3. **Write the loop.** Implement gradient descent for *w* and *b* in NumPy, recording the loss at every step. Your first two steps must match your paper. ✓
-4. **Tune the learning rate.** Try at least four learning rates, plot the loss curves on one chart, and write one sentence on each.
+4. **Tune the learning rate.** Try at least four learning rates, plot the loss curves on one chart (section 35.6's plotting cell, with a log scale if one curve climbs), and write one sentence on each.
 5. **Scale and compare.** Center (or standardize) the feature and train again. Report how many steps each version needs to get within 1% of the best loss, and compare your final *w* and *b* with `np.polyfit`.
 6. **PCA by hand, then in code.** Pick 4 to 6 numeric columns. Standardize them, build the covariance matrix with `X.T @ X / (n − 1)`, and find eigenvalues and eigenvectors with `np.linalg.eigh`. Check the variance shares against scikit-learn's `PCA`.
 7. **Interpret.** Name the first two components from their weights, plot the rows on them, and write three sentences a manager could understand.
@@ -1125,7 +1634,7 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 - A **derivative** is the slope of the loss for one parameter; the **gradient** is the vector of slopes for all of them and points uphill.
 - **Gradient descent** steps each parameter against its slope, scaled by the **learning rate** (a **hyperparameter**). Too small crawls; too large diverges; unscaled features make narrow valleys and slow training.
 - **Bernoulli** and **binomial** describe yes-or-no outcomes, **Poisson** describes counts per period, and the **normal** distribution describes symmetric measurements, but not skewed amounts like order values.
-- **Likelihood** scores parameter values by how probable they make the observed data. The **maximum likelihood estimate** is the best one; work with **log-likelihood** in practice.
+- **Likelihood** scores parameter values by how probable they make the observed data. The **maximum likelihood estimate** is the best one; work with **log-likelihood** in practice, because logs turn products into sums and powers into multiples. The log of a probability is negative, and ln 0 is minus infinity.
 - **Entropy** measures uncertainty in bits; **information gain** is how much a split reduces it, the rule decision trees use.
 - **Cross-entropy**, or **log loss**, scores predicted probabilities and punishes confident mistakes. Minimizing it is maximizing likelihood, and a base-rate model's log loss is the benchmark to beat.
 - **PCA** finds the directions of greatest **variance** using the **eigenvectors** of the **covariance matrix**. **Standardize** first, and read components by their weights.
@@ -1135,7 +1644,7 @@ Notice what Meera didn't do. She didn't build a competing model or write any cod
 
 ## Key terms
 
-vector · component · dimension · feature · Euclidean distance · length (norm) · element-by-element arithmetic · scaling · dot product · cosine similarity · matrix · shape · feature matrix (X) · target (y) · parameters (weights) · slope and intercept · matrix-times-vector (`@`) · transpose · mean-centering · loss function · mean squared error (MSE) · derivative · partial derivative · gradient · gradient descent · learning rate · hyperparameter · convergence · stochastic gradient descent · Adam · probability distribution · Bernoulli distribution · binomial distribution · Poisson distribution · normal distribution · skewed data · likelihood · maximum likelihood estimate (MLE) · log-likelihood · entropy · bit · information gain · cross-entropy · log loss (binary cross-entropy) · nat · base rate · principal component analysis (PCA) · principal component · variance · covariance · covariance matrix · eigenvector · eigenvalue · standardization · loadings · explained variance
+vector · component · dimension · feature · Euclidean distance · length (norm) · scaling · dot product · cosine similarity · matrix · shape · feature matrix (X) · target (y) · parameters (weights) · weight and bias (*w* and *b*) · slope and intercept · matrix-times-vector (`@`) · matrix times matrix · shape rule · transpose · mean-centering · loss function · mean squared error (MSE) · derivative · partial derivative · gradient · gradient descent · learning rate · hyperparameter · convergence · stochastic gradient descent · Adam · probability distribution · Bernoulli distribution · binomial distribution · Poisson distribution · normal distribution · skewed data · cumulative distribution function (cdf) · likelihood · maximum likelihood estimate (MLE) · log-likelihood · logarithm · natural log (ln) · *e* · log base 2 (log₂) · power rule · scientific notation · surprise · entropy · bit · information gain · cross-entropy · log loss (binary cross-entropy) · nat · base rate · accuracy · threshold · scikit-learn · principal component analysis (PCA) · principal component · variance · covariance · covariance matrix · eigenvector · eigenvalue · standardization · z-score · loadings · `.fit()` · explained variance
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -1173,9 +1682,9 @@ Exercises marked *(hand)* need only a calculator. Code exercises use the compani
 
 5. *(hand, then code)* Continue section 35.6's gradient descent for one more step, starting from *w* = 23.279 and *b* = 2.504 with a learning rate of 0.005. Calculate the errors, the loss, both slopes, and the new *w* and *b*. Check with code.
 6. Write gradient descent for the one-weight model *predicted revenue = w × orders* (no intercept) on the four customers, starting at *w* = 0 with a learning rate of 0.005. Print *w* and the loss after 1, 2, 3, and 20 steps. Compare with the exact answer 24.29.
-7. *(hand)* Riverstone averages 3.33 orders a week. Using the Poisson distribution, what's the probability of **at least one** order in a week? A new customer places orders at an average of 1.5 a month: what's the probability they place none in a given month?
+7. *(hand)* Riverstone averages 3.327 orders a week (173 ÷ 52). Using the Poisson distribution, what's the probability of **at least one** order in a week? A new customer places orders at an average of 1.5 a month: what's the probability they place none in a given month?
 8. Of the 14 website leads, 1 was won. Calculate the log-likelihood of the website leads' outcomes at *p* = 1/14 and at *p* = 0.2. Which value is the maximum likelihood estimate for website leads, and by how much is its log-likelihood higher?
-9. Two scoring tools rate four leads, of which the first two were won. Tool A predicts [0.6, 0.4, 0.4, 0.4]; tool B predicts [0.95, 0.05, 0.05, 0.05]. Using a threshold of 0.5, what is each tool's accuracy? What is each tool's log loss? Which would you trust, and why?
+9. Two scoring tools rate four leads, of which the first two were won. Tool A predicts [0.6, 0.4, 0.4, 0.4]; tool B predicts [0.95, 0.05, 0.05, 0.05]. Count a lead as predicted *won* if its probability is 0.5 or more (0.5 is the **threshold**; Chapter 39 shows how to choose one). What is each tool's accuracy? What is each tool's log loss? Which would you trust, and why?
 10. Repeat section 35.10's standardized PCA on the customers **without** the `revenue` column (six features). What share of variance do the first component and the first two components hold now?
 
 ### Stretch
@@ -1193,8 +1702,6 @@ Exercises marked *(hand)* need only a calculator. Code exercises use the compani
 ---
 
 ## Answers
-
-*(In the finished book these move to Appendix G. Every calculation was checked, and every code output shown is real.)*
 
 **1.** Dot product = 0.386 × 0.096 + 0.614 × 0.904 = 0.037056 + 0.555056 = **0.592112**. Lengths: √(0.386² + 0.614²) = √(0.148996 + 0.376996) = √0.525992 = 0.72525; √(0.096² + 0.904²) = √(0.009216 + 0.817216) = √0.826432 = 0.90908. Cosine = 0.592112 ÷ (0.72525 × 0.90908) = 0.592112 ÷ 0.659310 = **0.898**. They're **more** similar than Sharma and Coastal (0.614): both are kitchen-heavy, though Tasty Tiffins much more so. Check:
 
@@ -1265,7 +1772,7 @@ exact: w=24.286
 
 With a single weight there's no narrow valley, so descent reaches the exact answer, 24.286, well within 20 steps. The loss at the best one-weight line (257.68) is higher than the two-parameter best (91.55): the intercept helps this model fit.
 
-**7.** P(at least one) = 1 − P(0) = 1 − e^(−3.33) = 1 − 0.0359 = **0.964**, or 96.4%. For the new customer, P(0 in a month) = e^(−1.5) = **0.223**: they'd go a whole month without ordering in about one month out of four and a half, **with no change in behavior**. A "quiet month" alert for such a customer would fire often by chance alone.
+**7.** P(at least one) = 1 − P(0) = 1 − e^(−3.327) = 1 − 0.0359 = **0.964**, or 96.4%. For the new customer, P(0 in a month) = e^(−1.5) = **0.223**: they'd go a whole month without ordering in about one month out of four and a half, **with no change in behavior**. A "quiet month" alert for such a customer would fire often by chance alone.
 
 **8.**
 
@@ -1289,7 +1796,7 @@ log-likelihood at p=0.2:  -4.5103
 difference: 0.9078
 ```
 
-The MLE for website leads is their own win rate, **1/14 = 0.071**, and its log-likelihood is about 0.91 higher. That's a likelihood ratio of e^0.91, about 2.5: the website leads' outcomes are 2.5 times as likely under 7.1% as under 20%. With only 14 leads that's suggestive, not conclusive; Chapter 22 shows how to test it.
+The MLE for website leads is their own win rate, **1/14 = 0.071**, and its log-likelihood is about 0.91 higher. That's a likelihood ratio of e^0.91, about 2.5: the website leads' outcomes are 2.5 times as likely under 7.1% as under 20%. With only 14 leads that's suggestive, not conclusive; Chapter 22's test for two proportions is how you would check it.
 
 **9.**
 
@@ -1324,13 +1831,15 @@ share of variance: [0.542 0.199 0.144 0.092 0.022 0.   ]
 PC1: 54.2%   PC1 + PC2: 74.1%
 ```
 
+`[f for f in features if f != "revenue"]` is a list comprehension that keeps every feature except `revenue`; the next two lines build and standardize the 23 × 6 matrix exactly as in section 35.10, and `pca` returns the shares (the two `_` throw away the directions and scores).
+
 Almost nothing changes: the first component holds 54.2% instead of 53.5%, and the first two hold 74.1% instead of 73.9%. Revenue is largely orders × average order value, so the other columns already carried most of what it said. When dropping a column barely changes a PCA, that column was mostly repeating the others.
 
 **11.**
 
 ```python
 for lr in [0.002, 0.004, 0.008, 0.012, 0.014, 0.016]:
-    _, _, run = descend(x, lr, 50)
+    _, _, run = descend(x, y, lr, 50)
     print(f"learning rate {lr:<5}: loss after 50 steps = {run[-1]:>14,.2f}")
 ```
 
@@ -1385,6 +1894,11 @@ group sizes: 8 referral or cold call, 22 other
 won: 4 and 2
 information gain: 0.133 bits
 ```
+
+- `entropy(p)` is the section 35.9 formula as a function; `0.0 if p in (0, 1) else ...` returns 0 for a certain outcome, where the log would fail.
+- `leads["source"].isin([...])` is `True` for referral and cold-call leads, and `~in_group` flips it.
+- `leads.groupby(in_group)` splits the leads into the two groups (`True` and `False`). For each group `g`, `len(g) / len(leads)` is its share of the leads and `entropy(g["won"].mean())` its entropy; `sum(...)` adds the weighted entropies, as in the 14/30 and 16/30 calculation.
+- `leads.loc[in_group, 'won'].sum()` counts the wins in one group.
 
 Referral and cold-call leads won 4 of 8 (50%); every other source won 2 of 22 (9.1%). The information gain is larger than the website split's 0.071 bits, so a decision tree would choose this split first. With 30 leads, though, one or two different outcomes would change the ranking; Chapter 37 shows how trees guard against splitting on noise.
 

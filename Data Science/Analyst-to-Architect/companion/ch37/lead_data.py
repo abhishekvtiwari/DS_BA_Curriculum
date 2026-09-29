@@ -5,9 +5,11 @@ Rebuilds Chapter 36's lead-scoring table in one call, so Chapter 37 can start fr
 Use:     from lead_data import load_leads, make_model, LEAD_CATS, LEAD_NUMS
          train, valid, test = load_leads()           # run from companion/ch37/
 Reads:   ../crm/leads.csv and ../crm/activities.csv (build them with ../generate_riverstone_crm.py)
-Tested:  Python 3.12.3, pandas 3.0.2, scikit-learn 1.8.0 (17 September 2026)
+Tested:  Python 3.11.15, pandas 3.0.6, scikit-learn 1.9.1 (29 September 2026)
 
-Every step is explained in Chapter 36 (sections 36.2, 36.5, 36.6, 36.8).
+Every step is explained in Chapter 36 (sections 36.2, 36.3, 36.4, 36.6).
+make_model is Chapter 36's make_model (section 36.4) with one extra, optional argument: model
+(default: LogisticRegression(max_iter=1000), as in Chapter 36).
 Riverstone Supplies is fictional; every name and number is invented.
 """
 import pathlib
@@ -21,7 +23,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 CRM = pathlib.Path(__file__).resolve().parent.parent / "crm"
 LEAD_CATS = ["source", "segment", "city_clean", "company_size", "product_interest"]
-LEAD_NUMS = ["log_quantity", "website_visits", "free_email", "text_strong", "text_weak",
+LEAD_NUMS = ["log_quantity", "website_visits", "gmail", "text_strong", "text_weak",
              "inside_desk", "activities_24h", "responded_24h"]
 CITY_FIX = {"bombay": "Mumbai", "mumbai.": "Mumbai", "bangalore": "Bengaluru", "b'lore": "Bengaluru",
             "new delhi": "Delhi", "delhi ncr": "Delhi", "poona": "Pune", "madras": "Chennai",
@@ -52,7 +54,7 @@ def load_leads():
     text = leads["enquiry_text"].str.lower()
     leads["text_strong"] = text.str.contains("bulk|tender|urgent|monthly|new outlet").astype(int)
     leads["text_weak"] = text.str.contains("price list|sample|checking rates|catalogue|price please").astype(int)
-    leads["free_email"] = leads["email_norm"].str.endswith("@gmail.com").astype(int)
+    leads["gmail"] = leads["email_norm"].str.endswith("@gmail.com").astype(int)
     leads["log_quantity"] = np.log1p(leads["est_quantity"].where(leads["est_quantity"] <= 50_000))
     leads["inside_desk"] = (leads["owner_id"] == 9).astype(int)
     leads["responded_24h"] = (leads["first_response_hours"] <= 24).astype(int)

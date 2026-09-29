@@ -350,6 +350,8 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
     # reader-facing cover; "Chapter N." is written with its full stop, as in the headings (V12.27).
     cover = dict(cover, DOC='', META='')
     cover['TITLE'] = re.sub(r'^(Chapter \d+[A-Za-z]?)(<br>)', r'\1.\2', cover['TITLE'])
+    # A hyphenated word ("End-to-End") never breaks across cover lines (V44.6).
+    cover['TITLE'] = re.sub(r'(?<![<\w])(\w+(?:-\w+)+)', r'<span style="white-space:nowrap">\1</span>', cover['TITLE'])
     c = (HERE/'cover.html').read_text()
     for k, v in cover.items(): c = c.replace('{{'+k+'}}', v)
     (D/f'{name}-cover.html').write_text(c)
@@ -559,7 +561,7 @@ JOBS['package-0-1'] = lambda: build_package(
 
 
 def chapter_files(order):
-    return [sorted(MS.glob(f'ch{n:02d}-*.md'))[0].name for n in order]
+    return [sorted(MS.glob(f'ch{n:02d}-*.md' if isinstance(n, int) else f'ch{n}-*.md'))[0].name for n in order]
 
 
 PART2_ORDER = [10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27]   # approved reading order
@@ -576,6 +578,29 @@ JOBS['package-3'] = lambda: build_package(
     'Part-3-Advanced-Analytics-and-Analytics-Engineering', 'Analyst to Architect — Part 3: Advanced Analytics & Analytics Engineering',
     dict(KICKER='Analyst to Architect · Part 3', TITLE='Advanced Analytics &amp;<br>Analytics Engineering',
          SUB='Advanced SQL and data modelling, the command line, Python as software, dbt, the computer science behind fast code, experiments, and causal inference.'))
+
+
+PART_PACKAGES = {   # Parts 4 to 8 read in chapter-number order
+    '4': ('part4-machine-learning.md', list(range(35, 45)), 'Part-4-Machine-Learning-and-Data-Science',
+          'Machine Learning &amp;<br>Data Science', 'Machine Learning & Data Science',
+          'The maths under the models, the machine-learning workflow, supervised and unsupervised learning, honest evaluation, forecasting, text, recommenders, a first look at deep learning, and a capstone.'),
+    '5': ('part5-data-engineering.md', list(range(45, 53)), 'Part-5-Data-Engineering-Integration-and-Scale',
+          'Data Engineering,<br>Integration &amp; Scale', 'Data Engineering, Integration & Scale',
+          'Ingestion, pipelines and orchestration, data quality, big data, warehouses and lakehouses, streaming, data activation, and the cloud.'),
+    '6': ('part6-production-ml-genai.md', list(range(53, 60)), 'Part-6-Production-ML-Generative-AI-and-MLOps',
+          'Production ML,<br>Generative AI &amp; MLOps', 'Production ML, Generative AI & MLOps',
+          'Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry case studies.'),
+    '7': ('part7-architecture-leadership.md', list(range(60, 68)), 'Part-7-Architecture-Governance-and-Leadership',
+          'Architecture, Governance<br>&amp; Leadership', 'Architecture, Governance & Leadership',
+          'Designing whole systems, distributed systems, data architecture patterns, automation architecture, security and responsible AI, FinOps, data strategy, and the architect as leader.'),
+    '8': ('part8-interview-playbook.md', [68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
+          'Part-8-The-Interview-Playbook', 'The Interview<br>Playbook', 'The Interview Playbook',
+          'How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews.'),
+}
+for _k, (_intro, _order, _name, _title, _plain, _sub) in PART_PACKAGES.items():
+    JOBS['package-' + _k] = (lambda intro, order, name, title, plain, sub, k: lambda: build_package(
+        [intro] + chapter_files(order), name, f'Analyst to Architect — Part {k}: {plain}',
+        dict(KICKER=f'Analyst to Architect · Part {k}', TITLE=title, SUB=sub)))(_intro, _order, _name, _title, _plain, _sub, _k)
 
 # ---------------------------------------------------------------------------
 # Generic builder.
