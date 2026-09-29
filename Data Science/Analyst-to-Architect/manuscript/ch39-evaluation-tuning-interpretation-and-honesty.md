@@ -623,7 +623,8 @@ print([name for name, step in nb.steps])
 
 **How it works:**
 
-- `GaussianNB` can't read the compressed (sparse) table that one-hot encoding produces. Chapter 37 (section 37.5) solved that with `to_dense`, a `FunctionTransformer` that converts it to an ordinary array; the same line is repeated here.
+- `GaussianNB` can't read the compressed (sparse) table that one-hot encoding produces when there are many categories, as there are here with the lead cities. (On Chapter 37's accounts the table came out as an ordinary one, so the problem didn't arise there.)
+- `FunctionTransformer(...)` turns any function into a pipeline step. The function here is a `lambda` (Chapter 18), a one-line function without a name: if the table `X` has a `toarray` method (only compressed tables do), it returns `X.toarray()`, the ordinary version; otherwise it returns `X` unchanged. The step is called `to_dense`.
 - `nb.steps` is the pipeline's list of `(name, step)` pairs. `.insert(1, ("dense", to_dense))` puts the new step at position 1, second in the list: after `prepare` (position 0) and before `model`. The printed names confirm the order.
 - `HistGradientBoostingClassifier(random_state=39)` is Chapter 37's boosting model with its default settings; the seed makes it repeatable.
 

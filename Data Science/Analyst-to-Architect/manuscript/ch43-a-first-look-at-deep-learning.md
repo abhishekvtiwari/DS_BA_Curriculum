@@ -351,7 +351,7 @@ targets:     [0. 1. 1. 0.]
 - Each pass of the loop is one training step: clear old gradients, predict, measure the loss, compute gradients, step.
 - `prediction.detach().numpy()` turns the tensor into a NumPy array (without the gradient record), so `.round(3)` and `.ravel()` work as in Chapter 18.
 
-**Reading it.** After 2,000 steps the loss has settled at 0.6931, which is *exactly* ln 2 (Chapter 35, section 35.8): the log loss of predicting 50% for every row. The single neuron learned nothing useful, because there is no straight line, and therefore no setting of its weights, that does better on these four points. For a single neuron on XOR, predicting 0.5 everywhere is the best it can possibly do. This isn't a training failure that more steps or a different learning rate would fix; it's a **structural limitation** of one neuron.
+**Reading it.** After 2,000 more steps the loss has settled at 0.6931, which is *exactly* ln 2 (Chapter 35, section 35.8): the log loss of predicting 50% for every row. The single neuron learned nothing useful, because there is no straight line, and therefore no setting of its weights, that does better on these four points. For a single neuron on XOR, predicting 0.5 everywhere is the best it can possibly do. This isn't a training failure that more steps or a different learning rate would fix; it's a **structural limitation** of one neuron.
 
 ### Adding a hidden layer
 
@@ -405,7 +405,7 @@ print(f"ReLU hidden layer, after 3000 steps: loss = {relu_loss.item():.4f}")
 ReLU hidden layer, after 3000 steps: loss = 0.3467
 ```
 
-`nn.ReLU()` is the only change. The loss stops at XX, well short of solving XOR: some of its four neurons died. With thousands of neurons and rows, a few dead ones don't matter, which is why ReLU works well in real networks; on this tiny problem, tanh is the safer choice.
+`nn.ReLU()` is the only change. The loss stops at 0.3467, well short of solving XOR: some of its four neurons died. With thousands of neurons and rows, a few dead ones don't matter, which is why ReLU works well in real networks; on this tiny problem, tanh is the safer choice.
 
 **Reading it.** With a hidden layer of just 4 tanh neurons, the network solves XOR almost perfectly (predictions of 0.001, 0.999, 0.999, 0.001 against targets of 0, 1, 1, 0). Each hidden neuron draws its own straight line, and the output layer combines them into a shape a single line never could: the diagonal band in Figure 43.1's right panel. **This is the reason depth exists**: layers with nonlinear activations between them let a network represent patterns a single layer structurally cannot, no matter how it's trained.
 
@@ -600,7 +600,7 @@ nudge, 32-bit:      -0.13500452
 - `W2_plus = W2.clone()` copies the weights, and **`W2_plus[0, 0] += epsilon`** raises the weight in row 0, column 0, the first output weight, by `epsilon` = 0.0001. `W2_minus` lowers it by the same amount.
 - `loss_plus` and `loss_minus` are the losses with each nudged weight; the slope is their difference divided by 2 × `epsilon`.
 
-The nudge gives XX against the hand calculation's XX: close, but only to three decimal places. Is `epsilon` too big? No. The losses here are 32-bit numbers, with about 7 significant digits (section 43.0), and the two losses differ only in their fifth decimal place; dividing that tiny difference by 0.0002 magnifies the rounding in the last digits. (Shrinking `epsilon` would make it *worse*: an even smaller difference, magnified more.) Redo it in 64-bit numbers:
+The nudge gives −0.13500 against the hand calculation's −0.13520: close, but only to three decimal places. Is `epsilon` too big? No. The losses here are 32-bit numbers, with about 7 significant digits (section 43.0), and the two losses differ only in their fifth decimal place; dividing that tiny difference by 0.0002 magnifies the rounding in the last digits. (Shrinking `epsilon` would make it *worse*: an even smaller difference, magnified more.) Redo it in 64-bit numbers:
 
 ```python
 print(f"nudge, 64-bit:      {nudge_slope(W1.double(), b1.double(), W2.double(), b2.double(), x_tiny.double(), target_tiny.double()):.8f}")
@@ -687,7 +687,7 @@ print(f"{X_train.shape[0]:,} training accounts, {X_train.shape[1]} features")
 - `prepare.fit_transform` learns the medians, means and categories from the training rows only and transforms them; `prepare.transform` applies what it learned to the validation rows (Chapter 36, section 36.9).
 - **`.astype("float32")`** is new: PyTorch works in 32-bit numbers (section 43.0), and scikit-learn gives 64-bit ones.
 - **`.to_numpy()`** is new too: it turns a pandas Series into a plain NumPy array, which `torch.tensor` can read.
-- 25 features: 14 one-hot columns for the four categories, the 11 numbers, and 1 "was blank" flag for `late_payment_days` (Chapter 37).
+- 25 features: 13 one-hot columns for the four categories, the 11 numbers, and 1 "was blank" flag for `late_payment_days` (Chapter 37).
 
 ### From arrays to tensors
 
@@ -804,7 +804,7 @@ after 200 epochs: validation AUC 0.773
 - **`with torch.no_grad():`** means "don't keep a gradient record for what happens inside": we're only scoring the validation rows, not training on them, so there's nothing to backpropagate. Without the record, PyTorch can also hand the result straight to NumPy with `.numpy()`.
 - `torch.sigmoid(network(Xva_t))` turns the validation logits into churn probabilities, and `roc_auc_score` is Chapter 36's AUC.
 
-**Reading it.** Training loss falls steadily and validation AUC climbs from a coin toss (XX) to XX: Chapter 35's gradient descent, now adjusting 561 parameters across three layers instead of one.
+**Reading it.** Training loss falls steadily and validation AUC climbs from a coin toss (0.542) to 0.773: Chapter 35's gradient descent, now adjusting 561 parameters across three layers instead of one.
 
 ### The honest comparison
 
@@ -842,7 +842,7 @@ gradient boosting        0.786   0.2744     (300 trees)
 - Both models are Chapter 37's, with its settings; boosting's are the four in `hgb_settings`. They take the same prepared arrays as the network. (Boosting doesn't need the scaling, but it doesn't mind it: trees only compare values within one column.)
 - The loop goes through three (name, predictions, size) triples and prints one row each.
 
-**Reading it, plainly.** The small network (XX) and logistic regression (XX) are **effectively tied**: Chapter 37 (section 37.8) showed that with 1,000 validation accounts and 97 churners, differences of about 0.01 are noise. Tuned gradient boosting (XX) is ahead of both, and Chapter 37's cross-validation (section 37.10) showed that boosting's lead over logistic regression on this data is real. So the network matches the simple model at twenty times the parameters, with more code, more settings, and more training time, and trails boosting. **On clean, modest-sized tabular data, deep learning has no automatic advantage** over the methods of earlier chapters; tuned gradient boosting remains the strongest default for tables of numbers.
+**Reading it, plainly.** The small network (0.773) and logistic regression (0.764) are **effectively tied**: Chapter 37 (section 37.8) showed that with 1,000 validation accounts and 97 churners, differences of about 0.01 are noise. Tuned gradient boosting (0.786) is ahead of both, and Chapter 37's cross-validation (section 37.10) showed that boosting's lead over logistic regression on this data is real. So the network matches the simple model at twenty times the parameters, with more code, more settings, and more training time, and trails boosting. **On clean, modest-sized tabular data, deep learning has no automatic advantage** over the methods of earlier chapters; tuned gradient boosting remains the strongest default for tables of numbers.
 
 ### The test set, once
 
@@ -870,7 +870,7 @@ gradient boosting        test AUC 0.821   log loss 0.2437
 - `prepare.transform` prepares the 1,000 test accounts with what it learned from the training rows, exactly as for validation.
 - Each model is scored once; nothing is changed after seeing these numbers.
 
-**Reading it.** XX These are single scores on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts; the order is what matters. Where deep learning's advantage becomes overwhelming is where the simpler methods have no good equivalent at all: raw images, audio, and text at scale. That's where the next two sections go.
+**Reading it.** On the test set the network (0.818) lands between logistic regression (0.797) and boosting (0.821), and much closer to boosting than on validation. That's the noise Chapter 37 warned about: on 1,000 accounts, a gap of 0.003 is a tie, and even 0.02 is only suggestive. Put the two scorings together and the honest summary is that the network is in the same range as the other two and **never clearly ahead of boosting**, for far more code, settings and training time. These are single scores on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts. on 1,000 accounts, trained on 3,000 rows, so they aren't the same as Chapter 37's section 37.11 test scores, which used models refitted on all 4,000 non-test accounts; the order is what matters. Where deep learning's advantage becomes overwhelming is where the simpler methods have no good equivalent at all: raw images, audio, and text at scale. That's where the next two sections go.
 
 ---
 
@@ -956,7 +956,7 @@ print(np.round(feature_map, 1))
 - An 8 × 8 image has 6 × 6 positions where a 3 × 3 kernel fits entirely inside it, so `np.zeros((6, 6))` makes a 6 × 6 grid of zeros to fill in.
 - The two loops visit every position; `images[0][row : row + 3, col : col + 3]` is the 3 × 3 patch whose top-left corner is at (`row`, `col`).
 
-**Reading it.** The grid a convolution produces is called a **feature map**: it shows where in the image the kernel's pattern appears. The largest positive values are along the **bottom** of the "0", where ink increases going down into the lower stroke; the most negative, XX, are just **under the top stroke**, where ink ends going down; near the flat middle and edges, the values are close to 0. Figure 43.3 shows the image, the kernel, and the feature map side by side. (Strictly, this sliding weighted sum is called *cross-correlation*; PyTorch's convolution layers compute exactly this, and everyone calls it convolution.)
+**Reading it.** The grid a convolution produces is called a **feature map**: it shows where in the image the kernel's pattern appears. The largest positive values are along the **bottom** of the "0", where ink increases going down into the lower stroke; the most negative, −2.0, are just **under the top stroke**, where ink ends going down; near the flat middle and edges, the values are close to 0. Figure 43.3 shows the image, the kernel, and the feature map side by side. (Strictly, this sliding weighted sum is called *cross-correlation*; PyTorch's convolution layers compute exactly this, and everyone calls it convolution.)
 
 ![Three grids side by side: the 8 by 8 image of the digit 0 shaded by ink; the 3 by 3 kernel with -1 in the top row, 0 in the middle row and +1 in the bottom row; and the 6 by 6 feature map, with the largest positive values along the bottom of the 0, marked with plus signs, and the most negative just under the top stroke, marked with minus signs](figures/fig43-3-convolution.svg)
 
@@ -1127,9 +1127,9 @@ after 60 epochs: training loss 0.0019   test accuracy 98.7%
 - `base_model(Xb_test_t).argmax(1)` predicts a digit for every test image.
 - `predicted == yb_test_t` gives True or False per image; **`.float()`** turns those into 1.0 and 0.0, and `.mean()` of them is the share correct, the **accuracy**.
 
-**Reading it.** With 675 training images and a network of only 3,493 parameters, tiny by deep-learning standards, the model classifies XX of the 226 held-out images of the digits 0–4 correctly. Two rounds of convolution and pooling turn each 8 × 8 grid into a compact set of features that a small final layer can classify.
+**Reading it.** With 675 training images and a network of only 3,493 parameters, tiny by deep-learning standards, the model classifies 98.7% of the 226 held-out images of the digits 0–4 correctly. Two rounds of convolution and pooling turn each 8 × 8 grid into a compact set of features that a small final layer can classify.
 
-> **Learned features are learned representations.** For each image, `base_model.features(...)` produces 32 numbers: the network's own description of that image, learned by gradient descent. It's the image version of Chapter 41's word embeddings (section 41.7), where each word became a vector learned from text. Nobody told the network what the 32 numbers should mean, yet images of the same digit end up with similar vectors. Section 43.7 works by reusing exactly these 32-number descriptions on a new task.
+> **Learned features are learned representations.** For each image, `base_model.features(...)` produces 32 numbers: the network's own description of that image, learned by gradient descent. It's the image version of Chapter 41's word embeddings (section 41.7), where each word became a vector learned from text. Nobody told the network what the 32 numbers should mean, yet images of the same digit end up with more similar vectors than images of different digits. Section 43.7 works by reusing exactly these 32-number descriptions on a new task.
 
 ---
 ## 43.7 Transfer learning
@@ -1223,7 +1223,7 @@ transfer, 10 per class: test accuracy 92.0%
 
 ### Transfer against training from scratch
 
-Is XX good? Only a comparison can say. Wrap the steps above into a function, and write a second one that trains a fresh `SmallCNN` from scratch on the **same** images. Each takes the training images and a seed, so both methods see identical data:
+Is 92.0% good? Only a comparison can say. Wrap the steps above into a function, and write a second one that trains a fresh `SmallCNN` from scratch on the **same** images. Each takes the training images and a seed, so both methods see identical data:
 
 ```python
 def train_transfer(Xs, ys, seed, epochs=80):
@@ -1303,7 +1303,7 @@ examples/class     transfer: mean (range)     scratch: mean (range)
 - For each size `n`, the inner loop draws five samples (`seed` 0 to 4) and trains both methods on each; `sweep[n]` keeps the ten scores for later.
 - `np.array(...)` turns each list of five scores into an array, so `.mean()`, `.min()` and `.max()` work.
 
-**Reading it, honestly.** XX
+**Reading it, honestly.** Training from scratch comes out ahead **at every size**, by 2 to 3 points on average, and transfer learning from this base never wins on average. The ranges overlap at the small sizes (at 3 per class, transfer runs from 75% to 84% and scratch from 78% to 92%), so single runs can point either way: one draw of each could easily have made transfer look better at some size. That's why each cell is five runs on shared samples. Both methods improve steadily with more examples, from about 81–84% at 3 per class to 94–96% at 30.
 
 **Why doesn't transfer learning dominate here, the way its reputation suggests?** Because the *base* task, recognizing digits 0–4 from only 675 small images, is itself small and narrow. Transfer learning's dramatic real-world wins come from base models trained on **enormous, general** datasets: a network trained on millions of varied photographs learns edge and texture detectors far richer than anything 675 tiny digit images can teach, and *that* richness is what transfers to a new, small task. **The lesson isn't "transfer learning doesn't work"; it's "transfer learning is only as good as what the base model actually learned,"** and that has to be checked, not assumed, like every other technique in this book.
 
@@ -1347,9 +1347,9 @@ The pattern across this book has been consistent: try the simplest thing that co
 
 In October 2026, Vikram comes back from a retail-technology conference where a speaker presented a "deep learning churn model" with 91% accuracy. His question for Meera: should Riverstone's churn model be upgraded to deep learning?
 
-Meera doesn't need a new project to answer. This chapter's comparison already ran on Riverstone's own accounts, scored once on the test set: the small neural network reached a test AUC of XX, logistic regression XX, and tuned gradient boosting XX. And the conference number needs one more fact before it means anything: Riverstone's churn rate is 9.7%, so predicting "no churn" for everyone is already 90.3% accurate. A 91% headline says almost nothing on a problem this imbalanced, as Chapter 39 established.
+Meera doesn't need a new project to answer. This chapter's comparison already ran on Riverstone's own accounts, scored once on the test set: the small neural network reached a test AUC of 0.818, logistic regression 0.797, and tuned gradient boosting 0.821. And the conference number needs one more fact before it means anything: Riverstone's churn rate is 9.7%, so predicting "no churn" for everyone is already 90.3% accurate. A 91% headline says almost nothing on a problem this imbalanced, as Chapter 39 established.
 
-Her note to Vikram is short: *"On our own accounts, a neural network scores about the same as the logistic regression we already understand and below the boosting model; it would cost more to build, retrain, and explain to the sales team. So no upgrade for churn. The 91% from the talk isn't evidence either way: on our 9.7% churn rate, saying 'no churn' for everyone scores 90.3%. If we ever take on an image or text problem, such as sorting photos of damaged products, that's where deep learning would be the right tool to test first."*
+Her note to Vikram is short: *"On our own accounts, a neural network scores in the same range as the models we already have, and no better than the boosting model; it would cost more to build, retrain, and explain to the sales team. So no upgrade for churn. The 91% from the talk isn't evidence either way: on our 9.7% churn rate, saying 'no churn' for everyone scores 90.3%. If we ever take on an image or text problem, such as sorting photos of damaged products, that's where deep learning would be the right tool to test first."*
 
 The point isn't that deep learning is overhyped; this chapter's own numbers show it does real, useful things, on the right problems. The point is that "deep learning" is a *method*, not a *result*, and every method in this book, however sophisticated, still has to clear the same bar: beat the baseline, on your own data, measured honestly.
 
@@ -1364,7 +1364,7 @@ The point isn't that deep learning is overhyped; this chapter's own numbers show
 - **PyTorch** 2.14.0 (installed in section 43.0; the CPU-only build is all this chapter needs): tensors, `nn.Linear`, `nn.Conv2d`, `nn.MaxPool2d`, `nn.ReLU`, `nn.Tanh`, `nn.Sigmoid`, `nn.Sequential`, `nn.Module`, `nn.BCELoss`, `nn.BCEWithLogitsLoss`, `nn.CrossEntropyLoss`, `torch.optim.SGD`, `torch.optim.Adam`, and `.backward()` for automatic gradients.
 - **scikit-learn** 1.9.1 (installed in Chapter 35): `load_digits` (a small image dataset built into the library, no download needed), plus the same splitting, preparation, models and metrics used throughout Part 4.
 - Not used here but worth knowing: **torchvision** (pretrained image models; downloading their weights needs an internet connection), **Keras/TensorFlow** (an alternative to PyTorch with a similar feature set), and **TensorBoard** or **Weights & Biases** (tracking training runs, essential once experiments multiply).
-- The outputs in this chapter were produced on one CPU core with Python 3.11, PyTorch 2.14.0, scikit-learn 1.9.1, NumPy 2.4.6 and pandas 3.0.6, on 29 September 2026. The whole chapter, exercises included, runs in about XX.
+- The outputs in this chapter were produced on one CPU core with Python 3.11, PyTorch 2.14.0, scikit-learn 1.9.1, NumPy 2.4.6 and pandas 3.0.6, on 29 September 2026. The whole chapter, exercises included, runs in under a minute. On a computer that lets PyTorch use several CPU cores, the last digit of a few long training runs can come out slightly different, because the cores add numbers up in a different order.
 - **Companion files:** this chapter needs no new dataset. `companion/accounts/accounts.csv` is built by `companion/generate_riverstone_accounts.py` (Chapter 37), and the digits come with scikit-learn. Run the chapter's code from `companion/ch43/`.
 
 **Steps:**
@@ -1393,7 +1393,7 @@ The point isn't that deep learning is overhyped; this chapter's own numbers show
 - **ReLU** avoids the **vanishing gradient** of sigmoid in hidden layers: its slope is 1 for positive inputs, where the sigmoid's is at most 0.25.
 - A single neuron can only draw a straight decision boundary; problems like **XOR** need at least one **hidden layer** with a nonlinear activation.
 - **Backpropagation** computes the gradient of every parameter with the **chain rule**, working backwards from the loss and reusing each step; PyTorch's **autograd** does it with `.backward()`, and you can check it by hand and with a nudge (in 64-bit numbers).
-- On Riverstone's tabular churn data, a small neural network roughly ties logistic regression and trails tuned gradient boosting, on validation and on the test set: deep learning has no automatic advantage on clean tabular data.
+- On Riverstone's tabular churn data, a small neural network lands in the same range as logistic regression and tuned gradient boosting, and never clearly ahead of boosting: deep learning has no automatic advantage on clean tabular data.
 - A **convolution** slides a kernel across an image to produce a **feature map**; **pooling** shrinks it; a CNN learns its kernels, and uses **softmax** and **cross-entropy** for several classes.
 - **Transfer learning** reuses a base model's learned features on a new task; its benefit depends on how rich and general the base model's training data was, so compare it with training from scratch, on the same data, over several runs.
 - Every deep learning claim should clear the same bar as any other method: beat an honest baseline, measured with the tools from Chapters 36, 37, and 39.
@@ -1522,7 +1522,7 @@ for hidden_size in [2, 1]:
 1 hidden neuron(s): loss 0.4799   predictions [0.668 0.665 0.665 0.004]
 ```
 
-XX
+With **2** hidden neurons, the network still solves XOR essentially perfectly (loss 0.0022, predictions [0.002, 0.997, 0.997, 0.001]). With only **1** hidden neuron, it fails (loss 0.4799, predictions of 0.665–0.668 for three of the four points): one hidden neuron is itself a single straight-line boundary feeding the output, so it inherits section 43.2's limitation. **Two is the smallest hidden layer that solves XOR**, matching the picture in Figure 43.1: you need two lines to cut out the diagonal band.
 
 **7.**
 
@@ -1555,7 +1555,7 @@ print(
 3 hidden layers: AUC 0.770   (2 hidden layers, chapter version: 0.773)
 ```
 
-XX
+No better: validation AUC 0.770 against the two-layer version's 0.773, a difference well inside the noise of 1,000 validation accounts. With 3,000 training rows and 25 features, the extra layer adds flexibility the data doesn't reward. That's Chapter 37's bias–variance lesson (section 37.10): past a certain point more flexibility adds variance without removing bias, and the way to find that point is to test it, not to assume "deeper is better."
 
 **8.**
 
@@ -1596,7 +1596,7 @@ after epoch 450: training loss 0.1507   validation AUC 0.734
 after epoch 500: training loss 0.1408   validation AUC 0.730
 ```
 
-XX
+Of the checkpoints printed, validation AUC is best after epoch 200 (0.773), then **declines** to 0.730 by epoch 500, while the training loss keeps falling the whole time (0.2466 → 0.1408). Training loss still improving while validation gets worse is the signature of **overfitting**: the network is increasingly memorizing quirks of the 3,000 training rows. In practice this is handled with **early stopping**: check the validation score as you train, and stop (keeping the best weights) once it stops improving, instead of fixing the number of epochs in advance. The true peak could be a few epochs either side of 200; checking more often would find it.
 
 **9.**
 
@@ -1624,7 +1624,7 @@ print(
 200 training images: test accuracy 96.9%   (675 training images, chapter version: 98.7%)
 ```
 
-XX
+Test accuracy falls only modestly, from 98.7% with 675 images to 96.9% with 200. This is an easy task (small, clean, centred 8 × 8 digits, only 5 classes), so even a large cut in training data costs little. On harder image problems (more classes, more variation, more noise), a comparable cut usually costs far more, which is why transfer learning and data augmentation matter more in practice than this toy comparison suggests.
 
 **10.**
 
@@ -1647,7 +1647,7 @@ for n in [1, 50]:
             50       95.4% (95%-96%)      97.5% (96%-99%)
 ```
 
-XX
+The same picture continues at both ends: from scratch is ahead at **1** per class (65.1% against 58.8%) and at **50** (97.5% against 95.4%). With one example per digit, both methods are nearly guessing from one exemplar each, and the ranges are wide (50% to 73% across the ten runs), so single runs there could say anything. Across the whole sweep, from 1 to 50 per class, features frozen from this small, narrow base never beat training from scratch on average: the base model simply didn't learn enough to be worth reusing.
 
 **11.**
 
@@ -1686,7 +1686,7 @@ n=30, mean of 5 seeds:  conv2 fine-tuned 96.2%
 - `train_transfer_partial(*small_training_set(30, seed), seed)`: the `*` unpacks the two tensors that `small_training_set` returns into the first two arguments, as `**` unpacked a dictionary in Chapter 37 (section 37.8).
 - `sweep[30]` holds section 43.7's scores for the same five samples.
 
-XX
+Fine-tuning `conv2` along with the head (96.2% on average) closes the whole gap between fully frozen features (94.2%) and training from scratch (96.2%) at 30 per class. Letting the later convolution adapt to the new digits, while the first layer's simple edge detectors stay fixed, is standard practice in real transfer learning: freeze the early layers, fine-tune the later ones, and treat how many to unfreeze as a setting to test, not a fixed rule. Here it only draws level with training from scratch, because the base model had little extra to offer.
 
 **12.**
 
@@ -1769,7 +1769,7 @@ for name, runs in results_8_9.items():
   transfer from 0-7 base   93.9%  (93%-94%)
 ```
 
-XX
+No clear help. With the same five samples of 10 images per class and the same 89 test images, the transfer from the richer 0–7 base (93.9% on average) is a hair above the transfer from the 0–4 base (93.5%), and both are below training from scratch (95.3%). With 89 test images, one image is about 1.1 percentage points, so these three are within a few images of each other. An 8-class base of 1,082 small digits is still a small, narrow base; the rich bases that make transfer learning shine have millions of varied images. The exercise's real lesson is the method: to answer "does a richer base help?" you need the baseline and the other base on the same samples and test set, or the numbers can't be compared.
 
 **13.**
 
@@ -1808,9 +1808,9 @@ manual gradient descent: w=3.102   b=6.382
 scikit-learn LinearRegression: w=3.027   b=6.885
 ```
 
-The loop you wrote (w = XX, b = XX) lands close to the true values (w = 3, b = 7) and to scikit-learn's least-squares fit (w = XX, b = XX), but not exactly on the fit, because 500 gradient-descent steps (Chapter 35) haven't fully reached the minimum that `LinearRegression`'s exact formula (Chapter 37, section 37.1) finds directly; more steps close the gap. The update happens inside `torch.no_grad()` because changing a weight is not part of the model's calculation, so PyTorch mustn't record it. And `.grad.zero_()` matters exactly as `optimizer.zero_grad()` did throughout the chapter: without it, each step's gradients would be added to the previous ones. What the exercise confirms: a "neural network" with no hidden layer and no activation function is just linear regression, trained by gradient descent instead of solved by formula.
+The loop you wrote (w = 3.102, b = 6.382) lands close to the true values (w = 3, b = 7) and to scikit-learn's least-squares fit (w = 3.027, b = 6.885), but not exactly on the fit, because 500 gradient-descent steps (Chapter 35) haven't fully reached the minimum that `LinearRegression`'s exact formula (Chapter 37, section 37.1) finds directly; with 2,000 steps the loop matches the fit to three decimals. The update happens inside `torch.no_grad()` because changing a weight is not part of the model's calculation, so PyTorch mustn't record it. And `.grad.zero_()` matters exactly as `optimizer.zero_grad()` did throughout the chapter: without it, each step's gradients would be added to the previous ones. What the exercise confirms: a "neural network" with no hidden layer and no activation function is just linear regression, trained by gradient descent instead of solved by formula.
 
-**14.** "This chapter's own numbers say otherwise on tabular data: on our churn accounts, a small neural network roughly tied plain logistic regression and trailed tuned gradient boosting, on validation and on the test set, while needing far more code and tuning than either. 'State of the art' is true for images, text, and audio at scale; it isn't automatically true for a table of account features, and the only way to know which situation you're in is to test it, the same way we test everything else."
+**14.** "This chapter's own numbers say otherwise on tabular data: on our churn accounts, a small neural network scored in the same range as plain logistic regression and tuned gradient boosting, and never clearly beat boosting, while needing far more code and tuning than either. 'State of the art' is true for images, text, and audio at scale; it isn't automatically true for a table of account features, and the only way to know which situation you're in is to test it, the same way we test everything else."
 
 **15.** "Imagine sorting four boxes into two piles using only one straight cut of a knife: some arrangements can't be separated that way, wherever you cut. A single artificial 'neuron' can only make one such straight cut. Adding a hidden layer is like being allowed to make two cuts and then combine the results, which handles arrangements no single cut ever could."
 
