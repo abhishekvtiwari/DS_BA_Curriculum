@@ -1135,7 +1135,8 @@ print(f"test accuracy: {base_accuracy:.1%}")
 ```
 
 ```
-after 60 epochs: training loss 0.0019   test accuracy 98.7%
+after 60 epochs: training loss 0.0019
+test accuracy: 98.7%
 ```
 
 - The loop is the same five-line training step, now with `CrossEntropyLoss` and the labels as class numbers.
@@ -1180,11 +1181,14 @@ print("images per digit:", [ys.tolist().count(d) for d in range(5)])
 ```
 
 ```
-FILL
+new task: 672 training images, 224 test images
+one small training set: 50 images
+images per digit: [10, 10, 10, 10, 10]
 ```
 
 - `labels[new_mask] - 5` relabels 5, 6, 7, 8, 9 as 0 to 4.
 - `small_training_set(n_per_class, seed)` picks `n_per_class` random training images of each digit. **`np.random.default_rng(seed)`** makes NumPy's random generator with a fixed seed, so the same seed always picks the same images. `np.where(yn_train == digit_class)[0]` lists the positions of that digit's images, and `rng.choice(candidates, n_per_class, replace=False)` picks `n_per_class` of them, none twice.
+- `ys.tolist().count(d)` counts how many of the chosen labels equal `d`, for each digit 0 to 4: ten of each.
 - The test set, 224 images, is the same for every experiment below.
 
 ### One transfer run, step by step

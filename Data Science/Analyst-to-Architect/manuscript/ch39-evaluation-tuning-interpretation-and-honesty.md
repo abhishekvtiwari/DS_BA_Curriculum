@@ -1963,7 +1963,7 @@ Per lead, the test profit is higher than validation's, because the test period's
 
 - **Chapter 40, Time Series & Forecasting,** measures forecast accuracy with MAPE and WAPE, and backtests over time instead of a single split.
 - **Chapter 42, Recommender Systems & Ranking,** uses hit rate@k, precision@k, NDCG and MRR, the ranking cousins of the top-N table.
-- **Chapter 44, Capstone,** ends with a model card and a presentation to non-technical leaders.
+- **Chapter 44, Capstone,** ends with a one-page summary for non-technical leaders.
 - **Chapter 56, MLOps: Making Models Survive Production,** turns the monitoring row of the model card into dashboards and retraining rules.
 - **Chapter 30, Experiments,** is how threshold changes, fairness fixes, and win-back campaigns are proved to work.
 - **Chapter 31, Causal Inference,** is the answer when someone reads a SHAP plot as a cause.
