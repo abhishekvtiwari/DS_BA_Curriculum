@@ -1,7 +1,6 @@
-metric,value_inr,value_usd
-Total platform cost / month,38014.0,436.94
-"Cost per 1,000 order lines processed",2182.58,25.087
-Cost per Daily Flash send,73.1,
-Cost per defect-model prediction,1.6513,
-Cost per PO-intake email processed,0.62,
-Cost per RAG assistant question answered,0.202,
+metric,value_inr
+"per 1,000 order lines",5210.376
+per Daily Flash send,0.994
+per defect prediction,2.627
+per PO-intake email,0.078
+per RAG question,0.134

@@ -4,15 +4,15 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** compare Lambda, Kappa, and a real hybrid approach on one concrete scenario, and explain the trade-off each makes · recognize the medallion architecture (bronze, silver, gold) as a name for a layering this book has already used since Chapter 45 · distinguish the centralized, data mesh, and data fabric organizational patterns, and know what each demands of a company · run an honest data mesh maturity check on a real organization, including the uncomfortable answer of "not yet" · describe what makes something a genuine data product rather than just a table with a name · explain how data contracts and a semantic layer are what make decentralized ownership survivable · apply Conway's Law as a design tool, not just an observation · match an architecture pattern to an organization's actual size and maturity, not to whichever pattern is fashionable this year.
+> **You will learn to:** compare Lambda and Kappa on one concrete scenario (the plant-sensor stream Chapter 50 built), explain the trade-off each makes, and tell stream processing apart from a model answering requests · recognize the medallion architecture (bronze, silver, gold) as a name for a layering this book has already used since Chapter 45 · distinguish the centralized, data mesh, and data fabric organizational patterns, and know what each demands of a company · run an honest data mesh maturity check on a real organization, including the uncomfortable answer of "not yet" · describe what makes something a genuine data product rather than just a table with a name · explain how data contracts and a semantic layer are what make decentralized ownership survivable · apply Conway's Law as a design tool, not just an observation · match an architecture pattern to an organization's actual size and maturity, not to whichever pattern is fashionable this year.
 >
-> **Before you start:** Chapter 60's container diagram and Chapter 61's failure analysis are both referenced directly — you don't need to reread them, but recognizing "the warehouse," "the semantic layer," and "the four-person data platform team" will help. Chapter 45 (raw/staging/modelled), Chapter 47 (data contracts), and Chapter 23 (the semantic layer) are each revisited in one line before being renamed with this chapter's vocabulary.
+> **Before you start:** Chapter 60's container diagram is referenced directly — you don't need to reread it, but recognizing "the warehouse," "the semantic layer," and "the four-person data platform team" will help. Chapter 50 (the plant-sensor stream and its daily correction job), Chapter 45 (raw/staging/modeled), Chapter 47 (data contracts), Chapter 32 (the semantic layer, section 32.13), and Chapter 23 (metric definitions such as "active customer", section 23.13) are each revisited in one line before being renamed with this chapter's vocabulary.
 >
-> **Time needed:** 10–12 hours, spread over a week.
+> **Time needed:** 10–12 hours, spread over a week. Plan three sittings: sections 62.1–62.3 (about 1.5 hours); sections 62.4–62.8 (about 1.5 hours); then the exercises (about 3 hours) and the project (4–6 hours).
 >
 > **Tools:** nothing new — this chapter names and compares patterns already built earlier in the book.
 >
-> **Practice data:** `companion/ch62/`: the full worked Lambda-vs-Kappa-vs-hybrid comparison, a blank data mesh maturity scorecard, and the filled-in scorecard for Riverstone.
+> **Practice data:** `companion/ch62/`: the full worked Lambda-versus-Kappa comparison, a blank data mesh maturity scorecard, and the filled-in scorecard for Riverstone.
 
 ---
 
@@ -30,7 +30,7 @@ The failure mode this chapter guards against is choosing a pattern because it's 
 
 Think about how a city decides where its water comes from and who's allowed to build a new tap.
 
-A small town might have one water department that handles everything — the reservoir, the pipes, every new connection request — and that's completely sensible at that size. A sprawling metropolis with dozens of districts, each wanting new development at its own pace, usually can't run that way: one central department becomes the bottleneck every district is waiting behind, and the answer is often to let each district manage its own local network, on a shared set of city-wide standards (water pressure, pipe materials, safety codes) enforced centrally.
+A small town might have one water department that handles everything — the reservoir, the pipes, every new connection request — and that's completely sensible at that size. A sprawling metropolis with dozens of districts, each wanting new development at its own pace, usually can't run that way, because one central department becomes the bottleneck every district is waiting behind, and the answer is often to let each district manage its own local network, on a shared set of city-wide standards (water pressure, pipe materials, safety codes) enforced centrally.
 
 Neither approach is "better" in general. A small town that adopts the big-city, every-district-for-itself model is creating coordination problems it doesn't have yet, for a scale it hasn't reached. A sprawling metropolis still running everything through one central office is the town everyone complains has "impossible" wait times for anything.
 
@@ -44,49 +44,69 @@ Chapter 60 zoomed in on one system — the Riverstone Analytics & AI Platform �
 
 This is a distinctly different question from anything Chapters 45 through 61 asked. Those chapters were about building one thing well and making it survive failure. This one is about the shape of the *whole company's* data capability — a decision horizon measured in years, not sprints, because switching organizing patterns wholesale is itself one of the most disruptive things a data organization can do.
 
-Two axes organize the rest of this chapter, and they're independent of each other: **how data gets processed** (Lambda, Kappa, and the layering within either — sections 62.2 through 62.4), and **who owns it** (centralized, data mesh, data fabric — sections 62.4 through 62.6, with section 62.5 on the contracts and shared definitions that make it work). A company can be centralized and medallion-layered, or mesh-organized with each domain running its own Kappa pipeline. The two choices don't imply each other, and conflating them is a common source of confused architecture conversations.
+Two axes organize the rest of this chapter, and they're independent of each other: **how data gets processed** (Lambda, Kappa, and the layering within either — sections 62.2 and 62.3), and **who owns it** (centralized, data mesh, data fabric — sections 62.4 to 62.8, with section 62.5 on the contracts and shared definitions that make it work). A company can be centralized and medallion-layered, or mesh-organized with each domain running its own Kappa pipeline. The two choices don't imply each other, and conflating them is a common source of confused architecture conversations.
 
 ---
 
 ## 62.2 Lambda and Kappa, on one real scenario
 
-Rather than define these abstractly, here's one concrete requirement, solved three ways: **Taloja's plant sensors need to power both an instant line alert and a historical warehouse table**, exactly the scenario Chapter 60's data-flow trace (section 60.5.2) touched on without naming its pattern.
+Rather than define these abstractly, take one requirement this book has already solved: **the plant's machine sensors must raise an alert on the line within minutes, and still produce correct daily totals.** That is the plant-sensor case Chapter 50 built in section 50.8, with three paths:
 
-![Three architecture diagrams for the same sensor scenario: Lambda with separate batch and speed layers merged afterward, Kappa with one stream serving two consumers, and what Riverstone actually built — edge inference plus an asynchronous batch log](figures/fig62-1-lambda-kappa-riverstone.svg)
+- **The alerting path (seconds):** a consumer group reads the `sensor-readings` topic and raises an alert when a machine's 2-minute average passes its limit.
+- **The aggregation path (minutes):** a Spark Structured Streaming job writes 5-minute windows into a Delta table.
+- **The correction path (daily):** a batch job re-reads the day from the archive and rewrites yesterday's windows, so readings that arrived late, or were dropped, are counted after all. Chapter 50's summary: "Streaming for speed, batch for truth."
 
-*Figure 62.1 — Same requirement, three shapes. Riverstone's real system is neither textbook pattern, and section 62.3 shows why the choice was made for the reasons it was.*
+The same plant sensors appear in Chapter 60's context diagram, among the systems around the platform.
 
-**Lambda architecture** runs two parallel paths for the same logic: a **batch layer** that periodically reprocesses everything, thoroughly and correctly, and a separate **speed layer** that handles just-arrived data fast, with a merge step reconciling the two views. It was, for years, the default answer to "I need both fast and correct" — and it earns that reputation fairly: the batch layer's slow, careful reprocessing catches anything the speed layer's fast, approximate pass got wrong. Its cost is equally honest: **the same business logic has to be implemented and maintained twice**, in two different systems, and keeping them in agreement is real, ongoing work.
+![Two diagrams for the same sensor need. Left, Lambda as Chapter 50 built it: the sensor topic feeds a speed layer (an alert consumer and a streaming job writing 5-minute windows) and a daily batch layer that rewrites yesterday's windows into a corrected table, and a serving layer, the dashboard query, reads the corrected table for past days and the streaming table for today. Right, Kappa: a topic kept for months feeds one streaming job that raises alerts and writes one table; to correct history, the job's offsets are reset and the same code replays the topic](figures/fig62-1-lambda-kappa-riverstone.svg)
 
-**Kappa architecture** removes the duplication by treating *everything* as a stream, including historical reprocessing — replay the stream from the beginning through the same processing logic instead of maintaining a separate batch path. One code path, one set of bugs to fix, one thing to operate. Its cost: it needs genuine streaming infrastructure (Chapter 50's territory) capable of retaining and replaying history, which is more operationally demanding to run well than a scheduled batch job.
+*Figure 62.1 — The same need, drawn two ways. Riverstone runs the left-hand shape; the rest of this section shows why.*
 
-**What Riverstone actually built is neither.** The defect model does **real-time inference at the edge** — scoring an image the instant it arrives, because a line alert delayed by even a few seconds has already let a defective part move on. The same event is then **logged asynchronously** into the ordinary batch-ingested warehouse, for monitoring, retraining, and historical analysis, where a few minutes of lag costs nothing. This is neither Lambda (there's no reconciling merge step — the two paths never need to agree with each other, because they answer different questions on different timescales) nor Kappa (there's no unified stream serving both from one path). It's a **hybrid, chosen because the two consumers of this data have real, different needs** — one needs speed above all, the other needs completeness and history above all — and forcing them through one shared pattern would have compromised whichever consumer didn't get what it specifically needed.
+**Lambda architecture** runs two paths for the same logic: a **batch layer** that periodically reprocesses the data, thoroughly and correctly, and a separate **speed layer** that handles just-arrived data fast, plus a **serving layer** (a merge view) that answers queries from both. Chapter 50's design is exactly this, although Chapter 50 didn't use the name:
 
-**The lesson isn't "always build a hybrid."** It's that Lambda and Kappa are answers to a specific question — *does my system need one unified processing path or two specialized ones?* — and the right answer depends entirely on whether your fast-path and slow-path consumers actually need the same guarantees. When they do, Kappa's single path is almost always the better-engineered choice today (Lambda's dual-maintenance cost rarely earns its keep except in specific compliance or historical-reprocessing-heavy cases). When they genuinely don't — as with Riverstone's line alert versus its historical archive — building the honest hybrid beats forcing an artificial unification.
+- **The speed layer** is the alert consumer and the streaming job. The streaming job writes 5-minute windows to a small streaming table as the readings arrive.
+- **The batch layer** is the daily correction job. It rewrites yesterday's windows in a corrected table.
+- **The serving layer** is the dashboard's query. It reads the corrected table for past days and the streaming table for today.
+
+Lambda was, for years, the default answer to "I need both fast and correct", and it earns that reputation fairly: the batch layer's slow, careful pass catches anything the fast pass got wrong. At Riverstone that means a machine whose network dropped for an hour, whose readings reached the stream after the watermark had already closed their windows (Chapter 50, section 50.5). Its cost is equally honest: **the same business logic lives in two jobs**, and keeping them in agreement is real, ongoing work. Change the window from 5 minutes to 10 in the streaming job, forget the correction job, and today's numbers and yesterday's stop being comparable. Spark shrinks this cost, since section 50.4 showed that a streaming query is almost the same code as a batch one, but it doesn't remove it: two jobs still run, fail, and get deployed separately.
+
+**Kappa architecture** removes the duplication by treating *everything* as a stream, including corrections. At Riverstone, Kappa would mean dropping the daily batch job. To correct history, you reset the streaming job's committed offsets to the start of the topic (the replay that Chapter 50's section 50.7 called "your recovery tool"), and run the same Structured Streaming code over the whole topic again, into a fresh table. The replay run can use a much longer watermark than the live run, because nobody is waiting on it for an alert. One code path, one set of bugs to fix, one thing to operate. Its cost: the log has to keep history long enough to replay, and replay has to be fast and trustworthy enough to use routinely, not just in theory. Section 50.7's typical retention is 7 days; replaying last quarter means keeping months of readings in the log, and running a log that can serve them.
+
+**Which one Riverstone chose, and why.** Riverstone runs the Lambda shape, on purpose. The team already runs Dagster batch jobs every day (Chapter 46), and the sensor archive already exists as a Delta table (Chapter 49), so the correction job is one more daily asset on infrastructure the team already knows. Kappa would need the topic retained for months so that history can be replayed, which is a bigger, always-on system for a four-person team to operate. Chapter 50's exercise 12 reached the same conclusion from the other side: a company this size gets most of the value from minute-level latency, and shouldn't run its own broker until several consumers need the same events. **The decision would flip** if the two jobs started drifting apart often enough to cause incidents, or if Riverstone were already running a durable, replayable log for other reasons.
+
+### A second example: the defect camera, which is neither
+
+Not every fast path is a stream. Riverstone's defect model (Chapter 53) looks at a camera image of each part on the Taloja line. Chapter 56 served it **online**: a request arrives, and the answer goes back in a couple of milliseconds, while the part is still in front of the camera. Each prediction is also written as one structured log line (Chapter 56, section 56.5), which the monitoring reads later (section 56.7), where a few minutes' delay costs nothing.
+
+This is neither Lambda nor Kappa, and it isn't trying to be. **Lambda and Kappa are patterns for processing an event log.** The defect alert isn't a log consumer; it's a request that must be answered while the part is still on the line (Chapter 56's online pattern). Logging the result afterwards is a separate, asynchronous write. There's no merge step, because the two paths answer different questions.
+
+**The lesson** is that Lambda and Kappa answer one specific question: *when fast results and correct history come from the same stream of events, do you keep one processing path or two?* Kappa's single path is usually the better-engineered choice when a durable, replayable log is already part of the platform. Lambda earns its second path when the batch system already exists and a long-retention log doesn't, as at Riverstone. And when the fast path isn't stream processing at all, as with the defect camera, neither name applies; forcing one onto the design only confuses the conversation.
 
 ---
 
 ## 62.3 Medallion: a name for a layering you've already built
 
-The **medallion architecture** organizes a lakehouse into three tiers, and if you've read this book from Chapter 45 onward, you've already built every one of them under different names.
+The **medallion architecture** organizes a warehouse or a lakehouse (Chapter 49) into three tiers, and if you've read this book from Chapter 45 onward, you've already built every one of them under different names.
 
-![Three tiers: bronze (raw, exactly as the source sent it), silver (staging, cleaned and conformed), and gold (modelled marts, business-ready), each mapped to the chapter and schema this book already used for it](figures/fig62-2-medallion.svg)
+![Four rows. Bronze (raw: exactly as the source sent it) is Chapter 45's raw schema. Silver (staging: cleaned, typed, deduplicated, conformed) is Chapter 45's staging schema, kept clean by Chapter 47's checks. Gold (modeled marts: business-ready tables) is Chapter 45's modeled layer and Chapter 32's marts. On top, drawn dashed because it is not a tier, the semantic layer holds one definition per metric and reads the gold tables (Chapter 32, section 32.13)](figures/fig62-2-medallion.svg)
 
-*Figure 62.2 — Medallion isn't new construction. It's recognizing that Chapter 45's raw/staging/modelled layering is an industry-standard convention, not one team's private habit.*
+*Figure 62.2 — Medallion isn't new construction. It's recognizing that Chapter 45's raw/staging/modeled layering is an industry-standard convention, not one team's private habit.*
 
 - **Bronze (raw):** data exactly as the source produced it, kept for audit and replay. Chapter 45's `raw` schema, unmodified.
-- **Silver (staging):** cleaned, typed, deduplicated, conformed to a consistent shape — but not yet organized around business questions. Chapter 45's `staging` schema, with Chapter 47's tests enforcing it stays clean.
-- **Gold (modelled / marts):** business-ready tables, organized around the questions people actually ask — revenue by month, active customers, on-time delivery rate. Chapter 23's semantic layer, in medallion's vocabulary.
+- **Silver (staging):** cleaned, typed, deduplicated, conformed to a consistent shape — but not yet organized around business questions. Chapter 45's `staging` schema, with Chapter 47's tests enforcing that it stays clean.
+- **Gold (modeled / marts):** business-ready tables, organized around the questions people actually ask — revenue by month, active customers, on-time delivery rate. Chapter 45's modeled layer, and Chapter 32's marts, in medallion's vocabulary.
 
-**Medallion is not a fourth option alongside Lambda, Kappa, and a hybrid — it's a layering that sits inside whichever processing pattern you chose.** Section 62.2's hybrid sensor pipeline has medallion tiers running through it exactly as much as a pure Lambda or Kappa system would:
+**The semantic layer (Chapter 32, section 32.13) sits on top of gold.** It isn't a fourth tier: it's where "revenue" is defined once, reading gold tables. Riverstone's `net_revenue` macro, which Chapter 32 called a one-metric semantic layer, is the smallest example. Keeping the two apart matters in section 62.5: gold holds the tables, the semantic layer holds the agreed meanings.
 
-- **Bronze:** the raw sensor readings and the raw defect-model scores, exactly as the edge service and the ingestion job produced them — untouched, kept for replay if the model needs retraining on historical images.
-- **Silver:** cleaned, deduplicated readings, with sensor IDs conformed to one naming scheme and obviously-faulty readings (a sensor stuck reporting the same value for six hours) flagged rather than silently trusted.
-- **Gold:** the daily defect-rate-by-machine table the monitoring dashboards actually read from — the business-ready question, answered.
+**Medallion is not a third option alongside Lambda and Kappa — it's a layering that sits inside whichever processing pattern you chose.** Section 62.2's sensor pipeline has medallion tiers running through it:
 
-The instant line alert **never touches any of these three tiers at all** — it acts on the raw score the moment it's computed, before bronze has even landed. That's the clarifying point: medallion governs how data at rest gets organized for everyone who queries it later; it says nothing about, and doesn't need to say anything about, a fast path that was never going to be queried later in the first place. Asking "which medallion tier is the line alert in?" is a category error, in the same way asking "which chapter of the book is the table of contents in?" is — the two ideas operate at different levels entirely.
+- **Bronze:** the raw sensor readings, exactly as the machine controllers sent them — the Chapter 48 archive, untouched, kept so that any day can be re-read.
+- **Silver:** cleaned readings, deduplicated on machine and event time (Chapter 50's de-duplication key), with obviously faulty readings (a sensor stuck reporting the same value for six hours) flagged rather than silently trusted.
+- **Gold:** the corrected 5-minute windows and the daily scrap-by-machine table the dashboards actually read from — the business-ready question, answered.
 
-**Why the name matters, even though the layering doesn't change:** a shared vocabulary lets a new hire, a vendor, or an auditor immediately understand where in the pipeline a problem sits, without a company-specific onboarding conversation. "The bug is in silver" tells anyone who's worked with a medallion-organized lakehouse before exactly what kind of problem to expect — a cleaning or typing issue, not a raw-ingestion failure and not a business-logic error in a downstream model. That's the entire value of a named pattern: it's a shortcut for communication, built once by an entire industry, that you get to use for free.
+The line alert **never touches any of these three tiers at all** — the alert consumer acts on the 2-minute average the moment it's computed, before bronze has even landed. That's the clarifying point: medallion governs how data at rest gets organized for everyone who queries it later; it says nothing about, and doesn't need to say anything about, a fast path that was never going to be queried later in the first place. Asking "which medallion tier is the line alert in?" is a category error, in the same way asking "which chapter of the book is the table of contents in?" is — the two ideas operate at different levels entirely.
+
+**Why the name matters, even though the layering doesn't change:** a shared vocabulary lets a new hire, a vendor, or an auditor immediately understand where in the pipeline a problem sits, without a company-specific onboarding conversation. "The bug is in silver" tells anyone who's worked with a medallion-organized warehouse before exactly what kind of problem to expect — a cleaning or typing issue, not a raw-ingestion failure and not a business-logic error in a downstream model. That's the entire value of a named pattern: it's a shortcut for communication, built once by an entire industry, that you get to use for free.
 
 ---
 
@@ -94,17 +114,17 @@ The instant line alert **never touches any of these three tiers at all** — it 
 
 The processing patterns in sections 62.2 and 62.3 are about *how* data moves. This section is about *who's allowed to touch it* — a completely separate decision, and the one with the bigger organizational consequences.
 
-![Three cards: centralized (one team owns everything, simple but eventually a bottleneck), data mesh (each domain owns its data as a product on a shared platform, scales but needs real maturity), and data fabric (a metadata layer unifying distributed data, technology-led)](figures/fig62-3-org-patterns.svg)
+![Three cards. Centralized: one team owns ingestion, models, quality, and delivery for everyone; simple to govern, but every request waits in one queue as the company grows. Data mesh: each domain team owns its data as a product on a shared self-serve platform under federated governance; removes the central queue, but needs builders in every domain and a mature platform. Data fabric: ownership doesn't change; a data catalog plus a query engine find and query data where it already lives; it pairs with either of the other two](figures/fig62-3-org-patterns.svg)
 
 *Figure 62.3 — Riverstone today is firmly centralized, and section 62.6 checks honestly whether that should change.*
 
-**Centralized** means one team — Riverstone's four-person data platform team from Chapter 60 — owns ingestion, modelling, quality, and delivery for the entire company. It's simple to govern (one team, one set of standards, one place to look when something breaks) and it scales poorly past a certain size: every new team's data need waits in the same queue behind everyone else's, and the central team becomes the organization's most requested, most overloaded resource.
+**Centralized** means one team — Riverstone's four-person data platform team from Chapter 60 — owns ingestion, modeling, quality, and delivery for the entire company. It's simple to govern (one team, one set of standards, one place to look when something breaks) and it scales poorly past a certain size: every new team's data need waits in the same queue behind everyone else's, and the central team becomes the organization's most requested, most overloaded resource.
 
 **Data mesh** decentralizes ownership: each business domain (sales, operations, the Taloja plant) owns its own data **as a product** — with an owner, a defined interface, a quality bar, and a promise about what it provides — served to the rest of the company on a **shared, self-serve platform**, under **federated governance** (company-wide standards, applied locally by each domain rather than enforced centrally on every request). Done well, it removes the central bottleneck entirely, because domains stop waiting on one team and start serving each other directly, through interfaces defined and maintained by the people who actually understand that data best.
 
 The word "done well" is doing real work in that sentence. Data mesh's genuine cost is **organizational**, not technical: every domain needs people capable of building and operating their own data products, a self-serve platform good enough that domains actually prefer using it over building their own from scratch, and governance mature enough to keep dozens of independently-run data products interoperable rather than dozens of incompatible islands. Adopted before an organization has these things, a data mesh doesn't remove the bottleneck — it multiplies it into several smaller, less experienced bottlenecks, each now also responsible for infrastructure it didn't ask to own.
 
-**Data fabric** is a related but distinct idea: an intelligent metadata layer that unifies access to distributed data without necessarily changing who owns or where it physically lives. It's more a technology answer than an organizational one, and it's often paired with either centralized or mesh ownership rather than competing with them directly.
+**Data fabric** is a related but distinct idea: a layer of tools that lets you *find* and *query* data where it already lives, without changing who owns it or moving it anywhere. It has two parts. The first is a **data catalog**: a searchable list of every table, with its owner, its columns, what it means, and how fresh it is. (This is a different thing from the Iceberg catalog in Chapter 49, which only records where each table's metadata file lives; Chapter 32's dbt docs site is a small data catalog for the dbt models alone.) The second is a query engine that can read several sources in one query, without copying the data first. At Riverstone, a data fabric would mean a catalog listing the ERP's tables, the warehouse's raw, staging, and mart tables, and the Delta sensor archive, plus queries that join them where they sit. It's more a technology answer than an organizational one, and it's often paired with either centralized or mesh ownership rather than competing with them directly.
 
 ---
 
@@ -112,42 +132,48 @@ The word "done well" is doing real work in that sentence. Data mesh's genuine co
 
 Section 62.4 described data mesh's promise — each domain owning its own data, served to everyone else without waiting on a central team. Left there, that description is missing the one thing that keeps it from collapsing into chaos the moment a second domain starts publishing.
 
-![Without a contract, two domains each publish their own definition of "active customer" and quietly disagree; with a contract, both domains publish to and read from one agreed, shared definition](figures/fig62-5-contracts-glue.svg)
+![Left, without a contract: Sales publishes active_customer as a non-cancelled order in the trailing 12 months and Finance publishes active_customer as a non-zero balance, so one name gives two counts that nobody notices until a report uses both. Right, with a contract: the semantic layer, owned by the data platform team, holds the one definition; Sales reads it, and Finance publishes its own meaning under its own name, customer_with_balance](figures/fig62-4-contracts-glue.svg)
 
-*Figure 62.5 — Decentralized ownership without an agreed contract isn't a mesh. It's several teams, each confidently wrong about what the other one means.*
+*Figure 62.4 — Decentralized ownership without an agreed contract isn't a mesh. It's several teams, each confidently wrong about what the other one means.*
 
-**A data contract** (Chapter 47) is a written, checkable statement of what a dataset provides: its shape, its meaning, its freshness, what's excluded. **A semantic layer** (Chapter 23) is where the *agreed*, shared business definitions actually live — one place that says what "revenue" or "active customer" means, that every domain reads from rather than each domain quietly deciding for itself.
+**A data contract** (Chapter 47) is a written, checkable statement of what a dataset provides: its shape, its meaning, its freshness, what's excluded. **A semantic layer** (Chapter 32, section 32.13) is where the *agreed*, shared business definitions actually live — one place that says what "revenue" or "active customer" means, that every domain reads from rather than each domain quietly deciding for itself.
 
-Together, they're what section 62.4 left unstated: **federated governance is not a policy document, it's these two things, built and enforced.** Without them, "each domain owns its own data" doesn't produce a mesh — it produces exactly Figure 62.5's left-hand scenario, where Sales and Finance each confidently publish an "active customer" table, each internally consistent, each quietly disagreeing with the other, with nobody positioned to notice until a report built from both tables produces a number nobody can explain.
+Together, they're what section 62.4 left unstated: **federated governance is not a policy document, it's these two things, built and enforced.** Without them, "each domain owns its own data" doesn't produce a mesh — it produces exactly Figure 62.4's left-hand scenario, where Sales and Finance each confidently publish an "active customer" table, each internally consistent, each quietly disagreeing with the other, with nobody positioned to notice until a report built from both tables produces a number nobody can explain. It's the disagreement Chapter 23 (section 23.13) warned about: "active customer" can defensibly mean a non-cancelled order in the trailing 12 months, or a non-zero account balance, and each gives a different count from the same database.
 
 **What each one is actually doing, mechanically:**
 
 - **The contract is the interface.** It's what lets a domain change its *internal* implementation freely — a new pipeline, a faster query, a different underlying table structure — without breaking anyone downstream, as long as the contract's promise still holds. This is the same idea as an API contract in software engineering, applied to data instead of function calls.
 - **The semantic layer is the shared vocabulary.** It's what stops "active customer" from meaning five different things across five different domains' own private definitions. A domain can still compute its own specialized metrics for its own internal use — but anything shared across domain boundaries goes through the one agreed definition, not a re-derivation.
 
-**Riverstone's own centralized platform already has both**, which is worth noticing precisely because it means the *infrastructure* for a future mesh is partially in place even though the *organization* (per section 62.6's scorecard) isn't ready to use it yet. Chapter 47's data contract for the Bhiwandi dispatch feed and Chapter 23's semantic layer aren't mesh-specific inventions — they're good practice for a centralized platform on their own, and they happen to be exactly the two things that would need to generalize company-wide, to every domain rather than just the platform team's own pipelines, for a mesh to actually work.
+**Riverstone's own centralized platform already has both**, which is worth noticing precisely because it means the *infrastructure* for a future mesh is partially in place even though the *organization* (per section 62.6's scorecard) isn't ready to use it yet. Chapter 47's data contract for the Bhiwandi dispatch feed and Chapter 32's semantic layer aren't mesh-specific inventions — they're good practice for a centralized platform on their own, and they happen to be exactly the two things that would need to generalize company-wide, to every domain rather than just the platform team's own pipelines, for a mesh to actually work.
 
-**The test that ties this section to the two before it:** before treating any decentralization plan as workable, ask whether an agreed contract and a shared semantic definition would exist *before* two domains' data ever needs to be joined or compared. If the honest answer is "we'd figure that out once it becomes a problem," the plan is missing its glue — and Figure 62.5's left-hand chaos is what "figuring it out later" actually looks like from the inside.
+**The test that ties this section to the two before it:** before treating any decentralization plan as workable, ask whether an agreed contract and a shared semantic definition would exist *before* two domains' data ever needs to be joined or compared. If the honest answer is "we'd figure that out once it becomes a problem," the plan is missing its glue — and Figure 62.4's left-hand chaos is what "figuring it out later" actually looks like from the inside.
+
+---
 
 ## 62.6 Is Riverstone ready for a data mesh? A maturity check, scored honestly
 
 The useful version of "should we adopt a data mesh" is not a debate about the pattern's merits in the abstract — it's a specific, honest scorecard against the organization in front of you.
 
-![Five maturity dimensions scored for Riverstone: multiple domain teams (1/5), a self-serve platform (2/5), federated governance (2/5), a data-product mindset (3/5), and organizational appetite (1/5), with a verdict of "not ready, and that's fine"](figures/fig62-4-mesh-maturity.svg)
+**The scale.** Score each of five questions from 1 to 5: **1 = absent, 3 = partly in place, 5 = working company-wide.** Write one sentence of evidence beside every score. The rule for reading the result: **any question at 1, or a total under 15 out of 25, means not ready.** A 1 is a blocker on its own, however good the other scores are, because a mesh needs all five things at once.
 
-*Figure 62.4 — Scored against the organization that actually exists, not the one a conference talk assumes.*
+![The five questions scored for Riverstone on a 1-to-5 scale: domain teams able to own data 1 (a blocker), a self-serve platform 2, federated governance 2, a data-product mindset 3, and appetite for the change 1 (a blocker), for a total of 9 out of 25. The rule: any question at 1, or a total under 15, means not ready](figures/fig62-5-mesh-maturity.svg)
+
+*Figure 62.5 — Scored against the organization that actually exists, not the one a conference talk assumes.*
 
 **Five questions, asked plainly, and Riverstone's honest answers:**
 
-1. **Are there multiple domain teams that could each own data?** Not yet — sales, operations, and the Taloja plant each generate data, but none has its own builders; everything still runs through the one data platform team.
-2. **Is there a self-serve platform domains could use independently?** Partially — Dagster and the warehouse exist and are fully reusable, but no domain team has ever used them without the platform team's direct involvement.
-3. **Is there federated governance — agreed standards, locally applied?** Barely — Chapter 47's data contracts exist for one pipeline (the Bhiwandi dispatch feed), not yet as a company-wide practice anyone else follows.
-4. **Is there a data-product mindset already — data with a named owner and a stated service level?** The strongest score here — Chapter 60's container diagram already gives every piece an owner and non-functional requirements, which is real groundwork.
-5. **Is there organizational appetite for the cultural change a mesh requires?** No — nobody outside the platform team has asked to own their own data yet, which is itself the most honest signal of all.
+1. **Are there multiple domain teams that could each own data?** Not yet — sales, operations, and the Taloja plant each generate data, but none has its own builders; everything still runs through the one data platform team. **Score: 1.**
+2. **Is there a self-serve platform domains could use independently?** Partially — Dagster and the warehouse exist and are fully reusable, but no domain team has ever used them without the platform team's direct involvement. **Score: 2.**
+3. **Is there federated governance — agreed standards, locally applied?** Barely — Chapter 47's data contracts exist for one pipeline (the Bhiwandi dispatch feed), not yet as a company-wide practice anyone else follows. **Score: 2.**
+4. **Is there a data-product mindset already — data with a named owner and a stated service level (an SLA, the service-level agreement of Chapter 46)?** The strongest score here — Chapter 60's container diagram already gives every piece an owner and non-functional requirements, which is real groundwork. **Score: 3.**
+5. **Is there organizational appetite for the cultural change a mesh requires?** No — nobody outside the platform team has asked to own their own data yet, which is itself the most honest signal of all. **Score: 1.**
 
-**The verdict the scorecard actually supports: not ready, and that's a perfectly fine place to be.** A data mesh imposed on Riverstone today would add real organizational complexity — new roles, new governance processes, new platform obligations pushed onto teams that never asked for them — to solve a bottleneck that, per Chapter 60's own story, doesn't yet exist: one four-person team is still managing the current load without anyone queueing behind it for weeks at a time.
+The total is 1 + 2 + 2 + 3 + 1 = **9 out of 25**, with two questions at 1.
 
-**The right trigger to revisit this** isn't a calendar date or a industry trend — it's a specific organizational signal: *a second domain team asks to own its own data*, because it has people capable of building it and reasons the central team can't serve it fast enough. That request, when it actually arrives, is the maturity check passing on its own, in the real world, rather than being guessed at in a document.
+**The verdict the scorecard actually supports: not ready, and that's a perfectly fine place to be.** A data mesh imposed on Riverstone today would add real organizational complexity — new roles, new governance processes, new platform obligations pushed onto teams that never asked for them — to solve a bottleneck that doesn't yet exist: one four-person team is still managing the current load without anyone queueing behind it for weeks at a time.
+
+**The right trigger to revisit this** isn't a calendar date or an industry trend — it's a specific organizational signal: *a business domain with its own builder asks to own its data*, because it has someone capable of building it and reasons the central team can't serve it fast enough. That request, when it actually arrives, is the maturity check passing its first test on its own, in the real world, rather than being guessed at in a document.
 
 > **Watch out: a maturity check is not a permission slip for inaction.** The point of scoring plainly isn't to justify never changing — it's to know exactly which dimension is the blocker, so effort goes toward closing that gap deliberately (building the self-serve platform further, writing more data contracts) rather than either ignoring the question entirely or jumping straight to a full reorganization nobody asked for.
 
@@ -160,9 +186,9 @@ The useful version of "should we adopt a data mesh" is not a debate about the pa
 - **A named owner**, accountable for its quality and availability — not "the data team" generically, but a specific person or team who can be asked a question and is expected to answer it. Every container in Chapter 60's diagram already has this.
 - **A stated interface and contract**, describing what it provides, in what shape, how fresh, and what's excluded — Chapter 47's data contracts, applied to an internal table rather than an external file.
 - **A quality bar that's actively tested**, not merely hoped for — Chapter 47's automated tests, run against the product itself, not assumed to hold because nobody's complained recently.
-- **Discoverability** — someone outside the owning team can find it, understand what it offers, and use it without a private conversation with its builder. A catalog entry, at minimum; ideally, self-service access within whatever the company's governance allows.
+- **Discoverability** — someone outside the owning team can find it, understand what it offers, and use it without a private conversation with its builder. An entry in a data catalog (section 62.4), at minimum; ideally, self-service access within whatever the company's governance allows.
 
-**The semantic layer (Chapter 23) is the clearest existing Riverstone data product**, judged against this list: it has an owner (the analytics team), a contract (the agreed definitions of revenue, active customer, and every other shared metric), active testing (Chapter 47's checks against it), and it's discoverable (every team building a dashboard or a model uses it rather than re-deriving its own definition of revenue). The reason two teams' revenue numbers agree is entirely because this data product exists and is actually treated as one — not because the underlying SQL happens to be correct.
+**The semantic layer (Chapter 32, section 32.13) is the clearest existing Riverstone data product**, judged against this list: it has an owner (Meera's data platform team), a contract (the agreed definitions of revenue, active customer, and every other shared metric), active testing (Chapter 32's dbt tests and Chapter 47's checks), and it's discoverable (every team building a dashboard or a model uses it rather than re-deriving its own definition of revenue). The reason two teams' revenue numbers agree is entirely because this data product exists and is actually treated as one — not because the underlying SQL happens to be correct.
 
 A raw ingested table sitting in the bronze layer, with no owner name attached, no tested contract, and nobody outside the platform team aware it exists, is not a data product by this definition — it's a technical asset one step above a file on disk. **The distinction matters because a data mesh literally cannot work without genuine data products at its center**: decentralized ownership without any of these four properties isn't a mesh, it's just several uncoordinated, ungoverned tables with different people's names near them.
 
@@ -187,9 +213,10 @@ The design-tool version of the advice: **decide the organizational boundary you 
 
 | Mistake | Symptom | Fix |
 |---|---|---|
-| Choosing Lambda or Kappa by reputation, not fit | A unified pipeline built where two truly different consumers needed different things | Ask whether your fast-path and slow-path consumers need the same guarantees |
-| Maintaining Lambda's dual paths when nothing requires it | The same logic drifts out of sync between batch and speed layers | Default to Kappa or a deliberate hybrid; reserve Lambda for real reprocessing needs |
-| Treating medallion as new infrastructure to build | Months spent "adopting medallion" when raw/staging/modelled already exists | Recognize the pattern in what's already built and rename, don't rebuild |
+| Choosing Lambda or Kappa by reputation, not fit | A long-retention log run only to avoid a batch job, or a second batch path added beside a log that could already replay | Start from what you already run, and price the replay (section 62.2) |
+| Maintaining Lambda's two paths carelessly | The same logic drifts out of sync between batch and speed layers | Share the code between the two jobs, and move to Kappa once a replayable log is already part of the platform |
+| Calling every fast path "Lambda" or "Kappa" | A model answering requests described as a stream, and the design argued about in the wrong terms | Keep the names for event-log processing; online serving is its own pattern (Chapter 56) |
+| Treating medallion as new infrastructure to build | Months spent "adopting medallion" when raw/staging/modeled already exists | Recognize the pattern in what's already built and rename, don't rebuild |
 | Adopting data mesh because it's the current trend | New roles and governance overhead added with no domain team asking for them | Run the maturity check plainly first; let a real signal trigger the change |
 | Calling any table a "data product" | Decentralization without ownership, contracts, or testing underneath it | Require all four properties: owner, contract, tested quality, discoverability |
 | Skipping federated governance when decentralizing | Domains diverge into incompatible, ungoverned islands | Company-wide standards, applied locally — not centrally enforced, not absent |
@@ -203,21 +230,21 @@ The design-tool version of the advice: **decide the organizational boundary you 
 
 ## In the real world: the mesh pitch that didn't happen
 
-In March 2026, a vendor's solutions consultant pitched Anita Rao directly — bypassing Meera's data platform team entirely — on adopting "a modern data mesh architecture" for Riverstone, complete with a glossy deck showing domain-owned data products, a self-serve platform, and federated governance, all diagrammed as a clean, three-domain mesh: sales, operations, and manufacturing, each with its own data team.
+A few months into Meera's time as Head of Data Platform (Chapter 60's story), a vendor's solutions consultant pitched Anita Rao directly — bypassing Meera's data platform team entirely — on adopting "a modern data mesh architecture" for Riverstone, complete with a glossy deck showing domain-owned data products, a self-serve platform, and federated governance, all diagrammed as a clean, three-domain mesh: sales, operations, and manufacturing, each with its own data team.
 
 Anita, to her credit, didn't approve anything on the strength of the deck. She forwarded it to Meera with one line: *"Does this make sense for us? Be honest, even if the answer embarrasses the pitch."*
 
-Meera's answer, delivered the following week, was the maturity check in section 62.6, run for real rather than as a textbook exercise. She scored all five dimensions plainly, including the two that came out lowest — no domain teams existed yet to own anything, and nobody outside her own team had ever asked to. The deck's three "domains" (sales, operations, manufacturing) were organizational labels with no actual data-owning teams behind any of them; adopting mesh terminology would have meant Meera's four-person team pretending to be three separate domain teams wearing different hats, which is not a data mesh — it's a centralized team with an extra layer of process attached, and none of the benefits either.
+Meera's answer, delivered the following week, was the maturity check in section 62.6, run for real rather than as a textbook exercise. She scored all five dimensions plainly, including the two that came out at 1 — no domain teams existed yet to own anything, and nobody outside her own team had ever asked to. The total was 9 out of 25. The deck's three "domains" (sales, operations, manufacturing) were organizational labels with no actual data-owning teams behind any of them; adopting mesh terminology would have meant Meera's four-person team pretending to be three separate domain teams wearing different hats, which is not a data mesh — it's a centralized team with an extra layer of process attached, and none of the benefits either.
 
-Her recommendation, plainly stated: *not yet, and here's exactly what would need to be true first.* She listed three concrete prerequisites — a named data owner within operations with actual capacity to build (not just a job title), a self-serve onboarding process any new team could use without her involvement, and at least one company-wide data contract standard applied outside her own team's pipelines. None of the three existed yet, and pretending otherwise, dressed in mesh vocabulary, would have cost real implementation effort for a bottleneck that — as Chapter 60's own story established — didn't exist yet.
+Her recommendation, plainly stated: *not yet, and here's exactly what would need to be true first.* She listed three concrete prerequisites — a named data owner within operations with actual capacity to build (not just a job title), a self-serve onboarding process any new team could use without her involvement, and at least one company-wide data contract standard applied outside her own team's pipelines. None of the three existed yet, and pretending otherwise, dressed in mesh vocabulary, would have cost real implementation effort for a bottleneck that didn't exist yet.
 
-Anita declined the vendor's proposal, on the strength of a scorecard rather than a feeling. Nine months later, when the Taloja plant hired its first dedicated data analyst — someone whose job explicitly included owning plant data — the same scorecard, rerun, showed real movement on exactly the dimension that mattered: a second domain team, with real capacity, actually wanting to own its own data. That was the trigger section 62.6 named in advance, arriving on its own, in the real world, rather than being guessed at from a vendor's deck.
+Anita declined the vendor's proposal, on the strength of a scorecard rather than a feeling. Months later, the Taloja plant hired its own data analyst, a builder whose job explicitly included owning plant data, and the plant asked to own that data itself. That was the trigger section 62.6 named in advance, arriving on its own, in the real world, rather than being guessed at from a vendor's deck. Meera reran the scorecard: domain teams moved from 1 to 2 and appetite from 1 to 3, a total of 12. Still under 15, so still not a mesh; but the blockers were gone for one domain, and the right response was a first step: one plant data product, owned by the plant (exercise 16 asks you to design it).
 
 What made the difference:
 
 - **The question was answered with a scorecard, not a feeling** — "does this sound modern" was replaced by "what does this organization actually have."
 - **The honest low scores were kept, not smoothed over** to make the pitch look more reasonable than it was.
-- **A specific, concrete trigger was named in advance**, so the eventual "yes" — nine months later — wasn't a guess either; it was the same test, rerun, actually passing.
+- **A specific, concrete trigger was named in advance**, so the eventual first step wasn't a guess either; it was the same test, rerun, with the evidence changed.
 - **Declining wasn't a permanent no.** It was "not yet, and here's exactly what would change that," which is a very different, much more useful answer than either "yes" or "no" said with confidence but no reasoning underneath it.
 
 ---
@@ -230,20 +257,20 @@ What made the difference:
 
 - No new software this chapter — every pattern here names something already built in Parts 5 and 6.
 - **Companion files (`companion/ch62/`):**
-  - `lambda-kappa-comparison.md`: the full worked comparison from section 62.2, with the specific trade-offs written out for each of the three approaches.
-  - `mesh-maturity-scorecard-template.md`: a blank version of the section 62.6 scorecard, ready to score for your own organization.
-  - `mesh-maturity-riverstone.md`: the full worked scorecard behind Figure 62.4, with reasoning for each score.
+  - `lambda-kappa-comparison.md`: the full worked comparison from section 62.2, with the trade-offs written out for Lambda and Kappa on the plant-sensor case, and the defect camera as the case that is neither.
+  - `mesh-maturity-scorecard-template.md`: a blank version of the section 62.6 scorecard, with its 1-to-5 scale and the readiness rule, ready to score for your own organization.
+  - `mesh-maturity-riverstone.md`: the full worked scorecard behind Figure 62.5, with the evidence for each score.
 
-**Option A: your own organization.** Score it honestly against section 62.6's five questions, and separately decide which processing pattern (Lambda, Kappa, or a deliberate hybrid) fits your most demanding real-time-versus-historical scenario.
+**Option A: your own organization.** Score it honestly against section 62.6's five questions, and separately decide which processing pattern (Lambda or Kappa, or neither if the fast path isn't a stream) fits your most demanding real-time-versus-historical scenario.
 
 **Option B: a scenario.** A 200-person logistics company with a central ops team, four regional warehouses each wanting faster access to their own data, and a live vehicle-tracking feed that needs both instant alerts and historical route analysis.
 
 **Steps**
 
 1. **Pick one concrete scenario** with a genuine fast-path and slow-path need (Option B's tracking feed, or your own equivalent).
-2. **Compare Lambda, Kappa, and a hybrid on that scenario**, following section 62.2's method: what does each cost, and does the fast-path and slow-path actually need the same guarantees?
-3. **Run the five-question maturity check** (section 62.6) honestly on your chosen organization, scoring each dimension and writing one sentence of evidence for the score.
-4. **State the verdict plainly** — ready, not ready, or ready for a specific first step — and name the concrete trigger that would change a "not ready" verdict.
+2. **Compare Lambda and Kappa on that scenario**, following section 62.2's method: what does each cost, what does the organization already run, how far back would a replay need to reach, and is the fast path really stream processing at all?
+3. **Run the five-question maturity check** (section 62.6) honestly on your chosen organization, scoring each question from 1 to 5 on section 62.6's scale and writing one sentence of evidence for each score.
+4. **State the verdict plainly** — ready, not ready, or ready for a specific first step — using section 62.6's rule, and name the concrete trigger that would change a "not ready" verdict.
 5. **Check one existing table or system against the four data-product properties** (section 62.7): owner, contract, tested quality, discoverability. Does it qualify?
 6. **Apply Conway's Law**: does the current or proposed architecture match the current org chart? If a mesh is being proposed, what organizational change has to happen alongside it, not after it?
 7. **Write the one-paragraph recommendation**, in the style of Meera's answer to Anita: what to do, what not to do yet, and what would change the answer.
@@ -260,10 +287,11 @@ What made the difference:
 
 ## Recap
 
-- **Lambda architecture** runs separate batch and speed layers for accuracy and immediacy, at the cost of maintaining the same logic twice. **Kappa** unifies both into one stream, at the cost of needing real streaming infrastructure. Riverstone's real system is a deliberate hybrid, because its fast-path (a line alert) and slow-path (historical analysis) consumers have genuinely different guarantees.
-- **Medallion architecture** — bronze (raw), silver (staging), gold (modelled) — is a name for the raw/staging/modelled layering this book has used since Chapter 45, now recognized as an industry-standard vocabulary.
-- **Centralized** ownership is simple to govern and eventually bottlenecks; **data mesh** decentralizes ownership to domain teams as data products, on a shared self-serve platform, under federated governance — and demands real organizational maturity to work. **Data fabric** is a metadata-layer answer, more technical than organizational.
-- **A data mesh maturity check**, run honestly, is a five-question scorecard — domain teams, a self-serve platform, federated governance, a data-product mindset, organizational appetite — and "not ready" is frequently the correct, useful answer.
+- **Lambda architecture** runs a batch layer and a speed layer for the same logic, with a serving layer that answers queries from both, at the cost of maintaining that logic twice. Riverstone's plant-sensor design from Chapter 50 is Lambda: an alert consumer and a streaming job for speed, a daily correction job for truth, and a dashboard query that reads both. **Kappa** keeps one streaming path and corrects history by replaying the log, at the cost of retaining the log long enough and trusting the replay. Riverstone chose Lambda because it already runs daily batch jobs and doesn't run a long-retention log.
+- **Not every fast path is a stream.** The defect camera is a model answering requests online (Chapter 56), with its results logged afterwards: neither Lambda nor Kappa.
+- **Medallion architecture** — bronze (raw), silver (staging), gold (modeled marts) — is a name for the raw/staging/modeled layering this book has used since Chapter 45, now recognized as an industry-standard vocabulary. The semantic layer sits on top of gold; it isn't a tier.
+- **Centralized** ownership is simple to govern and eventually bottlenecks; **data mesh** decentralizes ownership to domain teams as data products, on a shared self-serve platform, under federated governance — and demands real organizational maturity to work. **Data fabric** is a data catalog plus a query engine that reads data where it lives: a technology answer, not an organizational one.
+- **A data mesh maturity check** scores five questions from 1 to 5 — domain teams, a self-serve platform, federated governance, a data-product mindset, organizational appetite. Any 1, or a total under 15, means not ready; Riverstone scores 9, and "not ready" is frequently the correct, useful answer.
 - **A genuine data product** has an owner, a contract, tested quality, and discoverability — not just a name and a description field.
 - **Data contracts and a semantic layer are the glue** that keeps decentralized ownership from becoming chaos: without an agreed, checkable definition, "each domain owns its data" just means several teams confidently disagreeing.
 - **Conway's Law**, used as a design tool, says decide the organizational boundary on purpose, or the architecture will eventually mirror whichever boundary already exists by accident.
@@ -273,7 +301,7 @@ What made the difference:
 
 ## Key terms
 
-data architecture pattern · Lambda architecture · batch layer · speed layer · Kappa architecture · stream replay · medallion architecture · bronze / silver / gold · raw / staging / modelled · centralized ownership · data mesh · domain ownership · data as a product · self-serve platform · federated governance · data fabric · data mesh maturity · data contract (Chapter 47) · semantic layer (Chapter 23) · shared vocabulary · data product · discoverability · Conway's Law
+data architecture pattern · Lambda architecture · batch layer · speed layer · serving layer · Kappa architecture · stream replay · online serving (Chapter 56) · medallion architecture · bronze / silver / gold · raw / staging / modeled · centralized ownership · data mesh · domain ownership · data as a product · self-serve platform · federated governance · data fabric · data catalog · data mesh maturity · maturity score · data contract (Chapter 47) · semantic layer (Chapter 32) · shared vocabulary · data product · discoverability · Conway's Law
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -281,10 +309,11 @@ data architecture pattern · Lambda architecture · batch layer · speed layer �
 
 ## Check yourself
 
-- [ ] You can compare Lambda and Kappa on a real scenario and state which one fits, based on whether the consumers need the same guarantees — not from memory of the definitions.
-- [ ] You recognize medallion as a name for a layering you may have already built, not a new system to construct.
+- [ ] You can compare Lambda and Kappa on a real scenario and state which one fits, from what the organization already runs and what a replay would cost — not from memory of the definitions.
+- [ ] You can tell a stream-processing path from a model answering requests, and you don't call the second one Lambda or Kappa.
+- [ ] You recognize medallion as a name for a layering you may have already built, not a new system to construct, and you know the semantic layer sits on top of gold.
 - [ ] You can explain what a data mesh actually requires — a self-serve platform, federated governance, domain teams with real capacity — not just its diagram.
-- [ ] You score an organization's mesh readiness honestly, including uncomfortable low scores, rather than steering the scorecard toward a preferred answer.
+- [ ] You score an organization's mesh readiness from 1 to 5 per question, honestly, including uncomfortable low scores, rather than steering the scorecard toward a preferred answer.
 - [ ] You can tell a genuine data product from a table with a description field, using the four-property test.
 - [ ] You can explain why decentralized ownership without a data contract and a shared semantic layer isn't a mesh — it's several teams each confidently publishing a different truth.
 - [ ] You use Conway's Law as a design tool: deciding the organizational boundary on purpose, rather than discovering it by accident once the architecture already reflects it.
@@ -301,43 +330,38 @@ data architecture pattern · Lambda architecture · batch layer · speed layer �
 3. What's the difference between centralized and data mesh ownership, in one sentence each?
 4. List the four properties that make something a genuine data product.
 5. State Conway's Law, then state its design-tool version (what it tells you to actually do, not just what it observes).
+6. In your own words, explain why "each domain owns its own data" without a contract isn't decentralization at all — what is it instead?
 
 ### Core
 
-6. For Riverstone's sensor scenario (section 62.2), explain in your own words why a true Kappa architecture — one unified stream serving both the line alert and the warehouse — would have been a worse fit than the hybrid actually built.
-7. Take a system you know (work or personal) with both a real-time need and a historical/reporting need. Would Lambda, Kappa, or a hybrid fit better, and why?
-8. Explain why "we already have raw, staging, and modelled tables" means you don't need a medallion adoption project. What, if anything, would still be worth doing?
-9. Run the five-question maturity check (section 62.6) on an organization you know (your workplace, or a hypothetical one from the project's Option B). Score each dimension honestly.
-10. Using the four data-product properties, evaluate a table or dataset you use regularly. Does it qualify as a genuine data product? What's missing?
-11. Riverstone's story shows a vendor proposing a mesh Riverstone wasn't ready for. Using Conway's Law, explain specifically why adopting mesh *terminology* without the organizational change underneath it wouldn't have produced a real mesh.
-12. A colleague argues "data mesh is just better, we should move toward it regardless of readiness, since we'll need it eventually." How would you respond, using this chapter's method rather than a general opinion?
+7. For Riverstone's plant-sensor case (section 62.2), explain in your own words why Riverstone kept Chapter 50's daily correction job (the Lambda shape) rather than moving to Kappa. Then explain why the defect camera's line alert is neither pattern.
+8. Take a system you know (work or personal) with both a real-time need and a historical/reporting need. Would Lambda or Kappa fit better, or neither, and why?
+9. Explain why "we already have raw, staging, and modeled tables" means you don't need a medallion adoption project. What, if anything, would still be worth doing?
+10. Run the five-question maturity check (section 62.6) on an organization you know (your workplace, or a hypothetical one from the project's Option B). Score each question from 1 to 5, and apply the readiness rule.
+11. Using the four data-product properties, evaluate a table or dataset you use regularly. Does it qualify as a genuine data product? What's missing?
+12. Riverstone's story shows a vendor proposing a mesh Riverstone wasn't ready for. Using Conway's Law, explain specifically why adopting mesh *terminology* without the organizational change underneath it wouldn't have produced a real mesh.
+13. A colleague argues "data mesh is just better, we should move toward it regardless of readiness, since we'll need it eventually." How would you respond, using this chapter's method rather than a general opinion?
+14. Riverstone's Bhiwandi dispatch data contract (Chapter 47) already exists, scoped to one pipeline. What would need to change about it for it to serve as a genuine cross-domain contract rather than a single-pipeline one?
+15. Using Figure 62.4's two scenarios, write the specific contract clause that would have prevented Sales and Finance's "active_customer" disagreement.
 
 ### Stretch
 
-13. Design the specific first step Riverstone should take if the Taloja plant's new data analyst (mentioned at the end of the story) does want to start owning plant data — what would the first data contract and self-serve access look like, concretely?
-14. Data fabric was described as "often paired with either" centralized or mesh ownership. Sketch what a data-fabric layer would add on top of Riverstone's current centralized setup, and what problem it would actually solve that centralization alone doesn't.
-15. Find or imagine an organization where the architecture clearly mirrors a dysfunctional org chart (per Conway's Law). What would you change first — the org chart or the architecture — and why?
+16. Design the specific first step Riverstone should take now that the Taloja plant's new data analyst (from the end of the story) wants to start owning plant data — what would the first data contract and self-serve access look like, concretely?
+17. Data fabric was described as "often paired with either" centralized or mesh ownership. Sketch what a data-fabric layer would add on top of Riverstone's current centralized setup, and what problem it would actually solve that centralization alone doesn't.
+18. Find or imagine an organization where the architecture clearly mirrors a dysfunctional org chart (per Conway's Law). What would you change first — the org chart or the architecture — and why?
 
 ### Think about it
 
-16. Is there a company size or situation where adopting data mesh *before* full organizational readiness might actually be the right call — forcing the organizational change rather than waiting for it? What would make that bet defensible?
-17. How would you distinguish, in a real conversation, between a stakeholder who's actually identified an organizational bottleneck and one who's just excited about a pattern they read about?
-
-### Data contracts and the semantic layer
-
-18. In your own words, explain why "each domain owns its own data" without a contract isn't decentralization at all — what is it instead?
-19. Riverstone's Bhiwandi dispatch data contract (Chapter 47) already exists, scoped to one pipeline. What would need to change about it for it to serve as a genuine cross-domain contract rather than a single-pipeline one?
-20. Using Figure 62.5's two scenarios, write the specific contract clause that would have prevented Sales and Finance's "active_customer" disagreement.
+19. Is there a company size or situation where adopting data mesh *before* full organizational readiness might actually be the right call — forcing the organizational change rather than waiting for it? What would make that bet defensible?
+20. How would you distinguish, in a real conversation, between a stakeholder who's actually identified an organizational bottleneck and one who's just excited about a pattern they read about?
 
 ---
 
 ## Answers
 
-*(In the finished book these move to Appendix G.)*
+**1.** Lambda trades duplicated engineering effort (the same logic built and maintained in two separate layers) for the accuracy of a thorough, periodic batch reprocessing alongside a fast path. Kappa trades that duplication away — one code path, one thing to maintain — for the operational cost of a log that retains history long enough to replay, and a replay you can trust.
 
-**1.** Lambda trades duplicated engineering effort (the same logic built and maintained in two separate layers) for the accuracy of a thorough, periodic batch reprocessing alongside a fast approximate path. Kappa trades that duplication away — one code path, one thing to maintain — for the operational cost of needing real streaming infrastructure capable of retaining and replaying history.
-
-**2.** Bronze (raw): a bug here looks like malformed or missing source data, exactly as it arrived. Silver (staging): a bug here looks like a type mismatch, a duplicate, or an unconformed value that cleaning should have caught. Gold (modelled/marts): a bug here looks like a business-logic error — a wrong definition of a metric, or a join that fans out.
+**2.** Bronze (raw): a bug here looks like malformed or missing source data, exactly as it arrived. Silver (staging): a bug here looks like a type mismatch, a duplicate, or an unconformed value that cleaning should have caught. Gold (modeled/marts): a bug here looks like a business-logic error — a wrong definition of a metric, or a join that fans out.
 
 **3.** Centralized: one team owns all data for the whole organization. Data mesh: each business domain owns its own data as a product, on a shared platform, under governance applied locally rather than centrally.
 
@@ -345,42 +369,42 @@ data architecture pattern · Lambda architecture · batch layer · speed layer �
 
 **5.** Conway's Law: organizations design systems that mirror their own communication structure. Design-tool version: decide the organizational boundary you want on purpose, before the architecture drifts to mirror whatever boundary already exists by accident.
 
-**6.** A true Kappa architecture would mean the line alert waits on the same unified stream-processing path as the historical warehouse write, even though the alert needs a response in under 50ms and the warehouse write can tolerate minutes of lag with no cost. Unifying them would mean either slowing the alert down to match the stream's overall processing guarantees, or building extra complexity into the single path just to give the alert consumer special low-latency treatment — at which point it's no longer really "one unified path" in any meaningful sense.
+**6.** It's just several teams each independently, confidently publishing their own version of a shared concept — not decentralization in any useful sense, but the appearance of decentralization with none of a mesh's actual benefit. Real decentralization means domains can move fast independently *because* a contract and a shared definition let them trust each other's outputs without checking; without that, "independence" just means nobody notices the disagreement until two outputs are compared and don't match.
 
-**7.** Personal exercise; the reasoning should identify whether the real-time and historical consumers of the same data truly need the same guarantees (favoring Kappa or Lambda) or clearly don't (favoring a deliberate hybrid, as Riverstone's is).
+**7.** **The sensor case.** Kappa would drop the daily correction job and fix history by resetting the streaming job's offsets and replaying the topic through the same code. That needs the topic retained for months, not the 7 days section 50.7 calls typical, and a log that can serve those months on demand: a bigger, always-on system for a four-person team. Riverstone already runs Dagster batch jobs every day and already keeps the sensor archive as a Delta table, so the correction job is one more daily asset on infrastructure the team knows. The price is keeping the window logic the same in two jobs. **The defect camera.** Kappa, like Lambda, is about processing an event log. The defect alert isn't a log consumer; it's a request that must be answered while the part is still in front of the camera (Chapter 56's online pattern). Logging the result for monitoring afterwards is a separate, asynchronous write, so there are no two paths to keep in agreement and no stream to unify.
 
-**8.** It means the *pattern* is already present under a different name, so there's no infrastructure to newly build. What's still worth doing: explicitly adopting the bronze/silver/gold vocabulary in documentation and conversation, so new hires and vendors can communicate about the system using a name the whole industry recognizes, rather than a company-specific set of terms that has to be explained every time.
+**8.** Personal exercise; the reasoning should ask whether the fast path is really processing a stream of events (if not, neither pattern applies), what the organization already runs (a batch orchestrator, a long-retention log, or both), and how far back a correction would need to reach.
 
-**9.** Personal exercise; check that at least one dimension is scored plainly low if the evidence supports it, and that each score has a one-sentence justification rather than a bare number.
+**9.** It means the *pattern* is already present under a different name, so there's no infrastructure to newly build. What's still worth doing: explicitly adopting the bronze/silver/gold vocabulary in documentation and conversation, so new hires and vendors can communicate about the system using a name the whole industry recognizes, rather than a company-specific set of terms that has to be explained every time.
 
-**10.** Personal exercise; check the answer explicitly addresses all four properties separately (a dataset can have an owner but no tested quality, for example) rather than a single yes/no verdict.
+**10.** Personal exercise; check that every score from 1 to 5 has a one-sentence justification rather than a bare number, that at least one question is scored plainly low if the evidence supports it, and that the verdict follows the rule (any 1, or a total under 15, means not ready).
 
-**11.** Riverstone's four-person team relabeling itself as three "domains" wearing different hats doesn't create the actual capacity, self-serve platform habits, or governance federation a real mesh needs — per Conway's Law, the resulting system would still communicate and coordinate exactly like one team, because it still *is* one team, regardless of what the architecture diagram calls its parts. The mesh vocabulary would describe an organizational reality that doesn't yet exist, which is precisely the mismatch Conway's Law predicts will eventually resurface as friction.
+**11.** Personal exercise; check the answer explicitly addresses all four properties separately (a dataset can have an owner but no tested quality, for example) rather than a single yes/no verdict.
 
-**12.** Ask what specific bottleneck exists today that a mesh would relieve, and what it would cost — in new roles, new platform investment, new governance overhead — to adopt before that bottleneck is real. "We'll need it eventually" is true of almost any pattern eventually, for a large enough hypothetical future; the discipline this chapter teaches is scoring readiness against the organization that exists now, and naming the concrete trigger (a domain team with real capacity, actively asking) that would justify the move, rather than pre-adopting complexity against a future that may arrive later than expected, or differently than expected.
+**12.** Riverstone's four-person team relabeling itself as three "domains" wearing different hats doesn't create the actual capacity, self-serve platform habits, or governance federation a real mesh needs — per Conway's Law, the resulting system would still communicate and coordinate exactly like one team, because it still *is* one team, regardless of what the architecture diagram calls its parts. The mesh vocabulary would describe an organizational reality that doesn't yet exist, which is precisely the mismatch Conway's Law predicts will eventually resurface as friction.
 
-**13.** A concrete first step: the plant analyst and Meera's team jointly write one data contract for a single, well-scoped plant dataset (say, machine-level defect summaries) with the analyst as the named owner, a stated freshness and quality bar, and a defined interface others can query without going through Meera's team directly — a single, real, working data product, built once, as the proof of concept before any broader mesh conversation.
+**13.** Ask what specific bottleneck exists today that a mesh would relieve, and what it would cost — in new roles, new platform investment, new governance overhead — to adopt before that bottleneck is real. "We'll need it eventually" is true of almost any pattern eventually, for a large enough hypothetical future; the discipline this chapter teaches is scoring readiness against the organization that exists now, and naming the concrete trigger (a business domain with its own builder, actively asking) that would justify the move, rather than pre-adopting complexity against a future that may arrive later than expected, or differently than expected.
 
-**14.** A data-fabric layer on top of Riverstone's centralized setup would add a unified metadata/catalog layer letting anyone discover what data exists and where, without changing who owns or operates it — solving the discoverability problem (section 62.7's fourth property) specifically, without requiring the organizational changes a mesh would need. It's a reasonable low-cost improvement to make *before* mesh readiness is even a question.
+**14.** It would need to be published somewhere other domains could actually discover it — an entry in a data catalog, not just code living inside one pipeline's repository — and its definitions (what counts as a "dispatch," what date field is authoritative) would need to be registered in the shared semantic layer rather than living only in that one pipeline's own logic, so a second domain building something related doesn't have to reverse-engineer the first domain's assumptions from scratch.
 
-**15.** Personal exercise; the reasoning should recognize that Conway's Law usually means the org chart needs to change first (or in tandem) for an architectural change to actually stick — imposing a new architecture on an unchanged organization typically just relocates the friction rather than removing it.
+**15.** Something close to: *"`active_customer` is defined as: placed a non-cancelled order in the trailing 12 months. This definition is owned by the data platform team. Any domain needing a different status — for example, an account with a non-zero balance — must name it differently (e.g., `customer_with_balance`) rather than redefining `active_customer` itself."* The clause works by making the *name* itself owned and protected, so a second meaning can't quietly attach itself to the same label.
 
-**16.** A defensible bet: an organization about to scale extremely fast (a planned 10x headcount and revenue growth within a known, short timeframe) where the cost of retrofitting a mesh *after* the bottleneck bites is demonstrably higher than the cost of building mesh-readiness slightly ahead of need. The key word is *demonstrably* — the bet is defensible when it's backed by a concrete growth plan and a real cost comparison, not general optimism that mesh will "obviously" be needed someday.
+**16.** A concrete first step: the plant analyst and Meera's team jointly write one data contract for a single, well-scoped plant dataset (say, machine-level daily scrap summaries from the corrected sensor windows) with the analyst as the named owner, a stated freshness and quality bar, and a defined interface others can query without going through Meera's team directly — a single, real, working data product, listed in the catalog, built once, as the proof of concept before any broader mesh conversation.
 
-**17.** Ask for specifics: can they name the actual team, the actual request, and the actual wait time that's currently a problem? A genuine bottleneck comes with a story that has names, dates, and a cost attached. Enthusiasm for a pattern read about recently tends to produce answers about the pattern's benefits in the abstract, with no specific instance of the current system actually failing to deliver.
+**17.** A data-fabric layer on top of Riverstone's centralized setup would add a data catalog listing every table (the ERP's tables, the warehouse's raw, staging, and mart tables, the Delta sensor archive) with its owner, columns, meaning, and freshness, plus a query engine that can join those sources where they sit — without changing who owns or operates any of them. It solves the discoverability problem (section 62.7's fourth property) specifically, without requiring the organizational changes a mesh would need. It's a reasonable low-cost improvement to make *before* mesh readiness is even a question.
 
-**18.** It's just several teams each independently, confidently publishing their own version of a shared concept — not decentralization in any useful sense, but the appearance of decentralization with none of a mesh's actual benefit. Real decentralization means domains can move fast independently *because* a contract and a shared definition let them trust each other's outputs without checking; without that, "independence" just means nobody notices the disagreement until two outputs are compared and don't match.
+**18.** Personal exercise; the reasoning should recognize that Conway's Law usually means the org chart needs to change first (or in tandem) for an architectural change to actually stick — imposing a new architecture on an unchanged organization typically just relocates the friction rather than removing it.
 
-**19.** It would need to be published somewhere other domains could actually discover it — a catalog entry, not just code living inside one pipeline's repository — and its definitions (what counts as a "dispatch," what date field is authoritative) would need to be registered in the shared semantic layer rather than living only in that one pipeline's own logic, so a second domain building something related doesn't have to reverse-engineer the first domain's assumptions from scratch.
+**19.** A defensible bet: an organization about to scale extremely fast (a planned 10x headcount and revenue growth within a known, short timeframe) where the cost of retrofitting a mesh *after* the bottleneck bites is demonstrably higher than the cost of building mesh-readiness slightly ahead of need. The key word is *demonstrably* — the bet is defensible when it's backed by a concrete growth plan and a real cost comparison, not general optimism that mesh will "obviously" be needed someday.
 
-**20.** Something close to: *"`active_customer` is defined as: placed a non-cancelled order in the trailing 90 days. This definition is owned by the Analytics team. Any domain needing a different status — for example, an account with an outstanding balance — must name it differently (e.g., `customer_with_balance`) rather than redefining `active_customer` itself."* The clause works by making the *name* itself owned and protected, so a second meaning can't quietly attach itself to the same label.
+**20.** Ask for specifics: can they name the actual team, the actual request, and the actual wait time that's currently a problem? A genuine bottleneck comes with a story that has names, dates, and a cost attached. Enthusiasm for a pattern read about recently tends to produce answers about the pattern's benefits in the abstract, with no specific instance of the current system actually failing to deliver.
 
 ---
 
 ## Where this leads
 
-- **Chapter 60, Designing Whole Systems:** the container diagram this chapter's Lambda/Kappa/hybrid comparison and medallion mapping both draw directly on.
+- **Chapter 60, Designing Whole Systems:** the container diagram this chapter's processing patterns, medallion mapping, and ownership patterns are all drawn onto.
 - **Chapter 61, Distributed Systems & Trade-offs:** the consistency and failure reasoning that applies inside whichever processing pattern you choose.
 - **Chapter 63, Automation Architecture & Governance:** operating and governing this architecture at company scale, including the automation inventory and ownership model a data mesh would eventually need.
 - **Chapter 66, Data Strategy, Maturity & Building Data Teams:** the organizational side of the centralized-versus-mesh decision, including how and when to actually hire the domain-team capacity section 62.6's scorecard says is missing.
-- **Interview preparation:** the System Design Question Bank (Chapter 77) and the Architecture & Leadership bank both ask "how would you architect data for a growing company" — this chapter's method, fit over fashion, is the answer they're looking for.
+- **Interview preparation:** the Architecture & Leadership Question Bank (Chapter 80) asks about Lambda versus Kappa directly; Chapter 77's data-system design questions use the same fit-over-fashion reasoning.

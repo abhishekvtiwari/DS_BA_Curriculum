@@ -1,15 +1,16 @@
 # Failure analysis worksheet
 
-For each container/component in your system, fill in the four columns.
+For each container/component in your system, fill in the five columns. Write the risk in words
+(platform outage, degrades, fails safe), not as a colour.
 See Chapter 61, section 61.7, for the method and a worked example.
 
-| Container | Weakest link | What breaks (specifically) | How it degrades |
-|---|---|---|---|
-| | | | |
-| | | | |
-| | | | |
-| | | | |
-| | | | |
+| Container | Weakest link | What breaks (specifically) | How it degrades | Risk |
+|---|---|---|---|---|
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
 
 ## Reading your own table
 

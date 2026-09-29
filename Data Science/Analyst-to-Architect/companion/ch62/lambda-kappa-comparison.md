@@ -1,69 +1,79 @@
-# Lambda vs. Kappa vs. hybrid: the full worked comparison
+# Lambda vs. Kappa: the full worked comparison
 
-Companion to Chapter 62, section 62.2. Scenario: Taloja's plant sensors need to
-power both an instant line alert and a historical warehouse table.
+Companion to Chapter 62, section 62.2. Scenario: the plant's machine sensors
+must raise an alert on the line within minutes, and still produce correct
+daily totals. This is the plant-sensor case Chapter 50 built in section 50.8.
 
-## Lambda architecture
+## What Chapter 50 built (three paths)
 
-**How it works:** a batch layer reprocesses all sensor data periodically (in
-Riverstone's case, this would be a nightly Dagster run reading the full day's
-readings into the warehouse). A separate speed layer processes new readings
-as they arrive, writing to a fast, low-latency store for immediate alerting.
-A merge/serving layer reconciles the two views for anyone querying "current"
-state.
+- **Alerting path (seconds):** a consumer group reads the `sensor-readings`
+  topic and raises an alert when a machine's 2-minute average passes its
+  limit. Alerts are de-duplicated by machine and window, and suppressed for
+  30 minutes after firing.
+- **Aggregation path (minutes):** a Spark Structured Streaming job with
+  5-minute windows and a 10-minute watermark writes windows into a Delta table
+  (the streaming table).
+- **Correction path (daily):** a batch job re-reads the day from the archive
+  and rewrites yesterday's windows (the corrected table), so late and dropped
+  readings are counted once a day. "Streaming for speed, batch for truth."
 
-**Cost:** the alerting logic (what counts as a defect-worthy reading) has to
-be implemented once in the speed layer's fast path and again in the batch
-layer's thorough pass — two implementations of the same business rule, which
-can and do drift apart over time as one is updated without the other.
+## Lambda architecture: what Riverstone runs
 
-**Where it's still the right call:** when the speed layer's approximate
-answer genuinely needs later correction by a slower, more thorough batch pass
-— for example, financial reconciliation where an initial fast estimate is
-routinely superseded by an end-of-day authoritative recompute.
+**How it maps:** the **speed layer** is the alert consumer plus the streaming
+job; the **batch layer** is the daily correction job; the **serving layer**
+is the dashboard's query, which reads the corrected table for past days and
+the streaming table for today.
 
-## Kappa architecture
+**Cost:** the window logic (window length, what counts as a reading, how
+duplicates are removed) lives in two jobs. Change it in one and forget the
+other, and today's numbers stop being comparable with yesterday's. Spark
+shrinks the cost, because a streaming query is almost the same code as a batch
+one (Chapter 50, section 50.4), but two jobs still run, fail, and get deployed
+separately.
 
-**How it works:** every sensor reading is written to one durable, replayable
-stream. Historical reprocessing means replaying the stream from the
-beginning (or from a checkpoint) through the same processing logic used for
-new data — no separate batch code path.
+**Why Riverstone chose it:** the team already runs Dagster batch jobs every
+day (Chapter 46) and already keeps the sensor archive as a Delta table
+(Chapter 49), so the correction job is one more daily asset on infrastructure
+the team knows. It needs no long-retention log.
 
-**Cost:** needs real streaming infrastructure (a broker that retains history
-and supports replay — Chapter 50's territory) operated to a standard where
-replay is fast and reliable enough to actually use for reprocessing, not just
-a theoretical capability.
+## Kappa architecture: the alternative
 
-**Where it's still the right call:** when the fast-path and slow-path
-consumers of the data genuinely want the same guarantees and the same
-processing logic — most modern streaming-first companies default here for
-exactly this reason.
+**How it would work at Riverstone:** drop the daily correction job. Keep one
+streaming job that raises alerts and writes the 5-minute windows. To correct
+history, reset the job's committed offsets to the start of the topic (Chapter
+50, section 50.7: "replay is your recovery tool") and run the same code over
+the whole topic again, into a fresh table. The replay run can use a much
+longer watermark than the live run, because nobody is waiting on it for an
+alert.
 
-## What Riverstone actually built: a deliberate hybrid
+**Cost:** the topic must be retained long enough to replay the history you
+might need to correct. Section 50.7's typical retention is 7 days; replaying a
+quarter means keeping months of readings in the log and running a log that can
+serve them. Replay must be fast and trustworthy enough to use routinely, not
+just in theory.
 
-**How it works:** the defect-model FastAPI service scores each image the
-instant it arrives, raising a line alert directly, with no dependency on the
-warehouse or any batch process. The same event is logged asynchronously into
-the ordinary Dagster-orchestrated batch ingestion path, landing in the
-warehouse on the normal schedule, for monitoring, drift analysis (Chapter 56),
-and historical reporting.
+**When it would be the better choice for Riverstone:** if the two jobs started
+drifting apart often enough to cause incidents, or if Riverstone were already
+running a durable, replayable log for other reasons (Chapter 50's exercise 12:
+a log starts to pay for itself when several consumers need the same events).
 
-**Why neither textbook pattern fit:** the line alert's consumer (a QC
-operator on the floor) needs a response in well under 50ms and has zero use
-for historical reprocessing. The warehouse's consumers (monitoring dashboards,
-retraining pipelines) need completeness and historical depth and have zero
-use for sub-second latency. Forcing both through one unified Kappa stream
-would mean either compromising the alert's speed to fit the stream's overall
-guarantees, or building special-cased fast-path logic inside the "unified"
-stream anyway — at which point it's not really unified. Forcing both through
-a Lambda merge step would add a reconciliation cost neither consumer actually
-needs, since the two paths never need to agree with each other in the first
-place — they're answering genuinely different questions on genuinely
-different timescales.
+## The case that is neither: the defect camera
 
-**The general lesson:** Lambda and Kappa are both answers to "how do I keep
-one shared view consistent across fast and slow paths." When your fast-path
-and slow-path consumers don't need a shared view at all — because they're
-different questions, not different speeds of the same question — building
-the honest, deliberately separate hybrid is the better-engineered choice,
-not a compromise.
+The defect model (Chapter 53) looks at a camera image of each part on the
+Taloja line. Chapter 56 serves it **online**: a request arrives and the answer
+goes back in milliseconds, while the part is still in front of the camera.
+Each prediction is also written as one structured log line (Chapter 56,
+section 56.5), which monitoring reads later (section 56.7).
+
+Lambda and Kappa are patterns for processing an event log. The defect alert
+isn't a log consumer; it's a request answered on the spot. Logging the result
+afterwards is a separate, asynchronous write. There is no merge step and no
+stream to unify, so neither name applies.
+
+## The general lesson
+
+Lambda and Kappa answer one question: *when fast results and correct history
+come from the same stream of events, do you keep one processing path or two?*
+Start from what the organization already runs, and price the replay. When the
+fast path isn't stream processing at all, use the name that fits it (online
+serving) instead.

@@ -1,12 +1,13 @@
 # ADR-007: Cloud provider and region
 
 **Status:** Accepted
-**Date:** 2026-09-19
+**Date:** before the pipeline was first deployed (Chapter 52)
 **Owner:** Data platform team
 
 ## Context
-Chapter 45 flagged cloud provider as an open decision; it became blocking once Chapter 52's
-deployment work needed a concrete target.
+Chapter 52's deployment work needed a concrete cloud and region. Chapter 45's note on data
+protection law (India's Digital Personal Data Protection Act, 2023) matters too: most of
+Riverstone's personal data is about Indian customers and staff.
 
 ## Decision
 AWS, region ap-south-1 (Mumbai).

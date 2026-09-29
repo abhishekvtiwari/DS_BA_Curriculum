@@ -1,12 +1,12 @@
 # ADR-002: Orchestrator for scheduled data pipelines
 
 **Status:** Accepted
-**Date:** 2026-09-16
+**Date:** when the Daily Sales Flash pipeline moved from cron to Dagster (Chapter 46)
 **Owner:** Data platform team
 
 ## Context
 Riverstone's daily sales flash and supporting pipelines had outgrown a single cron-scheduled
-script (Chapter 20). Failures were invisible until someone checked email; there was no shared
+script (Chapter 20, section 20.7). Failures were invisible until someone checked email; there was no shared
 view of what had run, what had failed, or what depended on what.
 
 ## Decision
@@ -15,7 +15,7 @@ Adopt Dagster as the orchestrator for all scheduled data pipelines.
 ## Alternatives considered
 1. **Stay with cron + custom logging** — rejected: no dependency graph, no built-in retry or
    backfill support, failures require manually reading log files.
-2. **Apache Airflow** — rejected for this team's first orchestrator: heavier operational
+2. **Apache Airflow** (Chapter 46, section 46.8) — rejected for this team's first orchestrator: heavier operational
    footprint (a scheduler, webserver, and metadata database to run), and its DAG-of-tasks model
    is a less natural fit than Dagster's asset-based model for a small team thinking in terms of
    "which tables get produced," not "which tasks run."

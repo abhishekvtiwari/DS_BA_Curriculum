@@ -1,36 +1,43 @@
 # ADR-021: PO-intake pipeline operating mode
 
 **Status:** Accepted
-**Date:** (Part 6, Chapter 58)
+**Date:** before the pilot went live on real email (Chapter 58)
 **Owner:** Automation team
 
 ## Context
-A full pilot of straight-through PO-intake processing (email to ERP with no human step) was
-measured at 88% of orders loading automatically — but of those auto-loaded orders, 19% were
-silently wrong (10 of 53), each costing roughly Rs 2,000 in credit notes, re-delivery, and a
-customer call to fix.
+Chapter 58 measured the pipeline on 60 practice emails. Run straight through (email to ERP
+with no person in between), it would load 88% of orders on its own, but 19% of those
+auto-loaded orders were silently wrong (10 of 53): a wrong quantity, a missing line. A wrong
+order costs roughly ₹2,000 to put right (credit note, re-delivery, a customer call). Nobody at
+Riverstone had measured either the coordinator's typing error rate or how many errors a
+reviewer catches, and the comparison between typing and assisted intake depends on both.
 
 ## Decision
-Operate the pipeline in assisted mode: the model drafts an order, a person confirms it
-(roughly 45 seconds per order) before it writes to the ERP. Fully automate only the segments
-measured at 100% accuracy (bulleted, forwarded, and terse-style emails — 62% of volume).
+Operate the pipeline in assisted mode: it drafts every order, and a person confirms each draft
+before anything is written to the ERP. Orders over ₹1,00,000 also wait for approval. Start with
+a shadow stage (the pipeline drafts, writes nothing, and its drafts are compared with what the
+coordinator typed) to measure the typing error rate and the review catch rate.
 
 ## Alternatives considered
-1. **Straight-through for all emails** — rejected: the 19% silent-error rate makes this more
-   expensive than manual entry once error costs are included, not less.
-2. **Manual entry, unchanged** — rejected: costs roughly 3x assisted mode per order with no
-   accuracy benefit over the confirmed-draft approach.
-3. **Straight-through only after a downstream confirmation loop is built** — deferred, not
-   rejected: revisit once such a loop exists (see "Revisit when").
+1. **Straight through for all emails** — rejected: at a 19% silent error rate it costs far more
+   than typing once the cost of wrong orders is counted (Chapter 58, section 58.7).
+2. **Typing, unchanged** — rejected, but narrowly: if typing were error-free it would be
+   cheaper than assisted intake, which wins on cost only if reviewers catch over 97% of errors
+   or typing gets more than 1.2% of orders wrong (Chapter 58, section 58.7). That is why the
+   shadow stage measures both numbers before the decision is revisited.
+3. **Auto-load a proven segment** (bulleted, forwarded and terse emails: 62% of the volume,
+   0 errors in 37 so far) — deferred, not rejected: 0 in 37 still allows a true error rate of
+   up to about 8% (the rule of three), so the segment must first pass on a fresh fortnight of
+   real email.
 
 ## Consequences
-**Positive:** assisted mode's measured cost (~Rs 198/order) beats both alternatives; the
-100%-accurate segments run fully automated today with no added risk.
-**Negative / costs:** a human reviewer remains in the loop for 38% of volume, which is a
-real, ongoing operating cost and a queue that has not yet been load-tested at higher volumes
-(see Chapter 60's open risks).
+**Positive:** no unreviewed order reaches the ERP; most silent errors become caught ones; the
+coordinator stays in the loop and notices when the model starts behaving oddly.
+**Negative / costs:** a person reviews every draft (about forty drafts in forty minutes a
+day), and the exception queue has not yet been load-tested at higher volumes (see the design
+document's risks).
 
 ## Revisit when
-Extraction accuracy on prose-and-table-style emails improves to a silent-error rate around 2%,
-or a reliable downstream confirmation mechanism (e.g., an automatic match against the original
-email) is built and measured.
+The shadow stage has measured the typing error rate and the review catch rate; or the proven
+segment passes on fresh email; or a downstream confirmation (for example, an email to the
+customer listing the lines) is built and measured.

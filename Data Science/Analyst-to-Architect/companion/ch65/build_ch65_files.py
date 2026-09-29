@@ -1,16 +1,28 @@
 """
-Analyst to Architect — Chapter 65: FinOps: The Economics of Data Platforms
-build_ch65_files.py — builds Riverstone's monthly platform cost model.
+Analyst to Architect, Chapter 65: FinOps: The Economics of Data Platforms
+build_ch65_files.py: builds Riverstone's monthly infrastructure bill and its unit economics.
 
-Infrastructure unit prices are anchored to real, searched AWS ap-south-1 (Mumbai) rates as of
-August 2026 (RDS db.m5.large Postgres $0.253/hr; gp3 storage $0.131/GB-month; S3 Standard
-$0.023/GB-month; S3 Glacier Deep Archive $0.002/GB-month; data transfer out $0.09/GB after the
-free tier) -- see the chapter's Tools section for sources. LLM API prices reuse Part 6 Chapter
-54's already-searched September 2026 figures (per 1M tokens) so the whole book stays internally
-consistent. Volumes (order lines, PO emails, RAG questions, defect-model predictions) are the
-real, established Riverstone facts from Chapters 16, 54, 55, 56, and 58. Everything else in this
-file -- which specific instance sizes Riverstone runs, exact storage volumes -- is a reasonable,
-invented sizing for a company this scale, not a verified fact. Riverstone Supplies is fictional.
+Every unit price is a list price, checked on 29 September 2026 in AWS's public price list
+(https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/<service>/current/ap-south-1/index.json),
+Asia Pacific (Mumbai), on-demand, before tax:
+  AmazonRDS (published 24 Sep 2026)      db.m5.large PostgreSQL Single-AZ $0.253/hour;
+                                         gp3 storage $0.131/GB-month; backup storage free up to
+                                         the provisioned size, then $0.095/GB-month
+  AmazonEC2 (published 25 Sep 2026)      t3.large Linux, shared tenancy, $0.0896/hour
+  AmazonS3 (published 28 Sep 2026)       S3 Standard $0.025/GB-month (first 50 TB);
+                                         S3 Glacier Flexible Retrieval $0.0045/GB-month
+  AWSDataTransfer (published 16 Sep 2026) data out to the internet: first 100 GB a month free
+                                         (all services together), then $0.1093/GB (first 10 TB)
+LLM prices are Chapter 54's workhorse tier ($2 per million input tokens, $10 per million output
+tokens, checked 29 Sep 2026), with the token counts Chapter 57 (PO intake) and Chapter 55 (the
+support assistant) measured.
+
+The sizing is invented, stated here and in section 65.2: one warehouse instance with 800 GB
+provisioned, two small always-on servers, the sensor archive of Chapter 49's plant-wide rollout
+a year in (277 GB), 180 GB a month of data out. The volumes come from earlier chapters:
+2025's 87,011 order lines (riverstone_full, Chapter 14), 1,120 PO emails a month (Chapter 57),
+1,000 support questions a month (Chapter 55), 500 inspected parts a week (Chapter 56) and
+250 Flash sends a year (Chapter 20). Riverstone Supplies is fictional.
 
 Run from this folder: python3 build_ch65_files.py
 Creates: monthly_cost_model.csv, unit_economics.csv
@@ -19,77 +31,56 @@ import pathlib
 import pandas as pd
 
 HERE = pathlib.Path(__file__).resolve().parent
-USD_INR = 87.0   # illustrative conversion rate used throughout this chapter, stated once here
+USD_TO_INR = 87          # this chapter's exchange rate, rupees per dollar
+HOURS_PER_MONTH = 730    # 24 x 365 / 12
 
-# ---- 1. Infrastructure: real ap-south-1 (Mumbai) rates, Riverstone-sized ----------------------
-infra = [
-    # component, unit, unit_price_usd, quantity, monthly_usd, notes
-    ("RDS PostgreSQL (db.m5.large, Single-AZ)", "instance-hours", 0.253, 730, None, "warehouse primary"),
-    ("RDS storage (gp3)", "GB-month", 0.131, 800, None, "800 GB provisioned"),
-    ("RDS automated backups", "GB-month", 0.0, 800, 0.0, "free up to provisioned size"),
-    ("S3 Standard (sensor archive, hot)", "GB-month", 0.023, 1200, None, "recent 90 days, Delta Lake"),
-    ("S3 Glacier Deep Archive (sensor archive, cold)", "GB-month", 0.002, 9800, None, "older than 90 days"),
-    ("Data transfer out (dashboards, API, email)", "GB", 0.09, 180, None, "180 GB/month egress"),
-    ("Dagster orchestration compute (small EC2 fleet)", "instance-hours", 0.052, 730, None, "t3.large, ingestion + scheduling"),
-    ("Defect-model serving (FastAPI, small EC2)", "instance-hours", 0.052, 730, None, "t3.large, always-on for line speed"),
+# Chapter 49's rollout archive: 277 GB a year; the last 90 days stay hot, the rest is cold.
+ARCHIVE_GB = 277
+HOT_GB = round(ARCHIVE_GB * 90 / 365, 1)          # 68.3
+COLD_GB = round(ARCHIVE_GB - HOT_GB, 1)            # 208.7
+
+# Chapter 57: 60 golden-set calls used 10,844 input and 3,184 output tokens at $2 / $10 per million.
+PO_PER_EMAIL_USD = (10_844 * 2 + 3_184 * 10) / 1_000_000 / 60
+# Chapter 55: about 470 input and 60 output tokens a question, same tier.
+RAG_PER_QUESTION_USD = (470 * 2 + 60 * 10) / 1_000_000
+
+EGRESS_GB, EGRESS_FREE_GB = 180, 100
+
+rows = [
+    # component, owner, unit, unit_price_usd, quantity
+    ("Warehouse compute (RDS)", "data platform", "instance-hour", 0.253, HOURS_PER_MONTH),
+    ("Warehouse storage (gp3)", "data platform", "GB-month", 0.131, 800),
+    ("Warehouse backups", "data platform", "GB-month", 0.0, 800),
+    ("Orchestration (Dagster)", "data platform", "instance-hour", 0.0896, HOURS_PER_MONTH),
+    ("Defect-model serving", "AI applications", "instance-hour", 0.0896, HOURS_PER_MONTH),
+    ("PO-intake (LLM API)", "AI applications", "email", PO_PER_EMAIL_USD, 1_120),
+    ("RAG assistant (LLM API)", "AI applications", "question", RAG_PER_QUESTION_USD, 1_000),
+    ("Sensor archive, hot (S3)", "plant operations", "GB-month", 0.025, HOT_GB),
+    ("Sensor archive, cold (Glacier)", "plant operations", "GB-month", 0.0045, COLD_GB),
+    ("Data transfer out", "shared", "GB", 0.1093, EGRESS_GB - EGRESS_FREE_GB),
 ]
-rows = []
-for name, unit, price, qty, monthly, notes in infra:
-    m = monthly if monthly is not None else round(price * qty, 2)
-    rows.append({"component": name, "unit": unit, "unit_price_usd": price, "quantity": qty,
-                "monthly_usd": m, "notes": notes})
-infra_df = pd.DataFrame(rows)
+costs = pd.DataFrame(rows, columns=["component", "owner", "unit", "unit_price_usd", "quantity"])
+costs["monthly_usd"] = (costs["unit_price_usd"] * costs["quantity"]).round(2)
+costs["monthly_inr"] = (costs["monthly_usd"] * USD_TO_INR).round(0).astype(int)
+costs["unit_price_usd"] = costs["unit_price_usd"].round(6)
+costs.to_csv(HERE / "monthly_cost_model.csv", index=False)
 
-# ---- 2. LLM API costs: real Sep 2026 prices from Chapter 54, real Riverstone volumes ----------
-# PO-intake: ~30 emails/day (Ch54: 20-40/day), assume ~900/month; extraction uses a mid-tier model
-# RAG assistant: modest support volume, ~25 questions/day = 750/month
-llm = [
-    ("PO-intake extraction (mid-tier model, e.g. Sonnet-5-class)", 900, 1800, 350, 2.0, 10.0),
-    ("Support RAG assistant (small/flash-tier model)", 750, 2200, 180, 0.75, 3.75),
-]
-llm_rows = []
-for name, calls, in_tok, out_tok, price_in, price_out in llm:
-    monthly_in_cost = calls * in_tok / 1_000_000 * price_in
-    monthly_out_cost = calls * out_tok / 1_000_000 * price_out
-    llm_rows.append({"component": name, "calls_per_month": calls, "avg_input_tokens": in_tok,
-                     "avg_output_tokens": out_tok, "price_per_1m_input_usd": price_in,
-                     "price_per_1m_output_usd": price_out,
-                     "monthly_usd": round(monthly_in_cost + monthly_out_cost, 2)})
-llm_df = pd.DataFrame(llm_rows)
-
-full = pd.concat([infra_df[["component", "monthly_usd", "notes"]],
-                  llm_df[["component", "monthly_usd"]].assign(notes="LLM API, Ch 54 Sep 2026 rates")],
-                 ignore_index=True)
-full["monthly_inr"] = (full["monthly_usd"] * USD_INR).round(0)
-full.to_csv(HERE / "monthly_cost_model.csv", index=False)
-
-total_usd = full["monthly_usd"].sum()
-total_inr = full["monthly_inr"].sum()
-
-# ---- 3. Unit economics, tied to Chapter 60's NFR (< Rs 0.50 per 1,000 order lines) -------------
-order_lines_per_month = 209_006 / 12 * (46_356 / 46_356)  # ~ monthly order-line volume, from the real dataset
-order_lines_per_month = round(17_417)  # 2025's 209,006 annual order lines / 12
-flash_sends_per_month = 26  # business days
-defect_predictions_per_month = 12000 / 6  # Ch53: 12,000 parts over 24 weeks -> ~2,000/week -> scale to a month
-po_intake_emails_per_month = 900
-rag_questions_per_month = 750
-
+# ---- Unit economics: the same allocation rules as section 65.3 ------------------------------
+total = costs["monthly_inr"].sum()
+by_name = costs.set_index("component")["monthly_inr"]
+volumes = {"order line": 87_011 / 12, "defect prediction": 500 * 52 / 12,
+           "PO-intake email": 1_120, "RAG question": 1_000}
+flash_hour = (by_name["Warehouse compute (RDS)"] + by_name["Orchestration (Dagster)"]) / HOURS_PER_MONTH
 unit = pd.DataFrame([
-    {"metric": "Total platform cost / month", "value_inr": round(total_inr), "value_usd": round(total_usd, 2)},
-    {"metric": "Cost per 1,000 order lines processed", "value_inr": round(total_inr / (order_lines_per_month/1000), 3),
-     "value_usd": round(total_usd / (order_lines_per_month/1000), 4)},
-    {"metric": "Cost per Daily Flash send", "value_inr": round((total_inr*0.05) / flash_sends_per_month, 2),
-     "value_usd": None},
-    {"metric": "Cost per defect-model prediction", "value_inr": round((infra_df.loc[infra_df.component.str.contains('Defect'), 'monthly_usd'].sum()*USD_INR) / defect_predictions_per_month, 4),
-     "value_usd": None},
-    {"metric": "Cost per PO-intake email processed", "value_inr": round((llm_df.loc[0,'monthly_usd']*USD_INR) / po_intake_emails_per_month, 2),
-     "value_usd": None},
-    {"metric": "Cost per RAG assistant question answered", "value_inr": round((llm_df.loc[1,'monthly_usd']*USD_INR) / rag_questions_per_month, 3),
-     "value_usd": None},
-])
+    ("per 1,000 order lines", total / (volumes["order line"] / 1_000)),
+    ("per Daily Flash send", flash_hour * 2 / 60),
+    ("per defect prediction", by_name["Defect-model serving"] / volumes["defect prediction"]),
+    ("per PO-intake email", by_name["PO-intake (LLM API)"] / volumes["PO-intake email"]),
+    ("per RAG question", by_name["RAG assistant (LLM API)"] / volumes["RAG question"]),
+], columns=["metric", "value_inr"])
+unit["value_inr"] = unit["value_inr"].round(3)
 unit.to_csv(HERE / "unit_economics.csv", index=False)
 
-print(f"Total monthly platform cost: ${total_usd:,.2f} (Rs {total_inr:,.0f})")
-print(f"Cost per 1,000 order lines: Rs {total_inr/(order_lines_per_month/1000):.3f}")
-print(f"Chapter 60's NFR target: under Rs 0.50 per 1,000 order lines")
+print(costs[["component", "monthly_usd", "monthly_inr"]].to_string(index=False))
+print(f"total: ${costs['monthly_usd'].sum():,.2f} = ₹{total:,.0f} a month at ₹{USD_TO_INR} to the dollar")
 print(unit.to_string(index=False))

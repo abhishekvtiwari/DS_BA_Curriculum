@@ -1,10 +1,6 @@
-item,amount_rs
-"Riverstone platform, annual cost (Ch 65)",456168.0
-"Daily Flash time saved, annual value (Ch 20)",97500.0
-"Branch macro time saved, annual value (Ch 19, conservative)",5775.0
-"PO-intake assisted-mode saving vs. fully manual, annual (Ch 58)",100500.0
-"Quantified savings, two automations only (incomplete case)",103275.0
-"Quantified savings, three known automations (still incomplete)",203775.0
-"Platform pays for itself, two automations only (x)",0.23
-"Platform pays for itself, three known automations (x)",0.45
-"Proposed new hire: data governance / catalog owner, annual salary",900000.0
+item_id,amount_rs,kind,source
+platform_cost,453360,cost,"Ch 65: Rs 37,780 a month x 12"
+flash,97500,measured saving,Ch 20: 325 hours x Rs 300
+macro,77,measured saving,Ch 19: 4 runs x 231 s x Rs 300 an hour
+po_intake,100750,conditional saving,Ch 58: (Rs 600 - Rs 197) x 250 days; only if 97% caught
+hire_salary,900000,cost,"Proposed catalog owner, a year"
