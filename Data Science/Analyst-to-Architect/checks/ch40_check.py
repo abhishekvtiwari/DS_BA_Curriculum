@@ -23,6 +23,9 @@ yearly = k.groupby(k.index.year).sum(); ok("2019/2025 totals (thousands)", (roun
 parts = seasonal_decompose(k, model="multiplicative", period=12); si = parts.seasonal[:12]
 ok("Oct/Nov factors", (round(si.iloc[9], 2), round(si.iloc[10], 2)), (1.43, 1.30))
 ok("Apr-Jun range", (round(si.iloc[3:6].min(), 2), round(si.iloc[3:6].max(), 2)), (0.82, 0.85))
+dev = (parts.resid.dropna() - 1).abs(); ok("largest residual deviation", (round(dev.max() * 100, 1), f"{dev.idxmax():%b %Y}"), (36.8, "May 2020"))
+tr = parts.trend.dropna(); ok("trend growth about 60%", round(tr.iloc[-1] / tr.iloc[0], 2), 1.57)
+ok("toy autocorr / Kitchen lag 1, 12", (round(pd.Series([10, 12, 11, 14, 13, 15.0]).autocorr(1), 2), round(k.autocorr(1), 2), round(k.autocorr(12), 2)), (0.3, 0.78, 0.85))
 ok("ADF raw p", round(adfuller(k)[1], 2), 0.98)
 train, test = k[:"2024-12"], k["2025"]
 wape = lambda a, f: np.abs(np.asarray(a) - np.asarray(f)).sum() / np.asarray(a).sum()
@@ -38,6 +41,9 @@ ci = np.exp(sar.get_forecast(12).conf_int(alpha=0.2)); ok("Dec interval", (round
 err = test.to_numpy() - fc.to_numpy(); ok("abs error sum ~42,000", round(np.abs(err).sum(), -3), 42000.0); ok("bias", round(err.mean()), 776)
 ok("July error", (round(np.abs(err).max()), test.index[np.abs(err).argmax()].month), (10464, 7)); ok("July pct", round(10464 / 74926 * 100), 14)
 naive_ins = np.abs(train.to_numpy()[12:] - train.to_numpy()[:-12]).mean(); ok("MASE", round(np.abs(err).mean() / naive_ins, 2), 0.37)
+ok("MASE parts", (round(naive_ins), round(np.abs(err).mean()), round(np.abs(err).sum())), (9432, 3537, 42440))
+ok("ACF lags outside band", [l for l in range(1, 25) if abs(a[l]) > 2 / np.sqrt(len(st)) or abs(pa[l]) > 2 / np.sqrt(len(st))], [9, 12, 22])
+ok("HW Jan-Apr gaps (%)", [round((f / t - 1) * 100, 1) for f, t in zip(hw.forecast(12)[:4], test[:4])], [-11.2, -7.0, -14.7, -19.7])
 ok("annual under", round((fc.sum() - test.sum()) / test.sum() * 100, 1), -0.9)
 def backtest(series, fn, horizon=12, folds=5):
     out = []
@@ -58,6 +64,10 @@ m2 = temp.rolling("120min").mean().shift(1); s2 = temp.rolling("120min").std().s
 ok("z alerts", int((z.abs() > 4).sum()), 3); ok("z at hottest", round(z[temp.idxmax()], 1), 2.8)
 base = temp.rolling("24h").median().shift(1); ex = temp - base; sus = (ex > 6).rolling(10).sum() == 10
 ok("first alert", f"{sus[sus].index.min():%a %H:%M}", "Wed 22:51")
+above = ex > 6; wed = above["2025-03-05 22:00":]; dip = above["2025-03-05 22:37":"2025-03-05 22:45"]
+ok("Wed first crossing / dip", (f"{wed[wed].index.min():%H:%M}", [f"{t:%H:%M}" for t in dip[~dip].index]), ("22:37", ["22:40", "22:41"]))
+full = temp - temp.rolling("24h", min_periods=1440).median().shift(1); fw = (temp.index >= "2025-03-05 22:00") & (temp.index <= "2025-03-05 23:30")
+ok("answer 13 false minutes, any vs full-day baseline (4 C, 5 and 20 min)", [int((((e > 4).rolling(w).sum() == w) & ~fw).sum()) for e in (ex, full) for w in (5, 20)], [132, 40, 29, 0])
 stops = r[r.status == "stopped"]; ok("stoppage", (f"{stops.timestamp.min():%a %H:%M}", f"{stops.timestamp.max():%H:%M}", len(stops)), ("Wed 22:02", "22:33", 32))
 json.dump({"kitchen": {str(d.date()): v for d, v in k.items()}, "trend": {str(d.date()): (None if np.isnan(v) else v) for d, v in parts.trend.items()},
            "seasonal": si.tolist(), "resid": {str(d.date()): (None if np.isnan(v) else v) for d, v in parts.resid.items()},

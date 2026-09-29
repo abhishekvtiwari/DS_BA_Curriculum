@@ -161,11 +161,11 @@ column standard deviations all 1: True
 
 **How it works:**
 
-- **`StandardScaler().fit_transform(...)`** subtracts each column's mean and divides by its standard deviation (Chapter 36). After scaling, one standard deviation of revenue counts exactly as much as one standard deviation of order count, which is what "similar accounts" should mean. The result `X` is a NumPy array: 5,000 rows, 7 columns.
+- **`StandardScaler().fit_transform(...)`** subtracts each column's mean and divides by its standard deviation (Chapter 36, section 36.4). After scaling, one standard deviation of revenue counts exactly as much as one standard deviation of order count, which is what "similar accounts" should mean. The result `X` is a NumPy array: 5,000 rows, 7 columns.
 - **`X.mean(axis=0)`** works down each column (`axis=0`, as in Chapter 35), giving seven means.
 - **`np.allclose(..., 0)`** asks "are these all equal to 0, apart from tiny rounding?" Computers store decimals with tiny errors, so a mean may come out as 0.00000000000000002 rather than 0; `allclose` treats that as equal.
 
-**Why fit the scaler on all 5,000 rows here**, when Chapter 36 fitted it inside a pipeline on training rows only? There's no target and no test set, so nothing can leak. When new accounts will later be placed into existing clusters, put the scaler and the clustering in one pipeline, so new accounts are scaled with the same means and standard deviations.
+**Why fit the scaler on all 5,000 rows here**, when Chapter 36 (section 36.9) fitted it inside a pipeline on training rows only? There's no target and no test set, so nothing can leak. When new accounts will later be placed into existing clusters, put the scaler and the clustering in one pipeline, so new accounts are scaled with the same means and standard deviations.
 
 ---
 
@@ -536,7 +536,7 @@ tenure                26.00       27.00      26.00     24.00
 churn_rate             0.03        0.03       0.08      0.41
 ```
 
-**How it works:** `n_accounts` counts each cluster's rows (`"size"`); revenue, orders, recency and tenure use the median, because they're skewed; categories, discount and lateness use the mean; and `churn_rate` is the mean of a 0/1 column, the share who churned, a column the clustering never saw. `.T` turns the table so each cluster is a column.
+**How it works:** `n_accounts` counts each cluster's rows (`"size"`); revenue, orders, recency and tenure use the median, because they're skewed; categories, discount and lateness use the mean; and `churn_rate` is the mean of a 0/1 column, the share who churned, a column the clustering never saw. The other output names (`discount_pct`, `late_days`, `days_since_order`, `tenure`) are just shorter labels. `.T` turns the table so each cluster is a column.
 
 Second, the segment mix inside each cluster. `pd.crosstab` counts accounts for every cluster and segment (Chapter 21); **`normalize="index"`** turns each row's counts into shares, so each row adds to 100%:
 
@@ -659,7 +659,7 @@ print(f"the rule gives the same cluster as k-means for {agree:.1%} of accounts")
 the rule gives the same cluster as k-means for 90.4% of accounts
 ```
 
-**How it works:** the tree's target is the cluster label, not churn, so it learns "which cluster would k-means put this account in?" from three raw columns. `max_depth=3` allows at most three questions, and `export_text` prints them (Chapter 37). The last line compares its answers with the real labels for all 5,000 accounts.
+**How it works:** the tree's target is the cluster label, not churn, so it learns "which cluster would k-means put this account in?" from three raw columns. `max_depth=3` allows at most three questions, and `export_text` prints them (Chapter 37), using `feature_names=RULE_COLUMNS` to name the columns. The last line compares its answers with the real labels for all 5,000 accounts.
 
 **Reading it.** In words: more than about 26 orders a year is a key account (unless the account buys three or more categories at 27 to 35 orders); otherwise, three or more categories and an order in the last five months or so is a regular; fewer categories and an order in the last 142 days is an occasional buyer; a longer silence is drifting away. Three numbers every rep can see in the order history reproduce the clusters for about nine accounts in ten. The rest sit near a boundary, where the silhouette said they would.
 
@@ -734,7 +734,7 @@ print("Ward heights:", linkage(small, method="ward")[:, 2].round(2))
 Ward heights: [ 0.54  1.53  3.    4.51 16.86]
 ```
 
-**How it works:** each row of the result is `[group, group, height, size]`. Groups 0–5 are the six accounts (A = 0 … F = 5); each merge creates a new group numbered from 6 upwards, so row 2's `4, 6` means "E joins group 6, which is {A, B}". The heights are the table's: 0.54, 1.30, 3.00, 3.16, 7.12. `[:, 2]` picks the height column of the Ward version. Ward measures height differently (by how much variance a merge adds), so its heights run on a different scale, 0.54 up to 16.86, but the tree has the same shape and the same two groups.
+**How it works:** each row of the result is `[group, group, height, size]`. Groups 0–5 are the six accounts (A = 0 … F = 5); each merge creates a new group numbered from 6 upwards, so the second row's `4, 6` means "E joins group 6, which is {A, B}". The heights are the table's: 0.54, 1.30, 3.00, 3.16, 7.12. `[:, 2]` picks the height column of the Ward version. Ward measures height differently (by how much variance a merge adds), so its heights run on a different scale, 0.54 up to 16.86, but the tree has the same shape and the same two groups.
 
 ### On the real accounts
 
@@ -764,7 +764,7 @@ cut into 5: sizes [147 119 168  50 316]   agreement with k-means 0.470
 - **`fcluster(tree, t=k, criterion="maxclust")`** cuts the tree. `criterion="maxclust"` means "cut at the height that leaves at most `t` clusters", so `t=k` asks for *k* clusters.
 - `fcluster` numbers clusters from **1**, not 0. `np.bincount(labels)` counts how many rows have each label, starting at label 0, which never occurs; **`[1:]`** drops that empty first count.
 
-To draw the tree, `dendrogram` does the work. 800 leaves would be an unreadable smear, so `truncate_mode="lastp"` with `p=30` shows only the last 30 merges; each leaf then stands for a group of accounts:
+To draw the tree, `dendrogram` does the work, on a matplotlib figure made the way Chapter 18 did (section 18.11). 800 leaves would be an unreadable smear, so `truncate_mode="lastp"` with `p=30` shows only the last 30 merges; each leaf then stands for a group of accounts:
 
 ```python
 import matplotlib.pyplot as plt
@@ -777,7 +777,7 @@ ax.set_ylabel("merge height (Ward)")
 plt.show()
 ```
 
-**How it works:** `tree[-3, 2]` is the height of the third-from-last merge, the one that would join four groups into three, and `tree[-4, 2]` the merge before it. A line halfway between them, drawn with `ax.axhline`, crosses exactly four branches: the cut into four clusters. `no_labels=True` hides the leaf labels. Figure 38.4 is this picture, redrawn in the book's style.
+**How it works:** `tree[-3, 2]` is the height of the third-from-last merge, the one that would join four groups into three, and `tree[-4, 2]` the merge before it. A line halfway between them, drawn with `ax.axhline` (`linestyle="--"` makes it dashed), crosses exactly four branches: the cut into four clusters. `no_labels=True` hides the leaf labels, and `figsize=(9, 3.6)` is the picture's width and height in inches, as in Chapter 18. Figure 38.4 is this picture, redrawn in the book's style.
 
 ![A dendrogram of 800 sampled accounts showing the last 30 merges, with the merge height on the vertical axis, a dashed line where a cut produces four clusters, and the four branches labeled with their sizes 147, 287, 50 and 316](figures/fig38-4-dendrogram.svg)
 
@@ -835,7 +835,9 @@ k_distance = np.sort(dist[:, -1])
 for share in [0.10, 0.25, 0.50, 0.75, 0.90, 0.99]:
     within = np.quantile(k_distance, share)
     print(f"{share:>4.0%} of accounts have a 14th neighbour within {within:.2f}")
-plt.plot(k_distance)
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.plot(k_distance)
+ax.set_ylabel("distance to 14th neighbour")
 plt.show()
 ```
 
@@ -848,7 +850,7 @@ plt.show()
  99% of accounts have a 14th neighbour within 2.13
 ```
 
-**How it works:** `NearestNeighbors(n_neighbors=14)` finds each row's 14 nearest rows. Asked about the rows it was fitted on, the nearest of those is the row itself (distance 0), which matches DBSCAN counting the row itself toward `min_samples`. `kneighbors(X)` returns two arrays, the distances and the neighbours' row numbers; `dist, _ = …` keeps the first and throws the second away (`_` is Python's name for "not needed"). `dist[:, -1]` is each row's distance to its 14th neighbour, and `np.sort` puts them in order for the plot. `np.quantile(k_distance, share)` reads the curve at a few points.
+**How it works:** `NearestNeighbors(n_neighbors=14)` finds each row's 14 nearest rows. Asked about the rows it was fitted on, the nearest of those is the row itself (distance 0), which matches DBSCAN counting the row itself toward `min_samples`. `kneighbors(X)` returns two arrays, the distances and the neighbours' row numbers; `dist, _ = …` keeps the first and throws the second away (`_` is Python's name for "not needed"). `dist[:, -1]` is each row's distance to its 14th neighbour, and `np.sort` puts them in order for the plot. `np.quantile(k_distance, share)` reads the curve at a few points, and `ax.plot(k_distance)` draws it on a 6 × 3 inch figure (`figsize`) (Figure 38.5 is the same curve in the book's style).
 
 ![A rising curve of the 5,000 accounts' 14th-neighbour distances, sorted, climbing gently from about 0.4 to about 1.5 and then steeply at the far right, with dotted lines at eps values 0.5, 0.8, 1.0 and 1.2 crossing it at different points](figures/fig38-5-k-distance.svg)
 
@@ -993,7 +995,7 @@ for ax, (title, coords) in zip(axes, pictures):
 plt.show()
 ```
 
-**How it works:** `plt.subplots(1, 3, ...)` makes one row of three panels, `axes`. `pictures` pairs each title with its coordinates; for PCA, `coords_pca[plot_rows]` picks the same 1,500 accounts. `zip(axes, pictures)` walks through both lists together. `ax.scatter(x, y, c=..., s=4, cmap="tab10")` draws a dot per account (`s` is the dot size), coloured by its cluster label through the colour set `tab10`. Figure 38.6 is this picture in the book's style, with a different marker shape for each cluster, so it reads in black and white too.
+**How it works:** `plt.subplots(1, 3, figsize=(12, 4))` makes one row of three panels, `axes`, on a 12 × 4 inch figure. `pictures` pairs each title with its coordinates; for PCA, `coords_pca[plot_rows]` picks the same 1,500 accounts. `zip(axes, pictures)` walks through both lists together. `ax.scatter(x, y, c=..., s=4, cmap="tab10")` draws a dot per account (`s` is the dot size), coloured by its cluster label through the colour set `tab10`. Figure 38.6 is this picture in the book's style, with a different marker shape for each cluster, so it reads in black and white too.
 
 ![Three scatter panels of the same 1,500 accounts, each account drawn with its k-means cluster's colour and marker shape: PCA shows a continuous cloud with clusters in overlapping bands, t-SNE shows the groups as touching regions, and UMAP shows a few connected arms, with the same groups appearing in each](figures/fig38-6-pca-tsne-umap.svg)
 
@@ -1025,7 +1027,7 @@ print(tiny.score_samples(values).round(2))
 [-0.43 -0.34 -0.35 -0.45 -0.73]
 ```
 
-**How it works:** `.reshape(-1, 1)` makes one column again. `IsolationForest(random_state=38).fit(values)` grows the random trees (100 by default), seeded so the result repeats. `score_samples` turns each value's average number of splits into a score: **the lower, the stranger**. 50 scores lowest by far; 12, in the middle of the crowd, scores highest.
+**How it works:** `.reshape(-1, 1)` makes one column again. `IsolationForest(random_state=38).fit(values)` grows the random trees (100 by default), seeded so the result repeats. `score_samples` turns each value's average number of splits into a score: **the lower, the stranger**. 50 scores lowest by far (−0.73); 11 and 12, in the middle of the crowd, score highest (−0.34 and −0.35).
 
 It's fast, it handles many features, and it needs no labels. On the accounts:
 
@@ -1096,7 +1098,7 @@ using the cluster alone to rank churn risk: AUC 0.759
 (Chapter 37's supervised models scored 0.80 to 0.85 on this target.)
 ```
 
-**How it works:** `rates` is each cluster's churn rate, and `.map(rates)` gives every account its cluster's rate as a score. `roc_auc_score` (Chapter 36) measures how well that score ranks churners above stayers.
+**How it works:** `rates` is each cluster's churn rate, and `.map(rates)` gives every account its cluster's rate as a score. `roc_auc_score` (Chapter 36, section 36.5) measures how well that score ranks churners above stayers.
 
 **Reading it.** Ranking accounts by their cluster's churn rate gives an AUC of 0.759, against 0.80–0.85 for the supervised models in Chapter 37 that were trained on churn directly. Four unlabelled groups recover much of the ranking power of a model built for the job. Two cautions make the check weaker than it sounds. Recency, the strongest churn signal in Chapter 37 (an odds ratio of 2.10 in section 37.3), was one of the clustering features, so some of this was built in. And the 0.759 is measured on the same accounts the rates came from, while Chapter 37's scores are on accounts its models hadn't seen. Still, it's a genuine external check, and also a caution: **when you have a target, use it.** Clustering isn't a substitute for a supervised model; it's what you reach for when there's no target at all, or when you need groups people can hold in their heads.
 
@@ -1199,17 +1201,17 @@ First turn the lines into baskets, one set of product names per order:
 
 ```python
 baskets = lines.groupby("order_id")["product_name"].apply(set)
-print(baskets.head(3).to_string())
+for order_id, items in baskets.head(3).items():
+    print(order_id, sorted(items))
 ```
 
 ```
-order_id
-900001    {Storage Crate 50L, Airtight Seal Pack, Food C...
-900002                                  {Food Container 5L}
-900003                   {Shelf Unit 4-Tier, Folding Stool}
+900001 ['Airtight Seal Pack', 'Chopping Board', 'Food Container 5L', 'Storage Crate 50L']
+900002 ['Food Container 5L']
+900003 ['Folding Stool', 'Shelf Unit 4-Tier']
 ```
 
-**How it works:** `groupby("order_id")["product_name"]` gathers each order's product names, and **`.apply(set)`** collects them into a **set**, a bag with no duplicates and no order (Chapter 17, section 17.7). `baskets` is a Series: one set per order, indexed by order number.
+**How it works:** `groupby("order_id")["product_name"]` gathers each order's product names, and **`.apply(set)`** collects them into a **set**, a bag with no duplicates and no order (Chapter 17, section 17.7). `baskets` is a Series: one set per order, indexed by order number. `.head(3).items()` hands over the first three as (order number, set) pairs, and `sorted(items)` prints each set as an alphabetical list, because a set has no order of its own and could print its items in any order.
 
 Now the three measures in code:
 
@@ -1267,7 +1269,9 @@ five = [
 encoder = TransactionEncoder()
 grid = pd.DataFrame(encoder.fit_transform(five), columns=encoder.columns_)
 print(grid.to_string())
-print(apriori(grid, min_support=0.4, use_colnames=True).to_string())
+found = apriori(grid, min_support=0.4, use_colnames=True)
+found["items"] = found["itemsets"].apply(sorted)
+print(found[["support", "items"]].to_string())
 ```
 
 ```
@@ -1277,17 +1281,17 @@ print(apriori(grid, min_support=0.4, use_colnames=True).to_string())
 2   True  False    False  False  False
 3  False   True    False   True  False
 4  False  False    False   True  False
-   support                   itemsets
-0      0.6         frozenset({chair})
-1      0.4           frozenset({lid})
-2      0.4         frozenset({table})
-3      0.4  frozenset({chair, table})
+   support           items
+0      0.6         [chair]
+1      0.4           [lid]
+2      0.4         [table]
+3      0.4  [chair, table]
 ```
 
 **How it works:**
 
 - **`TransactionEncoder`** turns a list of baskets into a table of True/False columns, one per product, one row per basket: the format `apriori` needs. `fit_transform` does it, and `encoder.columns_` holds the product names for the column headings.
-- **`apriori(grid, min_support=0.4, use_colnames=True)`** finds every item set in at least 40% of baskets. `use_colnames=True` shows product names instead of column numbers. The `itemsets` column holds **frozensets**: sets that can't be changed after they're made.
+- **`apriori(grid, min_support=0.4, use_colnames=True)`** finds every item set in at least 40% of baskets. `use_colnames=True` shows product names instead of column numbers. Its `itemsets` column holds **frozensets**, sets that can't be changed after they're made; `.apply(sorted)` turns each into an alphabetical list for printing, in a new column `items`. The four sets found are exactly the hand answer: chair, lid, table, and {chair, table}.
 
 The same on Riverstone's 34,013 baskets. `association_rules` then turns the frequent sets into if-then rules and scores them:
 
@@ -1301,7 +1305,7 @@ rules["if"] = rules["antecedents"].apply(lambda s: ", ".join(sorted(s)))
 rules["then"] = rules["consequents"].apply(lambda s: ", ".join(sorted(s)))
 rules["rule"] = rules["if"] + " -> " + rules["then"]
 print(f"{len(frequent)} frequent item sets, {len(rules)} rules with lift above 1.2")
-top = rules.sort_values("lift", ascending=False).head(8)
+top = rules.sort_values(["lift", "rule"], ascending=[False, True]).head(8)
 print(top[["rule", "support", "confidence", "lift"]].round(3).to_string(index=False))
 ```
 
@@ -1309,14 +1313,14 @@ print(top[["rule", "support", "confidence", "lift"]].round(3).to_string(index=Fa
 (34013, 24) baskets x products
 183 frequent item sets, 198 rules with lift above 1.2
                                        rule  support  confidence  lift
-               Garden Chair -> Garden Table    0.032       0.508 9.005
                Garden Table -> Garden Chair    0.032       0.571 9.005
+               Garden Chair -> Garden Table    0.032       0.508 9.005
           Chair Cushion Set -> Garden Chair    0.022       0.348 5.489
           Garden Chair -> Chair Cushion Set    0.022       0.353 5.489
    Drum Tap Fitting, Pallet Box -> Drum 60L    0.011       0.484 4.812
    Drum 60L -> Drum Tap Fitting, Pallet Box    0.011       0.108 4.812
-Crate Trolley, Drum Tap Fitting -> Drum 60L    0.011       0.477 4.747
 Drum 60L -> Crate Trolley, Drum Tap Fitting    0.011       0.109 4.747
+Crate Trolley, Drum Tap Fitting -> Drum 60L    0.011       0.477 4.747
 ```
 
 **How it works:**
@@ -1325,7 +1329,7 @@ Drum 60L -> Crate Trolley, Drum Tap Fitting    0.011       0.109 4.747
 - `apriori` keeps item sets in at least 1% of baskets (`min_support=0.01`, about 340 orders).
 - **`association_rules(frequent, metric="lift", min_threshold=1.2)`** makes every if-then rule from those sets and keeps the ones whose `lift` is at least 1.2. Its **`antecedents`** column is the "if" side and **`consequents`** the "then" side, each a frozenset.
 - `", ".join(sorted(s))` turns a frozenset into readable text such as `Drum Tap Fitting, Pallet Box`, and `rule` joins the two sides with an arrow.
-- `sort_values("lift", ascending=False)` puts the highest lift first (`ascending=False` means largest first), and `head(8)` keeps eight.
+- `sort_values(["lift", "rule"], ascending=[False, True])` puts the highest lift first (`False` means largest first); rules with equal lift, such as a pair read in both directions, then go in alphabetical order, so they print the same way every run. `head(8)` keeps eight.
 
 **Reading it.** The strongest rules are the planted ones and they're the ones a warehouse manager would recognize: garden chairs with garden tables (lift 9.0), chairs with cushions (5.5), drums with tap fittings. Rules go in both directions with the same lift but different confidence: 57.1% of table buyers add chairs, while 50.8% of chair buyers add a table, because chairs are more common overall.
 
@@ -1719,6 +1723,8 @@ cluster 2: Airtight Seal Pack (2,157), Crate Lid (80L) (1,348), Crate Lid (50L) 
 cluster 3: Airtight Seal Pack (177), Crate Lid (50L) (122), Insulated Jug 5L (116)
 ```
 
+**How it works:** `cluster_of` is a lookup from account to cluster, and `.map(cluster_of)` gives every order line its account's cluster. `dropna(subset=["cluster"])` drops lines whose account has no cluster (there are none here, but it's a safe habit). The `groupby` counts distinct orders per cluster and product, `.rename("orders")` names that count, and `reset_index()` turns the groups back into columns. The loop takes each cluster's rows, `nlargest(3, "orders")` keeps its top three, and `itertuples()` hands them over one row at a time, with each column as an attribute (`r.product_name`, `r.orders`), so the f-string can print them.
+
 The lists overlap heavily, because the most common products are common everywhere. Differences show up in what follows the top three, and they match the segment mix of each cluster: the key-accounts cluster, mostly wholesale, leans on industrial items, while the occasional buyers' baskets are storage and kitchen. For sharper differences, compare each cluster's share of a product against the overall share rather than raw counts.
 
 **11.**
@@ -1771,6 +1777,8 @@ month     1      2      3      4      5      6      7      8      9      10     
 3      0.110  0.054  0.056  0.061  0.174  0.109  0.087  0.080  0.069  0.079  0.054  0.067
 ```
 
+**How it works:** `.dt.month` takes the month number from each date. `unstack(fill_value=0)` turns the months from rows into columns, writing 0 where an account had no orders that month, and `reindex(columns=range(1, 13), fill_value=0)` makes sure all twelve months are there. `monthly.sum(axis=1)` is each account's total, and `monthly.div(..., axis=0)` divides each row by its own total, giving the share of the account's orders in each month.
+
 Each row here is a *shape*, the share of a customer's orders falling in each month (columns 1 to 12, January to December), not a level, so big and small accounts can share a pattern. The four groups differ mainly in which months are busiest. Each group peaks in a different month, which looks like seasonality until you remember that this generator spreads orders evenly across the year: with 12 noisy numbers per account, k-means will always find groups whose averages peak somewhere. That is the honest answer: clustering finds groups whether or not the data contains any. Chapter 40 handles seasonality properly, with data that has it.
 
 **13.**
@@ -1796,7 +1804,8 @@ for segment in ["Wholesale", "Hospitality"]:
         + " -> "
         + seg_rules["consequents"].apply(lambda s: ", ".join(sorted(s)))
     )
-    best = seg_rules.nlargest(3, "lift")[["rule", "support", "confidence", "lift"]]
+    best = seg_rules.sort_values(["lift", "rule"], ascending=[False, True]).head(3)
+    best = best[["rule", "support", "confidence", "lift"]]
     print(f"--- {segment} ({len(segment_baskets):,} baskets)")
     print(best.round(3).to_string(index=False))
 ```
@@ -1804,8 +1813,8 @@ for segment in ["Wholesale", "Hospitality"]:
 ```
 --- Wholesale (16,744 baskets)
                              rule  support  confidence   lift
-     Garden Chair -> Garden Table    0.014       0.480 19.078
      Garden Table -> Garden Chair    0.014       0.561 19.078
+     Garden Chair -> Garden Table    0.014       0.480 19.078
 Chair Cushion Set -> Garden Chair    0.010       0.343 11.659
 --- Hospitality (7,952 baskets)
                                             rule  support  confidence  lift
@@ -1814,7 +1823,7 @@ Airtight Seal Pack, Garden Table -> Garden Chair    0.015       0.578 7.290
 Airtight Seal Pack, Garden Chair -> Garden Table    0.015       0.527 7.247
 ```
 
-The pairs that are planted in the data (chairs with tables, drums with taps, crates with lids) appear in both segments, because the rules were built into the products, not the customers. What differs is which rules **clear the support threshold**, and how strong they look: the chair-and-table pair has a lift of 18.5 in wholesale baskets against 7.2 in hospitality (furniture is rarer in wholesale orders, so co-occurrence stands out more), and the three-product industrial rules appear only in wholesale. That's the practical lesson: run basket analysis per segment when the segments buy different catalogues, or the rules of the largest segment will be the only ones you see.
+The pairs that are planted in the data, such as chairs with tables and crates with lids, turn up in both segments, because the rules were built into the products, not the customers. What differs is which rules **clear the support threshold**, and how strong they look. The chair-and-table pair has a lift of 19.1 in wholesale baskets against about 7 in hospitality ones: furniture is rarer in wholesale orders, so when it does appear together it stands out more. The rules about drums, tap fittings, trolleys and dolly wheels clear the threshold only in wholesale baskets; *Drum 60L → Drum Tap Fitting* is one, because hospitality accounts hardly buy industrial products. And hospitality's top rules all add an Airtight Seal Pack, a kitchen staple common in its baskets, to the garden set. That's the practical lesson: run basket analysis per segment when the segments buy different catalogues, or the rules of the largest segment will be the only ones you see.
 
 **14.** Those four features all measure the same thing, the size of the account, and three of them are strongly correlated, so distance is dominated by size and the clusters come out as "big, medium, small". A useful segmentation needs features that vary **independently** of each other: keep one size measure, and add behavior (recency, product breadth, discount level, payment habits). The quick check is a correlation matrix of the features before clustering.
 

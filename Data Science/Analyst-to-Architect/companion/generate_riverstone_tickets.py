@@ -4,14 +4,15 @@ generate_riverstone_tickets.py: free-text customer support tickets, 2024-2025.
 
 Run:     python3 generate_riverstone_tickets.py       (writes into companion/tickets/)
 Writes:  tickets/tickets.csv
-Seed:    20241
-Tested:  Python 3.12.3, NumPy 2.4.4, pandas 3.0.2 (18 September 2026)
+Seed:    20241 (repeat contacts: 20242)
+Tested:  Python 3.11.15, NumPy 2.4.6, pandas 3.0.6 (29 September 2026)
 Spec:    planning/data/riverstone-tickets.md
 
 Riverstone Supplies is fictional; every name and number is invented. Ticket text is templated and
 randomized, not copied from any real support system.
 """
 import pathlib
+import re
 import numpy as np
 import pandas as pd
 
@@ -29,7 +30,7 @@ NAMES = ["Rakesh", "Priya", "Suresh", "Anjali", "Vikram", "Neha", "Farhan", "Div
 # ---- templates: (topic, sentiment, list of body templates with {product}/{days}/{order}/{amount} slots) ----
 TEMPLATES = {
     ("Delivery", "frustrated"): [
-        "This is the {n}rd time I am writing. My order #{order} was supposed to arrive {days} days ago and there is still no {product}. Very disappointed with this service.",
+        "This is the {n} time I am writing. My order #{order} was supposed to arrive {days} days ago and there is still no {product}. Very disappointed with this service.",
         "Extremely unhappy. {days} days late and no update from your courier. I need the {product} urgently for my shop, please escalate this now.",
         "Order {order} still not delivered after {days} days!! I called twice and nobody called back. This is not acceptable.",
     ],
@@ -112,11 +113,17 @@ def typo(text, rate=0.03):
             out.append(" ")                              # double space
     return "".join(out)
 
-bodies, subjects = [], []
+# templates that say the customer has been in touch before about the same order
+REPEAT_PHRASES = ["time I am writing", "called twice", "second defective piece", "raised this before"]
+
+bodies, subjects, products, repeat_wording = [], [], [], []
 for i in range(N):
     key = (topic[i], sentiment[i])
     body = rng.choice(TEMPLATES[key])
-    body = body.format(product=rng.choice(PRODUCTS), days=days_late[i], order=order_ids[i],
+    repeat_wording.append(any(phrase in body for phrase in REPEAT_PHRASES))
+    product = rng.choice(PRODUCTS)
+    products.append(product)
+    body = body.format(product=product, days=days_late[i], order=order_ids[i],
                        amount=amounts[i], n=rng.choice(["2nd", "3rd", "4th"]))
     if rng.random() < 0.25:
         body = f"Dear team, {body[0].lower()}{body[1:]}"
@@ -139,8 +146,33 @@ tickets = pd.DataFrame({
 })
 # a handful of genuinely ambiguous / mixed tickets (hard even for a human)
 mix_idx = rng.choice(N, 40, replace=False)
-tickets.loc[mix_idx[:20], "body"] = ("The " + tickets.loc[mix_idx[:20], "body"].str.split().str[3] +
-                                     " was fine but the delivery was late and the invoice amount looks off, please check.")
+mixed = mix_idx[:20]
+tickets.loc[mixed, "body"] = ("The " + pd.Series(products)[mixed].values +
+                              " was fine but the delivery was late and the invoice amount looks off, please check.")
+
+# repeat contacts: most tickets whose wording says "I've been in touch before" really do follow an
+# earlier ticket on the same order (the rest followed a phone call, which the ticket log never saw).
+# A separate random stream, so every other column is unchanged.
+rng2 = np.random.default_rng(20242)
+dates = pd.to_datetime(tickets["created_at"])
+is_mixed = np.zeros(N, dtype=bool); is_mixed[mixed] = True
+candidates = np.flatnonzero(np.array(repeat_wording) & ~is_mixed)
+for i in candidates[np.argsort(dates.values[candidates], kind="stable")]:   # oldest first
+    if rng2.random() >= 0.8:
+        continue                                        # the earlier contact was a phone call
+    earlier = np.flatnonzero((tickets["topic"].values == tickets.at[i, "topic"]) & ~is_mixed &
+                             (dates < dates[i]).values & (dates >= dates[i] - pd.Timedelta(days=30)).values)
+    if len(earlier) == 0:
+        continue
+    first = rng2.choice(earlier)
+    old, new = str(tickets.at[i, "order_id"]), str(tickets.at[first, "order_id"])
+    tickets.at[i, "body"] = re.sub(rf"\b{old}\b", new, tickets.at[i, "body"])
+    tickets.at[i, "order_id"] = tickets.at[first, "order_id"]
+    tickets.at[i, "customer_name"] = tickets.at[first, "customer_name"]
 tickets.to_csv(OUT / "tickets.csv", index=False)
-print(f"{N:,} tickets · topics {dict(pd.Series(topic).value_counts())}")
-print(f"sentiment {dict(pd.Series(sentiment).value_counts())}")
+def counts(column):
+    return ", ".join(f"{name} {n:,}" for name, n in tickets[column].value_counts().items())
+
+print(f"{N:,} tickets written to tickets/tickets.csv")
+print(f"topics: {counts('topic')}")
+print(f"sentiment: {counts('sentiment')}")
