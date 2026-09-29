@@ -1,0 +1,15 @@
+# Chapter 67 — The Architect as Leader: summary
+
+**What changed.** The chapter no longer calls itself the end of the book: it is the last *teaching* chapter, and "Where this leads" now points to Part 8 (Chapters 68–82) and the Closing chapter (83) by their real chapter numbers. The drafting leftover about "live search" and "training data" is gone (replaced with Chapter 64's dated legal facts). Every cross-reference was checked against the current files: Conway's Law is §62.8, "numbers, not adjectives" is §60.3, both leadership patterns are §67.4, the first query is Chapter 12, and the Part numbers are right. The influencing scenario now uses the facts: data contracts from Chapter 47, and the Delhi/Kolkata duplicated macros from Chapter 63's audit. The saying-no example now matches Chapter 51. The board speech uses Chapter 66's rebuilt business case: ₹97,577 measured, about a fifth of the ₹4,53,360 platform cost, and 44% with PO intake only if its 97% catch rate is proven. The story quotes "22% … 44%". The NFR gap is now "about 10,000 times" (Chapter 65). Technical debt and every other key term get a bold one-line definition at first use. The story is date-neutral and puts the managing director, Arvind Kapoor, in the room.
+
+**Structure (D8).** The closing sections now read Common mistakes · In the real world · Project (with "Tools you'll need") · Recap · Key terms · Check yourself · Exercises (the old "Questions to sit with", with its no-answer-key lead-in) · Where this leads. `restructure.py --check`: already in order.
+
+**Figures.** All three are redrawn on a 660-px canvas, with text at 7.5–9.7 pt (it was 4.4–5.7 pt). Figure 67.3 follows the six stops the finding lists, with its labels above the timeline rule.
+
+**Option picks.** 67.2: the first wording offered. 67.9 / V67.7: the ₹300/hour rate from 66.5 and Indian lakh grouping. 67.11 and 67.15: the finding's first option. 67.17: option (a), an edit to Ch 60's pointer, left for the integrator. 67.18: fold the stray line into the lead-in.
+
+**Skipped or partly done.** 67.10 is made date-neutral. A dated version ("late 2027") needs the book calendar (fact-sheet P-T2), which is not approved. 67.17 needs a one-line edit in Ch 60, given to the integrator.
+
+**Time needed.** It is now 3–4 hours: about two hours to read and an hour or two with the exercises. It was "about two hours", which `hours_table.py` counted as 2–4.
+
+**Verification.** There is no code, so every verifier reports 0 of 0. `checks/ch67_numbers.py` passes (ALL OK): it recomputes ₹4,53,360, ₹97,577 (21.5%), ₹1,00,750 and 43.7% from Ch 66's `roi_case.csv`, and 10,421× from Ch 65's `unit_economics.csv`. It also confirms that §60.3, §62.8, §64.5, §67.1, §67.4 and Figure 66.2 exist, and that "41 hours to 6" is in Ch 64. The build is clean: 15 pages, chapter map 12/12, no stranded headings or lead-ins, no sparse pages, no small text, no tofu. The two "draft" labels are reader text ("an earlier draft's dishonesty", "the first draft of that case"). `fig_check`: 0 figures under 7 pt.
