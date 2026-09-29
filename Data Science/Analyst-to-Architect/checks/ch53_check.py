@@ -1,59 +1,130 @@
 #!/usr/bin/env python3
-"""ch53_check.py - checks the numbers quoted in Chapter 53 against the generated images and the models."""
-import numpy as np, pathlib, sys
-from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import confusion_matrix
-D = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '/home/claude/book/companion/ch53') / 'defect_data'
+"""ch53_check.py - checks the numbers Chapter 53's prose quotes, and writes the data its figures draw.
+
+Run from the book folder, after companion/ch53/generate_defect_images.py has built defect_data/:
+    OMP_NUM_THREADS=1 python3 checks/ch53_check.py
+It runs every Python cell of the chapter in order (as tools/verify_python.py does, from companion/ch53),
+then checks each number the text states in words against the variables the cells produced, and writes
+checks/ch53_results.json for figures/make_figs53.py. About four minutes on one CPU thread.
+"""
+import contextlib, io, json, math, os, pathlib, re
+
+import numpy as np
+
+BOOK = pathlib.Path(__file__).resolve().parents[1]
+CHAPTER = BOOK / "manuscript" / "ch53-deep-learning-in-depth.md"
+OUT = BOOK / "checks" / "ch53_results.json"
+
+md = CHAPTER.read_text(encoding="utf-8")
+os.chdir(BOOK / "companion" / "ch53")
+ns = {"__name__": "__main__"}
+skip = False
+for m in re.finditer(r'<!-- run: (none) -->|^```(\w*)\n(.*?)^```$', md, re.S | re.M):
+    if m.group(1):
+        skip = True
+        continue
+    if m.group(2) == "python":
+        if skip:
+            skip = False
+            continue
+        with contextlib.redirect_stdout(io.StringIO()):
+            exec(compile(m.group(3), "<chapter cell>", "exec"), ns)
+    elif skip:
+        skip = False
+
+from sklearn.metrics import confusion_matrix, precision_recall_curve  # noqa: E402
+
 ok = 0
+
+
 def check(label, got, want, tol=0.0):
     global ok
-    assert (abs(got - want) <= tol) if isinstance(want, (int, float)) else got == want, f'{label}: {got} != {want}'
+    if isinstance(want, (int, float)) and not isinstance(want, bool):
+        assert abs(got - want) <= tol, f"{label}: {got} != {want}"
+    else:
+        assert got == want, f"{label}: {got} != {want}"
     ok += 1
-images = np.load(D / 'images.npy'); labels = np.load(D / 'labels.npy'); kinds = np.load(D / 'defect_types.npy')
-check('images', images.shape, (6000, 32, 32)); check('defective', int(labels.sum()), 476)
-check('defect rate %', round(100 * labels.mean(), 2), 7.93)
-check('always-good accuracy %', round(100 * (labels == 0).mean(), 2), 92.07)
-for kind, n in (('scratch', 162), ('void', 157), ('short_shot', 157), ('good', 5524)):
-    check(f'{kind} count', int((kinds == kind).sum()), n)
-# section 53.1 and 53.2 arithmetic
-check('neuron weighted sum', round(2.0 * 0.6 + 3.0 * -0.4 + 0.1, 2), 0.10)
-z1 = np.array([1.0, 2.0]) @ np.array([[0.5, -0.3], [0.8, 0.2]]) + np.array([0.0, 0.1])
-check('hidden sums', list(np.round(z1, 3)), [2.1, 0.2])
-z2 = float(np.maximum(0, z1) @ np.array([0.7, -0.5]) + 0.05)
-check('prediction', round(z2, 3), 1.42); check('loss', round((z2 - 1.0) ** 2, 3), 0.176)
-check('parameters 1024-128-1', 1024 * 128 + 128 + 128 + 1, 131329)
-# section 53.5 convolution
-patch = np.full((5, 5), 0.2); patch[1:4, 1:4] = 0.7
-kernel = np.array([[-1., 0, 1], [-2, 0, 2], [-1, 0, 1]])
-check('convolution at (0,0)', round(float((patch[0:3, 0:3] * kernel).sum()), 2), 1.5)
-# section 53.6 model
-X = np.load(D / 'features.npy')
-check('features per image', X.shape[1], 108)
-Xtr, Xte, ytr, yte = train_test_split(X, labels, test_size=0.25, random_state=53, stratify=labels)
-model = MLPClassifier(hidden_layer_sizes=(48,), max_iter=300, random_state=53).fit(Xtr, ytr)
-p = model.predict_proba(Xte)[:, 1]
-tn, fp, fn, tp = confusion_matrix(yte, p > 0.5).ravel()
-check('recall at 0.5 %', round(100 * tp / (tp + fn), 1), 91.6)
-check('precision at 0.5 %', round(100 * tp / (tp + fp), 1), 98.2)
+
+
+g = ns
+# 53.0 and 53.1
+check("images", g["images"].shape, (6000, 32, 32))
+check("defective", int(g["labels"].sum()), 476)
+check("neuron weighted sum", round(g["weighted_sum"], 2), 0.10)
+check("negative case", round(g["negative_sum"], 2), -0.5)
+check("float64 repr", repr(np.array([2.0, 3.0]) @ np.array([0.6, -0.4]) + 0.1), "np.float64(0.0999999999999999)")
+check("parameters 1024-64-1", 1024 * 64 + 64 + 64 + 1, 65665)
+# 53.2
+check("neuron 1 sum", round(1.0 * -0.3 + 2.0 * 0.2 + 0.1, 3), 0.2)
+check("dloss/dz2", round(g["dloss_dz2"], 3), 0.84)
+check("chain rule dW2[0]", round(0.84 * 2.1, 3), 1.764)
+check("dW2[0]", round(float(g["dW2"][0]), 3), 1.764)
+check("adam m", round(0.1 * -6, 3), -0.6)
+check("adam v", round(0.001 * 36, 3), 0.036)
+check("adam step", round(float(g["adam_step"]), 3), 0.1)
+# 53.3
+check("He std", round(math.sqrt(2 / 1024), 4), 0.0442)
+check("batch norm std", round(float(np.array([2.0, 4, 6, 8]).std()), 3), 2.236)
+# 53.5
+check("conv stride 2", (32 - 3) // 2 + 1, 15)
+check("pooling", g["m"].reshape(2, 2, 2, 2).max(axis=(1, 3)).tolist(), [[4, 2], [2, 5]])
+# 53.6
+ytr, yte, cvp, p = g["ytr"], g["yte"], g["cv_probabilities"], g["probabilities"]
+check("training defects", int(ytr.sum()), 357)
+rows = []
+for t in (0.5, 0.3, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002):
+    tn, fp, fn, tp = confusion_matrix(ytr, cvp > t).ravel()
+    rows.append({"threshold": t, "caught": int(tp), "missed": int(fn), "false_alarms": int(fp),
+                 "accuracy": float((tp + tn) / len(ytr)), "cost": int(fn * 4000 + fp * 40)})
+r = {row["threshold"]: row for row in rows}
+check("cv 0.1 recall %", round(100 * r[0.1]["caught"] / 357), 96)
+check("cv 0.1 false alarms", r[0.1]["false_alarms"], 31)
+check("cv 0.1 missed", r[0.1]["missed"], 13)
+check("cv 0.1 miss cost", r[0.1]["missed"] * 4000, 52000)
+check("best threshold", g["best_threshold"], 0.01)
+check("best cost", int(g["best_cost"]), 31560)
+check("two thirds", round(1 - r[0.01]["cost"] / r[0.5]["cost"], 2), 0.66)
+check("accuracy highest at expensive end", max(rows, key=lambda x: x["accuracy"])["threshold"] in (0.5, 0.3), True)
 tn, fp, fn, tp = confusion_matrix(yte, p > 0.01).ravel()
-check('recall at 0.01 %', round(100 * tp / (tp + fn), 1), 97.5)
-check('cheapest cost', fn * 4000 + fp * 40, 13840)
-check('cost at 0.5', 10 * 4000 + 2 * 40, 40080)
-# section 53.7 attention
-emb = np.eye(4)
-Q = emb @ np.array([[1.0, 0.0], [0.9, 0.3], [0.2, 0.1], [0.4, 0.9]])
-K = emb @ np.array([[0.9, 0.1], [0.4, 1.2], [0.2, 0.1], [0.1, 0.2]])
-scores = (Q @ K.T) / np.sqrt(2)
-w = np.exp(scores - scores.max(axis=1, keepdims=True))
-w = w / w.sum(axis=1, keepdims=True)
-check('cracked attends to crate', int(np.argmax(w[3])), 1)
-check('cracked-crate weight', round(float(w[3, 1]), 3), 0.396)
-check('rows sum to one', round(float(w.sum(axis=1).min()), 6), 1.0)
-# section 53.9 quantization
-weights = model.coefs_[0]
-scale = np.abs(weights).max() / 127
-restored = np.round(weights / scale).astype(np.int8).astype(np.float32) * scale
-check('quantization is 4x smaller', weights.nbytes // np.round(weights / scale).astype(np.int8).nbytes, 4)
-check('largest quantization error', round(float(np.abs(weights - restored).max()), 4) <= 0.0051, True)
-print(f'ch53_check.py: {ok} checks passed')
+check("test caught", int(tp), 116)
+check("test false alarms", int(fp), 46)
+check("test cost", int(fn * 4000 + fp * 40), 13840)
+check("test recall %", round(100 * tp / (tp + fn), 1), 97.5)
+tn, fp, fn, tp = confusion_matrix(yte, p > 0.5).ravel()
+check("test cost at 0.5", int(fn * 4000 + fp * 40), 40080)
+check("test accuracy at 0.5 %", round(100 * (tp + tn) / len(yte), 1), 99.2)
+check("one in twelve", round((tp + fn) / fn), 12)
+check("one in eight", round(119 / 15), 8)
+check("cnn parameters", sum(q.numel() for q in g["cnn"].parameters()), 27905)
+check("cnn threshold", g["cnn_threshold"], 0.05)
+# 53.7
+check("cracked-crate score", round(float(g["scores"][3, 1]), 2), 1.24)
+exps = np.exp(g["scaled"][3])
+check("exps", [round(float(e), 3) for e in exps], [1.375, 2.403, 1.128, 1.168])
+check("exp total", round(float(exps.sum()), 3), 6.074)
+check("attention params", 3 * 4 * 2, 24)
+check("67 million", round(4 * 4096 ** 2 / 1e6), 67)
+# 53.9
+check("quantized flips", int(((g["before"] > 0.01) != (g["after"] > 0.01)).sum()), 7)
+tn, fp, fn, tp = confusion_matrix(yte, g["after"] > 0.01).ravel()
+check("quantized caught", int(tp), 116)
+check("quantized false alarms", int(fp), 53)
+check("biases", sum(b.size for b in g["model"].intercepts_), 49)
+# Answers
+check("answer 9 re-inspections", (r[0.01]["false_alarms"], r[0.005]["false_alarms"]), (189, 301))
+check("answer 9 share", (round(100 * 189 / 4500), round(100 * 301 / 4500)), (4, 7))
+check("answer 10 ratio", round(117 / 46, 1), 2.5)
+w = g["weights_again"]
+check("answer 13 weight on 'was'", (round(float(w[3, 2]), 2), round(float(w[2, 2]), 2)), (0.19, 0.24))
+
+precision, recall, _ = precision_recall_curve(ytr, cvp)
+flagged = cvp > 0.01
+results = {
+    "cv_table": rows,
+    "pr_curve": {"recall": [round(float(v), 4) for v in recall], "precision": [round(float(v), 4) for v in precision]},
+    "operating_point": {"threshold": 0.01, "recall": float(flagged[ytr == 1].mean()),
+                        "precision": float(ytr[flagged].mean())},
+    "attention": [[round(float(v), 3) for v in row] for row in w],
+}
+OUT.write_text(json.dumps(results, indent=1))
+print(f"ch53_check.py: {ok} checks passed; wrote {OUT.relative_to(BOOK)}")
