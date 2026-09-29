@@ -128,7 +128,7 @@ def fig_six_dendro():
     for label, x, h in [("0.54", xs["A"], 0.54), ("1.30", ab, 1.30), ("3.00", xs["C"], 3.00), ("3.16", cd, 3.16), ("7.12", abe, 7.12)]:
         o.append(text(x + 8, Y(h) - 7, label, 13.5, INK))
     o.append(line(X0, Y(5), W - 30, Y(5), "#b23b3b", 1.6, dash="6 4"))
-    o.append(text(X0 + 6, Y(5) - 7, "cut at 5: two groups", 13.5, "#b23b3b", "bold"))
+    o.append(text((abe + cdf) / 2, Y(5) - 7, "cut at 5: two groups", 13.5, "#b23b3b", "bold", anchor="middle"))
     for n, x in xs.items():
         o.append(text(x, Y0 + 22, n, 15, INK, "bold", anchor="middle", family=HEAD))
     o.append(text(xs["B"], Y0 + 44, "{A, B, E}", 13.5, left, "bold", anchor="middle"))

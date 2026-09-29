@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 35 (log loss and the base-rate benchmark, section 35.9), Chapter 36 (the lead-scoring pipeline and validation set, scikit-learn's pieces in section 36.4, cross-validation and AUC in section 36.5), Chapter 37 (logistic regression, Naive Bayes, the churn models, and tuning in section 37.11). This chapter evaluates the models you already built.
 >
-> **Time needed:** 14–18 hours over two weeks, in four sittings: (1) sections 39.1–39.3, the metrics, each worked by hand first (about 4 hours); (2) sections 39.4–39.6a, calibration, thresholds, imbalance, and tuning (about 4–5 hours); (3) sections 39.7–39.9, interpretation, fairness, and model cards (about 4 hours); (4) the exercises and the project (3–5 hours).
+> **Time needed:** 16–20 hours over two to three weeks, in four sittings: (1) sections 39.1–39.3, the metrics, each worked by hand before the code (4–5 hours); (2) sections 39.4–39.6a, calibration, thresholds, imbalance, and tuning (4–5 hours); (3) sections 39.7–39.9, interpretation, fairness, and model cards (4–5 hours); (4) the exercises and the project (4–5 hours).
 >
 > **Tools:** Python 3 with scikit-learn, plus two free libraries you install when you first need them: `imbalanced-learn` (section 39.6) and `shap` (section 39.7).
 >
@@ -354,7 +354,7 @@ plt.show()
 
 - `plt.subplots(1, 2, figsize=(9, 4))` makes one figure with **1 row and 2 columns** of plots; the two axes come back as a pair, unpacked into `left` and `right`.
 - `left.plot(fpr, tpr)` draws the ROC curve. `left.plot([0, 1], [0, 1], ...)` adds the diagonal from (0, 0) to (1, 1), where a random model lies; `linestyle="--"` makes it dashed and `color="grey"` keeps it quiet.
-- `right.plot(rec, prec)` draws the PR curve with recall along the bottom. `right.axhline(y_valid.mean(), ...)` draws a **h**orizontal line across the whole plot at the base rate, the random model's precision.
+- `right.plot(rec, prec)` draws the PR curve with recall along the bottom. `right.axhline(y_valid.mean(), ...)` draws a horizontal line (the *h* in `axhline`) across the whole plot at the base rate, the random model's precision.
 - `plt.show()` displays the figure under the cell. Figure 39.2 is the same two curves, redrawn for print.
 
 ![Two panels: the ROC curve for the lead model bowing toward the top left with AUC 0.823 and a diagonal chance line, and the precision–recall curve falling from high precision at low recall to the base rate of 0.066, with average precision 0.302](figures/fig39-2-roc-pr.svg)
@@ -697,9 +697,9 @@ plt.show()
 
 **How it works:** the dashed diagonal is perfect calibration. `zip(curves, ["o", "s", "^"])` pairs each model's name with a marker shape (circle, square, triangle), so the lines can be told apart without colour. `label=name` names each line, and `ax.legend()` draws the key.
 
-![Three reliability curves against the diagonal: logistic regression close to the line, gradient boosting close to the line, and Naive Bayes far above it at low predictions and far below it at high ones, with its top tenth predicting 0.94 against an actual 0.27](figures/fig39-3-calibration.svg)
+![Two panels of reliability curves against the diagonal, with circles for logistic regression, squares for Naive Bayes and triangles for gradient boosting. Left, the full range: logistic regression and gradient boosting close to the line, Naive Bayes far below it at high predictions, its top tenth predicting 0.94 against an actual 0.27. Right, the 0 to 0.3 corner enlarged, where logistic regression and boosting track the diagonal](figures/fig39-3-calibration.svg)
 
-*Figure 39.3 — Reliability curves for three models. Logistic regression and gradient boosting are honest; Naive Bayes is confidently wrong in both directions. The inset enlarges the corner where most leads sit.*
+*Figure 39.3 — Reliability curves for three models. Logistic regression and gradient boosting are honest; Naive Bayes is confidently wrong in both directions. The right panel enlarges the corner where most leads sit; each model has its own marker shape.*
 
 **Reading it.** Logistic regression and gradient boosting are well calibrated: their average prediction (6.9% and 6.4%) matches the actual win rate (6.6%), and their bins sit near the diagonal. Naive Bayes is a different story. Its average prediction is **18%**, nearly three times the real rate, and its top tenth predicts a **94%** chance of winning for leads that are won **27%** of the time. It ranks reasonably (ROC-AUC 0.806) and its probabilities are fiction. This is the overconfidence Chapter 37 warned about when it fitted Naive Bayes, and it matters the moment someone uses the number: a rep told "94%" who wins one in four will stop trusting every model.
 
@@ -777,7 +777,7 @@ break-even win probability: 0.0496
 
 ### The profit curve
 
-Expected profit at a threshold is simple arithmetic: each won lead that's worked earns ₹30,255, and every worked lead costs ₹1,500. Work it out at a few thresholds, then at 501 of them:
+Expected profit at a threshold is simple arithmetic: each won lead that's worked earns ₹30,255, and every worked lead costs ₹1,500. A small function works it out at any threshold:
 
 ```python
 def profit_at(threshold, p=p_valid, y=y_valid):
@@ -793,12 +793,6 @@ print("threshold   worked   wins     profit")
 for threshold in [0.0, 0.02, 0.03, 0.05, 0.07, 0.10, 0.15, 0.20, 0.50]:
     profit, worked, wins = profit_at(threshold)
     print(f"{threshold:>9.2f}   {worked:>6}   {wins:>4}   ₹{profit:>10,.0f}")
-
-grid = np.linspace(0.0, 0.5, 501)
-profits = np.array([profit_at(t)[0] for t in grid])
-best = grid[profits.argmax()]
-print(f"\nbest threshold on the grid: {best:.3f}   profit ₹{profits.max():,.0f}")
-print(f"working every lead: ₹{profit_at(0.0)[0]:,.0f}   working none: ₹0")
 ```
 
 ```
@@ -812,16 +806,32 @@ threshold   worked   wins     profit
      0.15      291     76   ₹ 1,862,880
      0.20      177     55   ₹ 1,398,525
      0.50        7      4   ₹   110,520
-
-best threshold on the grid: 0.077   profit ₹2,448,060
-working every lead: ₹1,079,730   working none: ₹0
 ```
 
 **How it works:**
 
 - `profit_at` marks the leads at or above the threshold as `called` (an array of `True`/`False`). `y[called].sum()` counts the wins among them and `called.sum()` counts them all, because `True` counts as 1. It returns three things: the profit, the number worked, and the wins.
 - `p=p_valid, y=y_valid` are **default arguments**: if you call `profit_at(0.05)`, it uses the validation probabilities and outcomes; exercise 13 passes the test set's instead.
+
+Nine thresholds are a sketch. To find the best one, try 501 of them:
+
+```python
+grid = np.linspace(0.0, 0.5, 501)
+profits = np.array([profit_at(t)[0] for t in grid])
+best = grid[profits.argmax()]
+print(f"best threshold on the grid: {best:.3f}   profit ₹{profits.max():,.0f}")
+print(f"working every lead: ₹{profit_at(0.0)[0]:,.0f}   working none: ₹0")
+```
+
+```
+best threshold on the grid: 0.077   profit ₹2,448,060
+working every lead: ₹1,079,730   working none: ₹0
+```
+
+**How it works:**
+
 - `np.linspace(0.0, 0.5, 501)` makes 501 evenly spaced thresholds from 0 to 0.5, one every 0.001.
+- The list comprehension calls `profit_at` once per threshold and keeps element `[0]`, the profit; `np.array` makes the 501 profits an array.
 - `profits.argmax()` is the *position* of the largest profit, and `grid[...]` turns it into the threshold at that position.
 
 A line plot of `profits` against `grid` is the profit curve:
@@ -835,7 +845,7 @@ ax.set_ylabel("Expected profit (₹ lakh)")
 plt.show()
 ```
 
-**How it works:** dividing by `1e5` (100,000) shows profit in lakhs. `ax.axvline(...)` draws a **v**ertical line at the break-even probability, the partner of `axhline` in section 39.2.
+**How it works:** dividing by `1e5` (100,000) shows profit in lakhs. `ax.axvline(...)` draws a vertical line (the *v*) at the break-even probability, the partner of `axhline` in section 39.2.
 
 ![Expected profit on the validation leads against the threshold from 0 to 0.5, rising from 10.8 lakh rupees at threshold 0 to a broad, jagged peak of about 24.5 lakh near 0.077, then falling to near zero, with the break-even threshold of 0.05 marked](figures/fig39-4-profit-curve.svg)
 

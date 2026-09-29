@@ -65,7 +65,7 @@ def fig_calib():                           # 900 px wide: 13 px = 7.1 pt
         for x,y in pts: o.append(marker(x,y,c,m,4.5))
     nb=R["calib"]["Naive Bayes"]; o.append(halo(X0+nb[1][-1]*W-6,Y0-nb[0][-1]*H-14,"Naive Bayes",14,ORANGE,"bold",anchor="end"))
     o.append(rect(X0,Y0-0.3*H,0.3*W,0.3*H,stroke=INK,sw=1,extra='stroke-dasharray="3 3"'))
-    o.append(text(X0+0.3*W+6,Y0-0.3*H+14,"enlarged →",13,MUTED))
+    o.append(halo(X0+0.3*W+6,Y0-0.3*H+14,"enlarged on the right",13,MUTED))
     # right: zoom on 0-0.3
     X0=560; W=300; Z=0.3
     axes(o,X0,Y0,W,H,"Mean predicted probability (0 to 0.3)","Actual win rate (0 to 0.3)",[0,.1,.2,.3],[0,.1,.2,.3],xmax=Z,ymax=Z)
@@ -88,7 +88,7 @@ def fig_profit():                          # 900 px wide: 13 px = 7.1 pt
     o.append(poly([(X(t),Y(v)) for t,v in zip(g,pr)],ACC))
     best=g[pr.index(mx)]; o.append(line(X(best),Y0,X(best),Y(mx),ACC,1.5,"5 4")); o.append(marker(X(best),Y(mx),ACC,"o",6))
     o.append(halo(X(best)+12,Y(mx)-10,f"best: threshold {best:.3f}, ₹{mx/1e5:.1f} lakh",14,ACC,"bold"))
-    o.append(line(X(0.0496),Y0,X(0.0496),Y(2.35e6),ORANGE,1.5,"3 4")); o.append(halo(X(0.0496)-8,Y(0.6e6),"break-even 0.0496",14,ORANGE,"bold",anchor="end"))
+    o.append(line(X(0.0496),Y0,X(0.0496),Y(2.35e6),ORANGE,1.5,"3 4")); o.append(halo(X(0.0496)+8,Y(0.3e6),"break-even 0.0496",14,ORANGE,"bold"))
     o.append(text(X0+W/2,Y0+48,"Threshold (work leads scoring at or above it)",15,INK,anchor="middle"))
     o.append(ylabel(X0-88,Y0-H/2,"Expected profit, 2,225 validation leads",15))
     return svg(900,400,"".join(o))
@@ -97,12 +97,12 @@ def fig_pd():                              # 880 px wide: 1 px = 0.560 pt, so 13
     o=[]; X0=100; Y0=340; W=680; H=270; xs=R["pd_x"]; ys=R["pd_y"]
     X=lambda d: X0+d/max(xs)*W; Y=lambda v: Y0-v/0.5*H
     for d in [0,60,120,180,240]:
-        if d<=max(xs): o.append(line(X(d),Y0,X(d),Y0-H,PALE)); o.append(text(X(d),Y0+22,str(d),14,MUTED,anchor="middle"))
+        if d<=max(xs)+0.5: o.append(line(X(d),Y0,X(d),Y0-H,PALE)); o.append(text(X(d),Y0+22,str(d),14,MUTED,anchor="middle"))
     for v in [0,.1,.2,.3,.4,.5]: o.append(line(X0,Y(v),X0+W,Y(v),PALE)); o.append(text(X0-10,Y(v)+5,f"{v:.0%}",14,MUTED,anchor="end"))
     o.append(line(X0,Y0,X0+W,Y0,INK,1.2)); o.append(line(X0,Y0,X0,Y0-H,INK,1.2))
     o.append(poly([(X(a),Y(b)) for a,b in zip(xs,ys)],ACC))
-    for d,lab,anc,dx in [(90,"planted step at 90 days","start",6),(180,"planted step at 180 days","end",-6)]:
-        o.append(line(X(d),Y0,X(d),Y0-H,ORANGE,1.2,"4 4")); o.append(halo(X(d)+dx,Y0-H+16,lab,14,ORANGE,"bold",anchor=anc))
+    for d,lab,anc,dx,dy in [(90,"planted step at 90 days","start",6,44),(180,"planted step at 180 days","end",-6,18)]:
+        o.append(line(X(d),Y0,X(d),Y0-H,ORANGE,1.2,"4 4")); o.append(halo(X(d)+dx,Y0-H+dy,lab,14,ORANGE,"bold",anchor=anc))
     o.append(text(X0+W/2,Y0+48,"Days since last order (all other features as observed)",15,INK,anchor="middle"))
     o.append(ylabel(X0-58,Y0-H/2,"Average predicted churn probability",15))
     return svg(880,400,"".join(o))
