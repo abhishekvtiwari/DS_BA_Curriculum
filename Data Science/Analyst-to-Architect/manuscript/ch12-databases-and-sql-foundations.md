@@ -2579,7 +2579,7 @@ As an analyst you'll mostly read data, and in many companies your account on the
 | **DML** | Data Manipulation Language | `INSERT`, `UPDATE`, `DELETE` (and `SELECT`, which only reads) | the **rows** inside tables |
 | **TCL** | Transaction Control Language | `BEGIN` / `START TRANSACTION`, `COMMIT`, `ROLLBACK` | whether a group of changes is kept or undone |
 
-A fourth family, **DCL** (Data Control Language: `GRANT` and `REVOKE`), controls who may do what. Chapter 64 covers who should get which access (roles and permissions).
+A fourth family, **DCL** (Data Control Language: `GRANT` and `REVOKE`), controls who may do what. Chapter 64, section 64.3 decides who should get which access and shows `GRANT`, `REVOKE` and row-level security in use.
 
 > **The lab rule: never practice on data that matters.** Everything in this section happens in a new, separate database called `riverstone_lab`, so nothing you do can damage the `riverstone` database the rest of the chapter uses. At work, follow the same rule: try changes on a copy, never first on the live system.
 

@@ -544,5 +544,5 @@ architecture · non-functional requirement (NFR) · functional requirement · C4
 - **Chapter 63, Automation Architecture & Governance:** the eight-container platform, inventoried, owned, and governed at company scale — building directly on the container diagram this chapter drew.
 - **Chapter 64, Security, Privacy, Governance & Responsible AI:** closing the "access control model not yet defined" risk this chapter's design document left open.
 - **Chapter 65, FinOps: The Economics of Data Platforms:** pricing the platform bottom-up, and testing the cost ceiling this chapter set top-down.
-- **Chapter 67, The Architect as Leader:** the conversation between Meera and Vikram in this chapter's story — influencing a decision without unilateral authority — done properly.
+- **Chapter 67, The Architect as Leader:** influencing people you don't manage, worked through in section 67.4's influencing-without-authority scenario; Vikram's one question in this chapter's story, which stopped a rewrite he had no authority to veto, is the same move.
 - **Interview preparation:** the Architecture & Leadership Question Bank (Chapter 80) asks for C4 diagrams and ADRs directly; Chapter 77's system-design questions ("walk me through how you'd design X") are answered with this chapter's NFR method.

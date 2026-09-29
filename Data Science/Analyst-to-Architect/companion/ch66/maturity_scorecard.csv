@@ -1,6 +1,7 @@
-dimension,stage,evidence
-Data quality & reliability,3.6,"Automated tests (Ch 47), reconciled pipelines (Ch 14), but not every source has a contract yet"
-Architecture & platform,3.2,"A designed, documented platform (Ch 60-62) — still centralized, still young"
-Governance & security,3.4,A real access model and fairness audits exist (Ch 63-64) — not yet company-wide habit
-Cost discipline,2.6,"A real cost model exists (Ch 65) — but it was built once, not yet a routine practice"
-Data-driven culture,2.2,"Individual wins (Ch 19, 24) — most decisions still made by habit and hierarchy, not routinely by data"
+dimension,stage_met,next_met,evidence
+Data quality & reliability,3,3,"Automated tests and freshness checks (Ch 47), reconciled totals (Ch 14); not every source has a contract yet"
+Architecture & platform,3,1,"A designed, documented platform (Ch 60-62); still centralized, still young"
+Security & access,3,4,"Roles, masked views, row-level security and a fairness audit (Ch 64); not yet a company-wide habit"
+Catalog & discoverability,1,4,No catalog: finding the right table means asking Meera's team; 11 of 24 automations were unknown to it (Ch 63)
+Cost discipline,2,3,"A real cost model (Ch 65), built once, not yet reviewed every month"
+Data-driven culture,2,1,"Individual wins (Ch 19, 20); most decisions still made by habit and hierarchy"

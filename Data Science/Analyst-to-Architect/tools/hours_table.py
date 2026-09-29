@@ -11,8 +11,7 @@ How the lines are read (the rules Chapter 83 used for its 764–980 hours):
 - The teaching chapters are 1 to 67. Part 8 (68–82) and the Closing (83) are not counted.
 - Every "N–M hours" range in the line is added up. So Chapter 8's "3–4 hours, including the
   exercises. Allow another 2–3 hours for the project" counts as 5–7.
-- Chapter 67 has no range ("Reading it once will take about two hours; living it will take
-  years"). It counts as 2–4, as Chapter 83 counted it.
+- Chapter 67 used to have no range and was counted as 2–4; since the Part 7 build it states 3–4.
 - Any other line without a range stops the script, so nothing is silently guessed.
 
 Weeks are hours divided by the weekly hours, rounded to the nearest whole week (halves up);
@@ -32,14 +31,15 @@ LAST_TEACHING = 67
 RATES = (6, 8, 10)
 
 RANGE = re.compile(r'(\d+)\s*[–-]\s*(\d+)\s+hours?\b')
-SPECIAL = {67: (2, 4)}      # "about two hours" to read, counted as 2–4 (Chapter 83's rule)
+SPECIAL = {}
 # Lines whose later ranges break the first one down (sittings, sections) rather than add to it
 # (Parts 2 and 3 build, 28 Sep 2026). Chapter 27 adds its two stated parts: reading and running the
 # worked project (2–3 h) and the reader's own portfolio (20–30 h, which includes the deep project).
 SPECIAL.update({11: (35, 45), 19: (25, 30), 26: (9, 11), 27: (22, 33), 29: (20, 24), 32: (18, 22)})
 SPECIAL.update({36: (14, 18), 37: (20, 24), 39: (16, 20)})
 SPECIAL.update({48: (14, 18)})
-SPECIAL.update({59: (6, 8)})   # Part 6 build: the later ranges break the 6–8 hours down   # Part 5 build: later ranges are sittings   # Part 4 build: later ranges are sittings
+SPECIAL.update({59: (6, 8)})
+SPECIAL.update({62: (10, 12), 66: (9, 11)})   # Part 7 build: the later ranges break the total down   # Part 6 build: the later ranges break the 6–8 hours down   # Part 5 build: later ranges are sittings   # Part 4 build: later ranges are sittings
 
 
 def chapter_file(n):
