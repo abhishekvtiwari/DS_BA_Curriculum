@@ -1,106 +1,121 @@
 #!/usr/bin/env python3
 """
 Analyst to Architect · Chapter 57 · LLMOps
-File: provider.py - one function between your code and the model, with the three things production needs:
-      a pinned model version, token accounting, and simulated failures.
-The "provider" is Chapter 54's local stand-in (mock_llm.py), extended in two ways that make this chapter
-runnable offline:
-  * model='v2' behaves like a provider's next model version shipped behind the same name: same task,
-    slightly different habits (it comments its answers, and on about 40% of emails it reverts to the
-    date format the email itself used).
-  * failure_rate makes a deterministic share of calls fail with RateLimitError or TimeoutError, so the
-    retry and fallback code in section 57.8 runs for real.
-None of this is a language model. Everything it teaches about versioning, cost, caching and fallback is.
-Tested on: Python 3.12.3.
+File: provider.py - the one function between your code and the model, plus the meter that counts every call.
+What: `call(prompt, model, meter, failure_rate)` answers with Chapter 54's local stand-in (mock_llm.py) and
+  adds the two things this chapter needs to simulate offline:
+    * model="workhorse-002" behaves like the provider's next version: the same task, with two new habits.
+      It puts a comment line inside its JSON, and on about 40% of emails it writes the delivery date
+      day first (DD-MM-YYYY) instead of YYYY-MM-DD. Which emails is decided by a checksum of the prompt.
+    * failure_rate makes a share of calls fail with RateLimitError or ProviderTimeout. The failures are
+      deterministic: the same prompt sent to the same model always fails, or succeeds, the same way, so
+      every run gives the same numbers (section 57.8).
+  `Meter` is section 57.5's meter, and PRICES and USD_TO_INR are its price table.
+None of this is a language model. What it teaches about versions, cost, caching and fallback is real.
+How:  from provider import call, Meter, RateLimitError, ProviderTimeout
+Tested on: Python 3.11 and 3.12 (standard library only).
+Riverstone Supplies is fictional; every name and number here is invented.
 """
 from __future__ import annotations
 
 import hashlib
-import re
 import sys
-import time
-from dataclasses import dataclass, field
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'ch54'))
-from mock_llm import complete as _complete            # Chapter 54's stand-in
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ch54"))
+from mock_llm import complete                         # Chapter 54's stand-in model
 
-PRICES = {                                            # US dollars per million tokens (Chapter 54, Sept 2026)
-    'v1': {'input': 2.00, 'output': 10.00},
-    'v2': {'input': 2.00, 'output': 10.00},
-    'small': {'input': 0.75, 'output': 3.75},         # the cheaper fallback model
+PINNED_MODEL = "workhorse-001"      # the version Riverstone tested and pinned
+NEW_MODEL = "workhorse-002"         # the provider's next version (section 57.4)
+FALLBACK_MODEL = "volume-001"       # a cheaper model for when the pinned one fails (section 57.8)
+
+# Section 57.5. US dollars per million tokens (input, output): the workhorse and volume tiers of
+# Chapter 54's section 54.12, checked 29 September 2026.
+PRICES = {
+    "workhorse-001": (2.00, 10.00),
+    "workhorse-002": (2.00, 10.00),
+    "volume-001": (0.75, 3.75),
 }
-USD_TO_RUPEES = 88.0
+USD_TO_INR = 88.0                   # rupees per US dollar; check today's rate before you quote a bill
 
 
-class RateLimitError(RuntimeError):
-    """The provider is throttling us. Retryable."""
-
-
-class ProviderTimeout(RuntimeError):
-    """The call took too long. Retryable, carefully."""
-
-
-@dataclass
 class Meter:
-    """Every call, counted: this is where a monthly bill comes from."""
-    calls: int = 0
-    input_tokens: int = 0
-    output_tokens: int = 0
-    failures: int = 0
-    by_model: dict = field(default_factory=dict)
+    """Every call, counted: tokens in and out per model, and every provider error by kind."""
 
-    def record(self, model: str, prompt: str, reply: str) -> None:
-        tokens_in, tokens_out = len(prompt) // 4, len(reply) // 4
+    def __init__(self):
+        self.calls = 0
+        self.input_tokens = 0
+        self.output_tokens = 0
+        self.by_model = {}          # model -> [tokens in, tokens out]
+        self.errors = {}            # kind of error -> how many
+
+    def record(self, model, prompt, reply):
+        tokens_in, tokens_out = len(prompt) // 4, len(reply) // 4    # Chapter 54's four characters a token
         self.calls += 1
         self.input_tokens += tokens_in
         self.output_tokens += tokens_out
-        bucket = self.by_model.setdefault(model, {'calls': 0, 'input': 0, 'output': 0})
-        bucket['calls'] += 1
-        bucket['input'] += tokens_in
-        bucket['output'] += tokens_out
+        if model not in self.by_model:
+            self.by_model[model] = [0, 0]
+        self.by_model[model][0] += tokens_in
+        self.by_model[model][1] += tokens_out
 
-    def cost_rupees(self) -> float:
-        total = 0.0
-        for model, bucket in self.by_model.items():
-            price = PRICES.get(model, PRICES['v1'])
-            total += bucket['input'] / 1e6 * price['input'] + bucket['output'] / 1e6 * price['output']
-        return total * USD_TO_RUPEES
+    def record_error(self, kind):
+        self.errors[kind] = self.errors.get(kind, 0) + 1
 
-
-def _should_fail(prompt: str, failure_rate: float) -> str | None:
-    """Deterministic failures: the same prompt always fails the same way, so tests are reproducible."""
-    if failure_rate <= 0:
-        return None
-    digest = int(hashlib.sha256(prompt.encode()).hexdigest()[:8], 16) / 0xFFFFFFFF
-    if digest < failure_rate * 0.6:
-        return 'rate_limit'
-    if digest < failure_rate:
-        return 'timeout'
-    return None
+    def cost_rupees(self):
+        dollars = 0.0
+        for model, (tokens_in, tokens_out) in self.by_model.items():
+            price_in, price_out = PRICES[model]
+            dollars += tokens_in / 1_000_000 * price_in + tokens_out / 1_000_000 * price_out
+        return dollars * USD_TO_INR
 
 
-def call(prompt: str, model: str = 'v1', meter: Meter | None = None, failure_rate: float = 0.0) -> str:
-    """The only place in the codebase that talks to a model. Swap providers here, nowhere else."""
-    failure = _should_fail(prompt, failure_rate)
-    if failure == 'rate_limit':
-        if meter:
-            meter.failures += 1
-        raise RateLimitError('429 too many requests')
-    if failure == 'timeout':
-        if meter:
-            meter.failures += 1
-        raise ProviderTimeout('the request took longer than 10s')
+class RateLimitError(Exception):
+    """429: the provider is throttling us. Wait, then try again."""
 
-    reply = _complete(prompt)
-    if model == 'v2':
-        # The next model version, shipped behind the same name: same task, slightly different habits.
-        # It comments its answers, and on some emails it reverts to the date format the email used.
-        digest = int(hashlib.sha256(prompt.encode()).hexdigest()[8:16], 16) / 0xFFFFFFFF
-        if digest < 0.4:
-            reply = re.sub(r'"delivery_date": "(\d{4})-(\d{2})-(\d{2})"',
-                           lambda m: f'"delivery_date": "{m.group(3)}-{m.group(2)}-{m.group(1)}"', reply)
-        reply = reply + '\n// extracted with care'
-    if meter:
+
+class ProviderTimeout(Exception):
+    """The call took longer than the time we allow. Retrying at once rarely helps."""
+
+
+def _share(model, prompt, salt):
+    """A number between 0 and 1 fixed by the model and the prompt: the same input always gives the same number."""
+    digest = hashlib.sha256(f"{salt}|{model}|{prompt}".encode("utf-8")).hexdigest()
+    return int(digest[:8], 16) / 0xFFFFFFFF
+
+
+def _new_habits(reply, prompt):
+    """What workhorse-002 does differently: a comment line inside the JSON, and some dates day first."""
+    lines = reply.splitlines()
+    if _share(NEW_MODEL, prompt, "date") < 0.4:
+        for i, line in enumerate(lines):
+            if line.strip().startswith('"delivery_date": "'):
+                value = line.split('"')[3]
+                if len(value) == 10 and value[4] == "-":
+                    lines[i] = line.replace(value, f"{value[8:10]}-{value[5:7]}-{value[0:4]}")
+    for i, line in enumerate(lines):
+        if line.strip() == "{":
+            lines.insert(i + 1, "  // fields extracted from the email body")
+            break
+    return "\n".join(lines)
+
+
+def call(prompt, model=PINNED_MODEL, meter=None, failure_rate=0.0):
+    """The only place in the code that talks to a model. Swap providers here, nowhere else."""
+    if model not in PRICES:
+        raise ValueError(f"unknown model {model!r}")
+    share = _share(model, prompt, "failure")
+    if share < failure_rate * 0.6:                    # three failures in five are rate limits
+        if meter is not None:
+            meter.record_error("rate limit")
+        raise RateLimitError("429 too many requests")
+    if share < failure_rate:                          # the other two are timeouts
+        if meter is not None:
+            meter.record_error("timeout")
+        raise ProviderTimeout("no reply within 10 seconds")
+    reply = complete(prompt)
+    if model == NEW_MODEL:
+        reply = _new_habits(reply, prompt)
+    if meter is not None:
         meter.record(model, prompt, reply)
     return reply

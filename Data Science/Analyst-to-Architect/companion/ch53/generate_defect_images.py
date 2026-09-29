@@ -11,7 +11,7 @@ What: writes defect_data/images.npy (N x 32 x 32 float32, values 0-1) and defect
         short_shot   a bite missing from the edge, where the cavity did not fill
 How:  python3 generate_defect_images.py [--n 6000] [--defect-rate 0.08]
 Seed: 53 (fixed), so every reader's images, model and confusion matrix match the book's.
-Tested on: Python 3.12.3, numpy 2.4.4 (Ubuntu 24.04). No downloads, no GPU.
+Tested on: Python 3.11, numpy 2.4.6 (September 2026). No downloads, no GPU.
 Riverstone Supplies is fictional; these images are generated, not photographs.
 """
 import argparse, os
@@ -88,3 +88,4 @@ np.save(f'{a.out}/defect_types.npy', kinds)
 counts = {k: int((kinds == k).sum()) for k in ['good', 'scratch', 'void', 'short_shot']}
 print(f'{len(images):,} images of {SIZE}x{SIZE} pixels')
 print(f'defective {int(labels.sum()):,} ({labels.mean():.1%}) · ' + ' · '.join(f'{k} {v}' for k, v in counts.items()))
+print(f'wrote {a.out}/images.npy, {a.out}/labels.npy, {a.out}/defect_types.npy')

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Analyst to Architect · Chapter 56 · training runs, tracked.
-Every run logs its parameters, its metrics and the model itself to a local MLflow store, so twelve
-experiments can be compared next week instead of remembered. Run: python3 train.py
+Every run logs its parameters, its metrics and the model itself to a local MLflow store, so every
+experiment can be compared next week instead of remembered. These are section 56.3's four runs, as a
+script. Run: python train.py   (needs ../ch53/defect_data from Chapter 53)
+Tested on: Python 3.11.15, scikit-learn 1.9.1, MLflow 3.16.1.
 """
 from __future__ import annotations
-
-import warnings
 
 import mlflow
 import numpy as np
@@ -14,7 +14,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 
-warnings.filterwarnings('ignore')
 mlflow.set_tracking_uri('sqlite:///mlflow.db')    # one local file: no server, no account, real tracking
 mlflow.set_experiment('riverstone-defect')
 

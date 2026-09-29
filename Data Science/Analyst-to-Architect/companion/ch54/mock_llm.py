@@ -9,18 +9,21 @@ What it is: NOT a language model. It is a deterministic function that reads the 
     * it copies dates in whatever format the email used unless the prompt names an output format;
     * it omits a field it could not find unless the prompt says to use null;
     * it takes only the first item on a line unless the prompt shows an example with several;
-    * it occasionally returns broken JSON (email 7, 23, 41 and 58), as real models occasionally do.
-Why: model weights cannot be downloaded in the book's sandbox and no reader should need a paid key to
-  follow the chapter. Every prompting lesson here is real; the "model" is not. Section 54.12 lists the
-  provider code you would use instead, and the companion file api_example.py shows it.
+    * unless the prompt says to return JSON only, about one reply in fifteen has a trailing comma, which
+      json.loads rejects (real models occasionally emit broken JSON too). Which replies break is decided
+      by a checksum of the email text, so the same email always behaves the same way.
+Why: so the chapter runs with no account, no GPU and no large downloads. The measurement method in the
+  chapter is real; the numbers measure these rules, not a language model. Section 54.13 shows the
+  provider code you would use instead, and the companion file api_example.py is that code.
 How:  from mock_llm import complete;  complete(prompt)  ->  str
-Tested on: Python 3.12.3 (standard library only).
+Tested on: Python 3.11 and 3.12 (standard library only).
 Riverstone Supplies is fictional; every name and number here is invented.
 """
 from __future__ import annotations
 
 import json
 import re
+import zlib
 
 PRODUCT_CODES = {'101', '102', '103', '104', '105', '106', '107', '108'}
 MONTHS = {m.lower(): i for i, m in enumerate(
@@ -108,8 +111,7 @@ def complete(prompt: str, temperature: float = 0.0) -> str:
 
     body = json.dumps(result, indent=2)
 
-    number = re.search(r'email_(\d{3})', prompt)
-    troublesome = number and number.group(1) in {'007', '023', '041', '058'}
+    troublesome = zlib.crc32(email.strip().encode('utf-8')) % 15 == 0   # a fixed one-in-fifteen
     if troublesome and not wants_json_only:
         body = body.rstrip('}') + ',\n}'                      # a trailing comma: valid to a human, not to json.loads
     if not wants_json_only:
