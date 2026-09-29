@@ -1959,6 +1959,7 @@ print(round(statistics.stdev(values), 2))
 | `pyspark`, `polars` | Data too big for pandas | 48 |
 | `deltalake` | Lakehouse tables (Delta Lake) | 49 |
 | `kafka-python` | Kafka producer and consumer (optional broker) | 50 |
+| `pyyaml`, `python-hcl2`, `dockerfile-parse` | Reading YAML, Terraform and Dockerfiles in code | 52 |
 | `jupyterlab` | Notebooks | this chapter |
 
 Before installing something you found online, check that it's maintained (recent releases, open issues answered), that the name is spelled exactly right (typo-squatting, publishing a harmful package under a near-miss name, is a real attack), and that it goes into your project's virtual environment rather than the computer's own Python.

@@ -74,3 +74,5 @@ Data Science/Analyst-to-Architect/companion/ch51/webhook_inbox/
 **/.terraform/
 *.tfstate
 *.tfstate.backup
+Data Science/Analyst-to-Architect/companion/ch47/outbox/
+Data Science/Analyst-to-Architect/companion/ch47/alerts/
