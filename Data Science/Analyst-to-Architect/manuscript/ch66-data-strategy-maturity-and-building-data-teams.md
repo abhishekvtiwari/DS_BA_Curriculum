@@ -515,5 +515,5 @@ Use `companion/ch66/maturity_scorecard.csv` and `roi_case.csv`.
 - **Chapters 63 and 64:** the automation audit and the governance section that found the catalog gap this chapter's hire closes.
 - **Chapter 65, FinOps:** the real cost figure this chapter's business case is measured against.
 - **Chapters 19, 20, 58:** the three automations whose savings anchor the honest ROI case.
-- **Chapter 67, The Architect as Leader:** the final chapter, where strategy, maturity, and the business case become one person's actual responsibility — leading the organization this chapter has been describing, not just analyzing it.
+- **Chapter 67, The Architect as Leader:** the last teaching chapter, where strategy, maturity, and the business case become one person's actual responsibility — leading the organization this chapter has been describing, not just analyzing it.
 - **Interview preparation:** the Architecture & Leadership Question Bank asks directly about building a data team and justifying platform investment — "how would you make the case for headcount or budget" is this chapter's method.
