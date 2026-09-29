@@ -140,6 +140,9 @@ print(
 92,337 order lines, 34,013 orders, 4,516 accounts, 24 products
 ```
 
+- `parse_dates=["order_date"]` reads the date column as dates rather than text (Chapter 18, section 18.9); exercise 12 sorts by it.
+- The two `merge` calls attach each line's product name and category, and its account's segment, exactly as in Chapter 38. `len(lines)` counts the lines, and `nunique()` counts the distinct orders, accounts and products.
+
 A recommender doesn't care about individual orders; it needs one number per account and product: *how much of this product has this account bought?* That table is the **interaction matrix**:
 
 ```python
@@ -332,7 +335,7 @@ A recommender doesn't predict one right answer; it produces a **ranked list**, a
 - **Hit rate@k**: the share of customers with at least one relevant item in their top *k*.
 - **Recall@k**: relevant items found in the top *k* ÷ relevant items that exist. With one hidden item per customer, recall@k is either 0 or 1, and its average is exactly the hit rate@k.
 - **Precision@k**: relevant items found in the top *k* ÷ *k*. With one hidden item, a 5-item list can find at most 1, so precision@5 can never be more than 1 ÷ 5 = 20%.
-- **NDCG@k** (normalized discounted cumulative gain): like the hit rate, but a hit near the top counts more than a hit further down. A hit at position *p* (counting from 1) is worth 1 ÷ log₂(*p* + 1): position 1 is worth 1.000, position 2 is worth 0.631, position 3 is worth 0.500, position 5 only 0.387. That sum is the **DCG**; dividing it by the best possible DCG, the **ideal DCG**, puts it between 0 and 1. With several relevant items, the ideal list puts them all at the top; here there is only one, so the ideal DCG is 1.
+- **NDCG@k** (normalized discounted cumulative gain): like the hit rate, but a hit near the top counts more than a hit further down. A hit at position *p* (counting from 1) is worth 1 ÷ log₂(*p* + 1): position 1 is worth 1.000, position 2 is worth 0.631, position 3 is worth 0.500, position 5 only 0.387. Adding up those values for every relevant item in the top *k* gives the **DCG**; dividing it by the best possible DCG, the **ideal DCG**, puts it between 0 and 1. With several relevant items, the ideal list puts them all at the top; here there is only one, so the ideal DCG is 1.
 - **MRR@k** (mean reciprocal rank): a hit at position *p* scores 1 ÷ *p* (position 2 scores 0.5, position 5 scores 0.2), a miss scores 0, and MRR is the average over customers.
 
 ### The metrics by hand
@@ -397,6 +400,7 @@ the one hidden: 0
 - `np.where(condition)[0]`: `np.where` returns the positions where a condition is True, wrapped in a tuple with one entry per dimension; `[0]` takes the row positions. `eligible` is the rows of accounts with at least 2 products, because an account with one product has nothing left once it is hidden.
 - `np.full(X.shape[0], -1)` makes an array with one slot per account, all set to −1 ("nothing hidden").
 - `rng.choice(owned)` picks one of the account's product columns at random.
+- The last two lines show the first eligible account: it owns six products, and the one hidden is column 0. Columns count from 0, so column 0 is P01, the Storage Crate 50L.
 
 Then remove the hidden products from a copy of the matrix. Every method in this chapter learns from `X_train` only:
 
@@ -426,21 +430,25 @@ scores[X_train[i] > 0] = -np.inf  # products this account owns go to the bottom
 top_5 = np.argsort(-scores)[:5]
 print("top 5:", [names[items[j]] for j in top_5])
 print("hidden:", names[items[held_out[i]]])
-position = int(np.where(top_5 == held_out[i])[0][0]) + 1 if held_out[i] in top_5 else None
-print("position in the list:", position)
+if held_out[i] in top_5:
+    print("hit at position", int(np.where(top_5 == held_out[i])[0][0]) + 1)
+else:
+    print("miss: the hidden product is not in the top 5")
 ```
 
 ```
 top 5: ['Crate Lid (80L)', 'Crate Lid (50L)', 'Stacking Bin Large', 'Food Container 2L', 'Serving Tray']
 hidden: Storage Crate 50L
-position in the list: None
+miss: the hidden product is not in the top 5
 ```
 
 - `pop_counts` counts, for each product, the accounts that bought it in `X_train`. `.astype(float)` makes it a float array, because the next lines put `-np.inf` into a copy of it, and an integer array can't hold infinity.
 - `scores = pop_counts.copy()` copies it, so this account's changes don't touch the shared counts.
 - `scores[X_train[i] > 0] = -np.inf` gives every product the account already owns a score of minus infinity, lower than any real score, so it sorts to the very bottom and is never recommended: re-recommending something a customer already buys isn't useful.
 - `np.argsort(-scores)` gives the column positions that would sort `scores` from smallest to largest; sorting the negatives puts the largest score first. `[:5]` keeps the top five.
-- `np.where(top_5 == held_out[i])[0][0]` finds where the hidden product sits in the top 5, counted from 0; `+ 1` turns that into a position counted from 1. The `if ... else None` gives `None` for a miss.
+- `held_out[i] in top_5` asks whether the hidden product made the list. If it did, `np.where(top_5 == held_out[i])[0][0]` finds where, counted from 0, and `+ 1` turns that into a position counted from 1.
+
+For this account, popularity is a miss: it suggests the lids, bins and food containers that most accounts buy, and the account's hidden Storage Crate 50L isn't among them.
 
 ### Every account at once
 
@@ -511,7 +519,7 @@ item-based collaborative filtering: hit rate@5 65.0%   NDCG@5 0.495   MRR@5 0.44
 - `item_sim_train` is the 24 × 24 product similarity table again, built from `X_train` this time, so the hidden products play no part.
 - `X_train[i] @ item_sim_train` is a vector times a matrix (Chapter 35, section 35.3). For each product, it adds up *quantity of each owned product × that product's similarity to it*. A product similar to many things the account buys a lot of gets a high score.
 
-**Reading it.** Item-based collaborative filtering beats popularity (65.0% against 62.7% hit rate@5; NDCG 0.495 against 0.435): using *who bought what together* improves on suggesting the same popular items to everyone.
+**Reading it.** Item-based collaborative filtering beats popularity (65.0% against 62.7% hit rate@5; NDCG 0.495 against 0.434): using *who bought what together* improves on suggesting the same popular items to everyone.
 
 ### Quantities or yes/no?
 
@@ -539,7 +547,7 @@ item CF on log(1 + quantity)  hit rate@5 68.3%   NDCG@5 0.510   MRR@5 0.453
 - `np.log1p(X_train)` is ln(1 + quantity): 0 stays 0, 9 becomes 2.3, 399 becomes 6.0.
 - The loop builds a similarity table from each version, evaluates it, and keeps the result in `variant_results` for section 42.7's scoreboard. The lambda uses `weights` and `sim` from the current pass of the loop; `evaluate` runs it straight away, before the loop moves on (section 42.4 shows why that matters).
 
-**Reading it.** Both versions beat raw quantities: FILLIN. Big buyers were drowning out everyone else. Section 42.4 builds on that idea; for simplicity, the rest of the chapter keeps the raw-quantity `item_cf_score` as its item-based method, and the final scoreboard in section 42.7 lists the yes/no version too.
+**Reading it.** Both versions beat raw quantities: 68.7% and 68.3% hit rate@5 against 65.0%, and the log version has the best NDCG of the three (0.510). The biggest buyers were drowning out everyone else. Section 42.4 builds on that idea; for simplicity, the rest of the chapter keeps the raw-quantity `item_cf_score` as its item-based method, and the final scoreboard in section 42.7 lists the yes/no version too.
 
 ---
 
@@ -580,7 +588,7 @@ Prime Wholesale            7.8             0.0       10.4             1.3
 - `B` holds each product's weight on each factor: Crate Lid has 0.8 on storage and 0 on food; Chopping Board has a little of both (0.1 and 0.4).
 - `A @ B` multiplies them (Chapter 35, section 35.3): a 5 × 2 table times a 2 × 4 table gives a 5 × 4 table, the same shape as `toy`.
 
-Check one cell by hand. Sharma Hardware × Storage Crate = 6 × 0.6 + 0 × 0 = 3.6, against 3 in the real table: close. Twenty numbers have been summed up by eighteen, and the rebuilt table is near the original everywhere. Now look at Sharma Hardware × Chopping Board: 6 × 0.1 + 0 × 0.4 = 0.6. Sharma has never bought a chopping board (the real cell is 0), but the reconstruction gives it a small positive score, because Prime Wholesale, another storage buyer, bought one. **That non-zero score in an empty cell is the recommendation.** Matrix factorization recommends by rebuilding the matrix and reading the scores it puts in the cells that were empty.
+Check one cell by hand. Sharma Hardware × Storage Crate = 6 × 0.6 + 0 × 0 = 3.6, against 3 in the real table: close. The 20 numbers of the toy table have been summed up by 18 (10 in A, 8 in B), and the rebuilt table is near the original everywhere. Now look at Sharma Hardware × Chopping Board: 6 × 0.1 + 0 × 0.4 = 0.6. Sharma has never bought a chopping board (the real cell is 0), but the reconstruction gives it a small positive score, because Prime Wholesale, another storage buyer, bought one. **That non-zero score in an empty cell is the recommendation.** Matrix factorization recommends by rebuilding the matrix and reading the scores it puts in the cells that were empty.
 
 Nobody picks A and B by hand in practice. scikit-learn's **`TruncatedSVD`** finds them:
 
@@ -699,7 +707,7 @@ print(repr(confidence))
 	with 37525 stored elements and shape (4516, 24)>
 ```
 
-- `csr_matrix(...)` keeps each non-zero value with its row and column; rows are accounts, columns are products, the format `implicit` expects. `repr` shows its size and how many cells it actually stores.
+- `csr_matrix(...)` keeps each non-zero value with its row and column; rows are accounts, columns are products, the format `implicit` expects. `repr` shows its shape and how many cells it actually stores: 37,525 of the 108,384 (4,516 × 24).
 - `threadpool_limits(1, "blas")`: NumPy does matrix arithmetic with a library called BLAS, which can split work across several processor threads. `implicit` runs its own threads, and warns that the two together slow each other down, so it asks for BLAS to use one thread. `threadpoolctl` came with scikit-learn, so there's nothing to install.
 
 Now fit ALS with 8 and 16 factors:
@@ -735,7 +743,9 @@ ALS, 16 factors: hit rate@5 46.0%   NDCG@5 0.344   MRR@5 0.306
 - `model.fit(confidence, show_progress=False)` learns the two tables; `show_progress=False` hides the progress bar it would otherwise draw.
 - `m.user_factors` is table A (one row per account; `implicit` calls them users) and `m.item_factors` is table B turned on its side (one row per product). `m.user_factors[i] @ m.item_factors.T` multiplies account `i`'s factor row by every product's factor row: one predicted score per product. `m=model` freezes this pass's model, as shown above.
 
-**Reading it.** ALS with 8 factors has the highest hit rate of the models so far (67.9%), though item-based filtering on yes/no data still has a higher NDCG (0.504 against 0.488): the two metrics can disagree, which is why you report both. With 16 factors, ALS collapses further than the SVD did (46.0%), the same overfitting pattern, more pronounced. **The lesson generalizes beyond this dataset:** on a small or narrow catalog, keep factor counts low and always check with a held-out test, rather than trusting a bigger, fancier-sounding model by default.
+What happens if you change them? `factors` is the setting that matters most here: from 8 to 16, the hit rate falls by more than 20 points, as the output shows. Exercise 7 changes `regularization` and finds almost no difference.
+
+**Reading it.** ALS with 8 factors (67.9% hit rate@5) beats raw-quantity item-based filtering (65.0%) and the best SVD (64.7%), but not item-based filtering on yes/no data (68.7%), which also has the higher NDCG (0.504 against 0.488). And ALS's NDCG is below even raw item-based filtering's 0.495, although its hit rate is higher: the two metrics can disagree, which is why you report both. With 16 factors, ALS collapses further than the SVD did (46.0%), the same overfitting pattern, more pronounced. **The lesson generalizes beyond this dataset:** on a small or narrow catalog, keep factor counts low and always check with a held-out test, rather than trusting a bigger, fancier-sounding model by default.
 
 ---
 
@@ -790,25 +800,29 @@ print(
 content-based filtering: hit rate@5 53.0%   NDCG@5 0.357   MRR@5 0.300
 ```
 
-**Reading it.** By description alone, Storage Crate 50L's nearest neighbor is correctly its 80-litre sibling (they share almost every word except the size), but its matching lid drops to third, behind two food containers that happen to share generic words like "food", "safe" and "plastic". Content-based similarity captures *what a product is*, not *what customers actually do with it together*: it doesn't know that a crate and its lid are bought as a pair, only that their descriptions read somewhat alike. Its hit rate@5, 53.0%, is the weakest of the methods so far apart from the larger SVD and ALS models, behind even the popularity baseline.
+**Reading it.** By description alone, Storage Crate 50L's nearest neighbor is correctly its 80-litre sibling (they share almost every word except the size), but its matching lid drops to third, behind two food containers that happen to share generic words like "litre", "storage", "food safe" and "plastic". Content-based similarity captures *what a product is*, not *what customers actually do with it together*: it doesn't know that a crate and its lid are bought as a pair, only that their descriptions read somewhat alike. Its hit rate@5, 53.0%, is the weakest of the methods so far apart from the 12-factor SVD and the 16-factor ALS, behind even the popularity baseline.
 
 > **Watch out: content-based filtering is limited by how good the descriptions are.** These 24 descriptions were written once, by hand, with real product differences. Real catalogs often have sparse, inconsistent, or auto-generated descriptions, and a content recommender is only ever as good as the text it's given (Chapter 41's cleaning lessons apply directly here).
 
 ### Hybrid: combining both
 
-To blend two recommenders, add their scores. But the two are on different scales:
+To blend two recommenders, add their scores. But the two are measured in different units: quantity × purchase similarity against quantity × text similarity. Compare their largest scores for three accounts:
 
 ```python
-print(f"item CF scores for the first account: up to {item_cf_score(0).max():,.0f}")
-print(f"content scores for the first account: up to {content_score(0).max():,.0f}")
+for i in eligible[:3]:
+    print(
+        f"account row {i}: item CF up to {item_cf_score(i).max():.0f}, "
+        f"content up to {content_score(i).max():.0f}"
+    )
 ```
 
 ```
-item CF scores for the first account: up to 71
-content scores for the first account: up to 62
+account row 0: item CF up to 71, content up to 62
+account row 1: item CF up to 105, content up to 84
+account row 2: item CF up to 6, content up to 10
 ```
 
-A raw sum would be all collaborative filtering. So each score list is divided by its own largest absolute value first, which puts both on a 0-to-1 scale, and then the two are mixed:
+Which one is bigger changes from account to account, so in a raw sum whichever happened to be larger would decide the blend. So each score list is divided by its own largest absolute value first, which puts both on a 0-to-1 scale, and then the two are mixed:
 
 ```python
 def normalize(scores):
@@ -927,7 +941,7 @@ partner_counts = pd.Series(
     [
         p
         for basket in order_baskets[contains_target]
-        for p in basket
+        for p in sorted(basket)
         if p != target_item
     ]
 ).value_counts()
@@ -950,9 +964,9 @@ Drum 60L              15.6%
 
 - `groupby("order_id")["product_id"].apply(set)` turns each order into a set of product IDs, its basket (as in Chapter 38, section 38.9).
 - `contains_target` is True for each basket that holds the crate.
-- The list comprehension (Chapter 17, section 17.6) walks through those baskets and collects every *other* product in them; `value_counts()` counts each one, and dividing by the number of crate orders gives a share.
+- The list comprehension (Chapter 17, section 17.6) walks through those baskets and collects every *other* product in them; `value_counts()` counts each one, and dividing by the number of crate orders gives a share. `sorted(basket)` walks each basket in ID order: a set has no fixed order, and sorting makes products with equal counts always print in the same order.
 
-**Reading it.** FILLIN
+**Reading it.** Of the 3,397 orders containing an Industrial Crate 200L, nearly half (47.5%) also include a set of Dolly Wheels, the castors that fit under crates and pallet boxes: a natural add-on. About a quarter include the Drum Tap Fitting, which Chapter 38's rules tied to the Drum 60L, and about one in six includes each crate lid. An account manager working wholesale accounts has a concrete, short list to check before a call: has this crate buyer also picked up the wheels most crate buyers add?
 
 ### Ranking differs by who's asking
 
@@ -976,7 +990,7 @@ Wholesale    top products: Drum Tap Fitting (90%), Dolly Wheels (set) (89%), Cra
 - `matrix.index.isin(segment_accounts)` is True for the rows whose account is in this segment.
 - `bought[segment_rows].mean()` is each product's share of those accounts that bought it; the top three follow.
 
-**Reading it.** FILLIN
+**Reading it.** The three segments want quite different top recommendations: Wholesale accounts are led by industrial accessories (drum tap fittings and dolly wheels, each bought by about nine in ten), Hospitality by food storage, Retail by seal packs and crate lids. A single popularity list, ignoring segment, never shows a wholesale account the drum taps and dolly wheels that almost every wholesale account buys, because fewer than 30% of *all* accounts buy them. The cheapest, most robust improvement over plain popularity is often not a fancier algorithm; it's popularity **computed separately for each meaningful group**, exactly as Chapter 38's cluster profiles (section 38.3) suggested treating different customer groups differently.
 
 ### Segment-level popularity, tested
 
@@ -1012,7 +1026,7 @@ segment-level popularity: hit rate@5 71.5%   NDCG@5 0.533   MRR@5 0.473
 
 ### The scoreboard
 
-Every method in this chapter, tested the same way, in one table:
+Every method in this chapter, tested the same way, goes into one table. The yes/no, SVD and ALS rows come from the dictionaries filled in sections 42.3 and 42.4.
 
 ```python
 scoreboard = pd.DataFrame(
@@ -1047,7 +1061,11 @@ SVD, 12 factors          0.464   0.317  0.268
 ALS, 16 factors          0.460   0.344  0.306
 ```
 
-**Reading it.** FILLIN
+- Each dictionary entry is one method's three measures; `pd.DataFrame(..., index=[...])` makes them columns, with the three measure names as rows.
+- `.T` turns the table on its side, one row per method, and `sort_values("hit rate@5", ascending=False)` puts the best hit rate first.
+- The yes/no item-based method comes from section 42.3's `variant_results`, and the SVD and ALS rows from the `svd_results` and `als_results` dictionaries of section 42.4.
+
+**Reading it.** Segment-level popularity tops the board on all three measures (71.5% hit rate@5, NDCG 0.533, MRR 0.473), ahead of every model, with no training at all. Next come item-based filtering on yes/no data and ALS with 8 factors, then raw item-based filtering and the 4-factor SVD, all within four points of each other; then the hybrid, the plain popularity baseline, content-based filtering, and the over-sized factor models at the bottom. The order also depends on the measure: ALS is third on hit rate, but on NDCG it falls behind raw item-based filtering, and on MRR behind the 4-factor SVD too. On a 24-product catalog where the segment explains most of why accounts buy differently, knowing an account's segment is worth more than any pattern the models find in its purchases. That won't hold for every catalog, which is exactly why you test it.
 
 ---
 
@@ -1072,9 +1090,11 @@ ALS, 16 factors          0.460   0.344  0.306
 
 In September 2026, Riverstone's e-commerce contractor proposes a matrix-factorization recommender for the customer web portal, priced at a monthly licence fee. Vikram asks Meera to check whether it's worth it before signing.
 
-Meera builds this chapter's comparison on Riverstone's real order data. FILLIN
+Meera builds this chapter's comparison on Riverstone's real order data. Item-based collaborative filtering and a modestly sized ALS model land between 65% and 69% hit rate@5, ahead of the 63% popularity baseline. That's a real, measurable win, until she checks it against a much simpler alternative: **segment-level popularity**, the one from section 42.7, computed with a dozen lines of pandas and no model-fitting at all.
 
-The lesson isn't that collaborative filtering doesn't work: this chapter's own numbers show it does. It's that Chapter 36's oldest habit, comparing every model against the cheapest baseline that could plausibly work, applies exactly as much to recommenders as it does to lead scoring.
+Segment-level popularity actually edges ahead of every model on this catalog: 71.5% hit rate@5, against 68.7% for the best item-based filtering and 67.9% for ALS, and it leads on NDCG too. It costs a fraction of the engineering: no matrix to retrain, no factor count to tune, no cold-start logic needed, because a new customer's segment is known the moment they're onboarded. Her recommendation to Vikram isn't "don't build a recommender"; it's "start with the free version, measure it in production, and only pay for the fancier model once we can show it beats what a dozen lines of code already gets us." Riverstone launches the segment-popularity list first, with a click-through-rate dashboard attached, and Vikram tells the contractor they'll revisit the paid model once there's a baseline number worth beating in production, not just in a backtest.
+
+The lesson isn't that collaborative filtering doesn't work: this chapter's own numbers show it does. It's that Chapter 36's oldest habit (section 36.10), comparing every model against the cheapest baseline that could plausibly work, applies exactly as much to recommenders as it does to lead scoring.
 
 ---
 
@@ -1124,7 +1144,7 @@ The lesson isn't that collaborative filtering doesn't work: this chapter's own n
 - **Content-based filtering** reuses Chapter 41's TF-IDF and cosine similarity on item descriptions, and is the only method here that works for brand-new items.
 - **Cold start** (new products, new customers) needs a fallback: content-based scoring, popularity, or segment membership.
 - **Hybrid** methods trade off different failure modes; they aren't automatically better than the best single method, and should be checked, not assumed.
-- **Segment-level popularity** is a cheap, robust baseline; on Riverstone's catalog it beats every model in the chapter.
+- **Segment-level popularity** is a cheap, robust baseline; on Riverstone's catalog it beats every model on the section 42.7 scoreboard.
 
 ---
 
@@ -1214,7 +1234,9 @@ products bought most like 'Drum 60L':
   Pallet Box             similarity 0.697
 ```
 
-FILLIN
+This is section 42.2's code with `P17` as the target and three matches instead of four.
+
+The top match is the Drum Tap Fitting, the drum's own accessory and one of the pairs Chapter 38's rules found. The next matches, Dolly Wheels and the Pallet Box, are other industrial items bought by the same wholesale-heavy customers. This makes clear business sense: drums are an industrial product, bought by industrial buyers, who also buy other industrial products, and the algorithm arrives there with no idea what a "drum" or a "fitting" actually is.
 
 **6.**
 
@@ -1231,7 +1253,7 @@ k= 5:  popularity 62.7%   item-based CF 65.0%
 k=10:  popularity 85.6%   item-based CF 83.7%
 ```
 
-FILLIN
+The hit rate rises for both methods as *k* grows, because a longer list has more chances to contain the one hidden product. At the extreme, recommending every product the account doesn't own guarantees a hit (hit rate 100%), which is why *k* must always be stated. Notice that at k = 10, popularity (85.6%) actually edges ahead of item-based CF (83.7%): with a 24-product catalog, a top-10 list already covers 10 ÷ 24 = 42% of everything on offer, so the two methods' lists overlap heavily and the gap that mattered at k = 3 and 5 disappears. That's why a hit rate must be reported *with* the k it was measured at, chosen to reflect a realistic list length, and why NDCG (which discounts by position rather than just checking presence) is the more informative single number when comparing methods.
 
 **7.**
 
@@ -1255,7 +1277,9 @@ regularization=0.01  hit rate@5 68.0%
 regularization=1.0   hit rate@5 67.6%
 ```
 
-FILLIN
+`als_results[8][0]` is the hit rate stored for 8 factors in section 42.4; the loop fits two more models the same way, changing only `regularization`.
+
+Regularization penalizes large factor values, the matrix-factorization equivalent of Chapter 37's ridge penalty (section 37.2). Here the three settings land within half a point of each other (67.6%, 67.9%, 68.0%): regularization isn't the lever that matters on this catalog. The factor-count experiment in section 42.4 showed a much larger swing, from 67.9% at 8 factors down to 46.0% at 16. The number of factors, not the regularization strength, is what needs care here, a reminder that not every hyperparameter matters equally for a given dataset, and testing is how you find out which ones do.
 
 **8.**
 
@@ -1283,7 +1307,10 @@ item CF, all accounts:    hit rate@5 65.0%   NDCG@5 0.495
 segment-level popularity: hit rate@5 71.5%   NDCG@5 0.533
 ```
 
-FILLIN
+- `X_train[account_segments == segment]` keeps one segment's rows, and `.T` compares its products, as in section 42.2; each segment gets its own 24 × 24 table.
+- `segment_cf_score` looks up the account's segment and uses that segment's table.
+
+Item-based filtering computed within each segment reaches 72.1% hit rate@5 and NDCG 0.540, far above the same method on all accounts together (65.0%, 0.495) and a little above segment-level popularity (71.5%, 0.533). Similarities learned from similar customers are more relevant: in a wholesale-only table, the Drum 60L's neighbors are what wholesale accounts buy with it, not what the whole customer base does. But the gain over segment-level popularity is under a point, for a model that needs three similarity tables kept up to date. Whether that's worth it is a business call, and now it can be made with numbers.
 
 **9.** `content_similarity` is a NumPy array, so copy it, zero the diagonal (a product with itself), and only then wrap it in a DataFrame:
 
@@ -1309,7 +1336,7 @@ most similar different products: 'Food Container 2L' and 'Food Container 5L', si
 - `.stack()` turns the 24 × 24 table into one long Series indexed by (row, column) pairs, and `.idxmax()` returns the pair with the largest value.
 - Zeroing the diagonal *before* building the DataFrame matters: with pandas' copy-on-write, `DataFrame.values` can hand back a read-only array, and `np.fill_diagonal` on it stops with `ValueError: underlying array is read-only`.
 
-FILLIN
+The top pair is the 2-litre and 5-litre Food Containers, with a similarity of exactly 1.000. Their descriptions differ only in the size, "2" against "5", and `TfidfVectorizer` by default ignores one-character tokens, so to it the two texts are identical. A customer would see them as two sizes of the same product: a sensible alternative to each other, not an add-on. This is section 42.5's watch-out in practice: TF-IDF similarity reflects shared *vocabulary*, and a size, a colour or a model number that matters to the buyer can vanish from the text the model sees. Read a few flagged pairs by hand before trusting the scores.
 
 **10.**
 
@@ -1329,7 +1356,7 @@ weight 0.2 collaborative / 0.8 content: hit rate@5 58.7%   NDCG@5 0.397
 item-based CF alone: hit rate@5 65.0%
 ```
 
-FILLIN
+Weighting heavily toward collaborative filtering (0.8) lands level with item-based CF on hit rate (65.1% against 65.0%, a difference of a handful of accounts) but below it on NDCG (0.486 against 0.495); weighting toward content (0.2 collaborative) drags it down toward content-based's weaker standalone score (58.7%). Neither weighting clearly beats item-based CF alone on this catalog: a clean illustration that a hybrid is a tool for handling cases the best single method can't reach (like cold start), not a guaranteed accuracy improvement over that method.
 
 **11.**
 
@@ -1339,7 +1366,12 @@ def bought_together(product_id, top_n=3):
         order_baskets.apply(lambda s: product_id in s)
     ]
     counts = pd.Series(
-        [p for basket in orders_with_product for p in basket if p != product_id]
+        [
+            p
+            for basket in orders_with_product
+            for p in sorted(basket)
+            if p != product_id
+        ]
     ).value_counts()
     return counts.head(top_n)
 
@@ -1347,7 +1379,8 @@ def bought_together(product_id, top_n=3):
 print("co-occurrence count method:")
 print(bought_together("P01").rename(index=names).to_string())
 print("\ncosine similarity method (section 42.2):")
-print(sim_table["P01"].sort_values(ascending=False).head(3).rename(index=names).round(3).to_string())
+cosine_top = sim_table["P01"].sort_values(ascending=False).head(3)
+print(cosine_top.rename(index=names).round(3).to_string())
 ```
 
 ```
@@ -1362,7 +1395,9 @@ Crate Lid (80L)     0.573
 Drum Tap Fitting    0.555
 ```
 
-FILLIN
+`bought_together` repeats section 42.7's co-occurrence count for any product; `top_n=3` is a default value, so `bought_together("P01", top_n=5)` would return five. `order_baskets` is section 42.7's Series of baskets.
+
+Both methods put the matching lid first, in 2,800 orders, the same count Chapter 38, section 38.9 found. Further down they disagree. Raw co-occurrence counts favor whatever is simply *popular*: the Airtight Seal Pack, the most-bought product of all, ties for second with Crate Lid (80L) at 711 orders. Cosine similarity divides by each product's overall size (its vector length, Chapter 35), so a product that is everywhere doesn't win just by being everywhere; it ranks Crate Lid (80L) and the Drum Tap Fitting next. Note the two also count differently: co-occurrence counts **orders**, while section 42.2's cosine uses each **account's** total quantities, so some of the disagreement comes from that, not only from popularity.
 
 **12.** First, find each account's last order, and build a training matrix from the earlier orders only:
 
@@ -1384,20 +1419,22 @@ new_in_last = (
 )
 time_targets = {}
 for i, account_id in enumerate(matrix.index):
-    products_in_last = new_in_last[account_id]
-    if isinstance(products_in_last, set) and X_before[i].sum() > 0:
-        targets = [items.index(p) for p in products_in_last if X_before[i, items.index(p)] == 0]
+    in_last = new_in_last[account_id]
+    if isinstance(in_last, set) and X_before[i].sum() > 0:
+        columns = [items.index(p) for p in sorted(in_last)]
+        targets = [j for j in columns if X_before[i, j] == 0]
         if targets:
             time_targets[i] = targets
-print(f"{len(time_targets):,} accounts have earlier orders and something new in their last order")
+print(f"{len(time_targets):,} accounts have earlier orders and a new product last time")
 ```
 
 ```
-2,217 accounts have earlier orders and something new in their last order
+2,217 accounts have earlier orders and a new product last time
 ```
 
 - `sort_values(["order_date", "order_id"])` puts the lines in time order (the order ID breaks ties on the same day), so `groupby(...).last()` gives each account's latest order ID.
 - `earlier` is the interaction matrix built from every order *except* the last; `unstack(fill_value=0)` is a shortcut for the pivot-and-fill of section 42.1, and `reindex` puts the rows and columns in the same order as `matrix`.
+- `new_in_last` holds each account's last order as a set of product IDs. `isinstance(in_last, set)` checks that the account has one (an account with a single order has nothing earlier to learn from, and `X_before[i].sum() > 0` checks for that too).
 - `time_targets` keeps, for each account with some history, the column positions of the products in its last order that it had never bought before: the ones a recommender could have suggested.
 
 Then score three methods, each trained on `X_before` only:
@@ -1420,12 +1457,10 @@ before_als = implicit.als.AlternatingLeastSquares(
     factors=8, regularization=0.1, iterations=20, random_state=42
 )
 before_als.fit(csr_matrix(np.log1p(X_before)), show_progress=False)
+user_f, item_f = before_als.user_factors, before_als.item_factors
 print(f"popularity     hit rate@5 {time_evaluate(lambda i: before_pop):.1%}")
 print(f"item-based CF  hit rate@5 {time_evaluate(lambda i: X_before[i] @ before_sim):.1%}")
-print(
-    "ALS, 8 factors hit rate@5 "
-    f"{time_evaluate(lambda i: before_als.user_factors[i] @ before_als.item_factors.T):.1%}"
-)
+print(f"ALS, 8 factors hit rate@5 {time_evaluate(lambda i: user_f[i] @ item_f.T):.1%}")
 ```
 
 ```
@@ -1434,9 +1469,10 @@ item-based CF  hit rate@5 67.0%
 ALS, 8 factors hit rate@5 62.7%
 ```
 
-- `any(t in top_k for t in targets)` is True when at least one hidden product made the top 5; adding True counts as 1.
+- `time_evaluate` is `evaluate` with two changes: it excludes what the account bought in `X_before`, and it counts a hit when any of the account's hidden products makes the top 5. `any(t in top_k for t in targets)` is True when at least one did; adding True counts as 1.
+- `before_pop`, `before_sim` and `before_als` are the popularity counts, the item similarities and the ALS model rebuilt from `X_before`, exactly as in sections 42.3 and 42.4. `user_f` and `item_f` are short names for the model's two factor tables, to keep the last line short.
 
-FILLIN
+Popularity scores 70.9%, item-based CF 67.0% and ALS 62.7%: under a time-based holdout the ranking **changes**, and the plain popularity baseline comes first. The numbers aren't directly comparable with leave-one-out's (different accounts, and some have more than one hidden product), but the order is the finding. When the question is "what new product will this account add next?", the products most accounts buy were a better guess than anything learned from the account's own mix. A time-based holdout is the more realistic test for any recommender that will be used to predict *future* purchases, and this answer is Chapter 36's lesson (section 36.3) again: a random split can flatter a model in ways a time-respecting split won't. Before choosing a model for production, test it the way it will be used.
 
 **13.** *(No worked output: LightFM would not install on the Python version used for this book, so this exercise is optional.)* LightFM builds one model that blends interaction data and item features (like this chapter's descriptions) directly, rather than combining two separately trained models by hand as section 42.5's hybrid does. If you can install it, compare its hit rate@5 against this chapter's hybrid using the same leave-one-out procedure from section 42.3, and note that LightFM's real advantage over a hand-blended hybrid tends to show up on colder items and customers, not necessarily on the well-populated ones this catalog mostly contains.
 

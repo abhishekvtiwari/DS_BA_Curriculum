@@ -53,7 +53,7 @@ def fig_lasso():
 
 
 def fig_depth():
-    o = []; X0, Y0, W, H = 70, 270, 500, 230; data = R["depth"]
+    o = []; X0, Y0, W, H = 70, 270, 460, 230; data = R["depth"]
     X = lambda i: X0 + i / (len(data) - 1) * W; Y = lambda v: Y0 - (v - 0.5) / 0.5 * H
     for v in [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
         o.append(line(X0, Y(v), X0 + W, Y(v), PALE)); o.append(text(X0 - 8, Y(v) + 4, f"{v:.1f}", FS, MUTED, anchor="end"))
@@ -63,8 +63,8 @@ def fig_depth():
     for i, (_, t, v) in enumerate(data): o.append(dot(X(i), Y(t), ORANGE)); o.append(square(X(i), Y(v), ACC))
     best = max(range(len(data)), key=lambda i: data[i][2])
     bx, by = X(best), Y(data[best][2])
-    o.append(line(bx, by - 7, bx + 38, by - 52, INK, 1))
-    o.append(text(bx + 42, by - 56, f"best validation: {data[best][2]:.3f} at depth {data[best][0]}", 11, INK, "bold"))
+    o.append(line(bx, by + 7, bx + 30, by + 62, INK, 1))
+    o.append(text(bx + 34, by + 74, f"best validation: {data[best][2]:.3f} at depth {data[best][0]}", 11, INK, "bold"))
     o.append(text(X(len(data) - 1) + 10, Y(data[-1][1]) + 4, "training", 11.5, ORANGE, "bold"))
     o.append(text(X(len(data) - 1) + 10, Y(data[-1][2]) + 4, "validation", 11.5, ACC, "bold"))
     o.append(text(X0 + W / 2, Y0 + 40, "Maximum tree depth", 11.5, INK, anchor="middle"))
@@ -84,8 +84,9 @@ def fig_curves():
         for v in [0, 800, 1600, 2400, 3200]: o.append(text(X(v), Y0 + 17, f"{v:,}", FS, MUTED, anchor="middle"))
         o.append(poly([(X(a), Y(b)) for a, b in zip(n, tr)], ORANGE)); o.append(poly([(X(a), Y(b)) for a, b in zip(n, cv)], ACC, dash="6,3"))
         for a, b, c in zip(n, tr, cv): o.append(dot(X(a), Y(b), ORANGE)); o.append(square(X(a), Y(c), ACC))
-        o.append(text(X(n[-1]) + 10, Y(tr[-1]) + 4, f"training {tr[-1]:.3f}", 11.5, ORANGE, "bold"))
-        o.append(text(X(n[-1]) + 10, Y(cv[-1]) + 4, f"CV {cv[-1]:.3f}", 11.5, ACC, "bold"))
+        near = abs(Y(tr[-1]) - Y(cv[-1])) < 16
+        o.append(text(X(n[-1]) + 10, Y(tr[-1]) + (-5 if near else 4), f"training {tr[-1]:.3f}", 11.5, ORANGE, "bold"))
+        o.append(text(X(n[-1]) + 10, Y(cv[-1]) + (13 if near else 4), f"CV {cv[-1]:.3f}", 11.5, ACC, "bold"))
         o.append(vlabel(X0 - 45, Y0 - H / 2, "AUC"))
     o.append(text(X0 + W / 2, 470, "Training rows", 11.5, INK, anchor="middle"))
     return svg(640, 480, "".join(o))

@@ -10,7 +10,7 @@
 >
 > **Time needed:** 20–24 hours over three weeks, in two parts. **Part A**, sections 37.0 to 37.5 (the linear family, neighbors and Naive Bayes): about 9–10 hours. **Part B**, sections 37.6 to 37.12 and the project (trees, ensembles, tuning): about 11–13 hours. It's the longest chapter in Part 4; take it one algorithm at a time, and stop at the checkpoint between the parts.
 >
-> **Tools:** Python 3 with scikit-learn (installed in Chapter 35), plus three free gradient-boosting libraries (XGBoost, LightGBM, CatBoost) and Optuna for tuning, all installed in section 37.0. Everything runs on a laptop CPU; the slowest cell takes about a minute.
+> **Tools:** Python 3 with scikit-learn (installed in Chapter 35, section 35.9), plus three free gradient-boosting libraries (XGBoost, LightGBM, CatBoost) and Optuna for tuning, all installed in section 37.0. Everything runs on a laptop CPU; the slowest cell takes about a minute.
 >
 > **Practice data:** two Riverstone datasets. **Customer accounts** (new in this chapter, built by `companion/generate_riverstone_accounts.py`): 5,000 B2B accounts described as of 31 December 2024, with what happened in 2025. **Leads** (from Chapter 36), loaded through `companion/ch37/lead_data.py`. Every number in this chapter was calculated, and every output shown is real.
 
@@ -577,7 +577,7 @@ sd for smaller accounts 0.217, larger 0.228
 
 *Figure 37.1 — Residuals of the many-feature model on the test accounts. An even band around zero: no curve and no fan.*
 
-**Reading it.** The residuals average zero and spread about equally for smaller and larger accounts (the two SDs are close), and the chart shows no curve and no fan. On the log scale, the straight line fits: the log target did its job. In rupees, the same residuals mean bigger misses for bigger accounts, which is what you'd want.
+**Reading it.** The residuals average zero and spread about equally for smaller and larger accounts (the two SDs are close), and the chart shows no curve and no fan. On the log scale, the straight line fits: the log target did its job. In rupees, the same residuals mean bigger misses for bigger accounts, which is why the largest accounts dominate the MAE.
 
 **Linear regression's assumptions**, and what breaks when they fail:
 
@@ -749,7 +749,7 @@ kept at alpha 0.01: ['cat__segment_Retail', 'num__log_revenue_2024', 'num__late_
 - `(weights != 0).sum()` counts the weights that aren't zero: the features lasso kept.
 - `names[weights != 0]` picks the names of those features; the `if` saves them for α = 0.01, and the last line prints them.
 
-![Two stacked panels sharing a lasso alpha axis from 0.001 to 0.2 on a log scale. Top, features kept: 14 at 0.001, 5 at 0.01, 2 at 0.05, 1 at 0.2. Bottom, test R² on an axis from 0 to 1: about 0.96 until alpha 0.05, then 0.93 at 0.2](figures/fig37-2-lasso-path.svg)
+![Two stacked panels sharing a lasso alpha axis from 0.001 to 0.2 on a log scale. Top, features kept: 14 at 0.001, 5 at 0.01, 2 at 0.05, 1 at 0.2. Bottom, test R² on an axis from 0.90 to 1.00, each value printed: about 0.96 until alpha 0.05, then 0.925 at 0.2](figures/fig37-2-lasso-path.svg)
 
 *Figure 37.2 — Lasso as α grows. Five features give almost the same accuracy as fourteen; one feature (last year's revenue) still explains most of the variation.*
 
@@ -1377,7 +1377,10 @@ print(f"forest: average of the three = {np.mean(votes):.2f}")
 ```
 
 ```
-FILL
+tree 1: rows [0 1 2 5 5 5 5 7]   P(churn) at 197 days 1.00
+tree 2: rows [0 1 2 2 3 6 7 7]   P(churn) at 197 days 0.75
+tree 3: rows [0 0 1 4 5 5 6 6]   P(churn) at 197 days 0.00
+forest: average of the three = 0.58
 ```
 
 - `np.random.default_rng(37)` is a seeded random generator (Chapter 21), so the draws repeat.
@@ -1495,18 +1498,29 @@ Four implementations matter in practice:
 
 The settings that matter most are shared across all four, under different names:
 
-| Setting | scikit-learn HGB | XGBoost | LightGBM | CatBoost | Value here, and why |
-|---|---|---|---|---|---|
-| Number of trees | `max_iter` | `n_estimators` | `n_estimators` | `iterations` | 300: enough rounds at this learning rate |
-| Learning rate | `learning_rate` | `learning_rate` | `learning_rate` | `learning_rate` | 0.05: small steps generalize better but need more trees; 0.01–0.1 is typical |
-| Tree size | `max_depth` | `max_depth` | `num_leaves` | `depth` | depth 3, or 8 leaves (a depth-3 tree has at most 2³ = 8 leaves); CatBoost's depth 4 because its trees are symmetric and simpler |
-| Rows per leaf | `min_samples_leaf` | (`min_child_weight`) | `min_child_samples` | (`min_data_in_leaf`) | 40 where set: no tiny leaves |
-| Row sampling | (none) | `subsample` | `subsample` + `subsample_freq` | (automatic) | 0.8: each tree sees 80% of the rows; LightGBM ignores `subsample` unless `subsample_freq` is at least 1 (how often to redraw the rows) |
-| Column sampling | (none) | `colsample_bytree` | `colsample_bytree` | (`rsm`) | 0.8: each tree sees 80% of the features |
-| L2 regularization | `l2_regularization` | `reg_lambda` | `reg_lambda` | `l2_leaf_reg` | left at each library's default here; tuned in section 37.11 |
-| Repeatable results | `random_state` | `random_state` | `random_state` | `random_seed` | 37 |
-| Threads | (uses all cores) | `n_jobs` | `n_jobs` | `thread_count` | 1 where set, so runs repeat exactly and timings are comparable |
-| Messages | `verbose` | `verbosity` | `verbose` | `verbose` | silenced: `verbose=-1` for LightGBM, `verbose=0` for CatBoost |
+| Setting | scikit-learn HGB | XGBoost | LightGBM | CatBoost |
+|---|---|---|---|---|
+| Number of trees | `max_iter` | `n_estimators` | `n_estimators` | `iterations` |
+| Learning rate | `learning_rate` | `learning_rate` | `learning_rate` | `learning_rate` |
+| Tree size | `max_depth` | `max_depth` | `num_leaves` | `depth` |
+| Rows per leaf | `min_samples_leaf` | (`min_child_weight`) | `min_child_samples` | (`min_data_in_leaf`) |
+| Row sampling | (none) | `subsample` | `subsample` + `subsample_freq` | (automatic) |
+| Column sampling | (none) | `colsample_bytree` | `colsample_bytree` | (`rsm`) |
+| L2 regularization | `l2_regularization` | `reg_lambda` | `reg_lambda` | `l2_leaf_reg` |
+| Repeatable results | `random_state` | `random_state` | `random_state` | `random_seed` |
+| Threads | (all cores) | `n_jobs` | `n_jobs` | `thread_count` |
+| Messages | `verbose` | `verbosity` | `verbose` | `verbose` |
+
+The values used below, and why:
+
+- **Number of trees 300:** enough rounds at this learning rate.
+- **Learning rate 0.05:** small steps generalize better but need more trees; 0.01–0.1 is typical.
+- **Tree size:** depth 3, or 8 leaves for LightGBM (a depth-3 tree has at most 2<sup>3</sup> = 8 leaves); depth 4 for CatBoost, whose trees are symmetric and simpler.
+- **Rows per leaf 40**, where set: no tiny leaves.
+- **Row and column sampling 0.8:** each tree sees 80% of the rows and 80% of the features. LightGBM ignores `subsample` unless `subsample_freq` is at least 1 (how often to redraw the rows).
+- **L2 regularization:** left at each library's default here; tuned in section 37.11.
+- **Repeatable results 37**, and **threads 1** where the setting exists, so runs repeat exactly and timings are comparable.
+- **Messages silenced:** `verbose=-1` for LightGBM, `verbose=0` for CatBoost.
 
 Settings in brackets exist but aren't used here. One library per cell. First scikit-learn's own, with default settings and then with the settings in the table:
 
@@ -1727,6 +1741,14 @@ candidates = {
         HistGradientBoostingClassifier(**hgb_settings, random_state=37), scale=False
     ),
 }
+```
+
+- `StratifiedKFold(n_splits=5, shuffle=True, random_state=37)` cuts the 4,000 accounts into the same five folds for every model, each with the same churn rate.
+- `candidates` holds the three pipelines, unfitted, under their names; `**hgb_settings` reuses section 37.8's settings.
+
+Then score each one on the five folds:
+
+```python
 X_rest, y_rest = rest[CATS + NUMS], rest["churned_2025"]
 cv_scores = {}
 for name, pipe in candidates.items():
@@ -1741,7 +1763,7 @@ random forest                mean AUC 0.826   sd 0.020   folds [0.862 0.818 0.82
 HistGradientBoosting tuned   mean AUC 0.836   sd 0.016   folds [0.865 0.831 0.837 0.816 0.831]
 ```
 
-- `StratifiedKFold(n_splits=5, shuffle=True, random_state=37)` cuts the 4,000 accounts into the same five folds for every model, each with the same churn rate.
+- `X_rest` and `y_rest` are the features and target of the 4,000 non-test accounts.
 - `cross_val_score` fits each pipeline five times, scoring AUC on the held-out fold each time, and returns the five scores; `cv_scores[name] = s` keeps them for the next cell.
 
 On 4,000 accounts, the picture is clearer: **tuned boosting 0.836, random forest 0.826, logistic regression 0.807**. Are the gaps real? Each model's standard deviation (0.007 to 0.020) isn't the right yardstick here, because all three were scored on the *same* folds. Compare them fold by fold instead:
@@ -1768,14 +1790,8 @@ from sklearn.model_selection import learning_curve
 
 sizes = [0.1, 0.25, 0.5, 0.75, 1.0]
 n, tr_s, va_s = learning_curve(
-    candidates["logistic regression"],
-    X_rest,
-    y_rest,
-    cv=folds,
-    scoring="roc_auc",
-    train_sizes=sizes,
-    shuffle=True,
-    random_state=37,
+    candidates["logistic regression"], X_rest, y_rest, cv=folds,
+    scoring="roc_auc", train_sizes=sizes, shuffle=True, random_state=37,
 )
 print("rows used:", n)
 print("shape of the training scores:", tr_s.shape)
@@ -2068,7 +2084,17 @@ print(top[["mean_test_score", "std_test_score"]].head(5).round(3).to_string(inde
 ```
 
 ```
-FILL
+model__l2_regularization: 2.735
+model__learning_rate: 0.01989
+model__max_depth: 3
+model__max_iter: 334
+model__min_samples_leaf: 93
+ mean_test_score  std_test_score
+           0.841           0.017
+           0.838           0.016
+           0.838           0.015
+           0.837           0.017
+           0.836           0.017
 ```
 
 - `best_params_` is a dictionary of the winning settings, with their `model__` names; the loop prints each one, and `:.4g` shows four significant digits.
@@ -2334,7 +2360,7 @@ Vikram cancels the renewal request. Two months later, Meera does use an open-sou
 
 ### Tools you'll need
 
-- **scikit-learn** (tested on 1.9.1, installed in Chapter 35): `LinearRegression`, `RidgeCV`, `LassoCV`, `ElasticNetCV`, `LogisticRegression`, `KNeighborsClassifier`, `BernoulliNB`, `GaussianNB`, `DecisionTreeClassifier` and `export_text`, `RandomForestClassifier`, `HistGradientBoostingClassifier`, `SVC` with `CalibratedClassifierCV`, `learning_curve`, `RandomizedSearchCV`.
+- **scikit-learn** (tested on 1.9.1, installed in Chapter 35, section 35.9): `LinearRegression`, `RidgeCV`, `LassoCV`, `ElasticNetCV`, `LogisticRegression`, `KNeighborsClassifier`, `BernoulliNB`, `GaussianNB`, `DecisionTreeClassifier` and `export_text`, `RandomForestClassifier`, `HistGradientBoostingClassifier`, `SVC` with `CalibratedClassifierCV`, `learning_curve`, `RandomizedSearchCV`.
 - **XGBoost** 3.2.0, **LightGBM** 4.7.0, **CatBoost** 1.2.10 and **Optuna** 5.0.0, installed in section 37.0 with `python -m pip install xgboost lightgbm catboost optuna`. All are free and open source; versions move quickly, so check each project's documentation for the current parameter names.
 - **SciPy** (Chapter 21) for the `loguniform` and `randint` distributions in random search.
 - **statsmodels** (Chapter 22) for regression with confidence intervals and p-values, read as in Chapter 30, section 30.11.
@@ -2636,7 +2662,7 @@ stacking   mean AUC 0.840   sd 0.016
 (tuned boosting alone 0.841; logistic alone 0.807)
 ```
 
-`final_estimator` is the model on top, which learns how much to trust each part; `cv=5` means it learns from the parts' predictions on rows they weren't trained on (an inner 5-fold split), so it isn't fooled by their training scores. The stack scores about the same as tuned boosting alone. Stacking helps when the models make different kinds of mistakes and each is strong; here, boosting already captures what logistic regression knows, so the combination adds little, at double the training time and complexity. That's the usual outcome in business problems, and why stacking is more common in competitions than in production.
+`estimators=` lists the parts as (name, model) pairs; `final_estimator` is the model on top, which learns how much to trust each part; `cv=5` means it learns from the parts' predictions on rows they weren't trained on (an inner 5-fold split), so it isn't fooled by their training scores. The stack scores about the same as tuned boosting alone. Stacking helps when the models make different kinds of mistakes and each is strong; here, boosting already captures what logistic regression knows, so the combination adds little, at double the training time and complexity. That's the usual outcome in business problems, and why stacking is more common in competitions than in production.
 
 **15.**
 
@@ -2678,7 +2704,7 @@ print(
 inside sales desk (rep_id_9): coefficient 0.0311   95% CI [0.0092, 0.0531]   p-value 0.006
 ```
 
-This is Chapter 30's statsmodels regression (section 30.11): `pd.get_dummies(..., drop_first=True)` is pandas' one-hot encoding with the first category dropped, `sm.add_constant` adds the intercept's column of 1s, and `conf_int().loc["rep_id_9"]` reads that row's two interval ends. The interval, 0.009 to 0.053, **excludes zero** (p = 0.006), even though the generator gave the inside sales desk no effect on growth. So where does it come from? The generator did make inside-desk accounts **more likely to churn**, and this regression only includes accounts that stayed. Inside-desk accounts that survived despite that extra risk tend to be healthier on other churn signals, such as the late-payment and complaint thresholds, which the model's straight-line terms don't fully capture. That's **selection bias**: analyzing only the survivors creates a relationship that doesn't exist among all accounts (Chapter 22, section 22.7, and Chapter 31). The lesson is broader than this dataset. A statistically significant coefficient can still be an artifact of how the rows were chosen, so before anyone reassigns accounts to the inside sales desk, ask how the data was filtered. (statsmodels uses unscaled features, so its coefficients are in original units, unlike the scaled ones in section 37.1; for a one-hot column like this one, the meaning is the same.)
+This is Chapter 30's statsmodels regression (section 30.11): `pd.get_dummies(..., drop_first=True, dtype=float)` is pandas' one-hot encoding with the first category dropped, as 0.0/1.0 numbers; `fillna(...median())` fills the late-payment blanks with the median, as the pipeline did; `sm.add_constant` adds the intercept's column of 1s, and `conf_int().loc["rep_id_9"]` reads that row's two interval ends. The interval, 0.009 to 0.053, **excludes zero** (p = 0.006), even though the generator gave the inside sales desk no effect on growth. So where does it come from? The generator did make inside-desk accounts **more likely to churn**, and this regression only includes accounts that stayed. Inside-desk accounts that survived despite that extra risk tend to be healthier on other churn signals, such as the late-payment and complaint thresholds, which the model's straight-line terms don't fully capture. That's **selection bias**: analyzing only the survivors creates a relationship that doesn't exist among all accounts (Chapter 22, section 22.7, and Chapter 31). The lesson is broader than this dataset. A statistically significant coefficient can still be an artifact of how the rows were chosen, so before anyone reassigns accounts to the inside sales desk, ask how the data was filtered. (statsmodels uses unscaled features, so its coefficients are in original units, unlike the scaled ones in section 37.1; for a one-hot column like this one, the meaning is the same.)
 
 **17.** First, the scores come from **different evaluations**: 0.841 is the best of 25 tuned settings on cross-validation, which is slightly optimistic because the winner was selected for scoring well, while 0.807 is logistic regression's untuned CV score. Compare like with like, ideally on the test set (0.838 against 0.797). Second, a difference in **AUC points isn't a percentage improvement** in anything a business cares about: 0.034 AUC doesn't mean 4% more churners saved. Translate it into decisions, such as "how many of the 100 highest-risk accounts actually churn", which is what Chapter 39 does.
 
