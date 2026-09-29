@@ -1956,6 +1956,7 @@ print(round(statistics.stdev(values), 2))
 | `scipy` | Statistics and probability distributions | 21 |
 | `statsmodels` | Regression tables and statistical tests | 22 |
 | `scikit-learn` | Machine learning | 35 |
+| `pyspark`, `polars` | Data too big for pandas | 48 |
 | `jupyterlab` | Notebooks | this chapter |
 
 Before installing something you found online, check that it's maintained (recent releases, open issues answered), that the name is spelled exactly right (typo-squatting, publishing a harmful package under a near-miss name, is a real attack), and that it goes into your project's virtual environment rather than the computer's own Python.
