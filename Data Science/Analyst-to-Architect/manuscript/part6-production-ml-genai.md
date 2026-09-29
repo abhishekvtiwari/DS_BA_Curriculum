@@ -6,12 +6,12 @@ Read the chapters in this order:
 
 | Chapter | Time needed |
 |---|---|
-| **53. Deep Learning in Depth** | 14–18 hours |
-| **54. Generative AI & Large Language Models** | 14–18 hours |
-| **55. Building AI Applications: RAG, Agents & Evaluation** | 16–20 hours |
-| **56. MLOps: Making Models Survive Production** | 16–20 hours |
-| **57. LLMOps** | 14–18 hours |
-| **58. Intelligent Automation** | 14–18 hours |
-| **59. Industry Case Studies** | 3–4 hours |
+| **53. Deep Learning in Depth** | 17–20 hours |
+| **54. Generative AI & Large Language Models** | 16–20 hours |
+| **55. Building AI Applications: RAG, Agents & Evaluation** | 20–24 hours |
+| **56. MLOps: Making Models Survive Production** | 18–22 hours |
+| **57. LLMOps** | 16–20 hours |
+| **58. Intelligent Automation** | 16–20 hours |
+| **59. Industry Case Studies** | 6–8 hours |
 
-In total, allow 91–116 hours, including the exercises and projects.
+In total, allow 109–134 hours, including the exercises and projects.

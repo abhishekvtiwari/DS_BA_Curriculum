@@ -14,11 +14,12 @@ What: writes production_data/stream.npz holding, for 24 weeks of 500 parts each:
         weeks 16-23  a new mould starts producing "flash": a thin protrusion at the part's edge that
                      nobody has ever labelled, so the model has never seen it (concept drift).
 How:  python3 simulate_production.py [--weeks 24] [--per-week 500]
-Seed: 56 (fixed). NumPy only; no downloads, no GPU. Takes about a minute.
-Tested on: Python 3.12.3, numpy 2.4.4 (Ubuntu 24.04).
+Seed: 56 (fixed). NumPy only; no downloads, no GPU. Takes about two minutes.
+Tested on: Python 3.11.15, numpy 2.4.6 (Ubuntu 24.04).
 Riverstone Supplies is fictional; these images are generated, not photographs.
 """
 import argparse
+import os
 import numpy as np
 
 ap = argparse.ArgumentParser()
@@ -119,8 +120,8 @@ for week in range(a.weeks):
         rows.append(features(image)); labels.append(label); weeks.append(week)
         brightness.append(float(image.mean())); kinds.append(kind)
 
-np.savez_compressed(f'{a.out}/stream.npz' if __import__('os').path.isdir(a.out) else
-                    (__import__('os').makedirs(a.out) or f'{a.out}/stream.npz'),
+os.makedirs(a.out, exist_ok=True)
+np.savez_compressed(f'{a.out}/stream.npz',
                     features=np.stack(rows).astype(np.float32), labels=np.array(labels, dtype=np.int8),
                     week=np.array(weeks, dtype=np.int16), brightness=np.array(brightness, dtype=np.float32),
                     kind=np.array(kinds))
