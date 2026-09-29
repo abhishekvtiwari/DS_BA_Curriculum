@@ -350,6 +350,8 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
     # reader-facing cover; "Chapter N." is written with its full stop, as in the headings (V12.27).
     cover = dict(cover, DOC='', META='')
     cover['TITLE'] = re.sub(r'^(Chapter \d+[A-Za-z]?)(<br>)', r'\1.\2', cover['TITLE'])
+    # A hyphenated word ("End-to-End") never breaks across cover lines (V44.6).
+    cover['TITLE'] = re.sub(r'(?<![<\w])(\w+(?:-\w+)+)', r'<span style="white-space:nowrap">\1</span>', cover['TITLE'])
     c = (HERE/'cover.html').read_text()
     for k, v in cover.items(): c = c.replace('{{'+k+'}}', v)
     (D/f'{name}-cover.html').write_text(c)
