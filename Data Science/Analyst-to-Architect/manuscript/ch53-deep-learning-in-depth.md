@@ -345,7 +345,7 @@ gradient  -600.0: plain step  +60.000   Adam step +0.100
 
 - On the first step `m_hat` equals the gradient and `v_hat` its square, as the previous cell showed, so the loop uses them directly.
 
-Plain gradient descent would leap 60 units on the large gradient; Adam still moves 0.1. That's why Adam needs far less learning-rate tuning, and why it's the usual default. A simpler relative, **momentum**, keeps only the running average `m` and steps along it, so steps don't zig-zag when the gradient keeps changing direction (`torch.optim.SGD(..., momentum=0.9)` in PyTorch).
+Plain gradient descent would leap 60 units on the large gradient; Adam still moves 0.1. That's why Adam needs far less learning-rate tuning, and why it's the usual default. (On the first step Adam moves by exactly the learning rate; try changing `lr` to 0.5 and both Adam steps become +0.500, while the plain steps grow five-fold.) A simpler relative, **momentum**, keeps only the running average `m` and steps along it, so steps don't zig-zag when the gradient keeps changing direction (`torch.optim.SGD(..., momentum=0.9)` in PyTorch).
 
 **Vocabulary you now own:**
 
@@ -625,6 +625,7 @@ with reshape:
  [2 5]]
 ```
 
+- `np.zeros((2, 2), dtype=int)` makes the empty 2×2 result; `dtype=int` stores whole numbers, like the map, so it prints 4 rather than 4.0.
 - The loops visit the four blocks: `m[2 * i:2 * i + 2, 2 * j:2 * j + 2]` is the 2×2 block in block-row `i` and block-column `j`, and `.max()` keeps its largest value. The top-left block [[1, 3], [4, 2]] gives 4.
 - `m.reshape(2, 2, 2, 2)` views the same 16 numbers as four dimensions: (block row, row inside the block, block column, column inside the block). Chapter 38 used `reshape(-1, 1)` to make a column; here the reshape cuts the map into blocks without moving any numbers.
 - `.max(axis=(1, 3))` takes the maximum over the two "inside the block" dimensions, leaving one number per block. Both methods print the same grid.
@@ -803,7 +804,7 @@ smallest 0.015, largest 0.700
 
 **Line by line:**
 
-- `KERNELS` holds three hand-written filters in a dictionary. The **blob** detector compares each pixel with its eight neighbours (8 × the centre minus the rest), so it lights up on a spot brighter or darker than its surroundings, which suits voids. The two **Sobel** edge detectors from section 53.5 light up on scratches, on the part's rim, and on the broken rim of a short shot. Dividing by 8 and 4 keeps all three responses on a similar scale.
+- `KERNELS` holds three hand-written filters in a dictionary. The **blob** detector compares each pixel with its eight neighbours (8 × the centre minus the rest), so it lights up on a spot brighter or darker than its surroundings, which suits voids. The two **Sobel** edge detectors from section 53.5 light up on scratches, on the part's rim, and on the broken rim of a short shot. `dtype=float` makes each kernel an array of decimals, so the divisions keep their fractions. Dividing by 8 and 4 keeps all three responses on a similar scale.
 - `convolve` is section 53.5's function, unchanged.
 - `np.abs(convolve(image, kernel))` takes the absolute value, because an edge matters whichever way round it runs.
 - `response[:30, :30]` is the whole map: a 3×3 kernel on a 32×32 image gives 32 − 3 + 1 = 30 positions each way. `.reshape(6, 5, 6, 5).max(axis=(1, 3))` is section 53.5's pooling trick, with 5×5 blocks: the 30×30 map becomes a 6×6 grid of "the strongest response anywhere in this block", which is exactly what you want for "is there a scratch somewhere here?".
@@ -958,7 +959,7 @@ fit [3600, 1, 32, 32], validation [900, 1, 32, 32], test [1500, 1, 32, 32]
 ```
 
 - `train_test_split(train_idx, test_size=0.2, ...)` splits the 4,500 training row numbers again: 80% to fit the network, 20% to choose its threshold. The test rows are the same 1,500 as before.
-- `as_tensors` turns a set of rows into two tensors. `.unsqueeze(1)` adds the "one channel" dimension `nn.Conv2d` expects, giving (images, 1, 32, 32), and the labels become a column of 32-bit numbers, the shape `BCEWithLogitsLoss` wants (Chapter 43, section 43.5).
+- `as_tensors` turns a set of rows into two tensors with `torch.tensor` (Chapter 43, section 43.0): `images[rows]` picks those rows' images, already 32-bit, and `dtype=torch.float32` converts the 0/1 labels, stored as 8-bit integers, to 32-bit decimals. `.unsqueeze(1)` adds the "one channel" dimension `nn.Conv2d` expects, giving (images, 1, 32, 32), and the labels become a column of 32-bit numbers, the shape `BCEWithLogitsLoss` wants (Chapter 43, section 43.5).
 
 The network, written as a class as in Chapter 43:
 
@@ -1009,7 +1010,18 @@ def train_cnn(seed, epochs=30):
             loss.backward()
             optimizer.step()
     return cnn
+```
 
+**Line by line:**
+
+- `torch.manual_seed(seed)` fixes the random starting kernels *and* the shuffling, so a given seed always gives the same network. The seed is an argument because a later cell tries others.
+- `torch.optim.Adam(..., lr=0.005)` is section 53.2's optimizer. `nn.BCEWithLogitsLoss()` is Chapter 43's sigmoid-plus-log-loss.
+- `torch.randperm(len(X_fit))` is a random order of the numbers 0 to 3,599, new every epoch. `range(0, len(X_fit), 64)` steps through it 64 at a time (0, 64, 128, …), and `order[start:start + 64]` is one batch of row numbers; the last batch is smaller.
+- The four lines inside are Chapter 43's training step, on one batch: clear old gradients, compute the loss, backpropagate, update. At 57 batches per epoch, 30 epochs make 1,710 updates.
+
+The cell only defines the function; nothing trains yet. Next, a helper that picks the cheapest threshold, and one training run, scored the section 53.6 way:
+
+```python
 def cheapest_threshold(y, p):
     """The (cost, threshold) pair with the lowest cost, over the chapter's eight thresholds."""
     pairs = []
@@ -1036,13 +1048,9 @@ test set: caught 118 of 119 defects, 5 false alarms, cost 4,200 rupees for 1,500
 
 **Line by line:**
 
-- `torch.manual_seed(seed)` fixes the random starting kernels *and* the shuffling, so a given seed always gives the same network. The seed is an argument because the next cell tries others.
-- `torch.optim.Adam(..., lr=0.005)` is section 53.2's optimizer. `nn.BCEWithLogitsLoss()` is Chapter 43's sigmoid-plus-log-loss.
-- `torch.randperm(len(X_fit))` is a random order of the numbers 0 to 3,599, new every epoch. `range(0, len(X_fit), 64)` steps through it 64 at a time (0, 64, 128, …), and `order[start:start + 64]` is one batch of row numbers; the last batch is smaller.
-- The four lines inside are Chapter 43's training step, on one batch: clear old gradients, compute the loss, backpropagate, update. At 57 batches per epoch, 30 epochs make 1,710 updates.
 - `cheapest_threshold` is the threshold loop of the previous section, packed into a function that returns the cheapest (cost, threshold) pair.
 - `torch.no_grad()` and `torch.sigmoid(...)` score the validation and test images as in Chapter 43; `.numpy().ravel()` turns the column into a flat NumPy array.
-- The threshold is chosen on the validation parts, and the test set is scored once, at that threshold.
+- `val_cost, cnn_threshold = cheapest_threshold(...)` chooses the threshold on the validation parts only (the validation cost itself isn't needed again), and the test set is scored once, at that threshold.
 
 With learned kernels, the network misses fewer defects than Attempt 2 and raises far fewer false alarms, for a fraction of the cost. But that is one training run, and Chapter 43 (section 43.7) showed how much one run can mislead. Try three more seeds:
 
@@ -1553,6 +1561,10 @@ total: 131,329
 scikit-learn agrees: 131,329
 ```
 
+- `by_hand` adds up the two layers: a weight for every input–neuron pair, plus one bias per neuron.
+- `X_small` is 50 made-up rows of 1,024 numbers (`default_rng(53).normal(...)` draws them from a bell curve, with a seed), and `y_small` alternates 0 and 1, so the classifier has two classes to learn.
+- `MLPClassifier(hidden_layer_sizes=(128,), ...)` is the network in the question: one hidden layer of 128.
+
 `max_iter=1` trains for one step only, just to build the weights; in a fresh notebook scikit-learn shows a `ConvergenceWarning` for it, which is expected (section 53.3). `coefs_` holds the weight matrices and `intercepts_` the biases. Every weight is one number the training loop has to choose. This is why "how big is the model?" is usually answered in parameters, and why a 7-billion-parameter model needs 28 GB in float32 (section 53.9).
 
 **2.**
@@ -1597,7 +1609,9 @@ lr=0.5  prediction 1.420 -> -1.284   loss 0.176 -> 5.216
 lr=1.5  prediction 1.420 -> -4.203   loss 0.176 -> 27.071
 ```
 
-The loop repeats section 53.2's forward pass, backward pass and update for each learning rate. At 0.05 the step is small and the loss falls. At 0.5 it overshoots past the target and lands further away on the other side. At 1.5 it overshoots enormously: the loss is now far worse than where it started. That is exactly what a diverging training run looks like, and the first thing to try when the loss goes to infinity is a smaller learning rate.
+- The loop body is section 53.2 again, once per learning rate: `z1`, `a1` and `z2` are the forward pass; `d2` and `dz1` the backward pass (`np.outer(x, dz1)` is `W1`'s gradient); `W1n`, `b1n`, `W2n` and `b2n` the updated weights; and `z2n` the prediction they give.
+
+At 0.05 the step is small and the loss falls. At 0.5 it overshoots past the target and lands further away on the other side. At 1.5 it overshoots enormously: the loss is now far worse than where it started. That is exactly what a diverging training run looks like, and the first thing to try when the loss goes to infinity is a smaller learning rate.
 
 **4.**
 
@@ -1704,9 +1718,9 @@ operating point at 0.01: precision 65.0%, recall 98.3%
 
 - `precision_recall_curve` (Chapter 39, section 39.2) sweeps every threshold and returns the precision and recall at each; `_` discards the thresholds themselves.
 - `ytr[flagged].mean()` is the share of flagged parts that really are defective, the precision; `flagged[ytr == 1].mean()` is the share of real defects that were flagged, the recall.
-- `plt.plot` draws the curve and `plt.scatter` marks the operating point; `zorder=3` draws the dot on top of the line.
+- `plt.plot` draws the curve and `plt.scatter` marks the operating point; `color="black"` makes the dot stand out from the blue line, and `zorder=3` draws it on top.
 
-![A precision-recall curve that stays near a precision of 1 until recall passes about 0.9, then falls steeply, with the operating point at threshold 0.01 marked on the steep part](figures/fig53-5-pr-curve.svg)
+![A precision-recall curve that stays near a precision of 1 until recall passes about 0.95, then falls steeply, with the operating point at threshold 0.01 marked on the steep part](figures/fig53-5-pr-curve.svg)
 
 *Figure 53.5 — The defect model's precision-recall curve on the training parts' out-of-fold predictions, with the chosen operating point.*
 
@@ -1817,6 +1831,7 @@ original   outputs: [[0.454, 0.262], [0.477, 0.264], [0.44, 0.292], [0.526, 0.27
 big 'was'  outputs: [[1.068, 0.876], [1.062, 0.85], [1.129, 0.981], [1.065, 0.813]]
 ```
 
+- `Q, K = ...` recomputes section 53.7's queries and keys, and `weights_again` its attention weights, in one line each; `out = weights_again @ (embeddings @ W)` blends the value vectors for each version of `W_value`.
 - `W_value_big[2] = [3.0, 3.0]` replaces the value row for *was* (the third token), leaving the query and key matrices alone, so the attention weights are exactly the ones section 53.7 printed.
 
 Changing `W_value` changes the *outputs* while leaving the attention weights untouched, because weights come from Q and K only. Every token's output moves towards [3, 3] in proportion to the weight it already gave *was*, from about 0.19 for *cracked* to about 0.24 for *was* itself. That is the division of labor worth remembering: **queries and keys decide who is listened to; values decide what is heard.** A token nobody attends to can carry any value it likes without affecting the result.
@@ -1846,6 +1861,7 @@ model.coefs_ = original
 4-bit: largest probability change 0.4221, decisions flipped 24 of 1,500, memory 2,616 bytes
 ```
 
+- `quantize_bits` is section 53.9's `quantize` with the number of bits as a setting. `original` keeps copies of the real weights and `baseline` their probabilities; the loop swaps in each rounded version, and the last line puts the real weights back.
 - `limit` is the largest integer the bits can hold: 127 for 8 bits, 7 for 4 bits. `.clip(-limit - 1, limit)` keeps every rounded value inside the range (−8 to 7 for 4 bits).
 - `* bits // 8` converts the count of numbers to bytes: 8 bits are one byte, 4 bits half a byte.
 
