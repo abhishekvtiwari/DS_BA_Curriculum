@@ -1,38 +1,33 @@
-"""Chapter 52 companion: simulate which GitHub Actions jobs run for a given event,
-by reading the real workflow YAML and applying its 'on' and 'if' rules in Python.
-This is not GitHub's own engine, but the logic (trigger matching, needs, if conditions
-on github.event_name and github.ref) is the same, and it's checkable without a repository.
+"""Chapter 52 companion: work out which GitHub Actions jobs start for a given event,
+by reading the real workflow YAML and applying its 'on', 'needs' and 'if' rules in Python.
+It is not GitHub's own engine: it handles branch filters, needs, and 'if' tests on
+github.event_name and github.ref joined by &&, and nothing else (no path filters, tags,
+manual runs, schedules, or failing jobs).
 Riverstone Supplies is fictional; every name and number is invented."""
 import yaml
 
 def load_workflow(path):
-    return yaml.safe_load(open(path))
+    with open(path) as f:
+        return yaml.safe_load(f)
 
 def matches_trigger(workflow, event_name, branch):
-    on = workflow.get(True) or workflow.get("on")   # PyYAML can parse bare 'on:' as boolean True
-    if isinstance(on, str):
-        on = {on: {}}
+    on = workflow.get(True) or workflow.get("on")   # PyYAML can read a bare 'on:' as True
     if event_name not in on:
         return False
-    rule = on[event_name] or {}
-    branches = rule.get("branches")
-    if branches and branch not in branches:
-        return False
-    return True
+    branches = (on[event_name] or {}).get("branches")
+    return not branches or branch in branches
 
 def eval_if(expr, context):
-    """A tiny evaluator for the handful of expressions this workflow actually uses."""
+    """A tiny evaluator for the two tests this workflow uses, joined by &&."""
     if expr is None:
         return True
-    expr = expr.strip()
-    parts = [p.strip() for p in expr.split("&&")]
-    for part in parts:
-        if part.startswith("github.event_name =="):
-            want = part.split("==")[1].strip().strip("'")
+    for part in (p.strip() for p in expr.split("&&")):
+        name, _, want = (x.strip() for x in part.partition("=="))
+        want = want.strip("'")
+        if name == "github.event_name":
             if context["event_name"] != want:
                 return False
-        elif part.startswith("github.ref =="):
-            want = part.split("==")[1].strip().strip("'")
+        elif name == "github.ref":
             if context["ref"] != want:
                 return False
         else:
@@ -43,22 +38,14 @@ def jobs_that_run(workflow, event_name, branch):
     context = {"event_name": event_name, "ref": f"refs/heads/{branch}"}
     if not matches_trigger(workflow, event_name, branch):
         return []
-    jobs = workflow["jobs"]
     would_run = {}
-    for name, job in jobs.items():
+    for name, job in workflow["jobs"].items():
         needs = job.get("needs")
         needs = [needs] if isinstance(needs, str) else (needs or [])
-        needs_ok = all(would_run.get(n, False) for n in needs)
-        this_ok = needs_ok and eval_if(job.get("if"), context)
-        would_run[name] = this_ok
+        would_run[name] = all(would_run.get(n) for n in needs) and eval_if(job.get("if"), context)
     return [name for name, runs in would_run.items() if runs]
 
 if __name__ == "__main__":
-    wf = load_workflow(".github_workflows/deploy.yml")
-    cases = [
-        ("pull_request", "main", "a pull request targeting main"),
-        ("push", "main", "a direct push to main"),
-        ("push", "develop", "a push to a branch other than main"),
-    ]
-    for event, branch, description in cases:
-        print(f"{description:<38} -> {jobs_that_run(wf, event, branch)}")
+    wf = load_workflow(".github/workflows/deploy.yml")
+    for event, branch in [("pull_request", "main"), ("push", "main"), ("push", "develop"), ("pull_request", "develop")]:
+        print(f"{event} to {branch}: {jobs_that_run(wf, event, branch)}")

@@ -22,6 +22,8 @@ Removed from Ch 2 §2.1 "How numbers are stored". In Ch 17 the result must be pr
 
 ## Block 2 → Ch 49 (Storage, Warehouses & Lakehouses) (fix 2.7, finding 0.6)
 
+**Landed** in Ch 49 §49.2 "The same test across formats, with timing" (the test re-run on the chapter's sensor data; the old 500,000-row numbers could not be reproduced) (Part 5 build).
+
 Removed from Ch 2 §2.5: the longer Parquet explanation, the 500,000-row format test and the compression numbers from that test. Ch 2 keeps a short Parquet paragraph, Figure 2.2 (row vs column storage) and a short Compression note (lossless vs lossy). Ch 2's §2.2 sentence that pointed to the test file was also removed (last paragraph of this block). The timings were measured on "a small two-processor cloud computer"; re-run them in Ch 49 with the code shown before reusing the numbers.
 
 > **Parquet** is a format built for analyzing large datasets, and it's the standard format of cloud data platforms (Part 5). You can't read it as text: the file begins with the four letters `PAR1`, and the rest is compressed binary data. What makes it special is how it's laid out.
@@ -60,6 +62,8 @@ Also removed from the "Choosing a format" table in §2.5: the column "Opens in E
 
 ## Block 3 → Ch 52 (The Cloud, Containers & Infrastructure as Code) (fix 2.10, finding 0.6)
 
+**Landed** in Ch 52 §52.1 (the IaaS/PaaS/SaaS table, with an "At Riverstone" column) (Part 5 build).
+
 Removed from Ch 2 §2.7 "The cloud". Ch 2 now keeps two sentences and names SaaS only. The term **region** (in the paragraph after the table, which stays in Ch 2 unbolded) left Ch 2's key terms.
 
 > Businesses rent at three levels, depending on how much they want to manage themselves:
@@ -89,6 +93,8 @@ Also from §2.8 (fix 2.8, 2.13, R1): Ch 2 no longer names the `curl` tool or `ap
 ---
 
 ## Block 5 → Ch 45 (Data Ingestion & Integration), where hashes detect changed files (fix 2.11, finding 0.5)
+
+**Landed** in Ch 45 §45.5, "What a hash is" (Part 5 build).
 
 Removed from Ch 2 §2.9 "Integrity checks: fingerprints for files". Ch 2 keeps the idea in three sentences with the fingerprints cut to 12 characters and doesn't name SHA-256. In Ch 45 the hashes must be produced by code the reader can see.
 
