@@ -491,7 +491,7 @@ def running_head(title):
     return title
 
 
-def stamp_footers(pdf_path, heads, label):
+def stamp_footers(pdf_path, heads, label, book='Analyst to Architect'):
     """Footer on every body page: 'Analyst to Architect · <part or chapter>' left, the page label right.
     heads is [(physical page, H1 title)] in order; pages before the first H1 are the contents."""
     import pymupdf
@@ -503,7 +503,7 @@ def stamp_footers(pdf_path, heads, label):
         page.wrap_contents()      # Chromium leaves its page scale unclosed; isolate it before adding text
         n = i + 1
         cur = next((t for pg, t in reversed(heads) if pg <= n), 'Contents')
-        left = 'Analyst to Architect · ' + running_head(cur)
+        left = book + ' · ' + running_head(cur)
         right = label(n)
         W, H = page.rect.width, page.rect.height
         y = H - 11 * mm
@@ -517,8 +517,9 @@ def stamp_footers(pdf_path, heads, label):
     os.replace(tmp, str(pdf_path))
 
 
-def build_package(srcs, name, title, cover):
-    """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …)."""
+def build_package(srcs, name, title, cover, offset=0, book='Analyst to Architect'):
+    """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …).
+    offset continues the page count of an earlier volume: its first part page is offset + 1."""
     joined = '\n\n'.join((MS / s).read_text(encoding='utf-8').strip() for s in srcs) + '\n'
     joined = re.sub(r'^\*Part \d+ — [^\n]*\*\n', '', joined, flags=re.M)   # the part opening page says it once
     src = D / f'{name}.src.md'
@@ -542,12 +543,12 @@ def build_package(srcs, name, title, cover):
             new = outline_pages(D / f'{name}-body.pdf')
             ids = heading_pages(base, new)
             P = ids.get(first_part, 1)
-            label = (lambda P: lambda n: roman(n) if n < P else str(n - P + 1))(P)
+            label = (lambda P: lambda n: roman(n) if n < P else str(n - P + 1 + offset))(P)
             if new == pages and attempt: break
             pages = new
         (D / f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
     heads = [(ids[i], t) for i, t in h1s if i in ids]
-    stamp_footers(D / f'{name}-body.pdf', heads, label)
+    stamp_footers(D / f'{name}-body.pdf', heads, label, book)
     join_cover(D / f'{name}-cover.pdf', D / f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
     return heads, label
 
