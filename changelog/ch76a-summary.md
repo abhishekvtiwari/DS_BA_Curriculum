@@ -1,0 +1,11 @@
+# Ch 76A summary: Data Analyst & Data Scientist Question Bank
+
+**What changed.** The chapter's worked examples now agree with the book. The DS walkthrough (Q76A-012) tells the real Ch 36–39 lead-scoring story: a 90-day target, the sales team's "referrals first" rule as the baseline (test AUC 0.727), logistic regression at 0.838 beating tuned boosting at 0.830, the simpler model kept, and a cost-based threshold (₹1,500 per lead against about ₹30,000 of margin, so call above about 5%). The DA walkthrough (Q76A-007) is the same problem one step earlier, using the book's win rates by source. The resume-metric answer (Q76A-022) no longer says "improved by 12%" (it's 5 points, about 71% relative), and its model answer now uses a like-for-like comparison, names the selection trap and proposes a holdout. The retention scenario (Q76A-027) matches Ch 44: a one-year horizon, 40 calls a month, expected margin at risk. The production note about numbering and Q76A012B are gone. IDs are sequential (Q76A-001…027), tags follow Ch 69, and every question has a level (Fresher/Mid/Senior), roles, and a two-part "Learn it in / Practise it with" pointer to teaching sections. Broken or stale references were fixed (Ch 70 §70.8, Ch 39 §39.8/§39.9, Ch 8 §8.5/§8.9, Ch 56 §56.8). A "Chapter at a glance" box adds Before you start and Time needed. The laptop answer now warns against showing an employer's code.
+
+**Skipped / dependent.** Nothing was left Open. 76A.7 and V76A.7 cite Q76B-001/Q76B-033, so they need Ch 76B's own renumbering (row 76B.9). The review's "x% to y%" placeholders (76A.3) were not filled with invented numbers.
+
+**Option picks.** 76A.7: the recommended option (Q76B IDs). 76A.12: (a), quote the book's data. Levels: Fresher/Mid/Senior, the same as Ch 70 and 72A (the row suggested "Entry").
+
+**Time needed.** New: 2–2.5 hours to read and drill, 3–4 hours for the project (none was stated before).
+
+**Verification.** No code blocks. `checks/ch76a_numbers.py` confirms that every quoted number matches Ch 36/37/39/44 (11/11 OK; 7%→12% = 5 pp, 71.4%). Company-size claim checked on the regenerated CRM data. restructure --check: already in order. Build: 15 pages; layout_check clean (map 9/9, no stranded, sparse, small text or draft labels); prescan clean; fig_check 0 figures.
