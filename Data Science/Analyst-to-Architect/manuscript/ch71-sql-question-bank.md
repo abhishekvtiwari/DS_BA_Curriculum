@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point tags). The questions test Chapters 12 and 13 (SQL), Chapter 14 (cleaning), Chapter 27 (`NTILE`) and Chapter 28 (recursive CTEs, window frames, query plans, indexes, materialized views), plus Chapter 49, section 49.4 (ACID). This chapter tests those skills; it doesn't teach them again.
 >
-> **Time needed:** 1–2 hours for a read-through revision pass; 6–8 hours to run every core question yourself in both databases.
+> **Time needed:** 3–4 hours for a first pass (about 5 minutes per core question, 1 minute per rapid-fire row); 6–8 hours more to run every core question yourself in both databases; 1 hour for the final-week list.
 >
 > **How this chapter is built.** Same format as every question bank in Part 8 (Chapters 70–82): every core question leads with a **"Remember it as…"** memory hook, a one-line answer, and a compact tier table, and every rapid-fire section is a scan table. After each question number comes its level: **Warm-up** (sections 71.1–71.3), **Core** (CTEs, window functions, the classic problems, schema and dialect questions) or **Advanced** (recursive CTEs, gaps-and-islands, window frames, transactions, indexes). Rapid-fire tables take the level of their section. Extra-point moves are labelled with Chapter 69's twelve tags, such as **[+Edge cases]**.
 >
@@ -745,7 +745,7 @@ LIMIT 4;
 | Q71-037 | What does `SUM(x) OVER (ORDER BY month)` compute, with no `PARTITION BY`? | A running total across all rows, in that order | **[+Edge cases]** without a frame clause, the default frame is `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, so rows that tie on the `ORDER BY` value get the same running total. Write `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` for a strict row-by-row running total → Ch 13 §13.6 |
 | Q71-038 | What's the difference between a window function and `GROUP BY`? | `GROUP BY` collapses rows into one per group; a window function keeps every row and adds a calculated column beside it | **[+Business]** this is *why* window functions exist for reporting: you can show a customer's single order next to their running total, in the same row → Ch 13 §13.3 |
 | Q71-039 | What's `NTILE(4)` for? | Splits ordered rows into 4 roughly equal-sized groups (quartiles) | **[+Business]** the SQL way to build a quartile or decile segmentation directly in a query → Ch 27 §27.4 (and Ch 28 §28.3) |
-| Q71-040 | Can you use a window function's result in the same query's `WHERE` clause? | No: window functions are calculated after `WHERE`; wrap the query in a subquery or CTE and filter the outer layer | **[+Edge cases]** this is exactly why Q71-033 and Q71-035 wrap the window function in a subquery before filtering, and Q71-074 shows the real error → Ch 13 §13.4 |
+| Q71-040 | Can you use a window function's result in the same query's `WHERE` clause? | No: window functions are calculated after `WHERE`; wrap the query in a subquery or CTE and filter the outer layer | **[+Edge cases]** this is exactly why Q71-033 and Q71-035 wrap the window function in a subquery before filtering, and Q71-074 shows the real error → Ch 13 §13.3 |
 
 **Q71-037, run (riverstone_2025).** The running total over Q71-028's CTE:
 ```sql
@@ -1237,6 +1237,8 @@ SELECT @@transaction_isolation;
 +-------------------------+
 ```
 
+`SHOW` reads one of PostgreSQL's settings by name; in MySQL, `@@` in front of a name reads a server setting (a *system variable*) the same way. So PostgreSQL starts every transaction at Read Committed, and MySQL at Repeatable Read.
+
 A **dirty read** is the thing the weakest level allows. Picture two sessions, A and B, and an order whose status is `'Pending'`:
 
 | Step | Session A | Session B | What B sees |
@@ -1252,7 +1254,7 @@ Neither database allows a dirty read by default. Both let a plain `SELECT` in B 
 
 | # | Question | One-line answer | Extra point |
 |---|---|---|---|
-| Q71-052 | `ALTER TABLE ... ADD COLUMN` with a default value on a huge table: what should you know? | PostgreSQL 11 and later add a column with a constant default instantly, without rewriting every row; older versions, and some other engines, rewrite the whole table, which can lock it for a long time | **[+Business]** check your engine and version before assuming a schema change on a huge production table is "instant" → Ch 28 §28.12 |
+| Q71-052 | `ALTER TABLE ... ADD COLUMN` with a default value on a huge table: what should you know? | PostgreSQL 11 and later add a column with a constant default instantly, without rewriting every row; older versions, and some other engines, rewrite the whole table, which can lock it for a long time | **[+Business]** check your engine and version before assuming a schema change on a huge production table is "instant" → Ch 28 §28.12 (changing a live database); the version detail is *beyond the book* |
 | Q71-053 | What's the difference between a `PRIMARY KEY` and a `UNIQUE` constraint? | A table has at most one `PRIMARY KEY` (which also forbids NULL); it can have many `UNIQUE` constraints, and each still allows multiple NULLs (Q71-013) | **[+Edge cases]** this is why an email `UNIQUE` constraint doesn't stop multiple blank emails, but adding `NOT NULL` to the `UNIQUE` column would. (A `CHECK (email <> '')` also blocks empty text, per Q71-022) → Ch 12 §12.13 |
 | Q71-054 | What does `NOT NULL` enforce, and can you add it to a column that already has data? | It rejects any future NULL in that column; adding it to an existing column needs every current value to be non-NULL already, or the `ALTER TABLE` itself fails | **[+Edge cases]** run a check first, `SELECT COUNT(*) FROM t WHERE col IS NULL`, before adding `NOT NULL` to a live table → Ch 12 §12.13 (Step 9) |
 | Q71-055 | What's a materialized-view refresh strategy, in one sentence? | Refresh on a schedule (nightly, hourly), or refresh from a trigger or pipeline step after the source loads (PostgreSQL has no automatic refresh), chosen by how stale the data may get | **[+Business]** the same freshness-vs-cost trade as a Power BI scheduled refresh, one layer down → Ch 28 §28.11; Ch 46 (pipeline steps); Ch 16 §16.9 (Power BI refresh) |
@@ -1321,7 +1323,7 @@ ORDER BY category;
 | # | Feature | PostgreSQL | MySQL | Extra point |
 |---|---|---|---|---|
 | Q71-061 | NULL replacement | `COALESCE(x, 'default')` | `IFNULL(x, 'default')` or `COALESCE` (both work) | **[+Edge cases]** MySQL supports `COALESCE` too; `IFNULL` is a MySQL shorthand for the two-argument case → Ch 12 §12.7 (`COALESCE`); `IFNULL` is *beyond the book* |
-| Q71-062 | Auto-incrementing primary key | `GENERATED ALWAYS AS IDENTITY` (older code: `SERIAL`) | `AUTO_INCREMENT` | **[+Business]** copy-pasting a `CREATE TABLE` between engines without translating this is one of the most common cross-dialect errors → Ch 12 §12.13 (Step 3) |
+| Q71-062 | Auto-incrementing primary key | `GENERATED ALWAYS AS IDENTITY` (older code: `SERIAL`) | `AUTO_INCREMENT` | **[+Business]** copy-pasting a `CREATE TABLE` between engines without translating this is one of the most common cross-dialect errors → Ch 12 §12.13 (Steps 2 and 3) |
 | Q71-063 | Limiting and skipping rows | `LIMIT n OFFSET m` | `LIMIT m, n` (offset first!) or `LIMIT n OFFSET m` (also works) | **[+Edge cases]** MySQL's `LIMIT m, n` puts the offset *first*, a common source of swapped-number bugs when porting a query → Ch 12 §12.5 (`LIMIT`); `OFFSET` is *beyond the book* |
 | Q71-064 | Current date and time | `CURRENT_DATE`, `NOW()` | `CURRENT_DATE` (or `CURDATE()`), `NOW()` | **[+Trade-offs]** `CURRENT_DATE` and `NOW()` work in both; prefer `CURRENT_DATE` for portability. The real difference is date arithmetic → Ch 12 §12.16 (`DATEDIFF` and `INTERVAL`) |
 | Q71-065 | Case of table and column names | Unquoted names are folded to lower case | Table names are case-sensitive on Linux and case-insensitive on Windows and macOS by default | **[+Edge cases]** a query that works on a laptop can fail on a Linux production MySQL server purely because of table-name casing: use lower-case names everywhere → Ch 12 §12.13 (the "Naming" note) |
@@ -1385,16 +1387,24 @@ Remove the index, so the database is left as it was:
 DROP INDEX idx_orders_customer;
 ```
 
-*MySQL:* `EXPLAIN` prints a table instead of a tree. InnoDB builds an index for every foreign key automatically, so MySQL already has one on `orders.customer_id` and uses it (`type` is `ref`, `key` is `customer_id`) before you add anything:
+*MySQL:* InnoDB builds an index for every foreign key automatically, so MySQL already has one on `orders.customer_id` and uses it (`type` is `ref`, `key` is `customer_id`) before you add anything. `FORMAT=TRADITIONAL` asks for the plan as a table, which looks the same on every version; MySQL 9 otherwise prints the one-line tree that Chapter 28, section 28.13 reads (`-> Index lookup on orders using customer_id …`). Ending the statement with `\G` instead of `;` makes the `mysql` client print each column on its own line, which is easier to read for a wide result like this one:
 ```mysql
-EXPLAIN SELECT * FROM orders WHERE customer_id = 1;
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM orders WHERE customer_id = 1\G
 ```
 ```
-+----+-------------+--------+------------+------+---------------+-------------+---------+-------+------+----------+-------+
-| id | select_type | table  | partitions | type | possible_keys | key         | key_len | ref   | rows | filtered | Extra |
-+----+-------------+--------+------------+------+---------------+-------------+---------+-------+------+----------+-------+
-|  1 | SIMPLE      | orders | NULL       | ref  | customer_id   | customer_id | 4       | const |   16 |   100.00 | NULL  |
-+----+-------------+--------+------------+------+---------------+-------------+---------+-------+------+----------+-------+
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: orders
+   partitions: NULL
+         type: ref
+possible_keys: customer_id
+          key: customer_id
+      key_len: 4
+          ref: const
+         rows: 16
+     filtered: 100.00
+        Extra: NULL
 ```
 
 | Tier | What to say |
@@ -1709,7 +1719,7 @@ What made this a strong round wasn't the original query, it was correct and unre
 
 ### Tools you'll need
 
-**PostgreSQL** and **MySQL**, both free, both open source, installed as in Chapter 12, section 12.3 (the current releases: PostgreSQL 18 and MySQL 9.7 LTS, or 8.4 LTS). `psql` (PostgreSQL's command-line client) and the `mysql` client, or DBeaver for either. `EXPLAIN` (both engines) and `EXPLAIN ANALYZE` (runs the query and reports real timings, not just estimates) for reading query plans. Everything in this chapter was run on PostgreSQL 16.15 and MySQL 8.4.11, on Riverstone's `riverstone`, `riverstone_2025` and `riverstone_lab` databases, and uses only features that work the same way in the newer releases. One difference to know: MySQL 9.0 and later enforce the inline `REFERENCES` form that 8.4 ignores (Q71-047 avoids it).
+**PostgreSQL** and **MySQL**, both free, both open source, installed as in Chapter 12, section 12.3 (the current releases: PostgreSQL 18 and MySQL 9.7 LTS, or 8.4 LTS). `psql` (PostgreSQL's command-line client) and the `mysql` client, or DBeaver for either. `EXPLAIN` (both engines) and `EXPLAIN ANALYZE` (runs the query and reports real timings, not just estimates) for reading query plans. Everything in this chapter was run on PostgreSQL 16 and MySQL 8.4 LTS, on Riverstone's `riverstone`, `riverstone_2025` and `riverstone_lab` databases, and run again on PostgreSQL 18 and MySQL 9.7 with the same results. One difference to know: MySQL 9.0 and later enforce the inline `REFERENCES` form that 8.4 ignores (Q71-047 avoids it).
 
 1. Write and run the "customers with no orders" query (Q71-001), and reconcile the count against total customers minus customers with orders, the way this chapter did.
 2. Demonstrate the `NOT IN` NULL trap yourself: find a nullable foreign key in your data, and show the same query returning zero rows with `NOT IN` and the correct count with `NOT EXISTS`.
