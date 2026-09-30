@@ -1215,4 +1215,4 @@ Q72A-001, Q72A-002, Q72A-007, Q72A-008, Q72A-009, Q72A-014, Q72A-018, Q72A-020, 
 - **Looking back: Chapter 33, The Computer Science You Actually Need,** teaches the structures and patterns this bank tests; **Chapter 72, Python & pandas Question Bank,** covers the Python gotchas that came back here (mutable defaults, `is` versus `==`).
 - **Chapter 69, The Extra-Points Method,** is the rubric and move set every answer above is written against.
 - **Chapter 74, Machine Learning Question Bank,** picks up "algorithm" in its other sense: the learning algorithms themselves, not data structures.
-- **Chapter 77, Data Engineering & Data System Design Bank,** is where several of this chapter's patterns (the external-sort-and-merge story above, especially) show up again at real production scale.
+- **Chapter 77, Data Engineering & Data System Design Bank,** is where several of this chapter's patterns (the O(n²) lesson of Q72A-002 especially, which returns in Q77-035's deduplication design) show up again at real production scale.

@@ -1968,4 +1968,4 @@ Per lead, the test profit is higher than validation's, because the test period's
 - **Chapter 30, Experiments,** is how threshold changes, fairness fixes, and win-back campaigns are proved to work.
 - **Chapter 31, Causal Inference,** is the answer when someone reads a SHAP plot as a cause.
 - **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers fairness and model documentation in depth.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers precision versus recall, ROC versus PR, calibration, threshold selection, SMOTE, SHAP, and "how would you explain this model to a manager?", which is asked in nearly every data science interview.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers precision versus recall, ROC versus PR, calibration, and threshold selection.

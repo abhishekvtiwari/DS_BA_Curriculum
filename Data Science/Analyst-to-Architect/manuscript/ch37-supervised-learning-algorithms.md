@@ -2722,4 +2722,4 @@ This is Chapter 30's statsmodels regression (section 30.11): `pd.get_dummies(...
 - **Chapter 41, NLP Foundations,** uses Naive Bayes and logistic regression on text.
 - **Chapter 43, A First Look at Deep Learning,** takes logistic regression's weighted sum and sigmoid, and stacks them into a neural network.
 - **Looking back:** Chapter 30 (coefficient intervals, section 30.11) and Chapter 31 (causal inference) are where to go before acting on any coefficient in this chapter.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers every algorithm here, bias and variance, regularization, and tuning with graded answers. "Explain gradient boosting to a non-technical person" and "random forest vs gradient boosting" are among the most common questions in data science interviews.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers bias and variance, regularization, and choosing between a baseline and boosting with graded answers. "Explain gradient boosting to a non-technical person" and "random forest vs gradient boosting" are among the most common questions in data science interviews.

@@ -627,4 +627,4 @@ percentage · percent of · share / proportion · percent change · reverse perc
 - **Chapter 21, Descriptive Statistics & Probability,** adds spread, percentiles, distributions, and Bayes' rule.
 - **Chapter 22, Statistics Without Fooling Yourself,** shows how to tell whether a difference between two rates is real or chance.
 - **Chapter 23, Business Acumen, KPIs & Metrics,** applies growth rates, margins, and ratios to reading a company's financial statements.
-- **Interview preparation:** percentage, growth, averages, and probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.
+- **Interview preparation:** probability questions appear in Chapter 73 (statistics, probability, and experimentation), and guesstimates and metric questions in Chapter 75, with model answers.

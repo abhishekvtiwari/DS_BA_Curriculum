@@ -1646,4 +1646,4 @@ The recomputed revenue is rounded to the paisa and made an exact decimal before 
 - **Chapter 51, Data Activation,** sends warehouse data into the CRM and ERP, where an S1 incident means wrong data in a business system, not only a wrong chart.
 - **Chapter 32** covers dbt models, tests, and documentation; **Chapter 14** covers the analyst-level version of this work.
 - **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers ownership, stewardship, and the governance that data contracts sit inside.
-- **Part 8:** data quality and incident questions appear in the data engineering interview chapters, and "walk me through a wrong dashboard" is a standard system design question (Chapter 77).
+- **Part 8:** data quality and incident questions appear in the data engineering interview chapters, data quality, lineage and monitoring questions are in Chapter 77, section 77.6; "walk me through a wrong dashboard" is a standard interview question, answered with this chapter's lineage and freshness checks.

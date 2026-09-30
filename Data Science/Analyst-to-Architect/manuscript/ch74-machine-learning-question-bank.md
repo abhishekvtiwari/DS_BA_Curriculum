@@ -589,6 +589,5 @@ Q74-001, Q74-002, Q74-007, Q74-008, Q74-013, Q74-014, Q74-015, Q74-016, Q74-019,
 ## Where this leads
 
 - **Chapter 69, The Extra-Points Method,** is the rubric and move set every answer above is written against.
-- **Chapter 77, Data Engineering & Data System Design Bank,** covers the pipeline and infrastructure side of the training-serving skew problem in section 74.6.
 - **Chapter 79, GenAI, LLM & MLOps Question Bank,** takes Q74-030's monitoring and skew questions into feature stores and LLM-based systems.
 - **Chapters 35–43** are where every technique this bank draws on was taught in full; this chapter tests them, it doesn't re-teach them. When an interview pushes past "the model predicts X" into "does changing X actually cause the outcome?", go back to **Chapter 30** (experiments) and **Chapter 31** (causal inference).

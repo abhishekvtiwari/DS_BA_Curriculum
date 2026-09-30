@@ -2346,4 +2346,4 @@ Unless an exercise says otherwise, use the staging tables and cleaned tables in 
 - **Chapter 20, Automating Reports & Delivering Insights:** running the cleaning and validation rules as the first step of an automated report, and alerting when a rule fails.
 - **Chapter 21, Descriptive Statistics & Probability:** percentiles, the IQR, and z-scores, the statistical outlier rules that section 14.6 set aside.
 - **Chapter 47:** data-quality testing in pipelines (dbt tests, Great Expectations), where this chapter's rules run on every load.
-- **Interview preparation:** the SQL Question Bank (Chapter 71) and the Business Analyst Question Bank (Chapter 76B) include "here's a messy dataset; walk me through what you'd check" and deduplication with window functions.
+- **Interview preparation:** the SQL Question Bank (Chapter 71) includes "here's a messy dataset; walk me through what you'd check" and deduplication with window functions.

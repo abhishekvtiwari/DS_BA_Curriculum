@@ -2101,4 +2101,4 @@ The variant, device, and channel coefficients keep their intervals away from 1; 
 - **Chapter 75, Product Sense, Metrics, Case Studies & Guesstimates,** is about choosing and diagnosing metrics like the ones in this chapter's plan.
 - **Chapter 29, Python as Software, Not Scripts,** is how an analysis like this becomes a repeatable, tested pipeline instead of a notebook nobody can rerun.
 - **Chapter 56, MLOps: Making Models Survive Production,** runs experiments on models, where the treatment is a model version and the guardrails are latency and fairness.
-- **Chapter 73, Statistics, Probability & Experimentation Bank,** has about 70 interview questions, including three A/B test debugging cases built on exactly the faults in section 30.10.
+- **Chapter 73, Statistics, Probability & Experimentation Bank,** has 37 interview questions, including A/B test debugging cases built on the faults in section 30.10 (peeking, Q73-025; the sample-ratio check, Q73-026; novelty and multiple testing in its rapid-fire table).

@@ -5,10 +5,15 @@ chapter files, so a whole-part PDF always matches the chapters.
 
 Each part file keeps its own introduction (everything before the first "# Chapter" heading). In the
 introduction's contents table, the "Time needed" column is refreshed from each chapter's own
-"Time needed" line, and "In total, allow X–Y hours" is recomputed. Chapters are appended with their
+"Time needed" line, and "In total, allow X–Y hours" is recomputed. The hours come from
+tools/hours_table.py (one source, theme T12), so a line with a second range (Chapter 8's project)
+counts it, as Chapter 6's and Chapter 83's tables do. Chapters are appended with their
 "*Part …*" line removed (the part file already says which part it is).
 """
-import re, pathlib, glob
+import re, pathlib, glob, sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import hours_table          # one source for the hours (theme T12)
 
 MS = pathlib.Path(__file__).resolve().parents[1] / 'manuscript'
 PARTS = {'part0-first-principles.md': range(1, 7), 'part1-the-map.md': range(7, 10)}
@@ -18,9 +23,11 @@ def chapter_file(n):
     return sorted(MS.glob(f'ch{n:02d}-*.md'))[0]
 
 
-def hours(text):
-    m = re.search(r'\*\*Time needed:\*\*\s*(\d+)–(\d+) hours', text)
-    return (int(m.group(1)), int(m.group(2))) if m else None
+def hours(text, n):
+    if not re.search(r'\*\*Time needed:\*\*', text):
+        return None
+    lo, hi, _ = hours_table.chapter_hours(n)
+    return lo, hi
 
 
 def collate(name, nums):
@@ -31,7 +38,7 @@ def collate(name, nums):
     body = []
     for n in nums:
         t = chapter_file(n).read_text(encoding='utf-8')
-        h = hours(t)
+        h = hours(t, n)
         if h:
             lo += h[0]; hi += h[1]
             # refresh this chapter's row in the contents table: | **N. Title** | … | a–b hours |

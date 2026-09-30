@@ -113,6 +113,8 @@ That sentence is not a requirement. It has at least four holes in it, and your f
 
 Ask those four and you often find the ask was not one requirement at all. Sometimes it is several, wearing one sentence as a disguise. Sometimes it is one requirement that nobody needed, which is the story at the end of this chapter.
 
+**Elicitation** is the name for this whole activity, and it has several techniques: one-to-one interviews, workshops, observing the work, reading existing documents and reports, and surveys. The five moves below apply to all of them.
+
 **The discipline, in five moves:**
 
 1. **Ask for a specific example of the pain.** "Tell me about the last time this cost you something." Abstractions hide the requirement; incidents contain it.
@@ -412,7 +414,7 @@ Figure 25.3 shows a story for the at-risk dashboard of section 25.6, with its fo
 
 The shape forces three things into the open: who wants it, what they want, and why. The "so that" clause is the one people drop, and it is the one that prevents building something correct and useless.
 
-A story without **acceptance criteria** cannot be tested, so it cannot be finished. The common form is Given, When, Then, as in the four criteria of the figure.
+A story without **acceptance criteria** cannot be tested, so it cannot be finished. The common form is Given, When, Then, as in the four criteria of the figure. (Testing tools call this format **Gherkin**.)
 
 Three things to copy. **AC-2 contains the actual rule**, not the word "recently". **AC-3 is an edge case**, and a story with no edge case has not been thought about. It is not a rare one either: the query in section 25.6 found seven of Riverstone's 24 key accounts with fewer than four days of orders, and an account with a single order has no gap at all to compare against. And every criterion could be run by hand by a person who says yes or no, which is what makes them usable later as acceptance tests.
 
@@ -664,7 +666,7 @@ For automation, find the re-keying, the copy-paste, the emailed files, the manua
 
 ## Key terms
 
-business analyst · elicitation · software development life cycle (SDLC) · waterfall · Agile · flowchart · swimlane diagram · handoff · BPMN · as-is · to-be · business requirement · functional requirement · non-functional requirement · freshness · grain · completeness · reconciliation · timeliness · access control · data product · BRD · FRD · SRS · requirements traceability matrix · use case · main flow · alternative flow · user story · acceptance criteria · Given/When/Then · baseline · gap analysis · root cause · user acceptance testing (UAT) · sign-off · re-keying · copy-paste integration · manual matching · shadow system · tolerance · exception path · audit trail
+business analyst · elicitation · software development life cycle (SDLC) · waterfall · Agile · flowchart · swimlane diagram · handoff · BPMN · as-is · to-be · business requirement · functional requirement · non-functional requirement · freshness · grain · completeness · reconciliation · timeliness · access control · data product · BRD · FRD · SRS · requirements traceability matrix · use case · main flow · alternative flow · user story · acceptance criteria · Given/When/Then · Gherkin · baseline · gap analysis · root cause · user acceptance testing (UAT) · sign-off · re-keying · copy-paste integration · manual matching · shadow system · tolerance · exception path · audit trail
 
 *(All terms are defined in the Glossary, Appendix A.)*
 

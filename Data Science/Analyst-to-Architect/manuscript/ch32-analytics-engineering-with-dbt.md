@@ -1808,4 +1808,4 @@ The `left join` and `i.total is null` also catch a day missing from the fact alt
 - **Chapter 47, Data Quality, Observability & Contracts,** goes further than tests: freshness, anomaly detection, contracts, and who gets paged.
 - **Chapter 49, Storage, Warehouses & Lakehouses,** is where these models run at scale, and where materialization choices become money.
 - **Chapter 62, Data Architecture Patterns,** puts dbt in the wider picture, including when a team shouldn't use it.
-- **Chapter 71, SQL Question Bank,** and **Chapter 77** include dbt and analytics-engineering questions.
+- **Chapter 71, SQL Question Bank,** drills the SQL underneath (window frames, CTEs, views), and **Chapter 77** (grain, star schema, slowly changing dimensions and dbt snapshots, section 77.3) has the analytics-engineering questions.

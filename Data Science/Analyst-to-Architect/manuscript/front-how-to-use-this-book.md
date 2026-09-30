@@ -129,7 +129,7 @@ Parts 3 to 7 are branches, not a ladder you must climb to the top. Which ones yo
 
 ## A rough sense of time
 
-Adding up every chapter's *Time needed* line, the book's own estimates put the end of Part 2 at **317 to 394 hours**: at six hours a week, about 12 to 15 months. Chapter 6 turns that into a plan for your week.
+Adding up every chapter's *Time needed* line, the book's own estimates put the end of Part 2 at **394 to 488 hours**: at six hours a week, about 15 to 19 months. Chapter 6 turns that into a plan for your week.
 
 ---
 

@@ -1326,4 +1326,4 @@ Because this stand-in fails *deterministically* on a given prompt, extra attempt
 - **Chapter 54, Generative AI & Large Language Models,** is where the prompts, the golden set, tokens, and prices come from.
 - **Chapter 47, Data Quality, Observability & Contracts,** treats the corpus as data with owners, statuses, and freshness.
 - **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers disclosure, retention, and accountability for automated answers.
-- **Chapter 79, GenAI, LLM & MLOps Question Bank** (section 79.7), has the interview questions on LLM cost, caching and evaluation.
+- **Chapter 79, GenAI, LLM & MLOps Question Bank** (sections 79.5 and 79.7), has the interview questions on LLM cost, caching and evaluation.

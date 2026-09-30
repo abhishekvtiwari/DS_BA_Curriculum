@@ -592,4 +592,4 @@ The last row is the kind of detail that prevents arguments later: a blank `minut
 - **Chapter 18** flattens semi-structured data such as JSON into tables.
 - **Chapter 24** shows how to write the "so what" that turns a number into a decision.
 - **Chapters 41 and 55** work with unstructured text, and in **Chapter 58** you'll build the email-order automation from section 1.7.
-- **Interview preparation:** questions on data types, levels of measurement, and data quality appear in the Statistics bank (Chapter 73) and the Business Analyst bank (Chapter 76), with model answers.
+- **Interview preparation:** questions on data types and data quality appear in the Python and pandas bank (Chapter 72, Q72-038) and the Data Engineering bank (Chapter 77, section 77.6), with model answers.

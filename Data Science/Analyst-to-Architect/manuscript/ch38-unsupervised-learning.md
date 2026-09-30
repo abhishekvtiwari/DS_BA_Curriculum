@@ -1841,4 +1841,3 @@ The pairs that are planted in the data, such as chairs with tables and crates wi
 - **Chapter 42, Recommender Systems & Ranking,** goes beyond global basket rules to per-customer recommendations, reusing this chapter's basket data.
 - **Chapter 30, Experiments,** is how a bundle or a win-back campaign is proved to work.
 - **Chapter 54** turns text into embeddings, lists of numbers that this chapter's k-means can cluster; grouping support tickets into themes nobody labeled is one of its uses.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers k-means, choosing *k*, DBSCAN versus k-means, PCA versus t-SNE, and "how do you know your clusters are any good?", which is the question most candidates answer badly.
