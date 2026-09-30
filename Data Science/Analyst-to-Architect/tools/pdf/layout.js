@@ -65,7 +65,7 @@
   for (const c of document.querySelectorAll('code')) if (!c.closest('pre') && c.textContent.length <= 24) c.classList.add('nowrap');
 
   // ---- V10: tables. Right-align numeric columns, keep short tables whole, no wraps in short code.
-  const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
+  const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?(\s?[–-]\s?\d[\d,]*(\.\d+)?)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
   for (const table of document.querySelectorAll('table')) {
     const rows = [...table.querySelectorAll('tbody tr')];
     const ncol = Math.max(0, ...rows.map(r => r.children.length));
