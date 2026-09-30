@@ -60,7 +60,7 @@ for f in MS.glob("ch*.md"):
     for m in re.finditer(r"^#{2,3} (\d+[AB]?\.\d+) ", f.read_text(encoding="utf-8"), re.M):
         heads[m.group(1)] = f.name
 cited = set(re.findall(r"sections? (\d{2}\.\d+)", CH80))
-cited |= set(re.findall(r"(?:and|,) (\d{2}\.\d+)\b", CH80))
+cited |= set(re.findall(r"(?:and|,|;) (\d{2}\.\d+)\b", CH80))
 cited |= set(re.findall(r"· (\d{2}\.\d+)", CH80))
 missing = sorted(c for c in cited if c not in heads and not c.startswith("80."))
 check("every cited section exists", missing, [])
