@@ -1,6 +1,7 @@
 # Build scratch: final PDFs go to fixed/
 build/*
 !build/README.md
+Data Science/Analyst-to-Architect/build/
 
 # Python and notebook artifacts
 __pycache__/

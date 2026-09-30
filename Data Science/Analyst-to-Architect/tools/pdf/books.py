@@ -1,7 +1,7 @@
 """Build the book as reader volumes, plus the internal overview.
 
     python tools/pdf/books.py              # all four PDFs into build/
-    python tools/pdf/books.py overview     # or: volumes, playbook
+    python tools/pdf/books.py overview     # or: volumes, playbook; volume2 reuses a built Volume 1
 
 - Analyst to Architect, Volume 1 (How to Use This Book, Parts 0 to 2) and Volume 2 (Parts 3 to 7 and
   the closing chapter). One page count runs through both volumes: Volume 2 starts where Volume 1 ends.
@@ -97,18 +97,33 @@ def add_map(pdf_name, map_pdf):
     doc = pymupdf.open(str(path))
     m = pymupdf.open(str(map_pdf))
     toc = doc.get_toc(simple=False)
+    if toc and toc[0][1] == 'The whole book':            # rebuilt: replace the old map
+        old = toc[1][2] - 2
+        doc.delete_pages(1, old)
+        toc = [e for e in toc[1:]]
+        for e in toc: e[2] -= old
     doc.insert_pdf(m, start_at=1)
     for e in toc: e[2] += len(m)
     doc.set_toc([[1, 'The whole book', 2]] + toc)
     tmp = str(path) + '.tmp'
-    doc.save(tmp, garbage=3, deflate=True)
+    doc.save(tmp, garbage=1, deflate=True)       # garbage=3 takes half an hour on a 1,700-page volume
     doc.close(); m.close()
     os.replace(tmp, str(path))
 
 
-def volumes():
+def volumes(reuse_v1=False):
+    """reuse_v1: take Volume 1 as already built (its page labels are saved beside it)."""
+    import json, pymupdf
     name1, srcs1, title1, cover1 = V1
-    heads1, label1 = build_package(srcs1, name1, title1, cover1)
+    saved = D / f'{name1}-heads.json'
+    if reuse_v1 and saved.exists():
+        j = json.loads(saved.read_text())
+        heads1, labels1 = [tuple(h) for h in j['heads']], j['labels']
+        label1 = lambda n: labels1[n - 1]
+    else:
+        heads1, label1 = build_package(srcs1, name1, title1, cover1)
+        with pymupdf.open(str(D / f'{name1}-body.pdf')) as d:
+            saved.write_text(json.dumps(dict(heads=heads1, labels=[label1(n) for n in range(1, len(d) + 1)])))
     n1 = pages_used(name1, label1)
     name2, srcs2, title2, cover2 = V2
     heads2, label2 = build_package(srcs2, name2, title2, cover2, offset=n1)
@@ -132,6 +147,6 @@ def overview():
 
 
 if __name__ == '__main__':
-    jobs = dict(overview=overview, playbook=playbook, volumes=volumes)
+    jobs = dict(overview=overview, playbook=playbook, volumes=volumes, volume2=lambda: volumes(True))
     for k in (sys.argv[1:] or ['overview', 'playbook', 'volumes']):
         jobs[k]()

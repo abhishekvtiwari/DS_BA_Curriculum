@@ -296,6 +296,7 @@ def outline_pages(pdf_path):
 def render(pw, html_path, pdf_path, footer_text=None, layout=False):
     b = pw.chromium.launch()
     p = b.new_page(viewport={'width': PRINT_W_PX, 'height': 1100})
+    p.set_default_timeout(900_000)     # a whole volume (1,700 pages) takes minutes to lay out
     p.emulate_media(media='print')
     p.goto(f'file://{html_path}')
     p.wait_for_load_state('networkidle')
