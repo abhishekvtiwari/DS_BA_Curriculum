@@ -1,6 +1,6 @@
 # Chapter 75. Product Sense, Metrics, Case Studies & Guesstimates
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >

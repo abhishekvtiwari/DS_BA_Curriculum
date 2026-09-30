@@ -1,48 +1,68 @@
-"""Build the book as reader volumes, plus the internal overview.
+"""Build the four books, plus the internal overview.
 
-    python tools/pdf/books.py              # all four PDFs into build/
-    python tools/pdf/books.py overview     # or: volumes, playbook; volume2 reuses a built Volume 1
+    python tools/pdf/books.py book1 book2 book3 book4 map    # the four books, then the whole-book map
+    python tools/pdf/books.py overview                        # the internal Book Overview
 
-- Analyst to Architect, Volume 1 (How to Use This Book, Parts 0 to 2) and Volume 2 (Parts 3 to 7 and
-  the closing chapter). One page count runs through both volumes: Volume 2 starts where Volume 1 ends.
-  A single file would be about 150 MB, over GitHub's 100 MB limit, so the book is split at "job-ready".
-- The Interview Playbook: Part 8 as its own book.
-- Book Overview (internal): every part and chapter, the skills each covers, and how they flow, from
-  manuscript/book-overview.md (written by tools/make_overview.py).
+The book is published as four books, split by part (chapters stay whole):
 
-Both volumes open with "The whole book", a map of every part and chapter with its volume and page.
+  1. Theory           How to Use This Book, Part 0 and Part 1: the ideas, no software.
+  2. Practical        Parts 2 and 3: the analyst's tools, hands on.
+  3. Implementation   Parts 4 to 7 and the closing chapter: building real systems.
+  4. Be Interview Ready  Part 8.
+
+Books 1 to 3 share one page count: each starts where the one before ended, so build them in order. Each
+book saves its page labels beside it (build/<name>-heads.json), so a later book, or the map, can be built
+alone. "map" writes "The whole book", a map of every part and chapter with its book and page, and inserts
+it after the cover of all four books. The Book Overview (internal) is manuscript/book-overview.md, written
+by tools/make_overview.py.
 """
-import html, pathlib, sys
+import html, json, os, pathlib, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build as B
 from build import build_package, chapter_files, PART2_ORDER, PART3_ORDER, D, OUT
 
+B.SAVE_GARBAGE = 1       # the default clean-up takes half an hour per save on a 1,500-page book
 
-V1 = ('Analyst-to-Architect-Volume-1-From-Zero-to-Job-Ready',
-      ['front-how-to-use-this-book.md', 'part0-first-principles.md', 'part1-the-map.md',
-       'part2-the-analyst.md'] + chapter_files(PART2_ORDER),
-      'Analyst to Architect — Volume 1: From Zero to Job-Ready',
-      dict(KICKER='Analyst to Architect · Volume 1 of 2', TITLE='From Zero<br>to Job-Ready',
-           SUB='How to use this book; Part 0, First Principles; Part 1, The Map; and Part 2, The Analyst: '
-               'from "what is data" to the skills of a first analyst job.'))
-V2 = ('Analyst-to-Architect-Volume-2-From-Analyst-to-Architect',
-      ['part3-advanced-analytics.md'] + chapter_files(PART3_ORDER)
-      + ['part4-machine-learning.md'] + chapter_files(range(35, 45))
-      + ['part5-data-engineering.md'] + chapter_files(range(45, 53))
-      + ['part6-production-ml-genai.md'] + chapter_files(range(53, 60))
-      + ['part7-architecture-leadership.md'] + chapter_files(range(60, 68))
-      + chapter_files([83]),
-      'Analyst to Architect — Volume 2: From Analyst to Architect',
-      dict(KICKER='Analyst to Architect · Volume 2 of 2', TITLE='From Analyst<br>to Architect',
-           SUB='Parts 3 to 7: advanced analytics, machine learning, data engineering, production ML and '
-               'generative AI, and architecture and leadership; then the closing chapter, The Long Game.'))
-PLAYBOOK = ('The-Interview-Playbook',
-            ['part8-interview-playbook.md'] + chapter_files(B.PART_PACKAGES['8'][1]),
-            'The Interview Playbook — a companion to Analyst to Architect',
-            dict(KICKER='A companion to Analyst to Architect', TITLE='The Interview<br>Playbook',
-                 SUB='How data hiring works, the extra-points method, and a question bank for each skill and '
-                     'role, with take-home assignments and mock interviews.'))
+# (key, file name, sources, PDF title, cover, footer title, page count continues from)
+BOOKS = [
+    ('book1', 'Analyst-to-Architect-Book-1-Theory',
+     ['front-how-to-use-this-book.md', 'part0-first-principles.md', 'part1-the-map.md'],
+     'Analyst to Architect — Book 1: Theory',
+     dict(KICKER='Analyst to Architect · Book 1 of 4', TITLE='Theory',
+          SUB='How to use this book; Part 0, First Principles: Data from Zero; and Part 1, The Map. What data '
+              'is, how a business runs on it, numbers without fear, thinking like an analyst, and the map of '
+              'data careers. No software needed.'),
+     'Analyst to Architect', None),
+    ('book2', 'Analyst-to-Architect-Book-2-Practical',
+     ['part2-the-analyst.md'] + chapter_files(PART2_ORDER)
+     + ['part3-advanced-analytics.md'] + chapter_files(PART3_ORDER),
+     'Analyst to Architect — Book 2: Practical',
+     dict(KICKER='Analyst to Architect · Book 2 of 4', TITLE='Practical',
+          SUB='Part 2, The Analyst, and Part 3, Advanced Analytics &amp; Analytics Engineering. Spreadsheets, '
+              'SQL, cleaning, charts, Power BI, Python, statistics, business skills and a portfolio; then '
+              'advanced SQL, the command line, dbt, experiments and causal inference.'),
+     'Analyst to Architect', 'book1'),
+    ('book3', 'Analyst-to-Architect-Book-3-Implementation',
+     ['part4-machine-learning.md'] + chapter_files(range(35, 45))
+     + ['part5-data-engineering.md'] + chapter_files(range(45, 53))
+     + ['part6-production-ml-genai.md'] + chapter_files(range(53, 60))
+     + ['part7-architecture-leadership.md'] + chapter_files(range(60, 68))
+     + chapter_files([83]),
+     'Analyst to Architect — Book 3: Implementation',
+     dict(KICKER='Analyst to Architect · Book 3 of 4', TITLE='Implementation',
+          SUB='Parts 4 to 7: machine learning, data engineering, production ML and generative AI, and '
+              'architecture and leadership. Then the closing chapter, The Long Game.'),
+     'Analyst to Architect', 'book2'),
+    ('book4', 'Analyst-to-Architect-Book-4-Be-Interview-Ready',
+     ['part8-interview-playbook.md'] + chapter_files(B.PART_PACKAGES['8'][1]),
+     'Analyst to Architect — Book 4: Be Interview Ready',
+     dict(KICKER='Analyst to Architect · Book 4 of 4', TITLE='Be Interview<br>Ready',
+          SUB='Part 8. How data hiring works, the extra-points method, and a question bank for each skill '
+              'and role, with take-home assignments and mock interviews.'),
+     'Be Interview Ready', None),
+]
+BY_KEY = {b[0]: b for b in BOOKS}
 OVERVIEW = ('Analyst-to-Architect-Book-Overview', ['book-overview.md'],
             'Analyst to Architect — Book Overview (internal)',
             dict(KICKER='Analyst to Architect · Internal', TITLE='Book Overview',
@@ -50,24 +70,36 @@ OVERVIEW = ('Analyst-to-Architect-Book-Overview', ['book-overview.md'],
                      'and how the parts lead into each other.'))
 
 
-def pages_used(name, label):
-    """The last page label of a built package's body."""
+def saved(key):
+    """(heads, labels) saved when the book was built: heads is [(physical page, H1)], labels the page labels."""
+    j = json.loads((D / f'{BY_KEY[key][1]}-heads.json').read_text())
+    return [tuple(h) for h in j['heads']], j['labels']
+
+
+def build_book(key):
+    _, name, srcs, title, cover, footer, after = BY_KEY[key]
+    offset = int(saved(after)[1][-1]) if after else 0
+    heads, label = build_package(srcs, name, title, cover, offset=offset, book=footer)
     import pymupdf
     with pymupdf.open(str(D / f'{name}-body.pdf')) as d:
-        return int(label(len(d)))
+        labels = [label(n) for n in range(1, len(d) + 1)]
+    (D / f'{name}-heads.json').write_text(json.dumps(dict(heads=heads, labels=labels)))
+    print(name, 'pages', labels[0], '…', labels[-1])
 
 
-def whole_book_map(vols):
-    """HTML for 'The whole book': each part and its chapters, with volume and page."""
+def whole_book_map():
+    """HTML for 'The whole book': each part and its chapters, with book and page."""
     rows = []
-    for v, heads, label in vols:
+    for n, (key, *_rest) in enumerate(BOOKS, 1):
+        heads, labels = saved(key)
         for pg, t in heads:
+            p = labels[pg - 1]
             if t.startswith('Part ') or t.startswith('How to Use'):
-                rows.append(f'<tr class="p"><td>{html.escape(t)}</td><td>Vol. {v}</td><td>{label(pg)}</td></tr>')
+                rows.append(f'<tr class="p"><td>{html.escape(t)}</td><td>Book {n}</td><td>{p}</td></tr>')
             elif t.startswith('Chapter '):
                 if t.startswith('Chapter 83.'):
-                    rows.append(f'<tr class="p"><td>Closing</td><td></td><td></td></tr>')
-                rows.append(f'<tr><td class="c">{html.escape(t)}</td><td>Vol. {v}</td><td>{label(pg)}</td></tr>')
+                    rows.append('<tr class="p"><td>Closing</td><td></td><td></td></tr>')
+                rows.append(f'<tr><td class="c">{html.escape(t)}</td><td>Book {n}</td><td>{p}</td></tr>')
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
 @page {{ size: A4; margin: 20mm 20mm 18mm; }}
 body {{ font-family: "Lora","DejaVu Serif",serif; font-size: 10pt; color:#1d2330; }}
@@ -83,62 +115,43 @@ td.c {{ padding-left: 5mm; }}
 tr {{ break-inside: avoid; }}
 </style></head><body>
 <h1>The whole book</h1>
-<p><em>Analyst to Architect</em> comes in two volumes with one page count. Volume 1 takes you from zero to
-job-ready (Parts 0 to 2); Volume 2 goes on to the specialist and architect roles (Parts 3 to 7, then the
-closing chapter). Each volume's own contents, after this map, lists the sections of its chapters. The
-interview chapters (Part 8) are a separate book, <em>The Interview Playbook</em>.</p>
+<p><em>Analyst to Architect</em> comes as four books. <strong>Book 1, Theory</strong>, gives you the ideas, with
+no software (Parts 0 and 1). <strong>Book 2, Practical</strong>, teaches the analyst's tools, hands on (Parts 2
+and 3). <strong>Book 3, Implementation</strong>, builds real systems (Parts 4 to 7, then the closing chapter).
+<strong>Book 4, Be Interview Ready</strong>, is Part 8. Books 1 to 3 share one page count; Book 4 has its own.
+Each book's contents, after this map, lists the sections of its chapters.</p>
 <table>{''.join(rows)}</table></body></html>"""
 
 
 def add_map(pdf_name, map_pdf):
-    """Insert the map after the cover, with a bookmark."""
-    import pymupdf, os
+    """Insert the map after the cover, with a bookmark (replacing an earlier map)."""
+    import pymupdf
     path = OUT / f'{pdf_name}.pdf'
     doc = pymupdf.open(str(path))
     m = pymupdf.open(str(map_pdf))
     toc = doc.get_toc(simple=False)
-    if toc and toc[0][1] == 'The whole book':            # rebuilt: replace the old map
+    if toc and toc[0][1] == 'The whole book':
         old = toc[1][2] - 2
         doc.delete_pages(1, old)
-        toc = [e for e in toc[1:]]
+        toc = toc[1:]
         for e in toc: e[2] -= old
     doc.insert_pdf(m, start_at=1)
     for e in toc: e[2] += len(m)
     doc.set_toc([[1, 'The whole book', 2]] + toc)
     tmp = str(path) + '.tmp'
-    doc.save(tmp, garbage=1, deflate=True)       # garbage=3 takes half an hour on a 1,700-page volume
+    doc.save(tmp, garbage=1, deflate=True)
     doc.close(); m.close()
     os.replace(tmp, str(path))
 
 
-def volumes(reuse_v1=False):
-    """reuse_v1: take Volume 1 as already built (its page labels are saved beside it)."""
-    import json, pymupdf
-    name1, srcs1, title1, cover1 = V1
-    saved = D / f'{name1}-heads.json'
-    if reuse_v1 and saved.exists():
-        j = json.loads(saved.read_text())
-        heads1, labels1 = [tuple(h) for h in j['heads']], j['labels']
-        label1 = lambda n: labels1[n - 1]
-    else:
-        heads1, label1 = build_package(srcs1, name1, title1, cover1)
-        with pymupdf.open(str(D / f'{name1}-body.pdf')) as d:
-            saved.write_text(json.dumps(dict(heads=heads1, labels=[label1(n) for n in range(1, len(d) + 1)])))
-    n1 = pages_used(name1, label1)
-    name2, srcs2, title2, cover2 = V2
-    heads2, label2 = build_package(srcs2, name2, title2, cover2, offset=n1)
-    (D / 'whole-book-map.html').write_text(whole_book_map([(1, heads1, label1), (2, heads2, label2)]))
+def book_map():
+    (D / 'whole-book-map.html').write_text(whole_book_map())
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
         B.render(pw, D / 'whole-book-map.html', D / 'whole-book-map.pdf')
-    for name in (name1, name2):
-        add_map(name, D / 'whole-book-map.pdf')
-    print('Volume 1 ends on page', n1, '; Volume 2 ends on page', pages_used(name2, label2))
-
-
-def playbook():
-    name, srcs, title, cover = PLAYBOOK
-    build_package(srcs, name, title, cover, book='The Interview Playbook')
+    for b in BOOKS:
+        add_map(b[1], D / 'whole-book-map.pdf')
+        print('map added to', b[1])
 
 
 def overview():
@@ -147,6 +160,6 @@ def overview():
 
 
 if __name__ == '__main__':
-    jobs = dict(overview=overview, playbook=playbook, volumes=volumes, volume2=lambda: volumes(True))
-    for k in (sys.argv[1:] or ['overview', 'playbook', 'volumes']):
+    jobs = dict(overview=overview, map=book_map, **{b[0]: (lambda k: lambda: build_book(k))(b[0]) for b in BOOKS})
+    for k in (sys.argv[1:] or [b[0] for b in BOOKS] + ['map', 'overview']):
         jobs[k]()

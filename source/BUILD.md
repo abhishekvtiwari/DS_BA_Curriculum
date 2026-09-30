@@ -77,20 +77,23 @@ python tools/pdf/build.py all-chapters    # every chapter in manuscript/ (about 
 python tools/pdf/build.py package-2       # one part as a single PDF (package-0-1, package-2 … package-8)
 
 python tools/make_overview.py             # regenerate manuscript/book-overview.md and its flow figure
-python tools/pdf/books.py                 # the books: overview, playbook, volumes (Vol. 1 + Vol. 2)
-python tools/pdf/books.py volumes         # just the two volumes of the main book
+python tools/pdf/books.py book1 book2 book3 book4 map   # the four books, in order, then the whole-book map
+python tools/pdf/books.py overview        # the internal Book Overview
 ```
 
-The books (`tools/pdf/books.py`):
+The four books (`tools/pdf/books.py`) split the book by part; chapters stay whole:
 
-- **Analyst to Architect, Volume 1: From Zero to Job-Ready.** How to Use This Book, then Parts 0–2.
-- **Volume 2: From Analyst to Architect.** Parts 3–7, then Ch 83. Its page count continues from
-  Volume 1.
-- **The Interview Playbook.** Part 8 as its own book.
-- **Book Overview.** Internal: every part and chapter, its skills, time, prerequisites and flow.
+| Book | Parts |
+|---|---|
+| 1. Theory | How to Use This Book, Parts 0–1 |
+| 2. Practical | Parts 2–3 |
+| 3. Implementation | Parts 4–7, then Ch 83 |
+| 4. Be Interview Ready | Part 8 |
 
-Both volumes open with "The whole book", a map of every part and chapter with its volume and page. The main
-book is split in two because one file would be about 150 MB, over GitHub's 100 MB limit.
+Books 1–3 share one page count, so build them in order: each saves its page labels to
+`build/pdf/<name>-heads.json`, and the next book starts where the last one ended. `map` then inserts
+"The whole book" (every part and chapter with its book and page) after the cover of all four. Book 2 and
+Book 3 each take about an hour to render. The Book Overview is internal.
 
 Output goes to `build/pdf/` under the book root by default, which is gitignored. Override with
 environment variables:

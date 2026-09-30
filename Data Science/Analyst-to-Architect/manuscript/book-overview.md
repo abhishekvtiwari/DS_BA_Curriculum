@@ -2,14 +2,18 @@
 
 This is the internal overview of *Analyst to Architect*: every part and chapter, the skills each one covers, how long it takes, what it builds on, and how the parts lead into each other. It is generated from the chapters themselves (`tools/make_overview.py`), so it always matches them.
 
-The book is published as two books:
+The book is published as four books, split by part (chapters stay whole). Books 1 to 3 share one page count; Book 4 has its own.
 
-- **Analyst to Architect**, the main book, in two volumes with one page count. Volume 1, *From Zero to Job-Ready*: How to Use This Book and Parts 0 to 2. Volume 2, *From Analyst to Architect*: Parts 3 to 7 and the closing chapter.
-- **The Interview Playbook**, its own book: Part 8, the question banks and interview practice.
+| Book | Parts | What it gives the reader |
+|---|---|---|
+| **1. Theory** | How to Use This Book, Parts 0 and 1 | The ideas, with no software. |
+| **2. Practical** | Parts 2 and 3 | The analyst's tools, hands on: job-ready at the end of Part 2. |
+| **3. Implementation** | Parts 4 to 7, and the closing chapter | Building real systems: ML, pipelines, production AI, architecture. |
+| **4. Be Interview Ready** | Part 8 | How data hiring works, and a question bank for each role. |
 
 ## The whole path at a glance
 
-![The parts as boxes with arrows showing what builds on what. Part 0 First principles leads to Part 1 The map, then Part 2 The analyst, which is job-ready. Part 2 leads to Part 3 Advanced analytics, which leads to Part 4 Machine learning and Part 5 Data engineering. Part 4 leads to Part 6 Production ML and GenAI; Parts 5 and 6 lead to Part 7 Architecture and leadership, and Part 7 leads to the Closing. A dashed arrow from Part 2 goes to Part 8, the Interview playbook, used when you apply for a job.](figures/fig-overview-flow.svg)
+![The parts as boxes with arrows showing what builds on what. Part 0 First principles leads to Part 1 The map, then Part 2 The analyst, which is job-ready. Part 2 leads to Part 3 Advanced analytics, which leads to Part 4 Machine learning and Part 5 Data engineering. Part 4 leads to Part 6 Production ML and GenAI; Parts 5 and 6 lead to Part 7 Architecture and leadership, and Part 7 leads to the Closing. A dashed arrow from Part 2 goes to Part 8, Be Interview Ready, used when you apply for a job.](figures/fig-overview-flow.svg)
 
 *How the parts build on each other. Parts 0 to 2 are one path everyone follows; Parts 3 to 7 are branches you choose by the role you want.*
 
@@ -23,7 +27,7 @@ The book is published as two books:
 | **Part 5** Data Engineering, Integration & Scale | 45, 46, 47, 48, 49, 50, 51, 52 | 122–156 h | Ingestion, pipelines and orchestration, data quality, big data, warehouses and lakehouses, streaming, data activation, and the cloud. |
 | **Part 6** Production ML, Generative AI & MLOps | 53, 54, 55, 56, 57, 58, 59 | 109–134 h | Deep learning in depth, generative AI and large language models, building AI applications, MLOps, LLMOps, intelligent automation, and industry case studies. |
 | **Part 7** Architecture, Governance & Leadership | 60, 61, 62, 63, 64, 65, 66, 67 | 82–99 h | Designing whole systems, distributed systems, data architecture patterns, automation architecture, security and responsible AI, FinOps, data strategy, and the architect as leader. |
-| **Part 8** The Interview Playbook | 68, 69, 70, 71, 72, 72A, 73, 74, 75, 76A, 76B, 77, 78, 79, 80, 81, 82 | reference | How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews. Published as its own book. |
+| **Part 8** Be Interview Ready | 68, 69, 70, 71, 72, 72A, 73, 74, 75, 76A, 76B, 77, 78, 79, 80, 81, 82 | reference | How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews. Published as Book 4. |
 | **Closing** The Long Game | 83 | reference | What the whole path costs in hours, and how to keep going after the book. |
 
 **Job-ready** (Parts 0 to 2) takes 394–488 hours. **The teaching chapters** (Parts 0 to 7) take 957–1193 hours. Chapter 6 turns these hours into a weekly plan, and Chapter 83 into the long view.
@@ -1453,9 +1457,9 @@ Designing whole systems, distributed systems, data architecture patterns, automa
 
 **Sections:** 67.1 From technical excellence to leverage · 67.2 Strategy, business alignment, and portfolio thinking · 67.3 Communication: the bridge · 67.4 Leading people · 67.5 Judgment: the summit skill · 67.6 A first-90-days plan for a new architect · 67.7 The arc of this book
 
-# Part 8 — The Interview Playbook
+# Part 8 — Be Interview Ready
 
-How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews. Published as its own book.
+How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews. Published as Book 4.
 
 ## Chapter 68. How Data Hiring Works
 

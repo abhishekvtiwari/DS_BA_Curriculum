@@ -42,9 +42,9 @@ PARTS = [
     ('7', 'Architecture, Governance & Leadership', list(range(60, 68)),
      'Designing whole systems, distributed systems, data architecture patterns, automation architecture, '
      'security and responsible AI, FinOps, data strategy, and the architect as leader.'),
-    ('8', 'The Interview Playbook', [68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
+    ('8', 'Be Interview Ready', [68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
      'How data hiring works, the extra-points method, and a question bank for each skill and role, with '
-     'take-home assignments and mock interviews. Published as its own book.'),
+     'take-home assignments and mock interviews. Published as Book 4.'),
     ('Closing', 'The Long Game', [83],
      'What the whole path costs in hours, and how to keep going after the book.'),
 ]
@@ -108,7 +108,7 @@ def flow_svg(path):
         '6': (30, 340, 200, 58, 'Part 6', 'Production ML & GenAI'),
         '7': (250, 340, 200, 58, 'Part 7', 'Architecture & leadership'),
         'C': (250, 440, 200, 58, 'Closing', 'The long game'),
-        '8': (470, 440, 200, 58, 'Part 8 (own book)', 'Interview playbook'),
+        '8': (470, 440, 200, 58, 'Part 8 (Book 4)', 'Be interview ready'),
     }
     edges = [('0', '1'), ('1', '2'), ('2', '3'), ('3', '4'), ('3', '5'), ('4', '6'), ('5', '7'), ('6', '7'),
              ('7', 'C'), ('2', '8')]
@@ -157,17 +157,21 @@ def main():
           'This is the internal overview of *Analyst to Architect*: every part and chapter, the skills each one '
           'covers, how long it takes, what it builds on, and how the parts lead into each other. It is generated '
           'from the chapters themselves (`tools/make_overview.py`), so it always matches them.', '',
-          'The book is published as two books:', '',
-          '- **Analyst to Architect**, the main book, in two volumes with one page count. Volume 1, *From Zero '
-          'to Job-Ready*: How to Use This Book and Parts 0 to 2. Volume 2, *From Analyst to Architect*: Parts 3 '
-          'to 7 and the closing chapter.',
-          '- **The Interview Playbook**, its own book: Part 8, the question banks and interview practice.', '',
+          'The book is published as four books, split by part (chapters stay whole). Books 1 to 3 share one '
+          'page count; Book 4 has its own.', '',
+          '| Book | Parts | What it gives the reader |',
+          '|---|---|---|',
+          '| **1. Theory** | How to Use This Book, Parts 0 and 1 | The ideas, with no software. |',
+          '| **2. Practical** | Parts 2 and 3 | The analyst\'s tools, hands on: job-ready at the end of Part 2. |',
+          '| **3. Implementation** | Parts 4 to 7, and the closing chapter | Building real systems: ML, pipelines, '
+          'production AI, architecture. |',
+          '| **4. Be Interview Ready** | Part 8 | How data hiring works, and a question bank for each role. |', '',
           '## The whole path at a glance', '',
           '![The parts as boxes with arrows showing what builds on what. Part 0 First principles leads to Part 1 '
           'The map, then Part 2 The analyst, which is job-ready. Part 2 leads to Part 3 Advanced analytics, which '
           'leads to Part 4 Machine learning and Part 5 Data engineering. Part 4 leads to Part 6 Production ML and '
           'GenAI; Parts 5 and 6 lead to Part 7 Architecture and leadership, and Part 7 leads to the Closing. A '
-          'dashed arrow from Part 2 goes to Part 8, the Interview playbook, used when you apply for a job.]'
+          'dashed arrow from Part 2 goes to Part 8, Be Interview Ready, used when you apply for a job.]'
           '(figures/fig-overview-flow.svg)', '',
           '*How the parts build on each other. Parts 0 to 2 are one path everyone follows; Parts 3 to 7 are '
           'branches you choose by the role you want.*', '',

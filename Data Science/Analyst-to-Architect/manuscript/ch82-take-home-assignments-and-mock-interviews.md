@@ -1,6 +1,6 @@
 # Chapter 82. Take-Home Assignments & Mock Interviews
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -974,4 +974,4 @@ take-home assignment · fair take-home · model submission · mock interview · 
 
 - **Chapter 69, The Extra-Points Method,** is the rubric every scoring table in this chapter is built from.
 - **Every other chapter in Part 8** supplied the questions these take-homes and mocks draw on: Chapter 71 (SQL), Chapter 74 (machine learning), Chapter 76A (telling a project story), Chapter 76B (requirements), Chapter 77 (pipeline design) and Chapter 81 (STAR answers). The skills themselves were taught earlier: Chapters 12 and 13 (SQL), Chapters 36, 37, 39 and 44 (the lead model and ranking by value), and Chapters 45–47 (pipelines and data quality).
-- This is the last chapter in Part 8, The Interview Playbook. The reader who has worked through this part end to end has, in effect, already sat through the mocks in this chapter once, for real, one question at a time. **Chapter 83, The Long Game,** closes the book.
+- This is the last chapter in Part 8, Be Interview Ready. The reader who has worked through this part end to end has, in effect, already sat through the mocks in this chapter once, for real, one question at a time. **Chapter 83, The Long Game,** closes the book.

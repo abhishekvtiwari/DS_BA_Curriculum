@@ -1,6 +1,6 @@
 # Chapter 81. Behavioral, HR & Offer Conversations
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >

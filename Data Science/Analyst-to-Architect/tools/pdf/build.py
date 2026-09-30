@@ -338,7 +338,7 @@ def join_cover(cover_pdf, body_pdf, out, title, html_path=None):
     doc.insert_pdf(cov, start_at=0)
     if html_path: clean_bookmarks(doc, pathlib.Path(html_path).read_text())
     doc.set_metadata(dict(doc.metadata, title=title, author='Abhishek Tiwari'))
-    doc.save(str(out), garbage=3, deflate=True)
+    doc.save(str(out), garbage=SAVE_GARBAGE, deflate=True)
     doc.close(); cov.close()
     print(out, len(PdfReader(str(out)).pages), 'pages')
 
@@ -374,6 +374,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
     join_cover(D/f'{name}-cover.pdf', D/f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
 
 JOBS = {}
+SAVE_GARBAGE = 3     # PyMuPDF clean-up level; books.py lowers it, since 3 takes half an hour on a 1,500-page book
 JOBS['blueprint'] = lambda: build('blueprint.md', 'Analyst-to-Architect-Blueprint', '',
           'Analyst to Architect — Expansion Blueprint', 'Analyst to Architect · Expansion Blueprint v3',
           dict(KICKER='Analyst to Architect', TITLE='Expansion Blueprint',
@@ -513,7 +514,7 @@ def stamp_footers(pdf_path, heads, label, book='Analyst to Architect'):
         tw.append((W - 18 * mm - font.text_length(right, 7.5), y), right, font=font, fontsize=7.5)
         tw.write_text(page, color=grey)
     tmp = str(pdf_path) + '.tmp'
-    doc.save(tmp, garbage=3, deflate=True)
+    doc.save(tmp, garbage=SAVE_GARBAGE, deflate=True)
     doc.close()
     os.replace(tmp, str(pdf_path))
 
@@ -596,7 +597,7 @@ PART_PACKAGES = {   # Parts 4 to 8 read in chapter-number order
           'Architecture, Governance<br>&amp; Leadership', 'Architecture, Governance & Leadership',
           'Designing whole systems, distributed systems, data architecture patterns, automation architecture, security and responsible AI, FinOps, data strategy, and the architect as leader.'),
     '8': ('part8-interview-playbook.md', [68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
-          'Part-8-The-Interview-Playbook', 'The Interview<br>Playbook', 'The Interview Playbook',
+          'Part-8-Be-Interview-Ready', 'Be Interview<br>Ready', 'Be Interview Ready',
           'How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews.'),
 }
 for _k, (_intro, _order, _name, _title, _plain, _sub) in PART_PACKAGES.items():

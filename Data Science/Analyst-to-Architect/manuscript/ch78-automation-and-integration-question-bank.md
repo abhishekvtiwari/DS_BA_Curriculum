@@ -1,6 +1,6 @@
 # Chapter 78. Automation & Integration Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >

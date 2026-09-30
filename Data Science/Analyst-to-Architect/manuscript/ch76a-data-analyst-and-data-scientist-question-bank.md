@@ -1,6 +1,6 @@
 # Chapter 76A. Data Analyst & Data Scientist Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >

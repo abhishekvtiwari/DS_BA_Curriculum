@@ -50,7 +50,7 @@ PARTS = {
               "architect as leader.",
         order=list(range(60, 68))),
     'part8-interview-playbook.md': dict(
-        title='Part 8 — The Interview Playbook',
+        title='Part 8 — Be Interview Ready',
         about="How data hiring works, and question banks for each role. Use Part 8 when you apply for a job: "
               "read Chapters 68 and 69 first, then the banks for the role you want.",
         order=[68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82]),
