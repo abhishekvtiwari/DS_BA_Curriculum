@@ -1,6 +1,6 @@
 # Chapter 72, Python & pandas Question Bank: summary
 
-**Findings:** 29 content (72.1–72.29) and 11 visual (V72.1–V72.11). All 29 content rows fixed; V72.1, V72.2, V72.3, V72.5, V72.7 fixed and checked in the rebuilt PDF; V72.4, V72.6, V72.8–V72.11 were already done by the style pass. Nothing left open in this chapter.
+**Findings:** 29 content (72.1–72.29) and 11 visual (V72.1–V72.11). All 29 content rows fixed; V72.1, V72.2, V72.3, V72.5, V72.7 fixed and checked in the rebuilt PDF; V72.4, V72.6, V72.8–V72.11 were already done by the style pass and still hold in the rebuilt PDF. Nothing left open in this chapter (72.3 is fixed with option (b); option (a) is asked as a question).
 
 ## What changed
 
@@ -31,5 +31,5 @@ New: "about 4–6 hours to run every snippet yourself; 1 hour for a revision pas
 - `tools/verify_python.py`: 44 blocks run, **42 outputs checked, 0 mismatches**, on Python 3.11.15 and pandas 3.0.6. Outputs were written by running the cells, never typed.
 - `checks/ch72_check.py`: the 14 predict-the-output table rows (Q72-015–028) match a real run; the Q72-005 and Q72-051 claims hold; it prints the two timing cells (Q72-030, Q72-047), whose outputs in the chapter come from its run. **0 mismatches.**
 - `tools/check_code_teaching.py`: 46 blocks, 0 flagged. `restructure.py --check`: already in order.
-- Build: 34 pages. `layout_check`: no stranded heads or lead-ins, no sparse pages, no small text, tofu 0, map numbers 10/10. prescan: 0 sparse pages, 0 draft labels, 0 tofu. No figures.
+- Build (re-run 30 Sep after the final edit): 34 pages. `layout_check`: no stranded heads or lead-ins, no sparse pages, no small text, tofu 0, map numbers 10/10. prescan: 0 sparse pages, 0 draft labels, 0 tofu. No figures.
 - Version note: generator `getsizeof` is 208 bytes on 3.11 and 200 on 3.12/3.13 (all checked); the text says so. Python 3.14 isn't installed here, so it wasn't run.

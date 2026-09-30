@@ -721,7 +721,7 @@ print(df)
 | Q72-037 | *Warm-up.* `.loc` vs. `.iloc`? | Label-based selection (`.loc[row_label, col_label]`) / position-based selection (`.iloc[row_number, col_number]`) | **[+Edge cases]** `.loc`'s slices *include* the end label; `.iloc`'s follow normal Python rules and exclude the end. With the default 0, 1, 2… index, `df.loc[0:2]` returns 3 rows and `df.iloc[0:2]` returns 2 (run below) |
 | Q72-038 | *Warm-up.* What does `df.dtypes` tell you, and why check it early? | The data type pandas chose for each column | **[+Business]** a numeric-looking column stored as text (`str` in pandas 3.0+, `object` in earlier versions) usually means non-numeric values mixed in, worth catching before any calculation (Q72-054) |
 | Q72-039 | *Warm-up.* How do you check for and count duplicate rows? | `df.duplicated().sum()` counts them; `df[df.duplicated()]` shows them; `df.drop_duplicates()` removes them | **[+Edge cases]** `.duplicated()` treats the *first* occurrence as the original by default; `keep="last"` or `keep=False` change that |
-| Q72-040 | *Warm-up.* What's `df.info()` useful for that `df.head()` isn't? | Row count, column types, and non-blank counts per column, all at once: a fast structural health check | **[+Signpost]** the pandas twin of Chapter 71's SQL table-profiling walk-through (section 71.11): one call, several facts about data you've never seen |
+| Q72-040 | *Warm-up.* What's `df.info()` useful for that `df.head()` isn't? | Row count, column types, and non-blank counts per column, all at once: a fast structural health check | **[+Signpost]** the pandas twin of Chapter 71's SQL table-profiling walk-through (Q71-076, section 71.10): one call, several facts about data you've never seen |
 
 Q72-037, run on the three-row `df`:
 
@@ -1192,7 +1192,7 @@ print(clean["quantity"].astype("Int64").tolist())
 
 **Likely follow-ups:** How would you decide whether to keep the first or the last copy of a duplicate order? What would you do with the two `NaN` quantities now? *(Report them, with the order IDs, before deciding to fill or drop: Q72-048.)*
 **Red flag:** starting to "fix" a file (dropping rows, filling values) before running any checks on what's wrong with it.
-**Learn it in:** Chapter 18, section 18.10 (cleaning in pandas) and Chapter 14; Chapter 71's table-profiling walk-through (section 71.11) for the same discipline in SQL.
+**Learn it in:** Chapter 18, section 18.10 (cleaning in pandas) and Chapter 14; Chapter 71's table-profiling walk-through (Q71-076, section 71.10) for the same discipline in SQL.
 
 ---
 
