@@ -118,7 +118,10 @@
       // a heading, a lead-in ending in ":" and the code it introduces may take up to 45% of a page
       const lim = group.length > 2 && (group[2].tagName === 'PRE' || group[2].querySelector(':scope > pre')) && /[:：]\s*$/.test(group[1].textContent) ? 0.45 : KEEP;
       if (total < PAGE_H * lim) wrap(group);
-      else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) wrap(group.slice(0, 2));
+      else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) {
+        wrap(group.slice(0, 2));
+        group[0].parentElement.classList.add('with-next');   // the heading and lead-in never end a page alone
+      }
     }
   }
   // lead-in paragraphs and bare answer numbers elsewhere
