@@ -1538,7 +1538,7 @@ Every idea in this chapter reappears. Use this table as a map for the rest of th
 | Cross-entropy / log loss | Train and score probability predictions | Logistic regression (Ch 37), calibration (Ch 39), neural networks (Ch 43), language models (Ch 54) |
 | Covariance, eigenvectors, PCA | Compress correlated features | Dimensionality reduction (Ch 38), noise reduction before modeling |
 
-> **Interview extra point.** When an interviewer asks "why log loss and not accuracy?" or "why not squared error for classification?", the answer that passes says log loss punishes confident mistakes. The answer that earns extra points adds the connection: *minimizing log loss is maximizing the likelihood of a Bernoulli model*, and then gives a benchmark, "a model that always predicts the base rate scores the entropy of the outcome, so I compare against that." The Machine Learning Question Bank (Chapter 74) has graded answers to this and other math-behind-the-model questions.
+> **Interview extra point.** When an interviewer asks "why log loss and not accuracy?" or "why not squared error for classification?", the answer that passes says log loss punishes confident mistakes. The answer that earns extra points adds the connection: *minimizing log loss is maximizing the likelihood of a Bernoulli model*, and then gives a benchmark, "a model that always predicts the base rate scores the entropy of the outcome, so I compare against that." The Machine Learning Question Bank (Chapter 74) covers bias and variance with graded answers; section 35.9 and exercise 9 practise log loss.
 
 ---
 
@@ -1918,4 +1918,4 @@ Referral and cold-call leads won 4 of 8 (50%); every other source won 2 of 22 (9
 - **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** evaluates a real lead-scoring model with log loss, calibration, and cost-based thresholds, starting from the base-rate benchmark.
 - **Chapter 43, A First Look at Deep Learning,** computes a neuron by hand and trains a network in PyTorch with the same loop as section 35.6, with gradients calculated automatically.
 - **Chapter 54, Generative AI & Large Language Models,** shows dot products between vectors at work inside embeddings and attention.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers gradient descent, learning rates, log loss, bias and variance, and PCA questions with graded answers; the Statistics, Probability & Experimentation Bank (Chapter 73) covers distributions and likelihood.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers bias and variance, regularization and overfitting with graded answers; the Statistics, Probability & Experimentation Bank (Chapter 73) covers distributions and Bayes' rule.

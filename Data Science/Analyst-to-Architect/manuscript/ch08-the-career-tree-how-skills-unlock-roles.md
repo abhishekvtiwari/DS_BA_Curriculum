@@ -281,7 +281,7 @@ Some postings tell you more about the company than the job. Watch for these patt
 
 None of these is always a reason to walk away. A small company with a messy JD might be a great place to learn. But they're questions to ask before you accept.
 
-> **Interview extra point.** Bring your decoded JD to the interview. When asked *"Why this role?"*, name two duties from the posting, say what you've built that matches each, and ask one question about the hidden skill ("How are definitions like 'active customer' agreed today?"). Chapter 68 explains why this lands well with hiring managers.
+> **Interview extra point.** Bring your decoded JD to the interview. When asked *"Why this role?"*, name two duties from the posting, say what you've built that matches each, and ask one question about the hidden skill ("How are definitions like 'active customer' agreed today?"). Chapter 68 (section 68.7) explains why this lands well with hiring managers.
 
 ---
 
@@ -318,7 +318,7 @@ A **percentile** tells you where a value sits in a sorted list. The 10th percent
 
 **Some roles don't have reliable figures under their own title yet.** Analytics engineer, AI engineer, and integration engineer are newer titles, and many people doing that work are listed under older ones (data engineer, software engineer, BI developer). Business analyst figures mix IT business analysts, finance business analysts, and more. For these, look at live job postings for the work you'd do, not only the title, and compare several sources.
 
-Chapter 68 compares pay across roles, and how pay grows with experience, when you're preparing for the job search.
+Chapter 68 (section 68.6) compares pay across roles, and how pay grows with experience, when you're preparing for the job search.
 
 ### CTC and in-hand pay
 

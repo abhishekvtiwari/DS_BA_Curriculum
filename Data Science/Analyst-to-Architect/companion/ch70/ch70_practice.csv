@@ -1,0 +1,7 @@
+order_id,order_date,customer_name,category,product_name,quantity,unit_price,discount_pct,net_revenue,status
+1001,2025-01-06,Sharma Hardware,Storage,Storage Box 10L,25,430,5,10212.5,Delivered
+1002,2025-01-07,Metro Mart,Kitchen,Water Bottle 1L,40,115,0,4600.0,Delivered
+1003,2025-01-09,Sharma Hardware,Storage,Stackable Bin,30,290,5,8265.0,Cancelled
+1004,2025-01-13,Coastal Foods,Industrial,Industrial Crate,20,1400,10,25200.0,Delivered
+1005,2025-01-20,Metro Mart,Storage,Storage Box 25L,8,750,0,6000.0,Shipped
+1006,2025-02-03,Sharma Hardware,Storage,Storage Box 10L,12,430,0,5160.0,Delivered

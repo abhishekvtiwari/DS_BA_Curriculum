@@ -124,6 +124,8 @@ its chart marks the same value as the median). The "1.73 times" comparison uses 
 stale: on 20 Sep 2026 the page showed ₹6,29,019 from 605 salaries (Ch 8 now uses that). Old exercise 6 (data
 engineer growth, answer 56.4%) belongs with this table.
 
+**Landed** in Ch 68 §68.6 (Part 8 build).
+
 > ### Three roles, as published in 2026
 > 
 > Here are figures for three roles, as shown on PayScale's India pages (updated in July 2026) when this chapter was written. **Base salary** is fixed yearly pay before bonuses; **total pay** adds bonuses and similar extras.

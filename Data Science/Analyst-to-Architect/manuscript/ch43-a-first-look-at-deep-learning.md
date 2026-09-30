@@ -1879,4 +1879,4 @@ The loop you wrote (w = 3.102, b = 6.382) lands close to the true values (w = 3,
 - **Chapter 41, NLP Foundations,** previewed learned representations with word embeddings; Chapter 54 scales that idea up enormously.
 - **Chapter 53, Deep Learning in Depth,** goes further into architectures, regularization, and training at scale.
 - **Chapter 54, Generative AI & Large Language Models,** is where transfer learning's real power shows up: models pretrained on vastly larger, richer data than anything in this chapter.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers backpropagation, activation functions, why XOR needs a hidden layer, and "when would you use deep learning versus a simpler model?" — one of the most common questions in applied ML interviews, and one this chapter now lets you answer with evidence.
+- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers "when would you use deep learning versus a simpler model?" — one of the most common questions in applied ML interviews, and one this chapter now lets you answer with evidence.

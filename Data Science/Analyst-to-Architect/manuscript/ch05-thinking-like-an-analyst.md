@@ -311,7 +311,7 @@ Three principles sit behind the table:
 - **Include "do nothing".** It's often the real alternative, and it has costs too.
 - **Say what would change your mind.** It shows where the uncertainty is and what to watch.
 
-> **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank) have practice cases with model answers.
+> **Interview extra point.** In a case interview or a take-home question ("Revenue fell 20%. Why?"), don't start calculating. Spend the first minute restating the question precisely, then sketch a MECE split out loud (for example, number of orders × average order value, then by segment), and say which branch you'd check first and why. Interviewers are grading the structure of your thinking more than the final number. Chapter 75 (product sense, metrics, and case studies) has practice cases with model answers.
 
 ---
 
@@ -532,4 +532,4 @@ The first split (not yet due / overdue / paid but unrecorded) is MECE for the mo
 - **Chapter 24, Requirements, Storytelling & Stakeholders,** turns notes like Meera's into memos and presentations, and covers handling "can you find numbers that support this?"
 - **Chapters 30 and 31** test cause and effect properly: experiments, and methods for when experiments aren't possible.
 - **Chapters 36 and 40** take on predictive questions like *"What will April's revenue be?"*: the machine learning workflow, and forecasting over time.
-- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
+- **Interview preparation:** case questions ("revenue fell; why?"), structuring, and hypothesis-driven thinking appear in Chapter 75 (product sense, metrics, and case studies), with model answers; Chapter 76B (the Business Analyst question bank) uses the same structured thinking on requirements and process questions.

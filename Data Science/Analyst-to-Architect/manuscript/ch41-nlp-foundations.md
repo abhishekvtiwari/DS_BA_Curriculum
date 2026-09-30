@@ -1786,4 +1786,3 @@ Note that `"body"` is a string, not `["body"]`: a text vectorizer needs one colu
 - **Chapter 43, A First Look at Deep Learning,** builds the neural networks that sit inside word2vec and every model after it.
 - **Chapter 54, Generative AI & Large Language Models,** picks up word embeddings exactly where this chapter leaves them: contextual, much larger, and wired into attention and generation.
 - **Chapter 55, Building AI Applications,** searches documents by their embeddings (section 55.4), a whole-document version of section 41.7's word vectors.
-- **Interview preparation:** the Machine Learning Question Bank (Chapter 74) covers TF-IDF versus embeddings, bag-of-words limitations, when to use a lexicon versus a trained model, and "how would you find the topics in a pile of customer feedback?"

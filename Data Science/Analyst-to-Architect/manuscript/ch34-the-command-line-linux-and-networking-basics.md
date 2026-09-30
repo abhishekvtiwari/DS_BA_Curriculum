@@ -1521,5 +1521,5 @@ cd "${DIR:?DIR is not set}" && rm -rf -- ./*
 - **Chapter 32, Analytics Engineering with dbt,** is a command-line tool end to end.
 - **Chapter 46, Pipelines & Orchestration,** and **Chapter 49, Storage, Warehouses & Lakehouses,** run on machines you reach only this way.
 - **Chapter 52, The Cloud, Containers & Infrastructure as Code,** builds on IP addresses, ports, and SSH keys for virtual machines and networks.
-- **Chapter 77, Data Engineering & Data System Design Bank,** asks about permissions, exit codes, and debugging a failed job.
+- **Chapter 77, Data Engineering & Data System Design Bank,** asks how you'd notice and fix a failed or silent pipeline run (Q77-007, Q77-028, Q77-031).
 - **Looking back:** Chapter 20's `cron` lines and Chapter 26's Git commands are commands you now understand end to end.

@@ -55,16 +55,16 @@ No book, course, or bootcamp changes that arithmetic. A course can make your stu
 
 "Months" and "years" are vague, and vague plans get abandoned. So estimate with numbers you can check.
 
-Every chapter in this book starts with a *Time needed* estimate. Chapter 12, *Databases & SQL Foundations*, says 19–23 hours of reading and practice. Chapter 13, *SQL for Real Analysis*, says 15–20 hours. Together, that's **34–43 hours** to work through the book's two core SQL chapters properly, with exercises.
+Every chapter in this book starts with a *Time needed* estimate. Chapter 12, *Databases & SQL Foundations*, says 22–26 hours for its PostgreSQL core (add 6–10 for its MySQL track and project). Chapter 13, *SQL for Real Analysis*, says 15–20 hours. Together, that's **37–46 hours** to work through the book's two core SQL chapters properly, with exercises.
 
 Now divide by the hours you can *really* give each week, not the hours you wish you had:
 
 | Hours per week | Weeks for Chapters 12 and 13 |
 |---|---|
-| 6 | 34 ÷ 6 = 5.7 to 43 ÷ 6 = 7.2 weeks |
-| 10 | 34 ÷ 10 = 3.4 to 43 ÷ 10 = 4.3 weeks |
+| 6 | 37 ÷ 6 = 6.2 to 46 ÷ 6 = 7.7 weeks |
+| 10 | 37 ÷ 10 = 3.7 to 46 ÷ 10 = 4.6 weeks |
 
-At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to seven weeks. Part 2 has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
+At 6 hours a week, a realistic amount alongside a full-time job, the SQL chapters alone take about six to eight weeks. Part 2 has eighteen chapters. Working through all of it at that pace is a matter of many months, and that's before the extra practice that makes SQL fluent rather than familiar. Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree.
 
 > **Watch out: chapter hours are not fluency hours.** Finishing Chapters 12 and 13 means you can write the queries they teach. Being quick and confident on a messy real dataset takes more: many more questions, answered on data you didn't design. Plan for the chapter hours, then plan for practice beyond them. Section 9.4 shows how to make those hours count.
 
@@ -267,7 +267,7 @@ Farah Khan, the Riverstone sales executive from Chapter 8, kept a simple log whi
 - In weeks 5–8, she practiced 1,010 minutes (240 + 260 + 270 + 240), and her score didn't move. She responded the way most people do: she practiced *more*, from 220 minutes in week 4 to 270 in week 7, an increase of 22.7% (50 ÷ 220), with no gain.
 - In week 8, she changed *what* she practiced (the story in "In the real world" explains how). In weeks 9–12, she practiced 980 minutes (240 + 250 + 240 + 250), slightly less than in the plateau, and her score rose from 6 to 9.
 
-Over the 12 weeks, she practiced 2,800 minutes (810 + 1,010 + 980), about 46.7 hours (2,800 ÷ 60): slightly more than the 34–43 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
+Over the 12 weeks, she practiced 2,800 minutes (810 + 1,010 + 980), about 46.7 hours (2,800 ÷ 60): slightly more than the 37–46 hours the book estimates for Chapters 12 and 13. That's consistent with section 9.1: the chapter hours get you through the material, and fluency takes a little more.
 
 > **Simplification note.** Farah's log is fictional and deliberately tidy, to make the pattern clear. Real logs are noisier: a bad week, a holiday, a harder check. Look for a flat stretch over several weeks, not a single low score.
 
@@ -449,7 +449,7 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 ### Core
 
-4. Arjun can study 45 minutes a day, five days a week. How many hours will he have after 8 weeks? Is that enough to work through Chapters 12 and 13 at the book's estimate of 34–43 hours? If not, how many hours short of the lower estimate is he?
+4. Arjun can study 45 minutes a day, five days a week. How many hours will he have after 8 weeks? Is that enough to work through Chapters 12 and 13 at the book's estimate of 37–46 hours? If not, how many hours short of the lower estimate is he?
 5. Compare two plans over a year: (a) 20 minutes every day of the year; (b) one 3-hour session every Sunday for 52 weeks. Calculate the hours in each. Which plan has more hours, and which would you recommend for learning SQL? Give a reason from section 9.4.
 6. In Farah's log, her weekly check score went from 3 in week 1 to 9 in week 12. By what percentage did her score increase? Then explain why her *minutes* in weeks 5–7 are not evidence that she was working badly.
 7. Rewrite this request for help using the five-part structure from section 9.6: *"Pivot table not working in Google Sheets, totals are wrong, help!!"* Invent reasonable details.
@@ -477,7 +477,7 @@ honest timeline · study · project · feedback · knowledge · skill · judgmen
 
 **3.** (a) Naive: rereading feels productive but doesn't test recall or give feedback. (b) Deliberate: a specific prediction with immediate feedback when the result differs. (c) Naive: divided attention and no feedback. (d) Deliberate: retrieval (rebuilding from memory) with feedback (compare with the worked example).
 
-**4.** 45 × 5 × 8 = 1,800 minutes = **30 hours**. That's **not enough** for 34–43 hours: he's **4 hours short** of the lower estimate. He could extend the plan by about one more week, or add a longer weekend session. The point of the exercise is to adjust the plan to the arithmetic, not to hope.
+**4.** 45 × 5 × 8 = 1,800 minutes = **30 hours**. That's **not enough** for 37–46 hours: he's **7 hours short** of the lower estimate. At 45 × 5 = 225 minutes (3.75 hours) a week, he could extend the plan by about two more weeks (7 ÷ 3.75 = 1.9), or add a longer weekend session. The point of the exercise is to adjust the plan to the arithmetic, not to hope.
 
 **5.** (a) 20 × 365 = 7,300 minutes ≈ **121.7 hours**. (b) 3 × 52 = **156 hours**. Plan (b) has more hours, but plan (a) is usually better for learning SQL, because practice spread over many days (spacing) and frequent short, focused sessions produce more durable learning than one long weekly block, where attention fades in the third hour. The best answer might combine them: short daily practice plus a longer weekly project session. Either recommendation is acceptable with a reason from section 9.4.
 

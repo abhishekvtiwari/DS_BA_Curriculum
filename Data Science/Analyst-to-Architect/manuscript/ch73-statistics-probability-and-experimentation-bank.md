@@ -2,56 +2,120 @@
 
 *Part 8 — The Interview Playbook*
 
+> **Chapter at a glance**
+>
 > **You will learn to:** answer probability puzzles that show up across every data role's interviews, and explain *why* the surprising answer is correct, not just what it is · reason correctly about distributions, p-values, and confidence intervals, including the ways almost everyone misinterprets them at first · design an A/B test's sample size before running it, and debug one that's already gone wrong · spot Simpson's paradox and correlation-masquerading-as-causation in real-looking data.
 >
-> **How this chapter is built.** Same format as Chapters 70–72A: every core question leads with a **"Remember it as…"** hook, a one-line answer, a compact tier table. Rapid-fire sections are scan tables. **Every numeric claim in this chapter was computed by running real Python (NumPy, SciPy, statsmodels), not recalled from memory or asserted**: simulations, real test statistics, real p-values, real sample-size calculations. Section order was planned before writing, not fixed afterward: basics first, puzzles right after (since they test the same basics from an angle), then testing, then experimentation design and debugging, then causal reasoning, then integrative walkthroughs.
+> **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapter 21 (probability and distributions), Chapter 22 (confidence intervals, tests, A/B basics, confounders, Simpson's paradox, and regression basics in section 22.10), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Learn it in** pointers are at chapter level (this chat doesn't have this book's statistics/experimentation/causal-inference chapters' approved text to check exact section numbers against: flagged for a re-check once available, the same convention used for Chapters 10, 11, 16, and 19 elsewhere in this part).
+> **Time needed:** about 8–10 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list.
+>
+> **How this chapter is built.** Same format as every question bank in Part 8: every core question gives a memory hook ("Remember it as…"), a one-line answer, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, one per line, tagged the same way: **[+Validate]**, **[+Business]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Rapid-fire sections are scan tables. **Every number in this chapter comes from running the code shown** (NumPy, SciPy, statsmodels): simulations, test statistics, p-values, sample sizes. The order: probability warm-ups first, then the famous puzzles (they test the same basics from an angle), then distributions, testing, experiment design and debugging, causal reasoning, and two walk-throughs that put it all together.
+>
+> **Learn it in** pointers name the chapter and section that teach each idea: Chapter 21 (probability and distributions), Chapter 22 (tests, A/B basics, confounders, Simpson's paradox), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). The few ideas marked **Beyond the book** go further than those chapters and carry their own short explanation, so you can learn them here.
+
+---
+
+## 73.0 The setup cell, and how to use this bank
+
+**Levels and roles.** Each question carries a level and the roles that usually ask it:
+
+- **Fresher:** screening calls and first-job interviews. **Mid:** one to three years in the role. **Senior:** lead or specialist rounds.
+- **DA** data analyst · **DS** data scientist · **PA** product analyst (the role that runs A/B tests most) · **BA** business analyst.
+
+Within each section the core questions run from easier to harder. If you're preparing for a first analyst job, do every Fresher question first, then come back for the Mid ones.
+
+**The setup cell.** Open a new notebook in your Chapter 17 environment and run this cell first. Every later cell in the chapter assumes it ran, and the cells run in order, like a notebook:
+
+```python
+import numpy as np
+from scipy import stats
+import statsmodels.stats.api as sms
+
+rng = np.random.default_rng(73)
+```
+
+This cell prints nothing; if it runs without an error, you're ready.
+
+- `import numpy as np` loads NumPy (Chapter 18, section 18.1) for arrays and random numbers.
+- `from scipy import stats` loads SciPy's statistics module: the distributions, `ttest_ind`, `chisquare`, `chi2_contingency` and `pearsonr`. You installed SciPy in Chapter 21, section 21.5.
+- `import statsmodels.stats.api as sms` loads statsmodels' collection of tests and power tools under the short name `sms`: the proportion tests (`proportions_ztest`, `confint_proportions_2indep`) and the power calculators (`proportion_effectsize`, `NormalIndPower`) used in Q73-020 and Q73-036. You installed statsmodels in Chapter 22, section 22.2.
+- `rng = np.random.default_rng(73)` makes a random number generator with seed 73 (Chapter 21, section 21.5), so your "random" numbers match the ones printed here. Each simulation cell below starts the generator again with the same seed, so it prints the same answer even if you run it on its own.
 
 ---
 
 ## 73.1 Core probability concepts
 
-### Q73-001 · Explain Bayes' theorem, and why "95% accurate" doesn't mean what most people assume
+### Warm-ups, 73.1
+
+Roles: DA, DS, PA and BA for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-001 | Independent vs. mutually exclusive events? | Independent: one doesn't affect the other's probability / mutually exclusive: they can't both happen | **[+Edge cases]** two mutually exclusive events with nonzero probability are automatically *not* independent: one happening tells you the other definitely didn't | Fresher · 21.6 |
+| Q73-002 | What's the difference between P(A and B) and P(A or B)? | `P(A)×P(B)` if independent / `P(A)+P(B)-P(A and B)` always | **[+Edge cases]** forgetting to subtract the overlap in "or" is the single most common probability arithmetic mistake | Fresher · 21.6 |
+| Q73-003 | What's a conditional probability, in one sentence? | The probability of A, given that B is already known to be true: `P(A\|B)` | **[+Business]** almost every real business probability question is secretly conditional ("what's the chance this customer churns" really means "given what we know about them") | Fresher · 21.6 |
+| Q73-004 | Expected value of a fair six-sided die roll? | `(1+2+3+4+5+6)/6 = 3.5`: a value the die itself can never actually show | **[+Edge cases]** expected value doesn't have to be a possible outcome; it's a long-run average, not a prediction for one roll | Fresher · 21.5 |
+
+### Q73-005 · Explain Bayes' theorem, and why a "99% sensitive" test can still be wrong most of the time
+
+**Level:** Mid · **Roles:** DA, DS, PA
 
 **Remember it as:** *A rare disease and an imperfect test: even a good test is mostly wrong about rare things, because there are so many more healthy people to false-positive on than sick people to correctly catch.*
 
-**Answer in one line:** Bayes' theorem updates a prior probability using new evidence: `P(A|B) = P(B|A) × P(A) / P(B)`, and it matters most when the thing you're testing for is rare, because the base rate can overwhelm even a very accurate test.
+**Answer in one line:** Bayes' theorem updates a prior probability using new evidence: `P(A|B) = P(B|A) × P(A) / P(B)`, and it matters most when the thing you're testing for is rare, because the base rate can overwhelm even a very good test.
 
-**Verified, live:** a disease with 1% prevalence, a test that's 99% sensitive (catches 99% of true cases) and has a 5% false-positive rate:
+**By hand first, with 1,000 people.** A disease with 1% prevalence, a test that catches 99% of cases (its **sensitivity**) and wrongly flags 5% of healthy people (its **false-positive rate**). Out of 1,000 people, 10 are sick and 990 are healthy:
+
+| | Test positive | Test negative | Total |
+|---|---:|---:|---:|
+| **Sick** | 9.9 | 0.1 | 10 |
+| **Healthy** | 49.5 | 940.5 | 990 |
+| **Total** | 59.4 | 940.6 | 1,000 |
+
+Of the 59.4 people who test positive, only 9.9 are sick: 9.9 ÷ 59.4 = 16.7%. Counting people like this (**natural frequencies**) is the easiest way to explain the answer aloud. The same in Python:
 
 ```python
-p_disease = 0.01
-p_pos_given_disease = 0.99
-p_pos_given_no_disease = 0.05
+p_disease = 0.01                 # prevalence: the base rate
+p_pos_given_disease = 0.99       # sensitivity
+p_pos_given_no_disease = 0.05    # false-positive rate
 
 p_positive = p_pos_given_disease * p_disease + p_pos_given_no_disease * (1 - p_disease)
 p_disease_given_positive = (p_pos_given_disease * p_disease) / p_positive
+print(f"P(positive) = {p_positive:.4f}")
+print(f"P(disease | positive) = {p_disease_given_positive:.4f}")
 ```
+
 ```
 P(positive) = 0.0594
 P(disease | positive) = 0.1667
 ```
 
-Someone testing positive on a "99% accurate" test actually has the disease only **16.7%** of the time.
+- `p_positive` is the **Total** row of the table as a share: the sick who test positive plus the healthy who test positive (total probability, Chapter 21, section 21.7).
+- `p_disease_given_positive` is Bayes' rule: the sick positives divided by all positives.
+
+Someone testing positive on a test that catches 99% of cases and wrongly flags 5% of healthy people has the disease only **16.7%** of the time.
 
 | Tier | What to say |
 |---|---|
 | Passes | States the formula correctly, can't apply it to a concrete number |
 | Strong | Works through the disease example above, arriving at 16.7%, and explains *why* it's so much lower than 99%: the 5% false-positive rate applies to the 99% of people who are healthy, a much bigger group than the 1% who are sick |
-| Extra points | + **[Validate]** the real computed numbers above, not a remembered rule of thumb + **[Business]** this exact reasoning is why a fraud-detection or churn-flagging model's "95% accurate" claim needs the base rate before it means anything, exactly Chapter 39's evaluation discipline, here traced back to its probability root |
+| Extra points | **[+Validate]** the 1,000-person table and the computed numbers agree<br>**[+Edge cases]** calling this test "99% accurate" is itself the loose word: its accuracy (the share of everyone it gets right) is 0.99 × 0.01 + 0.95 × 0.99 = 95.0%, and neither number is the chance that a positive is sick<br>**[+Business]** this is why a fraud or churn model's headline accuracy needs the base rate before it means anything: it's precision (Chapter 39, section 39.1), traced back to its probability root |
 
 **Likely follow-ups:** How would a higher-prevalence disease change the answer? What test characteristic matters more for a rare event, sensitivity or specificity?
-**Red flag:** stating "99% accurate test → 99% chance of having the disease" as if they were the same number.
-**Learn it in:** Chapter 21 or nearby (statistics foundations; exact number to confirm).
+**Red flag:** treating sensitivity as P(disease | positive): "it's 99% sensitive, so a positive means 99% likely".
+**Learn it in:** Chapter 21, section 21.7 (Bayes' rule, "A worked Riverstone example").
 
-### Q73-002 · Walk through the Monty Hall problem, and prove your answer
+### Q73-006 · Walk through the Monty Hall problem, and prove your answer
+
+**Level:** Mid · **Roles:** DA, DS
 
 **Remember it as:** *The host's choice isn't random: he always avoids the car. That single fact is why switching wins twice as often.*
 
 **Answer in one line:** Switching doors wins the car **2/3** of the time; staying wins only **1/3**: because the host's forced choice (he always opens a goat door, never the car) concentrates the other 2/3 probability onto the one remaining unopened door.
 
-**Verified, live, by simulation (100,000 trials):**
+**By hand first.** Chapter 21, section 21.7 lists the three places the car can be, in a three-row table: staying wins in one row, switching in two. In an interview, draw that table first. Then offer a simulation as the check, 100,000 games. Before you run it, predict the two numbers it will print:
+
 ```python
 rng = np.random.default_rng(73)
 wins_switch = wins_stay = 0
@@ -59,64 +123,78 @@ for _ in range(100_000):
     car = rng.integers(0, 3)
     choice = rng.integers(0, 3)
     remaining = [d for d in range(3) if d != choice and d != car]
-    host_opens = rng.choice(remaining) if len(remaining) > 1 else remaining[0]
+    host_opens = rng.choice(remaining)
     switch_choice = [d for d in range(3) if d != choice and d != host_opens][0]
     wins_stay += (choice == car)
     wins_switch += (switch_choice == car)
+print(f"stay wins:   {wins_stay / 100_000:.3f}")
+print(f"switch wins: {wins_switch / 100_000:.3f}")
 ```
+
 ```
 stay wins:   0.332
 switch wins: 0.668
 ```
 
+- `rng = np.random.default_rng(73)` starts the generator again with seed 73, so you get the numbers printed here. `wins_switch = wins_stay = 0` sets both counters to 0 in one line.
+- `100_000` is 100000: Python ignores the underscore, which is there to make the number easy to read.
+- `rng.integers(0, 3)` draws a whole number from 0 up to, but not including, 3: the three doors, numbered 0, 1 and 2 (Chapter 21, section 21.5 rolled a die the same way).
+- `remaining` is a list comprehension with two conditions (Chapter 17, section 17.6): the doors that are neither your pick nor the car, which the host may open. There are two when you picked the car, one otherwise.
+- `rng.choice(remaining)` picks one of those doors at random.
+- `switch_choice` is the one door that is neither your pick nor the opened one; `[0]` takes it out of its one-item list.
+- `wins_stay += (choice == car)` adds the comparison to the counter. When Python adds `True` or `False` to a number it counts them as 1 and 0, so the counter goes up only on a win.
+
 | Tier | What to say |
 |---|---|
 | Passes | States "switching is better" from memory, can't explain why |
 | Strong | The reasoning: your original pick has a 1/3 chance of being right; the other two doors together have a 2/3 chance; once the host removes one (always a goat, never the car), that whole 2/3 collapses onto the single remaining door |
-| Extra points | + **[Validate]** a real 100,000-trial simulation landing almost exactly on the theoretical 1/3 and 2/3 + **[Depth]** the key, often-missed detail: this only works because the host's action is *not* random: he has certain knowledge and always avoids the car; if he opened a random unopened door and it happened to reveal a goat, switching would no longer help |
+| Extra points | **[+Validate]** a 100,000-game simulation lands almost exactly on the theoretical 1/3 and 2/3<br>**[+Edge cases]** the key, often-missed detail: this only works because the host's action is *not* random: he knows where the car is and always avoids it; if he opened a random unopened door and it happened to reveal a goat, switching would no longer help |
 
 **Likely follow-ups:** What if there were 100 doors instead of 3? What changes if the host sometimes opens the car by accident?
 **Red flag:** claiming it's 50/50 after one door is removed, the single most common wrong answer to this exact question.
-**Learn it in:** Chapter 21 or nearby.
+**Learn it in:** Chapter 21, section 21.7 ("Two famous puzzles").
 
-### Q73-003 · The birthday problem: how many people need to be in a room before it's more likely than not that two share a birthday?
+### Q73-007 · The birthday problem: how many people need to be in a room before it's more likely than not that two share a birthday?
+
+**Level:** Mid · **Roles:** DA, DS
 
 **Remember it as:** *It's not about matching one specific date: it's about how many *pairs* of people exist, and pairs grow far faster than people do.*
 
-**Answer in one line:** Just **23** people, computed as 1 minus the probability that all birthdays are distinct.
+**Answer in one line:** Just **23** people, computed as 1 minus the probability that all birthdays are different (the complement rule).
 
-**Verified, live:**
+**By hand first.** Chapter 21, section 21.7 builds the answer step by step: the second person misses the first's birthday with probability 364/365, the third misses both with 363/365, and so on, and 1 minus the product is the chance of a match. Here the same loop becomes a function, so you can see the whole curve:
+
 ```python
 def birthday_prob(n):
     p_no_match = 1.0
     for i in range(n):
         p_no_match *= (365 - i) / 365
     return 1 - p_no_match
+
+for n in (22, 23, 50, 70):
+    print(f"{n} people: {birthday_prob(n):.4f}")
 ```
+
 ```
+22 people: 0.4757
 23 people: 0.5073
 50 people: 0.9704
 70 people: 0.9992
 ```
 
+- `birthday_prob(n)` starts with `p_no_match = 1.0` and multiplies in one factor per person. `p_no_match *= x` is short for `p_no_match = p_no_match * x`, as `+=` is for adding (Chapter 17, section 17.6).
+- `return 1 - p_no_match` is the complement rule (Chapter 21, section 21.6).
+- The loop prints the curve: just under a half at 22 people, just over at 23.
+
 | Tier | What to say |
 |---|---|
-| Passes | Guesses a much larger number (180, "half of 365" is the most common wrong intuition) |
-| Strong | Correctly says 23, and explains the pairs insight: with 23 people there are `23 × 22 / 2 = 253` distinct pairs, each a chance for a shared birthday, and 253 chances is a lot even at low odds per pair |
-| Extra points | + **[Validate]** the real computed curve above: from 50% at 23 people to over 99.9% at 70 + **[Business]** this exact "how many pairwise comparisons exist" reasoning is why testing 20 unrelated metrics in an A/B test (§73.7) racks up false positives fast: many pairs, many chances, even at low odds each |
+| Passes | Says 23, from memory, can't explain why |
+| Strong | Explains the complement (1 minus the chance all birthdays differ) and the pairs insight: with 23 people there are `23 × 22 / 2 = 253` distinct pairs, each a chance for a shared birthday, and 253 chances is a lot even at low odds per pair |
+| Extra points | **[+Validate]** the computed curve above: from under 50% at 22 people to over 99.9% at 70<br>**[+Business]** the same "count the chances, not the people" logic is behind multiple comparisons: 20 metrics at α = 0.05 give 20 chances of a false alarm, 64% overall (Q73-028) |
 
-**Likely follow-ups:** What's the exact formula, not just the simulation/loop? How does the answer change for a 50% chance of *three* people sharing a birthday?
+**Likely follow-ups:** What's the exact formula, not just the loop? How does the answer change for a 50% chance of *three* people sharing a birthday?
 **Red flag:** answering close to 183 (half of 365), confusing "matching one specific date" with "any two people matching each other."
-**Learn it in:** Chapter 21 or nearby.
-
-### Rapid-fire, 73.1
-
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-004 | Independent vs. mutually exclusive events? | Independent: one doesn't affect the other's probability / mutually exclusive: they can't both happen | **[Edge cases]** two mutually exclusive events with nonzero probability are automatically *not* independent: one happening tells you the other definitely didn't |
-| Q73-005 | What's the difference between P(A and B) and P(A or B)? | `P(A)×P(B)` if independent / `P(A)+P(B)-P(A and B)` always | **[Edge cases]** forgetting to subtract the overlap in "or" is the single most common probability arithmetic mistake |
-| Q73-006 | What's a conditional probability, in one sentence? | The probability of A, given that B is already known to be true: `P(A\|B)` | **[Business]** almost every real business probability question is secretly conditional ("what's the chance this customer churns" really means "given what we know about them") |
-| Q73-007 | Expected value of a fair six-sided die roll? | `(1+2+3+4+5+6)/6 = 3.5`: a value the die itself can never actually show | **[Edge cases]** expected value doesn't have to be a possible outcome; it's a long-run average, not a prediction for one roll |
+**Learn it in:** Chapter 21, section 21.7 ("Two famous puzzles"); the complement rule is section 21.6.
 
 ---
 
@@ -124,21 +202,25 @@ def birthday_prob(n):
 
 ### Q73-008 · When would you use a Binomial distribution vs. a Poisson distribution?
 
+**Level:** Fresher · **Roles:** DA, DS
+
 **Remember it as:** *Binomial counts successes out of a known, fixed number of tries. Poisson counts events with no fixed "number of tries" at all, just a rate over time or space.*
 
-**Answer in one line:** Binomial models the count of successes in a fixed number of independent yes/no trials (10 coin flips, 100 leads contacted); Poisson models the count of events in a fixed interval when there's no natural "number of trials," only an average rate (customer support tickets per hour, defects per meter of cable).
+**Answer in one line:** Binomial models the count of successes in a fixed number of independent yes/no trials (how many of 40 deliveries are late, how many of 100 leads convert); Poisson models the count of events in a fixed interval when there's no natural "number of trials," only an average rate (complaints per week, support tickets per hour, defects per metre of cable).
 
 | Tier | What to say |
 |---|---|
 | Passes | "Binomial is for two outcomes, Poisson is for counting things" |
 | Strong | The trials-vs-rate distinction above, with a concrete example of each |
-| Extra points | + **[Depth]** Poisson is actually the limiting case of Binomial as the number of trials grows very large and the per-trial probability gets very small, while their product (the expected count) stays fixed: the two aren't unrelated, one is a special-case simplification of the other + **[Business]** a support team staffing model, "how many tickets will arrive in the next hour," is a textbook Poisson use case; "what fraction of these 500 leads will convert" is Binomial |
+| Extra points | **[+Edge cases]** a step beyond Chapter 21: Poisson is the limiting case of Binomial as the number of trials grows very large and the per-trial probability gets very small, while their product (the expected count) stays fixed; the two aren't unrelated<br>**[+Business]** Riverstone's 9.4 complaints a week (Chapter 21) is a textbook Poisson count, and so is "how many tickets will arrive in the next hour" for staffing; "what fraction of these 500 leads will convert" is Binomial |
 
 **Likely follow-ups:** What does the Poisson distribution's single parameter (λ) represent? When does Binomial start to look like a Normal distribution?
 **Red flag:** treating the two as interchangeable, or not knowing which applies to a described scenario.
-**Learn it in:** Chapter 21 or nearby.
+**Learn it in:** Chapter 21, section 21.5 (Binomial, Poisson).
 
 ### Q73-009 · State the Central Limit Theorem in plain English, and say why it matters even if your underlying data isn't normally distributed
+
+**Level:** Fresher · **Roles:** DA, DS, PA
 
 **Remember it as:** *It doesn't matter what shape the data is. Average enough of it together, and the average's own distribution becomes bell-shaped anyway.*
 
@@ -148,26 +230,30 @@ def birthday_prob(n):
 |---|---|
 | Passes | "Averages tend to be normal" (true, no mechanism, no "why it matters") |
 | Strong | + explicitly separates the individual data points (which can be any shape) from the *sample mean's* distribution (which becomes Normal), and connects this to why t-tests and z-tests are valid on skewed real-world data as long as the sample is reasonably large |
-| Extra points | + **[Business]** this is exactly why Chapter 71's real revenue data (heavily right-skewed, a few huge orders) can still be safely compared between two groups with a t-test on the *means*, even though the raw order values themselves look nothing like a bell curve + **[Edge cases]** "large enough" sample size depends on how skewed the underlying data is; a very heavy-tailed distribution needs a bigger sample before the CLT's approximation is trustworthy |
+| Extra points | **[+Business]** this is why Riverstone's order values (right-skewed, Chapter 21, section 21.4) can still be compared between two groups with a t-test on the means (Chapter 30, section 30.3), even though the raw order values look nothing like a bell curve<br>**[+Edge cases]** "large enough" depends on how skewed the underlying data is; a very heavy-tailed distribution needs a bigger sample before the CLT's approximation is trustworthy |
 
 **Likely follow-ups:** How large does a sample need to be for CLT to "kick in"? What happens to inference if you ignore CLT and the sample is too small?
 **Red flag:** claiming the underlying *data* becomes normal, rather than the sample *mean's* distribution.
-**Learn it in:** Chapter 21 or nearby.
+**Learn it in:** Chapter 21, section 21.8 (sampling and the central limit theorem); skew is section 21.4.
 
 ### Rapid-fire, 73.2
 
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-010 | What does a distribution's variance measure? | The average squared distance of values from the mean: how spread out the data is | **[Edge cases]** squaring means variance is in squared units (₹² for revenue); standard deviation (variance's square root) is back in the original, interpretable units |
-| Q73-011 | Normal vs. log-normal distribution: when does each apply? | Symmetric, bell-shaped data / data that's the *exponential* of something normal, common for values that can't go negative and are right-skewed (revenue, wait times) | **[Business]** most real business "amount" data (order value, salary, session length) is closer to log-normal than Normal: check before assuming symmetry |
-| Q73-012 | What's a uniform distribution, and give one real business example? | Every outcome in a range is equally likely | **[Business]** the position of a random number generator's seed, or a truly random A/B assignment before any group differences emerge |
-| Q73-013 | What does "long-tailed" or "heavy-tailed" mean? | Extreme values occur more often than a Normal distribution would predict | **[Edge cases]** heavy-tailed data can make sample means unstable and confidence intervals misleadingly narrow if treated as Normal without checking |
+Roles: DA and DS for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-010 | What does a distribution's variance measure? | The average squared distance of values from the mean: how spread out the data is | **[+Edge cases]** squaring means variance is in squared units (₹² for revenue); standard deviation (variance's square root) is back in the original, interpretable units | Fresher · 21.2 |
+| Q73-011 | Normal vs. log-normal distribution: when does each apply? | Normal: symmetric, bell-shaped data / log-normal: data whose *logarithm* is normal, common for values that can't go negative and are right-skewed (revenue, wait times) | **[+Business]** most real business "amount" data (order value, salary, session length) is closer to log-normal than Normal: check before assuming symmetry | Mid · beyond the book (skew 21.4; logs 31.0) |
+| Q73-012 | What's a uniform distribution, and give one real business example? | Every outcome in a range is equally likely | **[+Business]** a well-built A/B assignment: each user's hash bucket 0–99 is equally likely, which is what lets you check a 50/50 split (Q73-026); also `rng.uniform(1, 10, 200)` in Q73-032, where every account size from 1 to 10 is equally likely | Fresher · 21.5 |
+| Q73-013 | What does "long-tailed" or "heavy-tailed" mean? | Extreme values occur more often than a Normal distribution would predict | **[+Edge cases]** heavy-tailed data can make sample means unstable and confidence intervals misleadingly narrow if treated as Normal without checking | Mid · 21.4 |
 
 ---
 
 ## 73.3 Hypothesis testing fundamentals
 
 ### Q73-014 · Explain a p-value to a non-technical stakeholder, without saying "probability that the null hypothesis is true"
+
+**Level:** Fresher · **Roles:** DA, DS, PA, BA
 
 **Remember it as:** *A p-value answers "how surprising is this result, if nothing real were going on?" It never answers "how likely is it that something real is going on?"*
 
@@ -177,19 +263,21 @@ def birthday_prob(n):
 |---|---|
 | Passes | "It tells you if the result is significant" (technically true, doesn't explain the mechanism, invites the classic misreading) |
 | Strong | The correct definition above, explicitly distinguishing it from "probability the null hypothesis is true," which is the single most common misinterpretation |
-| Extra points | + **[Business]** a non-technical framing that avoids the trap: "if our change actually did nothing, we'd see a result this extreme only 3% of the time by chance, which is why we're treating it as a real effect" + **[Edge cases]** a p-value says nothing about the *size* of an effect, only its surprise value under the null: a tiny, practically meaningless effect can still have a very small p-value with enough data |
+| Extra points | **[+Business]** a non-technical framing that avoids the trap: "if our change actually did nothing, we'd see a result this extreme only 3% of the time by chance, which is why we're treating it as a real effect"<br>**[+Edge cases]** a p-value says nothing about the *size* of an effect, only its surprise value under the null: a tiny, practically meaningless effect can still have a very small p-value with enough data |
 
 **Likely follow-ups:** What's the difference between statistical significance and practical significance? Why is p < 0.05 the conventional threshold, and is it always the right one?
 **Red flag:** defining a p-value as "the probability the null hypothesis is true" or "the probability the result is due to chance," both common, both wrong.
-**Learn it in:** Chapter 21 or nearby.
+**Learn it in:** Chapter 22, section 22.2 ("What a p-value is not"); Chapter 30, section 30.3 ("What the p-value does not say"); practical significance is Chapter 22, section 22.8.
 
 ### Q73-015 · Demonstrate that underpowered tests miss real effects far more often than people expect
+
+**Level:** Mid · **Roles:** DA, DS, PA
 
 **Remember it as:** *A small sample doesn't just make you less sure: it makes you actively likely to miss a real, meaningful effect entirely.*
 
 **Answer in one line:** With a real effect but too small a sample, a test's **Type II error rate** (missing a real effect) can be dramatically higher than most people's intuition suggests, and it falls sharply as sample size grows.
 
-**Verified, live:** a true underlying difference of 0.3 standard deviations, tested with a standard t-test, 2,000 simulated experiments at each sample size:
+**Verified, live:** a true underlying difference of 0.3 standard deviations, tested with a t-test, 2,000 simulated experiments at each sample size:
 
 ```python
 rng = np.random.default_rng(73)
@@ -201,33 +289,40 @@ for n in [30, 200]:
         t, p = stats.ttest_ind(a, b)
         if p >= 0.05:
             misses += 1
-    print(n, misses / 2000)
+    print(f"n={n} per group: Type II error rate = {misses / 2000:.3f}")
 ```
+
 ```
-n=30 per group:  Type II error rate = 0.800
+n=30 per group: Type II error rate = 0.800
 n=200 per group: Type II error rate = 0.138
 ```
 
-With only 30 people per group, a real effect is **missed 80% of the time**: the test says "no significant difference" four times out of five, even though a real difference genuinely exists. At 200 per group, that drops to 13.8%.
+- `rng.normal(0, 1, n)` draws `n` values from a normal distribution with mean 0 and standard deviation 1: group A. Group B has mean 0.3, so a real difference of 0.3 standard deviations always exists.
+- `stats.ttest_ind(a, b)` is the two-sample t-test (Chapter 22, section 22.2; Chapter 30, section 30.3). It returns the t statistic and the p-value, which `t, p = ...` unpacks. Without `equal_var=False` it's the ordinary t-test, which is fine here because both groups have the same spread.
+- `if p >= 0.05: misses += 1` counts the experiments that fail to find the difference: each one is a Type II error.
+
+With only 30 people per group, a real effect is **missed 80% of the time**: the test says "no significant difference" four times out of five, even though a real difference exists. At 200 per group, that drops to 13.8%.
 
 | Tier | What to say |
 |---|---|
 | Passes | "Bigger samples are more reliable" (true, no sense of *how much* more reliable) |
 | Strong | Explains Type II error and power correctly, and that underpowered tests systematically under-detect real effects, not just "add noise" |
-| Extra points | + **[Validate]** the dramatic real numbers above: 80% miss rate collapsing to 14% from sample size alone, nothing else changed + **[Business]** a team that runs an underpowered A/B test and concludes "no effect" when there actually was one has made a real, costly, invisible mistake, not a safe, conservative call: this is exactly why sample-size planning (§73.5) happens *before* a test runs, not after |
+| Extra points | **[+Validate]** the simulated numbers above: an 80% miss rate falling to 14% from sample size alone, nothing else changed<br>**[+Business]** a team that runs an underpowered A/B test and concludes "no effect" when there actually was one has made a real, costly, invisible mistake, not a safe, conservative call: this is exactly why sample-size planning (section 73.4, Q73-020) happens *before* a test runs, not after |
 
 **Likely follow-ups:** What's the relationship between power, effect size, sample size, and significance level? How do you choose a target power before running a test?
 **Red flag:** treating "not statistically significant" as proof "there's no effect," rather than "we may not have had enough data to detect one."
-**Learn it in:** Chapter 21/30 or nearby (statistics and experimentation).
+**Learn it in:** Chapter 22, section 22.3 (Type II error and power); Chapter 30, section 30.7 (power and sample size).
 
 ### Rapid-fire, 73.3
 
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-016 | Type I vs. Type II error? | Rejecting a true null (a false alarm) / failing to reject a false null (a miss) | **[Business]** which error costs more depends on context: a fraud check favors avoiding Type II (missing real fraud); a drug side-effect check favors avoiding Type I (a false alarm halting a good drug) |
-| Q73-017 | What's statistical power? | The probability of correctly detecting a real effect when one exists, i.e. `1 - Type II error rate` | **[Business]** 80% power is the conventional target, meaning you accept a 1-in-5 chance of missing a real effect even when your test is well-designed |
-| Q73-018 | t-test vs. z-test, when does it matter which you use? | t-test for an unknown population standard deviation (the usual real-world case, estimated from the sample); z-test when the true population standard deviation is actually known | **[Edge cases]** with a large sample, the t-distribution converges to the normal distribution anyway, so the practical difference shrinks as n grows |
-| Q73-019 | What does a 95% confidence interval actually mean? | If you repeated the sampling process many times, 95% of the resulting intervals would contain the true population value | **[Edge cases]** it does *not* mean "95% probability the true value is in this specific interval": the true value either is or isn't in any single interval; the 95% describes the *procedure's* long-run reliability |
+Roles: DA, DS and PA for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-016 | Type I vs. Type II error? | Rejecting a true null (a false alarm) / failing to reject a false null (a miss) | **[+Business]** which error costs more depends on context: a fraud check favours avoiding Type II (missing real fraud); an automatic account-freeze rule favours avoiding Type I (freezing an honest customer's account) | Fresher · 22.3 |
+| Q73-017 | What's statistical power? | The probability of correctly detecting a real effect when one exists, i.e. `1 - Type II error rate` | **[+Business]** 80% power is the conventional target, meaning you accept a 1-in-5 chance of missing a real effect even when your test is well-designed | Fresher · 22.3, 30.7 |
+| Q73-018 | t-test vs. z-test, when does it matter which you use? | t-test when the population standard deviation is unknown and estimated from the sample (the usual real-world case); z-test when it's known, or for proportions with large samples | **[+Edge cases]** with a large sample, the t-distribution converges to the normal distribution anyway, so the practical difference shrinks as n grows | Mid · 22.1, 22.2 |
+| Q73-019 | What does a 95% confidence interval actually mean? | If you repeated the sampling process many times, 95% of the resulting intervals would contain the true population value | **[+Edge cases]** it does *not* mean "95% probability the true value is in this specific interval": the true value either is or isn't in any single interval; the 95% describes the *procedure's* long-run reliability | Fresher · 22.1 |
 
 ---
 
@@ -235,32 +330,45 @@ With only 30 people per group, a real effect is **missed 80% of the time**: the 
 
 ### Q73-020 · Calculate the required sample size for an A/B test, before running it
 
+**Level:** Mid · **Roles:** DA, DS, PA
+
 **Remember it as:** *You need four numbers before you can answer "how many": baseline rate, the smallest change worth detecting, your significance level, and your desired power.*
 
 **Answer in one line:** Sample size depends on the baseline conversion rate, the **minimum detectable effect (MDE)** you actually care about, the significance level (usually 0.05), and the desired power (usually 0.80): smaller effects and higher confidence both require larger samples.
 
-**Verified, live:** baseline conversion 9.6%, wanting to detect a rise to 10.9% (a realistic MDE), at 80% power:
+**Verified, live:** baseline conversion 9.6%, and the business says the smallest lift worth acting on is 1.5 percentage points (to 11.1%), at 80% power and α = 0.05:
 
 ```python
-import statsmodels.stats.api as sms
-effect_size = sms.proportion_effectsize(0.096, 0.109)
+effect_size = sms.proportion_effectsize(0.111, 0.096)
 n_required = sms.NormalIndPower().solve_power(effect_size, power=0.8, alpha=0.05, ratio=1)
+print(f"Cohen's h = {effect_size:.4f}")
+print(f"Required sample size per group: {np.ceil(n_required):,.0f}")
 ```
+
 ```
-Required sample size per group: 8,537
+Cohen's h = 0.0493
+Required sample size per group: 6,466
 ```
+
+- `sms.proportion_effectsize(0.111, 0.096)` turns the two rates into **Cohen's h**, an effect size for proportions built on an arcsine scale (Chapter 30, section 30.7). The rate you hope for goes first, the baseline second, as in Chapter 30.
+- `sms.NormalIndPower()` is a power calculator for two independent groups. `.solve_power(...)` solves for whichever number you leave out: here the sample size, given `power=0.8`, `alpha=0.05`, and `ratio=1` (the second group is the same size as the first).
+- `np.ceil` rounds **up**, because 6,465.6 people would leave the test slightly short of its power; `:,.0f` prints a whole number with a thousands comma.
+
+Chapter 22's hand formula, `sample_size_for_proportion(0.096, 1.5)` from section 22.3, gives 6,473 for the same inputs. The small difference is the effect-size scale (statsmodels works on Cohen's h, an arcsine transform). Either answer is fine in an interview; say which one you used.
 
 | Tier | What to say |
 |---|---|
 | Passes | "You need a big enough sample" with no method for computing it |
 | Strong | Names the four required inputs, and correctly identifies that MDE is a *business* decision (how small a change is still worth caring about), not a purely statistical one |
-| Extra points | + **[Validate]** the real computed number above, 8,537 per group, not a guessed round number + **[Business]** this number directly answers "how long will this test need to run," by dividing 8,537 by expected daily traffic per arm: the single most common follow-up question from a stakeholder, and one this calculation answers directly |
+| Extra points | **[+Validate]** the computed number above, 6,466 per group, checked against Chapter 22's formula, not a guessed round number<br>**[+Business]** this number directly answers "how long will this test need to run": divide 6,466 by the expected daily traffic per arm. It's the most common follow-up question from a stakeholder, and this calculation answers it |
 
 **Likely follow-ups:** How does the required sample size change if the MDE gets smaller (harder to detect)? What if traffic is limited, how would you trade off test duration against detectable effect size?
 **Red flag:** picking a sample size arbitrarily ("let's run it for two weeks") with no power calculation behind it.
-**Learn it in:** Chapter 30.
+**Learn it in:** Chapter 22, section 22.3 (designing an A/B test, the sample-size formula); Chapter 30, section 30.7 (power and sample size, Cohen's h).
 
 ### Q73-021 · What's a Minimum Detectable Effect (MDE), and who should decide it?
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
 
 **Remember it as:** *MDE isn't a statistics question. It's "how small a change would we actually act on?": a business question dressed in statistical clothing.*
 
@@ -270,19 +378,21 @@ Required sample size per group: 8,537
 |---|---|
 | Passes | "It's the effect size you're testing for" (correct, misses who should set it and why) |
 | Strong | + explicitly: the MDE should come from the business ("would we actually change anything for a 0.5 percentage point lift? For 2 points?"), not be back-calculated from whatever sample size happens to be convenient |
-| Extra points | + **[Business]** setting the MDE by working backward from "what sample size can we get in two weeks" instead of forward from "what change would we actually act on" is a common, subtle mistake: it optimizes for a schedule, not for a decision worth making + **[Edge cases]** an MDE set too small can make a test run for months chasing statistical significance on an effect too tiny to matter commercially even if proven real |
+| Extra points | **[+Business]** setting the MDE by working backward from "what sample size can we get in two weeks" instead of forward from "what change would we actually act on" is a common, subtle mistake: it optimizes for a schedule, not for a decision worth making<br>**[+Edge cases]** an MDE set too small can make a test run for months chasing statistical significance on an effect too tiny to matter commercially even if proven real |
 
 **Likely follow-ups:** How would you choose an MDE with no historical baseline data at all? What happens if the observed effect is smaller than the MDE but still "significant"?
 **Red flag:** treating MDE as a purely mathematical input with no connection to what the business would actually do differently.
-**Learn it in:** Chapter 30.
+**Learn it in:** Chapter 22, section 22.3; Chapter 30, sections 30.7 and 30.8 (designing an experiment).
 
 ### Rapid-fire, 73.4
 
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-022 | Why randomize which users see which variant? | Randomization is what makes the two groups comparable on everything else (known and unknown factors alike), so any observed difference can be attributed to the treatment | **[Depth]** this is the entire logic of a controlled experiment versus an observational comparison (§73.8): randomization is what earns the right to say "caused," not just "correlated" |
-| Q73-023 | One-tailed vs. two-tailed test, when would you use each? | One-tailed tests only for an effect in one specific direction; two-tailed tests for either direction | **[Edge cases]** using a one-tailed test to make a marginal result "significant" after seeing the data is a form of p-hacking; the choice should be made before looking at results, based on whether a decrease genuinely wouldn't matter |
-| Q73-024 | What's a holdout group, and why keep one even after shipping a winning test? | A group deliberately excluded from a rollout, to measure the change's real ongoing impact against a true baseline | **[Business]** without a holdout, a genuinely working feature's impact becomes impossible to separate from seasonal trends or other changes happening at the same time |
+Roles: DA, DS and PA for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-022 | Why randomize which users see which variant? | Randomization is what makes the two groups comparable on everything else (known and unknown factors alike), so any observed difference can be attributed to the treatment | **[+Edge cases]** this is the entire logic of a controlled experiment versus an observational comparison (section 73.6): randomization is what earns the right to say "caused," not just "correlated" | Fresher · 22.3, 30.8 |
+| Q73-023 | One-tailed vs. two-tailed test, when would you use each? | Two-tailed for a change in either direction (the book's default); one-tailed only when chosen before seeing the data, and only when a change in the other direction would lead to the same decision | **[+Edge cases]** switching to a one-tailed test after seeing the data, to make a marginal result "significant," is a form of p-hacking | Mid · 22.2 |
+| Q73-024 | What's a holdout group, and why keep one even after shipping a winning test? | Beyond the book: a small group (say 5% of users) deliberately kept on the old version after launch, to measure the change's lasting effect against a true baseline | **[+Business]** without a holdout, a genuinely working feature's impact becomes impossible to separate from seasonal trends or other changes happening at the same time | Mid · beyond the book (design: 30.8) |
 
 ---
 
@@ -290,97 +400,148 @@ Required sample size per group: 8,537
 
 ### Q73-025 · A dashboard shows a "statistically significant" result after checking it daily throughout the test. What's wrong, and prove it?
 
+**Level:** Mid · **Roles:** DA, DS, PA
+
 **Remember it as:** *Checking significance every day and stopping the moment it looks good is like flipping a coin until it lands on heads, then calling the coin biased.*
 
 **Answer in one line:** Checking for significance repeatedly and stopping as soon as p < 0.05 appears (**"peeking"**) inflates the true false-positive rate far above the nominal 5%, because each additional look is another chance for random noise to cross the threshold.
 
-**Verified, live:** 2,000 simulated experiments, **no real effect at all** (both groups drawn from the identical distribution), checked every 20 new observations for 10 checks:
+**Verified, live:** 2,000 simulated experiments with **no real effect at all** (both groups drawn from the identical distribution). Data arrives 20 per group at a time, and a t-test runs at every look from 40 to 200 per group: 9 looks in all:
 
 ```python
+rng = np.random.default_rng(73)
 false_positives = 0
 for _ in range(2000):
     data_a, data_b = [], []
     found_sig = False
     for _ in range(10):
-        data_a.extend(rng.normal(0, 1, 20)); data_b.extend(rng.normal(0, 1, 20))
+        data_a.extend(rng.normal(0, 1, 20))
+        data_b.extend(rng.normal(0, 1, 20))
         if len(data_a) >= 40:
             t, p = stats.ttest_ind(data_a, data_b)
             if p < 0.05:
-                found_sig = True; break
+                found_sig = True
+                break
     false_positives += found_sig
-```
-```
-false positive rate with repeated peeking: 0.163   (nominal alpha was 0.05)
+print(f"false positive rate with repeated peeking: {false_positives / 2000:.3f}")
 ```
 
-With **no real effect whatsoever**, repeatedly peeking and stopping at the first significant-looking result gives a false "win" **more than 3 times as often** as the stated 5% significance level promises.
+```
+false positive rate with repeated peeking: 0.163
+```
+
+- `data_a.extend(...)` adds 20 new values to the list: one more batch of visitors per group. Ten batches take each group to 200.
+- `if len(data_a) >= 40` skips a test on the very first batch, so the looks come at 40, 60, …, 200 per group: 9 of them.
+- `found_sig = True` and `break` stop the experiment at the first p below 0.05: that's the peeking.
+- `false_positives += found_sig` counts `True` as 1, as in Q73-006.
+
+With **no real effect whatsoever**, peeking and stopping at the first significant-looking result gives a false "win" **more than 3 times as often** as the stated 5% significance level promises. The exact rate moves a little with the seed (between 16% and 18% across ten seeds), and it grows with the number of looks: Chapter 22, section 22.4 found 14.3% with five looks and 23.9% with twenty.
 
 | Tier | What to say |
 |---|---|
 | Passes | "You shouldn't check too often" (correct instinct, no quantified reason) |
 | Strong | Explains the mechanism: each check is another roll of the dice against a 5% threshold, and repeated rolls compound the chance of a false positive somewhere along the way |
-| Extra points | + **[Validate]** the real, striking simulated number above: 16.3% actual false-positive rate against a claimed 5%, from peeking alone, on data with zero true effect + **[Business]** the fix isn't "never check early," it's using a sequential testing method (group sequential design, or Bayesian methods designed for continuous monitoring) that's built to allow early looks without inflating the error rate: or committing to a single, pre-planned sample size and analysis date and holding to it |
+| Extra points | **[+Validate]** the simulated number above: a false-positive rate of about 16% against a claimed 5%, from peeking alone, on data with zero true effect<br>**[+Business]** the fix isn't "never check early," it's using a sequential testing method (group sequential design, or Bayesian methods designed for continuous monitoring) that's built to allow early looks without inflating the error rate: or committing to a single, pre-planned sample size and analysis date and holding to it |
 
 **Likely follow-ups:** What's a sequential testing correction, in concept? How would you explain this risk to a PM who wants a "quick check" on day 2 of a two-week test?
 **Red flag:** not recognizing peeking as a real statistical problem, treating it as a minor process nitpick.
-**Learn it in:** Chapter 30.
+**Learn it in:** Chapter 22, section 22.4 ("Peeking"); Chapter 30, section 30.10 ("Peeking").
 
 ### Q73-026 · An A/B test's traffic split is supposed to be 50/50, but you're seeing 5,200 vs. 4,800. Is that a problem?
+
+**Level:** Mid · **Roles:** DA, DS, PA
 
 **Remember it as:** *A Sample Ratio Mismatch is a smoke alarm for the whole experiment, not a statistics problem to explain away.*
 
 **Answer in one line:** Run a chi-square goodness-of-fit test against the expected 50/50 split; if it's significant, you have a **Sample Ratio Mismatch (SRM)**, which almost always means something is broken in how users were assigned to groups, not real random variation, and the experiment's other results shouldn't be trusted until it's found and fixed.
 
 **Verified, live, two scenarios:**
+
 ```python
-chi2, p = stats.chisquare([5200, 4800], [5000, 5000])
+for observed in ([5200, 4800], [5100, 4900]):
+    chi2, p = stats.chisquare(observed, f_exp=[5000, 5000])
+    print(f"observed {observed}: chi2 = {chi2:.3f}, p = {p:.4f}")
 ```
+
 ```
-observed [5200, 4800]: chi2 = 16.000, p = 0.0001   -> real SRM, investigate immediately
-observed [5100, 4900]: chi2 = 4.000,  p = 0.0455   -> borderline, worth watching closely
+observed [5200, 4800]: chi2 = 16.000, p = 0.0001
+observed [5100, 4900]: chi2 = 4.000, p = 0.0455
 ```
+
+- `stats.chisquare(observed, f_exp=[5000, 5000])` is the goodness-of-fit test from Chapter 30, section 30.9 (Step 2). `f_exp` is the list of **expected** counts: an exact 50/50 split of 10,000. Leave it out and SciPy assumes equal counts anyway, which is what Chapter 30 did; writing it makes the 50/50 assumption visible, and lets you test a 90/10 split the same way.
+- The loop runs the test on both splits and prints the statistic and the p-value.
+
+The 5,200/4,800 split is a real SRM (p = 0.0001): investigate before reading any result. The 5,100/4,900 split gives p = 0.0455: under 0.05, but not under the stricter alarm teams usually use (below), so it's worth a look at the assignment logs, not an alarm. Chapter 30's Riverstone website test (24,036 vs 23,250 visitors, p = 0.0003) is exactly the first case, and section 30.10 finds its cause.
 
 | Tier | What to say |
 |---|---|
 | Passes | "That's probably just random variation, it's close to 50/50" |
 | Strong | Runs the chi-square test rather than eyeballing it, and correctly treats a significant result as a red flag about the experiment's plumbing, not a metric to report on |
-| Extra points | + **[Validate]** the real test: the 5,200/4,800 split is a genuine, significant SRM (p = 0.0001), while the smaller 5,100/4,900 split sits right at the edge (p = 0.0455): a real illustration that "looks close to 50/50" and "is actually statistically expected under 50/50" are different questions + **[Business]** common real causes: a bug in the randomization code, a caching layer serving one variant more, bot traffic disproportionately hitting one arm, or a redirect that silently drops some users from one variant before they're even counted |
+| Extra points | **[+Validate]** the test itself: 5,200/4,800 is a significant SRM (p = 0.0001), while 5,100/4,900 is not under a strict rule (p = 0.0455): "looks close to 50/50" and "is statistically expected under 50/50" are different questions<br>**[+Edge cases]** teams usually alarm on SRM at p < 0.001, not 0.05, because they check every experiment daily. At 0.05, one healthy test in 20 would trip the alarm (Q73-028's logic)<br>**[+Business]** common real causes: a bug in the randomization code, a caching layer serving one variant more, bot traffic disproportionately hitting one arm, or a redirect that silently drops some users from one variant before they're even counted |
 
 **Likely follow-ups:** If you find an SRM, do you throw out the whole test? How would you debug which stage of the pipeline caused it?
 **Red flag:** treating a skewed split as a minor curiosity rather than a signal the whole experiment's data may be unreliable.
-**Learn it in:** Chapter 30.
+**Learn it in:** Chapter 30, section 30.9 (Step 2, the sample-ratio check) and section 30.10 ("Sample-ratio mismatch: finding the cause").
 
 ### Rapid-fire, 73.5
 
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-027 | What's a novelty effect in an A/B test? | Users react to a change simply because it's *new*, not because it's actually better, and the effect fades over time | **[Business]** a test that shows a strong early lift can be entirely novelty; running long enough to see the effect stabilize (or a holdout, Q73-024) separates the two |
-| Q73-028 | Why test 20 different success metrics in one experiment problematic? | Multiple comparisons: testing many unrelated metrics multiplies the chance that at least one looks "significant" purely by chance | **[Validate]** verified live: testing 20 truly unrelated metrics with no real effects, `P(at least one false positive) = 0.634`, matching the theoretical `1 − 0.95²⁰ = 0.642` almost exactly |
-| Q73-029 | What's a Bonferroni correction, in one sentence? | Divide the significance threshold by the number of comparisons, so the *combined* false-positive risk across all of them stays at the original level | **[Trade-offs]** simple and conservative, but it can make genuinely real effects harder to detect (lower power) when many comparisons are tested at once |
-| Q73-030 | What's a network effect / interference problem in A/B testing? | When a treated user's behavior affects a control user's outcome (e.g., a social feature, a marketplace with shared inventory), violating the assumption that groups are independent | **[Business]** standard A/B math assumes no spillover between groups; a marketplace or social feature test may need a different design (geographic or time-based splitting) to avoid contaminating the control group |
+Roles: DA, DS and PA for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-027 | What's a novelty effect in an A/B test? | Users react to a change simply because it's *new*, not because it's actually better, and the effect fades over time | **[+Business]** a test that shows a strong early lift can be entirely novelty; running long enough to see the effect stabilize (or a holdout, Q73-024) separates the two | Mid · 30.10 |
+| Q73-028 | Why is testing 20 different success metrics in one experiment a problem? | Multiple comparisons: testing many unrelated metrics multiplies the chance that at least one looks "significant" purely by chance | **[+Validate]** 20 metrics with no real effect, each tested at α = 0.05: P(at least one false positive) = 1 − 0.95<sup>20</sup> = 0.642; a simulation of 10,000 such experiments (seed 73) gives 0.639 | Mid · 22.4 |
+| Q73-029 | What's a Bonferroni correction, in one sentence? | Divide the significance threshold by the number of comparisons, so the *combined* false-positive risk across all of them stays at the original level | **[+Trade-offs]** simple and conservative, but it can make genuinely real effects harder to detect (lower power) when many comparisons are tested at once | Mid · 22.4 |
+| Q73-030 | What's a network effect / interference problem in A/B testing? | When a treated user's behavior affects a control user's outcome (e.g., a social feature, a marketplace with shared inventory), violating the assumption that groups are independent | **[+Business]** standard A/B math assumes no spillover between groups; a marketplace or social feature test may need a different design (geographic or time-based splitting) to avoid contaminating the control group | Senior · 31.5 |
 
 ---
 
 ## 73.6 Causal inference and Simpson's paradox
 
-### Q73-031 · Construct a real Simpson's Paradox: show two sales reps, each individually better in every category, yet one appears worse overall
+### Q73-031 · Construct a Simpson's paradox: show a sales rep who is better in every category yet worse overall
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
 
 **Remember it as:** *When the group sizes are unbalanced across categories, "better in every group" and "better overall" can point in opposite directions at the same time.*
 
 **Answer in one line:** Simpson's paradox occurs when a trend present in every subgroup reverses when the subgroups are combined, because the subgroups are weighted very differently in size.
 
-**Verified, live:**
+**Verified, live.** Two reps, easy and hard leads, each stored as (won, total):
+
 ```python
 rep_a = {"easy": (9, 10), "hard": (30, 100)}     # (won, total)
 rep_b = {"easy": (80, 100), "hard": (2, 10)}
+for kind in ["easy", "hard"]:
+    won_a, total_a = rep_a[kind]
+    won_b, total_b = rep_b[kind]
+    print(f"{kind}: Rep A {won_a / total_a:.0%} ({won_a}/{total_a}), Rep B {won_b / total_b:.0%} ({won_b}/{total_b})")
 ```
-```
-Rep A: easy 90% (9/10),   hard 30% (30/100)
-Rep B: easy 80% (80/100), hard 20% (2/10)
 
+```
+easy: Rep A 90% (9/10), Rep B 80% (80/100)
+hard: Rep A 30% (30/100), Rep B 20% (2/10)
+```
+
+- Each dictionary maps a lead type to a pair of numbers, (won, total). `won_a, total_a = rep_a[kind]` unpacks the pair into two names.
+- `:.0%` prints a share as a whole percentage.
+
+Now add up each rep's leads across both types:
+
+```python
+won_a = rep_a["easy"][0] + rep_a["hard"][0]
+total_a = rep_a["easy"][1] + rep_a["hard"][1]
+won_b = rep_b["easy"][0] + rep_b["hard"][0]
+total_b = rep_b["easy"][1] + rep_b["hard"][1]
+print(f"Rep A overall: {won_a / total_a:.1%} ({won_a}/{total_a})")
+print(f"Rep B overall: {won_b / total_b:.1%} ({won_b}/{total_b})")
+```
+
+```
 Rep A overall: 35.5% (39/110)
 Rep B overall: 74.5% (82/110)
 ```
+
+- `rep_a["easy"][0]` is the first number of the easy pair, the leads won; `[1]` is the second, the total.
 
 **Rep A wins both categories** (90% beats 80% on easy leads; 30% beats 20% on hard leads) **but Rep B's overall win rate is more than double Rep A's** (74.5% vs. 35.5%). The reversal happens because Rep A worked mostly hard leads (where everyone's rate is lower) and Rep B worked mostly easy leads (where everyone's rate is higher): the mix, not the skill, is driving the overall number.
 
@@ -388,51 +549,109 @@ Rep B overall: 74.5% (82/110)
 |---|---|
 | Passes | Can define Simpson's paradox abstractly, can't construct or recognize a real example |
 | Strong | The worked example above, correctly identifying that unequal group sizes (Rep A mostly on hard leads, Rep B mostly on easy ones) is the mechanism, not some statistical trick |
-| Extra points | + **[Validate]** the real, checkable numbers above, both the subgroup rates and the reversed overall rates + **[Business]** this is exactly why comparing two sales reps', two ad campaigns', or two hospitals' raw overall success rates can be actively misleading if their underlying mix of harder and easier cases differs: always check the subgroup breakdown before ranking on an aggregate number |
+| Extra points | **[+Validate]** the checkable numbers above, both the subgroup rates and the reversed overall rates<br>**[+Business]** this is exactly why comparing two sales reps', two ad campaigns', or two hospitals' raw overall success rates can be actively misleading if their underlying mix of harder and easier cases differs: always check the subgroup breakdown before ranking on an aggregate number |
 
 **Likely follow-ups:** How would you fix the comparison to be fair? *(Compare like-for-like within each category, or weight by a standardized mix: the same logic behind a standardized/risk-adjusted rate.)* Can you think of a real Simpson's paradox from your own work?
 **Red flag:** not recognizing that the paradox is *always* about the mix/weighting, not about the individual category numbers being wrong.
-**Learn it in:** Chapter 22 or nearby (causal inference).
+**Learn it in:** Chapter 22, section 22.6 (Simpson's paradox; "Standardizing, by hand" answers the first follow-up).
 
 ### Q73-032 · A strong correlation between website logins and revenue disappears almost entirely once you control for account size. What happened?
+
+**Level:** Senior · **Roles:** DA, DS, PA
 
 **Remember it as:** *A confounder is a hidden variable pulling the strings on both sides of a correlation you're looking at.*
 
 **Answer in one line:** Account size is a **confounder**: bigger accounts naturally log in more *and* naturally generate more revenue, creating a strong correlation between logins and revenue that has nothing to do with logins actually driving revenue.
 
-**Verified, live:**
+**Verified, live.** First, build 200 accounts where size drives both logins and revenue, and measure the raw correlation:
+
 ```python
+rng = np.random.default_rng(73)
 account_size = rng.uniform(1, 10, 200)
 logins = account_size * 2 + rng.normal(0, 2, 200)
 revenue = account_size * 50000 + rng.normal(0, 20000, 200)
 
 r_raw, _ = stats.pearsonr(logins, revenue)
-r_partial = partial_corr(logins, revenue, account_size)   # controlling for account_size
+print(f"raw correlation(logins, revenue) = {r_raw:.3f}")
 ```
+
 ```
-raw correlation(logins, revenue)          = 0.922
+raw correlation(logins, revenue) = 0.922
+```
+
+- `rng.uniform(1, 10, 200)` draws 200 account sizes, each equally likely to be anywhere from 1 to 10 (a uniform distribution, Chapter 21, section 21.5).
+- `logins` is 2 per unit of size plus random noise; `revenue` is 50,000 per unit of size plus noise. `rng.normal(0, 2, 200)` is the noise: 200 values with mean 0 and standard deviation 2.
+- `stats.pearsonr(logins, revenue)` returns Pearson's r and a p-value (Chapter 22, section 22.5); `r_raw, _ = ...` keeps r and throws the p-value away (`_` is the usual name for a value you don't need).
+
+Revenue is built from size only, and logins from size only. Logins never enter the revenue formula, so any logins→revenue correlation must come through size.
+
+**Beyond the book: partial correlation.** Chapter 22 doesn't teach it, and the idea fits in one sentence: partial correlation is the correlation of what's left in logins and revenue once account size is removed from both. Remove size with a straight line (section 22.10), keep what's left over (the **residuals**), and correlate those:
+
+```python
+def partial_corr(x, y, z):
+    slope_x, intercept_x = np.polyfit(z, x, 1)
+    slope_y, intercept_y = np.polyfit(z, y, 1)
+    resid_x = x - (slope_x * z + intercept_x)
+    resid_y = y - (slope_y * z + intercept_y)
+    r, _ = stats.pearsonr(resid_x, resid_y)
+    return r
+
+print(f"partial correlation, controlling for size = {partial_corr(logins, revenue, account_size):.3f}")
+```
+
+```
 partial correlation, controlling for size = 0.029
 ```
 
-The raw correlation of **0.92** (very strong) collapses to essentially **zero (0.03)** once account size is accounted for, in data that was constructed with *no direct causal link* between logins and revenue at all, only a shared cause.
+- `np.polyfit(z, x, 1)` fits a straight line (a polynomial of degree `1`) that predicts `x` from `z`, and returns its slope and intercept: the least-squares line of Chapter 22, section 22.10.
+- `resid_x = x - (slope_x * z + intercept_x)` is each account's actual logins minus the logins its size predicts: the part of logins that size doesn't explain. `resid_y` does the same for revenue.
+- `stats.pearsonr(resid_x, resid_y)` correlates the two leftovers.
+
+The book's own tool gives the same verdict. A regression with both variables (Chapter 22, section 22.10, "More than one x"; Chapter 30, section 30.11) reads each coefficient "holding the others fixed":
+
+```python
+import pandas as pd
+import statsmodels.formula.api as smf
+
+accounts = pd.DataFrame({"revenue": revenue, "logins": logins, "account_size": account_size})
+model = smf.ols("revenue ~ logins + account_size", data=accounts).fit()
+print(model.params.round(0))
+print(f"p-value for logins: {model.pvalues['logins']:.2f}")
+```
+
+```
+Intercept        2099.0
+logins            248.0
+account_size    49596.0
+dtype: float64
+p-value for logins: 0.68
+```
+
+- `pd.DataFrame({...})` puts the three arrays into one table, one column each, because `smf.ols` reads its columns by name.
+- `smf.ols("revenue ~ logins + account_size", data=accounts).fit()` fits revenue on logins and account size together, exactly as in Chapter 30, section 30.11.
+- `model.params` holds the intercept and the two coefficients; `.round(0)` rounds them to whole numbers. `model.pvalues['logins']` is the p-value for the logins coefficient.
+
+The raw correlation of **0.92** (very strong) collapses to essentially **zero (0.03)** once account size is accounted for, in data that was built with *no direct causal link* between logins and revenue at all, only a shared cause. The regression says the same: with size held fixed, one extra login goes with only 248 more revenue, and that coefficient is nowhere near significant (p = 0.68), while size carries about 50,000 per unit (49,596), the number the data was built with.
 
 | Tier | What to say |
 |---|---|
 | Passes | "Correlation isn't causation" (true, doesn't diagnose *this specific* case) |
 | Strong | Correctly names account size as a likely confounder and proposes checking a partial correlation or controlling for it in a regression |
-| Extra points | + **[Validate]** the real numbers above: a genuinely constructed example with zero true login→revenue effect, where the naive correlation (0.92) would badly mislead anyone who stopped there + **[Business]** this is precisely the trap in a claim like "customers who log in more spend more, so let's push login frequency": the real driver (account size) isn't something a login-nudge campaign can change at all, and the campaign would likely show no revenue impact despite the strong raw correlation |
+| Extra points | **[+Validate]** the numbers above: a constructed example with zero true login→revenue effect, where the naive correlation would badly mislead anyone who stopped there<br>**[+Business]** this is precisely the trap in a claim like "customers who log in more spend more, so let's push login frequency": the real driver (account size) isn't something a login-nudge campaign can change at all, and the campaign would likely show no revenue impact despite the strong raw correlation |
 
 **Likely follow-ups:** How would you actually test whether logins *cause* more revenue, not just correlate with it? What's the difference between controlling for a confounder and running a randomized experiment?
 **Red flag:** citing "correlation isn't causation" as a complete answer without identifying what the actual confounder is or how to check for one.
-**Learn it in:** Chapter 22 or nearby.
+**Learn it in:** Chapter 22, section 22.5 (confounders) and section 22.10 ("More than one x"); Chapter 30, section 30.11 ("Several variables at once"). Partial correlation is Beyond the book, explained above.
 
 ### Rapid-fire, 73.6
 
-| # | Question | One-line answer | Extra point |
-|---|---|---|---|
-| Q73-033 | What's selection bias, with one business example? | The sample you're analyzing isn't representative of the population you're trying to draw conclusions about | **[Business]** analyzing only customers who responded to a survey, and concluding "customers are satisfied," ignores the (likely more dissatisfied) customers who didn't bother responding at all |
-| Q73-034 | What's a natural experiment? | A real-world situation where something close to random assignment happens without anyone deliberately designing an experiment (a policy change hitting some regions and not others, say) | **[Business]** useful exactly when a true randomized test isn't ethical or possible, though weaker than a real RCT since the "randomness" is only approximate |
-| Q73-035 | Why is "the data speaks for itself" a red flag phrase in a causal claim? | Data alone never distinguishes correlation from causation; that distinction always requires an assumption about the process that generated the data (randomization, a natural experiment, or a stated causal model) | **[Business]** anyone claiming pure data-driven causal certainty with no discussion of confounders or study design is skipping the hardest, most important part of the analysis |
+Roles: DA, DS, PA and BA for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q73-033 | What's selection bias, with one business example? | The sample you're analyzing isn't representative of the population you're trying to draw conclusions about | **[+Business]** analyzing only customers who responded to a survey, and concluding "customers are satisfied," ignores the (likely more dissatisfied) customers who didn't bother responding at all | Fresher · 22.7 |
+| Q73-034 | What's a natural experiment? | A real-world situation where something close to random assignment happens without anyone deliberately designing an experiment (a policy change hitting some regions and not others, or a threshold in a business rule) | **[+Business]** useful exactly when a true randomized test isn't ethical or possible, though weaker than a real randomized experiment since the "randomness" is only approximate | Mid · 31.3, 31.7 |
+| Q73-035 | Why is "the data speaks for itself" a red flag phrase in a causal claim? | Data alone never distinguishes correlation from causation; that distinction always requires an assumption about the process that generated the data (randomization, a natural experiment, or a stated causal model) | **[+Business]** anyone claiming pure data-driven causal certainty with no discussion of confounders or study design is skipping the hardest, most important part of the analysis | Senior · 22.5, 31.9 |
 
 ---
 
@@ -440,52 +659,106 @@ The raw correlation of **0.92** (very strong) collapses to essentially **zero (0
 
 ### Q73-036 · Walk-through: is this A/B test result real, worth shipping, and safe to trust?
 
-**What they're really testing:** whether you run the full checklist (significance, effect size, SRM, practical relevance) rather than stopping at the first "p < 0.05."
+**Level:** Senior · **Roles:** DA, DS, PA
 
-**The setup, talked through live:** "I've got control at 480/5,000 conversions and treatment at 545/5,000. Before I say anything about shipping this, I want to check four things in order: is the split itself sane (no SRM), is the difference statistically significant, how big is the effect in business terms, and does the sample size match what a proper power calculation would have called for."
+**What they're really testing:** whether you run the full checklist (significance, effect size, SRM, power, practical relevance) rather than stopping at the first "p < 0.05."
 
-**Verified, live:**
+**The setup, talked through live:** "I've got control at 480/5,000 conversions and treatment at 545/5,000. Before I say anything about shipping this, I want to check four things in order: is the split itself sane (no SRM), is the difference statistically significant, how big is the effect in business terms, and was the test big enough to trust a result this size."
+
+**Verified, live.** First, the two-proportion z-test:
+
 ```python
-count = np.array([545, 480]); nobs = np.array([5000, 5000])
+count = np.array([545, 480])     # conversions: treatment, control
+nobs = np.array([5000, 5000])    # visitors:    treatment, control
 z_stat, p_value = sms.proportions_ztest(count, nobs)
+print(f"control:   {480 / 5000:.2%}")
+print(f"treatment: {545 / 5000:.2%}")
+print(f"z = {z_stat:.3f}, p = {p_value:.4f}")
 ```
+
 ```
 control:   9.60%
 treatment: 10.90%
 z = 2.143, p = 0.0321
 ```
 
-**Talked through, live:** "p = 0.032, under the usual 0.05 threshold, so it's statistically significant. The lift is 1.3 percentage points, about a 13.5% relative improvement, which sounds meaningful, but I'd want to know the actual revenue or cost tied to a conversion before calling it worth shipping: statistical significance isn't the same question as 'is this worth the engineering cost to keep.' I'd also want the sample-ratio check on 5,000 vs. 5,000 (that's an exact 50/50 split here, so no SRM concern), and I'd check this sample size against what a proper power calculation for this baseline and MDE would have called for, to make sure this wasn't stopped early."
+- `sms.proportions_ztest(count, nobs)` is the two-proportion z-test from Chapter 22, section 22.2: `count` holds the conversions and `nobs` the visitors, in the same order.
+- The order matters for the sign. Treatment comes first, so a positive z means treatment converted more; swap the two and z becomes −2.143 with the same p-value.
 
-**Extra-points moves demonstrated:** **[Structure]** ran a defined checklist instead of stopping at the first significant p-value. **[Validate]** the real z-test output, not an assumed conclusion. **[Business]** explicitly separated "statistically significant" from "worth shipping," which are different questions with different owners.
+Next, how big the lift is, with its uncertainty:
+
+```python
+low, high = sms.confint_proportions_2indep(545, 5000, 480, 5000, method="wald")
+print(f"lift: {(545 / 5000 - 480 / 5000) * 100:.1f} points, 95% interval {low * 100:+.2f} to {high * 100:+.2f} points")
+```
+
+```
+lift: 1.3 points, 95% interval +0.11 to +2.49 points
+```
+
+- `confint_proportions_2indep(545, 5000, 480, 5000, method="wald")` gives the 95% interval for the first rate minus the second, with the textbook formula, as in Chapter 30, section 30.5. Multiplying by 100 turns shares into percentage points; `:+.2f` prints the sign.
+
+Last, was the test big enough? Power for the lift we saw, and the sample that 80% power would have needed:
+
+```python
+observed_h = sms.proportion_effectsize(0.109, 0.096)
+power = sms.NormalIndPower().power(observed_h, nobs1=5000, alpha=0.05, ratio=1)
+needed = sms.NormalIndPower().solve_power(observed_h, power=0.8, alpha=0.05, ratio=1)
+print(f"power at 5,000 per arm for a 1.3-point lift: {power:.2f}")
+print(f"per arm for 80% power: {np.ceil(needed):,.0f}")
+```
+
+```
+power at 5,000 per arm for a 1.3-point lift: 0.57
+per arm for 80% power: 8,537
+```
+
+- `.power(observed_h, nobs1=5000, ...)` is the same calculator as Q73-020, run the other way: given the sample size, it returns the power.
+- `.solve_power(...)` is Q73-020's call, for the lift this test actually saw.
+
+**Talked through, live:** "p = 0.032, under the usual 0.05 threshold, so it's statistically significant. The lift is 1.3 percentage points, about a 13.5% relative improvement, which sounds meaningful, but I'd want to know the actual revenue or cost tied to a conversion before calling it worth shipping: statistical significance isn't the same question as 'is this worth the engineering cost to keep.' The split is exactly 5,000 vs. 5,000, so there's no SRM concern. And this is where it gets interesting: for a 1.3-point lift on 9.6%, 80% power needs about 8,500 per arm, and even the 1.5-point MDE of Q73-020 needs 6,466. We have 5,000, so power was only about 57% for the lift we saw. Either the test was stopped early, or it was never sized. A 'significant' result from an underpowered test is more likely to overstate the true lift, so I'd report the 95% interval for the difference, +0.11 to +2.49 points, and recommend running to the planned size before shipping."
+
+**Why "overstate"?** Beyond the book, in one paragraph: when a test is too small, only the runs where chance pushed the lift *up* clear the significance bar. So among the significant results of small tests, the lift is, on average, larger than the truth, and it tends to shrink when the test is rerun at full size. This is sometimes called the **winner's curse**.
+
+**Extra-points moves demonstrated:** **[+Signpost]** named a four-step checklist up front, then ran it in order. **[+Validate]** the real z-test, the interval, and the power (0.57 at 5,000 per arm), not an assumed conclusion. **[+Business]** explicitly separated "statistically significant" from "worth shipping," which are different questions with different owners. **[+Limits]** said plainly what an underpowered test can't show, and what would settle it.
 
 **Likely follow-ups:** What if the sample sizes were very different between arms? How would you incorporate a cost estimate into the shipping decision?
 **Red flag:** treating a single p-value as a complete answer to "should we ship this."
-**Learn it in:** Chapter 30.
+**Learn it in:** Chapter 30, section 30.9 (Riverstone's website test, end to end), section 30.7 (power and sample size), and section 30.5 (the interval for two proportions).
 
 ### Q73-037 · Walk-through: a stakeholder shows you a chi-square test result and asks what it means
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
 
 **What they're really testing:** whether a chi-square test's actual question (independence between two categorical variables) is understood, not just its p-value.
 
 **Talked through live:** "A chi-square test of independence checks whether two categorical variables are related at all, not the direction or size of the relationship, just whether the pattern of counts differs from what independence would predict."
 
 **Verified, live**, on a segment-by-conversion table:
+
 ```python
 observed = np.array([[120, 80], [90, 110]])   # rows: segment; columns: converted, not converted
-chi2, p, dof, expected = stats.chi2_contingency(observed)
-```
-```
-chi2 = 8.431, p = 0.0037, dof = 1
-expected counts under independence: [[105, 95], [105, 95]]
+chi2, p, dof, expected = stats.chi2_contingency(observed, correction=False)
+print(f"chi2 = {chi2:.3f}, p = {p:.4f}, dof = {dof}")
+print("expected counts under independence:", expected.tolist())
 ```
 
-**Talked through, live:** "p = 0.0037 says the segments and conversion aren't independent, real evidence of a relationship. But chi-square alone doesn't say *which* segment converts better or by how much, only that a relationship exists. I'd follow it with the actual conversion rates per segment to answer the business question, and I'd check the expected-counts table, shown here, to make sure no cell had too few expected observations for the test to be reliable, a common chi-square validity issue with small samples."
+```
+chi2 = 9.023, p = 0.0027, dof = 1
+expected counts under independence: [[105.0, 95.0], [105.0, 95.0]]
+```
 
-**Extra-points moves demonstrated:** **[Depth]** correctly distinguished "a relationship exists" (what chi-square tests) from "here's the relationship" (a separate follow-up). **[Edge cases]** flagged the small-expected-count validity concern unprompted.
+- `stats.chi2_contingency(observed, correction=False)` is the test from Chapter 22, section 22.2. It returns four things, which `chi2, p, dof, expected = ...` unpacks: the statistic, the p-value, the degrees of freedom, and the table of counts you'd expect if segment and conversion were unrelated.
+- `correction=False` turns off **Yates' continuity correction**, a small, conservative adjustment SciPy applies to 2×2 tables by default. Chapter 22 turned it off too, so the result matches the hand sum and the two-proportion z-test. **What happens if you change it:** drop `correction=False`, and this table gives 8.431 (p = 0.0037) instead. In an interview, say which one you used.
+- `expected.tolist()` prints the expected table as a plain list of rows.
+
+**Talked through, live:** "p = 0.0027 says the segments and conversion aren't independent, real evidence of a relationship. But chi-square alone doesn't say *which* segment converts better or by how much, only that a relationship exists. I'd follow it with the actual conversion rates per segment to answer the business question, and I'd check the expected-counts table, shown here, to make sure no cell had too few expected observations for the test to be reliable, a common chi-square validity issue with small samples."
+
+**Extra-points moves demonstrated:** **[+Limits]** said what chi-square can't tell you: "a relationship exists" (what it tests) is not "here's the relationship" (a separate follow-up). **[+Edge cases]** flagged the small-expected-count validity concern unprompted.
 
 **Likely follow-ups:** What test would you use for two continuous variables instead? What's Cramér's V, and when would you report it alongside the p-value?
 **Red flag:** interpreting a significant chi-square result as telling you the direction or size of an effect, which it doesn't.
-**Learn it in:** Chapter 21 or nearby.
+**Learn it in:** Chapter 22, section 22.2 ("The chi-square test, by hand first"); Chapter 30, section 30.5 (chi-square and Cramér's V).
 
 ---
 
@@ -493,7 +766,7 @@ expected counts under independence: [[105, 95], [105, 95]]
 
 | Mistake | Symptom | Fix |
 |---|---|---|
-| Reading "99% accurate" as "99% chance you have it" | Wildly overestimating a positive result's reliability on a rare condition | Always ask for the base rate; run Bayes' theorem (Q73-001) |
+| Reading a "99% sensitive" test as "99% chance you have it" | Wildly overestimating a positive result's reliability on a rare condition | Always ask for the base rate; run Bayes' theorem (Q73-005) |
 | Defining a p-value as "probability the null is true" | Confidently wrong explanations to stakeholders | It's the probability of the *data*, assuming the null, never the reverse |
 | Treating "not significant" as "no effect" | Shipping decisions based on an underpowered test's false negative | Check power before concluding there's no effect (Q73-015) |
 | Skipping a sample-size calculation before running a test | A test that ends inconclusive, or runs far longer than needed | Compute required sample size from baseline, MDE, alpha, and power (Q73-020) |
@@ -506,7 +779,7 @@ expected counts under independence: [[105, 95], [105, 95]]
 
 ## In the real world: the A/B test that was actually broken plumbing
 
-Farah, running a pricing experiment at a mid-size company, sees a strong, statistically significant lift in the treatment group after ten days and is ready to recommend shipping it. Before doing so, she runs the sample-ratio check this chapter teaches, almost as a formality: and gets a real SRM: 5,340 users in control against 4,660 in treatment, a split that shouldn't happen by chance at that scale.
+Farah, running a pricing experiment at a mid-size company, sees a strong, statistically significant lift in the treatment group after ten days and is ready to recommend shipping it. Before doing so, she runs the sample-ratio check (Q73-026), almost as a formality: and gets a real SRM: 5,340 users in control against 4,660 in treatment, a split that shouldn't happen by chance at that scale.
 
 She doesn't ship the pricing change. She traces the mismatch and finds that the treatment variant's page loaded slightly slower, and a fraction of mobile users on slower connections were timing out before the assignment even completed, silently dropping out of the treatment group specifically. Those dropped users, it turns out, were disproportionately price-sensitive mobile shoppers, exactly the segment least likely to convert. The "lift" wasn't from the new pricing at all; it was from quietly excluding the users least likely to buy.
 
@@ -520,7 +793,7 @@ The fix took two days: a loading-performance bug, unrelated to pricing entirely.
 
 ### Tools you'll need
 
-**Python** with **SciPy** (`scipy.stats`) and **statsmodels** (`statsmodels.stats.api`), both free, both used throughout this chapter for every simulation, test statistic, and sample-size calculation. **R** offers equivalent functionality (`prop.test`, `power.t.test`, `chisq.test`) and is common in some analytics teams; the underlying statistics are identical regardless of language. Everything in this chapter ran on Python 3.12, SciPy 1.17.1, statsmodels 0.15.0.
+**Python** with **SciPy** (`scipy.stats`) and **statsmodels** (`statsmodels.stats.api`), both free and both already in your Chapter 17 environment (installed in Chapter 21, section 21.5 and Chapter 22, section 22.2), used throughout this chapter for every simulation, test statistic, and sample-size calculation. **R** offers equivalent functionality (`prop.test`, `power.t.test`, `chisq.test`) and is common in some analytics teams; the underlying statistics are identical regardless of language. Everything in this chapter ran on Python 3.11.15 with NumPy 2.4.6, SciPy 1.17.1, statsmodels 0.15.0 and pandas 3.0.6 (the book recommends Python 3.14, Chapter 17, section 17.0); a recent SciPy and statsmodels should give the same numbers to three decimals.
 
 1. Compute Bayes' theorem for a real base-rate scenario from your own work (a fraud flag, a churn flag, a quality-control test) and see how far the "accuracy" number is from the true positive-predictive value.
 2. Run a real sample-size calculation for an A/B test you'd actually want to run, using your own baseline rate and a business-justified MDE.
@@ -532,13 +805,13 @@ The fix took two days: a loading-performance bug, unrelated to pricing entirely.
 
 ## Key terms
 
-Bayes' theorem · base rate · conditional probability · Monty Hall problem · birthday problem · independent vs. mutually exclusive events · expected value · Binomial distribution · Poisson distribution · Central Limit Theorem · variance · standard deviation · Normal / log-normal distribution · heavy-tailed distribution · p-value · null hypothesis · Type I error · Type II error · statistical power · t-test vs. z-test · confidence interval · minimum detectable effect (MDE) · randomization · one-tailed vs. two-tailed test · holdout group · peeking (repeated significance testing) · Sample Ratio Mismatch (SRM) · novelty effect · multiple comparisons · Bonferroni correction · network effect (interference) · Simpson's paradox · confounder · partial correlation · selection bias · natural experiment
+Bayes' theorem · base rate · sensitivity · false-positive rate · natural frequencies · conditional probability · Monty Hall problem · birthday problem · independent vs. mutually exclusive events · expected value · Binomial distribution · Poisson distribution · Central Limit Theorem · variance · standard deviation · Normal / log-normal distribution · heavy-tailed distribution · p-value · null hypothesis · Type I error · Type II error · statistical power · t-test vs. z-test · confidence interval · minimum detectable effect (MDE) · Cohen's h · randomization · one-tailed vs. two-tailed test · holdout group · peeking (repeated significance testing) · Sample Ratio Mismatch (SRM) · novelty effect · multiple comparisons · Bonferroni correction · network effect (interference) · Simpson's paradox · confounder · partial correlation · residual · selection bias · natural experiment · Yates' continuity correction · winner's curse
 
 ---
 
 ## Final-week revision list
 
-Q73-001, Q73-002, Q73-003, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037.
+Q73-005, Q73-006, Q73-007, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037.
 
 ---
 
@@ -546,5 +819,5 @@ Q73-001, Q73-002, Q73-003, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017,
 
 - **Chapter 69, The Extra-Points Method,** is the rubric and move set every answer above is written against.
 - **Chapter 71, SQL Question Bank,** already covered the mechanics of building the aggregated tables (retention counts, group-by rates) that feed many of this chapter's tests.
-- **Chapter 74, Machine Learning Question Bank,** builds directly on this chapter's hypothesis-testing and bias/variance foundations for model evaluation.
-- **Chapter 30 and Chapter 22** (experimentation and causal inference) teach every technique this bank draws on, in full; this chapter tests it, it doesn't re-teach it from scratch.
+- **Chapter 74, Machine Learning Question Bank,** builds on this chapter's hypothesis testing and base-rate reasoning (Q73-005) for model evaluation.
+- **Chapters 21 and 22** (probability, distributions, the two famous puzzles in section 21.7, and tests), **Chapter 30** (inference and experiments) and **Chapter 31** (causal inference without experiments) teach what this bank draws on; this chapter tests it, it doesn't re-teach it. The few ideas marked Beyond the book (log-normal data, holdout groups, partial correlation, the winner's curse) are explained where they appear.

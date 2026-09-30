@@ -65,7 +65,7 @@
   for (const c of document.querySelectorAll('code')) if (!c.closest('pre') && c.textContent.length <= 24) c.classList.add('nowrap');
 
   // ---- V10: tables. Right-align numeric columns, keep short tables whole, no wraps in short code.
-  const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
+  const NUM = /^[\s(]*[-−+]?[₹$€£]?\s?[-−+]?\d[\d,]*(\.\d+)?(\s?[–-]\s?\d[\d,]*(\.\d+)?)?\s?(%|pp|x|×|h|hours?|days?|ms|s|GB|MB|TB|k|K|M|L| lakh| crore)?[)\s]*$/;
   for (const table of document.querySelectorAll('table')) {
     const rows = [...table.querySelectorAll('tbody tr')];
     const ncol = Math.max(0, ...rows.map(r => r.children.length));
@@ -118,7 +118,10 @@
       // a heading, a lead-in ending in ":" and the code it introduces may take up to 45% of a page
       const lim = group.length > 2 && (group[2].tagName === 'PRE' || group[2].querySelector(':scope > pre')) && /[:：]\s*$/.test(group[1].textContent) ? 0.45 : KEEP;
       if (total < PAGE_H * lim) wrap(group);
-      else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) wrap(group.slice(0, 2));
+      else if (group.length > 2 && h(group[0]) + h(group[1]) < PAGE_H * 0.3) {
+        wrap(group.slice(0, 2));
+        group[0].parentElement.classList.add('with-next');   // the heading and lead-in never end a page alone
+      }
     }
   }
   // lead-in paragraphs and bare answer numbers elsewhere

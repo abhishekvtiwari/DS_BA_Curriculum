@@ -347,7 +347,7 @@ Then estimate *how many times a week, how many minutes each*. A list of manual s
 
 Anita approving a 12% discount is a judgment, and it should stay with a person; what can be automated is sending her the margin and payment data. And automating a broken process gives you a fast broken process: fix the process first. The book returns to each of Riverstone's manual steps later, and shows how to automate the ones that should be.
 
-> **Interview extra point.** When an interviewer asks, *"What were sales last month?"*, or gives you a case with a "revenue" figure, say which definition you're using (booked, billed, or collected) before you calculate. It shows in one sentence that you understand the business, not only the tools. Chapters 75 and 76 have practice questions.
+> **Interview extra point.** When an interviewer asks, *"What were sales last month?"*, or gives you a case with a "revenue" figure, say which definition you're using (booked, billed, or collected) before you calculate. It shows in one sentence that you understand the business, not only the tools. Chapter 75 has practice questions.
 
 ---
 
@@ -580,4 +580,4 @@ When collections drop, you can ask which branch moved, and each branch has an ow
 - **Chapter 25, The Business Analyst Track,** maps Riverstone's order-to-cash process formally and writes requirements for an improvement.
 - **Chapters 45, 49, and 51** connect the systems: moving data from the ERP and CRM into a data warehouse (Chapter 49 explains how warehouses are built), and sending results back into them.
 - **Chapter 58** automates the re-typing of emailed purchase orders with AI, with a person checking uncertain cases.
-- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76 (the Business Analyst question bank), with model answers.
+- **Interview preparation:** metric definitions, KPI trees, and business-process questions appear in Chapter 75 (product sense, metrics, and case studies) and Chapter 76B (the Business Analyst question bank), with model answers.

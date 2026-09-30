@@ -1677,4 +1677,4 @@ IaaS · PaaS · SaaS · region · availability zone · shared responsibility mod
 - **Chapter 64, Security, Privacy, Governance & Responsible AI,** builds on the shared responsibility model and least-privilege access from section 52.1.
 - **Chapter 60, Designing Whole Systems,** returns to choosing platforms at the whole-company scale that section 52.8 only began; **Chapter 63, Automation Architecture & Governance,** to which tool runs which automation.
 - **Chapter 46**'s pipeline, **Chapter 47**'s checks, **Chapter 49**'s storage, **Chapter 50**'s streaming jobs, and **Chapter 51**'s syncs are all things this chapter's infrastructure would actually run.
-- **Part 8:** cloud, containers, and deployment questions appear in the data engineering interview chapters, and system design cases in Chapter 77 routinely ask how you'd deploy and operate exactly what this chapter builds.
+- **Part 8:** cloud, containers, and deployment questions appear in the data engineering interview chapters, and the system design cases in Chapter 77, section 77.7, ask how you'd run and monitor a pipeline end to end.

@@ -1474,4 +1474,4 @@ Use `riverstone_full`, `companion/ch20/daily_flash.py`, and your own email accou
 - **Chapter 29, Python as Software:** packaging, tests, and configuration once a script becomes a tool several people depend on.
 - **Chapter 46:** orchestration, when "run this at 7" becomes "run these eleven things in the right order, with retries".
 - **Chapter 47:** data-quality testing, which is the checks in this chapter done systematically.
-- **Interview preparation:** the Automation & Integration Question Bank (Chapter 78) and the Business Analyst bank (Chapter 76B) ask how you'd automate and deliver a recurring report, and what you'd do when it fails.
+- **Interview preparation:** the Automation & Integration Question Bank (Chapter 78) asks how you'd automate and deliver a recurring report, and what you'd do when it fails; the Business Analyst bank (Chapter 76B, Q76B-038) asks how you'd specify the requirement for one.

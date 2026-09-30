@@ -1886,4 +1886,4 @@ Four-bit quantization halves the memory again and costs more decisions. For a sm
 - **Chapter 39, Evaluation, Tuning, Interpretation & Honesty,** is the evaluation vocabulary this chapter leaned on: confusion matrices, precision and recall, thresholds by cost, and model cards.
 - **Chapter 33, The Computer Science You Actually Need,** explains the O(n²) that limits context windows.
 - **Chapter 64, Security, Privacy, Governance & Responsible AI,** covers explainability, bias, and the model card's place in governance.
-- **Chapter 74, Machine Learning Question Bank,** has the interview questions, including "explain backpropagation" and "why transformers".
+- **Chapter 74, Machine Learning Question Bank,** has the interview questions on when deep learning is worth it and how to judge a model's claims (Q74-035, Q74-036).
