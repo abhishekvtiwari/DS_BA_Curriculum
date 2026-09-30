@@ -26,3 +26,8 @@ How the books are laid out:
   teaches, what to read first, the time needed and the tools. A chapter map follows the box, showing the six
   stages (Start, Learn, Apply, Review, Practise, Next) with page numbers.
 - **Footers.** The running footer names the part or chapter.
+
+Decided by Abhishek, 30 Sep 2026:
+
+- **Book 4 numbering.** Book 4 keeps chapter numbers 68–82, so the other books' references to it stay the same.
+- **Part PDFs.** The per-part PDFs in `fixed/Part-*` stay alongside the books.
