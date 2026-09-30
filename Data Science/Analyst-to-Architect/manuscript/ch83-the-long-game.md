@@ -8,21 +8,21 @@
 >
 > **Before you start:** the book. Chapter 9 in particular, which this chapter is the far end of.
 >
-> **Time needed:** about an hour to read. The rest of it takes years, which is the subject.
+> **Time needed:** about an hour to read, and 4–5 hours for the project, spread over one week. The rest of it takes years, which is the subject.
 >
-> **Tools:** none.
+> **Tools:** none new: a calendar, and the Git and GitHub setup from Chapter 26 for one day's task.
 >
 > **Practice data:** none, except your own last week, which you will be asked to count truthfully.
 >
-> **A note on the shape of this chapter.** There are no exercises and no answer key. There is one week's worth of work at the end, and six decisions that only you can make. This is the last chapter, and the last thing it should do is give you something else to read.
+> **A note on the shape of this chapter.** The project is one week's worth of work, and the exercises are six decisions that only you can make, so there is no answer key. This is the last chapter, and the last thing it should do is give you something else to read.
 
 ---
 
 ## Why this matters
 
-Eighty-two chapters ago this book made a promise: that the whole territory of a data career could be laid out in one place, from a first query against one table to the design of systems an organization depends on.
+At its start, this book made a promise: that the whole territory of a data career could be laid out in one place, from a first query against one table to the design of systems an organization depends on.
 
-That promise has now been kept, and keeping it creates a new problem. **You can see the whole map, and you have walked almost none of it.** The map took you a few hundred hours to read. The territory takes years to cross. Everything this book taught you about the difference between knowing and doing applies most sharply to the book itself.
+That promise has now been kept, and keeping it creates a new problem. **You can see the whole map, and you have walked almost none of it.** The map took you hundreds of hours to read. The territory takes years to cross. Everything this book taught you about the difference between knowing and doing applies most sharply to the book itself.
 
 So the last chapter is not about data. It is about the distance between here and the version of you who does this for a living, and about the small number of habits that decide whether you cover that distance or stop in the foothills.
 
@@ -46,31 +46,31 @@ Everything in this chapter is about walking: the pace that works, the weight to 
 
 Chapter 9 said the honest thing about time: months to become a job-ready analyst, years to go further, and no course compresses that. Now that the book exists, the estimate can be exact, because every chapter carries its own.
 
-Adding up the *Time needed* line of all sixty-seven teaching chapters gives **762 to 978 hours**.
+Adding up the *Time needed* line of every teaching chapter, Chapters 1 to 67, gives **957 to 1,193 hours**, part by part:
 
 | | Chapters | Hours | At 6 hours a week |
 |---|---|---|---|
 | Parts 0 and 1, the foundations | 1–9 | 27–37 | 5–6 weeks |
-| **Part 2, The Analyst** | **10–27** | **290–357** | **48–60 weeks** |
-| **Parts 0 to 2: job-ready** | **1–27** | **317–394** | **12 to 15 months** |
-| Part 3, advanced analytics | 28–34 | 92–122 | 15–20 weeks |
-| Part 4, machine learning | 35–44 | 86–121 | 14–20 weeks |
-| Part 5, data engineering | 45–52 | 100–132 | 17–22 weeks |
-| Part 6, production ML and GenAI | 53–59 | 91–116 | 15–19 weeks |
-| Part 7, architecture and leadership | 60–67 | 76–93 | 13–16 weeks |
-| **All of it** | **1–67** | **762–978** | **2.4 to 3.1 years** |
+| **Part 2, The Analyst** | **10–27** | **367–451** | **61–75 weeks** |
+| **Parts 0 to 2: job-ready** | **1–27** | **394–488** | **15 to 19 months** |
+| Part 3, advanced analytics | 28–34 | 116–146 | 19–24 weeks |
+| Part 4, machine learning | 35–44 | 134–170 | 22–28 weeks |
+| Part 5, data engineering | 45–52 | 122–156 | 20–26 weeks |
+| Part 6, production ML and GenAI | 53–59 | 109–134 | 18–22 weeks |
+| Part 7, architecture and leadership | 60–67 | 82–99 | 14–17 weeks |
+| **All of it** | **1–67** | **957–1193** | **3.1 to 3.8 years** |
 
-![Horizontal bars of hours per part, low and high estimate, with Part 2 much the largest, and two summary rows: job-ready at 317 to 394 hours and the whole book at 762 to 978](figures/fig83-1-the-arithmetic.svg)
+![The whole book laid end to end as a bar, drawn twice: once with the low estimates, 957 hours, and once with the high, 1,193 hours. Each bar is split into Parts 0 to 2, then Parts 3, 4, 5, 6 and 7. Parts 0 to 2 end at 394 hours on the low bar and 488 on the high, 41% of the way along each. Dashed lines mark one, two and three years at six hours a week.](figures/fig83-1-the-arithmetic.svg)
 
-*Figure 83.1 — Being hirable is a quarter of the book. The other three quarters are the rest of a career, and they are optional.*
+*Figure 83.1 — Being hirable is about two fifths of the book. The other three fifths are the rest of a career, and they are optional.*
 
-Read the bold rows first. **The path to being hirable as an analyst is about 320 to 400 hours**, which at six hours a week, a realistic figure alongside a job, is a little over a year. The whole book, done properly, is two and a half to three years of part-time evenings.
+Read the bold rows first. **The path to being hirable as an analyst is about 400 to 490 hours**, which at six hours a week, a realistic figure alongside a job, is fifteen to nineteen months: well over a year. The whole book, done properly, is three to four years of part-time evenings.
 
 Three things follow from that table, and they are worth more than any encouragement.
 
-**The number is not discouraging; it is a plan.** "A year or so" is something you can arrange your life around. "However long it takes" is not, and it is what most people are working to, which is why they cannot tell whether they are on schedule and eventually assume they are not.
+**The number is not discouraging; it is a plan.** "A year and a half" is something you can arrange your life around. "However long it takes" is not, and it is what most people are working to, which is why they cannot tell whether they are on schedule and eventually assume they are not.
 
-**Job-ready is a quarter of the book.** Parts 0 to 2 are 317 to 394 hours of the 762 to 978. You do not need the other three quarters to be hired, and Chapter 8's career tree exists precisely so you can see how far your own branch actually goes.
+**Job-ready is two fifths of the book.** Parts 0 to 2 are 394 to 488 hours of the 957 to 1,193. You do not need the other three fifths to be hired, and Chapter 8's career tree exists precisely so you can see how far your own branch actually goes.
 
 **These are reading-and-exercise hours, not fluency hours.** Chapter 9 section 9.1 made this distinction and it matters here: finishing Chapters 12 and 13 means you can write the queries they teach. Being quick on a messy dataset you did not design takes more. Plan the chapter hours, then plan again.
 
@@ -90,16 +90,16 @@ Consider two people who start this book on the same Monday.
 |---|---|---|
 | Week 12 | 300 hours, and stops | 72 hours |
 | Week 50 | 300 hours | **300 hours: the crossover** |
-| Week 66 | 300 hours | 396 hours: finishes Parts 0 to 2 |
-| Year 3 | 300 hours | 936 hours: has done the whole book |
+| Weeks 66 to 81 | 300 hours | 396 to 486 hours: finishes Parts 0 to 2 |
+| Weeks 160 to 199 | 300 hours | 960 to 1,194 hours: has done the whole book |
 
-![Two cumulative-hours lines over 160 weeks: the sprinter rises steeply to 300 hours by week 12 and stays flat forever; the steady line rises constantly and crosses it at week 50, passing the shaded job-ready band at week 53 to 66](figures/fig83-2-consistency-beats-intensity.svg)
+![Two cumulative-hours lines over four years, 208 weeks. The sprinter's dashed line rises steeply to 300 hours by week 12, where it is marked burnout, and stays flat. The steady one's solid line rises six hours a week, crosses it at week 50, passes through the hatched job-ready band, 394 to 488 hours, in weeks 66 to 81, and reaches the outlined whole-book band, 957 to 1,193 hours, in year 4.](figures/fig83-2-consistency-beats-intensity.svg)
 
-*Figure 83.2 — The sprinter's line stops below the green band. That band is the difference between studying and being employable.*
+*Figure 83.2 — The sprinter's line stops below the job-ready band, the hatched strip. That band is the difference between studying and being employable.*
 
 The steady one passes the sprinter in **week 50**, and after that it is not a race any more.
 
-Now the part that should stop you. The sprinter's 300 hours do not reach the end of Part 2, which needs 317 to 394 hours from the start of the book. **The sprinter burns out somewhere between one chapter and five chapters short of being employable**, depending on how fast they were actually absorbing it. They did four times the weekly work the steady one ever did, they have nothing anybody would hire them for, and the reason is not talent or discipline. It is that they chose a pace they could not hold, on a route that was longer than they had been told.
+Now the part that should stop you. The sprinter's 300 hours do not reach the end of Part 2, which needs 394 to 488 hours from the start of the book. **The sprinter burns out 94 to 188 hours short of being employable, roughly the last seven to nine chapters of Part 2**, depending on how fast they were actually absorbing it. They did four times the weekly work the steady one ever did, they have nothing anybody would hire them for, and the reason is not talent or discipline. It is that they chose a pace they could not hold, on a route that was longer than they had been told.
 
 Progress here compounds in a specific, literal way. The SQL from Chapter 12 is used in Chapter 13, and in Chapter 14's cleaning, and in Chapter 16's model, and in Chapter 28's window functions, and in Chapter 32's dbt models, and in Chapter 49's warehouse, and in every interview in Part 8. An hour spent on foundations is not spent once. It is a deposit that every later chapter withdraws from.
 
@@ -119,7 +119,7 @@ While you were reading, the projects were handed to you at the end of every chap
 
 Three sources, in order of value:
 
-1. **Your own work.** The highest-value practice data in the world is the messy export from the system your employer actually uses, answering a question somebody actually asked. Chapter 27's project is built this way for a reason. Check what you are allowed to use and what must never leave the building, which Chapter 64 covers.
+1. **Your own work.** The highest-value practice data in the world is the messy export from the system your employer actually uses, answering a question somebody actually asked. Chapter 27's project is built this way for a reason. Check what you are allowed to use and what must never leave the building: Chapter 26, section 26.11 gave the everyday rule for AI assistants, and Chapter 64, section 64.4 gives the company-wide one.
 2. **A real public dataset with a real question attached.** Government open data, a regulator's filings, your city's transport figures. The question is the hard part and the part that makes it a project. Anything from a competition site arrives pre-cleaned, which removes most of the work that the job consists of.
 3. **A thing somebody needs.** A local business, a community organization, a friend running a shop. Unpaid, small, and worth more than six tutorials, because somebody will use the output and tell you when it is wrong.
 
@@ -277,7 +277,9 @@ None of this is a disappointment. It is the reason the field is worth a career r
 
 ---
 
-## The ways people fall off the path
+## Common mistakes
+
+The ways people fall off the path after a book like this one, and the correction for each.
 
 | The move | What it looks like | The correction |
 |---|---|---|
@@ -299,27 +301,31 @@ None of this is a disappointment. It is the reason the field is worth a career r
 
 Meera Iyer is the person everyone at Riverstone asks for numbers. It is worth knowing how recent that is.
 
-She did not study data. She joined in an administrative role, and when Imran left she inherited the Friday file from Chapter 2: one spreadsheet, on one laptop, that nobody else could update. She kept it running because somebody had to.
+She did not study data. She joined as a sales coordinator (Chapter 1), and within her first year she inherited the Friday file from Chapter 2, which Imran had run before her: one spreadsheet, on one laptop, that nobody else could update. She kept it running because somebody had to.
 
 What she did next was ordinary and is the whole point. She learned enough SQL to stop exporting the same report by hand. Not on a course and not in a burst: an hour most mornings before the office filled up, and a longer stretch on Saturdays when she could manage it. There were months with nothing in them. The file kept running throughout, which is what made the practice stick, because every query she learned had something to do the same week.
 
-Somewhere in the second year the questions started coming to her instead of to the system, and by the third she was the person the sales head checked a number with before a board meeting. Nobody appointed her. The gap closed on its own.
+Within months the questions started coming to her instead of to the system, and soon she was the person the sales head checked a number with before a board meeting (Chapter 4). Nobody appointed her. The gap closed on its own.
 
-Then she hit the third plateau in section 83.8, and did not recognize it as one for most of a year.
+Then she hit the third plateau in section 83.8, and did not recognize it as one for a while.
 
-By 2025 her mornings had a shape: forty minutes building the Daily Sales Flash by hand, then most of Friday on the sales pack, then copying overdue invoices out of the finance system into emails for the reps. She was busier than she had ever been and had not learned anything new in months. When Anita asked what she needed, she asked for more time, which was the wrong answer and the one that felt natural.
+Her mornings had settled into a shape: forty minutes building the Daily Sales Flash by hand, then most of Friday on the sales pack, then copying overdue invoices out of the finance system into emails for the reps. She was busier than she had ever been and had not learned anything new in months. When Anita asked what she needed, she asked for more time, which was the wrong answer and the one that felt natural.
 
 What changed it was not a course. It was writing down what the forty minutes actually consisted of, and noticing that all of it was a query she already knew how to write and a template she could have built in an afternoon. Chapter 20's automated flash is that afternoon. The Power Query rebuild of Vikram's month-end pack in Chapter 11 is another. Each one converted a thing she did forever into a thing that happened without her, and the hours came back as hours she could spend on work she had never done before.
 
-The job posting in Chapter 8, *Data Analyst (Sales Analytics and Automation)*, exists because of that pattern. Anita wrote it with her. The word **Automation** is in the title because Meera had learned, expensively and slowly, that being the bottleneck is not the same as being valuable.
+The job posting she and Anita rewrote in Chapter 7, *Data Analyst (Sales Analytics and Automation)*, the one Chapter 8 reads line by line, exists because of that pattern. The word **Automation** is in the title because Meera had learned, expensively and slowly, that being the bottleneck is not the same as being valuable.
 
-Five years, an hour most mornings, on real work that mattered to somebody that week. There is no other version of this story, and it does not require anybody to have been remarkable.
+About a year, an hour most mornings, on real work that mattered to somebody that week. There is no other version of this story, and it does not require anybody to have been remarkable.
 
 ---
 
-## The first week after this book
+## Project: the first week after this book
 
-Not a project. One week, and then you are on your own.
+Not a project like the others. One week, and then you are on your own.
+
+### Tools you'll need
+
+A calendar you actually look at, somewhere to write (paper is fine), and, for Thursday, Git and a GitHub account from Chapter 26. About 4–5 hours across the seven days, two of them on Saturday.
 
 **Monday. Count it.** Write down the hours you gave to learning last week, truthfully, not the hours you meant to. That number, not an aspiration, is what you plan with. Compare it against section 83.1's table and write down the date you would reach the end of Part 2 at that pace. Put the date somewhere you will see it.
 
@@ -337,26 +343,11 @@ Not a project. One week, and then you are on your own.
 
 ---
 
-## How you will know it is working
-
-- You have a weekly number of hours, it is written down, and it survived a bad week in the last month.
-- You can name the date you expect to finish your current part, and it came from arithmetic rather than hope.
-- There is something with your name on it that another person could open today.
-- You have been out of your depth on purpose in the last three months.
-- At least one person who is not you has looked at your work and said something uncomfortable about it.
-- You can tell someone which branch of the career tree you are on and why you chose it.
-- When something new appears, you can say whether it changes the job or only the buttons.
-- You have stopped counting courses.
-- When you go flat, you check which kind of plateau it is before deciding what to do about it.
-- You have taught somebody one step behind you at least one thing.
-
----
-
 ## Recap
 
-The book is 762 to 978 hours across sixty-seven teaching chapters, and 317 to 394 of those reach the end of Part 2, which is the point at which people get hired. At six hours a week, job-ready is about twelve to fifteen months and the whole map is two and a half to three years. That is a plan you can arrange a life around, and it is the number most people never get told.
+The book is 957 to 1,193 hours across the teaching chapters, Chapters 1 to 67, and 394 to 488 of those reach the end of Part 2, which is the point at which people get hired. At six hours a week, job-ready is about fifteen to nineteen months and the whole map is three to four years. That is a plan you can arrange a life around, and it is the number most people never get told.
 
-**Consistency beats intensity, arithmetically.** Six hours a week passes twenty-five-hours-a-week-for-twelve-weeks in week 50, and the sprinter runs out roughly one chapter short of employable. Choose a pace that survives a bad month and defend it.
+**Consistency beats intensity, arithmetically.** Six hours a week passes twenty-five hours a week for twelve weeks in week 50, and the sprinter runs out 94 to 188 hours short of employable, roughly the last seven to nine chapters of Part 2. Choose a pace that survives a bad month and defend it.
 
 Study enough to start building, then build, because after the book nobody hands you projects and reading is always available and always feels like progress. Go deep in one branch, keep literacy across the rest, and choose your own summit: every tier on the tree is a destination where people spend good careers, and there is no prize for reaching one you did not want.
 
@@ -372,9 +363,34 @@ And what a book cannot give you is judgment, a domain, stakes, and the room wher
 
 ---
 
-## Six decisions, which only you can make
+## Key terms
 
-No answers, and there will not be any.
+compounding · consistency over intensity · weekly budget · fluency hours · T-shaped · depth and breadth · career tree · your own summit · durable fundamentals · perishable tools · feedback loop · mentorship · teaching as learning · learning plateau (Chapter 9) · competence plateau · stack plateau · indispensable plateau · ladder plateau · scope · leverage · learning how to learn · judgment
+
+*(All terms are defined in the Glossary, Appendix A.)*
+
+---
+
+## Check yourself
+
+How you will know it is working, a few months from now:
+
+- You have a weekly number of hours, it is written down, and it survived a bad week in the last month.
+- You can name the date you expect to finish your current part, and it came from arithmetic rather than hope.
+- There is something with your name on it that another person could open today.
+- You have been out of your depth on purpose in the last three months.
+- At least one person who is not you has looked at your work and said something uncomfortable about it.
+- You can tell someone which branch of the career tree you are on and why you chose it.
+- When something new appears, you can say whether it changes the job or only the buttons.
+- You have stopped counting courses.
+- When you go flat, you check which kind of plateau it is before deciding what to do about it.
+- You have taught somebody one step behind you at least one thing.
+
+---
+
+## Exercises
+
+Six decisions, which only you can make. No answers, and there will not be any.
 
 1. How many hours a week, truthfully, and which hours specifically?
 2. Which branch of Chapter 8's tree, for now?
@@ -382,14 +398,6 @@ No answers, and there will not be any.
 4. Who is going to tell you the truth about your work?
 5. What is the thing you are currently the bottleneck for, and what would it take to not be?
 6. What will you have to show for the next twelve months, and how will you know in month six whether you are on track?
-
----
-
-## Key terms
-
-compounding · consistency over intensity · weekly budget · fluency hours · T-shaped · depth and breadth · career tree · your own summit · durable fundamentals · perishable tools · feedback loop · mentorship · teaching as learning · learning plateau (Chapter 9) · competence plateau · stack plateau · indispensable plateau · ladder plateau · scope · leverage · learning how to learn · judgment
-
-*(All terms are defined in the Glossary, Appendix A.)*
 
 ---
 
@@ -401,7 +409,7 @@ If you are preparing to be hired, Part 8, Chapters 68 to 82, is the part that is
 
 Everything else is outside these pages: the question somebody asks you on Thursday, the number you have to defend, the system you eventually get to design, and the first person you mentor who does for somebody else what this book has tried to do for you.
 
----
+### The map and the territory
 
 And so we arrive where every honest guide has to end.
 
