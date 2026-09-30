@@ -1,0 +1,11 @@
+# Ch 81 summary: Behavioral, HR & Offer Conversations
+
+**What changed.** All 17 content findings (3 High) and both remaining visual findings are applied. The chapter no longer tells the reader to retell other people's stories: the story bank is Farah's own five stories (Ch 8, 27, 44, 73, 76B) covering all seven themes, under a bold "one rule of a story bank" box, and the two generic STAR examples (disagreement, failure) are labelled composites. Q81-001 is the reader's Ch 44 capstone, told as a portfolio project with Ch 44's current numbers (about ₹12.0 lakh vs ₹3.9 lakh of *expected margin at risk*, targeted, not saved). §81.6 now honours Ch 8's promise and Ch 68's hand-off: a new core question on expected CTC and reading the offer breakup (illustrative table), a "general guidance, not advice" box, and new rapid-fire rows on current CTC, notice period, accepting then reneging and counter-offers. §81.4 gains a row on personal questions. §81.7 is renamed. The chapter has a glance box, Before you start and Time needed. Tags follow Ch 69. IDs renumbered in page order (Q81-001…034).
+
+**Skipped / softened.** Nothing left Open. The CTC breakup is labelled illustrative, and no legal percentages or service periods (PF rate, wage ceiling, gratuity years, recent labour-code changes) are stated: the primary sources (labour.gov.in, EPFO, PIB) and secondary sites were blocked by the proxy, so the text says only that gratuity is "paid only after a qualifying period of service" and that the rules change (T13: soften, don't invent).
+
+**Option picks.** The finding's recommended wording throughout; 81.14 done in Ch 81 ("about 90 seconds is fine in a follow-up-heavy round"), so Ch 82 needs no change for it; Failure story taken from Ch 27's real Farah story instead of the finding's hypothetical.
+
+**Time needed (new).** 2–3 hours to read and say every core answer aloud; 4–6 hours for the project.
+
+**Verification.** No code in the chapter. `checks/ch81_numbers.py` recomputes every number: 12,00,524 / 3,86,008 = 3.11; SRM 5,340 vs 4,660 → χ² 46.24, p ≈ 1.0e-11; 37/1,200 = 3.1%; breakup sums to 6,00,000, monthly fixed gross 42,500. Build 17 pages; layout_check clean (map 10/10, no stranded/sparse, tofu 0; "draft" on p. 16 is reader text: "draft the exact words"); fig_check 0; restructure --check "already in order".
