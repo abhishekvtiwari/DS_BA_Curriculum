@@ -36,7 +36,7 @@
 
 **Answer in one line:** `VLOOKUP` is rightward-only, approximate-match by default; `INDEX`/`MATCH` looks any direction; `XLOOKUP` does `INDEX`/`MATCH`'s job in one function, exact-match by default.
 
-```
+```excel
 =XLOOKUP("Crate Lid 50L", product_range, unit_price_range)      → 90
 =INDEX(unit_price_range, MATCH("Crate Lid 50L", product_range, 0))  → 90 (verified)
 ```

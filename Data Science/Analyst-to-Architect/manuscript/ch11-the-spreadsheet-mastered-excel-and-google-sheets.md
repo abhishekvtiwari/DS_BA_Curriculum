@@ -324,9 +324,9 @@ Applied to all valid lines, the `IFS` size bands give **158** Small (under ₹10
 | `FIND` | `=FIND("box","Lunch Box Set")` | `#VALUE!` (case-sensitive) | Yes |
 | `TEXTBEFORE` | `=TEXTBEFORE("Neha Kulkarni"," ")` | Neha | No (use `LEFT` + `FIND`) |
 | `TEXTAFTER` | `=TEXTAFTER("Neha Kulkarni"," ")` | Kulkarni | No (use `MID` + `FIND`) |
-| `TEXTSPLIT` | `=TEXTSPLIT("02.01.2025|SO10001|C0002","|")` | three cells | `SPLIT` |
+| `TEXTSPLIT` | `=TEXTSPLIT("02.01.2025\|SO10001\|C0002","\|")` | three cells | `SPLIT` |
 | `TEXTJOIN` | `=TEXTJOIN(", ",TRUE,IF(Customers!D2:D25="Wholesale",Customers!B2:B25,""))` | Coastal Foods, Northgate Distributors, … | Yes |
-| `REPT` | `=REPT("|",ROUND(0.393*20,0))` | `||||||||` (an in-cell bar) | Yes |
+| `REPT` | `=REPT("\|",ROUND(0.393*20,0))` | `\|\|\|\|\|\|\|\|` (an in-cell bar) | Yes |
 | `EXACT` | `=EXACT("0014","0014")` | TRUE (case-sensitive comparison) | Yes |
 | `CLEAN` | `=CLEAN(A2)` | Removes non-printing characters | Yes |
 | `NUMBERVALUE` | `=NUMBERVALUE("4.335.471,00",",",".")` | 4335471 (European separators) | No (use `SUBSTITUTE` + `VALUE`) |
@@ -1407,8 +1407,8 @@ A workbook that other people rely on needs the same care as code. These habits p
 |---|---|---|
 | See which cells feed a formula | **Formulas → Trace Precedents / Trace Dependents** | Click into the formula; ranges are outlined |
 | Step through a formula | **Formulas → Evaluate Formula** | — |
-| Show all formulas | **Ctrl+`** | **Ctrl+`** |
-| Find all formulas, constants, or errors | **Home → Find & Select → Go To Special** | **Ctrl+`**, then **Find** |
+| Show all formulas | **Ctrl+\`** | **Ctrl+\`** |
+| Find all formulas, constants, or errors | **Home → Find & Select → Go To Special** | **Ctrl+\`**, then **Find** |
 | List queries and connections | **Data → Queries & Connections** | — |
 | Find links to other workbooks | **Data → Edit Links** (**Workbook Links** in newer versions) | Search for `IMPORTRANGE` |
 | Workbook size and contents | **Review → Workbook Statistics** | — |
@@ -1729,7 +1729,7 @@ Meera ran the audit checklist from section 11.12.
 
 The other eight months matched exactly. Four months, four different problems.
 
-**3. Are the rules the same everywhere?** She pressed **Ctrl+`** on the Summary sheet and read the formulas. Most months used `SUMIFS(…,"<>Cancelled")`. **March and April used `SUM`**, which includes cancelled orders. April had one cancelled order, 10034, worth ₹24,800: that was April's difference. March had no cancelled orders, so its number was right *by luck*, with the wrong formula. The next time a March order was cancelled, the report would be wrong again. She noted it as a defect even though it cost nothing today.
+**3. Are the rules the same everywhere?** She pressed **Ctrl+\`** on the Summary sheet and read the formulas. Most months used `SUMIFS(…,"<>Cancelled")`. **March and April used `SUM`**, which includes cancelled orders. April had one cancelled order, 10034, worth ₹24,800: that was April's difference. March had no cancelled orders, so its number was right *by luck*, with the wrong formula. The next time a March order was cancelled, the report would be wrong again. She noted it as a defect even though it cost nothing today.
 
 **4. Are any numbers typed in?** **Home → Find & Select → Go To Special → Constants** on the Summary's revenue column selected one cell: **November**, a typed **633,480**, with a note "typed from the flash email". The real figure was ₹633,408. Two digits had been swapped. A ₹72 difference is harmless on its own, but it proved that the report wasn't connected to its data.
 

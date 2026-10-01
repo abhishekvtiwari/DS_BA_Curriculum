@@ -68,28 +68,14 @@ Before building anything new, an architect needs an honest answer to a harder qu
 
 ### The worked ROI comparison, with real numbers
 
-```
-Automation                    Value (₹/yr or time)          Effort to build   Risk if wrong
-─────────────────────────────────────────────────────────────────────────────────────────────
-Daily Sales Flash              325 hrs/yr saved               Low (days)        Low — wrong number is caught by
-(Ch 20)                        (~₹3.9 lakh at loaded cost)                      its own checks before sending
-
-Branch macro consolidation     ~4 min → 9 sec per run,         Low (days)        Low — source_file column and
-(Ch 19)                        hundreds of runs/year                            checks catch a bad consolidation
-
-PO-intake, assisted mode       ~₹198/day at 40 emails,         Medium (weeks)    Medium — a missed confirmation
-(Ch 58)                        vs. ₹600/day fully manual                        delays one order, doesn't ship it wrong
-
-PO-intake, straight-through    Looks like ~₹0/day labor        Medium (weeks)    HIGH — 19% silent error rate,
-(Ch 58, rejected)              cost, but ~₹13,380/day in                        ~₹2,000 per wrong order, discovered
-                                hidden error cost                                 only after the fact
-
-Dagster ingestion pipeline     Enables everything              High (months)     Medium — well-tested, but a
-(Ch 46, Part V)                 downstream; hard to price                       platform-wide dependency
-
-CRM reverse-ETL sync           Keeps sales data current,       Medium (weeks)    Low — deliberately eventual
-(Ch 51, Part V)                 avoids manual re-entry                          consistency (Ch 61); safe to lag
-```
+| Automation | Value (₹/yr or time) | Effort to build | Risk if wrong |
+|---|---|---|---|
+| Daily Sales Flash (Ch 20) | 325 hrs/yr saved (~₹3.9 lakh at loaded cost) | Low (days) | Low — wrong number is caught by its own checks before sending |
+| Branch macro consolidation (Ch 19) | ~4 min → 9 sec per run, hundreds of runs/year | Low (days) | Low — source_file column and checks catch a bad consolidation |
+| PO-intake, assisted mode (Ch 58) | ~₹198/day at 40 emails, vs. ₹600/day fully manual | Medium (weeks) | Medium — a missed confirmation delays one order, doesn't ship it wrong |
+| PO-intake, straight-through (Ch 58, rejected) | Looks like ~₹0/day labor cost, but ~₹13,380/day in hidden error cost | Medium (weeks) | HIGH — 19% silent error rate, ~₹2,000 per wrong order, discovered only after the fact |
+| Dagster ingestion pipeline (Ch 46, Part V) | Enables everything downstream; hard to price | High (months) | Medium — well-tested, but a platform-wide dependency |
+| CRM reverse-ETL sync (Ch 51, Part V) | Keeps sales data current, avoids manual re-entry | Medium (weeks) | Low — deliberately eventual consistency (Ch 61); safe to lag |
 
 **The finding the table makes obvious, that a value-and-effort-only view would miss entirely:** PO-intake's straight-through mode has *better* raw economics than its assisted alternative on labor cost alone — that's precisely why the pilot was tempting. Its risk column is what actually decided the question, and Chapter 58's own conclusion (assisted, not straight-through) is this exact prioritization framework, run for real, landing on the answer its raw ROI number argued against.
 

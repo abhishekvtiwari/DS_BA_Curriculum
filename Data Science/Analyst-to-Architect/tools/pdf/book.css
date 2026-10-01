@@ -1,7 +1,7 @@
 @page { size: A4; margin: 20mm 18mm 22mm 18mm; }
 :root { --ink:#1d2330; --muted:#5b6475; --accent:#0f5c8c; --accent-soft:#e8f1f8; --warn:#b4531f; --warn-soft:#fbefe6; --rule:#d9dee7; --code-bg:#f5f7fa; }
 html { font-size: 10.4pt; }
-body { font-family: "Lora","DejaVu Serif",serif; color: var(--ink); line-height: 1.55; margin:0; }
+body { font-family: "Lora","Noto Serif","DejaVu Serif",serif; color: var(--ink); line-height: 1.55; margin:0; }
 h1,h2,h3,h4 { font-family: "Poppins","DejaVu Sans",sans-serif; color: var(--ink); line-height:1.25; break-after: avoid; }
 h1 { font-size: 22pt; font-weight:600; margin: 0 0 6mm; }
 h2 { font-size: 15pt; font-weight:600; margin: 9mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1.5px solid var(--accent); }
@@ -11,10 +11,11 @@ p { margin: 0 0 2.6mm; orphans:3; widows:3; }
 a { color: var(--accent); text-decoration: none; }
 strong { font-weight: 700; }
 ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+ol { padding-left: 8.5mm; }                      /* V9: room for two-digit numbers */
 li { margin-bottom: 1mm; }
 hr { border: none; border-top: 1px solid var(--rule); margin: 6mm 0; }
-code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.6pt; background: var(--code-bg); padding: 0.2mm 1mm; border-radius: 2px; }
-pre { font-family: "DejaVu Sans Mono", monospace; font-size: 7.9pt; line-height: 1.38; background: var(--code-bg); border: 1px solid var(--rule); border-left: 3px solid #9fb3c8; border-radius: 3px; padding: 2.6mm 3.2mm; margin: 0 0 3.5mm; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.6pt; background: var(--code-bg); padding: 0.2mm 0.35mm; border-radius: 2px; }  /* small side padding: no false space before punctuation */
+pre { orphans: 4; widows: 4; font-family: "DejaVu Sans Mono", monospace; font-size: 7.9pt; line-height: 1.38; background: var(--code-bg); border: 1px solid var(--rule); border-left: 3px solid #9fb3c8; border-radius: 3px; padding: 2.6mm 3.2mm; margin: 0 0 3.5mm; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; }
 pre code { background: none; padding: 0; font-size: inherit; }
 pre.sql, pre:has(code.language-sql) { border-left-color: var(--accent); }
 table { border-collapse: collapse; width: 100%; margin: 1mm 0 4mm; font-family: "DejaVu Sans", sans-serif; font-size: 8.3pt; line-height: 1.4; }
@@ -41,3 +42,44 @@ p > img { display: block; width: 100%; height: auto; margin: 2mm auto 1mm; break
 p:has(> img) { break-inside: avoid; break-after: avoid; margin-bottom: 1mm; }
 p:has(> img) + p > em:only-child { display: block; text-align: center; font-size: 8.8pt; color: #5b6475; margin-bottom: 4mm; }
 .break-h1 h1 { break-before: page; } .break-h1 h1:first-of-type { break-before: auto; }
+
+/* ---- Layout pass (visual review themes), 28 Sep 2026 ---- */
+/* V8: code blocks are split into one block per line by layout.js. A line that is still too long
+   wraps with a hanging indent, never back to column 0, and carries a continuation mark. */
+pre.lines { white-space: pre-wrap; overflow-wrap: anywhere; }
+pre.lines .ln { display: block; padding-left: 3ch; text-indent: -3ch; }
+pre.lines .ln.wrapped { position: relative; }
+pre.lines .ln.wrapped::after { content: "\21A9"; position: absolute; right: -2.6mm; top: 0; text-indent: 0; color: var(--muted); font-size: 0.9em; }
+pre.split { break-inside: auto; }
+pre.keep { break-inside: avoid; }
+/* V7: headings, lead-ins, answer numbers and captions stay with what follows */
+.keep-together { break-inside: avoid; }
+h2, h3, h4 { break-inside: avoid; }
+/* V10: tables */
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+th code { background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.55); }
+td code { overflow-wrap: anywhere; }
+td code.nowrap, th code.nowrap { white-space: nowrap; overflow-wrap: normal; }
+table.keep { break-inside: avoid; }
+table { table-layout: auto; }
+td, th { overflow-wrap: break-word; }
+/* V16-style: inline code inside headings keeps the heading's size */
+h1 code, h2 code, h3 code, h4 code { font-size: 0.85em; background: none; padding: 0; }
+/* V11: overlines drawn by CSS (combining macron falls on the wrong glyph in Lora Italic) */
+.ovl { text-decoration: overline; text-decoration-thickness: 0.06em; }
+/* V2: contents with page numbers and dotted leaders */
+nav#TOC li > a { display: flex; align-items: flex-end; width: 100%; }
+nav#TOC li > a .toc-t { flex: 0 1 auto; min-width: 0; }
+nav#TOC li > a .toc-dots { flex: 1 1 auto; border-bottom: 1px dotted #9aa3b2; margin: 0 1.5mm; transform: translateY(-0.8mm); min-width: 4mm; }
+nav#TOC li > a .toc-pg { flex: 0 0 auto; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 400; }
+/* Checklists ("You've got it when…"): wrapped lines align with the text, not under the box */
+ul.task-list li { padding-left: 5.5mm; text-indent: -5.5mm; }
+/* Output blocks (no language) look different from input code */
+pre:not([class]), pre.text { background: #ffffff; border: 1px dashed #b8c2d0; border-left: 3px solid #c9ced8; }
+/* Titles: balanced lines, and a hyphenated word never breaks (V23.17, V28.19, V61.9) */
+h1, h2 { text-wrap: balance; }
+.nobr { white-space: nowrap; }
+pre.lines .ln.colon { break-after: avoid; }
+p.leadin { break-after: avoid; }
+p.leadin + pre, p.leadin + table, p.leadin + ul, p.leadin + ol { break-before: avoid; }
+pre.sourceCode, pre[class]:not(.text) { border-left-color: var(--accent); }   /* every input block, whatever its language (V77.13) */

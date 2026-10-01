@@ -351,13 +351,13 @@ of those disagreements, the candidate is right 17 times and the current model is
 
 | Layer | Question | Signal | Delay |
 |---|---|---|---|
-![Four rows: service, input, output and outcome monitoring, each with its question, signal, delay and the action it triggers](figures/fig56-2-monitoring-layers.svg)
-
-*Figure 56.2 — Each layer sees a different failure, and the slowest one is the only one that measures correctness.*
-
 | **Service** | is it up and fast? | uptime, error rate, latency percentiles, memory | seconds |
 | **Input** | does the data look like the training data? | feature distributions, missing rates, ranges, drift statistics | minutes |
 | **Output and outcome** | is it still right? | prediction distribution, and accuracy once labels arrive | hours to weeks |
+
+![Four rows: service, input, output and outcome monitoring, each with its question, signal, delay and the action it triggers](figures/fig56-2-monitoring-layers.svg)
+
+*Figure 56.2 — Each layer sees a different failure, and the slowest one is the only one that measures correctness.*
 
 The first layer is ordinary software monitoring. The second is section 56.8. The third has a property that makes it hard and that most ML monitoring articles skate over: **ground truth is late.** A part flagged defective is checked within the hour, but a part passed as good is only revealed as wrong when a customer complains, weeks later. So the third layer has two streams:
 

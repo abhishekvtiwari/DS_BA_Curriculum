@@ -102,7 +102,7 @@ You want **3.13 or 3.14** (the latest stable release when this was written). Any
 
 ### VS Code
 
-Install VS Code, then its **Python** extension (Microsoft) and **Jupyter** extension. Useful settings on day one: **View → Terminal** for the built-in terminal, **Ctrl+`** to toggle it, and **Ctrl+Shift+P** for the command palette, where **Python: Select Interpreter** chooses which Python (and which virtual environment) a folder uses.
+Install VS Code, then its **Python** extension (Microsoft) and **Jupyter** extension. Useful settings on day one: **View → Terminal** for the built-in terminal, **Ctrl+\`** to toggle it, and **Ctrl+Shift+P** for the command palette, where **Python: Select Interpreter** chooses which Python (and which virtual environment) a folder uses.
 
 ### Jupyter
 
@@ -126,7 +126,7 @@ A **package** is code someone else wrote that you can use: `pandas` for tables, 
 
 A **virtual environment** is a private copy of Python for one project, with its own installed packages.
 
-```
+```bash
 cd path/to/my-project
 python -m venv .venv                 # create it, once per project
 .venv\Scripts\activate               # activate: Windows

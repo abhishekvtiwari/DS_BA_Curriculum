@@ -10,6 +10,7 @@ STATUSES = ["Open", "Approved", "Modify", "Rejected", "Deferred", "Fixed", "Veri
 PART_ORDER = ["0–I", "0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "Closing"]
 
 def chkey(c):
+    if c == "Cross-chapter": return (999, "")
     m = re.match(r"(\d+)([AB]?)", c or "")
     return (int(m.group(1)), m.group(2)) if m else (0, "")
 
@@ -51,10 +52,12 @@ for p in PART_ORDER:
 out.append("")
 out.append("## By chapter")
 out.append("")
-out.append("| Part | Ch | Content | Visual | High | Open | Approved | Fixed | Verified | Closed | Status |")
-out.append("|---|---|---|---|---|---|---|---|---|---|---|")
+out.append("| Part | Ch | Content | Visual | Journey | High | Open | Approved | Fixed | Verified | Closed | Status |")
+out.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
 bych = collections.defaultdict(list)
-for r in rows: bych[(r["part"], r["chapter"])].append(r)
+# Reader's Journey rows can name several chapters ("6, 14, 19, 20"); they are counted once, on a
+# "Cross-chapter" line per part, instead of creating one line for every chapter combination.
+for r in rows: bych[(r["part"], "Cross-chapter" if "," in r["chapter"] else r["chapter"])].append(r)
 for (p, ch) in sorted(bych, key=lambda k: (PART_ORDER.index(k[0]) if k[0] in PART_ORDER else 99, chkey(k[1]))):
     rs = bych[(p, ch)]
     c = collections.Counter(r["status"] for r in rs)
@@ -62,6 +65,7 @@ for (p, ch) in sorted(bych, key=lambda k: (PART_ORDER.index(k[0]) if k[0] in PAR
     state = "✅ done" if c["Verified"] + c["Rejected"] + c["Deferred"] == len(rs) else \
             ("🔧 fixing" if c["Fixed"] or c["Verified"] else ("🟢 ready" if c["Approved"] + c["Modify"] else "⏳ awaiting decisions"))
     out.append(f"| {p} | {ch} | {sum(r['kind']=='content' for r in rs)} | {sum(r['kind']=='visual' for r in rs)} | "
+               f"{sum(r['kind']=='reader-journey' for r in rs)} | "
                f"{sum(r['severity']=='High' for r in rs)} | {c['Open']} | {c['Approved']+c['Modify']} | {c['Fixed']} | "
                f"{c['Verified']} | {frac:.0%} | {state} |")
 (ROOT / "TRACKER.md").write_text("\n".join(out) + "\n", encoding="utf-8")

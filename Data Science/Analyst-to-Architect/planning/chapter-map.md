@@ -6,6 +6,8 @@ Depth classes: **A** full-depth skill chapter · **B** technical teaching chapte
 
 ## Reading order decided 17 September 2026 (renumbering happens at assembly)
 
+> **Amended 28 September 2026 (Abhishek):** D1 is kept, so Ch 14–16 (cleaning, visualization, Power BI) come **before** Python (17–18), and their pandas sections move to Ch 18. Approved Part II order: 10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20, 21–27. Part III is as below. Chapters are renumbered to this order in the final pass; the new-number map is in `CLAUDE.md` §3.
+
 Parts II and III are reordered so that each tool is learned end to end (including cleaning and automation in that tool) before the next tool, and the cross-tool chapters come after all three. **Chapter files keep their current numbers while writing; the coordinator renumbers the whole book in one pass at assembly.** Use this table to know what comes before what.
 
 | New no. | Old no. | Chapter | Block |

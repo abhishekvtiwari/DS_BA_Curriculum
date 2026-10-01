@@ -76,14 +76,35 @@ Plus the **visual standard** (see `review/briefs/VISUAL_BRIEF.md`):
   - Git in Ch 26, with a new §26.0 "The terminal in 20 minutes".
 
   **Chapter 6 becomes tool-free.**
-- **D1:** Power BI (Ch 16) stays before Python (Ch 17–18). Ch 16 must not assume pandas.
+- **Reading order (Abhishek, 28 Sep): `planning/chapter-map.md`, with D1 kept.** So Ch 14–16 come before Python (17–18); everything else follows the chapter map.
+  - Part II reads 10, 11, 19, 12, 13, 14, 15, 16, 17, 18, 20, then 21–27.
+  - Part III reads 28, 34, 29, 32, 33, 30, 31.
+  - Where a finding assumes a different order, it stays `Open` with the reason in `notes` (listed in `review/reading-order-conflicts.md`). Don't guess.
+- **Renumbering (Abhishek, 28 Sep): Parts II and III are renumbered to match the reading order**, in the final pass (section 5, step 4), together with the Part VIII renumbering (D2) and the cross-reference pass. Until then every file, finding and part build keeps the current numbers.
+
+  | Old | 10 | 11 | 19 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20–27 | 28 | 34 | 29 | 32 | 33 | 30 | 31 |
+  |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+  | **New** | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20–27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 |
+- **D1:** Power BI (Ch 16) stays before Python (Ch 17–18). Ch 16 must not assume pandas. (Kept by Abhishek, 28 Sep.)
 - **D2:** Ch 34 is split. Terminal essentials move to Ch 26 §26.0; Linux and networking stay in Ch 34.
 - **D3:** regression basics become a new final section of Ch 22.
-- Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. A one-page NumPy basics section goes in Ch 18.
+- **D6:** Chapter 6 is split, with no renumbering.
+  - A new **unnumbered front section, "How to Use This Book"**, goes before Chapter 1 (4–6 pages). It covers how each chapter is laid out, how to read the code cells and their outputs, the four exercise groups and the answers, how the parts climb, a rough sense of time (pointing to Ch 6), and where the companion files are. It takes old §6.9 (chapter anatomy, exercises) and adds the rest new.
+  - **Chapter 6 keeps its number and becomes "Planning Your Learning"**: the honest hours table, the weekly rhythm, a tool timeline (no installs), learning with AI assistants, reading documentation, and a project to plan your route and first 90 days.
+  - Also update the Part 0 contents, Ch 5's "Where this leads" and Ch 9's references to Ch 6. The spec is Chapter 6 of `review/part-0-and-I/fix-instructions-DRAFT-parked.md`.
+- Python in Ch 14 §14.13 and Ch 15 §15.14 moves to Ch 18. (Kept by Abhishek, 28 Sep.)
+- A one-page NumPy basics section goes in Ch 18.
 - Part 0 and Part I findings are approved (status `Approved` in the CSV).
 - **Version rule:** where a chapter exists in several versions, the latest is final. Ch 12's final version is Draft v4 (96 pages, 19–23 h, expanded §12.13). The Blueprint files are out of scope.
 
 ## 4. What you may fix: the approval gate
+
+**In force since 28 Sep 2026:**
+- **Global rules:** A1 is ticked and A3 is not. All themes T1–T14 and V1–V11 are Approve; V12 is Modify (see `DECISIONS.md`: Claude Code does what it can, and screenshots are listed for Abhishek to retake).
+- **Structural decisions:** D2–D7 are Approve.
+- **Option picks:** strictly the recommended option, else (a).
+- **Reader's Journey rows:** approved.
+- **Exception:** rows that assume a reading order other than the approved one are held `Open` (see §3).
 
 Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Global rule A1:** every row becomes `Approved` unless its theme (section B) or its row (section E) says Reject, Defer or Modify.
@@ -93,16 +114,29 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Section D (option picks):** use Abhishek's choice. If it's blank, use the option the finding marks as recommended, or option (a) if none is marked. Write which option you used in the changelog.
 - **Never fix a row that is `Open`, `Rejected` or `Deferred`.** If `DECISIONS.md` has no global rule ticked, stop and ask in the PR.
 
-## 5. Order of work
+## 5. Working mode and order of work (Abhishek, 28 Sep 2026: the standing rule)
 
-1. **Style pass (whole book, one PR `style-pass`):**
-   - shared template and CSS fixes (themes V1, V2, V7, V8, V9, V10, V11, V12);
+**The book is built one part at a time, end to end.**
+- **Trigger:** when Abhishek says **"Build Part X"**, work through every chapter of that part in reading order. For each chapter, apply all approved fixes, re-run all code, redraw the figures, and rebuild and check every page (section 6). Then go straight to the next chapter **without stopping to ask**.
+- **Stop only for a true blocker:** a missing source, or a build that won't run. Collect every other question under **"Questions for Abhishek"** in the part's PR and carry on. A finding that can't be applied without an answer stays `Open`, with the reason in `notes`.
+- **Commit and push as you go on long runs**, so no work is lost. Don't ask Abhishek anything until the part is finished.
+- **When the part is finished, deliver one package** (section 7):
+  - the whole part as a **single PDF** in `fixed/Part-X/`;
+  - a **one-page summary per chapter** (what changed, and what was skipped and why);
+  - **one pull request**.
+
+  Abhishek reviews once and merges.
+
+Order:
+
+1. **Whole-book layout pass (once, before any part; one PR `style-pass`):**
+   - themes **V1–V12** wherever one shared change fixes them: the builder (`tools/pdf/build.py`, `layout.js`), stylesheet and cover template, plus source fixes that change no wording (broken table pipes, escapes), and V12 (Ch 19 scale, rasters re-exported at 300 ppi). **Figure redraws (V3–V6: text under 7 pt, overlaps, colour-only meaning, figure order) are done per chapter in the part builds** (section 6 step 3), because each figure must be checked against its caption and text;
    - rebuild every chapter;
-   - run `review/briefs/prescan.py` on each rebuilt PDF, then spot-render and compare with the snapshots;
+   - run `review/briefs/prescan.py` and `tools/pdf/layout_check.py` on each rebuilt PDF, then spot-render and compare with the snapshots;
    - mark the fixed visual rows `Fixed`.
 2. **Riverstone fact sheet (D3):** draft `review/riverstone-facts.md` from the chapters and the findings under theme T10. Cover people and roles, the timeline, systems, rates, datasets, file names and the flash time. Open it as a PR for Abhishek to approve before Part II content work starts.
-3. **Content, part by part, one PR per part:** Part 0 → I → II → … → VIII → Closing. Branch name `part-II`, etc. Within a part, go chapter by chapter in order.
-4. **Final pass:** book-wide cross-references (T8), then the Time needed tables in Ch 6, 9 and 83 recomputed from one source (T12), then renumbering (D2) if approved.
+3. **Content, part by part, one PR per part, in this order: Part 0 + Part I together** (branch `part-0-I`, which includes D6), then II, III, IV, V, VI, VII, VIII, Closing (branch `part-II`, etc.). Within a part, go chapter by chapter in reading order. Findings that assume another reading order (`review/reading-order-conflicts.md`) stay `Open`.
+4. **Final pass:** renumber Parts II and III to the reading order (map in section 3) and Part VIII (D2), then book-wide cross-references (T8) from a generated index, then the Time needed tables in Ch 6, 9 and 83 recomputed from one source (T12).
 
 ## 6. How to fix one chapter
 
@@ -116,7 +150,7 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
    Never type an output by hand.
 3. Redraw the chapter's figures from the figure scripts at print width (text ≥ 7 pt). Check each figure against its caption and the text.
 4. Build the chapter PDF into `build/`. Then:
-   - run `python review/briefs/prescan.py build/<file>.pdf build/<file>.json`;
+   - run `python review/briefs/prescan.py build/<file>.pdf build/<file>.json` and `python "Data Science/Analyst-to-Architect/tools/pdf/layout_check.py" build/<file>.pdf` (contents numbers, stranded headings and lead-ins, half-empty pages, clipped list numbers, draft labels);
    - render the pages that had visual findings (`pdftoppm -r 110`) and look at them;
    - confirm each visual finding is gone.
 5. Re-read the chapter as the first-time reader against the seven tests.
@@ -124,8 +158,10 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 7. Write `changelog/chNN.md`, with one line per finding: `ID · what changed · where (section/page) · option used if any`. Add before/after page crops for High visual findings to `changelog/img/`.
 8. Run `python tracker/make_tracker.py` and commit the source, CSV, `TRACKER.md` and changelog **together**. Commit message: `Ch NN: fix <n> findings (<ids range>)`.
 
-## 7. Pull request for a part
+## 7. The package for a part: one PDF, one summary per chapter, one pull request
 
+- **One PDF for the whole part** in `fixed/Part-X/` (e.g. `fixed/Part-II/Part-II-The-Analyst.pdf`), built from the fixed chapters. Chapter PDFs can sit beside it.
+- **One page per chapter**, `changelog/chNN-summary.md`: what changed, what was skipped and why, and the option picks used. The line-by-line `changelog/chNN.md` stays as the detailed record.
 - **Title:** `Part II fixes: Ch 10–27 (<n> findings)`.
 - **Body:**
   - a summary table per chapter (fixed / verified / skipped with reason);
@@ -144,4 +180,4 @@ Before each session, read `DECISIONS.md` and update `tracker/register.csv`:
 - **Every chapter must still build** after each commit.
 - **Bigger scope needs a comment.** If a fix needs changes in another chapter (cross-refs, moved sections), make them in the same PR and note them in both changelogs. Moves across parts (e.g. Ch 14 Python → Ch 18) are done in the later part's PR, with a placeholder note in the earlier part's changelog.
 - **Keep the tracker true.** `TRACKER.md` must always match the CSV. Statuses allowed: Open, Approved, Modify, Rejected, Deferred, Fixed, Verified.
-- **Ask when unsure.** Put the question in the PR description under "Questions for Abhishek" rather than guessing.
+- **Ask when unsure, but don't pause.** Put the question in the PR description under "Questions for Abhishek" rather than guessing, and keep working on everything else (section 5).
