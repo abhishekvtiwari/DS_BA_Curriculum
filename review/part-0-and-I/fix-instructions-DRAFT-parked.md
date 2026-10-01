@@ -6,6 +6,8 @@ Status: v1, 2026-09-25. Written after Abhishek approved (a) Part 0/I findings, (
 - **D3** Regression basics become a new section at the end of Ch 22.
 
 Source register: `claude/findings-part-0-and-I.md`. Master order: `claude/sequence-map.md`.
+**Updated 28 Sep 2026 for D6** (Abhishek): Chapter 6 is split into an unnumbered front section, "How to Use This Book", placed before Chapter 1, and Chapter 6, "Planning Your Learning". No chapter numbers change. The Chapter 6 section below replaces the earlier "How to Study This Book" plan. These instructions are carried out in the **Part 0 + I build** (CLAUDE.md §5).
+
 Every instruction below names its finding ID, the exact location, the action, and an acceptance check the editor can tick.
 
 **Action verbs:** DELETE (remove text) · REPLACE (swap for given text or spec) · MOVE (cut here, paste at named destination) · ADD (new text) · REWRITE (same purpose, new wording per spec).
@@ -19,7 +21,7 @@ Every instruction below names its finding ID, the exact location, the action, an
 | R1 No code before its chapter (S.1) | In Ch 1–9, no line of SQL, Python, spreadsheet formula, terminal command, DAX or VBA may appear. Data examples (tables, JSON records, an API reply shown as data) are allowed because Ch 1–2 teach them. | Search Ch 1–9 for `SELECT`, `=` followed by a capital function name, `print(`, `import `, `pip`, `python `, `git `: zero hits. |
 | R2 No preview boxes (S.4, M.10) | Delete every "Spreadsheet link", "SQL link" and "Dialect note" box in Ch 1–9. Their content moves to the chapter that teaches the tool, rewritten to point **back** ("In Chapter 4 you worked this out by hand; here is the formula"). | Zero boxes with those titles in Ch 1–9. |
 | R3 Forward references (0.7) | In the body of Ch 1–9, at most **one** forward reference per section, and only when the reader must know something is deliberately left out. All other pointers go into that chapter's "Where this leads" list. Current counts of references to Ch 10+ in body text: Ch 1: 14 · Ch 2: 15 · Ch 3: 14 · Ch 4: 11 · Ch 5: 10 · Ch 6: 37. | Body references to Ch 10+ ≤ number of sections in the chapter. |
-| R4 Production notes (0.15, I.9) | DELETE "(In the finished book these move to Appendix G.)" under every "Answers to practice exercises" heading. Also DELETE in Ch 6 §6.9: "The answers are at the end of each chapter in this draft and move to Appendix G in the finished book." REPLACE with: "The answers are in Appendix G." | Zero hits for "finished book" and "this draft". |
+| R4 Production notes (0.15, I.9) | DELETE "(In the finished book these move to Appendix G.)" under every "Answers to practice exercises" heading. The sentence in old Ch 6 §6.9, "The answers are at the end of each chapter in this draft and move to Appendix G in the finished book.", moves to the front section (F.3) and becomes: "Each chapter's answers follow its exercises." (Appendix G is not written, so the book must not send the reader there.) | Zero hits for "finished book" and "this draft". |
 | R5 Dataset label (0.8) | Every table or figure with Riverstone numbers carries a one-line source label: "Mini database (Jan–Mar 2026)" or "One-year database (2025)". | Every Riverstone number table has a label. |
 | R6 Arithmetic stays checkable | Every number changed by these instructions is recalculated and shown with its working, as the book already does. | Each changed number has a working line or ✓ check. |
 
@@ -103,60 +105,84 @@ Goal: cut the chapter from about 110 key terms to about 65, remove results produ
 
 ---
 
-## Chapter 6 — Setting Up to Learn → becomes "How to Study This Book"
+## Front section — How to Use This Book (new, D6)
 
-This is the largest change. The chapter keeps its study-habit half and loses every install. It becomes tool-free, so Part 0 needs no software.
+Unnumbered, placed before Chapter 1 (file `manuscript/front-how-to-use-this-book.md`, H1 `# How to Use This Book`, no part line). **Length:** 4–6 printed pages, about 1,500–2,200 words. **No code, no tool commands** (R1 applies: the reader hasn't met any tool yet). Build it with a hand-written job in `tools/pdf/build.py` (`front`), and put it first in the Part 0 collated file.
+
+| # | Section | Content | Source |
+|---|---|---|---|
+| F.1 | Who this book is for, and how it's built | Two or three paragraphs: from "what is data" to architect; one fictional company, Riverstone Supplies, all the way through; tools are introduced one at a time, in the chapter that first needs them | New |
+| F.2 | How each chapter is laid out | The anatomy in order: Chapter at a glance (You will learn to · Before you start · Time needed · Tools · Practice data), Why this matters, In plain English, numbered sections, the boxes (Watch out, Try it, Simplification note, Real-life example, Interview extra point: check each name against the manuscript before listing it), Common mistakes, In the real world, Tools, The project, You've got it when…, Recap, Practice exercises, Key terms, Where this leads, Answers | New paragraph + old §6.9 framing |
+| F.3 | The four exercise groups, and the answers | Old §6.9 table (Warm-up, Core, Stretch, Think about it) and its four bullets, unchanged. Answers sentence per R4 | Old §6.9, moved |
+| F.4 | How to read code and its output | Part 0 and Part I have no code. From Chapter 10 on, each code block is followed by the output it actually produced when run, then a line-by-line explanation; one new idea per block; PostgreSQL and MySQL shown side by side where they differ; run it yourself and compare. A code block and an output block are shown as they will look, with **no real code** (use a placeholder labelled as such, or describe it in words) | New |
+| F.5 | How the parts climb | One line per part, 0 → VIII and Closing, with the part titles exactly as in the chapter files; where job-ready ends (end of Part II); that later parts are optional branches (Chapter 8's career tree) | New |
+| F.6 | A rough sense of time | Two sentences: the book's own estimates put the end of Part II at about 320 to 400 hours; Chapter 6 turns that into a plan for your week | New; must match 6.1's table |
+| F.7 | The companion files and a tidy folder | What the companion files are and that each chapter's Tools and Practice data lines name the files it uses; the folder layout from old §6.4 **without** `.venv/`; the two rules (never edit the originals; name files as in Chapter 2 §2.4); the "Files" habits from old §6.5 (show extensions, copy a full path, unzip before opening). Pointer to Appendix E for the download address. **Open issue: the address itself doesn't exist yet (RJ-S1-3); do not invent one** | Old §6.4, §6.5 "Files" |
+
+**Check:** 4–6 pages in the built PDF; zero code; every box name listed exists in the manuscript; part titles match the chapter files.
+
+---
+
+## Chapter 6 — Setting Up to Learn → becomes "Planning Your Learning" (D6)
+
+The chapter keeps its number and its study-planning half, and loses every install. It becomes tool-free, so Part 0 needs no software. Chapter anatomy and the exercise guide (old §6.9) move to the front section.
 
 ### 6-A. New title, new outline
 
-**Title:** "How to Study This Book". **Before you start:** Chapters 1–5. **Time needed:** about 1.5–2 hours. **Tools:** a notebook, or a notes app, for your plan.
+**H1:** `# Chapter 6. Planning Your Learning`. **Before you start:** Chapters 1–5, and "How to Use This Book". **Time needed:** 2–3 hours, including the exercises and the project (re-measure after writing). **Tools:** a notebook or a notes app, and a calendar. **Practice data:** none; you plan with your own week.
 
 | New § | Content | Source |
 |---|---|---|
-| 6.1 How each chapter works | Chapter anatomy (at a glance, plain English, sections, watch outs, common mistakes, story, project, self-check, exercises); the four exercise groups | Old §6.9 (moved up) plus a new anatomy paragraph |
-| 6.2 How long it really takes | Honest hours table (6-C), weekly-hours arithmetic, "chapter hours are not fluency hours" | New; must agree with Ch 9 §9.1 and the Closing |
-| 6.3 A weekly rhythm you can keep | Old Figure 6.3 and "When you fall behind", unchanged | Old §6.8 second half |
-| 6.4 What you'll need, and when | Tool timeline table (6-D): what, which chapter, cost, runs on. **No install steps.** Computer requirements (8 GB / 16 GB, Mac and Power BI, Chromebook, locked work laptop) kept as plain text | Old §6.1 and §6.2, trimmed |
-| 6.5 The companion files and a tidy folder | Download once, the folder structure (without `.venv/`), the two rules (never edit originals; name files well) | Old §6.4, minus the Python rows |
-| 6.6 Learning with AI assistants | Old §6.7, unchanged apart from R3 | Old §6.7 |
-| 6.7 Reading documentation (the habit) | The five-part method for reading a documentation page, using a **non-code example**: the reader's phone-plan or bank fee page ("find the signature, i.e. the exact rule; read every word; find the exception box"). The rounding comparison moves out (6-B) | Old §6.6, rewritten |
+| Why this matters / In plain English | Keep the author's framing; the kitchen analogy keeps only the meal-plan half (a cook plans the week and gets each utensil when a recipe calls for it) | Old openings, trimmed |
+| 6.1 How long it really takes | Honest hours table (6-C), the weekly-hours arithmetic, "chapter hours are not fluency hours" (pointer to Ch 9 §9.1) | New; replaces Figure 6.2 |
+| 6.2 A weekly rhythm you can keep | Old Figure 6.3 (becomes Figure 6.1), its three ideas, and "When you fall behind", unchanged | Old §6.8 second half |
+| 6.3 What you'll need, and when | Computer requirements from old §6.1 as plain text (8 GB / 16 GB, Mac and Power BI, Chromebook, locked work laptop, the Windows 10 Watch out), the tool timeline table (6-D) and old Figure 6.1 (becomes Figure 6.2). **No install steps, no versions table** | Old §6.1, §6.2, trimmed |
+| 6.4 Reading documentation | The five-part method for reading a documentation page, practiced on a **non-code** page the reader already has (a phone-plan or bank fee page: find the exact rule, read every word, find the exception box, check the date or version). One sentence keeps the lesson that tools disagree (for example on rounding a half), with the demonstration deferred to the tool chapters | Old §6.6, rewritten |
+| 6.5 Learning with AI assistants | Old §6.7 unchanged, except rule 3's pointer (now to §6.4) | Old §6.7 |
 
 ### 6-B. Where each removed piece goes
+
+Removed text is moved verbatim to `manuscript/_parked/ch06-moved-out.md` in the Part 0 + I build, each block labelled with its destination, so nothing is lost before the destination part is built. The destination part's build pulls it from there and deletes it from the parked file.
 
 | Removed from Ch 6 | Goes to | Form there |
 |---|---|---|
 | §6.3 Step 1 spreadsheet access and `=ROUND(A1,0)` check | Ch 10, new first section "10.0 Getting a spreadsheet and checking it works" | Install or sign in, then a one-line first run |
-| §6.3 Step 2 PostgreSQL, MySQL, DBeaver, loading riverstone data, `SELECT COUNT(*)` check | Ch 12 §12.3 (already has full steps) | Remove the "Chapter 6 → come back" loop |
+| §6.3 Step 2 PostgreSQL, MySQL, DBeaver, loading riverstone data, `SELECT COUNT(*)` check | Ch 12 §12.3 (already has full steps) | Remove the "Chapter 6 → come back" loop (0.4) |
 | §6.3 Step 3 Python, virtual environment, pip, `check_setup.py` | Ch 17, new first section "17.0 Setting up Python, the terminal and Jupyter" | Every command explained line by line: what `python -m venv .venv` does and what each part means; what "activate" changes; what `pip` is; why `python -m pip`; what the PowerShell policy line does and whether you need it |
 | §6.3 Step 4 VS Code and extensions | Ch 17 §17.0 | Same |
 | Jupyter (only installed before) | Ch 17 §17.0 | **First notebook**: launch JupyterLab, create a notebook, one cell `print("hello")`, Shift+Enter, read the output, then a markdown cell. This is where the book's line-by-line cell habit starts |
 | §6.3 Step 5 Git | Ch 26 §26.2 (Your first repository) | Install plus `git --version` |
 | §6.3 Step 6 Power BI | Ch 16, first section | Install from the Microsoft Store; the Mac options |
 | §6.5 terminal basics (open, `pwd`, `cd`, run a script) | Ch 17 §17.0 (minimum needed to run Python) **and** Ch 26 new §26.0 "The terminal in 20 minutes" (D2) | Explained command by command |
-| §6.6 rounding comparison (PostgreSQL, MySQL, Python, spreadsheet) and exercises 6, 7, 11 | Ch 17, section on numbers (the Python and spreadsheet parts); Ch 12 (the SQL part, as a documentation Watch out) | Each shown only where the reader knows that tool |
+| §6.5 keyboard shortcuts table | General rows: front section is too short for it, so Ch 10 §10.0 (the first chapter at a keyboard); VS Code row: Ch 17 | Question for Abhishek in the Part 0 + I PR |
+| §6.5 "Files" habits | Front section F.7 | — |
+| §6.6 rounding comparison (PostgreSQL, MySQL, Python, spreadsheet) and exercises 6, 7, 11 | Ch 17, section on numbers (the Python and spreadsheet parts); Ch 12 (the SQL part, as a documentation Watch out) | Each shown only where the reader knows that tool (S.2) |
 | §6.4 companion rows for SQL, Python and Ch 12 labs | Ch 12, Ch 17 | Listed where used |
-| Keyboard shortcuts: VS Code command palette row | Ch 17 | — |
+| §6.9 chapter anatomy, exercise groups, answers | Front section F.2, F.3 | — |
+| Exercises 2, 3, 5, 10 and their answers (install checks, terminal, pip, IT request to install) | Ch 12 (2b, 10), Ch 17 (2c, 3, 5), Ch 10 (2d), Ch 26 (2a) | Reworded for the chapter that receives them |
+| Meera's `check_setup.py` / "matplotlab" episode | Ch 17 §17.0 as its real-life example | — |
 
 ### 6-C. Honest hours (fixes 0.1, I.8)
 
-REPLACE Figure 6.2 ("six months at 8 hours") with a table built from the book's own Time needed lines. The numbers below are the totals; recheck them if any chapter's estimate changes after the moves.
+REPLACE Figure 6.2 ("six months at 8 hours") with a table computed **with code** from every chapter's *Time needed* line, the same way Chapter 83 §83.1 does. It counts Chapter 8's extra 2–3 hours for its project and Chapter 67's "about two hours" as 2–4. Group the rows **by part**, not by topic block, so the table does not depend on the open Part II/III reading-order question.
 
-| Stage | Chapters | Hours | Weeks at 6 h | Weeks at 8 h | Weeks at 10 h |
+Numbers as of 28 Sep 2026, with the new Chapter 6 at 2–3 hours:
+
+| | Chapters | Hours | Weeks at 6 h | Weeks at 8 h | Weeks at 10 h |
 |---|---|---|---|---|---|
-| Foundations and the map | 1–9 | 29–39 | 5–7 | 4–5 | 3–4 |
-| Spreadsheets | 10–11 | 39–47 | 7–8 | 5–6 | 4–5 |
-| SQL | 12–13 | 34–43 | 6–7 | 4–5 | 3–4 |
-| Cleaning, charts, Power BI | 14–16 | 50–62 | 8–10 | 6–8 | 5–6 |
-| Python and pandas | 17–18 | 55–65 | 9–11 | 7–8 | 6–7 |
-| Automation and statistics | 19–22 | 68–83 | 11–14 | 9–10 | 7–8 |
-| Business, BA, Git, capstone | 23–27 | 44–57 | 7–10 | 6–7 | 4–6 |
-| **Job-ready (Parts 0–II)** | **1–27** | **319–396** | **53–66 (12–15 months)** | **40–50 (9–12 months)** | **32–40 (7–9 months)** |
+| Parts 0 and I | 1–9 | 28–38 | 5–6 | 4–5 | 3–4 |
+| Part II | 10–27 | 290–357 | 48–60 | 36–45 | 29–36 |
+| **Job-ready (Parts 0–II)** | **1–27** | **318–395** | **53–66 (12–15 months)** | **40–49** | **32–40** |
+| Parts III–VII | 28–67 | 445–584 | — | — | — |
+| **All teaching chapters** | **1–67** | **763–979** | **2.4 to 3.1 years** | | |
 
-Working to show: 319 ÷ 6 = 53.2; 396 ÷ 6 = 66; 319 ÷ 8 = 39.9; 396 ÷ 8 = 49.5; 319 ÷ 10 = 31.9; 396 ÷ 10 = 39.6. Add a sentence: "These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9)."
+Recompute these in the build, and again in the final pass (T12), because every chapter's *Time needed* is re-estimated after its fixes. Add the sentence: "These are reading-and-exercise hours. Fluency takes more practice on top (Chapter 9)."
 
-Also REWRITE the Meera story (§"In the real world: Meera sets up"): keep her two-computer decision, framed as *planning* rather than installing ("she decided which tools would live on which computer when she reached them"). Replace "At that pace, Figure 6.2 becomes a nine-month plan" with "At 6 hours a week, the table says 53–66 weeks to the end of Part II, so she planned for about fifteen months and wrote her first 90 days". Delete the check_setup/matplotlab episode (it moves to Ch 17 as a real-life example).
+**Knock-on, same build:** Chapter 83 §83.1 uses the old Chapter 6 figure (3–4 h). Update its table, prose and Figure 83.1 (`make_figs83.py`) to the recomputed totals (currently 29–39 → 28–38, 319–396 → 318–395, 764–980 → 763–979). The rounded weeks, months and years there don't change. Note it in `changelog/ch83.md`.
 
-### 6-D. Tool timeline table (new §6.4)
+Also REWRITE the Meera story (§"In the real world: Meera sets up" → "Meera makes a plan"). Keep her two-computer decision, framed as *planning* rather than installing: "she decided which tools would live on which computer when she reached them". Replace "At that pace, Figure 6.2 becomes a nine-month plan" with the hours arithmetic from 6.1. Her 90-day chapter targets must follow from 6 hours a week × 13 weeks ≈ 78 hours, counted from Chapter 7 with the *Time needed* lines. Stop at the end of Chapter 11 plus "the next chapter", so the story doesn't depend on the reading-order question. Delete the check_setup/matplotlab episode (parked for Ch 17).
+
+### 6-D. Tool timeline table (new §6.3)
 
 | Tool | You first need it in | Cost | Runs on |
 |---|---|---|---|
@@ -166,22 +192,36 @@ Also REWRITE the Meera story (§"In the real world: Meera sets up"): keep her tw
 | Python, VS Code, Jupyter | Ch 17 | Free | Windows, Mac, Linux |
 | Git | Ch 26 | Free | Windows, Mac, Linux |
 
-Add the line: "You'll install each tool at the start of the chapter that first uses it, and check it works with one small first step. Appendix B has all the install steps in one place if you'd rather set everything up at once." Keep the versions table in Appendix B only.
+Add the line: "You'll install each tool at the start of the chapter that first uses it, and check it works with one small first step. Appendix B will gather all the install steps in one place." Keep the versions table in Appendix B only. Until the Part II build moves the installs into Ch 10, 16, 17 and 26, those chapters still say "Chapter 6 set up the tools". List that in the Part 0 + I PR as a known interim gap. Ch 12 §12.3 already has its install steps.
 
 ### 6-E. Exercises, project, self-check, recap, key terms
 
 | Item | Action |
 |---|---|
 | Exercises 1 (which tools a computer can run) and 4 (AI requests) | KEEP; exercise 1 reworded to "which chapters could you do on each computer?" |
-| Exercises 2, 3, 5, 6, 7, 10, 11 (install checks, terminal, pip, rounding) | MOVE to Ch 17 / Ch 12 / Ch 26 exercises as appropriate. **Fix the S.2 typo when moved:** `SELECT ROUND(45E1)` must become `SELECT ROUND(45E-1)` (45E1 is 450) |
-| Exercise 8 (5-hour rhythm) | KEEP; its answer uses the new hours table: 319–396 h ÷ 5 = 64–79 weeks |
-| Exercises 9 (AI without real data), 12 (90-day plan), 13–15 | KEEP |
-| New exercise | "Using the table in 6.2, and the hours you really studied last week, write the month you expect to finish Part II. Show your division." |
-| Project | REWRITE as "Plan your route and your first 90 days": the hours calculation, the weekly rhythm, the folder set up, the companion files downloaded, the AI rule written, one documentation page read (the phone or bank example). No install table |
+| Exercises 2, 3, 5, 6, 7, 10, 11 (install checks, terminal, pip, rounding, IT request, rounding documentation) | MOVE per 6-B. S.2: when exercise 6 lands in Ch 12/17, check part (e) reads `ROUND(45E-1)` (the current text already does) |
+| Exercise 8 (5-hour rhythm) | KEEP; its answer uses the new hours table: 318–395 h ÷ 5 = 64–79 weeks |
+| Exercises 9 (AI without real data), 12 (90-day plan), 13–15 | KEEP; 14 points to the front section instead of §6.9 |
+| New exercises | "Using the table in 6.1 and the hours you really studied last week, write the month you expect to finish Part II. Show your division." And a non-code documentation exercise: "Find the official page for one rule that affects you (your phone plan's data limit, a bank fee) and write down the exact rule, one example, one exception, and the date or version." |
+| Project | REWRITE as "Plan your route and your first 90 days": the hours calculation, the weekly rhythm put in a calendar, the folder set up and the companion files downloaded (front section F.7), the AI rule written, one documentation page read (the non-code example), which chapter you'll install each tool in. No install table |
 | You've got it when… | Remove the install and check lines; add "I know which chapter I'll install each tool in" and "My finish date comes from arithmetic, not hope" |
-| Key terms | Remove operating system, virtual machine, installer, Microsoft Store, admin rights, LTS, PostgreSQL, MySQL, DBeaver, Power BI Desktop, Python install manager, virtual environment, pip, package, VS Code, extension, Jupyter, Git, terminal, command, banker's rounding, round half away from zero, floating-point number. Add chapter anatomy, study hours, weekly rhythm |
+| Key terms | Remove operating system, virtual machine, installer, Microsoft Store, admin rights, LTS, PostgreSQL, MySQL, DBeaver, Power BI Desktop, Python install manager, virtual environment, pip, package, VS Code, extension, Jupyter, Git, terminal, command, banker's rounding, round half away from zero, floating-point number, warm-up/core/stretch exercises (now front section). Add study hours, weekly rhythm, tool timeline |
+| Where this leads | Ch 7–9; the chapters that install each tool (10, 12, 16, 17, 26); Ch 83 (the long game, the same hours); Appendix B; interview chapters 68 and 81 |
 
-**Check for all of Ch 6:** zero install steps, zero commands, zero code; hours agree with Ch 9 and the Closing; every moved item exists at its destination (Ch 10, 12, 16, 17, 26, Appendix B).
+**Check for all of Ch 6:** zero install steps, zero commands, zero code; hours computed by code and equal in Ch 6, Ch 83 and the front section; every removed block is in `_parked/ch06-moved-out.md` with its destination.
+
+### 6-F. References to Chapter 6 elsewhere (D6)
+
+| Where | Now says | Change to |
+|---|---|---|
+| Part 0 contents (`part0-first-principles.md` intro and table; `planning/chapter-map.md` P0-06) | "you'll have every core tool installed"; row "6. Setting Up to Learn … install and check the book's tools…"; "In total, allow 20–26 hours" | "…and you'll have a plan for how and when you'll learn the rest"; row "6. Planning Your Learning · estimate your hours honestly; set a weekly rhythm; know which chapter brings each tool; read documentation; learn with AI assistants; plan your first 90 days · 2–3 hours"; total recomputed (19–25 hours with Ch 6 at 2–3). Add a line above the table naming "How to Use This Book". Regenerate the collated file from the chapter files |
+| Ch 1, line ~382 | "Chapter 6 walks you through installing everything else the book uses." | "Each tool is installed in the chapter that first uses it; Chapter 6 shows when." |
+| Ch 3, Tools | "Not needed yet; Chapter 6 installs it and Chapter 12 queries…" | "Not needed yet; Chapter 12 installs it and queries…" |
+| Ch 5, "Where this leads" | "Chapter 6, Setting Up to Learn, installs the tools you'll use to test hypotheses, and helps you build a study plan." | "Chapter 6, Planning Your Learning, turns the book's hours into a plan for your week, and shows which chapter brings each tool you'll use to test hypotheses." |
+| Ch 7 §7.9, Ch 9 §9.4 Watch out | "Chapter 6 covers learning with AI assistants…" | No change (still true) |
+| Ch 9, "Where this leads" | "Chapter 6, Setting Up to Learn, covers your study setup, a sample 6-month analyst plan, and learning with AI…" | "Chapter 6, Planning Your Learning, turns this chapter's timeline into hours and weeks for your own plan, and covers learning with AI assistants without letting them think for you." |
+| Ch 9 §9.1 (I.8) | — | ADD one sentence after the table: "Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree." (replaces instruction 9.10) |
+| Ch 17 (Before you start, §17.1), Ch 26 (intro, Git table), Ch 34 (Before you start, Git Bash row) | "Chapter 6 set up / installed…" | Fixed in the Part II and III builds, when the installs arrive there |
 
 ---
 
@@ -227,7 +267,8 @@ Add the line: "You'll install each tool at the start of the chapter that first u
 | 9.7 | S.1 | §9.6 asking-for-help example with `LEFT JOIN` / `WHERE o.status <> 'Cancelled'` | REPLACE | A spreadsheet-free, code-free example: "I'm totalling my spending log by category. My Food total is ₹1,230, but when I add the Food receipts by hand I get ₹1,380. I expected them to match. Here are the eight Food rows." Remove the pointer to Ch 12 §12.10. |
 | 9.8 | S.1 | "In the real world: Farah's week seven": "her join kept dropping them", "the difference between an inner and a left join and where the filter goes", "rebuilt its LEFT JOIN examples" | REWRITE | Keep the story's logic in plain words: "her answers kept leaving out customers who had never ordered", "one idea: how to keep the rows that have no match in the other table", "rebuilt that section's examples without looking". Keep one pointer: "(Chapter 12, section 12.10, teaches this exact idea.)" |
 | 9.9 | S.1 | Answer 2(b) "Write three queries that keep customers with no orders" and answer 10 (window functions week) | REWRITE | 2(b): "Answer three questions about customers with no orders on the practice data, predicting each result first." Exercise 10 becomes: "Design one week of deliberate practice for someone who has finished Chapter 4 and struggles with percentage points versus percent change." Answer rewritten to match. |
-| 9.10 | I.8 | §9.1 | ADD one sentence | "Chapter 6's hours table uses the same numbers, so your plan and this chapter agree." |
+| 9.10 | I.8 | §9.1 | ADD one sentence | See 6-F (D6): "Chapter 6's hours table uses the same Time needed lines, so your plan and this chapter agree." |
+| 9.11 | D6 | "Where this leads", Chapter 6 bullet | REPLACE | See 6-F. |
 
 ---
 
@@ -248,6 +289,9 @@ Add the line: "You'll install each tool at the start of the chapter that first u
 | Ch 52 | IaaS / PaaS / SaaS table | Ch 2 |
 | Ch 68 | Two salary rows and the growth discussion | Ch 8 |
 | Appendix B | All-in-one install guide and versions table | Ch 6 |
+| Front section "How to Use This Book" (D6) | Chapter anatomy, exercise groups, companion folder, "Files" habits | Ch 6 §6.9, §6.4, §6.5 |
+| Ch 83 §83.1 | Recomputed hours totals (new Ch 6 at 2–3 h) | Ch 6 (D6) |
+| `manuscript/_parked/ch06-moved-out.md` | Every block removed from Ch 6, labelled with its destination, until that part is built | Ch 6 |
 
 ## Order of work for the editor
 
@@ -255,5 +299,5 @@ Add the line: "You'll install each tool at the start of the chapter that first u
 2. Ch 7 §7.6 rewrite, Ch 9 plain-word rewrites, Ch 1 "Meet Riverstone".
 3. Ch 2 cuts and moves.
 4. Ch 4 and Ch 5 box removals (their destinations in Ch 10–12 are written when Part II is fixed).
-5. Ch 6 rebuild: last, because it depends on the destination sections existing.
+5. Ch 6 rebuild and the front section (D6). The removed install material goes to `_parked/` because its destinations (Ch 10, 16, 17, 26) are built in the Part II build; Ch 12 §12.3 already has its steps. Then the D6 reference updates (6-F), Ch 83's hours, and the regenerated Part 0 and Part I collated files.
 6. Re-measure every Part 0 and I "Time needed" line, then update the Ch 6 table and the Closing's hours table if totals change.
