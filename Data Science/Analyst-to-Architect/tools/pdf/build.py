@@ -496,29 +496,51 @@ def running_head(title):
 def relink(doc):
     """Rewrite named-destination links as direct internal go-tos. Returns how many changed.
 
+    Two things need fixing, and both are easy to get wrong.
+
     join_cover inserts the cover into the body, and that rewrites the body's own internal links as
     *named* destinations. A named destination is valid PDF, but many viewers will not follow one,
-    so a reader clicking a contents entry gets nothing at all. Resolving each name to an explicit
-    page and position makes every viewer follow it. Run after the last step that inserts pages."""
+    so a reader clicking a contents entry gets nothing at all.
+
+    The stored point is in PDF's native space: origin bottom-left, y growing upward. insert_link
+    takes its point in page space: origin top-left, y growing downward. Copied across unconverted,
+    a destination meaning "top of the page" (y = 842 on A4) becomes "842 points below the top",
+    which is the bottom edge, so the viewer scrolls onto the next page or lands mid-page. Convert
+    against the target page's own height.
+
+    Every link on a page is removed and re-inserted in one go, because deleting and inserting
+    inside a loop over get_links() invalidates the entries after it and silently drops them.
+
+    Run after the last step that inserts pages."""
     import pymupdf
     names = doc.resolve_names() or {}
+    heights = [p.rect.height for p in doc]
     fixed = 0
     for page in doc:
-        swap = []
-        for l in page.get_links():
+        links = page.get_links()
+        if not any(l['kind'] == pymupdf.LINK_NAMED for l in links):
+            continue
+        rebuilt = []
+        for l in links:
             if l['kind'] != pymupdf.LINK_NAMED:
+                rebuilt.append(l)
                 continue
             t = names.get(l.get('nameddest'))
             if not t:
-                continue
+                continue                      # a name with no destination cannot be linked
             new = {'kind': pymupdf.LINK_GOTO, 'from': l['from'], 'page': t['page']}
             if t.get('to'):
-                new['to'] = pymupdf.Point(t['to'][0], t['to'][1])
-            swap.append((l, new))
-        for old, new in swap:
-            page.delete_link(old)
-            page.insert_link(new)
+                H = heights[t['page']]
+                new['to'] = pymupdf.Point(t['to'][0], max(0.0, min(H - 1.0, H - t['to'][1])))
+            rebuilt.append(new)
             fixed += 1
+        while True:                       # link annots are NOT returned by page.annots(), so
+            ls = page.get_links()         # delete the first repeatedly: no handle goes stale and
+            if not ls:                    # nothing is left behind to double up with the new ones
+                break
+            page.delete_link(ls[0])
+        for l in rebuilt:
+            page.insert_link(l)
     return fixed
 
 
