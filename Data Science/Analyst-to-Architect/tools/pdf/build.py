@@ -22,6 +22,10 @@ def md_to_html(src, out, bodyclass, title, toc_depth):
                     src, '-o', str(out)], check=True)
     h = out.read_text()
     h = re.sub(r'<blockquote>(\s*<p><strong>Watch out)', r'<blockquote class="warn">\1', h)
+    # The HTML is written to the scratch dir D, so relative links to the stylesheet (beside this
+    # script) and to figures/ (under the book root) would not resolve. Point them at the real files.
+    h = h.replace('href="book.css"', f'href="{(HERE/"book.css").as_uri()}"')
+    h = re.sub(r'src="(figures/[^"]+)"', lambda m: f'src="{(ROOT/m.group(1)).as_uri()}"', h)
     out.write_text(h)
 
 def render(pw, html_path, pdf_path, footer_text=None):
@@ -180,6 +184,12 @@ NAMES = {
     'ch56': 'Ch56-MLOps',
 }
 
+# Two released footers carry a shorter title than the chapter's H1. Pinned for the same reason.
+FOOTER_NAMES = {
+    'ch19': 'Spreadsheet Automation: Macros, VBA, Office Scripts & Apps Script',
+    'ch51': 'Data Activation',
+}
+
 
 def chapter_md(key):
     """manuscript/<key>-*.md for a key like 'ch40' or 'ch72a'."""
@@ -201,7 +211,8 @@ def generic_job(key):
     out_name = NAMES.get(key) or (('Ch%s-%s' % (pad, slug)) if num else slug)
     title_html = ('Chapter %s<br>%s' % (num, html.escape(name))) if num else html.escape(name)
     return build(src.name, out_name, '', h1,
-                 'Analyst to Architect · ' + h1,
+                 # released footers read "Chapter 40 · Time Series & Forecasting", not "Chapter 40. …"
+                 'Analyst to Architect · ' + (('Chapter %s · %s' % (num, FOOTER_NAMES.get(key, name))) if num else h1),
                  dict(KICKER='Analyst to Architect · ' + part,
                       TITLE=title_html,
                       SUB='',

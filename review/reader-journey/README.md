@@ -1,9 +1,10 @@
 # The Reader's Journey review
 
 A **third review strand**, separate from the content review in `review/content/` and the visual
-review in `review/visual/`. Its findings are **not in `tracker/register.csv`** and are not part of
-the 3,758. Nothing here has been approved, and none of it should be fixed under the approval gate
-in `CLAUDE.md` section 4 until it has been reconciled into the register or approved another way.
+review in `review/visual/`. **Merged into `tracker/register.csv` on 28 September 2026** (setup PR):
+64 findings were added as new rows with `kind` = `reader-journey`, status `Open`. The other 66
+duplicate an existing finding, so they were not added twice (see below). Nothing here is approved
+until `DECISIONS.md` says so, like any other row.
 
 ## What it is
 
@@ -54,14 +55,20 @@ for a decision.
 
 ## How this relates to the register
 
-Some findings here will duplicate rows already in `tracker/register.csv`, because the content review
-covered the same chapters from a different angle. Others are genuinely new, particularly the
-cross-part ones: the reading-order references, the story calendar clashing between parts, the two
-endings, and the chapter-number and chapter-title citations that were written before renumbering.
+Each of the 130 findings was compared with the register rows of the chapters it names. A text
+shortlist was checked by reading both findings. A finding counts as a **duplicate** only when
+applying the existing row's fix would fully resolve it.
 
-Before any of it is acted on, someone has to decide whether to merge these into the register as new
-rows or keep the strand separate. Until then, treat this folder as read-only background, the same as
-`review/content/`.
+| Outcome | Count | Where it is recorded |
+|---|---:|---|
+| New, added to the register | 64 | New rows in `tracker/register.csv` (IDs `RJ-…`). Rows that partly overlap existing findings name them in `notes` as `related: …` |
+| Duplicate, not added | 66 | `register-candidates.csv` `notes`: `DUPLICATE of <IDs>`. The original rows' `notes` say `Also raised by RJ-… (Reader's Journey)` |
+
+Rows that name several chapters (for example `6, 14, 19, 20`) keep the full list in `chapter`.
+`TRACKER.md` counts them once, on a "Cross-chapter" line per part.
+
+Seven RJ findings assume the 17 September reading order in `planning/chapter-map.md` rather than the
+approved sequence map. They are listed in `review/reading-order-conflicts.md` and await a decision.
 
 ## The tool scripts
 
