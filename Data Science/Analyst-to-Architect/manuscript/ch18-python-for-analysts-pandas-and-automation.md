@@ -4,15 +4,15 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** think in whole columns instead of loops, starting with NumPy arrays · load data from CSV, Excel, JSON, Parquet, a database, and an API · profile a DataFrame in five lines · select, filter, and create columns without falling into pandas' classic traps · aggregate with `groupby`, combine with `merge`, and reshape with `pivot_table` and `melt` · work with dates, resampling, and rolling windows · redo Chapter 14's cleaning in pandas and reconcile it to the rupee · draw Chapter 15's charts with matplotlib and seaborn through one reusable style function · write formatted, multi-sheet Excel files people are glad to receive · call an API, page through its results, and handle its status codes · turn the whole thing into one script with logging, checks, and a Markdown summary · know when to push work back to SQL and when to stop using pandas.
+> **You will learn to:** think in whole columns instead of loops, starting with NumPy arrays · load data from CSV, Excel, JSON, Parquet, a database, and an API · profile a DataFrame in five lines · select, filter, and create columns without falling into pandas' classic traps · aggregate with `groupby`, combine with `merge`, and reshape with `pivot_table` and `melt` · work with dates, resampling, and rolling windows · redo Chapter 14's cleaning in pandas and reconcile it to the rupee · draw Chapter 15's charts with matplotlib and seaborn through one reusable style function · write formatted, multi-sheet Excel files people are glad to receive · call an API, page through its results, and handle its status codes · turn the whole thing into one script with logging, checks, and a Markdown summary · know when to push work back to SQL and when to stop using pandas · organise a growing script into classes, data classes and composition, and judge honestly when a class is the wrong answer · use inheritance where several things really are a kind of one thing · give the work one entry point with an exit code, fire it from a `.bat` file and Task Scheduler, and prove the morning after that it ran.
 >
 > **Before you start:** Chapter 17 (Python, the notebook, and the terminal from section 17.0), Chapters 12–13 (SQL and the `sales_lines` view), Chapter 14 (cleaning), Chapter 15 (chart choice and design), Chapter 16 (Power BI, whose measures pandas mirrors), and Chapters 10, 11, and 19 for the spreadsheet ideas pandas mirrors.
 >
-> **Time needed:** 40–45 hours, spread over four weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16, the project, and the timed challenge. Each week ends with a short checkpoint.
+> **Time needed:** 47–53 hours, spread over five weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16 (database, API, the whole script, performance); week 5, sections 18.17–18.18 (classes and scheduling), the project, and the timed challenge. Each week ends with a short checkpoint.
 >
 > **Tools:** the Python, VS Code, and Jupyter you installed in Chapter 17 (section 17.0), in the book's virtual environment, with `pandas`, `numpy`, `pyarrow`, `matplotlib`, `seaborn`, `openpyxl`, `xlsxwriter`, `tabulate`, `SQLAlchemy`, a database driver (`psycopg[binary]` for PostgreSQL, `mysql-connector-python` for MySQL), `requests`, and `python-dotenv`. Section 18.1 gives the one install command.
 >
-> **Practice data:** the full Riverstone dataset (`companion/full/`, CSV and Parquet, and the `riverstone_full` database from Chapter 14), Chapter 14's messy export, Chapter 15's chart data, Chapter 16's city-to-region table, Chapter 17's twelve monthly files, and `companion/ch18/` (a small demonstration API, a saved API reply, the cleaning script, and the finished monthly report script).
+> **Practice data:** the full Riverstone dataset (`companion/full/`, CSV and Parquet, and the `riverstone_full` database from Chapter 14), Chapter 14's messy export, Chapter 15's chart data, Chapter 16's city-to-region table, Chapter 17's twelve monthly files, and `companion/ch18/` (a small demonstration API, a saved API reply, the cleaning script, the finished monthly report script, and section 18.17's `report_objects.py` with section 18.18's `run_report.py` and `run_report.bat`).
 
 ---
 
@@ -2811,6 +2811,623 @@ The habits that matter, roughly in order of payoff:
 Run `monthly_report.py` for November 2025 from the terminal. Does every check pass? Open the Markdown file: what share of target did November reach? The answer is at the end of the chapter.
 
 ---
+
+## 18.17 Organising the work: classes, data classes, and composition
+
+Section 18.15's script works. It is also the last version of itself that fits in your head.
+
+Look at what `load`, `check`, `summarize` and `write_excel` each need: the month, the folder, the connection, the target, the tolerance, and the lines the earlier step produced. Every new requirement adds an argument to four functions, and every call site has to be found and changed. The script is not wrong. It has simply run out of a way to grow.
+
+A **class** is the answer to one specific problem: *data and the functions that use it keep travelling together, so put them in one thing*. That test is the whole of it. If the settings and the steps that read them are passed around as a group, they are already an object in everything but name.
+
+This section builds the monthly report as objects. The finished code is `companion/ch18/report_objects.py`; run the cells here first.
+
+### A class in twenty minutes
+
+A class is a **template**. An **instance** is one thing made from it. `__init__` runs when the instance is made, and `self` is how the instance refers to itself.
+
+```python
+import pandas as pd
+
+
+class SalesMonth:
+    """One month of Riverstone's order lines."""
+
+    def __init__(self, month, data_dir="../full"):
+        self.month = month
+        self.data_dir = data_dir
+        self.start = pd.Timestamp(month + "-01")
+        self.end = self.start + pd.offsets.MonthBegin(1)
+
+    def describe(self):
+        return f"{self.month}: {self.start.date()} up to {self.end.date()}"
+
+
+december = SalesMonth("2025-12")
+print(december.describe())
+print(december.month, december.start.date())
+print(type(december))
+```
+
+```
+2025-12: 2025-12-01 up to 2026-01-01
+2025-12 2025-12-01
+<class '__main__.SalesMonth'>
+```
+
+**Line by line:**
+
+- **`class SalesMonth:`** declares the template. The capitalised name is a convention, not a rule, and it is worth keeping: it tells a reader that `SalesMonth("2025-12")` makes a thing rather than calls a function.
+- **`def __init__(self, month, data_dir="../full"):`** is the **initialiser**, which Python runs when you write `SalesMonth("2025-12")`. The two underscores on each side mark it as a name Python itself calls; you never call `__init__` yourself.
+- **`self`** is the instance being made. It is the first parameter of every method, Python passes it for you, and the name is a convention you should not break. `self.month = month` stores the argument *on the instance*, which is what makes it available to every other method later.
+- **`self.start` and `self.end`** are computed once, in the initialiser, rather than recomputed in every method. A half-open range (`>= start`, `< end`) is section 18.15's rule, kept here.
+- **`def describe(self):`** is a **method**: a function that belongs to the class and gets the instance as `self`. `december.describe()` passes `december` as `self` automatically.
+- **`december.month`** reads an **attribute**. Attributes are just variables that live on the instance.
+
+> **Watch out: a class is not a free improvement.** `SalesMonth` above earns its place because four methods will share `start` and `end`. A class with one method and no state is a function with extra ceremony, and the end of this section says so plainly.
+
+### Data classes: named bundles of settings
+
+Most of what a script passes around is not behaviour, it is settings. Writing `__init__` by hand for those is dull and easy to get wrong, so Python has a shortcut.
+
+```python
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class ReportConfig:
+    month: str
+    data_dir: Path = Path("../full")
+    out_dir: Path = Path("reports")
+    tolerance_pct: float = 50.0
+
+    @property
+    def start(self):
+        return pd.Timestamp(self.month + "-01")
+
+    @property
+    def end(self):
+        return self.start + pd.offsets.MonthBegin(1)
+
+
+config = ReportConfig(month="2025-12")
+print(config)
+print("window:", config.start.date(), "to", config.end.date())
+```
+
+```
+ReportConfig(month='2025-12', data_dir=WindowsPath('../full'), out_dir=WindowsPath('reports'), tolerance_pct=50.0)
+window: 2025-12-01 to 2026-01-01
+```
+
+**Line by line:**
+
+- **`@dataclass`** is a **decorator**: a line starting with `@` above a definition that changes what the definition produces. This one writes `__init__` for you from the fields below it, and a readable `__repr__`, which is why `print(config)` shows every value instead of a memory address.
+- **`month: str`** is a field with a **type hint**. The hint documents the intent and lets an editor warn you; Python does not enforce it. Section 29.6 takes type hints further.
+- **`data_dir: Path = Path("../full")`** gives a default, so `ReportConfig(month="2025-12")` is enough. Fields with defaults must come after fields without, exactly as in a function signature.
+- **`frozen=True`** makes the instance read-only after it is built. That matters more than it looks: the whole point of one config is that every step sees the same settings, and a step that could change `tolerance_pct` halfway through would break that quietly.
+- **`@property`** turns a method into something you read like an attribute: `config.start`, not `config.start()`. Use it for a value *derived* from the fields, so it can never drift out of step with `month`.
+
+Try to change a frozen instance and it refuses:
+
+```python
+try:
+    config.month = "2025-11"
+except Exception as e:
+    print(f"{type(e).__name__}: {e}")
+```
+
+```
+FrozenInstanceError: cannot assign to field 'month'
+```
+
+That error is the feature. It is **encapsulation**: the object decides what may change, rather than leaving every caller free to reach in.
+
+### Keeping private work private
+
+Python has no truly private attributes. It has a convention, and the convention is load-bearing.
+
+```python
+class SalesData:
+    """Loads Riverstone's order lines and nothing else. One job."""
+
+    def __init__(self, config):
+        self.config = config
+        self._lines = None              # not part of the public interface
+
+    def lines(self):
+        """The month's order lines, loaded once and remembered."""
+        if self._lines is None:
+            self._lines = self._load()
+        return self._lines
+
+    def _load(self):
+        d = self.config.data_dir
+        orders = pd.read_csv(d / "orders.csv", parse_dates=["order_date"])
+        items = pd.read_csv(d / "order_items.csv")
+        customers = pd.read_csv(d / "customers.csv")
+        products = pd.read_csv(d / "products.csv")
+        window = orders[(orders.order_date >= self.config.start)
+                        & (orders.order_date < self.config.end)
+                        & (orders.status != "Cancelled")]
+        lines = (window
+                 .merge(items, on="order_id", validate="one_to_many")
+                 .merge(customers[["customer_id", "customer_name", "segment"]],
+                        on="customer_id", validate="many_to_one")
+                 .merge(products[["product_id", "product_name", "unit_cost"]],
+                        on="product_id", validate="many_to_one"))
+        lines["net_revenue"] = (lines.quantity * lines.unit_price
+                                * (1 - lines.discount_pct / 100)).round(2)
+        lines["cost"] = (lines.quantity * lines.unit_cost).round(2)
+        print(f"loaded {len(lines):,} lines for {self.config.month}")
+        return lines
+
+
+data = SalesData(config)
+print("first call  :", f"{len(data.lines()):,} lines")
+print("second call :", f"{len(data.lines()):,} lines")
+```
+
+```
+loaded 7,278 lines for 2025-12
+first call  : 7,278 lines
+second call : 7,278 lines
+```
+
+**Line by line:**
+
+- **`self._lines = None`**: one leading underscore means "this is mine, do not touch it from outside". Python will not stop you, but every Python programmer reads it as a closed door, and tools leave it out of generated documentation.
+- **`lines()` is the public way in; `_load()` is how it happens.** Callers get to ask for the lines. They do not get to decide when the CSVs are read.
+- **The `if self._lines is None` guard** is the reason this is a class at all. The load happens once, and the second call is free. Notice that `loaded 7,278 lines` printed once although `lines()` was called twice: the remembering is the behaviour, and it is only possible because the instance has somewhere to keep it.
+- **`validate="one_to_many"` and `"many_to_one"`** are section 18.7's fan-out guard, kept in place. Moving code into a class is not a reason to drop the checks.
+
+### Composition: one report, made of parts
+
+Now the report itself. It does not re-implement loading; it **has a** `SalesData`. That relationship is **composition**, and it is the one to reach for first.
+
+```python
+class MonthlyReport:
+    """The report. It owns its settings, its data, and its writers."""
+
+    def __init__(self, config, writers=None):
+        self.config = config
+        self.data = SalesData(config)          # composition: the report has a loader
+        self.writers = writers if writers is not None else []
+
+    def lines(self):
+        return self.data.lines()
+
+    def headlines(self):
+        lines = self.lines()
+        return {
+            "net_revenue": float(lines.net_revenue.sum()),
+            "orders": int(lines.order_id.nunique()),
+            "margin_pct": float((1 - lines.cost.sum() / lines.net_revenue.sum()) * 100),
+        }
+
+    def by_segment(self):
+        return (self.lines()
+                .groupby("segment", as_index=False)["net_revenue"]
+                .sum()
+                .sort_values("net_revenue", ascending=False)
+                .round(2))
+
+
+report = MonthlyReport(config)
+print({k: round(v, 2) for k, v in report.headlines().items()})
+print()
+print(report.by_segment().to_string(index=False))
+```
+
+```
+loaded 7,278 lines for 2025-12
+{'net_revenue': 87266803.75, 'orders': 4047, 'margin_pct': 27.6}
+
+    segment  net_revenue
+     Retail  42213835.00
+  Wholesale  23584620.00
+Hospitality  21468348.75
+```
+
+**Line by line:**
+
+- **`self.data = SalesData(config)`** is the whole idea. The report *uses* a loader rather than *being* one. Swap in a loader that reads the database instead of CSVs and nothing else changes.
+- **`writers if writers is not None else []`** avoids a classic Python trap: a mutable default like `writers=[]` is created once, when the function is defined, and shared by every instance. Chapter 72's question bank asks about exactly this.
+- **Every method calls `self.lines()`**, and the caching inside `SalesData` means the CSVs are read once no matter how many of them run. `headlines` and `by_segment` both used the data; `loaded 7,278 lines` printed once.
+- **`float(...)` and `int(...)`** convert NumPy scalars to plain Python numbers, so the dictionary prints as `4047` rather than `np.int64(4047)`.
+
+### Inheritance: one idea, several forms
+
+Riverstone wants the report as Markdown for the team channel and as Excel for finance. The *writing* differs; everything else is identical. That is what **inheritance** is for: put the shared part in a **base class**, and let each **subclass** supply the part that differs.
+
+```python
+class WriterStep:
+    """What every writer must do. Subclasses say how."""
+
+    suffix = ""
+
+    def write(self, report):
+        raise NotImplementedError("a writer must implement write()")
+
+    def path_for(self, report):
+        report.config.out_dir.mkdir(parents=True, exist_ok=True)
+        return report.config.out_dir / f"riverstone-{report.config.month}{self.suffix}"
+
+
+class MarkdownWriterStep(WriterStep):
+    suffix = ".md"
+
+    def write(self, report):
+        path = self.path_for(report)
+        h = report.headlines()
+        rows = "\n".join(f"| {r.segment} | {r.net_revenue:,.0f} |"
+                         for r in report.by_segment().itertuples())
+        path.write_text(
+            f"# Riverstone · {report.config.month}\n\n"
+            f"Net revenue Rs {h['net_revenue']:,.0f} from {h['orders']:,} orders.\n\n"
+            f"| Segment | Net revenue |\n|---|---|\n{rows}\n", encoding="utf-8")
+        return path
+
+
+class ExcelWriterStep(WriterStep):
+    suffix = ".xlsx"
+
+    def write(self, report):
+        path = self.path_for(report)
+        with pd.ExcelWriter(path, engine="xlsxwriter") as xl:
+            report.by_segment().to_excel(xl, sheet_name="By segment", index=False)
+            report.lines().head(1000).to_excel(xl, sheet_name="Lines", index=False)
+        return path
+
+
+report = MonthlyReport(config, writers=[MarkdownWriterStep(), ExcelWriterStep()])
+for w in report.writers:
+    p = w.write(report)
+    print(f"{type(w).__name__:<20} -> {p}  ({p.stat().st_size:,} bytes)")
+```
+
+```
+loaded 7,278 lines for 2025-12
+MarkdownWriterStep   -> reports\riverstone-2025-12.md  (196 bytes)
+ExcelWriterStep      -> reports\riverstone-2025-12.xlsx  (76,103 bytes)
+```
+
+Your Markdown file will be exactly 196 bytes. Your workbook will be a byte or two different from mine, because an `.xlsx` records inside itself the moment it was written. A size that shifts slightly between runs is normal for Excel and is not a sign that anything is wrong.
+
+**Line by line:**
+
+- **`class MarkdownWriterStep(WriterStep):`** The name in brackets is the **base class**. The subclass gets everything the base has, and may replace any of it.
+- **`suffix = ""`** on the base is a **class attribute**: one value shared by the class rather than set per instance. Each subclass overrides it with its own, and `path_for` reads `self.suffix`, so it builds the right filename for whichever subclass it is running in.
+- **`path_for` is written once** and inherited by both. That is the payoff: the shared work lives in one place.
+- **`raise NotImplementedError`** in the base is a deliberate signal. `WriterStep` is not meant to be used directly, and saying so in code beats saying it in a comment:
+
+```python
+try:
+    WriterStep().write(report)
+except NotImplementedError as e:
+    print(f"NotImplementedError: {e}")
+```
+
+```
+NotImplementedError: a writer must implement write()
+```
+
+- **The loop does not know or care which writer it has.** It calls `w.write(report)` and the right version runs. Python calling the subclass's method through a base-class reference is **polymorphism**, and it is why adding a CSV writer later means adding a class and changing no existing code.
+
+> **Watch out: prefer composition to inheritance.** Inheritance is the right tool when several things genuinely *are* a kind of one thing, as these writers are. It is the wrong tool for sharing a handy function, because a subclass is tied to its base for ever and a chain three deep is very hard to follow. If you cannot finish the sentence "an X **is a** Y", you want composition.
+
+### The checks, as objects
+
+Section 18.15 printed its checks. Making each one a small object means the report can report on them.
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Check:
+    name: str
+    passed: bool
+    detail: str
+
+
+def checks_for(report):
+    lines, h = report.lines(), report.headlines()
+    targets = pd.read_csv(report.config.data_dir / "sales_targets.csv")
+    wanted = report.config.start.strftime("%Y-%m-%d")
+    row = targets[targets.target_month == wanted]
+    out = [
+        Check("some lines were loaded", len(lines) > 0, f"{len(lines):,} lines"),
+        Check("no negative revenue", bool((lines.net_revenue >= 0).all()),
+              f"min Rs {lines.net_revenue.min():,.2f}"),
+        Check("segments reconcile to the total",
+              abs(report.by_segment().net_revenue.sum() - h["net_revenue"]) < 0.01,
+              "segment sum matches the headline"),
+    ]
+    if len(row):
+        target = float(row.target_revenue.iloc[0])
+        gap = (h["net_revenue"] / target - 1) * 100
+        out.append(Check("within tolerance of target",
+                         abs(gap) <= report.config.tolerance_pct, f"{gap:+.1f}% vs target"))
+    return out
+
+
+for c in checks_for(report):
+    print(f"  {'PASS' if c.passed else 'FAIL'}  {c.name:<34} {c.detail}")
+```
+
+```
+  PASS  some lines were loaded             7,278 lines
+  PASS  no negative revenue                min Rs 546.25
+  PASS  segments reconcile to the total    segment sum matches the headline
+  PASS  within tolerance of target         -5.6% vs target
+```
+
+**Line by line:**
+
+- **`@dataclass` without `frozen=True`** is fine here: a `Check` is made once and read, and nothing needs protecting.
+- **Three fields, not a tuple.** `c.passed` says what it means; `c[1]` does not. That is the entire argument for a data class over a tuple.
+- **`bool(...)` around the pandas comparison** turns a NumPy boolean into a plain one, so `passed` is `True` rather than `np.True_`.
+- **The target check only appears when there is a target**, so a month with no row in the file is not failed for something nobody promised. December's revenue of ₹8,72,66,804 against a target of ₹9,24,00,000 is 5.6% under, inside the 50% tolerance.
+
+### When not to use a class
+
+The honest half of the section. Reach for a plain function when:
+
+- **There is no state to keep.** `def net_revenue(lines): ...` takes a DataFrame and returns a number. Wrapping that in a class adds a word to type and nothing else.
+- **You would write it once and never make a second instance.** One instance that exists for the life of the script is a module with extra steps.
+- **pandas already is the object.** A DataFrame is an object with a hundred methods. `class MyTable:` that holds one DataFrame and forwards every call to it is a layer nobody thanks you for.
+- **The class has no methods, only fields.** Then it is a data class, which is the right answer, or a dictionary, which is often fine.
+
+The test that works: *are these values and these functions always passed around together?* Yes means a class. No means leave it as functions, and section 29.5 revisits the same question when the code becomes a package.
+
+---
+
+## 18.18 From script to a tool that runs itself
+
+The report now exists as objects, and you can run it from a notebook. That is not the same as it running on the first of the month while you are asleep. This section closes that gap: one entry point, one command, one scheduled task, and a way to prove it ran.
+
+Chapter 20 does this at full length for the Daily Flash, and Chapter 29 turns a script into an installable package with tests. This is the shortest honest path to the same place, and the one most analysts actually need first.
+
+### One entry point
+
+A scheduler runs a command, not a notebook. So the whole report needs one file whose job is only to decide what to do and hand back a verdict.
+
+```python
+# run_report.py, in companion/ch18/
+import argparse
+import logging
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+from report_objects import (ExcelWriterStep, MarkdownWriterStep, MonthlyReport, ReportConfig)
+
+log = logging.getLogger("run_report")
+
+
+def last_completed_month(today=None):
+    """A report that runs on the 1st wants the month that just ended."""
+    today = today or pd.Timestamp.today()
+    return (today.normalize().replace(day=1) - pd.offsets.MonthBegin(1)).strftime("%Y-%m")
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="run_report",
+                                 description="Write Riverstone's monthly sales report.")
+    ap.add_argument("--month", help="YYYY-MM. Default: the last completed month.")
+    ap.add_argument("--excel", action="store_true", help="also write the Excel workbook")
+    ap.add_argument("--out", default="reports", help="where to write (default: reports)")
+    args = ap.parse_args(argv)
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)-7s %(name)s %(message)s",
+        handlers=[logging.StreamHandler(sys.stdout),
+                  logging.FileHandler(Path(args.out).parent / "run_report.log", encoding="utf-8")])
+
+    month = args.month or last_completed_month()
+    log.info("starting report for %s", month)
+
+    writers = [MarkdownWriterStep()] + ([ExcelWriterStep()] if args.excel else [])
+    report = MonthlyReport(ReportConfig(month=month, out_dir=Path(args.out)), writers=writers)
+
+    if report.lines().empty:
+        log.error("no order lines for %s: nothing written", month)
+        return 2
+    written = [w.write(report) for w in report.writers]
+    for p in written:
+        log.info("wrote %s (%s bytes)", p, f"{p.stat().st_size:,}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+**Line by line:**
+
+- **`def main(argv=None)` that returns a number**, rather than code at the top of the file. A function you can call from a test with `main(["--month", "2025-12"])` is testable; a script body is not. Chapter 29 section 29.7 tests exactly this shape.
+- **`argparse`** is section 18.15's, unchanged: `--month` is optional, `--excel` is a flag that is `True` when present, `--out` has a default. `--help` is written for you.
+- **`args.month or last_completed_month()`** is the rule that makes a scheduled job safe. The command cannot contain a date, because the scheduler runs the same command every time. The script works out the month itself, and still accepts one when a person wants to rerun.
+- **Two logging handlers.** `StreamHandler(sys.stdout)` is for you, watching. `FileHandler` is for the morning after, when nobody was. A scheduled job with no log file is a job you cannot investigate.
+- **`return 2`, `return 0`, and `sys.exit(main())`.** The number is the **exit code**, and it is the only thing the scheduler understands: 0 means it worked. This one uses 0 for success, 1 for a failed check, 2 for a month with no data, so the history tells you *which* kind of nothing happened.
+
+Run it as a person would:
+
+```python
+# in the notebook, to see what the scheduler will see
+!python run_report.py --help
+```
+
+```
+usage: run_report [-h] [--month MONTH] [--excel] [--out OUT]
+
+Write Riverstone's monthly sales report.
+
+options:
+  -h, --help     show this help message and exit
+  --month MONTH  YYYY-MM. Default: the last completed month.
+  --excel        also write the Excel workbook
+  --out OUT      where to write (default: reports)
+```
+
+Then for real, with the Excel workbook as well:
+
+```python
+!python run_report.py --month 2025-12 --excel
+```
+
+```
+2026-10-01 17:54:51,246 INFO    run_report starting report for 2025-12
+2026-10-01 17:54:51,511 INFO    report_objects loaded 7,278 lines for 2025-12
+2026-10-01 17:54:51,699 INFO    run_report wrote reports\riverstone-2025-12.md (196 bytes)
+2026-10-01 17:54:51,699 INFO    run_report wrote reports\riverstone-2025-12.xlsx (76,103 bytes)
+2026-10-01 17:54:51,701 INFO    run_report net revenue Rs 87,266,804 from 4,047 orders
+```
+
+And a month that has no data, to see the exit code do its job:
+
+```python
+!python run_report.py --month 2019-01
+!echo exit code: $?
+```
+
+```
+2026-10-01 17:54:52,268 INFO    run_report starting report for 2019-01
+2026-10-01 17:54:52,483 INFO    report_objects loaded 0 lines for 2019-01
+2026-10-01 17:54:52,483 ERROR   run_report no order lines for 2019-01: nothing written
+exit code: 2
+```
+
+Nothing was written, the log says why, and the exit code is not 0. That is a failure a scheduler can see.
+
+### The one line Windows runs
+
+Task Scheduler is happier with a `.bat` file than with a long command, and the `.bat` is where three problems get solved that only appear once nobody is watching.
+
+```bat
+@echo off
+REM run_report.bat
+
+REM 1. Work in the script's own folder, whatever folder the scheduler started us in.
+cd /d "%~dp0"
+
+REM 2. Use the project's own Python by full path. Do NOT rely on PATH.
+set PYTHON=%~dp0..\..\.venv\Scripts\python.exe
+if not exist "%PYTHON%" set PYTHON=python
+
+REM 3. Run it. Arguments pass straight through.
+"%PYTHON%" run_report.py %*
+
+REM 4. Hand the exit code back to the scheduler.
+exit /b %ERRORLEVEL%
+```
+
+**Line by line, and why each line exists:**
+
+- **`@echo off`** stops the console printing each command before it runs. Cosmetic when you watch, tidier in a log.
+- **`cd /d "%~dp0"`** is the one most people miss. A scheduled task starts in whatever folder Windows feels like, usually `C:\Windows\System32`, so every relative path in your script points at nothing. `%~dp0` is the drive and path of the `.bat` file itself, so this line means "work where I live". `/d` lets it change drive as well as folder.
+- **The full path to Python.** A scheduled task runs with a minimal environment: no `PATH` you recognise and no activated virtual environment. `python` on its own will find a different Python, or none, and the error will say `ModuleNotFoundError: No module named 'pandas'`, which sends people hunting for a pandas problem they do not have. Naming the interpreter by full path removes the whole class of mistake. The `if not exist` line keeps the file usable for a reader who has not made a virtual environment yet.
+- **`%*`** passes your arguments straight through, so the same file serves the scheduler (no arguments, last completed month) and you (`run_report.bat --month 2025-12`).
+- **`exit /b %ERRORLEVEL%`** hands Python's exit code back. Without it the task reports success no matter what happened, which is worse than no scheduling at all, because you stop checking.
+
+Run it and the behaviour is the script's:
+
+```
+> run_report.bat --month 2025-12
+2026-10-01 17:55:41,415 INFO    run_report starting report for 2025-12
+2026-10-01 17:55:41,658 INFO    report_objects loaded 7,278 lines for 2025-12
+2026-10-01 17:55:41,667 INFO    run_report wrote reports\riverstone-2025-12.md (196 bytes)
+2026-10-01 17:55:41,667 INFO    run_report net revenue Rs 87,266,804 from 4,047 orders
+exit code: 0
+
+> run_report.bat --month 2019-01
+2026-10-01 17:55:42,269 INFO    run_report starting report for 2019-01
+2026-10-01 17:55:42,512 INFO    report_objects loaded 0 lines for 2019-01
+2026-10-01 17:55:42,513 ERROR   run_report no order lines for 2019-01: nothing written
+exit code: 2
+```
+
+### Scheduling it
+
+On Windows, Task Scheduler, once:
+
+| Setting | Value | Why |
+|---|---|---|
+| Trigger | Monthly, day 1, 07:00 | After the month has closed, before anyone asks |
+| Action | Start a program | Not "start a script"; a `.bat` is a program to Windows |
+| Program/script | the full path to `run_report.bat` | Quote it if the path has spaces |
+| Start in | the folder holding the `.bat` | Belt and braces; the `cd /d` line already handles it |
+| Run whether user is logged on or not | Yes | Otherwise it waits for you to log in |
+| If the task fails, restart every | 30 minutes, up to 3 times | A database that is briefly down should not cost you the month |
+
+The same thing on macOS or Linux is one crontab line, and Chapter 20 section 20.12 gives it in full with the environment problem cron creates:
+
+```bash
+0 7 1 * * cd /path/to/ch18 && /path/to/.venv/bin/python run_report.py >> run_report.log 2>&1
+```
+
+> **Watch out: a scheduled job that nobody checks is a rumour.** The first month, open the log and the output file yourself. After that, make the job tell you: Chapter 20 section 20.9 emails the result, and section 47.4 turns "did it run, and was the answer sane" into a check that alerts when it is not. An unattended job you never verify will eventually fail silently, and you will find out from the person who needed the number.
+
+### Proving it ran
+
+Three things to look at the morning after, in order:
+
+```python
+from pathlib import Path
+import pandas as pd
+
+log = Path("run_report.log")
+print("log last modified:", pd.Timestamp(log.stat().st_mtime, unit="s").round("s"))
+print("last three lines:")
+for line in log.read_text(encoding="utf-8").strip().splitlines()[-3:]:
+    print("   ", line)
+
+out = sorted(Path("reports").glob("riverstone-*.md"))
+print("\nreports on disk:", [p.name for p in out])
+```
+
+```
+log last modified: 2026-10-01 17:55:42
+last three lines:
+    2026-10-01 17:55:42,269 INFO    run_report starting report for 2019-01
+    2026-10-01 17:55:42,512 INFO    report_objects loaded 0 lines for 2019-01
+    2026-10-01 17:55:42,513 ERROR   run_report no order lines for 2019-01: nothing written
+
+reports on disk: ['riverstone-2025-12.md']
+```
+
+Every date and time above comes from the run that produced this page, so yours will be your own. What matters is the shape of it: a timestamp from the night the job should have run, a last line that says `wrote`, and a file on disk.
+
+**What each one tells you:**
+
+- **The log's timestamp** answers "did it run at all", which is a different question from "did it work". A log that did not change overnight means the trigger never fired, and the problem is in Task Scheduler, not in your code.
+- **The last lines** answer "did it finish". A run that ends on `wrote ...` finished; one that ends mid-step did not, and the last line names the step.
+- **The file on disk** answers "is there an answer". Checking the log alone is how people end up with a confident green task and no report.
+
+Task Scheduler keeps its own history too, under the task's **History** tab, and the **Last Run Result** there is the exit code your `.bat` handed back. `0x0` is success. Anything else is the number you chose, which is why choosing 1 for a failed check and 2 for no data was worth the trouble.
+
+### What you have built
+
+Put the three sections together and the shape is the one every automated report has, whatever the company:
+
+| Piece | File | Its one job |
+|---|---|---|
+| Settings | `ReportConfig` | One frozen bundle every step reads |
+| Data | `SalesData` | Load once, remember, hand it over |
+| Analysis | `MonthlyReport` | Headlines, segments, checks |
+| Output | `MarkdownWriterStep`, `ExcelWriterStep` | One format each, sharing a base |
+| Entry point | `run_report.py` | Decide the month, run, return an exit code |
+| Trigger | `run_report.bat` plus Task Scheduler | Run it when nobody is there |
+| Evidence | `run_report.log` and the file on disk | Prove it happened |
+
+That is a small system, and it is yours. Chapter 29 makes it an installable package with tests and type hints, Chapter 46 replaces the scheduler with an orchestrator once there are ten of these and they depend on each other, and Chapter 47 adds the checks that watch the data rather than the code. None of those are harder than what you just did; they are the same idea at a larger size.
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -2873,7 +3490,7 @@ Her own summary of the change: *"I used to produce the report. Now I own it."*
 - **Python** and the book's virtual environment, as installed in Chapter 17 (section 17.0, which also sets the book's rule on Python versions). This chapter's code was run and checked on **Python 3.14.7** and **3.11.15**, with `pandas` 3.0.6, `numpy` 2.5.3 and 2.4.6, `pyarrow` 25.0.1, `matplotlib` 3.11.2 and 3.10.8, `seaborn` 0.13.2, `openpyxl` 3.1.5, `xlsxwriter` 3.2.9, `tabulate` 0.10.0, `SQLAlchemy` 2.1.1, `psycopg` 3.3.6, `mysql-connector-python` 26.7.0, `requests` 2.34.2 and 2.33.1, and `python-dotenv` 1.2.3, against PostgreSQL 16 and MySQL 8.
 - `python -m pip install pandas numpy pyarrow matplotlib seaborn openpyxl xlsxwriter tabulate sqlalchemy "psycopg[binary]" requests python-dotenv` (add `mysql-connector-python` for MySQL), as in section 18.1.
 - A database with `riverstone_full` loaded (Chapter 14), or the CSV and Parquet files in `companion/full/`.
-- **Companion files (`companion/ch18/`):** `api_demo.py` (the demonstration API of section 18.14), `api_response.json` (a saved page of its reply), `clean_orders_pandas.py` (section 18.10's cleaning as one script), and `monthly_report.py` (section 18.15's finished report). The chapter also reads `companion/full/`, `companion/ch14/orders_q4_2025_export.csv`, `companion/ch15/chart_data/`, `companion/ch16/city_region.csv`, and `companion/ch17/sales_exports/`. For instructors: `build_ch18_files.py` rebuilds `api_response.json`.
+- **Companion files (`companion/ch18/`):** `api_demo.py` (the demonstration API of section 18.14), `api_response.json` (a saved page of its reply), `clean_orders_pandas.py` (section 18.10's cleaning as one script), `monthly_report.py` (section 18.15's finished report), `report_objects.py` (section 18.17's report as objects), `run_report.py` (section 18.18's entry point) and `run_report.bat` (the line Task Scheduler runs). The chapter also reads `companion/full/`, `companion/ch14/orders_q4_2025_export.csv`, `companion/ch15/chart_data/`, `companion/ch16/city_region.csv`, and `companion/ch17/sales_exports/`. For instructors: `build_ch18_files.py` rebuilds `api_response.json`.
 - **Worth knowing about:** `ruff` (formatting and linting), `duckdb` and `polars` (section 18.16), and `great-expectations` or plain assertions for data checks (Chapter 47).
 
 **Option A: your own report.** Pick the report you produce most often. Time yourself doing it manually once, then automate it.
@@ -2934,12 +3551,16 @@ Use `companion/full/` (Parquet or CSV) and pandas only; no SQL. Answers at the e
 - **APIs** with `requests`: timeouts, status codes, `raise_for_status()`, paging to the last page, retries with growing waits, tokens from the environment.
 - **An automation** is a script with arguments, checks that can stop it, logging, exit codes, and outputs for both machines and people.
 - **Know when to stop:** memory limits, SQL, DuckDB, Polars, a BI model, or an orchestrator.
+- **A class is for one specific problem:** data and the functions that use it keep travelling together, so put them in one thing. No state, one instance, or fields only means a function, a module, or a data class instead.
+- **`@dataclass`** writes the initialiser and a readable `__repr__` for a bundle of settings, and `frozen=True` stops any step quietly changing a setting a later step depends on.
+- **Prefer composition to inheritance.** The report *has a* loader and *has* writers. Reach for a base class only when you can finish the sentence "an X **is a** Y", as `MarkdownWriterStep` **is a** `WriterStep`.
+- **Automation is four small things:** one entry point that works out its own date, an exit code the scheduler can read, a `.bat` that moves to its own folder and names Python by full path, and a log you actually open the morning after.
 
 ---
 
 ## Key terms
 
-NumPy · array · dtype · shape · `np.nan` · `np.where` · `np.select` · `np.inf` · pandas · DataFrame · Series · index · vectorized operation · scientific notation · `read_csv` parameters · Parquet · profiling · `value_counts` · `describe` · `info` · boolean mask · `.loc` · `.iloc` · `query` · chained assignment · `.copy()` · `.str` accessor · `.dt` accessor · `.map` · `validate` · `pd.cut` · `.apply` · `groupby` · named aggregation · quantile · two-level index · `unstack` · `axis` · `lambda` · `assign` · `transform` · `merge` · join type · `indicator` · fan-out · `concat` · `merge_asof` · `pivot_table` · `melt` · wide and long · tidy data · time series · datetime index · `resample` · `rolling` · `shift` · `NaT` · nullable integer (`Int64`) · matplotlib · figure and axes · seaborn · `ExcelWriter` · xlsxwriter · openpyxl · environment variable · `.env` file · connection URL · SQLAlchemy engine · bound parameters · SQL injection · `to_sql` · SQLite · API · status code · `requests` · timeout · `raise_for_status` · paging · rate limit · retry with backoff · `json_normalize` · half-open date range · logging · exit code · Markdown · categorical dtype · downcasting · chunking · DuckDB · Polars
+NumPy · array · dtype · shape · `np.nan` · `np.where` · `np.select` · `np.inf` · pandas · DataFrame · Series · index · vectorized operation · scientific notation · `read_csv` parameters · Parquet · profiling · `value_counts` · `describe` · `info` · boolean mask · `.loc` · `.iloc` · `query` · chained assignment · `.copy()` · `.str` accessor · `.dt` accessor · `.map` · `validate` · `pd.cut` · `.apply` · `groupby` · named aggregation · quantile · two-level index · `unstack` · `axis` · `lambda` · `assign` · `transform` · `merge` · join type · `indicator` · fan-out · `concat` · `merge_asof` · `pivot_table` · `melt` · wide and long · tidy data · time series · datetime index · `resample` · `rolling` · `shift` · `NaT` · nullable integer (`Int64`) · matplotlib · figure and axes · seaborn · `ExcelWriter` · xlsxwriter · openpyxl · environment variable · `.env` file · connection URL · SQLAlchemy engine · bound parameters · SQL injection · `to_sql` · SQLite · API · status code · `requests` · timeout · `raise_for_status` · paging · rate limit · retry with backoff · `json_normalize` · half-open date range · logging · exit code · Markdown · categorical dtype · downcasting · chunking · DuckDB · Polars · class · instance · `__init__` · `self` · attribute · method · class attribute · `@property` · decorator · data class (`@dataclass`) · `frozen=True` · `FrozenInstanceError` · encapsulation · leading underscore · composition · inheritance · base class · subclass · `NotImplementedError` · polymorphism · mutable default argument · entry point · `main()` returning an exit code · exit code · `.bat` file · `%~dp0` · `%*` · `ERRORLEVEL` · Task Scheduler · Last Run Result · log file handler · last completed month
 
 *(All terms are defined in the Glossary, Appendix A.)*
 
@@ -3159,6 +3780,6 @@ print(rep.shape, rep[["Rahul Mehta", "Simran Kaur"]].sum().round(0).to_dict())
 - **Chapter 20, Automating Reports & Delivering Insights:** scheduling this script, HTML email, alerts, failure handling, and handover.
 - **Chapters 21 and 22:** statistics with pandas and NumPy, and simulations.
 - **Chapter 26, Git:** versioning scripts, and keeping `.env` out of the repository.
-- **Chapter 29, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool.
+- **Chapter 29, Python as Software:** modules, packaging, tests, and type hints once a script becomes a tool. Section 29.5 returns to classes in that setting, and section 29.7 tests the `main()` that section 18.18 built.
 - **Part 4:** scikit-learn and modelling, all of which start from a DataFrame.
 - **Interview preparation:** the Python & pandas Question Bank (Chapter 72) covers `groupby`, `merge`, reshaping, and "make this faster".

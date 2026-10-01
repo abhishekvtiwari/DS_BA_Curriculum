@@ -441,7 +441,7 @@ Spreadsheets, SQL, cleaning data, charts, Power BI, Python, statistics, business
 
 ## Chapter 18. Python for Analysts: pandas & Automation
 
-**Time needed:** 40–45 hours, spread over four weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16, the project, and the timed challenge. Each week ends with a short checkpoint.
+**Time needed:** 47–53 hours, spread over five weeks. Type every example. A plan that works: week 1, sections 18.1–18.5 (NumPy, reading, looking, filtering, new columns); week 2, sections 18.6–18.9 (grouping, joining, reshaping, dates); week 3, sections 18.10–18.12 (cleaning, charts, Excel); week 4, sections 18.13–18.16 (database, API, the whole script, performance); week 5, sections 18.17–18.18 (classes and scheduling), the project, and the timed challenge. Each week ends with a short checkpoint.
 
 **Skills covered:**
 
@@ -460,7 +460,7 @@ Spreadsheets, SQL, cleaning data, charts, Power BI, Python, statistics, business
 
 **Builds on:** Chapter 17 (Python, the notebook, and the terminal from section 17.0), Chapters 12–13 (SQL and the `sales_lines` view), Chapter 14 (cleaning), Chapter 15 (chart choice and design), Chapter 16 (Power BI, whose measures pandas mirrors), and Chapters 10, 11, and 19 for the spreadsheet ideas pandas mirrors.
 
-**Sections:** 18.1 DataFrames, Series, and vectorized thinking · 18.2 Reading data from anywhere · 18.3 Looking at a DataFrame · 18.4 Selecting and filtering · 18.5 Creating and changing columns · 18.6 `groupby`: split, apply, combine · 18.7 Combining tables: `merge` and `concat` · 18.8 Reshaping: `pivot_table`, `melt`, and tidy data · 18.9 Dates and time series · 18.10 Cleaning in pandas · 18.11 Charts with matplotlib and seaborn · 18.12 Writing Excel people are glad to receive · 18.13 Reading from a database · 18.14 Calling an API · 18.15 The whole thing as one script · 18.16 Performance, habits, and when to stop using pandas
+**Sections:** 18.1 DataFrames, Series, and vectorized thinking · 18.2 Reading data from anywhere · 18.3 Looking at a DataFrame · 18.4 Selecting and filtering · 18.5 Creating and changing columns · 18.6 `groupby`: split, apply, combine · 18.7 Combining tables: `merge` and `concat` · 18.8 Reshaping: `pivot_table`, `melt`, and tidy data · 18.9 Dates and time series · 18.10 Cleaning in pandas · 18.11 Charts with matplotlib and seaborn · 18.12 Writing Excel people are glad to receive · 18.13 Reading from a database · 18.14 Calling an API · 18.15 The whole thing as one script · 18.16 Performance, habits, and when to stop using pandas · 18.17 Organising the work: classes, data classes, and composition · 18.18 From script to a tool that runs itself
 
 ## Chapter 20. Automating Reports & Delivering Insights
 
