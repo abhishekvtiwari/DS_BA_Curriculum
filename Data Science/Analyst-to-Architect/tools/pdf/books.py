@@ -119,25 +119,35 @@ tr {{ break-inside: avoid; }}
 no software (Parts 0 and 1). <strong>Book 2, Practical</strong>, teaches the analyst's tools, hands on (Parts 2
 and 3). <strong>Book 3, Implementation</strong>, builds real systems (Parts 4 to 7, then the closing chapter).
 <strong>Book 4, Be Interview Ready</strong>, is Part 8. Books 1 to 3 share one page count; Book 4 has its own.
-Each book's contents, after this map, lists the sections of its chapters.</p>
+This map covers all four; the contents at the front of this book lists its own chapters and their sections,
+and those entries are clickable.</p>
 <table>{''.join(rows)}</table></body></html>"""
 
 
 def add_map(pdf_name, map_pdf):
-    """Insert the map after the cover, with a bookmark (replacing an earlier map)."""
+    """Append the map as back matter, with a bookmark (replacing an earlier copy wherever it sits).
+
+    It used to be inserted straight after the cover. That put a list of every chapter of all four
+    books, with no clickable links, in front of the book's own contents, so the first thing a reader
+    met was mostly other books. The book's own contents now comes first and the series map is back
+    matter, which is what it is."""
     import pymupdf
     path = OUT / f'{pdf_name}.pdf'
     doc = pymupdf.open(str(path))
     m = pymupdf.open(str(map_pdf))
     toc = doc.get_toc(simple=False)
-    if toc and toc[0][1] == 'The whole book':
+    if toc and toc[0][1] == 'The whole book':          # old layout: map right after the cover
         old = toc[1][2] - 2
         doc.delete_pages(1, old)
         toc = toc[1:]
         for e in toc: e[2] -= old
-    doc.insert_pdf(m, start_at=1)
-    for e in toc: e[2] += len(m)
-    doc.set_toc([[1, 'The whole book', 2]] + toc)
+    elif toc and toc[-1][1] == 'The whole book':       # current layout: map already at the back
+        doc.delete_pages(toc[-1][2] - 1, doc.page_count - 1)
+        toc = toc[:-1]
+    at = doc.page_count
+    doc.insert_pdf(m, start_at=at)
+    doc.set_toc(toc + [[1, 'The whole book', at + 1]])
+    B.relink(doc)                                      # insert_pdf renames destinations; resolve them
     tmp = str(path) + '.tmp'
     doc.save(tmp, garbage=1, deflate=True)
     doc.close(); m.close()

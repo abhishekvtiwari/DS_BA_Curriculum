@@ -493,6 +493,35 @@ def running_head(title):
     return title
 
 
+def relink(doc):
+    """Rewrite named-destination links as direct internal go-tos. Returns how many changed.
+
+    join_cover inserts the cover into the body, and that rewrites the body's own internal links as
+    *named* destinations. A named destination is valid PDF, but many viewers will not follow one,
+    so a reader clicking a contents entry gets nothing at all. Resolving each name to an explicit
+    page and position makes every viewer follow it. Run after the last step that inserts pages."""
+    import pymupdf
+    names = doc.resolve_names() or {}
+    fixed = 0
+    for page in doc:
+        swap = []
+        for l in page.get_links():
+            if l['kind'] != pymupdf.LINK_NAMED:
+                continue
+            t = names.get(l.get('nameddest'))
+            if not t:
+                continue
+            new = {'kind': pymupdf.LINK_GOTO, 'from': l['from'], 'page': t['page']}
+            if t.get('to'):
+                new['to'] = pymupdf.Point(t['to'][0], t['to'][1])
+            swap.append((l, new))
+        for old, new in swap:
+            page.delete_link(old)
+            page.insert_link(new)
+            fixed += 1
+    return fixed
+
+
 def stamp_footers(pdf_path, heads, label, book='Analyst to Architect'):
     """Footer on every body page: 'Analyst to Architect · <part or chapter>' left, the page label right.
     heads is [(physical page, H1 title)] in order; pages before the first H1 are the contents."""
@@ -513,6 +542,9 @@ def stamp_footers(pdf_path, heads, label, book='Analyst to Architect'):
         tw.append((18 * mm, y), left, font=font, fontsize=7.5)
         tw.append((W - 18 * mm - font.text_length(right, 7.5), y), right, font=font, fontsize=7.5)
         tw.write_text(page, color=grey)
+    n = relink(doc)                # contents entries must be clickable in every viewer
+    if n:
+        print(f'  {n} contents links resolved to direct page jumps')
     tmp = str(pdf_path) + '.tmp'
     doc.save(tmp, garbage=SAVE_GARBAGE, deflate=True)
     doc.close()
