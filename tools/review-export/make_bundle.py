@@ -70,13 +70,18 @@ def build(dest, make_zip):
             copy(p, dest / '02-Guide' / name, 'guide', log)
 
     # ---------------------------------------------------------------- 3. what is new
-    for p in sorted((ROOT / 'review' / 'for-abhishek').glob('Ch71-section-71.11*')):
-        if p.suffix in ('.pdf', '.docx'):
-            copy(p, dest / '03-Whats-new' / p.name, 'what is new', log)
-    for name in ['ch71.md', 'ch18.md']:
-        p = ROOT / 'changelog' / name
-        if p.exists():
-            copy(p, dest / '03-Whats-new' / f'changelog-{name}', 'what is new', log)
+    # The readable summaries first, then the sample section, then the changelogs for every
+    # chapter the Part VIII work touched, so a reviewer can trace any figure back to its reason.
+    for stem in ['Part-VIII-predict-the-output-summary', 'Ch71-section-71.11-predict-the-output']:
+        for ext in ('.pdf', '.docx'):
+            f = ROOT / 'review' / 'for-abhishek' / (stem + ext)
+            if f.exists():
+                copy(f, dest / '03-Whats-new' / f.name, 'what is new', log)
+    for name in ['ch18.md', 'ch15.md', 'ch70.md', 'ch71.md', 'ch72a.md', 'ch73.md', 'ch74.md',
+                 'ch75.md', 'ch77.md', 'ch78.md', 'ch79.md', 'ch80.md']:
+        f = ROOT / 'changelog' / name
+        if f.exists():
+            copy(f, dest / '03-Whats-new' / 'changelogs' / name, 'what is new', log)
 
     # ---------------------------------------------------------------- 4. the practice material
     for src in tracked(BOOK / 'companion'):

@@ -1,9 +1,9 @@
 # Read me first
 
-*The Analyst to Architect review bundle — 3 October 2026*
+*The Analyst to Architect review bundle — 3 October 2026, second build*
 
 Everything is here: the four books, the practice material that goes with them, a guide to where
-every topic lives, and the review state. 781 files, 280 MB, in five folders you can read in order.
+every topic lives, and the review state. 794 files, 285 MB, in five folders you can read in order.
 
 The point of this bundle is for you to tell me **what is lapsing and what is not**. There is a
 section at the end on exactly that — what I would most like you to look at, and what I already
@@ -30,15 +30,15 @@ know is missing.
 | **1 · Theory** | 218 | The ideas, no software to install. Parts 0 and 1. |
 | **2 · Practical** | 1,401 | The analyst's tools, hands on: spreadsheets, SQL, cleaning, charts, Power BI, Python, statistics, business skills; then the advanced layer. Parts 2 and 3. |
 | **3 · Implementation** | 1,318 | Machine learning, data engineering, production ML and generative AI, architecture and leadership, and the closing chapter. Parts 4 to 7. |
-| **4 · Be Interview Ready** | 433 | Part 8: how hiring works, the extra-points method, and a question bank for every skill and role. |
+| **4 · Be Interview Ready** | 535 | Part 8: how hiring works, the extra-points method, and a question bank for every skill and role. |
 | *Book Overview* | 71 | Internal, not for sale. Every chapter, what it covers, how long it takes, how the parts connect. |
 
-**Book 4 is new today — 433 pages, up from 400.** Everything else is the 1 October build.
+**Book 4 is rebuilt — 535 pages, up from 400.** It now carries ten new predict-the-output sections across Part VIII. Everything else is the 1 October build.
 
 Two reading notes:
 
-- Use the contents page or your reader's bookmark sidebar. In Book 4 all **160 contents links and
-  629 bookmarks** were checked to land on the right page.
+- Use the contents page or your reader's bookmark sidebar. In Book 4 all **169 contents links and
+  724 bookmarks** were checked to land on the right page.
 - Books 2 and 3 are around 80 MB each. They are fine in a desktop reader and slow in a phone
   browser.
 
@@ -67,26 +67,26 @@ It answers three questions:
 
 ## 03-Whats-new — what changed
 
-**Chapter 71 has a new section, §71.11, "Predict the output: from basic to brain-racking."**
+**Part VIII now has ten predict-the-output sections, and 202 new questions.**
 
 You asked for the interview material to be ground down from very basic to very detailed, with
-brain-racking questions of the `int("25", 4)` kind. I measured Part VIII first: of its 619
-questions, only **19** were output-prediction, and **17 of those sat in one section** of Chapter
-72. Thirteen of the fourteen banks had none.
+brain-racking questions of the `int("25", 4)` kind. Thirteen of the fourteen banks had no such
+section at all; the one that did — Chapter 72's §72.2 — became the template. You read §71.11 and
+approved its depth, and this is that standard applied across the rest.
 
-§71.11 is the answer for SQL, and the template for the other thirteen banks. 16 core questions and
-16 rapid-fire rows, taking Chapter 71 from 76 questions to 108. A new *Brain-racking* level sits
-above Warm-up and Core.
+Part VIII goes from **565 coded questions to 767**.
 
-In this folder:
+Read these two, in this order:
 
-- **Ch71-section-71.11-predict-the-output.pdf** (26 pages) — read this one
-- the same as **.docx**, if you want to comment in it
-- **changelog-ch71.md** — what changed and why, including the six questions that were wrong in
-  draft
-- **changelog-ch18.md** — the object-oriented Python work you approved on 1 October
+- **Part-VIII-predict-the-output-summary.pdf** (4 pages) — what was built, the three banks I
+  deliberately left alone and why, the one scope decision I would like from you, and the dozen
+  drafted questions that turned out wrong and were caught by running them
+- **Ch71-section-71.11-predict-the-output.pdf** (26 pages) — the section you already approved,
+  as the worked example of the standard
 
----
+`changelogs/` holds one file per chapter touched, recording every change and how it was verified.
+
+Every answer in all ten sections was run. Nothing was typed from memory.
 
 ## 04-Practice — the material a reader works with
 
@@ -123,11 +123,10 @@ names the script that makes them.
 
 ## What I would most like you to look at
 
-**1. The depth of §71.11.** This matters more than anything else in the bundle, because the same
-standard is about to be applied to thirteen more question banks — roughly 260 more questions. If
-the depth is wrong, I would much rather fix it once than fourteen times. Read a few questions and
-tell me: too long, too short, or right? Is the tier table earning its place? Are the
-*Brain-racking* ones actually hard enough?
+**1. Whether Chapter 76B should get a section.** It is the one open scope decision. "Predict the
+output" does not fit a requirements bank, but there is a real BA equivalent — *given a written
+requirement, what is ambiguous and what breaks when a developer reads it?* That is a different
+format, so I did not build it unilaterally. The summary document explains the reasoning.
 
 **2. Whether the guide is the reference you wanted.** You asked for somewhere you can see what
 topics exist and where they are. The topic index is my answer. If you want it cut differently —

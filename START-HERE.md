@@ -14,9 +14,9 @@ Everything below is a real file in this folder. Click it, or open it from Explor
 
 Everything assembled in one place, outside this folder so it can be moved or sent:
 
-**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 781 files, 280 MB, in five numbered
+**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 794 files, 285 MB, in five numbered
 folders. Open **`00-Read-me-first.pdf`** inside it. There is also a
-**`…-Review-Bundle.zip`** (209 MB) beside it if you want to move it to another machine.
+**`…-Review-Bundle.zip`** (214 MB) beside it if you want to move it to another machine.
 
 It holds the four books, the practice material, the topic guide, what changed recently, and the
 review state. The read-me says what I would most like you to look at, and what I already know is
@@ -38,11 +38,11 @@ series map sits at the back.
 | 1 · Theory | [Analyst-to-Architect-Book-1-Theory.pdf](fixed/Books/Analyst-to-Architect-Book-1-Theory.pdf) | 218 | 359 |
 | 2 · Practical | [Analyst-to-Architect-Book-2-Practical.pdf](fixed/Books/Analyst-to-Architect-Book-2-Practical.pdf) | 1,401 | 1,616 |
 | 3 · Implementation | [Analyst-to-Architect-Book-3-Implementation.pdf](fixed/Books/Analyst-to-Architect-Book-3-Implementation.pdf) | 1,318 | 1,447 |
-| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 433 | 629 |
+| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 535 | 724 |
 | Overview (internal, not for sale) | [Analyst-to-Architect-Book-Overview.pdf](fixed/Books/Analyst-to-Architect-Book-Overview.pdf) | 71 | 99 |
 
-**Book 4 was rebuilt on 3 October** and now carries section 71.11; all 160 of its contents links
-and 629 bookmarks were checked to land on the right page. The others are the 1 October build.
+**Book 4 was rebuilt on 3 October** and now carries ten new predict-the-output sections across
+Part VIII; all 169 of its contents links and 724 bookmarks were checked to land on the right page. The others are the 1 October build.
 
 Two reading notes, so the navigation behaves the way you expect:
 
@@ -100,47 +100,37 @@ rewritten anyway.
 **Book 4, the interview book.** You asked for it to be ground down from very basic to very
 detailed, with output-prediction and trick questions of the `int("25", 4)` kind.
 
-**The measurement that set the task.** Across Part VIII's 619 questions, only 19 were
-output-prediction, and 17 of those sat in a single section — Chapter 72's §72.2. Thirteen of the
-fourteen banks had none at all.
+**The measurement that set the task.** Thirteen of the fourteen Part VIII banks had no
+predict-the-output section at all. The one that did — Chapter 72's §72.2 — became the template.
 
-| | |
-|---|---|
-| **Done** | **Chapter 71, SQL** — new section 71.11, "Predict the output: from basic to brain-racking." 16 core questions and 16 rapid-fire rows, warm-up up to a new *Brain-racking* level. The chapter goes from 76 questions to 108. This is the template. |
-| **Next** | The thirteen remaining banks: Chapters 70, 72a, 73–82. Roughly 260 questions at the same standard. |
+**Done: ten new sections, 202 new questions.** Part VIII goes from 565 coded questions to 767.
+Chapters 70, 71, 72A, 73, 74, 75, 77, 78, 79 and 80 each gained a section aimed at what that
+chapter genuinely lacked, rather than a fixed quota.
 
-**Read §71.11 first and tell me whether the depth is right**, because the same standard is about to
-be applied thirteen more times. A review copy is ready, so you do not have to wait for the book
-rebuild or read markdown:
+**Three banks were deliberately left alone** — 76A is career positioning with no technical content,
+81's one numeric topic is already covered by its Q81-024, and 82 has no coded questions at all.
 
-- **[Ch71 §71.11 — PDF, 26 pages](review/for-abhishek/Ch71-section-71.11-predict-the-output.pdf)**
-- **[the same as DOCX](review/for-abhishek/Ch71-section-71.11-predict-the-output.docx)**, if you
-  want to write comments into it
+**One decision is yours:** whether Chapter 76B should get an ambiguity-drill section, which is the
+BA equivalent but a different format. It is explained in
+[the Part VIII summary](review/for-abhishek/Part-VIII-predict-the-output-summary.pdf).
 
-What changed and why, including the six questions that were wrong in draft, is in
-[changelog/ch71.md](changelog/ch71.md). The section in the book itself is the last one in
-[the chapter source](Data%20Science/Analyst-to-Architect/manuscript/ch71-sql-question-bank.md),
-just before "Common mistakes".
-
-Every answer was run before it was written down, against `riverstone_2025` — the same 24-customer
-database the chapter already uses — on a bench first checked to reproduce all four figures the
-chapter already prints. **Six drafted questions turned out to be wrong and the runs caught them**,
-including a ranking answer that was 4,4,4 rather than 1,1,1, and three traps aimed at a column that
-has no missing values in that database. Those are listed in the changelog rather than quietly
-corrected.
+Every answer was run before it was written down. About a dozen drafted questions turned out wrong
+and the runs caught them — a `RANK` answer that was 4,4,4 rather than 1,1,1, a `257 is 257` that is
+`True` because the compiler folds literals, and a float-money question cut entirely because the
+trap does not fire at that scale. Each is recorded in its chapter's changelog.
 
 Two things are honestly outstanding rather than finished:
 
-- **PostgreSQL and MySQL are not installed here**, so the confirming run on PostgreSQL 16 and MySQL
-  8.4 has not happened. The new outputs are labelled "Run (riverstone_2025)" rather than
-  "Verified", and the chapter's own at-a-glance box now carries that exception so the section does
-  not borrow the chapter's engine claim. Four questions where the two engines genuinely disagree
-  are marked **Dialect split** and give each engine's documented behaviour instead of one answer.
-- **Book 4 has been rebuilt** — 433 pages, up from 400, with the series map regenerated. One
-  honest wrinkle: this machine does not reproduce the original build exactly (a test rebuild of
-  Book 1 came out 217 pages against the shipped 218, because fonts resolve differently here), so
-  only Book 4 was rebuilt and its visual check should be redone. Books 1–3 still carry a series
-  map whose Book 4 page numbers predate this.
+- **PostgreSQL and MySQL are not installed here**, so §71.11's confirming run has not happened. Its
+  outputs are labelled "Run (riverstone_2025)" rather than "Verified", and four questions are
+  marked **Dialect split**. **Excel is not installed either**, so §70.9 carries the same kind of
+  mark on four questions, reading **Check in Excel**. Both exceptions are stated in the chapters'
+  own at-a-glance boxes, not buried in a changelog.
+- **Book 4 has been rebuilt** — 535 pages, up from 400, with the series map regenerated from the
+  page numbers printed on the pages. This machine does not reproduce the original build exactly (a
+  test rebuild of Book 1 came out 217 pages against the shipped 218, because fonts resolve
+  differently here), so only Book 4 was rebuilt and its visual check should be redone. Books 1–3
+  still carry a series map whose Book 4 page numbers predate this.
 
 ---
 
