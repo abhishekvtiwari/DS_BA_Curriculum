@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 3 (KPIs, dashboards), 4 (percentage points, estimation), 5 (precise questions, issue trees, MECE), 22 (A/B design, Simpson's paradox), 23 (KPI trees, diagnosing a change, guardrails) and 24 (turning an ask into a question), with a few links to Chapters 15, 16, 25 and 30. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 2½–3½ hours to read and drill every question once, out loud; 2–3 hours more for the project.
+> **Time needed:** 3½–5 hours to read and drill every question once, out loud; 2–3 hours more for the project. Section 75.7 is arithmetic rather than structure, and rewards being done with a pen rather than read.
 >
 > **How this chapter is built.** Same format as every question bank in Part 8: a memory hook ("Remember it as…"), a one-line answer, and a tier table (**passes**, **strong**, **extra points**, tagged with Chapter 69's moves: **[+Clarify]**, **[+Signpost]** and so on), then follow-ups, the red flag, and where to learn it. Rapid-fire rows end with a level and the section that teaches the idea (a bare number such as 23.10 means that section). There is no code: a case is judged on structure and reasoning. Every number in a worked example is either an assumption, labelled as one, or a figure with its source, and the arithmetic is shown step by step. The chapter moves from the general case framework (section 75.1) through metric diagnosis (75.2), metrics and dashboards (75.3) and product decisions (75.4) to guesstimates (75.5) and two full cases (75.6). Guesstimates need only Chapter 4, so a first-job candidate can do section 75.5 straight after 75.1.
 >
@@ -350,6 +350,308 @@ Roles: DA, BA and PA for every row. Every number in this table is an assumption.
 
 ---
 
+## 75.7 Predict the number: metric arithmetic that is not what it looks like
+
+Section 75.5 is about estimating a number you do not have. This section is the opposite: you are *given* the numbers, and the arithmetic is the trap. Every question below has an answer that most people get wrong on first instinct, and every one of them appears in real reporting.
+
+These matter more than guesstimates, because a guesstimate is explicitly a guess and everyone treats it as one. A metric is presented as a fact. When a slide says churn is 60% and it is really 46%, nobody questions it, because arithmetic is not where people look for errors.
+
+Say each answer out loud before reading on. They are short.
+
+### Q75-032 · Revenue falls 50% in March and rises 50% in April. Where is it?
+
+**Level:** Fresher · **Roles:** DA, PA, BA, DS
+
+**Remember it as:** *A fall and a rise of the same percentage are not opposites, because they are percentages of different numbers.*
+
+**Answer in one line:** **25% below where it started** — 100 falls to 50, and 50% of 50 is only 25, so April ends at 75; recovering a 50% fall takes a 100% rise.
+
+```python
+v = 100.0
+v *= 0.5;  print(f"after -50%: {v:.2f}")
+v *= 1.5;  print(f"after +50%: {v:.2f}")
+
+for drop in (10, 20, 30, 50, 80, 90):
+    need = (1 / (1 - drop/100) - 1) * 100
+    print(f"a {drop:>2}% fall needs a {need:>5.1f}% rise to recover")
+```
+
+```
+after -50%: 50.00
+after +50%: 75.00
+
+a 10% fall needs a  11.1% rise to recover
+a 20% fall needs a  25.0% rise to recover
+a 30% fall needs a  42.9% rise to recover
+a 50% fall needs a 100.0% rise to recover
+a 80% fall needs a 400.0% rise to recover
+a 90% fall needs a 900.0% rise to recover
+```
+
+The asymmetry grows fast. A 90% crash needs a 900% recovery, which is why a stock or a metric that collapses almost never "bounces back" in the way the word implies.
+
+Where this reaches a real meeting: a monthly deck that reports "−50% then +50%, so we've recovered" is wrong, and it is wrong in the direction that makes bad news sound finished. The honest line is "we are 25% below January", which is a different conversation.
+
+The same arithmetic is why a column of month-on-month percentages cannot be added or averaged to get the period change. You multiply the growth factors, which is Q75-035.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Not back to the start" |
+| Strong | + 75, with the reason — the percentages are of different bases — and the recovery rule |
+| Extra points | **[+Business]** "we recovered" is the wrong summary and it understates the problem · **[+Edge cases]** the asymmetry is extreme at the tails: 90% down needs 900% up · **[+Validate]** compare against the absolute level, not the sequence of percentages |
+
+**Likely follow-ups:** How would you present this honestly on one slide? What is the right way to combine monthly changes? *(Multiply the factors — Q75-035.)* Does the order matter? *(No: 0.5 × 1.5 = 1.5 × 0.5.)*
+**Learn it in:** Chapter 23, section 23.6 (metric arithmetic); Chapter 4, section 4.5 (percentages).
+
+### Q75-033 · 5% of customers churn each month. What is annual churn?
+
+**Level:** Mid · **Roles:** DA, PA, BA, DS
+
+**Remember it as:** *Churn compounds on a shrinking base. Each month's 5% is 5% of who is left, not of who you started with.*
+
+**Answer in one line:** **46%**, not 60% — survival is 0.95¹², which is 54%, so 46% of the cohort is gone after a year; multiplying the monthly rate by twelve overstates it by 14 points.
+
+```python
+for m in (1, 2, 5, 10):
+    annual = (1 - (1 - m/100)**12) * 100
+    print(f"monthly {m:>2}% -> annual {annual:5.1f}%   (naive {m*12:>3}%)")
+```
+
+```
+monthly  1% -> annual  11.4%   (naive  12%)
+monthly  2% -> annual  21.5%   (naive  24%)
+monthly  5% -> annual  46.0%   (naive  60%)
+monthly 10% -> annual  71.8%   (naive 120%)
+```
+
+The 10% row is the one that shows why the naive method is not merely imprecise but impossible: 120% annual churn would mean losing more customers than you had.
+
+The companion figure, and the one worth knowing by heart: at a constant monthly churn *r*, the average customer lifetime is **1/r months**. At 5% that is 20 months, which is what feeds the LTV calculation in Q75-037.
+
+The reverse conversion catches people too. Annual churn of 46% is a monthly rate of 1 − 0.54^(1/12) = 5%, not 46 ÷ 12 = 3.8%. Converting between periods always goes through the survival rate, never through division.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You can't just multiply by 12" |
+| Strong | + 46%, the survival-rate method, and that 1/r gives the average lifetime |
+| Extra points | **[+Business]** the error always overstates churn, so it makes retention look worse and can trigger spending that is not needed · **[+Edge cases]** real churn is not constant — it is much higher in month one — so a single rate is itself an approximation, and a cohort curve is the honest version · **[+Validate]** a churn rate above 100% annualised is arithmetically impossible and is the giveaway |
+
+**Likely follow-ups:** How would you convert annual churn back to monthly? Why is month-one churn usually much higher? How does this feed LTV? *(Q75-037.)*
+**Learn it in:** Chapter 23, section 23.9 (retention and churn).
+
+### Q75-034 · A four-step funnel, each step converting at 80%. End-to-end?
+
+**Level:** Fresher · **Roles:** DA, PA, BA
+
+**Remember it as:** *Funnel steps multiply. Four steps at 80% is 0.8⁴, and 80% four times over is not 80%.*
+
+**Answer in one line:** **40.96%** — conversion multiplies rather than averaging, so four "good" steps of 80% lose nearly 60% of the traffic between them.
+
+```python
+p = 1.0
+for i in range(1, 5):
+    p *= 0.8
+    print(f"after step {i}: {p*100:5.2f}%")
+
+print(f"one step to 90%:  {0.8**3 * 0.9 * 100:.2f}%")
+print(f"all steps to 90%: {0.9**4 * 100:.2f}%")
+```
+
+```
+after step 1: 80.00%
+after step 2: 64.00%
+after step 3: 51.20%
+after step 4: 40.96%
+one step to 90%:  46.08%
+all steps to 90%: 65.61%
+```
+
+Each step individually looks healthy. Nobody reviewing step 3 in isolation would flag 80%. End to end, three in five visitors are lost.
+
+The two lines at the bottom are the ones that change a prioritisation conversation. Improving a single step from 80% to 90% — a substantial piece of work — buys **5.1 percentage points** end to end. Improving all four buys 24.7. So the honest answer to "which step should we fix?" is usually "the worst one", and the honest answer to "how much will this win get us?" is almost always smaller than the step-level improvement suggests.
+
+It also explains why adding a step is so expensive. An extra confirmation screen converting at 95% — which sounds harmless — costs 5% of everything downstream of it.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You multiply them: 0.8⁴" |
+| Strong | + 40.96%, and what a one-step improvement is worth end to end against a step-level reading |
+| Extra points | **[+Business]** a 95% step added to a funnel costs 5% of all traffic below it, which is how funnels silently lengthen · **[+Validate]** step rates that look fine individually can still give a poor end-to-end number; always compute both · **[+Edge cases]** the steps must be conditional on reaching that step, which is why a "conversion rate" with no stated denominator is unusable |
+
+**Likely follow-ups:** Which step would you fix first, and why? How would you find where users actually drop? What if users can skip a step?
+**Learn it in:** Chapter 23, section 23.7 (funnels).
+
+### Q75-035 · Revenue grows 5% month on month all year. What is annual growth?
+
+**Level:** Mid · **Roles:** DA, PA, BA, DS
+
+**Remember it as:** *Growth compounds. 5% a month is not 60% a year, it is 80% — and it doubles the business in about fourteen months.*
+
+**Answer in one line:** **79.6%** — 1.05¹² is 1.796, so the business grows by four-fifths rather than the three-fifths that multiplying by twelve suggests.
+
+```python
+import math
+for m in (1, 3, 5, 10):
+    annual = ((1 + m/100)**12 - 1) * 100
+    double = math.log(2) / math.log(1 + m/100)
+    print(f"{m:>2}% MoM -> {annual:6.1f}% a year, doubling in {double:4.1f} months")
+```
+
+```
+ 1% MoM ->   12.7% a year, doubling in 69.7 months
+ 3% MoM ->   42.6% a year, doubling in 23.4 months
+ 5% MoM ->   79.6% a year, doubling in 14.2 months
+10% MoM ->  213.8% a year, doubling in  7.3 months
+```
+
+Note that this error runs the *opposite* way to the churn one in Q75-033. Compounding growth makes the naive figure an **under**estimate; compounding churn makes it an **over**estimate. The mechanism is the same — the base changes each period — and the direction flips because one adds to the base and the other subtracts from it.
+
+The doubling column is the useful mental tool. The rule of 72 gets you there without a calculator: 72 ÷ 5 ≈ 14 months, which matches the exact 14.2 closely enough for a conversation.
+
+The practical trap in reporting is the mirror of Q75-032: a column of monthly growth percentages cannot be summed. To combine them you multiply the factors, and to get an average monthly rate from an annual one you take the twelfth root, not divide by twelve.
+
+| Tier | What to say |
+|---|---|
+| Passes | "More than 60%, because it compounds" |
+| Strong | + 79.6%, and the doubling time, with the rule of 72 as the mental shortcut |
+| Extra points | **[+Business]** the error here understates growth, where the churn version overstates loss — same mechanism, opposite direction · **[+Validate]** an average monthly rate is the twelfth root of the annual factor, never the annual rate divided by 12 · **[+Edge cases]** sustained high MoM growth is rarely real for long; check whether the base period was unusually low |
+
+**Likely follow-ups:** What is CAGR and how does it differ from this? What does the rule of 72 approximate? How would you report a growth rate that varied month to month? *(The geometric mean of the factors.)*
+**Learn it in:** Chapter 23, section 23.6; Chapter 4, section 4.5.
+
+### Q75-036 · DAU is 20,000 and MAU is 50,000. What does 0.40 mean, and what are the bounds?
+
+**Level:** Mid · **Roles:** DA, PA, BA
+
+**Remember it as:** *DAU/MAU is "how many days in the month does a typical active user show up", divided by thirty. It cannot go below 1/30.*
+
+**Answer in one line:** **0.40**, meaning the average monthly user is active about **12 days out of 30** — and the ratio is bounded below by 1/30 ≈ 0.033, not by zero, because anyone counted in MAU came at least once.
+
+```python
+dau, mau = 20_000, 50_000
+print(f"DAU/MAU = {dau/mau:.2f}")
+print(f"lower bound = 1/30 = {1/30:.3f}")
+print(f"0.40 means about {0.40*30:.0f} active days in 30")
+```
+
+```
+DAU/MAU = 0.40
+lower bound = 1/30 = 0.033
+0.40 means about 12 active days in 30
+```
+
+The bound is the part that makes this a real question rather than a definition. A ratio of 0.05 is not "very low engagement on a 0-to-1 scale"; it is close to the arithmetic floor, meaning essentially nobody returns. And 0.40 is not "a bit below average" — it is a genuinely sticky product, around what a daily-habit app achieves.
+
+Three caveats that separate a strong answer:
+
+**It is an average over very different users.** A 0.40 made of 40% of users coming every day and 60% coming once looks identical to one where everyone comes 12 days. Those are different products, and only a distribution shows it.
+
+**MAU is a trailing 30-day window in most definitions**, so the denominator moves. A campaign that brings a wave of one-time visitors inflates MAU and *drops* the ratio, making engagement look worse while the product got more users.
+
+**It does not fit every product.** Daily stickiness is the wrong frame for anything with a natural weekly or monthly cadence — a payroll tool, a tax app, Riverstone's monthly reorder portal. Measuring those on DAU/MAU produces a low number that means nothing.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's the stickiness ratio, 0.40" |
+| Strong | + the interpretation in days (12 of 30) and the 1/30 floor |
+| Extra points | **[+Business]** a growth campaign full of one-time visitors lowers the ratio while improving the business · **[+Edge cases]** the average hides the distribution; two very different products give the same number · **[+Clarify]** ask whether daily use is even the intended behaviour before using this metric at all |
+
+**Likely follow-ups:** What would you use instead for a monthly-cadence product? How does MAU's window definition affect it? What is an L28 chart?
+**Learn it in:** Chapter 23, section 23.8 (engagement metrics); Chapter 75, Q75-015 (vanity metrics).
+
+### Q75-037 · LTV is ₹12,000 and CAC is ₹4,000. Is 3:1 good?
+
+**Level:** Senior · **Roles:** DA, PA, BA, DS
+
+**Remember it as:** *3:1 is a rule of thumb about contribution margin, not revenue. If your LTV is a revenue number, the real ratio is lower — and the payback period matters more than the ratio.*
+
+**Answer in one line:** **It depends on whether that ₹12,000 is revenue or margin** — at a 70% margin the contribution LTV is ₹8,400 and the ratio is **2.1:1**, not 3:1, and the more decision-useful figure is the payback period of **11.4 months**.
+
+```python
+ltv, cac, margin, arpu = 12_000, 4_000, 0.70, 500
+
+print(f"LTV:CAC as given        = {ltv/cac:.1f}:1")
+print(f"contribution LTV        = {ltv*margin:,.0f}")
+print(f"LTV:CAC on contribution = {ltv*margin/cac:.1f}:1")
+print(f"payback months          = {cac/(arpu*margin):.1f}")
+```
+
+```
+LTV:CAC as given        = 3.0:1
+contribution LTV        = 8,400
+LTV:CAC on contribution = 2.1:1
+payback months          = 11.4
+```
+
+Two different companies can both report "3:1" and be in completely different health, because nothing in the ratio is standardised. Before accepting one, ask three things:
+
+| Ask | Why it changes the answer |
+|---|---|
+| Is LTV revenue or contribution margin? | A 70% margin turns 3:1 into 2.1:1 |
+| Is CAC fully loaded? | Blended CAC that includes organic signups understates it, often by a lot |
+| Over what horizon is LTV computed? | A 5-year LTV on a 2-year-old company is a forecast, not a measurement |
+
+**Payback is the better headline**, and the reason is cash. An 11.4-month payback means money spent on acquisition today comes back next year — so growth must be funded until then, and the faster you grow the more cash you consume. Two businesses with the same 3:1 ratio and payback periods of 3 months and 18 months are not comparable investments.
+
+Tie it back to Q75-033: at 5% monthly churn the average customer lasts 20 months. A payback of 11.4 leaves about 8.6 months of profitable life — thin. If churn rose to 8% monthly, lifetime falls to 12.5 months and the customer barely pays for themselves.
+
+| Tier | What to say |
+|---|---|
+| Passes | "3:1 is the usual benchmark, so yes" |
+| Strong | + asks whether LTV is margin or revenue, recomputes to 2.1:1, and offers payback as the more useful number |
+| Extra points | **[+Business]** payback drives cash needs, and fast growth with slow payback is how a profitable-looking company runs out of money · **[+Clarify]** blended against paid CAC can differ by several times · **[+Edge cases]** LTV over a horizon longer than the company has existed is a model output, not a measurement · **[+Validate]** cross-check LTV against the churn-implied lifetime, 1/r (Q75-033) |
+
+**Likely follow-ups:** How would you compute LTV for a business with no churn data yet? What is blended against paid CAC? Why might a 10:1 ratio be a bad sign? *(Usually under-investment in growth.)*
+**Learn it in:** Chapter 23, section 23.4 (unit economics); Chapter 23, section 23.9.
+
+### Q75-038 · 60% promoters, 30% passives, 10% detractors. What is the NPS?
+
+**Level:** Fresher · **Roles:** DA, PA, BA
+
+**Remember it as:** *Promoters minus detractors, as whole numbers. Passives count in the denominator and score nothing. The scale is −100 to +100.*
+
+**Answer in one line:** **50** — on a scale from −100 to +100, not a percentage out of 100, and the 30% of passives affect it only by taking up space in the denominator.
+
+```
+NPS = %promoters − %detractors = 60 − 10 = 50
+```
+
+Three things people get wrong, in order of how often:
+
+**It is not a percentage.** "An NPS of 50%" is a sentence that reveals the speaker does not know what the number is. It is a net score on a −100 to +100 range.
+
+**Passives are invisible to the arithmetic but not to the denominator.** Converting 10 points of passives into promoters moves NPS by +10 with no change in detractors at all. So a product can improve its NPS substantially without fixing anything a detractor complained about — which is worth knowing before treating the number as a measure of problems.
+
+**The buckets are coarse.** A 9 and a 10 are both promoters; a 6 and a 0 are both detractors. A score of 6 — mildly lukewarm — counts exactly as badly as a 0. That makes NPS jumpy on small samples and insensitive to real movement within a bucket.
+
+The grown-up version of the answer: NPS is useful for tracking a trend on a consistent population, and poor for comparing across companies or industries, because the bucketing and the sampling swamp the signal. If an interviewer offers it as the North Star metric, the extra-point move is to ask what decision it would change (Q75-017).
+
+| Tier | What to say |
+|---|---|
+| Passes | "50" |
+| Strong | + that the range is −100 to +100, not a percentage, and that passives dilute without scoring |
+| Extra points | **[+Edge cases]** a 6 counts as badly as a 0, so the metric is insensitive within buckets and jumpy on small samples · **[+Business]** useful as a trend on a stable population, poor for cross-company comparison · **[+Validate]** always report the sample size and the response rate with it; a 15% response rate selects for the opinionated |
+
+**Likely follow-ups:** What response rate would worry you? How would you detect a biased sample? What would you measure instead? *(A task-level satisfaction score tied to a specific action, usually.)*
+**Learn it in:** Chapter 23, section 23.10 (customer metrics).
+
+### Rapid-fire, 75.7: metric arithmetic
+
+Roles: DA, PA and BA for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q75-039 | Conversion went from 2% to 3%. Is that "up 1%" or "up 50%"? | Both, and they are different claims: +1 percentage point, +50% relative. Saying "percent" when you mean "points" overstates or understates by 50× here | **[+Business]** always say "points" or "relative"; the ambiguity is expensive → Ch 23 §23.6 |
+| Q75-040 | Average order value rose and total revenue fell. What happened? | Fewer orders, and probably the cheap ones stopped. A rising average can be a shrinking base — the mix changed, not the behaviour | **[+Validate]** always read an average beside its count → Q75-011 |
+| Q75-041 | A cohort retention curve flattens at 40% after month 6. What does that mean? | You have a stable core. The flat part is the real business; the steep early part is onboarding failure, and they need different fixes | **[+Business]** a curve that never flattens means no product-market fit at any scale → Ch 23 §23.9 |
+| Q75-042 | Two regions, each improved conversion this quarter, but the company total fell. Possible? | Yes — Simpson's paradox, if traffic shifted towards the lower-converting region. Both facts are true | **[+Validate]** check the mix before explaining the trend → Ch 73 §73.6 |
+| Q75-043 | "Our users are 60% female" — from a survey with a 12% response rate | Says little about users, a lot about responders. Non-response is rarely random | **[+Edge cases]** report the response rate with every survey figure → Ch 73 Q73-033 |
+| Q75-044 | Median order value ₹1,200, mean ₹3,400. What does the gap tell you? | A long right tail: a few very large orders. The mean describes revenue, the median describes a typical customer, and both belong in the report | **[+Business]** targeting the mean customer usually means targeting nobody → Ch 21 §21.2 |
+| Q75-045 | A metric is defined as "active users". Two teams report different numbers. | Almost always the definition, not the data: active in what window, counting what action, including or excluding internal accounts | **[+Clarify]** a metric without a written definition is not a metric → Q75-017 |
+| Q75-046 | Week-on-week comparison for a business with a weekly cycle | Compare like with like: the same weekday, or a 7-day trailing total. Week-on-week on a Tuesday against a Saturday is noise | **[+Edge cases]** also watch for 4- against 5-week months in monthly figures → Ch 23 §23.6 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -391,13 +693,15 @@ No software specific to this chapter. A notebook or whiteboard to sketch a struc
 
 ## Key terms
 
-MECE (Mutually Exclusive, Collectively Exhaustive) · diagnostic case · product-decision case · weekly active users · leading indicator · lagging indicator · North Star metric · vanity metric · guardrail metric · average handle time · service-level agreement (SLA) · RICE · Fermi estimation · total addressable market (TAM) · top-down vs. bottom-up estimate · pilot (as a decision-testing step)
+MECE (Mutually Exclusive, Collectively Exhaustive) · diagnostic case · product-decision case · weekly active users · leading indicator · lagging indicator · North Star metric · vanity metric · guardrail metric · average handle time · service-level agreement (SLA) · RICE · Fermi estimation · total addressable market (TAM) · top-down vs. bottom-up estimate · pilot (as a decision-testing step) · percentage points against relative percent · recovery asymmetry · compounding · survival rate · average customer lifetime (1/r) · funnel multiplication · DAU/MAU stickiness · contribution margin · LTV:CAC · CAC payback period · blended against paid CAC · NPS scale (−100 to +100) · promoter / passive / detractor · geometric mean · rule of 72
 
 ---
 
 ## Final-week revision list
 
-Q75-001, Q75-002, Q75-007, Q75-008, Q75-013, Q75-014, Q75-017, Q75-019, Q75-024, Q75-025, Q75-030, Q75-031.
+Q75-001, Q75-002, Q75-007, Q75-008, Q75-013, Q75-014, Q75-017, Q75-019, Q75-024, Q75-025, Q75-030, Q75-031, Q75-032, Q75-033, Q75-037.
+
+The last three are the arithmetic most likely to be wrong in a real deck: a fall and a rise of the same percentage (Q75-032), monthly churn annualised by multiplication (Q75-033), and an LTV:CAC ratio whose LTV turns out to be revenue (Q75-037).
 
 ---
 
