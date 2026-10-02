@@ -36,9 +36,18 @@ You read §71.11 and approved its depth. This is that standard applied across th
 | 80 | Architecture & Leadership | 80.7 The arithmetic of a design | 6 | 8 | 29 → 43 |
 
 Every section follows §71.11's shape: a memory hook, a one-line answer, the code, its real output,
-a three-tier table, likely follow-ups, a red flag and a *Learn it in* pointer. A script checks that
-every question has all five required parts, that no code is duplicated or skipped, and that no
-table has a ragged row. All ten pass.
+a three-tier table, likely follow-ups, a red flag and a *Learn it in* pointer. A script
+(`tools/review-export/check_bank.py`) checks that every question has all five required parts, that
+no question code is duplicated or skipped, that code fences balance and that no table has a ragged
+row. **All ten new sections pass it completely — 0 of 202 new questions is missing any part.**
+
+One thing that check turned up, worth passing on. Run across the *whole* of each chapter rather
+than just the new section, it flags **37 pre-existing questions** that lack one or more of those
+parts. Most are not defects: the full walk-throughs and design cases (Q73-036, Q74-035, Q75-030,
+Q77-033, Q79-038, Q80-022 and their neighbours) are deliberately a different format — a talked-
+through scenario rather than a question with a tier table — and several Chapter 71 queries treat
+the query itself as the answer. A handful may be genuine gaps, Q71-060 among them. I have not
+touched any of them; the list is reproducible by running the script without `--section`.
 
 **Every answer was run.** Nothing was typed from memory.
 
