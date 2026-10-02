@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Analyst to Architect — review bundle, read me first</title><style>
+@page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+body { font: 10.5pt/1.5 Georgia, 'Times New Roman', serif; color: #1a1a1a; }
+h1 { font-size: 20pt; border-bottom: 2px solid #333; padding-bottom: 6pt; }
+h2 { font-size: 15pt; margin-top: 22pt; page-break-after: avoid; }
+h3 { font-size: 12pt; margin-top: 18pt; background: #f1f1f1; padding: 5pt 7pt;
+     border-left: 3pt solid #555; page-break-after: avoid; }
+p { margin: 7pt 0; }
+code { font: 9pt 'Consolas', 'Courier New', monospace; background: #f4f4f4;
+       padding: 0 2pt; border-radius: 2px; }
+pre { font: 8.8pt/1.35 'Consolas', 'Courier New', monospace; background: #f7f7f7;
+      border: 1px solid #ddd; border-left: 3pt solid #888; padding: 7pt 9pt;
+      white-space: pre-wrap; page-break-inside: avoid; margin: 7pt 0; }
+pre.out { background: #fcfcf6; border-left-color: #b8a355; }
+table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt;
+        page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 4pt 6pt; vertical-align: top; text-align: left; }
+th { background: #ececec; }
+tr td:first-child { width: 14%; font-weight: bold; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 16pt 0; }
+ul { margin: 7pt 0 7pt 16pt; }
+li { margin: 3pt 0; }
+.note { background: #f0f4f8; border-left: 3pt solid #5a7a99; padding: 8pt 10pt; margin: 10pt 0;
+        font-size: 9.5pt; }
+</style></head><body>
+<h1>Read me first</h1>
+<p><em>The Analyst to Architect review bundle — 3 October 2026</em></p>
+<p>Everything is here: the four books, the practice material that goes with them, a guide to where every topic lives, and the review state. 781 files, 280 MB, in five folders you can read in order.</p>
+<p>The point of this bundle is for you to tell me <strong>what is lapsing and what is not</strong>. There is a section at the end on exactly that — what I would most like you to look at, and what I already know is missing.</p>
+<hr>
+<h2>The five folders</h2>
+<table><thead><tr><th>Folder</th><th>What is in it</th></tr></thead><tbody>
+<tr><td><strong>01-Books</strong></td><td>The four books as PDFs, plus the internal overview. Start here if you want to read.</td></tr>
+<tr><td><strong>02-Guide</strong></td><td><em>Where everything is</em> — the map of every chapter, section and topic. Start here if you want to find something.</td></tr>
+<tr><td><strong>03-Whats-new</strong></td><td>What changed since you last looked, as a short review copy rather than a whole book.</td></tr>
+<tr><td><strong>04-Practice</strong></td><td>The files a reader actually works with: notebooks, SQL, spreadsheets, datasets.</td></tr>
+<tr><td><strong>05-Review-state</strong></td><td>The tracker, your decisions, and the per-chapter changelogs.</td></tr>
+</tbody></table>
+<hr>
+<h2>01-Books — the four books</h2>
+<table><thead><tr><th>Book</th><th>Pages</th><th>What it covers</th></tr></thead><tbody>
+<tr><td><strong>1 · Theory</strong></td><td>218</td><td>The ideas, no software to install. Parts 0 and 1.</td></tr>
+<tr><td><strong>2 · Practical</strong></td><td>1,401</td><td>The analyst's tools, hands on: spreadsheets, SQL, cleaning, charts, Power BI, Python, statistics, business skills; then the advanced layer. Parts 2 and 3.</td></tr>
+<tr><td><strong>3 · Implementation</strong></td><td>1,318</td><td>Machine learning, data engineering, production ML and generative AI, architecture and leadership, and the closing chapter. Parts 4 to 7.</td></tr>
+<tr><td><strong>4 · Be Interview Ready</strong></td><td>433</td><td>Part 8: how hiring works, the extra-points method, and a question bank for every skill and role.</td></tr>
+<tr><td><em>Book Overview</em></td><td>71</td><td>Internal, not for sale. Every chapter, what it covers, how long it takes, how the parts connect.</td></tr>
+</tbody></table>
+<p><strong>Book 4 is new today — 433 pages, up from 400.</strong> Everything else is the 1 October build.</p>
+<p>Two reading notes:</p>
+<ul><li>Use the contents page or your reader's bookmark sidebar. In Book 4 all <strong>160 contents links and 629 bookmarks</strong> were checked to land on the right page.</li><li>Books 2 and 3 are around 80 MB each. They are fine in a desktop reader and slow in a phone browser.</li></ul>
+<hr>
+<h2>02-Guide — where everything is</h2>
+<p>A 192-page map of the whole book, in four formats, generated from the manuscript itself so it cannot drift out of step.</p>
+<ul><li><strong>Where-Everything-Is.pdf</strong> — read it</li><li><strong>Where-Everything-Is.docx</strong> — same, if you want to write in it</li><li><strong>Where-Everything-Is.xlsx</strong> — three sortable sheets: 85 chapters, 821 sections, 3,294 terms. This is the one to use if you want to filter, sort by time, or search.</li><li><strong>Where-Everything-Is.md</strong> — the source</li></ul>
+<p>It answers three questions:</p>
+<p>1. <em>Which book do I open?</em> — the four-books table at the front. 2. <em>Where is topic X taught?</em> — <strong>the topic index</strong>, alphabetical, 3,294 terms, each pointing at its chapter. Built from every chapter's own Key terms list. 3. <em>What do I actually do in this chapter?</em> — each chapter lists the practice files that ship with it.</p>
+<hr>
+<h2>03-Whats-new — what changed</h2>
+<p><strong>Chapter 71 has a new section, §71.11, "Predict the output: from basic to brain-racking."</strong></p>
+<p>You asked for the interview material to be ground down from very basic to very detailed, with brain-racking questions of the <code>int("25", 4)</code> kind. I measured Part VIII first: of its 619 questions, only <strong>19</strong> were output-prediction, and <strong>17 of those sat in one section</strong> of Chapter 72. Thirteen of the fourteen banks had none.</p>
+<p>§71.11 is the answer for SQL, and the template for the other thirteen banks. 16 core questions and 16 rapid-fire rows, taking Chapter 71 from 76 questions to 108. A new <em>Brain-racking</em> level sits above Warm-up and Core.</p>
+<p>In this folder:</p>
+<ul><li><strong>Ch71-section-71.11-predict-the-output.pdf</strong> (26 pages) — read this one</li><li>the same as <strong>.docx</strong>, if you want to comment in it</li><li><strong>changelog-ch71.md</strong> — what changed and why, including the six questions that were wrong in draft</li><li><strong>changelog-ch18.md</strong> — the object-oriented Python work you approved on 1 October</li></ul>
+<hr>
+<h2>04-Practice — the material a reader works with</h2>
+<p>580 files across 71 chapter folders, 92 MB.</p>
+<table><thead><tr><th><strong>49 notebooks</strong> (<code>.ipynb</code>)</th><th>Each chapter's code, with the book's own explanation beside it, already run so the outputs are there before you start</th></tr></thead><tbody>
+<tr><td><strong>86 SQL files</strong></td><td>The queries, written for PostgreSQL and MySQL. 13 chapters ship both dialects</td></tr>
+<tr><td><strong>127 Python scripts</strong></td><td>The finished programs the chapters build</td></tr>
+<tr><td><strong>29 Excel workbooks</strong></td><td>The spreadsheet exercises</td></tr>
+<tr><td><strong>152 CSVs and 9 parquet files</strong></td><td>Riverstone Supplies, the worked example used all the way through</td></tr>
+</tbody></table>
+<p><strong>What is deliberately not here.</strong> About 317 MB of generated data — the large files the data-engineering chapters build, such as Chapter 28's 52 MB of order items and Chapter 30's web events. The chapter scripts rebuild them in about a minute, which is how the book is designed to work, and shipping them would have tripled the bundle. Any chapter that needs them says so and names the script that makes them.</p>
+<hr>
+<h2>05-Review-state — where the work stands</h2>
+<ul><li><strong>TRACKER.md</strong> — <strong>3,761 of 3,822 findings closed, 98%.</strong> Verified 3,152 · Fixed 609 · Approved and waiting to be fixed 15 · Open 46.</li><li><strong>DECISIONS.md</strong> — your decisions. Global rule A1 is ticked, all 26 themes carry a decision, and all eight structural decisions D1–D8 are approved. Nothing in the fix queue is waiting on you.</li><li><strong>DECISIONS-BRIEFING.md</strong> — the decisions explained, if you want the reasoning again.</li><li><strong>Book-Review-Action-Register.xlsx</strong> — the findings as a spreadsheet.</li><li><strong>changelog/</strong> — one file per chapter, recording every change and how it was verified.</li><li><strong>START-HERE.md</strong> — the same orientation page that sits in the project folder.</li></ul>
+<hr>
+<h2>What I would most like you to look at</h2>
+<p><strong>1. The depth of §71.11.</strong> This matters more than anything else in the bundle, because the same standard is about to be applied to thirteen more question banks — roughly 260 more questions. If the depth is wrong, I would much rather fix it once than fourteen times. Read a few questions and tell me: too long, too short, or right? Is the tier table earning its place? Are the <em>Brain-racking</em> ones actually hard enough?</p>
+<p><strong>2. Whether the guide is the reference you wanted.</strong> You asked for somewhere you can see what topics exist and where they are. The topic index is my answer. If you want it cut differently — by role, by tool, by week of study — say so; it is generated, so re-cutting it is cheap.</p>
+<p><strong>3. The practice material against the theory.</strong> Open any chapter in Book 2, then open the same chapter's folder in <code>04-Practice</code>. Does the practice match what the chapter taught? That pairing is the thing I can least check for myself.</p>
+<hr>
+<h2>What I already know is missing</h2>
+<p>Recorded so you do not have to find it:</p>
+<p>1. <strong>Section 71.11 has not been run on PostgreSQL 16 and MySQL 8.4.</strong> Neither is installed on this machine. Every answer was run, against the chapter's own <code>riverstone_2025</code> data on a bench that was first checked to reproduce four figures the chapter already prints. But the chapter's standard is a run on both engines, so the new outputs are labelled <strong>Run (riverstone_2025)</strong> rather than <strong>Verified</strong>, and the chapter's own at-a-glance box now states the exception. Four questions where the engines genuinely disagree are marked <strong>Dialect split</strong> and give each engine's documented behaviour instead of one answer.</p>
+<p>2. <strong>Thirteen question banks still have no predict-the-output section:</strong> Chapters 70, 72a, 73–82.</p>
+<p>3. <strong>Books 1, 2 and 3 still carry a series map whose Book 4 page numbers predate today.</strong> Book 4's own map is correct and was rebuilt. Fixing the other three means rebuilding them, and I did not, for the reason below.</p>
+<p>4. <strong>This machine does not reproduce the original build exactly.</strong> I test-rebuilt Book 1 and got 217 pages against the shipped 218, with the cover's letter-spacing visibly different — the fonts resolve differently here. So I rebuilt only Book 4, whose content actually changed, rather than re-paginating three unchanged books for a cosmetic reason. Book 4's own pagination therefore moved slightly more than the new section alone explains: Chapters 69 and 70 shifted by one and two pages without their content changing. Book 4's visual check should be redone before release.</p>
+<p>5. <strong>Chapter 15 was missing its PostgreSQL query file</strong> while shipping a hand-written MySQL one. Generated today, consistent with the thirteen other chapters that ship both.</p>
+<p>6. <strong>The hours tables in Chapters 6, 9 and 83 are out of date</strong>, and have been since the Chapter 18 work. Theme T12 schedules that as a single final pass, so it is deliberately not done piecemeal.</p>
+<hr>
+<h2>If you want to run the practice material</h2>
+<p>Nothing in the bundle needs installing to <em>read</em>. To run it:</p>
+<ul><li><strong>Notebooks:</strong> Python 3.11 or newer, then <code>pip install jupyter pandas numpy matplotlib</code>. Open any <code>.ipynb</code> in <code>04-Practice/chNN/</code>. The outputs are already saved, so you can read without running.</li><li><strong>SQL:</strong> PostgreSQL is the book's primary database, MySQL the supported alternative. Load <code>04-Practice/riverstone_2025_setup.sql</code> first, then run the chapter's <code>_queries_postgresql.sql</code>.</li><li><strong>Excel:</strong> the workbooks open in Excel or Google Sheets and none of them carries a macro, so nothing will prompt you to enable one. Chapter 19 is the macro chapter, and there the macros are what you write rather than what ships.</li></ul>
+<p>The large generated datasets are rebuilt by the scripts named in each chapter.</p>
+</body></html>

@@ -180,10 +180,13 @@ li { margin: 3pt 0; }
 """
 
 
-def to_html(bs, title, note):
+def to_html(bs, title, note, show_h1=True):
     h = ['<!doctype html><html><head><meta charset="utf-8">',
-         f'<title>{esc(title)}</title><style>{CSS}</style></head><body>',
-         f'<h1>{esc(title)}</h1>', f'<div class="note">{inline_html(note)}</div>']
+         f'<title>{esc(title) or "Document"}</title><style>{CSS}</style></head><body>']
+    if title and show_h1:
+        h.append(f'<h1>{esc(title)}</h1>')
+    if note:
+        h.append(f'<div class="note">{inline_html(note)}</div>')
     for kind, payload in bs:
         if kind == 'head':
             lvl, t = payload
@@ -230,7 +233,7 @@ def add_inline(p, text):
             r.font.color.rgb = RGBColor(0x8B, 0x20, 0x20)
 
 
-def to_docx(bs, title, note, path):
+def to_docx(bs, title, note, path, show_h1=True):
     d = docx.Document()
     for s in d.sections:
         s.left_margin = s.right_margin = Inches(0.8)
@@ -238,10 +241,12 @@ def to_docx(bs, title, note, path):
     base.font.name = 'Georgia'
     base.font.size = Pt(10.5)
 
-    d.add_heading(title, 0)
-    n = d.add_paragraph()
-    add_inline(n, note)
-    n.paragraph_format.space_after = Pt(14)
+    if title and show_h1:
+        d.add_heading(title, 0)
+    if note:
+        n = d.add_paragraph()
+        add_inline(n, note)
+        n.paragraph_format.space_after = Pt(14)
 
     for kind, payload in bs:
         if kind == 'head':
@@ -286,20 +291,33 @@ def to_docx(bs, title, note, path):
 # ---------------------------------------------------------------- main
 
 if __name__ == '__main__':
-    src, start, stop, stem = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
-    text = pathlib.Path(src).read_text(encoding='utf-8')
-    a = text.index(start)
-    b = text.index(stop, a)
-    body = text[a:b]
+    import argparse
 
-    title = 'Analyst to Architect, Book 4 — Chapter 71, section 71.11'
-    note = ('**Review copy, 2 October 2026.** The new predict-the-output section of the SQL '
-            'question bank: 16 core questions and 16 rapid-fire rows. Every answer was produced '
-            'by running the query against the chapter\u2019s own `riverstone_2025` data. The '
-            'confirming run on PostgreSQL 16 and MySQL 8.4 has not happened, so outputs are '
-            'labelled *Run (riverstone_2025)*; the four questions marked *Dialect split* give '
-            'each engine\u2019s documented behaviour instead of one result.')
-    note_docx = note
+    ap = argparse.ArgumentParser(
+        description='Export a Markdown file, or one section of it, as HTML and DOCX.')
+    ap.add_argument('source', help='the Markdown file')
+    ap.add_argument('out_stem', help='output path without an extension')
+    ap.add_argument('--start', default=None,
+                    help='heading to start at, e.g. "## 71.11"; default is the top of the file')
+    ap.add_argument('--stop', default=None,
+                    help='heading to stop before; default is the end of the file')
+    ap.add_argument('--title', default=None, help='document title')
+    ap.add_argument('--note', default=None,
+                    help='one paragraph shown in a tinted box under the title (Markdown allowed)')
+    ap.add_argument('--no-title', action='store_true',
+                    help="do not add a title; the file's own H1 is the title")
+    a = ap.parse_args()
+
+    text = pathlib.Path(a.source).read_text(encoding='utf-8')
+    i = text.index(a.start) if a.start else 0
+    j = text.index(a.stop, i) if a.stop else len(text)
+    body = text[i:j]
+
+    title = a.title or pathlib.Path(a.source).stem.replace('-', ' ')
+    note = a.note or ''
+    # --no-title means the file already opens with its own H1, so do not add a second one.
+    # The title still names the document, for the browser tab and the PDF footer.
+    show_h1 = not a.no_title
 
     bs = blocks(body)
     kinds = {}
@@ -307,9 +325,9 @@ if __name__ == '__main__':
         kinds[k] = kinds.get(k, 0) + 1
     print('blocks parsed:', kinds)
 
-    html_path = pathlib.Path(stem + '.html')
-    html_path.write_text(to_html(bs, title, note), encoding='utf-8')
+    html_path = pathlib.Path(a.out_stem + '.html')
+    html_path.write_text(to_html(bs, title, note, show_h1), encoding='utf-8')
     print('html ->', html_path)
 
-    to_docx(bs, title, note_docx, stem + '.docx')
-    print('docx ->', stem + '.docx')
+    to_docx(bs, title, note, a.out_stem + '.docx', show_h1)
+    print('docx ->', a.out_stem + '.docx')

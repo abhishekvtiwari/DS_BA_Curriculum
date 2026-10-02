@@ -482,7 +482,33 @@ JOBS['front'] = lambda: build('front-how-to-use-this-book.md', 'Front-How-to-Use
 
 
 # ---- A package: several sources as one PDF with one page count (D8) ---------------------------
-FOOT_FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+def _foot_font():
+    """DejaVu Sans for the running footers, wherever this machine keeps it.
+
+    The path was hard-coded to the Linux sandbox the build was written in. matplotlib ships the
+    same font file, so the footers render identically on a machine with no system DejaVu.
+    Set BOOK_FOOT_FONT to override.
+    """
+    import os
+    here = pathlib.Path(__file__).resolve().parent
+    tries = [os.environ.get('BOOK_FOOT_FONT'),
+             '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+             here / 'fonts' / 'DejaVuSans.ttf']
+    try:
+        import matplotlib
+        tries.append(pathlib.Path(matplotlib.__file__).parent
+                     / 'mpl-data' / 'fonts' / 'ttf' / 'DejaVuSans.ttf')
+    except ImportError:
+        pass
+    tries += ['C:/Windows/Fonts/DejaVuSans.ttf', 'C:/Windows/Fonts/arial.ttf',
+              'C:/Windows/Fonts/segoeui.ttf']
+    for c in tries:
+        if c and pathlib.Path(c).exists():
+            return str(c)
+    raise SystemExit('no footer font found; set BOOK_FOOT_FONT to a .ttf')
+
+
+FOOT_FONT = _foot_font()
 
 
 def running_head(title):

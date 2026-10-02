@@ -10,6 +10,23 @@ Everything below is a real file in this folder. Click it, or open it from Explor
 
 ---
 
+## 0. The review bundle
+
+Everything assembled in one place, outside this folder so it can be moved or sent:
+
+**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 781 files, 280 MB, in five numbered
+folders. Open **`00-Read-me-first.pdf`** inside it. There is also a
+**`…-Review-Bundle.zip`** (209 MB) beside it if you want to move it to another machine.
+
+It holds the four books, the practice material, the topic guide, what changed recently, and the
+review state. The read-me says what I would most like you to look at, and what I already know is
+missing.
+
+The same documents are in [review/for-abhishek/](review/for-abhishek/) here, if you would rather
+not leave this folder.
+
+---
+
 ## 1. Read the books
 
 The five PDFs with the fixed navigation are in **[fixed/Books/](fixed/Books/)**. These are the ones
@@ -21,11 +38,11 @@ series map sits at the back.
 | 1 · Theory | [Analyst-to-Architect-Book-1-Theory.pdf](fixed/Books/Analyst-to-Architect-Book-1-Theory.pdf) | 218 | 359 |
 | 2 · Practical | [Analyst-to-Architect-Book-2-Practical.pdf](fixed/Books/Analyst-to-Architect-Book-2-Practical.pdf) | 1,401 | 1,616 |
 | 3 · Implementation | [Analyst-to-Architect-Book-3-Implementation.pdf](fixed/Books/Analyst-to-Architect-Book-3-Implementation.pdf) | 1,318 | 1,447 |
-| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 400 | 610 |
+| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 433 | 629 |
 | Overview (internal, not for sale) | [Analyst-to-Architect-Book-Overview.pdf](fixed/Books/Analyst-to-Architect-Book-Overview.pdf) | 71 | 99 |
 
-Built 1 October 2026. **Book 4 is being extended right now** (see section 4), so it will be
-rebuilt; the other four are current.
+**Book 4 was rebuilt on 3 October** and now carries section 71.11; all 160 of its contents links
+and 629 bookmarks were checked to land on the right page. The others are the 1 October build.
 
 Two reading notes, so the navigation behaves the way you expect:
 
@@ -119,9 +136,11 @@ Two things are honestly outstanding rather than finished:
   "Verified", and the chapter's own at-a-glance box now carries that exception so the section does
   not borrow the chapter's engine claim. Four questions where the two engines genuinely disagree
   are marked **Dialect split** and give each engine's documented behaviour instead of one answer.
-- **Book 4 needs rebuilding.** Chapter 71 grew from 15,935 to 26,430 words, so page numbers from
-  that chapter onward have moved. The PDF in `fixed/Books/` is the 1 October build and predates
-  this.
+- **Book 4 has been rebuilt** — 433 pages, up from 400, with the series map regenerated. One
+  honest wrinkle: this machine does not reproduce the original build exactly (a test rebuild of
+  Book 1 came out 217 pages against the shipped 218, because fonts resolve differently here), so
+  only Book 4 was rebuilt and its visual check should be redone. Books 1–3 still carry a series
+  map whose Book 4 page numbers predate this.
 
 ---
 
