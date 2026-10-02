@@ -8,7 +8,7 @@
 >
 > **Before you start:** Part 4 (Chapters 35–43), which teaches every idea in this bank; Chapter 53, section 53.3 (early stopping) and Chapter 56 (monitoring, drift, training-serving skew) for section 74.6; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 6–8 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Plus 1 hour for the final-week list.
+> **Time needed:** 8–10 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Section 74.8 adds about 1½ hours and is worth a sitting of its own, with the code running beside you. Plus 1 hour for the final-week list.
 >
 > **How this chapter is built.** Same format as every question bank in Part 8 (Chapters 70–82). Every **core question** gives a memory hook ("Remember it as…"), a one-line answer you can recall under pressure, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, tagged the same way: **[+Clarify]**, **[+Edge cases]**, **[+Validate]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Every **rapid-fire section** is a scan table: question, one-line answer, one extra point, level, and where to learn it (a bare number such as 37.2 means that section). Every **Learn it in** pointer names the section of Part 4 (or Chapter 53 or 56) that teaches the idea, and the numbers quoted are the ones you produced there. The four **Run it yourself** demos are complete cells: copy one into a fresh notebook and it prints what's shown (scikit-learn 1.9.1, the version installed in Chapter 35, section 35.9). Ideas no earlier chapter teaches are marked **Beyond the book** and carry their own short explanation and example.
 >
@@ -534,6 +534,510 @@ Roles: DS and MLE for every row.
 
 ---
 
+## 74.8 Predict the number: what the library did that you did not ask for
+
+The rest of this chapter tests whether you understand the modelling: bias and variance, leakage, calibration, thresholds. This section tests something narrower. Every question below is a model that trains without warning, scores plausibly, and reports a number that is not what you think it is — because scikit-learn made a choice on your behalf and did not mention it.
+
+That is a different skill from knowing the theory, and it is the one that shows up in a live-coding round. An interviewer who hands you a notebook and asks "what will this print?" is finding out whether you have read the defaults or only the tutorials.
+
+Read the setup, say the number, then read on.
+
+**How these were run.** scikit-learn 1.9.0, numpy 2.4.3, pandas 3.0.2, every random state fixed, so each cell reproduces. The setup cell for this section:
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import make_classification, make_regression
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score, accuracy_score, r2_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+rng = np.random.default_rng(74)
+```
+
+### Q74-037 · `clf.score(X, y)` and `reg.score(X, y)`: are they the same metric?
+
+**Level:** Fresher · **Roles:** DA, DS, MLE
+
+**Remember it as:** *`.score()` means accuracy on a classifier and R² on a regressor. Same method name, different number, no warning.*
+
+**Answer in one line:** No — a classifier's `.score()` returns accuracy and a regressor's returns R², so the same call on two models gives two numbers that are not comparable and are not labelled.
+
+```python
+clf = LogisticRegression(max_iter=1000).fit(X_tr, y_tr)
+print(f"classifier .score() = {clf.score(X_te, y_te):.4f}")
+print(f"accuracy_score      = {accuracy_score(y_te, clf.predict(X_te)):.4f}")
+
+reg = LinearRegression().fit(X_tr2, y_tr2)
+print(f"regressor .score()  = {reg.score(X_te2, y_te2):.4f}")
+print(f"r2_score            = {r2_score(y_te2, reg.predict(X_te2)):.4f}")
+```
+
+```
+classifier .score() = 0.9222
+accuracy_score      = 0.9222
+regressor .score()  = 0.9365
+r2_score            = 0.9365
+```
+
+Both land near 0.93 and they mean entirely different things. 0.9222 is "92% of labels correct". 0.9365 is "the model explains 94% of the variance". One is bounded at 1 and floored at 0; the other is bounded at 1 and has no floor at all (Q74-038).
+
+The practical damage is in comparison tables. A notebook that loops over models and collects `.score()` into a dataframe produces a column with no unit, and if the loop ever mixes a classifier with a regressor the column silently mixes metrics. The same applies to `cross_val_score` without an explicit `scoring=`, which defaults to the estimator's own `.score`.
+
+Always name the metric:
+
+```python
+cross_val_score(model, X, y, cv=5, scoring='roc_auc')
+```
+
+| Tier | What to say |
+|---|---|
+| Passes | "One's accuracy and one's R²" |
+| Strong | + that `cross_val_score` inherits the same default, so an unlabelled score column can mix metrics, and that passing `scoring=` explicitly is the fix |
+| Extra points | **[+Validate]** a results table whose metric column has no name is the smell · **[+Business]** accuracy and R² near 0.93 tell a stakeholder nothing comparable, and reading them as the same number is an easy mistake to invite · **[+Edge cases]** a clustering estimator's `.score()` is different again, and some have none |
+
+**Likely follow-ups:** What does `cross_val_score` default to? How would you compare a classifier and a regressor fairly? *(You cannot directly; pick a metric that answers the business question.)*
+**Red flag:** reporting `.score()` without saying what it is.
+**Learn it in:** Chapter 36, section 36.7 (evaluation); Chapter 74, section 74.3.
+
+### Q74-038 · Can R² be negative?
+
+**Level:** Fresher · **Roles:** DA, DS, MLE
+
+**Remember it as:** *R² is not r squared. It is 1 minus (your error ÷ the error of predicting the mean), and if you are worse than the mean it goes below zero.*
+
+**Answer in one line:** **Yes** — R² is −3.0 for a model that is worse than predicting the mean, 0 for predicting the mean exactly, and 1 for a perfect fit; the "squared" in the name refers to squared errors, not to a quantity that must be positive.
+
+```python
+y_true = np.array([10.0, 12, 14, 16, 18])
+for name, pred in [('worse than the mean', np.array([18.0, 16, 14, 12, 10])),
+                   ('the mean itself',     np.full(5, y_true.mean())),
+                   ('perfect',             y_true.copy())]:
+    print(f"{name:<22} R2 = {r2_score(y_true, pred):+.4f}")
+```
+
+```
+worse than the mean    R2 = -3.0000
+the mean itself        R2 = +0.0000
+perfect                R2 = +1.0000
+```
+
+The formula is 1 − SS_res/SS_tot. Predicting the mean makes those two equal, so R² is 0 — that is the baseline, not the floor. Do worse and the ratio exceeds 1, and R² goes negative without limit.
+
+Where you actually meet a negative R² is on the **test set**, and it is one of the most informative numbers in machine learning when you do. It says your model is worse than a constant. That usually means one of three things: the model is overfit beyond rescue, the test set comes from a different distribution than the training set, or something is wrong with the pipeline — a shuffled target, a misaligned index after a join, a scaler fitted in the wrong place.
+
+The name confusion is worth clearing up out loud: for a simple linear regression with an intercept, R² does happen to equal the square of Pearson's r. That coincidence is where the name comes from, and it stops being true for any other model.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Yes, if the model is worse than the mean" |
+| Strong | + the formula and the three reference points (−3, 0, 1), and that 0 is the baseline rather than the floor |
+| Extra points | **[+Validate]** a negative test R² is a strong signal of a pipeline bug, not just a weak model — check for a shuffled target or a misaligned index first · **[+Edge cases]** R² equals r² only for simple linear regression with an intercept · **[+Business]** "the model explains −300% of the variance" is not a sentence to put in a slide; say "worse than guessing the average" |
+
+**Likely follow-ups:** What is adjusted R²? Can it be negative too? *(Yes, more easily.)* Why does adding a feature never decrease *training* R²?
+**Learn it in:** Chapter 22, section 22.10 (regression); Chapter 74, Q74-009.
+
+### Q74-039 · Halve every predicted probability. What happens to AUC, and to accuracy?
+
+**Level:** Brain-racking · **Roles:** DS, MLE
+
+**Remember it as:** *AUC only reads the order of the scores. Accuracy reads the scores against a threshold. Rescale and one does not move at all while the other collapses.*
+
+**Answer in one line:** AUC is **completely unchanged** at 0.949532 — through halving, cubing, and taking logs — while accuracy at a 0.5 threshold falls from 0.9222 to 0.6500, because AUC depends only on the ranking and accuracy depends on where the scores sit relative to the cut-off.
+
+```python
+p = clf.predict_proba(X_te)[:, 1]
+
+print(f"AUC with p        = {roc_auc_score(y_te, p):.6f}")
+print(f"AUC with p/2      = {roc_auc_score(y_te, p/2):.6f}")
+print(f"AUC with p**3     = {roc_auc_score(y_te, p**3):.6f}")
+print(f"AUC with log(p)   = {roc_auc_score(y_te, np.log(p)):.6f}")
+print(f"accuracy on p     = {accuracy_score(y_te, (p > 0.5).astype(int)):.4f}")
+print(f"accuracy on p/2   = {accuracy_score(y_te, (p/2 > 0.5).astype(int)):.4f}")
+```
+
+```
+AUC with p        = 0.949532
+AUC with p/2      = 0.949532
+AUC with p**3     = 0.949532
+AUC with log(p)   = 0.949532
+accuracy on p     = 0.9222
+accuracy on p/2   = 0.6500
+```
+
+Four transformations, six decimal places, not one digit different. Halving, cubing and logging are all **monotonic**: they change the values and preserve the order. AUC is computed entirely from the order — it is the probability that a randomly chosen positive outranks a randomly chosen negative — so none of them touches it.
+
+Accuracy is a different kind of measurement. It asks whether each score is above 0.5, and halving every score pushes most of them below, so a quarter of the test set changes class and accuracy falls 27 points.
+
+Three consequences, and they are what the question is really testing:
+
+**AUC cannot detect a calibration problem.** A model whose probabilities are all systematically too low — a common result of training on resampled data — has perfect AUC and useless probabilities. If anyone downstream multiplies the probability by a value to get an expected return, AUC will never warn them. That is Q74-014's point arriving from the other side.
+
+**AUC cannot be improved by changing the threshold**, because it already summarises every threshold at once. "We tuned the threshold and AUC went up" is not possible, and hearing it is a useful signal.
+
+**A model can have better AUC and worse accuracy than another**, and neither number is lying. They answer different questions: can it rank, and does it decide correctly at this cut-off.
+
+| Tier | What to say |
+|---|---|
+| Passes | "AUC doesn't change, it's rank-based" |
+| Strong | + that *any* monotonic transform leaves it identical, with accuracy's collapse as the contrast, and the definition of AUC as a ranking probability |
+| Extra points | **[+Business]** AUC is blind to calibration, so a model used for expected-value decisions needs Brier score or a reliability curve as well · **[+Validate]** "we improved AUC by moving the threshold" is impossible and signals a misunderstanding · **[+Edge cases]** a *non*-monotonic transform does change AUC, which is why a poorly chosen feature transform can hurt ranking |
+
+**Likely follow-ups:** What transform *would* change AUC? How would you measure calibration? *(Brier score, reliability curve.)* Does this apply to PR-AUC? *(Yes, also rank-based.)*
+**Red flag:** saying AUC falls. It is the answer that follows from treating AUC as "accuracy, but better".
+**Learn it in:** Chapter 74, section 74.3 (metrics and calibration); Chapter 36, section 36.7.
+
+### Q74-040 · `train_test_split` on data that is 5% positive, with no `stratify`
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *A random split is random about the rare class too. On 5% positives it will hand you a test set with anywhere from 4% to 10%.*
+
+**Answer in one line:** The test set's positive rate ranges from **4.0% to 10.0%** across eight seeds — 8 positives in one split and 20 in another, out of the same data — so a model's apparent performance moves with the seed and not with the model.
+
+```python
+print(f"overall positive rate: {y.mean():.4f}")
+
+rates = []
+for seed in range(8):
+    _, _, _, y_te = train_test_split(X, y, test_size=0.2, random_state=seed)
+    rates.append(y_te.mean())
+print(f"no stratify: min {min(rates):.4f}, max {max(rates):.4f}")
+print(f"positives in the test set: {[int(r*200) for r in rates]}")
+
+srates = [train_test_split(X, y, test_size=0.2, random_state=s, stratify=y)[3].mean()
+          for s in range(8)]
+print(f"stratify=y:  min {min(srates):.4f}, max {max(srates):.4f}")
+```
+
+```
+overall positive rate: 0.0500
+no stratify: min 0.0400, max 0.1000
+positives in the test set: [9, 8, 8, 10, 8, 10, 20, 14]
+stratify=y:  min 0.0500, max 0.0500
+```
+
+Look at that list of counts. One seed gives the test set 8 positives; another gives it 20. Every metric that depends on the positive class — recall, precision, PR-AUC — is being computed on a sample that varies by a factor of two and a half, for reasons that have nothing to do with the model.
+
+`stratify=y` pins the proportion exactly in both halves, at no cost. It should be the default thing you type for any classification problem, and it matters more the rarer the class: at 0.5% positive, a 20% test set of 1,000 rows expects 10 positives and will routinely get 4 or 16.
+
+The same applies to cross-validation, and there scikit-learn is on your side: `cross_val_score` with a classifier uses `StratifiedKFold` automatically. It does not do the same for `train_test_split`, which is exactly the inconsistency that catches people.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should use `stratify`" |
+| Strong | + the measured spread (4% to 10%, 8 to 20 positives), and that every positive-class metric inherits that variance |
+| Extra points | **[+Edge cases]** `cross_val_score` stratifies automatically for classifiers but `train_test_split` does not, which is why the habit does not transfer · **[+Scale]** the rarer the class, the worse it gets; below about 1% a single split is not a reliable estimate at all · **[+Trade-offs]** with very few positives, repeated stratified CV beats any single split · **[+Validate]** print the positive count in each split before trusting a comparison |
+
+**Likely follow-ups:** How would you split time-ordered data? *(Not randomly at all — Q74-020.)* What if you have groups, like multiple rows per customer? *(`GroupKFold`, or you leak.)* Does stratify work for regression? *(Not directly; bin the target first.)*
+**Learn it in:** Chapter 36, section 36.3 (splitting); Chapter 74, section 74.4.
+
+### Q74-041 · `cross_val_score(model, X, y, cv=5)` on data sorted by the target
+
+**Level:** Mid · **Roles:** DS, MLE
+
+**Remember it as:** *`cv=5` does not shuffle. On a classifier it stratifies and hides the problem; on a regressor it does not, and each fold gets its own slice of the target range.*
+
+**Answer in one line:** **0.930 against 0.997** — the folds are contiguous blocks of a sorted target, so each one trains on a range that excludes the range it is tested on, and the score understates the model by seven points for no modelling reason.
+
+```python
+X, y = make_regression(n_samples=500, n_features=5, noise=10, random_state=74)
+order = np.argsort(y)
+X_sorted, y_sorted = X[order], y[order]
+
+no_shuffle = cross_val_score(LinearRegression(), X_sorted, y_sorted, cv=5)
+shuffled   = cross_val_score(LinearRegression(), X_sorted, y_sorted,
+                             cv=KFold(5, shuffle=True, random_state=74))
+
+print(f"cv=5, no shuffle:        {np.round(no_shuffle, 3)}  mean {no_shuffle.mean():.3f}")
+print(f"KFold(shuffle=True):     {np.round(shuffled, 3)}  mean {shuffled.mean():.3f}")
+```
+
+```
+cv=5, no shuffle:        [0.988 0.912 0.881 0.888 0.981]  mean 0.930
+KFold(shuffle=True):     [0.997 0.997 0.997 0.996 0.998]  mean 0.997
+```
+
+The middle folds are the worst, which is the signature: fold 3 holds the middle of the target range and trains on the two tails, so it has to interpolate from data on either side. The outer folds hold the extremes and do better because the model extrapolates from a contiguous range next to them.
+
+Here the damage is mild because the relationship is genuinely linear and extrapolates well. Change the model to something that cannot extrapolate — a tree, a random forest, anything that predicts within the range it saw — and a fold holding the top 20% of the target becomes unscoreable, because the model has never seen a value that large.
+
+The asymmetry is the part worth memorising: **`cv=5` means `StratifiedKFold` for a classifier and plain `KFold` for a regressor.** So the identical mistake is invisible on classification and expensive on regression. Pass the splitter explicitly and the question does not arise.
+
+And sorted data is not exotic. A dataframe that arrived from a `SELECT ... ORDER BY`, a file written by date, anything grouped by customer — all of them have structure that contiguous folds will find.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should shuffle" |
+| Strong | + that `cv=5` does not shuffle, that it stratifies for classifiers and not for regressors, with both means |
+| Extra points | **[+Edge cases]** a tree-based model cannot extrapolate, so the same split can give a strongly negative R² rather than a mild dip · **[+Validate]** fold scores that vary systematically rather than randomly — worst in the middle, best at the ends — are the tell · **[+Trade-offs]** do *not* shuffle time-ordered data; use `TimeSeriesSplit`, where contiguous folds are the whole point · **[+Edge cases]** with repeated customers, shuffling leaks instead; `GroupKFold` is the right tool |
+
+**Likely follow-ups:** When is not shuffling correct? *(Time series — and then you want `TimeSeriesSplit`.)* What does `StratifiedKFold` do for regression? *(Nothing; bin the target yourself.)* What is `GroupKFold` for?
+**Learn it in:** Chapter 36, section 36.3 (cross-validation); Chapter 74, section 74.4.
+
+### Q74-042 · Does `LogisticRegression()` regularise by default?
+
+**Level:** Mid · **Roles:** DS, MLE
+
+**Remember it as:** *scikit-learn's logistic regression is penalised out of the box. `C=1.0` is already shrinking your coefficients, and `C` is the inverse of the penalty.*
+
+**Answer in one line:** **Yes** — the default `C=1.0` applies an L2 penalty, and on 60 samples with 40 features it shrinks the largest coefficient from 7.677 to 1.403, so coefficients from an untouched `LogisticRegression()` are not the maximum-likelihood estimates a statistics course would give you.
+
+```python
+X, y = make_classification(n_samples=60, n_features=40, n_informative=5, random_state=74)
+for C in (0.01, 1.0, 1e6):
+    m = LogisticRegression(C=C, max_iter=20000).fit(X, y)
+    print(f"C={C:<8g} max|coef| = {np.abs(m.coef_).max():7.3f}   "
+          f"sum|coef| = {np.abs(m.coef_).sum():8.3f}   train acc = {m.score(X, y):.3f}")
+print(f"default C = {LogisticRegression().C}")
+```
+
+```
+C=0.01     max|coef| =   0.138   sum|coef| =    1.107   train acc = 0.817
+C=1        max|coef| =   1.403   sum|coef| =   15.675   train acc = 1.000
+C=1e+06    max|coef| =   7.677   sum|coef| =   99.796   train acc = 1.000
+```
+
+`C=1e6` is effectively no penalty, and it is the setting that matches what `statsmodels`' `Logit` or R's `glm` would give you. The default is five and a half times smaller on the largest coefficient and six times smaller in total.
+
+Two things follow.
+
+**Your coefficients are not comparable across tools.** Fit the same data in scikit-learn and in statsmodels and the numbers differ, not because either is wrong but because one is penalised. If you are interpreting coefficients — reporting an odds ratio, arguing that a feature matters — that difference is the whole result.
+
+**`C` is backwards from what people expect.** It is the *inverse* of regularisation strength: small `C` is strong shrinkage. The row at `C=0.01` has almost flattened the model, and its training accuracy has dropped to 0.817 as a result.
+
+Note also that the penalty is applied to all coefficients on their own scale, which is why unscaled features get penalised unevenly — a feature measured in rupees is shrunk far harder than one measured in units. Scaling is not optional for a penalised linear model, which is the part of Q74-011's answer that matters most.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Yes, there's an L2 penalty by default" |
+| Strong | + that `C` is the inverse of the strength, and what the default actually does to the coefficients, with numbers |
+| Extra points | **[+Business]** coefficients reported as odds ratios from a default fit are penalised estimates, and differ from statsmodels or R · **[+Edge cases]** the penalty acts on the raw coefficient scale, so unscaled features are regularised unevenly · **[+Trade-offs]** for prediction the default is usually a good one; for interpretation, fit without a penalty and say so |
+
+**Likely follow-ups:** How does this differ from statsmodels' `Logit`? What does `penalty='l1'` change? Does `LinearRegression` regularise? *(No — `Ridge` and `Lasso` are the penalised versions.)*
+**Red flag:** interpreting default scikit-learn coefficients as unbiased estimates.
+**Learn it in:** Chapter 36, section 36.6 (regularisation); Chapter 74, Q74-003 and Q74-004.
+
+### Q74-043 · Shuffle the target, retrain, and score. What AUC do you get?
+
+**Level:** Mid · **Roles:** DS, MLE
+
+**Remember it as:** *Destroy the signal and the model should land at a coin flip. Not zero — zero would mean it learned the relationship and reversed it.*
+
+**Answer in one line:** About **0.47**, scattered around 0.5 — a model trained on a randomly permuted target has no information, and AUC for no information is 0.5, not 0.
+
+```python
+real = RandomForestClassifier(n_estimators=100, random_state=74).fit(X_tr, y_tr)
+print(f"AUC, real target     = {roc_auc_score(y_te, real.predict_proba(X_te)[:,1]):.4f}")
+
+aucs = []
+for s in range(5):
+    y_shuffled = np.random.default_rng(s).permutation(y_tr)
+    m = RandomForestClassifier(n_estimators=100, random_state=74).fit(X_tr, y_shuffled)
+    aucs.append(roc_auc_score(y_te, m.predict_proba(X_te)[:,1]))
+print(f"AUC, shuffled target = {np.mean(aucs):.4f}  ({', '.join(f'{a:.3f}' for a in aucs)})")
+```
+
+```
+AUC, real target     = 0.9791
+AUC, shuffled target = 0.4707  (0.406, 0.520, 0.513, 0.529, 0.386)
+```
+
+The five shuffles range from 0.386 to 0.529 — scattered either side of 0.5, which is what no information looks like. An AUC *below* 0.5 is not worse than useless; it is noise, and if it were consistently and substantially below 0.5 you would have a model that had learned the relationship backwards, which usually means a flipped label.
+
+This is the single most valuable diagnostic in the chapter, because it is a test of your **pipeline**, not your model. Run it before you trust a surprisingly good result:
+
+- If the shuffled AUC comes back near 0.5, as it should, your evaluation is wired correctly.
+- If the shuffled AUC comes back high — 0.8, 0.9 — then your pipeline can predict a *random* target, which is impossible unless information is leaking from the test set into training. A scaler fitted before the split, a feature computed over the whole dataframe, a duplicated row appearing on both sides.
+
+That second case is the one worth rehearsing out loud, because "I permute the target as a sanity check" is a short sentence that tells an interviewer you have been burned by leakage and built a habit from it.
+
+| Tier | What to say |
+|---|---|
+| Passes | "About 0.5" |
+| Strong | + why 0.5 rather than 0, that individual runs scatter either side of it, and that this is a leakage test for the pipeline |
+| Extra points | **[+Validate]** a high AUC on a shuffled target proves leakage, because no model can predict noise · **[+Edge cases]** consistently *below* 0.5 suggests inverted labels rather than a bad model · **[+Scale]** this is the cheap version of a permutation test; several shuffles give you a null distribution to compare the real score against · **[+Business]** run it before presenting any result that seems too good |
+
+**Likely follow-ups:** What would a high shuffled AUC tell you? How many permutations for a proper test? What is the equivalent check for a regressor? *(R² near 0, or negative.)*
+**Learn it in:** Chapter 74, section 74.4 (leakage); Chapter 36, section 36.7.
+
+### Q74-044 · Add a column of pure random noise. What feature importance does it get?
+
+**Level:** Brain-racking · **Roles:** DS, MLE
+
+**Remember it as:** *Importances are shares of a fixed total, so they always add to 1 and nothing can get zero. A noise column takes its cut.*
+
+**Answer in one line:** **0.0271**, which ranks it **5th of 11** — above the least useful genuine feature at 0.0205 — because a random forest's importances are a normalised split of a fixed budget and noise still gets chosen at some splits deep in the trees.
+
+```python
+X_noise = np.column_stack([X_tr, np.random.default_rng(74).normal(size=len(X_tr))])
+rf = RandomForestClassifier(n_estimators=200, random_state=74).fit(X_noise, y_tr)
+imp = rf.feature_importances_
+
+print(f"noise column importance          = {imp[-1]:.4f}")
+print(f"smallest real-feature importance = {imp[:-1].min():.4f}")
+print(f"importances sum to                 {imp.sum():.4f}")
+```
+
+```
+noise column importance          = 0.0271
+smallest real-feature importance = 0.0205
+importances sum to                 1.0000
+```
+
+A column with no relationship to the target whatsoever is rated more important than one of the real features. It is not a bug: the forest grows deep trees, and far down a tree any column can produce a split that happens to separate the handful of rows in that node.
+
+Two properties of the default importance explain it, and naming both is the strong answer.
+
+**They are normalised.** The sum is exactly 1.0000. Importances are shares, not evidence — adding a column takes some share from the others regardless of whether it helps.
+
+**They favour high-cardinality features.** The default is mean decrease in impurity, which rewards a column with many distinct values because it offers many possible split points. A continuous noise column has as many split points as there are rows. This is the same mechanism that puts a customer ID at the top of an importance table (Q74-031).
+
+So "feature importance" from this attribute answers "how much did the trees use this column", not "does this column carry information". For the second question, use something that measures it directly:
+
+| Method | What it measures |
+|---|---|
+| Permutation importance on a **held-out** set | How much the score drops when that column is shuffled — the question you meant |
+| SHAP values | Contribution per prediction, with direction, not just magnitude |
+| Adding a known noise column | Any feature ranked below it is not demonstrably useful — a cheap, blunt, effective cut-off |
+
+That last row is the practical trick worth stealing: deliberately include a random column, and treat its importance as the noise floor.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It won't be zero" |
+| Strong | + the number, the fact that it beats a real feature, and both mechanisms: normalised shares and the bias towards high-cardinality columns |
+| Extra points | **[+Validate]** adding a deliberate noise column gives you a noise floor to compare against · **[+Trade-offs]** permutation importance on held-out data answers the question people think they are asking, at the cost of refitting or rescoring · **[+Edge cases]** impurity importance is computed on the *training* data, so it reflects fit rather than generalisation · **[+Business]** an importance table shown to stakeholders implies "these are the drivers", which this attribute does not support |
+
+**Likely follow-ups:** What is permutation importance? Why does it need a held-out set? How do correlated features split importance between them? *(They share it, so both look weak — related to Q74-045.)*
+**Learn it in:** Chapter 36, section 36.5 (feature importance); Chapter 74, Q74-031.
+
+### Q74-045 · Two nearly identical features. What coefficients does linear regression give them?
+
+**Level:** Brain-racking · **Roles:** DS, MLE
+
+**Remember it as:** *When two columns are the same, the model only needs their sum to be right. It can pick any pair that adds up — including one large positive and one negative.*
+
+**Answer in one line:** **−1.170 and +4.166** — one coefficient comes out *negative* on a feature with a strongly positive relationship to the target, because with `corr = 0.999948` the model is free to split the true coefficient of 3 any way it likes as long as the two add to it.
+
+```python
+x1 = rng.normal(size=500)
+x2 = x1 + rng.normal(0, 0.01, 500)        # x1 with a tiny jitter
+y  = 3 * x1 + rng.normal(0, 0.5, 500)
+
+lin = LinearRegression().fit(np.column_stack([x1, x2]), y)
+print(f"corr(x1, x2) = {np.corrcoef(x1, x2)[0,1]:.6f}")
+print(f"both features: {lin.coef_.round(3)}   sum {lin.coef_.sum():.3f}")
+print(f"x1 alone:      {LinearRegression().fit(x1.reshape(-1,1), y).coef_.round(3)}")
+print(f"Ridge(alpha=1):{Ridge(alpha=1.0).fit(np.column_stack([x1, x2]), y).coef_.round(3)}")
+```
+
+```
+corr(x1, x2) = 0.999948
+both features: [-1.17   4.166]   sum 2.996
+x1 alone:      [2.997]
+Ridge(alpha=1):[1.427 1.567]   sum 2.994
+```
+
+Three numbers tell the whole story. Fitted alone, x1 gets **2.997** — essentially the true 3. Fitted together with its near-twin, the pair gets **−1.170 and +4.166**, which sum to **2.996**. The model's predictions are just as good; it has simply distributed the same total differently, and the distribution is driven by the tiny jitter rather than by anything real.
+
+That negative coefficient is the danger. Read literally it says "more of x1 means less of y", the exact opposite of the truth, and it is the sort of thing that gets reported to a business as a finding. Collinearity does not damage predictions — it damages *interpretation*, and only interpretation.
+
+Ridge fixes it, and the last line shows how: the L2 penalty prefers small coefficients, so of all the pairs that sum to 3 it picks the balanced one, 1.427 and 1.567. Both are now positive and the sign is readable. That is the main reason to use Ridge on correlated features even when prediction is fine.
+
+How to spot it before it embarrasses you:
+
+- A coefficient whose **sign contradicts** the simple two-variable relationship.
+- Coefficients that **change a lot** when you add or drop one feature.
+- **Large standard errors** on individually insignificant coefficients while the model's overall fit is strong.
+- A **variance inflation factor** above about 5 or 10.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Multicollinearity makes coefficients unstable" |
+| Strong | + reads off the sign flip, notes that the *sum* is still correct and predictions are unaffected, and names Ridge as the fix |
+| Extra points | **[+Business]** a reported negative driver that is really positive is worse than no model, because someone will act on it · **[+Validate]** VIF, or simply refitting with one feature removed and watching the other move · **[+Trade-offs]** collinearity is harmless if you only want predictions; drop a feature or use Ridge when you want to interpret · **[+Edge cases]** tree models are unaffected in prediction but split importance between the twins, making both look unimportant (Q74-044) |
+
+**Likely follow-ups:** What is VIF? Does this hurt prediction? *(No.)* What happens with perfectly collinear columns? *(The solution is not unique; scikit-learn returns one via the pseudo-inverse rather than erroring.)* How do tree models handle it?
+**Learn it in:** Chapter 22, section 22.10 (regression); Chapter 36, section 36.6 (Ridge).
+
+### Q74-046 · k-means on age in years and income in rupees, unscaled
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *k-means measures straight-line distance. A column with a bigger range has a bigger say, and rupees beat years by a factor of two hundred million.*
+
+**Answer in one line:** The clusters split on **income only** — the three cluster means are 767k, 592k and 410k with the age mean stuck at 40 or 41 in all three — because income's variance is 209 million times age's and Euclidean distance is dominated by whichever column has the larger numbers.
+
+```python
+raw = np.column_stack([age, income])
+labels_raw    = KMeans(n_clusters=3, n_init=10, random_state=74).fit_predict(raw)
+labels_scaled = KMeans(n_clusters=3, n_init=10, random_state=74).fit_predict(
+                    StandardScaler().fit_transform(raw))
+
+df = pd.DataFrame({'age': age, 'income': income, 'raw': labels_raw, 'scaled': labels_scaled})
+print(df.groupby('raw')[['age', 'income']].mean().round(0).to_string())
+print(df.groupby('scaled')[['age', 'income']].mean().round(0).to_string())
+print(f"variance: age {age.var():,.0f}, income {income.var():,.0f}")
+```
+
+```
+      age    income
+raw
+0    40.0  767391.0
+1    41.0  410448.0
+2    41.0  592122.0
+
+         age    income
+scaled
+0       50.0  541810.0
+1       38.0  743781.0
+2       30.0  487883.0
+
+variance: age 102, income 21,305,692,647
+```
+
+The first table is three income bands. Age is 40, 41, 41 — the algorithm has not used it at all. You could have produced the same segmentation with a single `pd.qcut` on income, and it would have been clearer and faster.
+
+The second table is a real segmentation: a 50-year-old mid-income group, a 38-year-old high-income group, a 30-year-old lower-income group. Those are three different customers. The first table describes one variable three times.
+
+The mechanism is the variance ratio in the last line: **209 million to one**. Euclidean distance squares the differences and adds them, so a 100,000-rupee gap contributes 10¹⁰ while a 20-year gap contributes 400. Age is not outvoted; it is invisible.
+
+This applies to every distance-based or penalised method — k-means, kNN, SVM with an RBF kernel, PCA, and any regularised linear model (Q74-042). Tree-based models are the exception: they split one column at a time on thresholds, so the units never interact.
+
+A caution worth adding, because it is the mature version of the answer: scaling is a **decision**, not a formality. `StandardScaler` declares that one standard deviation of age matters as much as one standard deviation of income. That is a reasonable default and it is still a claim about the business. If income genuinely should dominate, say so deliberately and weight it, rather than arriving there by leaving the units alone.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You need to scale first" |
+| Strong | + reads both tables, names the variance ratio, and shows the unscaled version is really just income bands |
+| Extra points | **[+Business]** an unscaled clustering sold as "customer segments" is a single-variable split wearing a fancier name · **[+Edge cases]** trees and gradient boosting are scale-invariant, so the same data needs no scaling there · **[+Trade-offs]** `StandardScaler` against `MinMaxScaler` against `RobustScaler` is a choice about outliers; `RobustScaler` where income has a long tail · **[+Clarify]** scaling encodes a judgement about what matters equally, so it is worth stating rather than assuming |
+
+**Likely follow-ups:** Which scaler for skewed income? *(`RobustScaler`, or log first.)* Does this affect decision trees? *(No.)* What about PCA? *(Yes, strongly — PCA on unscaled data finds the biggest-variance column.)*
+**Learn it in:** Chapter 36, section 36.4 (scaling); Chapter 39, section 39.2 (clustering).
+
+### Rapid-fire, 74.8: defaults worth knowing
+
+Roles: DS and MLE for every row unless stated. Everything below was run.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q74-047 | `cross_val_score(m, X, y, cv=5)` — what metric? | The estimator's own `.score`: accuracy for a classifier, R² for a regressor. Pass `scoring=` explicitly | **[+Validate]** an unnamed metric column is the smell → Q74-037 |
+| Q74-048 | Does `LinearRegression` regularise? | No. `Ridge`, `Lasso` and `ElasticNet` are the penalised versions; only `LogisticRegression` is penalised by default | **[+Edge cases]** which makes the two APIs inconsistent, and that inconsistency is the trap → Q74-042 |
+| Q74-049 | `RandomForestClassifier` default `max_depth`? | `None` — trees grow until leaves are pure, so training accuracy is usually 1.0 and means nothing | **[+Validate]** the forest still generalises, because averaging many overfit trees is the point → Ch 37 §37.6 |
+| Q74-050 | Do feature importances sum to 1? | Yes, exactly. They are shares of a fixed budget, so adding any column takes from the others | **[+Business]** a share is not evidence of a driver → Q74-044 |
+| Q74-051 | `predict_proba` on a default `SVC`? | `AttributeError: This 'SVC' has no attribute 'predict_proba'`. An SVM gives a decision function, not probabilities; getting probabilities means an extra Platt-scaling fit | **[+Trade-offs]** `decision_function` is enough when you only need ranking, and costs nothing → Ch 37 §37.7 |
+| Q74-052 | What does `random_state=None` mean for comparing two models? | Their scores differ by run, so a 1-point gap may be noise. Fix the seed, or compare across repeated CV | **[+Validate]** report a spread, not a single number → Ch 36 §36.3 |
+| Q74-053 | `StandardScaler` fitted before the split — how bad? | Test statistics leak into training. Usually a small inflation, and it is still wrong; use a `Pipeline` so it cannot happen | **[+Scale]** `Pipeline` makes the right thing the easy thing → Q74-022 |
+| Q74-054 | Accuracy of a model predicting the majority class on 99:1 data? | 99%. Which is why accuracy is the wrong headline for rare events — the same arithmetic as the rare-disease test | **[+Business]** quote precision, recall or PR-AUC instead → Q74-007, Ch 73 Q73-005 |
+| Q74-055 | `n_jobs=-1` — what does it change about results? | Speed only, not the answer, provided `random_state` is fixed. A changed result means an unseeded source of randomness | **[+Validate]** results that move with `n_jobs` are a bug worth chasing → Ch 36 §36.8 |
+| Q74-056 | Why might a pipeline score worse after you add a feature? | The split is fixed, so a useless feature adds variance and can lower the score by chance; and with trees it dilutes importances | **[+Edge cases]** training R² never falls when you add a feature, but test R² can → Q74-038 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -546,6 +1050,11 @@ Roles: DS and MLE for every row.
 | Assuming more features always helps | Perfect training score, poor test score, especially with few rows | Check the rows-to-features ratio; regularize; validate on held-out data |
 | Judging a model on one small test set | A "trend" that's really luck (0.58 one run, 0.32 the next) | Cross-validate, or average several splits, before comparing |
 | Picking a complex model without a baseline | No way to tell whether the complexity was worth it | Always run the simplest reasonable baseline first, and compare |
+| Splitting an imbalanced dataset without `stratify` | Positive-class metrics move with the seed, not the model | `stratify=y` on every classification split (Q74-040) |
+| `cross_val_score(..., cv=5)` on ordered data | Folds become contiguous blocks; stratified for classifiers, not for regressors | Pass the splitter explicitly, and shuffle unless the data is a time series (Q74-041) |
+| Reading default `LogisticRegression` coefficients as unbiased | They are penalised at `C=1.0`, and differ from statsmodels or R | Fit with a very large `C` when you intend to interpret, and say so (Q74-042) |
+| Treating `feature_importances_` as evidence a feature matters | A pure noise column scored 0.0271 and beat a real feature | Permutation importance on held-out data, or include a noise column as the floor (Q74-044) |
+| Interpreting coefficients on correlated features | Signs flip; a positive driver is reported as negative | Check VIF, drop one, or use Ridge (Q74-045) |
 
 ---
 
@@ -576,13 +1085,15 @@ The interviewer's note afterward: *"Went straight to feature importance, and rea
 
 ## Key terms
 
-bias-variance trade-off · underfitting · overfitting · regularization (L1/L2) · learning curve · curse of dimensionality · adjusted R² · base rate · confusion matrix · precision · recall · F1 score · macro and weighted F1 · ROC-AUC · PR-AUC · calibration · target leakage · temporal leakage · target encoding leakage · training-serving skew · data drift · concept drift · label delay · feature importance · early stopping · one-hot encoding · frequency encoding · feature hashing · hash collision · interaction feature · missing-value indicator
+bias-variance trade-off · underfitting · overfitting · regularization (L1/L2) · learning curve · curse of dimensionality · adjusted R² · base rate · confusion matrix · precision · recall · F1 score · macro and weighted F1 · ROC-AUC · PR-AUC · calibration · target leakage · temporal leakage · target encoding leakage · training-serving skew · data drift · concept drift · label delay · feature importance · early stopping · one-hot encoding · frequency encoding · feature hashing · hash collision · interaction feature · missing-value indicator · `.score()` · `scoring=` · negative R² · monotonic transform · rank-based metric · `stratify` · `StratifiedKFold` against `KFold` · `shuffle=False` · `GroupKFold` · `TimeSeriesSplit` · inverse regularisation strength (`C`) · permuted-target check · mean decrease in impurity · permutation importance · noise floor · multicollinearity · variance inflation factor (VIF) · coefficient sign flip · scale invariance · `Pipeline`
 
 ---
 
 ## Final-week revision list
 
-Q74-001, Q74-002, Q74-007, Q74-008, Q74-013, Q74-014, Q74-015, Q74-016, Q74-019, Q74-020, Q74-021, Q74-025, Q74-030, Q74-031, Q74-035, Q74-036.
+Q74-001, Q74-002, Q74-007, Q74-008, Q74-013, Q74-014, Q74-015, Q74-016, Q74-019, Q74-020, Q74-021, Q74-025, Q74-030, Q74-031, Q74-035, Q74-036, Q74-039, Q74-043, Q74-045.
+
+The last three are the predict-the-number questions that pay for themselves: AUC being untouched by any monotonic transform (Q74-039), the permuted-target check that proves your pipeline is wired correctly (Q74-043), and the coefficient sign flip that turns a positive driver into a negative one in a report (Q74-045).
 
 ---
 
