@@ -29,7 +29,7 @@ li { margin: 3pt 0; }
 <h2>How to use this</h2>
 <p>Three ways in, depending on what you are looking for.</p>
 <ul><li><strong>"Which book do I open?"</strong> — the table in <em>The four books</em> below.</li><li><strong>"Where is topic X taught?"</strong> — <em>The topic index</em> at the end. It is alphabetical, built from every chapter's own Key terms list, and points at the chapter.</li><li><strong>"What do I actually do in this chapter?"</strong> — the part-by-part tables. Each chapter names the practice files that ship with it.</li></ul>
-<p>The book is <strong>85 chapters</strong>, about <strong>1,253,764 words</strong>. <strong>49</strong> chapters have a worked notebook and <strong>13</strong> ship runnable SQL in both PostgreSQL and MySQL.</p>
+<p>The book is <strong>85 chapters</strong>, about <strong>1,298,540 words</strong>. <strong>49</strong> chapters have a worked notebook and <strong>14</strong> ship runnable SQL in both PostgreSQL and MySQL.</p>
 <h2>The four books</h2>
 <table><thead><tr><th>Book</th><th>Parts</th><th>Chapters</th><th>What it is for</th></tr></thead><tbody>
 <tr><td><strong>Book 1 · Theory</strong></td><td>0, 1</td><td>9</td><td>The ideas, with no software to install. Read it first.</td></tr>
@@ -115,7 +115,7 @@ li { margin: 3pt 0; }
 <tr><td>12</td><td><strong>Databases &amp; SQL Foundations</strong></td><td>22–26 hours</td><td>2 SQL</td></tr>
 <tr><td>13</td><td><strong>SQL for Real Analysis</strong></td><td>15–20 hours</td><td>2 Python script, 4 SQL</td></tr>
 <tr><td>14</td><td><strong>Data Cleaning &amp; Preparation</strong></td><td>20–25 hours</td><td>4 Python script, 11 SQL, data (json), 10 dataset (csv)</td></tr>
-<tr><td>15</td><td><strong>Data Visualization Principles</strong></td><td>12–15 hours</td><td>Excel workbook, Python script, SQL, 14 dataset (csv), notes</td></tr>
+<tr><td>15</td><td><strong>Data Visualization Principles</strong></td><td>12–15 hours</td><td>Excel workbook, Python script, 2 SQL, 14 dataset (csv), notes</td></tr>
 <tr><td>16</td><td><strong>Business Intelligence with Power BI</strong></td><td>22–26 hours</td><td>4 SQL, 2 dataset (csv), 2 notes</td></tr>
 <tr><td>17</td><td><strong>Python from Zero</strong></td><td>28–32 hours</td><td>3 Python script, 2 data (json), 15 dataset (csv), notebook, 2 text</td></tr>
 <tr><td>18</td><td><strong>Python for Analysts: pandas &amp; Automation</strong></td><td>47–53 hours</td><td>2 Excel workbook, 6 Python script, data (json), notebook, notes</td></tr>
@@ -164,7 +164,7 @@ li { margin: 3pt 0; }
 <p><strong>Before you start:</strong> Chapter 1 (levels of measurement), Chapter 4 (averages (mean vs median), percentages, and the chart checks in section 4.7), Chapter 10 and 11 (spreadsheets and pivot tables), and Chapter 13 (SQL aggregation). Chapter 14 helps: charts of dirty data are wrong however well they're drawn.</p>
 <p><strong>Time needed:</strong> 12–15 hours of reading and practice, spread over two weeks.</p>
 <p><strong>Sections:</strong> 15.1 How people read charts · 15.2 Start from the question · 15.3 Bar and column charts · 15.4 Line charts · 15.5 Distributions: histograms and box plots · 15.6 Relationships: scatter plots · 15.7 Parts of a whole: stacked bars, pies, and waterfalls · 15.8 Heatmaps and tables · 15.9 Maps · 15.10 Color with meaning · 15.11 Titles, labels, annotations, and clutter · 15.12 Misleading charts, and how not to make them · 15.13 Missing data, uncertainty, and accessibility · 15.14 Building charts in Excel and Google Sheets · 15.15 Running this chapter's SQL in MySQL</p>
-<p><strong>In </strong><code>companion/ch15/</code> — <em>SQL:</em> <code>ch15_queries_mysql.sql</code> · <em>Python script:</em> <code>build_ch15_data.py</code> · <em>Excel workbook:</em> <code>ch15_chart_data.xlsx</code> · <em>dataset (csv):</em> <code>anscombe.csv</code>, <code>bridge_2024_2025.csv</code>, <code>category_month_2025.csv</code>, <code>city_2025.csv</code>, and 10 more</p>
+<p><strong>In </strong><code>companion/ch15/</code> — <em>SQL:</em> <code>ch15_queries_mysql.sql</code>, <code>ch15_queries_postgresql.sql</code> · <em>Python script:</em> <code>build_ch15_data.py</code> · <em>Excel workbook:</em> <code>ch15_chart_data.xlsx</code> · <em>dataset (csv):</em> <code>anscombe.csv</code>, <code>bridge_2024_2025.csv</code>, <code>category_month_2025.csv</code>, <code>city_2025.csv</code>, and 10 more</p>
 <h3>Chapter 16. Business Intelligence with Power BI</h3>
 <p><strong>You will learn to:</strong> install Power BI Desktop and build a first report · explain what a BI tool does that a spreadsheet can't, and which Power BI licence buys what · load Riverstone's full dataset with Power Query and choose between Import and DirectQuery · build a star schema with a proper date table · write DAX measures from zero, and know when a measure beats a calculated column · use CALCULATE to change filter context deliberately · build time intelligence (year to date, same period last year, year-over-year growth) that survives slicers · design a report page with Chapter 15's principles, using cards, slicers, tooltips, drill-through, and bookmarks · publish, schedule refresh, use a gateway, and share with an app · apply row-level security so each region sees only its own customers · keep a model fast and avoid the modelling mistakes that make numbers wrong · recognize the same ideas in Tableau and Looker Studio.</p>
 <p><strong>Before you start:</strong> Chapter 11 (Power Query, the Data Model, and DAX in Excel), Chapter 13 (SQL aggregation and the sales_lines view), Chapter 14 (cleaning: this chapter assumes clean data), and Chapter 15 (chart choice, color, titles: this chapter applies them rather than repeating them). You don't need any programming for this chapter. Python comes next, in Chapters 17 and 18.</p>
@@ -540,23 +540,23 @@ li { margin: 3pt 0; }
 <p><strong>Sections:</strong> 67.1 From technical excellence to leverage · 67.2 Strategy, business alignment, and portfolio thinking · 67.3 Communication: the bridge · 67.4 Leading people · 67.5 Judgment: the summit skill · 67.6 A first-90-days plan for a new architect · 67.7 The arc of this book</p>
 <hr>
 <h2>Part 8 — Be Interview Ready</h2>
-<p><strong>Book 4 · Be Interview Ready</strong> · 17 chapters · roughly 77 hours in total</p>
+<p><strong>Book 4 · Be Interview Ready</strong> · 17 chapters · roughly 91 hours in total</p>
 <table><thead><tr><th>Ch</th><th>Chapter</th><th>Time</th><th>What you practise with</th></tr></thead><tbody>
 <tr><td>68</td><td><strong>How Data Hiring Works</strong></td><td>5 hours</td><td><em>reading only</em></td></tr>
 <tr><td>69</td><td><strong>The Extra-Points Method</strong></td><td>4–6 hours</td><td><em>reading only</em></td></tr>
-<tr><td>70</td><td><strong>Excel, Google Sheets, VBA &amp; BI Question Bank</strong></td><td>4–6 hours</td><td>Excel workbook, Python script, dataset (csv)</td></tr>
+<tr><td>70</td><td><strong>Excel, Google Sheets, VBA &amp; BI Question Bank</strong></td><td>5–7 hours</td><td>Excel workbook, Python script, dataset (csv)</td></tr>
 <tr><td>71</td><td><strong>SQL Question Bank</strong></td><td>6 hours</td><td>2 SQL</td></tr>
 <tr><td>72</td><td><strong>Python &amp; pandas Question Bank</strong></td><td>4–6 hours</td><td>notebook</td></tr>
-<tr><td>72A</td><td><strong>Data Structures &amp; Algorithms Question Bank</strong></td><td>6–8 hours</td><td>notebook</td></tr>
-<tr><td>73</td><td><strong>Statistics, Probability &amp; Experimentation Bank</strong></td><td>8–10 hours</td><td>notebook</td></tr>
-<tr><td>74</td><td><strong>Machine Learning Question Bank</strong></td><td>6–8 hours</td><td>notebook</td></tr>
-<tr><td>75</td><td><strong>Product Sense, Metrics, Case Studies &amp; Guesstimates</strong></td><td>2–3 hours</td><td><em>reading only</em></td></tr>
+<tr><td>72A</td><td><strong>Data Structures &amp; Algorithms Question Bank</strong></td><td>8–10 hours</td><td>notebook</td></tr>
+<tr><td>73</td><td><strong>Statistics, Probability &amp; Experimentation Bank</strong></td><td>9–12 hours</td><td>notebook</td></tr>
+<tr><td>74</td><td><strong>Machine Learning Question Bank</strong></td><td>8–10 hours</td><td>notebook</td></tr>
+<tr><td>75</td><td><strong>Product Sense, Metrics, Case Studies &amp; Guesstimates</strong></td><td>5 hours</td><td><em>reading only</em></td></tr>
 <tr><td>76A</td><td><strong>Data Analyst &amp; Data Scientist Question Bank</strong></td><td>5 hours</td><td><em>reading only</em></td></tr>
 <tr><td>76B</td><td><strong>Business Analyst Question Bank</strong></td><td>5–3 hours</td><td><em>reading only</em></td></tr>
-<tr><td>77</td><td><strong>Data Engineering &amp; Data System Design Bank</strong></td><td>3–4 hours</td><td>2 SQL, notebook</td></tr>
-<tr><td>78</td><td><strong>Automation &amp; Integration Question Bank</strong></td><td>5 hours</td><td>notebook</td></tr>
-<tr><td>79</td><td><strong>GenAI, LLM &amp; MLOps Question Bank</strong></td><td>10 minutes</td><td>notebook</td></tr>
-<tr><td>80</td><td><strong>Architecture &amp; Leadership Question Bank</strong></td><td>2–3 hours</td><td>notebook</td></tr>
+<tr><td>77</td><td><strong>Data Engineering &amp; Data System Design Bank</strong></td><td>5–6 hours</td><td>2 SQL, notebook</td></tr>
+<tr><td>78</td><td><strong>Automation &amp; Integration Question Bank</strong></td><td>5–4 hours</td><td>notebook</td></tr>
+<tr><td>79</td><td><strong>GenAI, LLM &amp; MLOps Question Bank</strong></td><td>5–6 hours</td><td>notebook</td></tr>
+<tr><td>80</td><td><strong>Architecture &amp; Leadership Question Bank</strong></td><td>3–4 hours</td><td>notebook</td></tr>
 <tr><td>81</td><td><strong>Behavioral, HR &amp; Offer Conversations</strong></td><td>2–3 hours</td><td><em>reading only</em></td></tr>
 <tr><td>82</td><td><strong>Take-Home Assignments &amp; Mock Interviews</strong></td><td>2–3 hours</td><td>Python script, 2 SQL, notebook</td></tr>
 </tbody></table>
@@ -573,8 +573,8 @@ li { margin: 3pt 0; }
 <h3>Chapter 70. Excel, Google Sheets, VBA &amp; BI Question Bank</h3>
 <p><strong>You will learn to:</strong> answer the spreadsheet, automation, and BI questions that come up across screening calls, live exercises, and case interviews for analyst, BA, BI, and automation-track roles · check every formula answer on a small practice table you can type in two minutes · read a broken macro and fix it live · critique a dashboard the way a hiring manager would · walk out with a 20-question final-week revision list.</p>
 <p><strong>Before you start:</strong> Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 10, 11, 15, 16 and 19, with a few links to Chapter 12 (joins, UNION ALL, GROUP BY). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> 4–6 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.</p>
-<p><strong>Sections:</strong> 70.0 The practice table, and how to use this bank · 70.1 Formulas, lookups, and logic · 70.2 Pivot tables and data analysis · 70.3 Power Query · 70.4 Google Sheets: QUERY, ARRAYFORMULA, and IMPORTRANGE · 70.5 VBA and Excel macros · 70.6 Google Apps Script · 70.7 DAX and Power BI modeling · 70.8 Dashboard critiques</p>
+<p><strong>Time needed:</strong> 5–7 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 70.9 adds about an hour and is best done with a spreadsheet open, since four of its questions ask you to confirm a behaviour in your own copy of Excel.</p>
+<p><strong>Sections:</strong> 70.0 The practice table, and how to use this bank · 70.1 Formulas, lookups, and logic · 70.2 Pivot tables and data analysis · 70.3 Power Query · 70.4 Google Sheets: QUERY, ARRAYFORMULA, and IMPORTRANGE · 70.5 VBA and Excel macros · 70.6 Google Apps Script · 70.7 DAX and Power BI modeling · 70.8 Dashboard critiques · 70.9 Predict the output: what the grid does behind the number</p>
 <p><strong>In </strong><code>companion/ch70/</code> — <em>Python script:</em> <code>build_ch70_files.py</code> · <em>Excel workbook:</em> <code>ch70_practice.xlsx</code> · <em>dataset (csv):</em> <code>ch70_practice.csv</code></p>
 <h3>Chapter 71. SQL Question Bank</h3>
 <p><strong>You will learn to:</strong> answer the SQL questions that come up across screening calls, live-coding rounds, and take-home exercises for every data role · reason through the classic NULL and join traps that catch experienced candidates, not just beginners · write window-function solutions to the second-highest, top-N-per-group, running-total, streak and retention problems that recur across companies · know exactly where PostgreSQL and MySQL disagree · predict the output of a query cold, from the warm-up cases to the brain-racking ones, which is the round that cannot be talked around · walk out with a 24-question final-week revision list.</p>
@@ -590,25 +590,25 @@ li { margin: 3pt 0; }
 <p><strong>In </strong><code>companion/ch72/</code> — <em>notebook:</em> <code>ch72-notebook.ipynb</code></p>
 <h3>Chapter 72A. Data Structures &amp; Algorithms Question Bank</h3>
 <p><strong>Before you start:</strong> do Chapter 33 first (The Computer Science You Actually Need): it teaches almost every idea in this bank. You also need Chapter 17 (Python from zero), Chapter 29, section 29.5 (writing a class with __init__ and self), and Chapter 69 (the three answer tiers and the twelve extra-point tags). Chapter 72's Python gotchas (mutable defaults, is versus ==) come back here twice.</p>
-<p><strong>Time needed:</strong> 6–8 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.</p>
+<p><strong>Time needed:</strong> 8–10 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Section 72A.10, the predict-the-output round, is worth its own sitting of about 2 hours, answering each snippet out loud before reading on. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.</p>
 <p><strong>In </strong><code>companion/ch72a/</code> — <em>notebook:</em> <code>ch72a-notebook.ipynb</code></p>
 <h3>Chapter 73. Statistics, Probability &amp; Experimentation Bank</h3>
 <p><strong>You will learn to:</strong> answer probability puzzles that show up across every data role's interviews, and explain why the surprising answer is correct, not just what it is · reason correctly about distributions, p-values, and confidence intervals, including the ways almost everyone misinterprets them at first · design an A/B test's sample size before running it, and debug one that's already gone wrong · spot Simpson's paradox and correlation-masquerading-as-causation in real-looking data.</p>
 <p><strong>Before you start:</strong> Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapter 21 (probability and distributions), Chapter 22 (confidence intervals, tests, A/B basics, confounders, Simpson's paradox, and regression basics in section 22.10), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> about 8–10 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list.</p>
-<p><strong>Sections:</strong> 73.0 The setup cell, and how to use this bank · 73.1 Core probability concepts · 73.2 Distributions · 73.3 Hypothesis testing fundamentals · 73.4 A/B test design · 73.5 A/B test debugging · 73.6 Causal inference and Simpson's paradox · 73.7 Live-coding and live-analysis walk-throughs</p>
+<p><strong>Time needed:</strong> about 9–12 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list. Section 73.8 adds about an hour and is best done in one sitting.</p>
+<p><strong>Sections:</strong> 73.0 The setup cell, and how to use this bank · 73.1 Core probability concepts · 73.2 Distributions · 73.3 Hypothesis testing fundamentals · 73.4 A/B test design · 73.5 A/B test debugging · 73.6 Causal inference and Simpson's paradox · 73.7 Live-coding and live-analysis walk-throughs · 73.8 Predict the number: the arithmetic that quietly goes wrong</p>
 <p><strong>In </strong><code>companion/ch73/</code> — <em>notebook:</em> <code>ch73-notebook.ipynb</code></p>
 <h3>Chapter 74. Machine Learning Question Bank</h3>
 <p><strong>You will learn to:</strong> answer the ML questions that come up across screening calls, live-coding rounds, and case interviews for Data Scientist, ML Engineer, and analytics-adjacent roles · explain bias and variance, not just define them · spot data leakage before a model's score fools you · read a confusion matrix, an ROC curve, and a calibration plot the way an interviewer actually wants · debug a model that "worked in training and broke in production."</p>
 <p><strong>Before you start:</strong> Part 4 (Chapters 35–43), which teaches every idea in this bank; Chapter 53, section 53.3 (early stopping) and Chapter 56 (monitoring, drift, training-serving skew) for section 74.6; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> 6–8 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Plus 1 hour for the final-week list.</p>
-<p><strong>Sections:</strong> 74.1 Basic-but-tricky ML questions · 74.2 Bias, variance, and the shape of a good model · 74.3 Metrics, calibration, and thresholds · 74.4 Data leakage · 74.5 Feature engineering · 74.6 Model debugging · 74.7 ML case studies and live-coding walk-throughs</p>
+<p><strong>Time needed:</strong> 8–10 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Section 74.8 adds about 1½ hours and is worth a sitting of its own, with the code running beside you. Plus 1 hour for the final-week list.</p>
+<p><strong>Sections:</strong> 74.1 Basic-but-tricky ML questions · 74.2 Bias, variance, and the shape of a good model · 74.3 Metrics, calibration, and thresholds · 74.4 Data leakage · 74.5 Feature engineering · 74.6 Model debugging · 74.7 ML case studies and live-coding walk-throughs · 74.8 Predict the number: what the library did that you did not ask for</p>
 <p><strong>In </strong><code>companion/ch74/</code> — <em>notebook:</em> <code>ch74-notebook.ipynb</code></p>
 <h3>Chapter 75. Product Sense, Metrics, Case Studies &amp; Guesstimates</h3>
 <p><strong>You will learn to:</strong> structure an ambiguous business case the way an interviewer actually wants, instead of jumping straight to an answer · diagnose a metric that moved, systematically, not by guessing at causes · design a KPI dashboard that answers real decisions, not just displays numbers · size a market or estimate a quantity with a defensible structure, not a guessed final number.</p>
 <p><strong>Before you start:</strong> Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 3 (KPIs, dashboards), 4 (percentage points, estimation), 5 (precise questions, issue trees, MECE), 22 (A/B design, Simpson's paradox), 23 (KPI trees, diagnosing a change, guardrails) and 24 (turning an ask into a question), with a few links to Chapters 15, 16, 25 and 30. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> 2½–3½ hours to read and drill every question once, out loud; 2–3 hours more for the project.</p>
-<p><strong>Sections:</strong> 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live</p>
+<p><strong>Time needed:</strong> 3½–5 hours to read and drill every question once, out loud; 2–3 hours more for the project. Section 75.7 is arithmetic rather than structure, and rewards being done with a pen rather than read.</p>
+<p><strong>Sections:</strong> 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live · 75.7 Predict the number: metric arithmetic that is not what it looks like</p>
 <h3>Chapter 76A. Data Analyst &amp; Data Scientist Question Bank</h3>
 <p><strong>You will learn to:</strong> answer the role-specific questions a Data Analyst or Data Scientist interview actually asks, distinct from the skill-testing banks elsewhere in this part (SQL, Python, stats, ML) · walk an interviewer through a real project end to end, at the right level of depth for each role · handle the "what's the difference between a DA and a DS" question, and the harder version, "which one are you actually best suited for" · survive a portfolio deep-dive without getting caught flat-footed on a detail you glossed over.</p>
 <p><strong>Before you start:</strong> Chapter 7, §7.2 (the tracks and the ten roles) · Chapter 8, §8.5 (decoding a job description) · Chapter 24, §24.4–24.8 (bottom line up front, the memo, handling pushback) · Chapter 25, §25.1 (the business analyst on a data team) · Chapters 36–39 (the lead-scoring project behind §76A.3) · Chapter 44 (the churn call list behind §76A.6) · Chapter 69 (the three answer tiers and the twelve extra-point moves).</p>
@@ -620,26 +620,26 @@ li { margin: 3pt 0; }
 <h3>Chapter 77. Data Engineering &amp; Data System Design Bank</h3>
 <p><strong>You will learn to:</strong> answer the pipeline, data-modeling, and system-design questions that come up in Data Engineer interviews · design a batch or streaming pipeline live, under time pressure, the way an interviewer actually wants · reason correctly about idempotency, partitioning, and schema evolution, not just define the terms · walk through a full system design case end to end, stating trade-offs out loud.</p>
 <p><strong>Before you start:</strong> Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Part 5 (Chapters 45–52: ingestion, pipelines, data quality, distributed compute, storage, streaming, activation and deployment) and Chapter 28 (query plans, grain, the star schema, slowly changing dimensions). They also link to Chapter 12, section 12.13 (the upsert), Chapter 33 (queues and graphs), Chapter 61 (partitioning and sharding), and the two banks this one leans on, Chapter 71 (SQL) and Chapter 72A (complexity). This chapter tests those skills; it doesn't teach them again, with one exception: Q77-018 builds topological sort step by step, because no earlier chapter does.</p>
-<p><strong>Time needed:</strong> 3–4 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.</p>
-<p><strong>Sections:</strong> 77.1 Pipeline fundamentals · 77.2 Basic-but-tricky data engineering questions · 77.3 Data modeling for pipelines and warehouses · 77.4 Orchestration and scheduling · 77.5 Scale, partitioning, and performance · 77.6 Data quality and monitoring · 77.7 Full system design walk-throughs</p>
+<p><strong>Time needed:</strong> 5–6 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 77.8 adds about 1½ hours and is best done with a notebook open.</p>
+<p><strong>Sections:</strong> 77.1 Pipeline fundamentals · 77.2 Basic-but-tricky data engineering questions · 77.3 Data modeling for pipelines and warehouses · 77.4 Orchestration and scheduling · 77.5 Scale, partitioning, and performance · 77.6 Data quality and monitoring · 77.7 Full system design walk-throughs · 77.8 Predict the output: what happens to rows on the way in</p>
 <p><strong>In </strong><code>companion/ch77/</code> — <em>notebook:</em> <code>ch77-notebook.ipynb</code> · <em>SQL:</em> <code>ch77_queries_mysql.sql</code>, <code>ch77_queries_postgresql.sql</code></p>
 <h3>Chapter 78. Automation &amp; Integration Question Bank</h3>
 <p><strong>You will learn to:</strong> choose the right automation approach for a given problem, macro, script, low-code tool, or RPA, instead of defaulting to whichever one you know best · design report and alert automations that actually get read · reason correctly about APIs, webhooks, and reverse ETL · build retry and idempotency logic that survives a flaky upstream system · investigate an automation that silently stopped working, the way an interviewer actually wants.</p>
 <p><strong>Before you start:</strong> Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 19–20 (spreadsheet and report automation), 45 and 51 (APIs, webhooks, reverse ETL), 58 and 63 (intelligent automation, automation architecture), with retries from Chapter 29, section 29.9 and the circuit breaker from Chapter 57, section 57.8. This chapter tests those skills; it doesn't teach them again.</p>
-<p><strong>Time needed:</strong> 2–2.5 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list.</p>
-<p><strong>Sections:</strong> 78.1 Choosing the right automation approach · 78.2 Basic-but-tricky automation questions · 78.3 Report and alert automation · 78.4 APIs, webhooks, and reverse ETL · 78.5 Failure handling and monitoring for automations · 78.6 Full design case</p>
+<p><strong>Time needed:</strong> 3.5–4 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list. Section 78.7 adds about an hour.</p>
+<p><strong>Sections:</strong> 78.1 Choosing the right automation approach · 78.2 Basic-but-tricky automation questions · 78.3 Report and alert automation · 78.4 APIs, webhooks, and reverse ETL · 78.5 Failure handling and monitoring for automations · 78.6 Full design case · 78.7 Predict the number: schedules, retries, and defaults</p>
 <p><strong>In </strong><code>companion/ch78/</code> — <em>notebook:</em> <code>ch78-notebook.ipynb</code></p>
 <h3>Chapter 79. GenAI, LLM &amp; MLOps Question Bank</h3>
 <p><strong>You will learn to:</strong> answer the LLM fundamentals, RAG design, and evaluation questions that come up in GenAI-adjacent Data Scientist, ML Engineer, and AI Engineer interviews · reason correctly about embeddings, chunking, and retrieval, not just name the components · explain how a model actually survives production (registries, serving, monitoring, retraining) · design a RAG assistant and a model-serving platform end to end, stating trade-offs out loud.</p>
 <p><strong>Before you start:</strong> Chapters 54–57 (Generative AI and LLMs; RAG, agents and evaluation; MLOps; LLMOps), which teach every idea in this bank; Chapter 35, section 35.2 for the dot product and cosine similarity; Chapter 41, section 41.7 for word embeddings; Chapter 74 for the classical-ML side of monitoring; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> 3½–4½ hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Plus 45 minutes for the final-week list.</p>
-<p><strong>Sections:</strong> 79.1 LLM fundamentals · 79.2 Basic-but-tricky GenAI questions · 79.3 Retrieval-Augmented Generation (RAG) · 79.4 Agents and tool use · 79.5 Evaluating AI applications · 79.6 MLOps: making models survive production · 79.7 LLMOps · 79.8 Full design cases</p>
+<p><strong>Time needed:</strong> 5–6 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Section 79.9 adds about 1¼ hours. Plus 45 minutes for the final-week list.</p>
+<p><strong>Sections:</strong> 79.1 LLM fundamentals · 79.2 Basic-but-tricky GenAI questions · 79.3 Retrieval-Augmented Generation (RAG) · 79.4 Agents and tool use · 79.5 Evaluating AI applications · 79.6 MLOps: making models survive production · 79.7 LLMOps · 79.8 Full design cases · 79.9 Predict the number: the arithmetic behind an AI system</p>
 <p><strong>In </strong><code>companion/ch79/</code> — <em>notebook:</em> <code>ch79-notebook.ipynb</code></p>
 <h3>Chapter 80. Architecture &amp; Leadership Question Bank</h3>
 <p><strong>You will learn to:</strong> reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end.</p>
 <p><strong>Before you start:</strong> Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.</p>
-<p><strong>Time needed:</strong> 2–3 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap.</p>
-<p><strong>Sections:</strong> 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases</p>
+<p><strong>Time needed:</strong> 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading.</p>
+<p><strong>Sections:</strong> 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases · 80.7 Predict the number: capacity, availability, and the arithmetic of a design</p>
 <p><strong>In </strong><code>companion/ch80/</code> — <em>notebook:</em> <code>ch80-notebook.ipynb</code></p>
 <h3>Chapter 81. Behavioral, HR &amp; Offer Conversations</h3>
 <p><strong>You will learn to:</strong> answer any behavioral question using the STAR method without sounding scripted · build a small story bank from your own experience that covers most behavioral themes with five to eight real stories, not forty different ones · ask questions that actually reveal something about the role, not filler · answer "what's your expected CTC?", read an offer's breakup, and negotiate without either accepting the first number or overplaying a weak hand.</p>
@@ -666,7 +666,7 @@ li { margin: 3pt 0; }
 <hr>
 <h2>The topic index</h2>
 <p>Every term the book defines, alphabetically, with the chapter that teaches it. Built from each chapter's own Key terms list. A term taught in more than one place lists them all, earliest first.</p>
-<p><strong>3,294 terms.</strong></p>
+<p><strong>3,422 terms.</strong></p>
 <h3>#</h3>
 <table><thead><tr><th>Term</th><th>Taught in</th></tr></thead><tbody>
 <tr><td>%*</td><td>Ch 18</td></tr>
@@ -674,7 +674,12 @@ li { margin: 3pt 0; }
 <tr><td>+=</td><td>Ch 17</td></tr>
 <tr><td>10,000-hour rule</td><td>Ch 9</td></tr>
 <tr><td>100% stacked bar</td><td>Ch 15</td></tr>
+<tr><td>15 significant digits</td><td>Ch 70</td></tr>
+<tr><td>1904 epoch</td><td>Ch 70</td></tr>
+<tr><td>2⁵³ in JSON</td><td>Ch 78</td></tr>
+<tr><td>2⁵³ precision limit</td><td>Ch 77</td></tr>
 <tr><td>3-2-1 rule</td><td>Ch 2</td></tr>
+<tr><td>429 Too Many Requests</td><td>Ch 78</td></tr>
 <tr><td>68–95–99.7 rule</td><td>Ch 21</td></tr>
 <tr><td>95th percentile</td><td>Ch 56</td></tr>
 <tr><td>__init__</td><td>Ch 18</td></tr>
@@ -748,18 +753,20 @@ li { margin: 3pt 0; }
 <tr><td>alternative flow</td><td>Ch 25</td></tr>
 <tr><td>alternative hypothesis</td><td>Ch 22</td></tr>
 <tr><td>amortisation</td><td>Ch 23</td></tr>
+<tr><td>amortised O(1)</td><td>Ch 72A</td></tr>
 <tr><td>amortized complexity</td><td>Ch 72A</td></tr>
 <tr><td>analysis plan</td><td>Ch 27</td></tr>
 <tr><td>analytics engineer</td><td>Ch 7</td></tr>
 <tr><td>analytics engineering</td><td>Ch 32</td></tr>
 <tr><td>anchor</td><td>Ch 28</td></tr>
 <tr><td>anchoring</td><td>Ch 5</td></tr>
+<tr><td>anisotropy</td><td>Ch 79</td></tr>
 <tr><td>annotation</td><td>Ch 15</td></tr>
 <tr><td>anomaly</td><td>Ch 47</td></tr>
 <tr><td>anomaly detection</td><td>Ch 38</td></tr>
 <tr><td>anonymization</td><td>Ch 64</td></tr>
 <tr><td>ANOVA</td><td>Ch 22, Ch 30</td></tr>
-<tr><td>Anscombe's quartet</td><td>Ch 15</td></tr>
+<tr><td>Anscombe's quartet</td><td>Ch 15, Ch 73</td></tr>
 <tr><td>anti-join</td><td>Ch 12, Ch 14, Ch 47, Ch 71</td></tr>
 <tr><td>AP system</td><td>Ch 61</td></tr>
 <tr><td>Apache Hudi</td><td>Ch 49</td></tr>
@@ -779,7 +786,9 @@ li { margin: 3pt 0; }
 <tr><td>.apply(axis=1)</td><td>Ch 72</td></tr>
 <tr><td>approval threshold</td><td>Ch 58</td></tr>
 <tr><td>approvals</td><td>Ch 63</td></tr>
+<tr><td>approximate against exact match (range_lookup)</td><td>Ch 70</td></tr>
 <tr><td>approximate match</td><td>Ch 11</td></tr>
+<tr><td>approximate nearest neighbour (HNSW, IVF)</td><td>Ch 79</td></tr>
 <tr><td>approximate-nearest-neighbour (ANN) index</td><td>Ch 55</td></tr>
 <tr><td>Apps Script</td><td>Ch 19</td></tr>
 <tr><td>Apps Script execution limit</td><td>Ch 70</td></tr>
@@ -847,8 +856,11 @@ li { margin: 3pt 0; }
 <tr><td>availability</td><td>Ch 2, Ch 61</td></tr>
 <tr><td>availability ("nines")</td><td>Ch 60</td></tr>
 <tr><td>availability bias</td><td>Ch 5</td></tr>
+<tr><td>availability in series</td><td>Ch 80</td></tr>
 <tr><td>availability zone</td><td>Ch 52</td></tr>
 <tr><td>average</td><td>Ch 4</td></tr>
+<tr><td>average against worst case</td><td>Ch 72A</td></tr>
+<tr><td>average customer lifetime (1/r)</td><td>Ch 75</td></tr>
 <tr><td>average handle time</td><td>Ch 75</td></tr>
 <tr><td>average of averages</td><td>Ch 4, Ch 21</td></tr>
 <tr><td>average order value (AOV)</td><td>Ch 3</td></tr>
@@ -865,6 +877,7 @@ li { margin: 3pt 0; }
 <tr><td>background job</td><td>Ch 34</td></tr>
 <tr><td>background verification</td><td>Ch 68</td></tr>
 <tr><td>backlog</td><td>Ch 26</td></tr>
+<tr><td>backoff cap</td><td>Ch 78</td></tr>
 <tr><td>backpressure</td><td>Ch 77</td></tr>
 <tr><td>backpropagation</td><td>Ch 43, Ch 53</td></tr>
 <tr><td>backtesting</td><td>Ch 40</td></tr>
@@ -877,6 +890,7 @@ li { margin: 3pt 0; }
 <tr><td>bandwidth</td><td>Ch 31</td></tr>
 <tr><td>banker's rounding</td><td>Ch 12</td></tr>
 <tr><td>banker's rounding (round half to even)</td><td>Ch 17</td></tr>
+<tr><td>banker's rounding against half-away-from-zero</td><td>Ch 70</td></tr>
 <tr><td>bar chart</td><td>Ch 15</td></tr>
 <tr><td>base case</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>base class</td><td>Ch 18</td></tr>
@@ -908,8 +922,9 @@ li { margin: 3pt 0; }
 <tr><td>behavioral theme</td><td>Ch 81</td></tr>
 <tr><td>Benjamini-Hochberg</td><td>Ch 22, Ch 30</td></tr>
 <tr><td>Bernoulli distribution</td><td>Ch 35</td></tr>
+<tr><td>Bessel's correction</td><td>Ch 73</td></tr>
 <tr><td>beta</td><td>Ch 30, Ch 40</td></tr>
-<tr><td>bfloat16</td><td>Ch 53</td></tr>
+<tr><td>bfloat16</td><td>Ch 53, Ch 79</td></tr>
 <tr><td>BI (business intelligence)</td><td>Ch 7</td></tr>
 <tr><td>BI analyst</td><td>Ch 8</td></tr>
 <tr><td>BI developer</td><td>Ch 7</td></tr>
@@ -930,15 +945,16 @@ li { margin: 3pt 0; }
 <tr><td>Binomial distribution</td><td>Ch 73</td></tr>
 <tr><td>binomial distribution</td><td>Ch 21, Ch 35</td></tr>
 <tr><td>birthday problem</td><td>Ch 73</td></tr>
-<tr><td>bisect</td><td>Ch 33</td></tr>
+<tr><td>bisect</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>bit</td><td>Ch 2, Ch 35</td></tr>
 <tr><td>bit-packing</td><td>Ch 49</td></tr>
 <tr><td>bitmap scan</td><td>Ch 28</td></tr>
 <tr><td>blameless review</td><td>Ch 47</td></tr>
+<tr><td>blended against paid CAC</td><td>Ch 75</td></tr>
 <tr><td>blended CAC</td><td>Ch 23</td></tr>
 <tr><td>blind spot sampling</td><td>Ch 59</td></tr>
 <tr><td>Block Kit</td><td>Ch 20</td></tr>
-<tr><td>blocking (deduplication) ---</td><td>Ch 77</td></tr>
+<tr><td>blocking (deduplication)</td><td>Ch 77</td></tr>
 <tr><td>blocking check</td><td>Ch 46</td></tr>
 <tr><td>blue-green deployment</td><td>Ch 56</td></tr>
 <tr><td>blue/green tables</td><td>Ch 47</td></tr>
@@ -954,6 +970,7 @@ li { margin: 3pt 0; }
 <tr><td>border point</td><td>Ch 38</td></tr>
 <tr><td>bottom line up front (BLUF)</td><td>Ch 24</td></tr>
 <tr><td>bound parameters</td><td>Ch 18</td></tr>
+<tr><td>boundary burst</td><td>Ch 78</td></tr>
 <tr><td>bounded staleness</td><td>Ch 61</td></tr>
 <tr><td>box plot</td><td>Ch 15</td></tr>
 <tr><td>Boyce–Codd normal form (BCNF)</td><td>Ch 28</td></tr>
@@ -998,8 +1015,10 @@ li { margin: 3pt 0; }
 <tr><td>business rule</td><td>Ch 24, Ch 76B</td></tr>
 <tr><td>business system</td><td>Ch 3</td></tr>
 <tr><td>business-question-first narrative structure</td><td>Ch 76A</td></tr>
+<tr><td>busy hour</td><td>Ch 80</td></tr>
 <tr><td>byte</td><td>Ch 2</td></tr>
 <tr><td>byte-order mark (BOM)</td><td>Ch 45</td></tr>
+<tr><td>byte-order mark (BOM) ---</td><td>Ch 77</td></tr>
 <tr><td>byte-pair encoding</td><td>Ch 54</td></tr>
 <tr><td>bytes</td><td>Ch 20</td></tr>
 <tr><td>BytesIO</td><td>Ch 20</td></tr>
@@ -1011,10 +1030,11 @@ li { margin: 3pt 0; }
 <tr><td>C4 diagram</td><td>Ch 80</td></tr>
 <tr><td>C4 model</td><td>Ch 60</td></tr>
 <tr><td>CAC</td><td>Ch 23</td></tr>
+<tr><td>CAC payback period</td><td>Ch 75</td></tr>
 <tr><td>cache</td><td>Ch 48</td></tr>
 <tr><td>cache invalidation</td><td>Ch 57, Ch 61</td></tr>
 <tr><td>caching</td><td>Ch 61</td></tr>
-<tr><td>caching (LLM cost) ---</td><td>Ch 79</td></tr>
+<tr><td>caching (LLM cost)</td><td>Ch 79</td></tr>
 <tr><td>CAGR (compound annual growth rate)</td><td>Ch 4</td></tr>
 <tr><td>CALCULATE</td><td>Ch 11, Ch 16, Ch 70</td></tr>
 <tr><td>calculated column</td><td>Ch 11, Ch 16</td></tr>
@@ -1096,6 +1116,7 @@ li { margin: 3pt 0; }
 <tr><td>choropleth map</td><td>Ch 15</td></tr>
 <tr><td>ChrW</td><td>Ch 19</td></tr>
 <tr><td>chunk</td><td>Ch 55</td></tr>
+<tr><td>chunk overlap</td><td>Ch 79</td></tr>
 <tr><td>chunking</td><td>Ch 18</td></tr>
 <tr><td>chunking (fixed-size, sentence, section)</td><td>Ch 79</td></tr>
 <tr><td>chunking strategy</td><td>Ch 55</td></tr>
@@ -1143,6 +1164,7 @@ li { margin: 3pt 0; }
 <tr><td>code review</td><td>Ch 26, Ch 29</td></tr>
 <tr><td>coefficient</td><td>Ch 37</td></tr>
 <tr><td>coefficient of variation</td><td>Ch 21</td></tr>
+<tr><td>coefficient sign flip</td><td>Ch 74</td></tr>
 <tr><td>cognitive bias</td><td>Ch 5</td></tr>
 <tr><td>Cohen's d</td><td>Ch 30</td></tr>
 <tr><td>Cohen's h</td><td>Ch 30, Ch 73</td></tr>
@@ -1160,8 +1182,9 @@ li { margin: 3pt 0; }
 <tr><td>column / field / variable / attribute</td><td>Ch 1</td></tr>
 <tr><td>column chart</td><td>Ch 15</td></tr>
 <tr><td>column chunk</td><td>Ch 49</td></tr>
-<tr><td>column pruning</td><td>Ch 48</td></tr>
+<tr><td>column pruning</td><td>Ch 48, Ch 77</td></tr>
 <tr><td>column-level lineage</td><td>Ch 47</td></tr>
+<tr><td>columnar format</td><td>Ch 77</td></tr>
 <tr><td>columnar storage</td><td>Ch 49, Ch 77</td></tr>
 <tr><td>Columns area</td><td>Ch 11</td></tr>
 <tr><td>ColumnTransformer</td><td>Ch 36</td></tr>
@@ -1193,7 +1216,7 @@ li { margin: 3pt 0; }
 <tr><td>composition</td><td>Ch 18</td></tr>
 <tr><td>compound growth rate</td><td>Ch 4</td></tr>
 <tr><td>compound score</td><td>Ch 41</td></tr>
-<tr><td>compounding</td><td>Ch 4, Ch 83</td></tr>
+<tr><td>compounding</td><td>Ch 4, Ch 75, Ch 83</td></tr>
 <tr><td>compression</td><td>Ch 2</td></tr>
 <tr><td>compression codec (Snappy, zstd, gzip)</td><td>Ch 49</td></tr>
 <tr><td>compute</td><td>Ch 49</td></tr>
@@ -1225,6 +1248,7 @@ li { margin: 3pt 0; }
 <tr><td>confusion matrix</td><td>Ch 39, Ch 53, Ch 74</td></tr>
 <tr><td>confusion matrix (multi-class)</td><td>Ch 41</td></tr>
 <tr><td>confusion of the inverse</td><td>Ch 21</td></tr>
+<tr><td>connect timeout against read timeout</td><td>Ch 78</td></tr>
 <tr><td>Connected Sheets</td><td>Ch 11</td></tr>
 <tr><td>connection string</td><td>Ch 45</td></tr>
 <tr><td>connection URL</td><td>Ch 18</td></tr>
@@ -1233,6 +1257,7 @@ li { margin: 3pt 0; }
 <tr><td>consistency</td><td>Ch 1, Ch 61</td></tr>
 <tr><td>consistency over intensity</td><td>Ch 83</td></tr>
 <tr><td>consistency spectrum</td><td>Ch 61</td></tr>
+<tr><td>constant folding</td><td>Ch 72A</td></tr>
 <tr><td>constant time</td><td>Ch 33</td></tr>
 <tr><td>constraint</td><td>Ch 12</td></tr>
 <tr><td>consumer</td><td>Ch 50</td></tr>
@@ -1256,7 +1281,7 @@ li { margin: 3pt 0; }
 <tr><td>continuous deployment</td><td>Ch 52</td></tr>
 <tr><td>continuous integration</td><td>Ch 26, Ch 32, Ch 52</td></tr>
 <tr><td>contrast ratio</td><td>Ch 15</td></tr>
-<tr><td>contribution margin</td><td>Ch 23</td></tr>
+<tr><td>contribution margin</td><td>Ch 23, Ch 75</td></tr>
 <tr><td>control</td><td>Ch 30</td></tr>
 <tr><td>control group</td><td>Ch 22</td></tr>
 <tr><td>convergence</td><td>Ch 35</td></tr>
@@ -1289,13 +1314,13 @@ li { margin: 3pt 0; }
 <tr><td>cost-based threshold (reused)</td><td>Ch 82</td></tr>
 <tr><td>count(*) vs. count(col)</td><td>Ch 71</td></tr>
 <tr><td>count(DISTINCT col)</td><td>Ch 71</td></tr>
-<tr><td>Counter</td><td>Ch 17</td></tr>
+<tr><td>Counter</td><td>Ch 17, Ch 72A</td></tr>
 <tr><td>counter-offer (from your current employer) ---</td><td>Ch 81</td></tr>
 <tr><td>counterfactual</td><td>Ch 31</td></tr>
 <tr><td>covariance</td><td>Ch 35</td></tr>
 <tr><td>covariance matrix</td><td>Ch 35</td></tr>
 <tr><td>covariate smoothness</td><td>Ch 31</td></tr>
-<tr><td>coverage</td><td>Ch 29</td></tr>
+<tr><td>coverage</td><td>Ch 29, Ch 73</td></tr>
 <tr><td>covering index</td><td>Ch 28, Ch 71</td></tr>
 <tr><td>CP system</td><td>Ch 61</td></tr>
 <tr><td>CP vs. AP</td><td>Ch 80</td></tr>
@@ -1312,6 +1337,7 @@ li { margin: 3pt 0; }
 <tr><td>CRM</td><td>Ch 3</td></tr>
 <tr><td>cron</td><td>Ch 20, Ch 34, Ch 46</td></tr>
 <tr><td>cron expression</td><td>Ch 46</td></tr>
+<tr><td>cron step syntax (*/n)</td><td>Ch 78</td></tr>
 <tr><td>CRON_TZ</td><td>Ch 20</td></tr>
 <tr><td>CronJob</td><td>Ch 52</td></tr>
 <tr><td>crontab</td><td>Ch 20</td></tr>
@@ -1326,6 +1352,7 @@ li { margin: 3pt 0; }
 <tr><td>CrossEntropyLoss</td><td>Ch 43</td></tr>
 <tr><td>CSV</td><td>Ch 2</td></tr>
 <tr><td>CSV extract</td><td>Ch 20</td></tr>
+<tr><td>CSV quoting and escaping</td><td>Ch 77</td></tr>
 <tr><td>CSV UTF-8</td><td>Ch 10</td></tr>
 <tr><td>csv.DictReader</td><td>Ch 17</td></tr>
 <tr><td>csv.DictWriter</td><td>Ch 17</td></tr>
@@ -1336,13 +1363,14 @@ li { margin: 3pt 0; }
 <tr><td>cumulative / running total</td><td>Ch 4</td></tr>
 <tr><td>cumulative distribution</td><td>Ch 56</td></tr>
 <tr><td>cumulative distribution function (cdf)</td><td>Ch 21, Ch 35</td></tr>
+<tr><td>CUPED</td><td>Ch 73</td></tr>
 <tr><td>curl</td><td>Ch 34</td></tr>
 <tr><td>currency text</td><td>Ch 14</td></tr>
 <tr><td>current assets / liabilities</td><td>Ch 23</td></tr>
 <tr><td>current ratio</td><td>Ch 23</td></tr>
 <tr><td>CURRENT ROW</td><td>Ch 13</td></tr>
 <tr><td>CurrentRegion</td><td>Ch 19</td></tr>
-<tr><td>curse of dimensionality</td><td>Ch 37, Ch 74</td></tr>
+<tr><td>curse of dimensionality</td><td>Ch 37, Ch 74, Ch 79</td></tr>
 <tr><td>cursor</td><td>Ch 45</td></tr>
 <tr><td>custom exception</td><td>Ch 29</td></tr>
 <tr><td>custom format</td><td>Ch 10</td></tr>
@@ -1434,7 +1462,7 @@ li { margin: 3pt 0; }
 <tr><td>date grouping</td><td>Ch 11</td></tr>
 <tr><td>date literal</td><td>Ch 12</td></tr>
 <tr><td>date parts</td><td>Ch 36</td></tr>
-<tr><td>date serial number</td><td>Ch 10</td></tr>
+<tr><td>date serial number</td><td>Ch 10, Ch 70</td></tr>
 <tr><td>date spine / calendar table</td><td>Ch 13</td></tr>
 <tr><td>date table</td><td>Ch 11, Ch 16</td></tr>
 <tr><td>DATEDIFF</td><td>Ch 12</td></tr>
@@ -1442,6 +1470,7 @@ li { margin: 3pt 0; }
 <tr><td>datetime</td><td>Ch 17</td></tr>
 <tr><td>datetime index</td><td>Ch 18</td></tr>
 <tr><td>datum</td><td>Ch 1</td></tr>
+<tr><td>DAU/MAU stickiness</td><td>Ch 75</td></tr>
 <tr><td>DAX</td><td>Ch 11, Ch 16</td></tr>
 <tr><td>DAX Studio</td><td>Ch 16</td></tr>
 <tr><td>DBeaver</td><td>Ch 12</td></tr>
@@ -1460,6 +1489,7 @@ li { margin: 3pt 0; }
 <tr><td>DCL</td><td>Ch 12</td></tr>
 <tr><td>DCL (Data Control Language)</td><td>Ch 64</td></tr>
 <tr><td>DDL</td><td>Ch 12</td></tr>
+<tr><td>ddof (degrees of freedom)</td><td>Ch 73</td></tr>
 <tr><td>de-duplication key</td><td>Ch 50</td></tr>
 <tr><td>dead-letter path</td><td>Ch 50</td></tr>
 <tr><td>dead-letter queue</td><td>Ch 77</td></tr>
@@ -1479,11 +1509,14 @@ li { margin: 3pt 0; }
 <tr><td>deduplication</td><td>Ch 13, Ch 36</td></tr>
 <tr><td>deep copy</td><td>Ch 72</td></tr>
 <tr><td>deep network</td><td>Ch 53</td></tr>
+<tr><td>deepcopy</td><td>Ch 72A</td></tr>
 <tr><td>DEFAULT</td><td>Ch 12</td></tr>
 <tr><td>default argument</td><td>Ch 44</td></tr>
 <tr><td>default frame (RANGE vs. ROWS)</td><td>Ch 71</td></tr>
+<tr><td>default NA markers</td><td>Ch 77</td></tr>
 <tr><td>default value</td><td>Ch 17</td></tr>
 <tr><td>defaultdict</td><td>Ch 17</td></tr>
+<tr><td>defaultdict.__missing__</td><td>Ch 72A</td></tr>
 <tr><td>Definition of Done</td><td>Ch 26, Ch 76B</td></tr>
 <tr><td>deflection rate</td><td>Ch 59</td></tr>
 <tr><td>degraded mode</td><td>Ch 57</td></tr>
@@ -1514,7 +1547,7 @@ li { margin: 3pt 0; }
 <tr><td>depth-first search</td><td>Ch 33</td></tr>
 <tr><td>depth-first search (DFS)</td><td>Ch 72A</td></tr>
 <tr><td>dequantization</td><td>Ch 53</td></tr>
-<tr><td>deque</td><td>Ch 33</td></tr>
+<tr><td>deque</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>derivative</td><td>Ch 35</td></tr>
 <tr><td>derived table</td><td>Ch 12</td></tr>
 <tr><td>describe</td><td>Ch 18</td></tr>
@@ -1524,6 +1557,7 @@ li { margin: 3pt 0; }
 <tr><td>deviation</td><td>Ch 21</td></tr>
 <tr><td>diagnostic case</td><td>Ch 75</td></tr>
 <tr><td>diagnostic question</td><td>Ch 5</td></tr>
+<tr><td>dict.get</td><td>Ch 72A</td></tr>
 <tr><td>dictionary</td><td>Ch 17, Ch 33</td></tr>
 <tr><td>dictionary comprehension</td><td>Ch 17</td></tr>
 <tr><td>dictionary encoding</td><td>Ch 49</td></tr>
@@ -1550,6 +1584,7 @@ li { margin: 3pt 0; }
 <tr><td>discrete</td><td>Ch 1</td></tr>
 <tr><td>disparate impact</td><td>Ch 64</td></tr>
 <tr><td>disparate treatment</td><td>Ch 64</td></tr>
+<tr><td>display rounding against ROUND</td><td>Ch 70</td></tr>
 <tr><td>distillation</td><td>Ch 53, Ch 54</td></tr>
 <tr><td>DISTINCT</td><td>Ch 12</td></tr>
 <tr><td>distinct count</td><td>Ch 11</td></tr>
@@ -1598,6 +1633,7 @@ li { margin: 3pt 0; }
 <tr><td>DSO</td><td>Ch 23</td></tr>
 <tr><td>.dt accessor</td><td>Ch 18, Ch 72</td></tr>
 <tr><td>dtype</td><td>Ch 18</td></tr>
+<tr><td>dtype= at read time</td><td>Ch 77</td></tr>
 <tr><td>dual-axis chart</td><td>Ch 15</td></tr>
 <tr><td>DuckDB</td><td>Ch 18, Ch 45, Ch 48</td></tr>
 <tr><td>due date</td><td>Ch 3</td></tr>
@@ -1623,6 +1659,7 @@ li { margin: 3pt 0; }
 <tr><td>EDI (Electronic Data Interchange)</td><td>Ch 51</td></tr>
 <tr><td>editable install</td><td>Ch 29</td></tr>
 <tr><td>effect size</td><td>Ch 22, Ch 27, Ch 30</td></tr>
+<tr><td>effective step size</td><td>Ch 79</td></tr>
 <tr><td>egress</td><td>Ch 65</td></tr>
 <tr><td>egress (All terms are defined in the Glossary, Appendix A.) ---</td><td>Ch 49</td></tr>
 <tr><td>eigenvalue</td><td>Ch 35</td></tr>
@@ -1659,10 +1696,13 @@ li { margin: 3pt 0; }
 <tr><td>eps</td><td>Ch 38</td></tr>
 <tr><td>equal opportunity</td><td>Ch 39</td></tr>
 <tr><td>equity</td><td>Ch 23</td></tr>
+<tr><td>equivalence test</td><td>Ch 73</td></tr>
+<tr><td>erasure coding</td><td>Ch 80</td></tr>
 <tr><td>ERP</td><td>Ch 3</td></tr>
 <tr><td>Err</td><td>Ch 19</td></tr>
 <tr><td>Err.Raise</td><td>Ch 19</td></tr>
 <tr><td>error</td><td>Ch 10</td></tr>
+<tr><td>error budget</td><td>Ch 80</td></tr>
 <tr><td>error value</td><td>Ch 10</td></tr>
 <tr><td>ERRORLEVEL</td><td>Ch 18</td></tr>
 <tr><td>errors="coerce"</td><td>Ch 72</td></tr>
@@ -1769,7 +1809,7 @@ li { margin: 3pt 0; }
 <tr><td>false-positive rate</td><td>Ch 21, Ch 73</td></tr>
 <tr><td>falsifiable</td><td>Ch 5</td></tr>
 <tr><td>family-wise error rate</td><td>Ch 22, Ch 30</td></tr>
-<tr><td>fan-out</td><td>Ch 12, Ch 14, Ch 18</td></tr>
+<tr><td>fan-out</td><td>Ch 12, Ch 14, Ch 18, Ch 80</td></tr>
 <tr><td>fan-out (join cardinality)</td><td>Ch 71</td></tr>
 <tr><td>fast proxy metric</td><td>Ch 56</td></tr>
 <tr><td>fast-forward</td><td>Ch 26</td></tr>
@@ -1793,6 +1833,7 @@ li { margin: 3pt 0; }
 <tr><td>FETCH FIRST … WITH TIES</td><td>Ch 71</td></tr>
 <tr><td>few-shot</td><td>Ch 54</td></tr>
 <tr><td>field separator</td><td>Ch 34</td></tr>
+<tr><td>field shift</td><td>Ch 77</td></tr>
 <tr><td>figure and axes</td><td>Ch 18</td></tr>
 <tr><td>file</td><td>Ch 2</td></tr>
 <tr><td>FileDialog</td><td>Ch 19</td></tr>
@@ -1814,7 +1855,7 @@ li { margin: 3pt 0; }
 <tr><td>FinOps</td><td>Ch 65</td></tr>
 <tr><td>first in first out</td><td>Ch 33</td></tr>
 <tr><td>first normal form (1NF)</td><td>Ch 28</td></tr>
-<tr><td>first-90-days plan (architect) ---</td><td>Ch 80</td></tr>
+<tr><td>first-90-days plan (architect)</td><td>Ch 80</td></tr>
 <tr><td>first-party data</td><td>Ch 1</td></tr>
 <tr><td>FIRST_VALUE</td><td>Ch 13</td></tr>
 <tr><td>Fisher's exact test</td><td>Ch 30</td></tr>
@@ -1827,6 +1868,7 @@ li { margin: 3pt 0; }
 <tr><td>fixed cost</td><td>Ch 23</td></tr>
 <tr><td>fixed effects</td><td>Ch 31</td></tr>
 <tr><td>fixed vs variable pay</td><td>Ch 81</td></tr>
+<tr><td>fixed window against token bucket</td><td>Ch 78</td></tr>
 <tr><td>fixture</td><td>Ch 29</td></tr>
 <tr><td>Flash Fill</td><td>Ch 10</td></tr>
 <tr><td>flattening</td><td>Ch 1</td></tr>
@@ -1870,6 +1912,7 @@ li { margin: 3pt 0; }
 <tr><td>frozen=True</td><td>Ch 18</td></tr>
 <tr><td>FrozenInstanceError</td><td>Ch 18</td></tr>
 <tr><td>frozenset</td><td>Ch 38</td></tr>
+<tr><td>frozenset ---</td><td>Ch 72A</td></tr>
 <tr><td>full load</td><td>Ch 45</td></tr>
 <tr><td>full outer join</td><td>Ch 12</td></tr>
 <tr><td>full refresh</td><td>Ch 32</td></tr>
@@ -1881,6 +1924,7 @@ li { margin: 3pt 0; }
 <tr><td>functional requirement</td><td>Ch 25, Ch 60, Ch 76B</td></tr>
 <tr><td>functools.wraps</td><td>Ch 72</td></tr>
 <tr><td>funnel</td><td>Ch 13, Ch 23</td></tr>
+<tr><td>funnel multiplication</td><td>Ch 75</td></tr>
 <tr><td>fuzzy duplicate</td><td>Ch 14</td></tr>
 <tr><td>fuzzy merge</td><td>Ch 14</td></tr>
 </tbody></table>
@@ -1899,6 +1943,7 @@ li { margin: 3pt 0; }
 <tr><td>generator</td><td>Ch 29, Ch 33, Ch 72</td></tr>
 <tr><td>generator expression</td><td>Ch 33</td></tr>
 <tr><td>generic test</td><td>Ch 32</td></tr>
+<tr><td>geometric mean</td><td>Ch 75</td></tr>
 <tr><td>get with default</td><td>Ch 17</td></tr>
 <tr><td>GET, POST, PUT, PATCH</td><td>Ch 51</td></tr>
 <tr><td>GETPIVOTDATA</td><td>Ch 11</td></tr>
@@ -1954,7 +1999,7 @@ li { margin: 3pt 0; }
 <tr><td>graph</td><td>Ch 33</td></tr>
 <tr><td>graphical perception</td><td>Ch 15</td></tr>
 <tr><td>greedy algorithm</td><td>Ch 33</td></tr>
-<tr><td>greedy decoding</td><td>Ch 54</td></tr>
+<tr><td>greedy decoding</td><td>Ch 54, Ch 79</td></tr>
 <tr><td>greenfield</td><td>Ch 60</td></tr>
 <tr><td>grep</td><td>Ch 34</td></tr>
 <tr><td>grid search</td><td>Ch 37, Ch 39</td></tr>
@@ -1969,6 +2014,7 @@ li { margin: 3pt 0; }
 <tr><td>groupby</td><td>Ch 18</td></tr>
 <tr><td>groupby().agg()</td><td>Ch 72</td></tr>
 <tr><td>grouped (clustered) bar</td><td>Ch 15</td></tr>
+<tr><td>GroupKFold</td><td>Ch 74</td></tr>
 <tr><td>GROUPS frame</td><td>Ch 28</td></tr>
 <tr><td>guardrail</td><td>Ch 55, Ch 79</td></tr>
 <tr><td>guardrail metric</td><td>Ch 23, Ch 30, Ch 75</td></tr>
@@ -1978,7 +2024,7 @@ li { margin: 3pt 0; }
 <table><thead><tr><th>Term</th><th>Taught in</th></tr></thead><tbody>
 <tr><td>habit questions</td><td>Ch 5</td></tr>
 <tr><td>half-life</td><td>Ch 40</td></tr>
-<tr><td>half-open date range</td><td>Ch 18</td></tr>
+<tr><td>half-open date range</td><td>Ch 18, Ch 77</td></tr>
 <tr><td>half-open date window</td><td>Ch 23</td></tr>
 <tr><td>half-open validity period</td><td>Ch 77</td></tr>
 <tr><td>hallucination</td><td>Ch 54, Ch 79</td></tr>
@@ -2000,10 +2046,11 @@ li { margin: 3pt 0; }
 <tr><td>headers</td><td>Ch 10</td></tr>
 <tr><td>health check</td><td>Ch 52, Ch 56</td></tr>
 <tr><td>heap</td><td>Ch 28, Ch 33, Ch 72A</td></tr>
-<tr><td>heapq</td><td>Ch 33</td></tr>
+<tr><td>heapq</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>heartbeat (dead-man's switch)</td><td>Ch 77</td></tr>
 <tr><td>heatmap</td><td>Ch 15</td></tr>
 <tr><td>heavy-tailed distribution</td><td>Ch 73</td></tr>
+<tr><td>hedged request</td><td>Ch 80</td></tr>
 <tr><td>hexdigest</td><td>Ch 45</td></tr>
 <tr><td>hidden file</td><td>Ch 26</td></tr>
 <tr><td>hidden layer</td><td>Ch 43, Ch 53</td></tr>
@@ -2057,28 +2104,32 @@ li { margin: 3pt 0; }
 <tr><td>IaaS</td><td>Ch 52</td></tr>
 <tr><td>IAM (identity and access management)</td><td>Ch 52</td></tr>
 <tr><td>ICE plot</td><td>Ch 39</td></tr>
+<tr><td>id_str</td><td>Ch 78</td></tr>
 <tr><td>ideal DCG</td><td>Ch 42</td></tr>
 <tr><td>idempotency</td><td>Ch 20, Ch 57, Ch 58, Ch 61, Ch 77</td></tr>
-<tr><td>idempotency key</td><td>Ch 29, Ch 46, Ch 50, Ch 51, Ch 58, Ch 60</td></tr>
+<tr><td>idempotency key</td><td>Ch 29, Ch 46, Ch 50, Ch 51, Ch 58, Ch 60, Ch 78</td></tr>
 <tr><td>idempotent</td><td>Ch 28, Ch 29, Ch 45, Ch 46</td></tr>
 <tr><td>idempotent load (reused)</td><td>Ch 82</td></tr>
 <tr><td>identifier</td><td>Ch 1</td></tr>
 <tr><td>identity</td><td>Ch 52</td></tr>
 <tr><td>IDENTITY / AUTO_INCREMENT</td><td>Ch 71</td></tr>
+<tr><td>identity against equality (is / ==)</td><td>Ch 72A</td></tr>
 <tr><td>identity column / AUTO_INCREMENT</td><td>Ch 12</td></tr>
+<tr><td>IEEE 754</td><td>Ch 72A</td></tr>
 <tr><td>if __name__ == "__main__"</td><td>Ch 17</td></tr>
 <tr><td>if/elif/else</td><td>Ch 17</td></tr>
+<tr><td>IFNA against IFERROR</td><td>Ch 70</td></tr>
 <tr><td>.iloc</td><td>Ch 18</td></tr>
 <tr><td>image</td><td>Ch 52</td></tr>
 <tr><td>Immediate window</td><td>Ch 19</td></tr>
-<tr><td>immutability</td><td>Ch 33</td></tr>
+<tr><td>immutability</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>immutable</td><td>Ch 29</td></tr>
 <tr><td>impact analysis</td><td>Ch 47</td></tr>
 <tr><td>implicit commit</td><td>Ch 12</td></tr>
 <tr><td>implicit feedback</td><td>Ch 42</td></tr>
 <tr><td>import</td><td>Ch 17</td></tr>
 <tr><td>Import mode</td><td>Ch 16</td></tr>
-<tr><td>Import mode vs. DirectQuery ---</td><td>Ch 70</td></tr>
+<tr><td>Import mode vs. DirectQuery</td><td>Ch 70</td></tr>
 <tr><td>IMPORTRANGE</td><td>Ch 11, Ch 70</td></tr>
 <tr><td>impossible date</td><td>Ch 14</td></tr>
 <tr><td>imputation</td><td>Ch 14, Ch 36</td></tr>
@@ -2095,6 +2146,7 @@ li { margin: 3pt 0; }
 <tr><td>incremental refresh</td><td>Ch 16</td></tr>
 <tr><td>incremental strategy</td><td>Ch 32</td></tr>
 <tr><td>independence</td><td>Ch 4, Ch 21, Ch 31</td></tr>
+<tr><td>independent failure</td><td>Ch 80</td></tr>
 <tr><td>independent vs. mutually exclusive events</td><td>Ch 73</td></tr>
 <tr><td>INDEX</td><td>Ch 11</td></tr>
 <tr><td>index</td><td>Ch 17, Ch 18, Ch 28, Ch 55</td></tr>
@@ -2128,6 +2180,7 @@ li { margin: 3pt 0; }
 <tr><td>Inquire</td><td>Ch 11</td></tr>
 <tr><td>INSERT</td><td>Ch 12</td></tr>
 <tr><td>insert anomaly</td><td>Ch 28</td></tr>
+<tr><td>insertion order</td><td>Ch 72A</td></tr>
 <tr><td>insight</td><td>Ch 1</td></tr>
 <tr><td>installable trigger</td><td>Ch 70</td></tr>
 <tr><td>installer</td><td>Ch 12</td></tr>
@@ -2157,6 +2210,7 @@ li { margin: 3pt 0; }
 <tr><td>inventory turns</td><td>Ch 23</td></tr>
 <tr><td>inverse document frequency</td><td>Ch 55</td></tr>
 <tr><td>inverse document frequency (IDF)</td><td>Ch 41</td></tr>
+<tr><td>inverse regularisation strength (C)</td><td>Ch 74</td></tr>
 <tr><td>INVEST</td><td>Ch 26, Ch 76B</td></tr>
 <tr><td>invoice</td><td>Ch 3</td></tr>
 <tr><td>IP address</td><td>Ch 2, Ch 34</td></tr>
@@ -2184,6 +2238,7 @@ li { margin: 3pt 0; }
 <tr><td>JAVA_HOME</td><td>Ch 48</td></tr>
 <tr><td>Jinja</td><td>Ch 32</td></tr>
 <tr><td>jitter</td><td>Ch 15, Ch 29, Ch 78</td></tr>
+<tr><td>jitter (full, decorrelated)</td><td>Ch 78</td></tr>
 <tr><td>Job</td><td>Ch 52</td></tr>
 <tr><td>job</td><td>Ch 46, Ch 52</td></tr>
 <tr><td>job description (JD)</td><td>Ch 8</td></tr>
@@ -2213,6 +2268,7 @@ li { margin: 3pt 0; }
 <tr><td>Kanban</td><td>Ch 26</td></tr>
 <tr><td>Kappa architecture</td><td>Ch 62</td></tr>
 <tr><td>kappa architecture</td><td>Ch 80</td></tr>
+<tr><td>keep_default_na</td><td>Ch 77</td></tr>
 <tr><td>KEEPFILTERS</td><td>Ch 16</td></tr>
 <tr><td>kernel</td><td>Ch 17, Ch 37</td></tr>
 <tr><td>kernel (filter)</td><td>Ch 43, Ch 53</td></tr>
@@ -2239,6 +2295,7 @@ li { margin: 3pt 0; }
 <tr><td>KS statistic (D)</td><td>Ch 79</td></tr>
 <tr><td>Kubernetes</td><td>Ch 52</td></tr>
 <tr><td>kurtosis</td><td>Ch 21</td></tr>
+<tr><td>KV cache</td><td>Ch 79</td></tr>
 </tbody></table>
 <h3>L</h3>
 <table><thead><tr><th>Term</th><th>Taught in</th></tr></thead><tbody>
@@ -2314,7 +2371,7 @@ li { margin: 3pt 0; }
 <tr><td>LET</td><td>Ch 11</td></tr>
 <tr><td>level-order traversal</td><td>Ch 72A</td></tr>
 <tr><td>levels of measurement</td><td>Ch 1</td></tr>
-<tr><td>leverage</td><td>Ch 23, Ch 67, Ch 83</td></tr>
+<tr><td>leverage</td><td>Ch 23, Ch 67, Ch 73, Ch 83</td></tr>
 <tr><td>liabilities</td><td>Ch 23</td></tr>
 <tr><td>liabilities-to-equity</td><td>Ch 23</td></tr>
 <tr><td>lifecycle policy</td><td>Ch 65</td></tr>
@@ -2338,6 +2395,7 @@ li { margin: 3pt 0; }
 <tr><td>liquid clustering</td><td>Ch 49</td></tr>
 <tr><td>list</td><td>Ch 17, Ch 33</td></tr>
 <tr><td>list comprehension</td><td>Ch 17, Ch 72</td></tr>
+<tr><td>Little's Law</td><td>Ch 80</td></tr>
 <tr><td>live connection</td><td>Ch 16</td></tr>
 <tr><td>liveness</td><td>Ch 56</td></tr>
 <tr><td>liveness probe</td><td>Ch 52</td></tr>
@@ -2347,6 +2405,7 @@ li { margin: 3pt 0; }
 <tr><td>load balancer</td><td>Ch 52</td></tr>
 <tr><td>load balancing</td><td>Ch 61</td></tr>
 <tr><td>load log</td><td>Ch 45</td></tr>
+<tr><td>load shedding</td><td>Ch 80</td></tr>
 <tr><td>load status</td><td>Ch 47</td></tr>
 <tr><td>load to</td><td>Ch 11</td></tr>
 <tr><td>load_dotenv</td><td>Ch 20</td></tr>
@@ -2358,6 +2417,7 @@ li { margin: 3pt 0; }
 <tr><td>local mode</td><td>Ch 48</td></tr>
 <tr><td>local versus global structure</td><td>Ch 38</td></tr>
 <tr><td>locale</td><td>Ch 10, Ch 11, Ch 14</td></tr>
+<tr><td>locale date parsing ---</td><td>Ch 70</td></tr>
 <tr><td>localhost</td><td>Ch 12, Ch 34</td></tr>
 <tr><td>lock file</td><td>Ch 19</td></tr>
 <tr><td>lockfile</td><td>Ch 29</td></tr>
@@ -2377,6 +2437,7 @@ li { margin: 3pt 0; }
 <tr><td>logarithmic time</td><td>Ch 33</td></tr>
 <tr><td>logger</td><td>Ch 20, Ch 29</td></tr>
 <tr><td>logging</td><td>Ch 18, Ch 20, Ch 29</td></tr>
+<tr><td>logical (execution) date</td><td>Ch 77, Ch 78</td></tr>
 <tr><td>logical date (Airflow ds)</td><td>Ch 46</td></tr>
 <tr><td>logical execution order</td><td>Ch 12</td></tr>
 <tr><td>logical value</td><td>Ch 10</td></tr>
@@ -2395,6 +2456,7 @@ li { margin: 3pt 0; }
 <tr><td>lookup array</td><td>Ch 11</td></tr>
 <tr><td>loop</td><td>Ch 17</td></tr>
 <tr><td>LoRA</td><td>Ch 54</td></tr>
+<tr><td>LoRA / QLoRA</td><td>Ch 79</td></tr>
 <tr><td>loss</td><td>Ch 31</td></tr>
 <tr><td>loss function</td><td>Ch 35, Ch 53</td></tr>
 <tr><td>lossless</td><td>Ch 2</td></tr>
@@ -2403,7 +2465,7 @@ li { margin: 3pt 0; }
 <tr><td>lru_cache</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>LSTM</td><td>Ch 53</td></tr>
 <tr><td>LTS release</td><td>Ch 12</td></tr>
-<tr><td>LTV:CAC</td><td>Ch 23</td></tr>
+<tr><td>LTV:CAC</td><td>Ch 23, Ch 75</td></tr>
 </tbody></table>
 <h3>M</h3>
 <table><thead><tr><th>Term</th><th>Taught in</th></tr></thead><tbody>
@@ -2467,6 +2529,8 @@ li { margin: 3pt 0; }
 <tr><td>mean</td><td>Ch 1, Ch 4, Ch 21</td></tr>
 <tr><td>mean absolute error (MAE)</td><td>Ch 37</td></tr>
 <tr><td>mean average precision (MAP)</td><td>Ch 42</td></tr>
+<tr><td>mean decrease in impurity</td><td>Ch 74</td></tr>
+<tr><td>mean of ratios against ratio of means</td><td>Ch 73</td></tr>
 <tr><td>mean reciprocal rank</td><td>Ch 55</td></tr>
 <tr><td>mean reciprocal rank (MRR)</td><td>Ch 42</td></tr>
 <tr><td>mean squared error (MSE)</td><td>Ch 35</td></tr>
@@ -2509,6 +2573,7 @@ li { margin: 3pt 0; }
 <tr><td>Microsoft Store</td><td>Ch 16</td></tr>
 <tr><td>migration</td><td>Ch 12, Ch 28</td></tr>
 <tr><td>MIME type</td><td>Ch 20</td></tr>
+<tr><td>min-heap</td><td>Ch 72A</td></tr>
 <tr><td>min_samples</td><td>Ch 38</td></tr>
 <tr><td>min_samples_leaf</td><td>Ch 37</td></tr>
 <tr><td>mini-batch</td><td>Ch 53</td></tr>
@@ -2521,7 +2586,7 @@ li { margin: 3pt 0; }
 <tr><td>missing not at random</td><td>Ch 14</td></tr>
 <tr><td>missing value</td><td>Ch 14, Ch 36</td></tr>
 <tr><td>missing value / NULL</td><td>Ch 1</td></tr>
-<tr><td>missing-value indicator ---</td><td>Ch 74</td></tr>
+<tr><td>missing-value indicator</td><td>Ch 74</td></tr>
 <tr><td>mix effect</td><td>Ch 23</td></tr>
 <tr><td>mixed reference</td><td>Ch 10</td></tr>
 <tr><td>ML engineer</td><td>Ch 7</td></tr>
@@ -2550,7 +2615,10 @@ li { margin: 3pt 0; }
 <tr><td>momentum</td><td>Ch 53</td></tr>
 <tr><td>monitoring</td><td>Ch 39</td></tr>
 <tr><td>monitoring (absence of success)</td><td>Ch 78</td></tr>
+<tr><td>monotonic association</td><td>Ch 73</td></tr>
+<tr><td>monotonic transform</td><td>Ch 74</td></tr>
 <tr><td>month key</td><td>Ch 10</td></tr>
+<tr><td>month-end clamping</td><td>Ch 77</td></tr>
 <tr><td>month-over-month</td><td>Ch 13</td></tr>
 <tr><td>month-over-month growth</td><td>Ch 4</td></tr>
 <tr><td>monthly projection</td><td>Ch 57</td></tr>
@@ -2561,7 +2629,7 @@ li { margin: 3pt 0; }
 <tr><td>multi-agent system</td><td>Ch 79</td></tr>
 <tr><td>multi-factor authentication (MFA)</td><td>Ch 2</td></tr>
 <tr><td>multi-head attention</td><td>Ch 53</td></tr>
-<tr><td>multicollinearity</td><td>Ch 37</td></tr>
+<tr><td>multicollinearity</td><td>Ch 37, Ch 74</td></tr>
 <tr><td>multimodal</td><td>Ch 54</td></tr>
 <tr><td>multinomial Naive Bayes</td><td>Ch 41</td></tr>
 <tr><td>multipart message</td><td>Ch 20</td></tr>
@@ -2571,6 +2639,7 @@ li { margin: 3pt 0; }
 <tr><td>must-have</td><td>Ch 8</td></tr>
 <tr><td>must-have coverage</td><td>Ch 8, Ch 68</td></tr>
 <tr><td>mutable default argument</td><td>Ch 18, Ch 72</td></tr>
+<tr><td>mutation during iteration</td><td>Ch 72A</td></tr>
 <tr><td>mutually exclusive</td><td>Ch 5, Ch 21</td></tr>
 <tr><td>MVCC</td><td>Ch 71</td></tr>
 <tr><td>mypy</td><td>Ch 29</td></tr>
@@ -2593,6 +2662,7 @@ li { margin: 3pt 0; }
 <tr><td>named window (WINDOW)</td><td>Ch 13</td></tr>
 <tr><td>namedValues</td><td>Ch 19</td></tr>
 <tr><td>namespace</td><td>Ch 52</td></tr>
+<tr><td>NaN</td><td>Ch 72A</td></tr>
 <tr><td>narrow operation</td><td>Ch 48</td></tr>
 <tr><td>NaT</td><td>Ch 18</td></tr>
 <tr><td>nat</td><td>Ch 35</td></tr>
@@ -2602,7 +2672,9 @@ li { margin: 3pt 0; }
 <tr><td>natural log</td><td>Ch 31</td></tr>
 <tr><td>natural log (ln)</td><td>Ch 35</td></tr>
 <tr><td>NDCG (normalized discounted cumulative gain)</td><td>Ch 42</td></tr>
+<tr><td>near-orthogonality in high dimensions</td><td>Ch 79</td></tr>
 <tr><td>nearest neighbors (embedding space)</td><td>Ch 41</td></tr>
+<tr><td>negative R²</td><td>Ch 74</td></tr>
 <tr><td>nested function</td><td>Ch 33</td></tr>
 <tr><td>nested loop join</td><td>Ch 28</td></tr>
 <tr><td>net margin</td><td>Ch 23</td></tr>
@@ -2614,6 +2686,7 @@ li { margin: 3pt 0; }
 <tr><td>neuron</td><td>Ch 43, Ch 53</td></tr>
 <tr><td>next-token prediction</td><td>Ch 54</td></tr>
 <tr><td>nice-to-have</td><td>Ch 8</td></tr>
+<tr><td>nines of availability</td><td>Ch 80</td></tr>
 <tr><td>ninety-second scan</td><td>Ch 27</td></tr>
 <tr><td>nn.Linear</td><td>Ch 43</td></tr>
 <tr><td>nn.Module</td><td>Ch 43</td></tr>
@@ -2625,6 +2698,7 @@ li { margin: 3pt 0; }
 <tr><td>node ID</td><td>Ch 29</td></tr>
 <tr><td>node selection (+, state:modified)</td><td>Ch 32</td></tr>
 <tr><td>noise (residual)</td><td>Ch 40</td></tr>
+<tr><td>noise floor</td><td>Ch 74</td></tr>
 <tr><td>noise points</td><td>Ch 38</td></tr>
 <tr><td>nominal</td><td>Ch 1</td></tr>
 <tr><td>non-data row</td><td>Ch 14</td></tr>
@@ -2634,6 +2708,7 @@ li { margin: 3pt 0; }
 <tr><td>non-functional requirement (NFR)</td><td>Ch 60</td></tr>
 <tr><td>non-negative matrix factorization (NMF)</td><td>Ch 41</td></tr>
 <tr><td>non-response bias</td><td>Ch 22</td></tr>
+<tr><td>nonexistent and ambiguous local times</td><td>Ch 77</td></tr>
 <tr><td>Normal / log-normal distribution</td><td>Ch 73</td></tr>
 <tr><td>normal approximation</td><td>Ch 22</td></tr>
 <tr><td>normal distribution</td><td>Ch 21, Ch 35</td></tr>
@@ -2654,6 +2729,7 @@ li { margin: 3pt 0; }
 <tr><td>np.nan</td><td>Ch 18</td></tr>
 <tr><td>np.select</td><td>Ch 18</td></tr>
 <tr><td>np.where</td><td>Ch 18</td></tr>
+<tr><td>NPS scale (−100 to +100)</td><td>Ch 75</td></tr>
 <tr><td>.npy file</td><td>Ch 53</td></tr>
 <tr><td>NR and FNR</td><td>Ch 34</td></tr>
 <tr><td>NTILE</td><td>Ch 27</td></tr>
@@ -2663,11 +2739,12 @@ li { margin: 3pt 0; }
 <tr><td>NULL propagation in</td><td></td><td></td><td>Ch 71</td></tr>
 <tr><td>null result</td><td>Ch 27</td></tr>
 <tr><td>nullable Int64</td><td>Ch 72</td></tr>
-<tr><td>nullable integer (Int64)</td><td>Ch 18</td></tr>
+<tr><td>nullable integer (Int64)</td><td>Ch 18, Ch 77</td></tr>
 <tr><td>NULLIF</td><td>Ch 71</td></tr>
 <tr><td>NULLS FIRST / NULLS LAST</td><td>Ch 71</td></tr>
 <tr><td>number</td><td>Ch 1, Ch 10</td></tr>
 <tr><td>number format</td><td>Ch 10</td></tr>
+<tr><td>numbers stored as text</td><td>Ch 70</td></tr>
 <tr><td>NUMERIC vs floating point</td><td>Ch 12</td></tr>
 <tr><td>numerical gradient check</td><td>Ch 43</td></tr>
 <tr><td>NumPy</td><td>Ch 18</td></tr>
@@ -2748,6 +2825,7 @@ li { margin: 3pt 0; }
 <tr><td>overfitting</td><td>Ch 37, Ch 53, Ch 74</td></tr>
 <tr><td>overlap</td><td>Ch 55, Ch 79</td></tr>
 <tr><td>overlap (common support)</td><td>Ch 31</td></tr>
+<tr><td>overlapping runs ---</td><td>Ch 78</td></tr>
 <tr><td>overplotting</td><td>Ch 15</td></tr>
 <tr><td>override with reason</td><td>Ch 59</td></tr>
 <tr><td>oversampling</td><td>Ch 39</td></tr>
@@ -2768,6 +2846,7 @@ li { margin: 3pt 0; }
 <tr><td>pagination</td><td>Ch 29</td></tr>
 <tr><td>pagination (offset, cursor)</td><td>Ch 45</td></tr>
 <tr><td>paging</td><td>Ch 18</td></tr>
+<tr><td>paired design</td><td>Ch 73</td></tr>
 <tr><td>paired test</td><td>Ch 22</td></tr>
 <tr><td>pandas</td><td>Ch 18</td></tr>
 <tr><td>pandas DataFrame</td><td>Ch 72</td></tr>
@@ -2813,7 +2892,9 @@ li { margin: 3pt 0; }
 <tr><td>PCA</td><td>Ch 38</td></tr>
 <tr><td>pd.cut</td><td>Ch 18</td></tr>
 <tr><td>PDF</td><td>Ch 2, Ch 20</td></tr>
+<tr><td>peak factor</td><td>Ch 80</td></tr>
 <tr><td>Pearson</td><td>Ch 22</td></tr>
+<tr><td>Pearson against Spearman</td><td>Ch 73</td></tr>
 <tr><td>peeking</td><td>Ch 22, Ch 30</td></tr>
 <tr><td>peeking (repeated significance testing)</td><td>Ch 73</td></tr>
 <tr><td>peer group</td><td>Ch 28, Ch 71</td></tr>
@@ -2822,9 +2903,12 @@ li { margin: 3pt 0; }
 <tr><td>percent change</td><td>Ch 4</td></tr>
 <tr><td>percent of</td><td>Ch 4</td></tr>
 <tr><td>percent point function (ppf)</td><td>Ch 21</td></tr>
+<tr><td>percent-encoding against form-encoding (quote / quote_plus)</td><td>Ch 78</td></tr>
 <tr><td>percentage</td><td>Ch 4</td></tr>
 <tr><td>percentage point</td><td>Ch 4</td></tr>
+<tr><td>percentage points against relative percent</td><td>Ch 75</td></tr>
 <tr><td>percentile</td><td>Ch 8, Ch 21</td></tr>
+<tr><td>percentile interpolation method ---</td><td>Ch 73</td></tr>
 <tr><td>percentile threshold</td><td>Ch 20</td></tr>
 <tr><td>PERCENTILE_CONT (recap)</td><td>Ch 28</td></tr>
 <tr><td>PERCENTILE_DISC</td><td>Ch 28</td></tr>
@@ -2833,7 +2917,8 @@ li { margin: 3pt 0; }
 <tr><td>perishable tools</td><td>Ch 83</td></tr>
 <tr><td>permission bits</td><td>Ch 34</td></tr>
 <tr><td>permission policy</td><td>Ch 52</td></tr>
-<tr><td>permutation importance</td><td>Ch 37, Ch 39</td></tr>
+<tr><td>permutation importance</td><td>Ch 37, Ch 39, Ch 74</td></tr>
+<tr><td>permuted-target check</td><td>Ch 74</td></tr>
 <tr><td>perplexity</td><td>Ch 38</td></tr>
 <tr><td>persistence</td><td>Ch 20</td></tr>
 <tr><td>persistence rule</td><td>Ch 40</td></tr>
@@ -2846,12 +2931,13 @@ li { margin: 3pt 0; }
 <tr><td>pickle risk</td><td>Ch 56</td></tr>
 <tr><td>pie chart</td><td>Ch 15</td></tr>
 <tr><td>PII (personally identifiable information)</td><td>Ch 64</td></tr>
-<tr><td>pilot (as a decision-testing step) ---</td><td>Ch 75</td></tr>
+<tr><td>pilot (as a decision-testing step)</td><td>Ch 75</td></tr>
 <tr><td>pinned model version</td><td>Ch 57</td></tr>
 <tr><td>pinned requirements</td><td>Ch 29</td></tr>
 <tr><td>pip</td><td>Ch 17</td></tr>
 <tr><td>pipe</td><td>Ch 34</td></tr>
 <tr><td>pipeline</td><td>Ch 7, Ch 23, Ch 36, Ch 46</td></tr>
+<tr><td>Pipeline ---</td><td>Ch 74</td></tr>
 <tr><td>pipeline version</td><td>Ch 58</td></tr>
 <tr><td>pivot</td><td>Ch 13</td></tr>
 <tr><td>pivot chart</td><td>Ch 11</td></tr>
@@ -2877,12 +2963,14 @@ li { margin: 3pt 0; }
 <tr><td>polling</td><td>Ch 60, Ch 63</td></tr>
 <tr><td>polling vs. webhook</td><td>Ch 78</td></tr>
 <tr><td>polymorphism</td><td>Ch 18</td></tr>
+<tr><td>pooled rate</td><td>Ch 73</td></tr>
 <tr><td>pooled standard deviation</td><td>Ch 31</td></tr>
 <tr><td>pooled standard error</td><td>Ch 30</td></tr>
 <tr><td>pooling</td><td>Ch 53</td></tr>
 <tr><td>pooling (max pooling)</td><td>Ch 43</td></tr>
 <tr><td>popularity baseline</td><td>Ch 42</td></tr>
 <tr><td>population</td><td>Ch 21, Ch 30</td></tr>
+<tr><td>population against sample standard deviation</td><td>Ch 73</td></tr>
 <tr><td>population stability index</td><td>Ch 56</td></tr>
 <tr><td>population stability index (PSI)</td><td>Ch 79</td></tr>
 <tr><td>port</td><td>Ch 12, Ch 34</td></tr>
@@ -2918,9 +3006,12 @@ li { margin: 3pt 0; }
 <tr><td>pre-registration</td><td>Ch 22</td></tr>
 <tr><td>precise question</td><td>Ch 5</td></tr>
 <tr><td>precision</td><td>Ch 39, Ch 53, Ch 74</td></tr>
+<tr><td>precision as displayed</td><td>Ch 70</td></tr>
 <tr><td>precision@k</td><td>Ch 42</td></tr>
 <tr><td>precision–recall curve</td><td>Ch 39</td></tr>
+<tr><td>precondition</td><td>Ch 72A</td></tr>
 <tr><td>predicate overwrite</td><td>Ch 49</td></tr>
+<tr><td>predicate pushdown</td><td>Ch 77</td></tr>
 <tr><td>predict</td><td>Ch 36</td></tr>
 <tr><td>predict_proba</td><td>Ch 36</td></tr>
 <tr><td>prediction interval</td><td>Ch 40</td></tr>
@@ -2962,6 +3053,7 @@ li { margin: 3pt 0; }
 <tr><td>product backlog</td><td>Ch 26</td></tr>
 <tr><td>product backlog vs. sprint backlog</td><td>Ch 76B</td></tr>
 <tr><td>Product Owner</td><td>Ch 26, Ch 76B</td></tr>
+<tr><td>product quantisation</td><td>Ch 79</td></tr>
 <tr><td>product-decision case</td><td>Ch 75</td></tr>
 <tr><td>profile</td><td>Ch 32</td></tr>
 <tr><td>profiles.yml</td><td>Ch 32</td></tr>
@@ -2971,10 +3063,12 @@ li { margin: 3pt 0; }
 <tr><td>program</td><td>Ch 17</td></tr>
 <tr><td>project</td><td>Ch 9</td></tr>
 <tr><td>project frame</td><td>Ch 59</td></tr>
+<tr><td>promoter / passive / detractor</td><td>Ch 75</td></tr>
 <tr><td>prompt</td><td>Ch 17, Ch 54</td></tr>
 <tr><td>prompt caching</td><td>Ch 54, Ch 55, Ch 57</td></tr>
 <tr><td>prompt injection</td><td>Ch 54, Ch 79</td></tr>
 <tr><td>prompt injection through documents</td><td>Ch 55</td></tr>
+<tr><td>prompt prefix caching ---</td><td>Ch 79</td></tr>
 <tr><td>prompt registry</td><td>Ch 57</td></tr>
 <tr><td>prompt version</td><td>Ch 57</td></tr>
 <tr><td>prompt versioning</td><td>Ch 79</td></tr>
@@ -3021,6 +3115,7 @@ li { margin: 3pt 0; }
 <tr><td>qualitative / categorical</td><td>Ch 1</td></tr>
 <tr><td>quantified impact</td><td>Ch 76A</td></tr>
 <tr><td>quantile</td><td>Ch 18</td></tr>
+<tr><td>quantisation (int8, int4)</td><td>Ch 79</td></tr>
 <tr><td>quantitative</td><td>Ch 1</td></tr>
 <tr><td>quantization</td><td>Ch 53</td></tr>
 <tr><td>quantization-aware training</td><td>Ch 53</td></tr>
@@ -3034,7 +3129,8 @@ li { margin: 3pt 0; }
 <tr><td>query parameter</td><td>Ch 29</td></tr>
 <tr><td>query plan</td><td>Ch 28, Ch 48</td></tr>
 <tr><td>queue</td><td>Ch 33</td></tr>
-<tr><td>queue (FIFO) ---</td><td>Ch 72A</td></tr>
+<tr><td>queue (FIFO)</td><td>Ch 72A</td></tr>
+<tr><td>queueing collapse ---</td><td>Ch 80</td></tr>
 <tr><td>quicksort</td><td>Ch 72A</td></tr>
 <tr><td>quorum</td><td>Ch 61</td></tr>
 <tr><td>quota</td><td>Ch 19</td></tr>
@@ -3060,6 +3156,7 @@ li { margin: 3pt 0; }
 <tr><td>range</td><td>Ch 10, Ch 17, Ch 21</td></tr>
 <tr><td>RANK</td><td>Ch 13</td></tr>
 <tr><td>rank</td><td>Ch 54</td></tr>
+<tr><td>rank-based metric</td><td>Ch 74</td></tr>
 <tr><td>ransomware</td><td>Ch 2</td></tr>
 <tr><td>rate</td><td>Ch 4</td></tr>
 <tr><td>rate (λ)</td><td>Ch 21</td></tr>
@@ -3085,7 +3182,7 @@ li { margin: 3pt 0; }
 <tr><td>real evidence</td><td>Ch 69</td></tr>
 <tr><td>recall</td><td>Ch 53, Ch 74</td></tr>
 <tr><td>recall (sensitivity, true positive rate)</td><td>Ch 39</td></tr>
-<tr><td>recall@k</td><td>Ch 42, Ch 55</td></tr>
+<tr><td>recall@k</td><td>Ch 42, Ch 55, Ch 79</td></tr>
 <tr><td>receivables / accounts receivable</td><td>Ch 3</td></tr>
 <tr><td>recency</td><td>Ch 5</td></tr>
 <tr><td>recipient list</td><td>Ch 20</td></tr>
@@ -3094,6 +3191,7 @@ li { margin: 3pt 0; }
 <tr><td>reconciliation / manual matching</td><td>Ch 3</td></tr>
 <tr><td>reconciliation check</td><td>Ch 45</td></tr>
 <tr><td>reconciliation criterion</td><td>Ch 76B</td></tr>
+<tr><td>recovery asymmetry</td><td>Ch 75</td></tr>
 <tr><td>recruiter call</td><td>Ch 68</td></tr>
 <tr><td>recursion</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>recursion limit</td><td>Ch 33</td></tr>
@@ -3150,6 +3248,7 @@ li { margin: 3pt 0; }
 <tr><td>replay</td><td>Ch 50, Ch 51</td></tr>
 <tr><td>replica</td><td>Ch 50, Ch 52, Ch 61</td></tr>
 <tr><td>replication</td><td>Ch 61</td></tr>
+<tr><td>replication factor</td><td>Ch 80</td></tr>
 <tr><td>replication slot</td><td>Ch 45</td></tr>
 <tr><td>report</td><td>Ch 3, Ch 16</td></tr>
 <tr><td>report automation</td><td>Ch 78</td></tr>
@@ -3186,6 +3285,7 @@ li { margin: 3pt 0; }
 <tr><td>resume-driven design</td><td>Ch 60</td></tr>
 <tr><td>retention</td><td>Ch 13, Ch 49, Ch 50, Ch 64</td></tr>
 <tr><td>retention period</td><td>Ch 57</td></tr>
+<tr><td>retention policy</td><td>Ch 80</td></tr>
 <tr><td>retention rate</td><td>Ch 23</td></tr>
 <tr><td>retraining trigger</td><td>Ch 56, Ch 79</td></tr>
 <tr><td>retrieval practice</td><td>Ch 9</td></tr>
@@ -3197,7 +3297,7 @@ li { margin: 3pt 0; }
 <tr><td>retry policy</td><td>Ch 46</td></tr>
 <tr><td>retry queue</td><td>Ch 33</td></tr>
 <tr><td>retry with backoff</td><td>Ch 18</td></tr>
-<tr><td>Retry-After</td><td>Ch 29, Ch 45</td></tr>
+<tr><td>Retry-After</td><td>Ch 29, Ch 45, Ch 78</td></tr>
 <tr><td>return</td><td>Ch 17</td></tr>
 <tr><td>return array</td><td>Ch 11</td></tr>
 <tr><td>return on assets (ROA)</td><td>Ch 23</td></tr>
@@ -3263,6 +3363,7 @@ li { margin: 3pt 0; }
 <tr><td>rubric</td><td>Ch 55</td></tr>
 <tr><td>Ruff (All terms are defined in the Glossary, Appendix A.) ---</td><td>Ch 29</td></tr>
 <tr><td>rule of 72</td><td>Ch 4</td></tr>
+<tr><td>rule of 72 ---</td><td>Ch 75</td></tr>
 <tr><td>rule of three</td><td>Ch 58</td></tr>
 <tr><td>rule-of-thumb baseline</td><td>Ch 36</td></tr>
 <tr><td>run</td><td>Ch 56</td></tr>
@@ -3276,6 +3377,7 @@ li { margin: 3pt 0; }
 <tr><td>runbook</td><td>Ch 46, Ch 47, Ch 56, Ch 63</td></tr>
 <tr><td>running total</td><td>Ch 13, Ch 71</td></tr>
 <tr><td>running variable</td><td>Ch 31</td></tr>
+<tr><td>RuntimeError: dictionary changed size</td><td>Ch 72A</td></tr>
 <tr><td>runway</td><td>Ch 68</td></tr>
 <tr><td>R²</td><td>Ch 39</td></tr>
 <tr><td>R² (coefficient of determination)</td><td>Ch 22, Ch 37</td></tr>
@@ -3303,6 +3405,7 @@ li { margin: 3pt 0; }
 <tr><td>save rate</td><td>Ch 44</td></tr>
 <tr><td>scalar subquery</td><td>Ch 71</td></tr>
 <tr><td>scale and maintenance</td><td>Ch 69</td></tr>
+<tr><td>scale invariance</td><td>Ch 74</td></tr>
 <tr><td>scaled dot-product attention</td><td>Ch 53</td></tr>
 <tr><td>scaling</td><td>Ch 35</td></tr>
 <tr><td>scaling (standardization)</td><td>Ch 36</td></tr>
@@ -3326,9 +3429,12 @@ li { margin: 3pt 0; }
 <tr><td>schema registry</td><td>Ch 50</td></tr>
 <tr><td>schema validation</td><td>Ch 54</td></tr>
 <tr><td>scientific notation</td><td>Ch 18, Ch 35</td></tr>
+<tr><td>scientific-notation display</td><td>Ch 70</td></tr>
 <tr><td>scikit-learn</td><td>Ch 35, Ch 36</td></tr>
 <tr><td>scope</td><td>Ch 17, Ch 51, Ch 83</td></tr>
 <tr><td>score normalization</td><td>Ch 55</td></tr>
+<tr><td>.score()</td><td>Ch 74</td></tr>
+<tr><td>scoring=</td><td>Ch 74</td></tr>
 <tr><td>scp</td><td>Ch 34</td></tr>
 <tr><td>screen scraping</td><td>Ch 58</td></tr>
 <tr><td>ScreenUpdating</td><td>Ch 19</td></tr>
@@ -3403,6 +3509,7 @@ li { margin: 3pt 0; }
 <tr><td>Set</td><td>Ch 19</td></tr>
 <tr><td>set</td><td>Ch 17, Ch 33</td></tr>
 <tr><td>set -euo pipefail</td><td>Ch 34</td></tr>
+<tr><td>set ordering</td><td>Ch 72A</td></tr>
 <tr><td>SettingWithCopyWarning (legacy)</td><td>Ch 72</td></tr>
 <tr><td>severity (error, warning)</td><td>Ch 47</td></tr>
 <tr><td>severity levels (S1, S2, S3)</td><td>Ch 47</td></tr>
@@ -3415,7 +3522,7 @@ li { margin: 3pt 0; }
 <tr><td>shadow mode (Chapter 56)</td><td>Ch 60</td></tr>
 <tr><td>shadow rollout</td><td>Ch 58</td></tr>
 <tr><td>shadow system</td><td>Ch 3, Ch 25</td></tr>
-<tr><td>shallow copy</td><td>Ch 72</td></tr>
+<tr><td>shallow copy</td><td>Ch 72, Ch 72A</td></tr>
 <tr><td>SHAP</td><td>Ch 37, Ch 39</td></tr>
 <tr><td>shape</td><td>Ch 18, Ch 35</td></tr>
 <tr><td>shape rule</td><td>Ch 35</td></tr>
@@ -3437,6 +3544,7 @@ li { margin: 3pt 0; }
 <tr><td>showback</td><td>Ch 65</td></tr>
 <tr><td>showback vs. chargeback</td><td>Ch 80</td></tr>
 <tr><td>shuffle</td><td>Ch 48</td></tr>
+<tr><td>shuffle=False</td><td>Ch 74</td></tr>
 <tr><td>side effect</td><td>Ch 46</td></tr>
 <tr><td>sigmoid</td><td>Ch 37, Ch 43</td></tr>
 <tr><td>sign-off</td><td>Ch 25</td></tr>
@@ -3455,7 +3563,7 @@ li { margin: 3pt 0; }
 <tr><td>Simpson's paradox</td><td>Ch 22, Ch 73</td></tr>
 <tr><td>single point of failure</td><td>Ch 80</td></tr>
 <tr><td>single point of failure (SPOF)</td><td>Ch 61</td></tr>
-<tr><td>single point of failure (undocumented automation) ---</td><td>Ch 78</td></tr>
+<tr><td>single point of failure (undocumented automation)</td><td>Ch 78</td></tr>
 <tr><td>singular test</td><td>Ch 32, Ch 47</td></tr>
 <tr><td>sink</td><td>Ch 50</td></tr>
 <tr><td>skew</td><td>Ch 15, Ch 21, Ch 48</td></tr>
@@ -3466,6 +3574,7 @@ li { margin: 3pt 0; }
 <tr><td>slicer</td><td>Ch 11, Ch 16</td></tr>
 <tr><td>slide title as a finding</td><td>Ch 24</td></tr>
 <tr><td>sliding-window pattern</td><td>Ch 72A</td></tr>
+<tr><td>SLO against SLA</td><td>Ch 80</td></tr>
 <tr><td>slope</td><td>Ch 22</td></tr>
 <tr><td>slope and intercept</td><td>Ch 35</td></tr>
 <tr><td>slope of an activation</td><td>Ch 43</td></tr>
@@ -3474,6 +3583,7 @@ li { margin: 3pt 0; }
 <tr><td>small files</td><td>Ch 50</td></tr>
 <tr><td>small files problem</td><td>Ch 48, Ch 49</td></tr>
 <tr><td>small multiples</td><td>Ch 15</td></tr>
+<tr><td>small-integer cache</td><td>Ch 72A</td></tr>
 <tr><td>small-numbers bias</td><td>Ch 5</td></tr>
 <tr><td>Smart Fill</td><td>Ch 10</td></tr>
 <tr><td>smoke test</td><td>Ch 57</td></tr>
@@ -3485,6 +3595,7 @@ li { margin: 3pt 0; }
 <tr><td>snowflake schema</td><td>Ch 28</td></tr>
 <tr><td>soft delete</td><td>Ch 12</td></tr>
 <tr><td>softmax</td><td>Ch 41, Ch 43, Ch 53, Ch 54</td></tr>
+<tr><td>softmax temperature</td><td>Ch 79</td></tr>
 <tr><td>software</td><td>Ch 29</td></tr>
 <tr><td>software development life cycle (SDLC)</td><td>Ch 25</td></tr>
 <tr><td>Solver</td><td>Ch 11</td></tr>
@@ -3514,6 +3625,7 @@ li { margin: 3pt 0; }
 <tr><td>spill reference (#)</td><td>Ch 11</td></tr>
 <tr><td>#SPILL!</td><td>Ch 11</td></tr>
 <tr><td>split</td><td>Ch 37</td></tr>
+<tr><td>splittable compression</td><td>Ch 77</td></tr>
 <tr><td>spread</td><td>Ch 21</td></tr>
 <tr><td>spreadsheet application</td><td>Ch 10</td></tr>
 <tr><td>SpreadsheetApp</td><td>Ch 19</td></tr>
@@ -3591,7 +3703,8 @@ li { margin: 3pt 0; }
 <tr><td>straight-through rate</td><td>Ch 59</td></tr>
 <tr><td>stratified k-fold</td><td>Ch 36</td></tr>
 <tr><td>stratified sample</td><td>Ch 21</td></tr>
-<tr><td>stratify</td><td>Ch 36</td></tr>
+<tr><td>StratifiedKFold against KFold</td><td>Ch 74</td></tr>
+<tr><td>stratify</td><td>Ch 36, Ch 74</td></tr>
 <tr><td>stream replay</td><td>Ch 62</td></tr>
 <tr><td>streaming</td><td>Ch 50, Ch 57</td></tr>
 <tr><td>streaming serving</td><td>Ch 56</td></tr>
@@ -3631,6 +3744,7 @@ li { margin: 3pt 0; }
 <tr><td>support vector machine</td><td>Ch 37</td></tr>
 <tr><td>surprise</td><td>Ch 35</td></tr>
 <tr><td>surrogate key</td><td>Ch 28, Ch 77</td></tr>
+<tr><td>survival rate</td><td>Ch 75</td></tr>
 <tr><td>survivorship bias</td><td>Ch 5, Ch 22</td></tr>
 <tr><td>swimlane diagram</td><td>Ch 25, Ch 76B</td></tr>
 <tr><td>symbol</td><td>Ch 54</td></tr>
@@ -3655,6 +3769,7 @@ li { margin: 3pt 0; }
 <tr><td>tag</td><td>Ch 19, Ch 52</td></tr>
 <tr><td>tagging</td><td>Ch 65</td></tr>
 <tr><td>tail</td><td>Ch 21, Ch 34</td></tr>
+<tr><td>tail latency</td><td>Ch 80</td></tr>
 <tr><td>take-home assignment</td><td>Ch 68, Ch 82</td></tr>
 <tr><td>tanh</td><td>Ch 43</td></tr>
 <tr><td>target</td><td>Ch 32, Ch 36</td></tr>
@@ -3693,6 +3808,7 @@ li { margin: 3pt 0; }
 <tr><td>text classification</td><td>Ch 41</td></tr>
 <tr><td>Text to Columns</td><td>Ch 10</td></tr>
 <tr><td>TF-IDF</td><td>Ch 41</td></tr>
+<tr><td>the 1900 leap-year bug</td><td>Ch 70</td></tr>
 <tr><td>the two-minute version</td><td>Ch 27</td></tr>
 <tr><td>theme</td><td>Ch 16</td></tr>
 <tr><td>third normal form (3NF)</td><td>Ch 28</td></tr>
@@ -3706,6 +3822,7 @@ li { margin: 3pt 0; }
 <tr><td>threshold re-tuning</td><td>Ch 56</td></tr>
 <tr><td>threshold sensitivity</td><td>Ch 27</td></tr>
 <tr><td>thumbs-down rate</td><td>Ch 57</td></tr>
+<tr><td>thundering herd</td><td>Ch 78</td></tr>
 <tr><td>ticket</td><td>Ch 3</td></tr>
 <tr><td>tidy data</td><td>Ch 18</td></tr>
 <tr><td>tie-breaker</td><td>Ch 13, Ch 71</td></tr>
@@ -3725,9 +3842,10 @@ li { margin: 3pt 0; }
 <tr><td>timeliness</td><td>Ch 1, Ch 25</td></tr>
 <tr><td>timeout</td><td>Ch 18, Ch 29, Ch 45, Ch 46, Ch 57, Ch 61</td></tr>
 <tr><td>Timer</td><td>Ch 19</td></tr>
+<tr><td>TimeSeriesSplit</td><td>Ch 74</td></tr>
 <tr><td>timestamp strategy</td><td>Ch 32</td></tr>
 <tr><td>timestamp with time zone</td><td>Ch 14</td></tr>
-<tr><td>Timsort</td><td>Ch 33</td></tr>
+<tr><td>Timsort</td><td>Ch 33, Ch 72A</td></tr>
 <tr><td>TLS</td><td>Ch 64</td></tr>
 <tr><td>to-be</td><td>Ch 25</td></tr>
 <tr><td>to_sql</td><td>Ch 18</td></tr>
@@ -3750,6 +3868,7 @@ li { margin: 3pt 0; }
 <tr><td>top-k</td><td>Ch 54</td></tr>
 <tr><td>top-N table</td><td>Ch 39</td></tr>
 <tr><td>top-p (nucleus sampling)</td><td>Ch 54</td></tr>
+<tr><td>top-p against top-k</td><td>Ch 79</td></tr>
 <tr><td>topic</td><td>Ch 50</td></tr>
 <tr><td>topic drift</td><td>Ch 57</td></tr>
 <tr><td>topic modeling</td><td>Ch 41</td></tr>
@@ -3757,6 +3876,7 @@ li { margin: 3pt 0; }
 <tr><td>topological sort</td><td>Ch 77</td></tr>
 <tr><td>total addressable market (TAM)</td><td>Ch 75</td></tr>
 <tr><td>total cost of ownership (TCO)</td><td>Ch 80</td></tr>
+<tr><td>total deadline</td><td>Ch 78</td></tr>
 <tr><td>total pay</td><td>Ch 8</td></tr>
 <tr><td>total probability</td><td>Ch 21</td></tr>
 <tr><td>TOTALYTD</td><td>Ch 11, Ch 16</td></tr>
@@ -3836,6 +3956,7 @@ li { margin: 3pt 0; }
 <tr><td>type I error</td><td>Ch 22</td></tr>
 <tr><td>Type II error</td><td>Ch 30, Ch 73</td></tr>
 <tr><td>type II error</td><td>Ch 22</td></tr>
+<tr><td>type inference</td><td>Ch 77</td></tr>
 <tr><td>TypeScript</td><td>Ch 19</td></tr>
 </tbody></table>
 <h3>U</h3>
@@ -3853,6 +3974,7 @@ li { margin: 3pt 0; }
 <tr><td>undocumented constraints</td><td>Ch 59</td></tr>
 <tr><td>Unicode</td><td>Ch 2</td></tr>
 <tr><td>uniform distribution</td><td>Ch 21</td></tr>
+<tr><td>uniform distribution of p-values</td><td>Ch 73</td></tr>
 <tr><td>UNION / UNION ALL</td><td>Ch 12</td></tr>
 <tr><td>UNION ALL in recursion</td><td>Ch 28</td></tr>
 <tr><td>union, intersection, difference</td><td>Ch 17</td></tr>
@@ -3894,7 +4016,9 @@ li { margin: 3pt 0; }
 <tr><td>UserForm</td><td>Ch 19, Ch 70</td></tr>
 <tr><td>USERPRINCIPALNAME</td><td>Ch 16</td></tr>
 <tr><td>UTC</td><td>Ch 14</td></tr>
+<tr><td>UTC-first scheduling</td><td>Ch 77</td></tr>
 <tr><td>UTF-8</td><td>Ch 2</td></tr>
+<tr><td>utilisation headroom</td><td>Ch 80</td></tr>
 <tr><td>uv</td><td>Ch 29</td></tr>
 <tr><td>uv.lock</td><td>Ch 29</td></tr>
 </tbody></table>
@@ -3919,12 +4043,15 @@ li { margin: 3pt 0; }
 <tr><td>variable</td><td>Ch 17</td></tr>
 <tr><td>variable cost</td><td>Ch 23</td></tr>
 <tr><td>variance</td><td>Ch 21, Ch 35, Ch 37, Ch 73</td></tr>
+<tr><td>variance inflation factor (VIF)</td><td>Ch 74</td></tr>
+<tr><td>variance of a difference</td><td>Ch 73</td></tr>
 <tr><td>variant</td><td>Ch 30</td></tr>
 <tr><td>VBA</td><td>Ch 19</td></tr>
 <tr><td>VBA object model</td><td>Ch 70</td></tr>
 <tr><td>vector</td><td>Ch 35</td></tr>
 <tr><td>vector database</td><td>Ch 79</td></tr>
 <tr><td>vector search</td><td>Ch 55</td></tr>
+<tr><td>vector storage arithmetic</td><td>Ch 79</td></tr>
 <tr><td>vectorization</td><td>Ch 72</td></tr>
 <tr><td>vectorized operation</td><td>Ch 18</td></tr>
 <tr><td>vendor lock-in</td><td>Ch 66</td></tr>
@@ -3968,7 +4095,7 @@ li { margin: 3pt 0; }
 <tr><td>weight</td><td>Ch 43, Ch 53</td></tr>
 <tr><td>weight and bias (w and b)</td><td>Ch 35</td></tr>
 <tr><td>weight decay</td><td>Ch 53</td></tr>
-<tr><td>weighted average</td><td>Ch 4, Ch 11, Ch 21, Ch 41</td></tr>
+<tr><td>weighted average</td><td>Ch 4, Ch 11, Ch 21, Ch 41, Ch 73</td></tr>
 <tr><td>weighted F1</td><td>Ch 39</td></tr>
 <tr><td>Welch's t-test</td><td>Ch 22, Ch 30</td></tr>
 <tr><td>what-if analysis</td><td>Ch 11</td></tr>
@@ -3987,7 +4114,7 @@ li { margin: 3pt 0; }
 <tr><td>WINDOW clause (recap)</td><td>Ch 28</td></tr>
 <tr><td>window function</td><td>Ch 13</td></tr>
 <tr><td>window ORDER BY</td><td>Ch 13</td></tr>
-<tr><td>winner's curse ---</td><td>Ch 73</td></tr>
+<tr><td>winner's curse</td><td>Ch 73</td></tr>
 <tr><td>winsorizing</td><td>Ch 30</td></tr>
 <tr><td>WITH</td><td>Ch 13</td></tr>
 <tr><td>With</td><td>Ch 19</td></tr>
@@ -4008,6 +4135,7 @@ li { margin: 3pt 0; }
 <tr><td>Worksheet</td><td>Ch 19</td></tr>
 <tr><td>worksheet (sheet)</td><td>Ch 10</td></tr>
 <tr><td>workspace</td><td>Ch 16</td></tr>
+<tr><td>wrap-around gap</td><td>Ch 78</td></tr>
 <tr><td>write-ahead log (WAL)</td><td>Ch 45</td></tr>
 <tr><td>write–audit–publish</td><td>Ch 77</td></tr>
 <tr><td>write–audit–publish (WAP)</td><td>Ch 47</td></tr>

@@ -10,7 +10,7 @@ Three ways in, depending on what you are looking for.
 - **"Where is topic X taught?"** — *The topic index* at the end. It is alphabetical, built from every chapter's own Key terms list, and points at the chapter.
 - **"What do I actually do in this chapter?"** — the part-by-part tables. Each chapter names the practice files that ship with it.
 
-The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a worked notebook and **13** ship runnable SQL in both PostgreSQL and MySQL.
+The book is **85 chapters**, about **1,298,540 words**. **49** chapters have a worked notebook and **14** ship runnable SQL in both PostgreSQL and MySQL.
 
 ## The four books
 
@@ -170,7 +170,7 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 | 12 | **Databases & SQL Foundations** | 22–26 hours | 2 SQL |
 | 13 | **SQL for Real Analysis** | 15–20 hours | 2 Python script, 4 SQL |
 | 14 | **Data Cleaning & Preparation** | 20–25 hours | 4 Python script, 11 SQL, data (json), 10 dataset (csv) |
-| 15 | **Data Visualization Principles** | 12–15 hours | Excel workbook, Python script, SQL, 14 dataset (csv), notes |
+| 15 | **Data Visualization Principles** | 12–15 hours | Excel workbook, Python script, 2 SQL, 14 dataset (csv), notes |
 | 16 | **Business Intelligence with Power BI** | 22–26 hours | 4 SQL, 2 dataset (csv), 2 notes |
 | 17 | **Python from Zero** | 28–32 hours | 3 Python script, 2 data (json), 15 dataset (csv), notebook, 2 text |
 | 18 | **Python for Analysts: pandas & Automation** | 47–53 hours | 2 Excel workbook, 6 Python script, data (json), notebook, notes |
@@ -259,7 +259,7 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Sections:** 15.1 How people read charts · 15.2 Start from the question · 15.3 Bar and column charts · 15.4 Line charts · 15.5 Distributions: histograms and box plots · 15.6 Relationships: scatter plots · 15.7 Parts of a whole: stacked bars, pies, and waterfalls · 15.8 Heatmaps and tables · 15.9 Maps · 15.10 Color with meaning · 15.11 Titles, labels, annotations, and clutter · 15.12 Misleading charts, and how not to make them · 15.13 Missing data, uncertainty, and accessibility · 15.14 Building charts in Excel and Google Sheets · 15.15 Running this chapter's SQL in MySQL
 
-**In `companion/ch15/`** — *SQL:* `ch15_queries_mysql.sql` · *Python script:* `build_ch15_data.py` · *Excel workbook:* `ch15_chart_data.xlsx` · *dataset (csv):* `anscombe.csv`, `bridge_2024_2025.csv`, `category_month_2025.csv`, `city_2025.csv`, and 10 more
+**In `companion/ch15/`** — *SQL:* `ch15_queries_mysql.sql`, `ch15_queries_postgresql.sql` · *Python script:* `build_ch15_data.py` · *Excel workbook:* `ch15_chart_data.xlsx` · *dataset (csv):* `anscombe.csv`, `bridge_2024_2025.csv`, `category_month_2025.csv`, `city_2025.csv`, and 10 more
 
 
 ### Chapter 16. Business Intelligence with Power BI
@@ -1019,25 +1019,25 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 ## Part 8 — Be Interview Ready
 
-**Book 4 · Be Interview Ready** · 17 chapters · roughly 77 hours in total
+**Book 4 · Be Interview Ready** · 17 chapters · roughly 91 hours in total
 
 | Ch | Chapter | Time | What you practise with |
 |---|---|---|---|
 | 68 | **How Data Hiring Works** | 5 hours | *reading only* |
 | 69 | **The Extra-Points Method** | 4–6 hours | *reading only* |
-| 70 | **Excel, Google Sheets, VBA & BI Question Bank** | 4–6 hours | Excel workbook, Python script, dataset (csv) |
+| 70 | **Excel, Google Sheets, VBA & BI Question Bank** | 5–7 hours | Excel workbook, Python script, dataset (csv) |
 | 71 | **SQL Question Bank** | 6 hours | 2 SQL |
 | 72 | **Python & pandas Question Bank** | 4–6 hours | notebook |
-| 72A | **Data Structures & Algorithms Question Bank** | 6–8 hours | notebook |
-| 73 | **Statistics, Probability & Experimentation Bank** | 8–10 hours | notebook |
-| 74 | **Machine Learning Question Bank** | 6–8 hours | notebook |
-| 75 | **Product Sense, Metrics, Case Studies & Guesstimates** | 2–3 hours | *reading only* |
+| 72A | **Data Structures & Algorithms Question Bank** | 8–10 hours | notebook |
+| 73 | **Statistics, Probability & Experimentation Bank** | 9–12 hours | notebook |
+| 74 | **Machine Learning Question Bank** | 8–10 hours | notebook |
+| 75 | **Product Sense, Metrics, Case Studies & Guesstimates** | 5 hours | *reading only* |
 | 76A | **Data Analyst & Data Scientist Question Bank** | 5 hours | *reading only* |
 | 76B | **Business Analyst Question Bank** | 5–3 hours | *reading only* |
-| 77 | **Data Engineering & Data System Design Bank** | 3–4 hours | 2 SQL, notebook |
-| 78 | **Automation & Integration Question Bank** | 5 hours | notebook |
-| 79 | **GenAI, LLM & MLOps Question Bank** | 10 minutes | notebook |
-| 80 | **Architecture & Leadership Question Bank** | 2–3 hours | notebook |
+| 77 | **Data Engineering & Data System Design Bank** | 5–6 hours | 2 SQL, notebook |
+| 78 | **Automation & Integration Question Bank** | 5–4 hours | notebook |
+| 79 | **GenAI, LLM & MLOps Question Bank** | 5–6 hours | notebook |
+| 80 | **Architecture & Leadership Question Bank** | 3–4 hours | notebook |
 | 81 | **Behavioral, HR & Offer Conversations** | 2–3 hours | *reading only* |
 | 82 | **Take-Home Assignments & Mock Interviews** | 2–3 hours | Python script, 2 SQL, notebook |
 
@@ -1069,9 +1069,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 10, 11, 15, 16 and 19, with a few links to Chapter 12 (joins, UNION ALL, GROUP BY). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 4–6 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.
+**Time needed:** 5–7 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 70.9 adds about an hour and is best done with a spreadsheet open, since four of its questions ask you to confirm a behaviour in your own copy of Excel.
 
-**Sections:** 70.0 The practice table, and how to use this bank · 70.1 Formulas, lookups, and logic · 70.2 Pivot tables and data analysis · 70.3 Power Query · 70.4 Google Sheets: QUERY, ARRAYFORMULA, and IMPORTRANGE · 70.5 VBA and Excel macros · 70.6 Google Apps Script · 70.7 DAX and Power BI modeling · 70.8 Dashboard critiques
+**Sections:** 70.0 The practice table, and how to use this bank · 70.1 Formulas, lookups, and logic · 70.2 Pivot tables and data analysis · 70.3 Power Query · 70.4 Google Sheets: QUERY, ARRAYFORMULA, and IMPORTRANGE · 70.5 VBA and Excel macros · 70.6 Google Apps Script · 70.7 DAX and Power BI modeling · 70.8 Dashboard critiques · 70.9 Predict the output: what the grid does behind the number
 
 **In `companion/ch70/`** — *Python script:* `build_ch70_files.py` · *Excel workbook:* `ch70_practice.xlsx` · *dataset (csv):* `ch70_practice.csv`
 
@@ -1106,7 +1106,7 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** do Chapter 33 first (The Computer Science You Actually Need): it teaches almost every idea in this bank. You also need Chapter 17 (Python from zero), Chapter 29, section 29.5 (writing a class with __init__ and self), and Chapter 69 (the three answer tiers and the twelve extra-point tags). Chapter 72's Python gotchas (mutable defaults, is versus ==) come back here twice.
 
-**Time needed:** 6–8 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.
+**Time needed:** 8–10 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Section 72A.10, the predict-the-output round, is worth its own sitting of about 2 hours, answering each snippet out loud before reading on. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.
 
 **In `companion/ch72a/`** — *notebook:* `ch72a-notebook.ipynb`
 
@@ -1117,9 +1117,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapter 21 (probability and distributions), Chapter 22 (confidence intervals, tests, A/B basics, confounders, Simpson's paradox, and regression basics in section 22.10), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** about 8–10 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list.
+**Time needed:** about 9–12 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list. Section 73.8 adds about an hour and is best done in one sitting.
 
-**Sections:** 73.0 The setup cell, and how to use this bank · 73.1 Core probability concepts · 73.2 Distributions · 73.3 Hypothesis testing fundamentals · 73.4 A/B test design · 73.5 A/B test debugging · 73.6 Causal inference and Simpson's paradox · 73.7 Live-coding and live-analysis walk-throughs
+**Sections:** 73.0 The setup cell, and how to use this bank · 73.1 Core probability concepts · 73.2 Distributions · 73.3 Hypothesis testing fundamentals · 73.4 A/B test design · 73.5 A/B test debugging · 73.6 Causal inference and Simpson's paradox · 73.7 Live-coding and live-analysis walk-throughs · 73.8 Predict the number: the arithmetic that quietly goes wrong
 
 **In `companion/ch73/`** — *notebook:* `ch73-notebook.ipynb`
 
@@ -1130,9 +1130,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Part 4 (Chapters 35–43), which teaches every idea in this bank; Chapter 53, section 53.3 (early stopping) and Chapter 56 (monitoring, drift, training-serving skew) for section 74.6; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 6–8 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Plus 1 hour for the final-week list.
+**Time needed:** 8–10 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and about an hour to run the four code demos yourself. Section 74.8 adds about 1½ hours and is worth a sitting of its own, with the code running beside you. Plus 1 hour for the final-week list.
 
-**Sections:** 74.1 Basic-but-tricky ML questions · 74.2 Bias, variance, and the shape of a good model · 74.3 Metrics, calibration, and thresholds · 74.4 Data leakage · 74.5 Feature engineering · 74.6 Model debugging · 74.7 ML case studies and live-coding walk-throughs
+**Sections:** 74.1 Basic-but-tricky ML questions · 74.2 Bias, variance, and the shape of a good model · 74.3 Metrics, calibration, and thresholds · 74.4 Data leakage · 74.5 Feature engineering · 74.6 Model debugging · 74.7 ML case studies and live-coding walk-throughs · 74.8 Predict the number: what the library did that you did not ask for
 
 **In `companion/ch74/`** — *notebook:* `ch74-notebook.ipynb`
 
@@ -1143,9 +1143,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 3 (KPIs, dashboards), 4 (percentage points, estimation), 5 (precise questions, issue trees, MECE), 22 (A/B design, Simpson's paradox), 23 (KPI trees, diagnosing a change, guardrails) and 24 (turning an ask into a question), with a few links to Chapters 15, 16, 25 and 30. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 2½–3½ hours to read and drill every question once, out loud; 2–3 hours more for the project.
+**Time needed:** 3½–5 hours to read and drill every question once, out loud; 2–3 hours more for the project. Section 75.7 is arithmetic rather than structure, and rewards being done with a pen rather than read.
 
-**Sections:** 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live
+**Sections:** 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live · 75.7 Predict the number: metric arithmetic that is not what it looks like
 
 
 ### Chapter 76A. Data Analyst & Data Scientist Question Bank
@@ -1172,9 +1172,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Part 5 (Chapters 45–52: ingestion, pipelines, data quality, distributed compute, storage, streaming, activation and deployment) and Chapter 28 (query plans, grain, the star schema, slowly changing dimensions). They also link to Chapter 12, section 12.13 (the upsert), Chapter 33 (queues and graphs), Chapter 61 (partitioning and sharding), and the two banks this one leans on, Chapter 71 (SQL) and Chapter 72A (complexity). This chapter tests those skills; it doesn't teach them again, with one exception: Q77-018 builds topological sort step by step, because no earlier chapter does.
 
-**Time needed:** 3–4 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.
+**Time needed:** 5–6 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 77.8 adds about 1½ hours and is best done with a notebook open.
 
-**Sections:** 77.1 Pipeline fundamentals · 77.2 Basic-but-tricky data engineering questions · 77.3 Data modeling for pipelines and warehouses · 77.4 Orchestration and scheduling · 77.5 Scale, partitioning, and performance · 77.6 Data quality and monitoring · 77.7 Full system design walk-throughs
+**Sections:** 77.1 Pipeline fundamentals · 77.2 Basic-but-tricky data engineering questions · 77.3 Data modeling for pipelines and warehouses · 77.4 Orchestration and scheduling · 77.5 Scale, partitioning, and performance · 77.6 Data quality and monitoring · 77.7 Full system design walk-throughs · 77.8 Predict the output: what happens to rows on the way in
 
 **In `companion/ch77/`** — *notebook:* `ch77-notebook.ipynb` · *SQL:* `ch77_queries_mysql.sql`, `ch77_queries_postgresql.sql`
 
@@ -1185,9 +1185,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 19–20 (spreadsheet and report automation), 45 and 51 (APIs, webhooks, reverse ETL), 58 and 63 (intelligent automation, automation architecture), with retries from Chapter 29, section 29.9 and the circuit breaker from Chapter 57, section 57.8. This chapter tests those skills; it doesn't teach them again.
 
-**Time needed:** 2–2.5 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list.
+**Time needed:** 3.5–4 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list. Section 78.7 adds about an hour.
 
-**Sections:** 78.1 Choosing the right automation approach · 78.2 Basic-but-tricky automation questions · 78.3 Report and alert automation · 78.4 APIs, webhooks, and reverse ETL · 78.5 Failure handling and monitoring for automations · 78.6 Full design case
+**Sections:** 78.1 Choosing the right automation approach · 78.2 Basic-but-tricky automation questions · 78.3 Report and alert automation · 78.4 APIs, webhooks, and reverse ETL · 78.5 Failure handling and monitoring for automations · 78.6 Full design case · 78.7 Predict the number: schedules, retries, and defaults
 
 **In `companion/ch78/`** — *notebook:* `ch78-notebook.ipynb`
 
@@ -1198,9 +1198,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Chapters 54–57 (Generative AI and LLMs; RAG, agents and evaluation; MLOps; LLMOps), which teach every idea in this bank; Chapter 35, section 35.2 for the dot product and cosine similarity; Chapter 41, section 41.7 for word embeddings; Chapter 74 for the classical-ML side of monitoring; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 3½–4½ hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Plus 45 minutes for the final-week list.
+**Time needed:** 5–6 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Section 79.9 adds about 1¼ hours. Plus 45 minutes for the final-week list.
 
-**Sections:** 79.1 LLM fundamentals · 79.2 Basic-but-tricky GenAI questions · 79.3 Retrieval-Augmented Generation (RAG) · 79.4 Agents and tool use · 79.5 Evaluating AI applications · 79.6 MLOps: making models survive production · 79.7 LLMOps · 79.8 Full design cases
+**Sections:** 79.1 LLM fundamentals · 79.2 Basic-but-tricky GenAI questions · 79.3 Retrieval-Augmented Generation (RAG) · 79.4 Agents and tool use · 79.5 Evaluating AI applications · 79.6 MLOps: making models survive production · 79.7 LLMOps · 79.8 Full design cases · 79.9 Predict the number: the arithmetic behind an AI system
 
 **In `companion/ch79/`** — *notebook:* `ch79-notebook.ipynb`
 
@@ -1211,9 +1211,9 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 **Before you start:** Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 2–3 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap.
+**Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading.
 
-**Sections:** 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases
+**Sections:** 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases · 80.7 Predict the number: capacity, availability, and the arithmetic of a design
 
 **In `companion/ch80/`** — *notebook:* `ch80-notebook.ipynb`
 
@@ -1269,7 +1269,7 @@ The book is **85 chapters**, about **1,253,764 words**. **49** chapters have a w
 
 Every term the book defines, alphabetically, with the chapter that teaches it. Built from each chapter's own Key terms list. A term taught in more than one place lists them all, earliest first.
 
-**3,294 terms.**
+**3,422 terms.**
 
 ### #
 
@@ -1280,7 +1280,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | += | Ch 17 |
 | 10,000-hour rule | Ch 9 |
 | 100% stacked bar | Ch 15 |
+| 15 significant digits | Ch 70 |
+| 1904 epoch | Ch 70 |
+| 2⁵³ in JSON | Ch 78 |
+| 2⁵³ precision limit | Ch 77 |
 | 3-2-1 rule | Ch 2 |
+| 429 Too Many Requests | Ch 78 |
 | 68–95–99.7 rule | Ch 21 |
 | 95th percentile | Ch 56 |
 | __init__ | Ch 18 |
@@ -1356,18 +1361,20 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | alternative flow | Ch 25 |
 | alternative hypothesis | Ch 22 |
 | amortisation | Ch 23 |
+| amortised O(1) | Ch 72A |
 | amortized complexity | Ch 72A |
 | analysis plan | Ch 27 |
 | analytics engineer | Ch 7 |
 | analytics engineering | Ch 32 |
 | anchor | Ch 28 |
 | anchoring | Ch 5 |
+| anisotropy | Ch 79 |
 | annotation | Ch 15 |
 | anomaly | Ch 47 |
 | anomaly detection | Ch 38 |
 | anonymization | Ch 64 |
 | ANOVA | Ch 22, Ch 30 |
-| Anscombe's quartet | Ch 15 |
+| Anscombe's quartet | Ch 15, Ch 73 |
 | anti-join | Ch 12, Ch 14, Ch 47, Ch 71 |
 | AP system | Ch 61 |
 | Apache Hudi | Ch 49 |
@@ -1387,7 +1394,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | .apply(axis=1) | Ch 72 |
 | approval threshold | Ch 58 |
 | approvals | Ch 63 |
+| approximate against exact match (range_lookup) | Ch 70 |
 | approximate match | Ch 11 |
+| approximate nearest neighbour (HNSW, IVF) | Ch 79 |
 | approximate-nearest-neighbour (ANN) index | Ch 55 |
 | Apps Script | Ch 19 |
 | Apps Script execution limit | Ch 70 |
@@ -1455,8 +1464,11 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | availability | Ch 2, Ch 61 |
 | availability ("nines") | Ch 60 |
 | availability bias | Ch 5 |
+| availability in series | Ch 80 |
 | availability zone | Ch 52 |
 | average | Ch 4 |
+| average against worst case | Ch 72A |
+| average customer lifetime (1/r) | Ch 75 |
 | average handle time | Ch 75 |
 | average of averages | Ch 4, Ch 21 |
 | average order value (AOV) | Ch 3 |
@@ -1475,6 +1487,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | background job | Ch 34 |
 | background verification | Ch 68 |
 | backlog | Ch 26 |
+| backoff cap | Ch 78 |
 | backpressure | Ch 77 |
 | backpropagation | Ch 43, Ch 53 |
 | backtesting | Ch 40 |
@@ -1487,6 +1500,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | bandwidth | Ch 31 |
 | banker's rounding | Ch 12 |
 | banker's rounding (round half to even) | Ch 17 |
+| banker's rounding against half-away-from-zero | Ch 70 |
 | bar chart | Ch 15 |
 | base case | Ch 33, Ch 72A |
 | base class | Ch 18 |
@@ -1518,8 +1532,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | behavioral theme | Ch 81 |
 | Benjamini-Hochberg | Ch 22, Ch 30 |
 | Bernoulli distribution | Ch 35 |
+| Bessel's correction | Ch 73 |
 | beta | Ch 30, Ch 40 |
-| bfloat16 | Ch 53 |
+| bfloat16 | Ch 53, Ch 79 |
 | BI (business intelligence) | Ch 7 |
 | BI analyst | Ch 8 |
 | BI developer | Ch 7 |
@@ -1540,15 +1555,16 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Binomial distribution | Ch 73 |
 | binomial distribution | Ch 21, Ch 35 |
 | birthday problem | Ch 73 |
-| bisect | Ch 33 |
+| bisect | Ch 33, Ch 72A |
 | bit | Ch 2, Ch 35 |
 | bit-packing | Ch 49 |
 | bitmap scan | Ch 28 |
 | blameless review | Ch 47 |
+| blended against paid CAC | Ch 75 |
 | blended CAC | Ch 23 |
 | blind spot sampling | Ch 59 |
 | Block Kit | Ch 20 |
-| blocking (deduplication) --- | Ch 77 |
+| blocking (deduplication) | Ch 77 |
 | blocking check | Ch 46 |
 | blue-green deployment | Ch 56 |
 | blue/green tables | Ch 47 |
@@ -1564,6 +1580,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | border point | Ch 38 |
 | bottom line up front (BLUF) | Ch 24 |
 | bound parameters | Ch 18 |
+| boundary burst | Ch 78 |
 | bounded staleness | Ch 61 |
 | box plot | Ch 15 |
 | Boyce–Codd normal form (BCNF) | Ch 28 |
@@ -1608,8 +1625,10 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | business rule | Ch 24, Ch 76B |
 | business system | Ch 3 |
 | business-question-first narrative structure | Ch 76A |
+| busy hour | Ch 80 |
 | byte | Ch 2 |
 | byte-order mark (BOM) | Ch 45 |
+| byte-order mark (BOM) --- | Ch 77 |
 | byte-pair encoding | Ch 54 |
 | bytes | Ch 20 |
 | BytesIO | Ch 20 |
@@ -1623,10 +1642,11 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | C4 diagram | Ch 80 |
 | C4 model | Ch 60 |
 | CAC | Ch 23 |
+| CAC payback period | Ch 75 |
 | cache | Ch 48 |
 | cache invalidation | Ch 57, Ch 61 |
 | caching | Ch 61 |
-| caching (LLM cost) --- | Ch 79 |
+| caching (LLM cost) | Ch 79 |
 | CAGR (compound annual growth rate) | Ch 4 |
 | CALCULATE | Ch 11, Ch 16, Ch 70 |
 | calculated column | Ch 11, Ch 16 |
@@ -1708,6 +1728,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | choropleth map | Ch 15 |
 | ChrW | Ch 19 |
 | chunk | Ch 55 |
+| chunk overlap | Ch 79 |
 | chunking | Ch 18 |
 | chunking (fixed-size, sentence, section) | Ch 79 |
 | chunking strategy | Ch 55 |
@@ -1755,6 +1776,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | code review | Ch 26, Ch 29 |
 | coefficient | Ch 37 |
 | coefficient of variation | Ch 21 |
+| coefficient sign flip | Ch 74 |
 | cognitive bias | Ch 5 |
 | Cohen's d | Ch 30 |
 | Cohen's h | Ch 30, Ch 73 |
@@ -1772,8 +1794,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | column / field / variable / attribute | Ch 1 |
 | column chart | Ch 15 |
 | column chunk | Ch 49 |
-| column pruning | Ch 48 |
+| column pruning | Ch 48, Ch 77 |
 | column-level lineage | Ch 47 |
+| columnar format | Ch 77 |
 | columnar storage | Ch 49, Ch 77 |
 | Columns area | Ch 11 |
 | ColumnTransformer | Ch 36 |
@@ -1805,7 +1828,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | composition | Ch 18 |
 | compound growth rate | Ch 4 |
 | compound score | Ch 41 |
-| compounding | Ch 4, Ch 83 |
+| compounding | Ch 4, Ch 75, Ch 83 |
 | compression | Ch 2 |
 | compression codec (Snappy, zstd, gzip) | Ch 49 |
 | compute | Ch 49 |
@@ -1837,6 +1860,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | confusion matrix | Ch 39, Ch 53, Ch 74 |
 | confusion matrix (multi-class) | Ch 41 |
 | confusion of the inverse | Ch 21 |
+| connect timeout against read timeout | Ch 78 |
 | Connected Sheets | Ch 11 |
 | connection string | Ch 45 |
 | connection URL | Ch 18 |
@@ -1845,6 +1869,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | consistency | Ch 1, Ch 61 |
 | consistency over intensity | Ch 83 |
 | consistency spectrum | Ch 61 |
+| constant folding | Ch 72A |
 | constant time | Ch 33 |
 | constraint | Ch 12 |
 | consumer | Ch 50 |
@@ -1868,7 +1893,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | continuous deployment | Ch 52 |
 | continuous integration | Ch 26, Ch 32, Ch 52 |
 | contrast ratio | Ch 15 |
-| contribution margin | Ch 23 |
+| contribution margin | Ch 23, Ch 75 |
 | control | Ch 30 |
 | control group | Ch 22 |
 | convergence | Ch 35 |
@@ -1901,13 +1926,13 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | cost-based threshold (reused) | Ch 82 |
 | count(*) vs. count(col) | Ch 71 |
 | count(DISTINCT col) | Ch 71 |
-| Counter | Ch 17 |
+| Counter | Ch 17, Ch 72A |
 | counter-offer (from your current employer) --- | Ch 81 |
 | counterfactual | Ch 31 |
 | covariance | Ch 35 |
 | covariance matrix | Ch 35 |
 | covariate smoothness | Ch 31 |
-| coverage | Ch 29 |
+| coverage | Ch 29, Ch 73 |
 | covering index | Ch 28, Ch 71 |
 | CP system | Ch 61 |
 | CP vs. AP | Ch 80 |
@@ -1924,6 +1949,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | CRM | Ch 3 |
 | cron | Ch 20, Ch 34, Ch 46 |
 | cron expression | Ch 46 |
+| cron step syntax (*/n) | Ch 78 |
 | CRON_TZ | Ch 20 |
 | CronJob | Ch 52 |
 | crontab | Ch 20 |
@@ -1938,6 +1964,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | CrossEntropyLoss | Ch 43 |
 | CSV | Ch 2 |
 | CSV extract | Ch 20 |
+| CSV quoting and escaping | Ch 77 |
 | CSV UTF-8 | Ch 10 |
 | csv.DictReader | Ch 17 |
 | csv.DictWriter | Ch 17 |
@@ -1948,13 +1975,14 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | cumulative / running total | Ch 4 |
 | cumulative distribution | Ch 56 |
 | cumulative distribution function (cdf) | Ch 21, Ch 35 |
+| CUPED | Ch 73 |
 | curl | Ch 34 |
 | currency text | Ch 14 |
 | current assets / liabilities | Ch 23 |
 | current ratio | Ch 23 |
 | CURRENT ROW | Ch 13 |
 | CurrentRegion | Ch 19 |
-| curse of dimensionality | Ch 37, Ch 74 |
+| curse of dimensionality | Ch 37, Ch 74, Ch 79 |
 | cursor | Ch 45 |
 | custom exception | Ch 29 |
 | custom format | Ch 10 |
@@ -2048,7 +2076,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | date grouping | Ch 11 |
 | date literal | Ch 12 |
 | date parts | Ch 36 |
-| date serial number | Ch 10 |
+| date serial number | Ch 10, Ch 70 |
 | date spine / calendar table | Ch 13 |
 | date table | Ch 11, Ch 16 |
 | DATEDIFF | Ch 12 |
@@ -2056,6 +2084,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | datetime | Ch 17 |
 | datetime index | Ch 18 |
 | datum | Ch 1 |
+| DAU/MAU stickiness | Ch 75 |
 | DAX | Ch 11, Ch 16 |
 | DAX Studio | Ch 16 |
 | DBeaver | Ch 12 |
@@ -2074,6 +2103,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | DCL | Ch 12 |
 | DCL (Data Control Language) | Ch 64 |
 | DDL | Ch 12 |
+| ddof (degrees of freedom) | Ch 73 |
 | de-duplication key | Ch 50 |
 | dead-letter path | Ch 50 |
 | dead-letter queue | Ch 77 |
@@ -2093,11 +2123,14 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | deduplication | Ch 13, Ch 36 |
 | deep copy | Ch 72 |
 | deep network | Ch 53 |
+| deepcopy | Ch 72A |
 | DEFAULT | Ch 12 |
 | default argument | Ch 44 |
 | default frame (RANGE vs. ROWS) | Ch 71 |
+| default NA markers | Ch 77 |
 | default value | Ch 17 |
 | defaultdict | Ch 17 |
+| defaultdict.__missing__ | Ch 72A |
 | Definition of Done | Ch 26, Ch 76B |
 | deflection rate | Ch 59 |
 | degraded mode | Ch 57 |
@@ -2128,7 +2161,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | depth-first search | Ch 33 |
 | depth-first search (DFS) | Ch 72A |
 | dequantization | Ch 53 |
-| deque | Ch 33 |
+| deque | Ch 33, Ch 72A |
 | derivative | Ch 35 |
 | derived table | Ch 12 |
 | describe | Ch 18 |
@@ -2138,6 +2171,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | deviation | Ch 21 |
 | diagnostic case | Ch 75 |
 | diagnostic question | Ch 5 |
+| dict.get | Ch 72A |
 | dictionary | Ch 17, Ch 33 |
 | dictionary comprehension | Ch 17 |
 | dictionary encoding | Ch 49 |
@@ -2164,6 +2198,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | discrete | Ch 1 |
 | disparate impact | Ch 64 |
 | disparate treatment | Ch 64 |
+| display rounding against ROUND | Ch 70 |
 | distillation | Ch 53, Ch 54 |
 | DISTINCT | Ch 12 |
 | distinct count | Ch 11 |
@@ -2212,6 +2247,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | DSO | Ch 23 |
 | .dt accessor | Ch 18, Ch 72 |
 | dtype | Ch 18 |
+| dtype= at read time | Ch 77 |
 | dual-axis chart | Ch 15 |
 | DuckDB | Ch 18, Ch 45, Ch 48 |
 | due date | Ch 3 |
@@ -2239,6 +2275,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | EDI (Electronic Data Interchange) | Ch 51 |
 | editable install | Ch 29 |
 | effect size | Ch 22, Ch 27, Ch 30 |
+| effective step size | Ch 79 |
 | egress | Ch 65 |
 | egress (All terms are defined in the Glossary, Appendix A.) --- | Ch 49 |
 | eigenvalue | Ch 35 |
@@ -2275,10 +2312,13 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | eps | Ch 38 |
 | equal opportunity | Ch 39 |
 | equity | Ch 23 |
+| equivalence test | Ch 73 |
+| erasure coding | Ch 80 |
 | ERP | Ch 3 |
 | Err | Ch 19 |
 | Err.Raise | Ch 19 |
 | error | Ch 10 |
+| error budget | Ch 80 |
 | error value | Ch 10 |
 | ERRORLEVEL | Ch 18 |
 | errors="coerce" | Ch 72 |
@@ -2387,7 +2427,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | false-positive rate | Ch 21, Ch 73 |
 | falsifiable | Ch 5 |
 | family-wise error rate | Ch 22, Ch 30 |
-| fan-out | Ch 12, Ch 14, Ch 18 |
+| fan-out | Ch 12, Ch 14, Ch 18, Ch 80 |
 | fan-out (join cardinality) | Ch 71 |
 | fast proxy metric | Ch 56 |
 | fast-forward | Ch 26 |
@@ -2411,6 +2451,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | FETCH FIRST … WITH TIES | Ch 71 |
 | few-shot | Ch 54 |
 | field separator | Ch 34 |
+| field shift | Ch 77 |
 | figure and axes | Ch 18 |
 | file | Ch 2 |
 | FileDialog | Ch 19 |
@@ -2432,7 +2473,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | FinOps | Ch 65 |
 | first in first out | Ch 33 |
 | first normal form (1NF) | Ch 28 |
-| first-90-days plan (architect) --- | Ch 80 |
+| first-90-days plan (architect) | Ch 80 |
 | first-party data | Ch 1 |
 | FIRST_VALUE | Ch 13 |
 | Fisher's exact test | Ch 30 |
@@ -2445,6 +2486,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | fixed cost | Ch 23 |
 | fixed effects | Ch 31 |
 | fixed vs variable pay | Ch 81 |
+| fixed window against token bucket | Ch 78 |
 | fixture | Ch 29 |
 | Flash Fill | Ch 10 |
 | flattening | Ch 1 |
@@ -2488,6 +2530,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | frozen=True | Ch 18 |
 | FrozenInstanceError | Ch 18 |
 | frozenset | Ch 38 |
+| frozenset --- | Ch 72A |
 | full load | Ch 45 |
 | full outer join | Ch 12 |
 | full refresh | Ch 32 |
@@ -2499,6 +2542,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | functional requirement | Ch 25, Ch 60, Ch 76B |
 | functools.wraps | Ch 72 |
 | funnel | Ch 13, Ch 23 |
+| funnel multiplication | Ch 75 |
 | fuzzy duplicate | Ch 14 |
 | fuzzy merge | Ch 14 |
 
@@ -2519,6 +2563,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | generator | Ch 29, Ch 33, Ch 72 |
 | generator expression | Ch 33 |
 | generic test | Ch 32 |
+| geometric mean | Ch 75 |
 | get with default | Ch 17 |
 | GET, POST, PUT, PATCH | Ch 51 |
 | GETPIVOTDATA | Ch 11 |
@@ -2574,7 +2619,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | graph | Ch 33 |
 | graphical perception | Ch 15 |
 | greedy algorithm | Ch 33 |
-| greedy decoding | Ch 54 |
+| greedy decoding | Ch 54, Ch 79 |
 | greenfield | Ch 60 |
 | grep | Ch 34 |
 | grid search | Ch 37, Ch 39 |
@@ -2589,6 +2634,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | groupby | Ch 18 |
 | groupby().agg() | Ch 72 |
 | grouped (clustered) bar | Ch 15 |
+| GroupKFold | Ch 74 |
 | GROUPS frame | Ch 28 |
 | guardrail | Ch 55, Ch 79 |
 | guardrail metric | Ch 23, Ch 30, Ch 75 |
@@ -2600,7 +2646,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 |---|---|
 | habit questions | Ch 5 |
 | half-life | Ch 40 |
-| half-open date range | Ch 18 |
+| half-open date range | Ch 18, Ch 77 |
 | half-open date window | Ch 23 |
 | half-open validity period | Ch 77 |
 | hallucination | Ch 54, Ch 79 |
@@ -2622,10 +2668,11 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | headers | Ch 10 |
 | health check | Ch 52, Ch 56 |
 | heap | Ch 28, Ch 33, Ch 72A |
-| heapq | Ch 33 |
+| heapq | Ch 33, Ch 72A |
 | heartbeat (dead-man's switch) | Ch 77 |
 | heatmap | Ch 15 |
 | heavy-tailed distribution | Ch 73 |
+| hedged request | Ch 80 |
 | hexdigest | Ch 45 |
 | hidden file | Ch 26 |
 | hidden layer | Ch 43, Ch 53 |
@@ -2681,28 +2728,32 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | IaaS | Ch 52 |
 | IAM (identity and access management) | Ch 52 |
 | ICE plot | Ch 39 |
+| id_str | Ch 78 |
 | ideal DCG | Ch 42 |
 | idempotency | Ch 20, Ch 57, Ch 58, Ch 61, Ch 77 |
-| idempotency key | Ch 29, Ch 46, Ch 50, Ch 51, Ch 58, Ch 60 |
+| idempotency key | Ch 29, Ch 46, Ch 50, Ch 51, Ch 58, Ch 60, Ch 78 |
 | idempotent | Ch 28, Ch 29, Ch 45, Ch 46 |
 | idempotent load (reused) | Ch 82 |
 | identifier | Ch 1 |
 | identity | Ch 52 |
 | IDENTITY / AUTO_INCREMENT | Ch 71 |
+| identity against equality (is / ==) | Ch 72A |
 | identity column / AUTO_INCREMENT | Ch 12 |
+| IEEE 754 | Ch 72A |
 | if __name__ == "__main__" | Ch 17 |
 | if/elif/else | Ch 17 |
+| IFNA against IFERROR | Ch 70 |
 | .iloc | Ch 18 |
 | image | Ch 52 |
 | Immediate window | Ch 19 |
-| immutability | Ch 33 |
+| immutability | Ch 33, Ch 72A |
 | immutable | Ch 29 |
 | impact analysis | Ch 47 |
 | implicit commit | Ch 12 |
 | implicit feedback | Ch 42 |
 | import | Ch 17 |
 | Import mode | Ch 16 |
-| Import mode vs. DirectQuery --- | Ch 70 |
+| Import mode vs. DirectQuery | Ch 70 |
 | IMPORTRANGE | Ch 11, Ch 70 |
 | impossible date | Ch 14 |
 | imputation | Ch 14, Ch 36 |
@@ -2719,6 +2770,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | incremental refresh | Ch 16 |
 | incremental strategy | Ch 32 |
 | independence | Ch 4, Ch 21, Ch 31 |
+| independent failure | Ch 80 |
 | independent vs. mutually exclusive events | Ch 73 |
 | INDEX | Ch 11 |
 | index | Ch 17, Ch 18, Ch 28, Ch 55 |
@@ -2752,6 +2804,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Inquire | Ch 11 |
 | INSERT | Ch 12 |
 | insert anomaly | Ch 28 |
+| insertion order | Ch 72A |
 | insight | Ch 1 |
 | installable trigger | Ch 70 |
 | installer | Ch 12 |
@@ -2781,6 +2834,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | inventory turns | Ch 23 |
 | inverse document frequency | Ch 55 |
 | inverse document frequency (IDF) | Ch 41 |
+| inverse regularisation strength (C) | Ch 74 |
 | INVEST | Ch 26, Ch 76B |
 | invoice | Ch 3 |
 | IP address | Ch 2, Ch 34 |
@@ -2810,6 +2864,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | JAVA_HOME | Ch 48 |
 | Jinja | Ch 32 |
 | jitter | Ch 15, Ch 29, Ch 78 |
+| jitter (full, decorrelated) | Ch 78 |
 | Job | Ch 52 |
 | job | Ch 46, Ch 52 |
 | job description (JD) | Ch 8 |
@@ -2841,6 +2896,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Kanban | Ch 26 |
 | Kappa architecture | Ch 62 |
 | kappa architecture | Ch 80 |
+| keep_default_na | Ch 77 |
 | KEEPFILTERS | Ch 16 |
 | kernel | Ch 17, Ch 37 |
 | kernel (filter) | Ch 43, Ch 53 |
@@ -2867,6 +2923,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | KS statistic (D) | Ch 79 |
 | Kubernetes | Ch 52 |
 | kurtosis | Ch 21 |
+| KV cache | Ch 79 |
 
 ### L
 
@@ -2944,7 +3001,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | LET | Ch 11 |
 | level-order traversal | Ch 72A |
 | levels of measurement | Ch 1 |
-| leverage | Ch 23, Ch 67, Ch 83 |
+| leverage | Ch 23, Ch 67, Ch 73, Ch 83 |
 | liabilities | Ch 23 |
 | liabilities-to-equity | Ch 23 |
 | lifecycle policy | Ch 65 |
@@ -2968,6 +3025,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | liquid clustering | Ch 49 |
 | list | Ch 17, Ch 33 |
 | list comprehension | Ch 17, Ch 72 |
+| Little's Law | Ch 80 |
 | live connection | Ch 16 |
 | liveness | Ch 56 |
 | liveness probe | Ch 52 |
@@ -2977,6 +3035,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | load balancer | Ch 52 |
 | load balancing | Ch 61 |
 | load log | Ch 45 |
+| load shedding | Ch 80 |
 | load status | Ch 47 |
 | load to | Ch 11 |
 | load_dotenv | Ch 20 |
@@ -2988,6 +3047,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | local mode | Ch 48 |
 | local versus global structure | Ch 38 |
 | locale | Ch 10, Ch 11, Ch 14 |
+| locale date parsing --- | Ch 70 |
 | localhost | Ch 12, Ch 34 |
 | lock file | Ch 19 |
 | lockfile | Ch 29 |
@@ -3007,6 +3067,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | logarithmic time | Ch 33 |
 | logger | Ch 20, Ch 29 |
 | logging | Ch 18, Ch 20, Ch 29 |
+| logical (execution) date | Ch 77, Ch 78 |
 | logical date (Airflow ds) | Ch 46 |
 | logical execution order | Ch 12 |
 | logical value | Ch 10 |
@@ -3025,6 +3086,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | lookup array | Ch 11 |
 | loop | Ch 17 |
 | LoRA | Ch 54 |
+| LoRA / QLoRA | Ch 79 |
 | loss | Ch 31 |
 | loss function | Ch 35, Ch 53 |
 | lossless | Ch 2 |
@@ -3033,7 +3095,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | lru_cache | Ch 33, Ch 72A |
 | LSTM | Ch 53 |
 | LTS release | Ch 12 |
-| LTV:CAC | Ch 23 |
+| LTV:CAC | Ch 23, Ch 75 |
 
 ### M
 
@@ -3099,6 +3161,8 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | mean | Ch 1, Ch 4, Ch 21 |
 | mean absolute error (MAE) | Ch 37 |
 | mean average precision (MAP) | Ch 42 |
+| mean decrease in impurity | Ch 74 |
+| mean of ratios against ratio of means | Ch 73 |
 | mean reciprocal rank | Ch 55 |
 | mean reciprocal rank (MRR) | Ch 42 |
 | mean squared error (MSE) | Ch 35 |
@@ -3141,6 +3205,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Microsoft Store | Ch 16 |
 | migration | Ch 12, Ch 28 |
 | MIME type | Ch 20 |
+| min-heap | Ch 72A |
 | min_samples | Ch 38 |
 | min_samples_leaf | Ch 37 |
 | mini-batch | Ch 53 |
@@ -3153,7 +3218,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | missing not at random | Ch 14 |
 | missing value | Ch 14, Ch 36 |
 | missing value / NULL | Ch 1 |
-| missing-value indicator --- | Ch 74 |
+| missing-value indicator | Ch 74 |
 | mix effect | Ch 23 |
 | mixed reference | Ch 10 |
 | ML engineer | Ch 7 |
@@ -3182,7 +3247,10 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | momentum | Ch 53 |
 | monitoring | Ch 39 |
 | monitoring (absence of success) | Ch 78 |
+| monotonic association | Ch 73 |
+| monotonic transform | Ch 74 |
 | month key | Ch 10 |
+| month-end clamping | Ch 77 |
 | month-over-month | Ch 13 |
 | month-over-month growth | Ch 4 |
 | monthly projection | Ch 57 |
@@ -3193,7 +3261,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | multi-agent system | Ch 79 |
 | multi-factor authentication (MFA) | Ch 2 |
 | multi-head attention | Ch 53 |
-| multicollinearity | Ch 37 |
+| multicollinearity | Ch 37, Ch 74 |
 | multimodal | Ch 54 |
 | multinomial Naive Bayes | Ch 41 |
 | multipart message | Ch 20 |
@@ -3203,6 +3271,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | must-have | Ch 8 |
 | must-have coverage | Ch 8, Ch 68 |
 | mutable default argument | Ch 18, Ch 72 |
+| mutation during iteration | Ch 72A |
 | mutually exclusive | Ch 5, Ch 21 |
 | MVCC | Ch 71 |
 | mypy | Ch 29 |
@@ -3227,6 +3296,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | named window (WINDOW) | Ch 13 |
 | namedValues | Ch 19 |
 | namespace | Ch 52 |
+| NaN | Ch 72A |
 | narrow operation | Ch 48 |
 | NaT | Ch 18 |
 | nat | Ch 35 |
@@ -3236,7 +3306,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | natural log | Ch 31 |
 | natural log (ln) | Ch 35 |
 | NDCG (normalized discounted cumulative gain) | Ch 42 |
+| near-orthogonality in high dimensions | Ch 79 |
 | nearest neighbors (embedding space) | Ch 41 |
+| negative R² | Ch 74 |
 | nested function | Ch 33 |
 | nested loop join | Ch 28 |
 | net margin | Ch 23 |
@@ -3248,6 +3320,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | neuron | Ch 43, Ch 53 |
 | next-token prediction | Ch 54 |
 | nice-to-have | Ch 8 |
+| nines of availability | Ch 80 |
 | ninety-second scan | Ch 27 |
 | nn.Linear | Ch 43 |
 | nn.Module | Ch 43 |
@@ -3259,6 +3332,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | node ID | Ch 29 |
 | node selection (+, state:modified) | Ch 32 |
 | noise (residual) | Ch 40 |
+| noise floor | Ch 74 |
 | noise points | Ch 38 |
 | nominal | Ch 1 |
 | non-data row | Ch 14 |
@@ -3268,6 +3342,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | non-functional requirement (NFR) | Ch 60 |
 | non-negative matrix factorization (NMF) | Ch 41 |
 | non-response bias | Ch 22 |
+| nonexistent and ambiguous local times | Ch 77 |
 | Normal / log-normal distribution | Ch 73 |
 | normal approximation | Ch 22 |
 | normal distribution | Ch 21, Ch 35 |
@@ -3288,6 +3363,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | np.nan | Ch 18 |
 | np.select | Ch 18 |
 | np.where | Ch 18 |
+| NPS scale (−100 to +100) | Ch 75 |
 | .npy file | Ch 53 |
 | NR and FNR | Ch 34 |
 | NTILE | Ch 27 |
@@ -3297,11 +3373,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | NULL propagation in || | Ch 71 |
 | null result | Ch 27 |
 | nullable Int64 | Ch 72 |
-| nullable integer (Int64) | Ch 18 |
+| nullable integer (Int64) | Ch 18, Ch 77 |
 | NULLIF | Ch 71 |
 | NULLS FIRST / NULLS LAST | Ch 71 |
 | number | Ch 1, Ch 10 |
 | number format | Ch 10 |
+| numbers stored as text | Ch 70 |
 | NUMERIC vs floating point | Ch 12 |
 | numerical gradient check | Ch 43 |
 | NumPy | Ch 18 |
@@ -3384,6 +3461,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | overfitting | Ch 37, Ch 53, Ch 74 |
 | overlap | Ch 55, Ch 79 |
 | overlap (common support) | Ch 31 |
+| overlapping runs --- | Ch 78 |
 | overplotting | Ch 15 |
 | override with reason | Ch 59 |
 | oversampling | Ch 39 |
@@ -3406,6 +3484,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | pagination | Ch 29 |
 | pagination (offset, cursor) | Ch 45 |
 | paging | Ch 18 |
+| paired design | Ch 73 |
 | paired test | Ch 22 |
 | pandas | Ch 18 |
 | pandas DataFrame | Ch 72 |
@@ -3451,7 +3530,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | PCA | Ch 38 |
 | pd.cut | Ch 18 |
 | PDF | Ch 2, Ch 20 |
+| peak factor | Ch 80 |
 | Pearson | Ch 22 |
+| Pearson against Spearman | Ch 73 |
 | peeking | Ch 22, Ch 30 |
 | peeking (repeated significance testing) | Ch 73 |
 | peer group | Ch 28, Ch 71 |
@@ -3460,9 +3541,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | percent change | Ch 4 |
 | percent of | Ch 4 |
 | percent point function (ppf) | Ch 21 |
+| percent-encoding against form-encoding (quote / quote_plus) | Ch 78 |
 | percentage | Ch 4 |
 | percentage point | Ch 4 |
+| percentage points against relative percent | Ch 75 |
 | percentile | Ch 8, Ch 21 |
+| percentile interpolation method --- | Ch 73 |
 | percentile threshold | Ch 20 |
 | PERCENTILE_CONT (recap) | Ch 28 |
 | PERCENTILE_DISC | Ch 28 |
@@ -3471,7 +3555,8 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | perishable tools | Ch 83 |
 | permission bits | Ch 34 |
 | permission policy | Ch 52 |
-| permutation importance | Ch 37, Ch 39 |
+| permutation importance | Ch 37, Ch 39, Ch 74 |
+| permuted-target check | Ch 74 |
 | perplexity | Ch 38 |
 | persistence | Ch 20 |
 | persistence rule | Ch 40 |
@@ -3484,12 +3569,13 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | pickle risk | Ch 56 |
 | pie chart | Ch 15 |
 | PII (personally identifiable information) | Ch 64 |
-| pilot (as a decision-testing step) --- | Ch 75 |
+| pilot (as a decision-testing step) | Ch 75 |
 | pinned model version | Ch 57 |
 | pinned requirements | Ch 29 |
 | pip | Ch 17 |
 | pipe | Ch 34 |
 | pipeline | Ch 7, Ch 23, Ch 36, Ch 46 |
+| Pipeline --- | Ch 74 |
 | pipeline version | Ch 58 |
 | pivot | Ch 13 |
 | pivot chart | Ch 11 |
@@ -3515,12 +3601,14 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | polling | Ch 60, Ch 63 |
 | polling vs. webhook | Ch 78 |
 | polymorphism | Ch 18 |
+| pooled rate | Ch 73 |
 | pooled standard deviation | Ch 31 |
 | pooled standard error | Ch 30 |
 | pooling | Ch 53 |
 | pooling (max pooling) | Ch 43 |
 | popularity baseline | Ch 42 |
 | population | Ch 21, Ch 30 |
+| population against sample standard deviation | Ch 73 |
 | population stability index | Ch 56 |
 | population stability index (PSI) | Ch 79 |
 | port | Ch 12, Ch 34 |
@@ -3556,9 +3644,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | pre-registration | Ch 22 |
 | precise question | Ch 5 |
 | precision | Ch 39, Ch 53, Ch 74 |
+| precision as displayed | Ch 70 |
 | precision@k | Ch 42 |
 | precision–recall curve | Ch 39 |
+| precondition | Ch 72A |
 | predicate overwrite | Ch 49 |
+| predicate pushdown | Ch 77 |
 | predict | Ch 36 |
 | predict_proba | Ch 36 |
 | prediction interval | Ch 40 |
@@ -3600,6 +3691,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | product backlog | Ch 26 |
 | product backlog vs. sprint backlog | Ch 76B |
 | Product Owner | Ch 26, Ch 76B |
+| product quantisation | Ch 79 |
 | product-decision case | Ch 75 |
 | profile | Ch 32 |
 | profiles.yml | Ch 32 |
@@ -3609,10 +3701,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | program | Ch 17 |
 | project | Ch 9 |
 | project frame | Ch 59 |
+| promoter / passive / detractor | Ch 75 |
 | prompt | Ch 17, Ch 54 |
 | prompt caching | Ch 54, Ch 55, Ch 57 |
 | prompt injection | Ch 54, Ch 79 |
 | prompt injection through documents | Ch 55 |
+| prompt prefix caching --- | Ch 79 |
 | prompt registry | Ch 57 |
 | prompt version | Ch 57 |
 | prompt versioning | Ch 79 |
@@ -3661,6 +3755,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | qualitative / categorical | Ch 1 |
 | quantified impact | Ch 76A |
 | quantile | Ch 18 |
+| quantisation (int8, int4) | Ch 79 |
 | quantitative | Ch 1 |
 | quantization | Ch 53 |
 | quantization-aware training | Ch 53 |
@@ -3674,7 +3769,8 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | query parameter | Ch 29 |
 | query plan | Ch 28, Ch 48 |
 | queue | Ch 33 |
-| queue (FIFO) --- | Ch 72A |
+| queue (FIFO) | Ch 72A |
+| queueing collapse --- | Ch 80 |
 | quicksort | Ch 72A |
 | quorum | Ch 61 |
 | quota | Ch 19 |
@@ -3702,6 +3798,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | range | Ch 10, Ch 17, Ch 21 |
 | RANK | Ch 13 |
 | rank | Ch 54 |
+| rank-based metric | Ch 74 |
 | ransomware | Ch 2 |
 | rate | Ch 4 |
 | rate (λ) | Ch 21 |
@@ -3727,7 +3824,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | real evidence | Ch 69 |
 | recall | Ch 53, Ch 74 |
 | recall (sensitivity, true positive rate) | Ch 39 |
-| recall@k | Ch 42, Ch 55 |
+| recall@k | Ch 42, Ch 55, Ch 79 |
 | receivables / accounts receivable | Ch 3 |
 | recency | Ch 5 |
 | recipient list | Ch 20 |
@@ -3736,6 +3833,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | reconciliation / manual matching | Ch 3 |
 | reconciliation check | Ch 45 |
 | reconciliation criterion | Ch 76B |
+| recovery asymmetry | Ch 75 |
 | recruiter call | Ch 68 |
 | recursion | Ch 33, Ch 72A |
 | recursion limit | Ch 33 |
@@ -3792,6 +3890,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | replay | Ch 50, Ch 51 |
 | replica | Ch 50, Ch 52, Ch 61 |
 | replication | Ch 61 |
+| replication factor | Ch 80 |
 | replication slot | Ch 45 |
 | report | Ch 3, Ch 16 |
 | report automation | Ch 78 |
@@ -3828,6 +3927,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | resume-driven design | Ch 60 |
 | retention | Ch 13, Ch 49, Ch 50, Ch 64 |
 | retention period | Ch 57 |
+| retention policy | Ch 80 |
 | retention rate | Ch 23 |
 | retraining trigger | Ch 56, Ch 79 |
 | retrieval practice | Ch 9 |
@@ -3839,7 +3939,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | retry policy | Ch 46 |
 | retry queue | Ch 33 |
 | retry with backoff | Ch 18 |
-| Retry-After | Ch 29, Ch 45 |
+| Retry-After | Ch 29, Ch 45, Ch 78 |
 | return | Ch 17 |
 | return array | Ch 11 |
 | return on assets (ROA) | Ch 23 |
@@ -3905,6 +4005,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | rubric | Ch 55 |
 | Ruff (All terms are defined in the Glossary, Appendix A.) --- | Ch 29 |
 | rule of 72 | Ch 4 |
+| rule of 72 --- | Ch 75 |
 | rule of three | Ch 58 |
 | rule-of-thumb baseline | Ch 36 |
 | run | Ch 56 |
@@ -3918,6 +4019,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | runbook | Ch 46, Ch 47, Ch 56, Ch 63 |
 | running total | Ch 13, Ch 71 |
 | running variable | Ch 31 |
+| RuntimeError: dictionary changed size | Ch 72A |
 | runway | Ch 68 |
 | R² | Ch 39 |
 | R² (coefficient of determination) | Ch 22, Ch 37 |
@@ -3947,6 +4049,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | save rate | Ch 44 |
 | scalar subquery | Ch 71 |
 | scale and maintenance | Ch 69 |
+| scale invariance | Ch 74 |
 | scaled dot-product attention | Ch 53 |
 | scaling | Ch 35 |
 | scaling (standardization) | Ch 36 |
@@ -3970,9 +4073,12 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | schema registry | Ch 50 |
 | schema validation | Ch 54 |
 | scientific notation | Ch 18, Ch 35 |
+| scientific-notation display | Ch 70 |
 | scikit-learn | Ch 35, Ch 36 |
 | scope | Ch 17, Ch 51, Ch 83 |
 | score normalization | Ch 55 |
+| .score() | Ch 74 |
+| scoring= | Ch 74 |
 | scp | Ch 34 |
 | screen scraping | Ch 58 |
 | ScreenUpdating | Ch 19 |
@@ -4047,6 +4153,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Set | Ch 19 |
 | set | Ch 17, Ch 33 |
 | set -euo pipefail | Ch 34 |
+| set ordering | Ch 72A |
 | SettingWithCopyWarning (legacy) | Ch 72 |
 | severity (error, warning) | Ch 47 |
 | severity levels (S1, S2, S3) | Ch 47 |
@@ -4059,7 +4166,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | shadow mode (Chapter 56) | Ch 60 |
 | shadow rollout | Ch 58 |
 | shadow system | Ch 3, Ch 25 |
-| shallow copy | Ch 72 |
+| shallow copy | Ch 72, Ch 72A |
 | SHAP | Ch 37, Ch 39 |
 | shape | Ch 18, Ch 35 |
 | shape rule | Ch 35 |
@@ -4081,6 +4188,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | showback | Ch 65 |
 | showback vs. chargeback | Ch 80 |
 | shuffle | Ch 48 |
+| shuffle=False | Ch 74 |
 | side effect | Ch 46 |
 | sigmoid | Ch 37, Ch 43 |
 | sign-off | Ch 25 |
@@ -4099,7 +4207,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Simpson's paradox | Ch 22, Ch 73 |
 | single point of failure | Ch 80 |
 | single point of failure (SPOF) | Ch 61 |
-| single point of failure (undocumented automation) --- | Ch 78 |
+| single point of failure (undocumented automation) | Ch 78 |
 | singular test | Ch 32, Ch 47 |
 | sink | Ch 50 |
 | skew | Ch 15, Ch 21, Ch 48 |
@@ -4110,6 +4218,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | slicer | Ch 11, Ch 16 |
 | slide title as a finding | Ch 24 |
 | sliding-window pattern | Ch 72A |
+| SLO against SLA | Ch 80 |
 | slope | Ch 22 |
 | slope and intercept | Ch 35 |
 | slope of an activation | Ch 43 |
@@ -4118,6 +4227,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | small files | Ch 50 |
 | small files problem | Ch 48, Ch 49 |
 | small multiples | Ch 15 |
+| small-integer cache | Ch 72A |
 | small-numbers bias | Ch 5 |
 | Smart Fill | Ch 10 |
 | smoke test | Ch 57 |
@@ -4129,6 +4239,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | snowflake schema | Ch 28 |
 | soft delete | Ch 12 |
 | softmax | Ch 41, Ch 43, Ch 53, Ch 54 |
+| softmax temperature | Ch 79 |
 | software | Ch 29 |
 | software development life cycle (SDLC) | Ch 25 |
 | Solver | Ch 11 |
@@ -4158,6 +4269,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | spill reference (#) | Ch 11 |
 | #SPILL! | Ch 11 |
 | split | Ch 37 |
+| splittable compression | Ch 77 |
 | spread | Ch 21 |
 | spreadsheet application | Ch 10 |
 | SpreadsheetApp | Ch 19 |
@@ -4235,7 +4347,8 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | straight-through rate | Ch 59 |
 | stratified k-fold | Ch 36 |
 | stratified sample | Ch 21 |
-| stratify | Ch 36 |
+| StratifiedKFold against KFold | Ch 74 |
+| stratify | Ch 36, Ch 74 |
 | stream replay | Ch 62 |
 | streaming | Ch 50, Ch 57 |
 | streaming serving | Ch 56 |
@@ -4275,6 +4388,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | support vector machine | Ch 37 |
 | surprise | Ch 35 |
 | surrogate key | Ch 28, Ch 77 |
+| survival rate | Ch 75 |
 | survivorship bias | Ch 5, Ch 22 |
 | swimlane diagram | Ch 25, Ch 76B |
 | symbol | Ch 54 |
@@ -4301,6 +4415,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | tag | Ch 19, Ch 52 |
 | tagging | Ch 65 |
 | tail | Ch 21, Ch 34 |
+| tail latency | Ch 80 |
 | take-home assignment | Ch 68, Ch 82 |
 | tanh | Ch 43 |
 | target | Ch 32, Ch 36 |
@@ -4339,6 +4454,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | text classification | Ch 41 |
 | Text to Columns | Ch 10 |
 | TF-IDF | Ch 41 |
+| the 1900 leap-year bug | Ch 70 |
 | the two-minute version | Ch 27 |
 | theme | Ch 16 |
 | third normal form (3NF) | Ch 28 |
@@ -4352,6 +4468,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | threshold re-tuning | Ch 56 |
 | threshold sensitivity | Ch 27 |
 | thumbs-down rate | Ch 57 |
+| thundering herd | Ch 78 |
 | ticket | Ch 3 |
 | tidy data | Ch 18 |
 | tie-breaker | Ch 13, Ch 71 |
@@ -4371,9 +4488,10 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | timeliness | Ch 1, Ch 25 |
 | timeout | Ch 18, Ch 29, Ch 45, Ch 46, Ch 57, Ch 61 |
 | Timer | Ch 19 |
+| TimeSeriesSplit | Ch 74 |
 | timestamp strategy | Ch 32 |
 | timestamp with time zone | Ch 14 |
-| Timsort | Ch 33 |
+| Timsort | Ch 33, Ch 72A |
 | TLS | Ch 64 |
 | to-be | Ch 25 |
 | to_sql | Ch 18 |
@@ -4396,6 +4514,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | top-k | Ch 54 |
 | top-N table | Ch 39 |
 | top-p (nucleus sampling) | Ch 54 |
+| top-p against top-k | Ch 79 |
 | topic | Ch 50 |
 | topic drift | Ch 57 |
 | topic modeling | Ch 41 |
@@ -4403,6 +4522,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | topological sort | Ch 77 |
 | total addressable market (TAM) | Ch 75 |
 | total cost of ownership (TCO) | Ch 80 |
+| total deadline | Ch 78 |
 | total pay | Ch 8 |
 | total probability | Ch 21 |
 | TOTALYTD | Ch 11, Ch 16 |
@@ -4482,6 +4602,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | type I error | Ch 22 |
 | Type II error | Ch 30, Ch 73 |
 | type II error | Ch 22 |
+| type inference | Ch 77 |
 | TypeScript | Ch 19 |
 
 ### U
@@ -4501,6 +4622,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | undocumented constraints | Ch 59 |
 | Unicode | Ch 2 |
 | uniform distribution | Ch 21 |
+| uniform distribution of p-values | Ch 73 |
 | UNION / UNION ALL | Ch 12 |
 | UNION ALL in recursion | Ch 28 |
 | union, intersection, difference | Ch 17 |
@@ -4542,7 +4664,9 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | UserForm | Ch 19, Ch 70 |
 | USERPRINCIPALNAME | Ch 16 |
 | UTC | Ch 14 |
+| UTC-first scheduling | Ch 77 |
 | UTF-8 | Ch 2 |
+| utilisation headroom | Ch 80 |
 | uv | Ch 29 |
 | uv.lock | Ch 29 |
 
@@ -4569,12 +4693,15 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | variable | Ch 17 |
 | variable cost | Ch 23 |
 | variance | Ch 21, Ch 35, Ch 37, Ch 73 |
+| variance inflation factor (VIF) | Ch 74 |
+| variance of a difference | Ch 73 |
 | variant | Ch 30 |
 | VBA | Ch 19 |
 | VBA object model | Ch 70 |
 | vector | Ch 35 |
 | vector database | Ch 79 |
 | vector search | Ch 55 |
+| vector storage arithmetic | Ch 79 |
 | vectorization | Ch 72 |
 | vectorized operation | Ch 18 |
 | vendor lock-in | Ch 66 |
@@ -4620,7 +4747,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | weight | Ch 43, Ch 53 |
 | weight and bias (w and b) | Ch 35 |
 | weight decay | Ch 53 |
-| weighted average | Ch 4, Ch 11, Ch 21, Ch 41 |
+| weighted average | Ch 4, Ch 11, Ch 21, Ch 41, Ch 73 |
 | weighted F1 | Ch 39 |
 | Welch's t-test | Ch 22, Ch 30 |
 | what-if analysis | Ch 11 |
@@ -4639,7 +4766,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | WINDOW clause (recap) | Ch 28 |
 | window function | Ch 13 |
 | window ORDER BY | Ch 13 |
-| winner's curse --- | Ch 73 |
+| winner's curse | Ch 73 |
 | winsorizing | Ch 30 |
 | WITH | Ch 13 |
 | With | Ch 19 |
@@ -4660,6 +4787,7 @@ Every term the book defines, alphabetically, with the chapter that teaches it. B
 | Worksheet | Ch 19 |
 | worksheet (sheet) | Ch 10 |
 | workspace | Ch 16 |
+| wrap-around gap | Ch 78 |
 | write-ahead log (WAL) | Ch 45 |
 | write–audit–publish | Ch 77 |
 | write–audit–publish (WAP) | Ch 47 |
