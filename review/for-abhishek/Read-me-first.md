@@ -3,7 +3,7 @@
 *The Analyst to Architect review bundle — 3 October 2026, second build*
 
 Everything is here: the four books, the practice material that goes with them, a guide to where
-every topic lives, and the review state. 794 files, 285 MB, in five folders you can read in order.
+every topic lives, and the review state. 928 files, 289 MB, in five folders you can read in order.
 
 The point of this bundle is for you to tell me **what is lapsing and what is not**. There is a
 section at the end on exactly that — what I would most like you to look at, and what I already
@@ -18,7 +18,7 @@ know is missing.
 | **01-Books** | The four books as PDFs, plus the internal overview. Start here if you want to read. |
 | **02-Guide** | *Where everything is* — the map of every chapter, section and topic. Start here if you want to find something. |
 | **03-Whats-new** | What changed since you last looked, as a short review copy rather than a whole book. |
-| **04-Practice** | The files a reader actually works with: notebooks, SQL, spreadsheets, datasets. |
+| **04-Practice-Arena** | Everything you practise with, **arranged by tool** — pick Excel, or SQL, or Python, and work down. |
 | **05-Review-state** | The tracker, your decisions, and the per-chapter changelogs. |
 
 ---
@@ -88,25 +88,50 @@ Read these two, in this order:
 
 Every answer in all ten sections was run. Nothing was typed from memory.
 
-## 04-Practice — the material a reader works with
+## 04-Practice-Arena — arranged by tool, not by chapter
 
-580 files across 71 chapter folders, 92 MB.
+This is the part that changed most. It used to be sixty-nine folders named `ch10`, `ch11`, `ch12`
+— the book's filing system, handed to the reader. To practise Excel you had to already know that
+chapters 02, 04, 08, 09, 10, 11, 15, 19, 22 and 70 were the ones with workbooks in them.
 
-| | |
-|---|---|
-| **49 notebooks** (`.ipynb`) | Each chapter's code, with the book's own explanation beside it, already run so the outputs are there before you start |
-| **86 SQL files** | The queries, written for PostgreSQL and MySQL. 13 chapters ship both dialects |
-| **127 Python scripts** | The finished programs the chapters build |
-| **29 Excel workbooks** | The spreadsheet exercises |
-| **152 CSVs and 9 parquet files** | Riverstone Supplies, the worked example used all the way through |
+Now you pick a tool and work down. Ten tools, sixty stages, 643 files.
+
+| | Tool | Stages | What it goes from, and to |
+|---|---|---|---|
+| 1 | **Excel & Google Sheets** | 8 | A first formula → lookups and Power Query → a dashboard → a macro that consolidates twelve branch workbooks |
+| 2 | **SQL** | 10 | Load one database → SELECT → window functions → dbt → the question banks |
+| 3 | **Python** | 6 | First line → pandas → a scheduled report → a packaged program with tests |
+| 4 | **Statistics & experiments** | 6 | Describing data → tests → A/B design → causal inference |
+| 5 | **Machine learning** | 7 | The workflow → algorithms → honest evaluation → deep learning → a capstone |
+| 6 | **Data engineering** | 7 | Ingestion → orchestration → quality → scale → streaming |
+| 7 | **GenAI & production ML** | 6 | Tokens and embeddings → RAG and agents → MLOps and LLMOps |
+| 8 | **Command line, Git & toolkit** | 3 | The shell → version control → setup checks |
+| 9 | **Architecture & the business** | 6 | Requirements → metrics → system design → governance |
+| 10 | **Take-home assignments** | 1 | Timed, realistic briefs |
+
+**Chapter numbers are gone from the folder names.** Where a stage draws on more than one chapter,
+the sub-folder is named after what it teaches — `Numbers-Without-Fear`, not `ch04`.
+
+Three things that make it usable rather than just rearranged:
+
+- **Every stage has a README** saying what it covers, how many files are yours, and which chapter
+  it came from.
+- **`WHERE-IS-MY-CHAPTER.md`** at the Arena root turns any reference in the book — "see
+  `companion/ch18/`" — into a folder, for all 71 chapters that have practice files.
+- **`_build-scripts/` folders** hold the scripts that generate practice data, kept out of the way
+  but not hidden, so nothing is a black box.
+
+**The chapter-by-chapter view still exists** in the repository, unchanged, because the book refers
+to it by name and breaking those references across 83 chapters would be worse than the problem it
+solves. The Arena is a second view of the same files, not a replacement.
+
+**It is generated and it proves itself.** The build refuses to finish if any chapter is unclaimed
+by a tool, if two files would overwrite each other, or if any source file is missing from the
+result — checked by content hash, not by counting. All 573 tracked practice files verified present.
 
 **What is deliberately not here.** About 317 MB of generated data — the large files the
-data-engineering chapters build, such as Chapter 28's 52 MB of order items and Chapter 30's web
-events. The chapter scripts rebuild them in about a minute, which is how the book is designed to
-work, and shipping them would have tripled the bundle. Any chapter that needs them says so and
-names the script that makes them.
-
----
+data-engineering chapters build. The `_build-scripts/` rebuild them in about a minute, which is how
+the book is designed to work.
 
 ## 05-Review-state — where the work stands
 
@@ -132,9 +157,10 @@ format, so I did not build it unilaterally. The summary document explains the re
 topics exist and where they are. The topic index is my answer. If you want it cut differently —
 by role, by tool, by week of study — say so; it is generated, so re-cutting it is cheap.
 
-**3. The practice material against the theory.** Open any chapter in Book 2, then open the same
-chapter's folder in `04-Practice`. Does the practice match what the chapter taught? That pairing
-is the thing I can least check for myself.
+**3. Whether the Arena is the shape you wanted.** Open `04-Practice-Arena/`, pick one tool, and
+see whether the stages run small-to-full the way you described. The ordering within each tool is
+my editorial judgement — it follows the book's teaching order — and it is the part most worth
+correcting now, because it is one map in one file and cheap to change.
 
 ---
 

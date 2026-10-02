@@ -26,6 +26,7 @@ import zipfile
 HERE = pathlib.Path(__file__).resolve()
 ROOT = HERE.parents[2]
 BOOK = ROOT / 'Data Science' / 'Analyst-to-Architect'
+sys.path.insert(0, str(HERE.parent))   # so the Arena builder can be imported
 
 
 def tracked(path):
@@ -84,11 +85,15 @@ def build(dest, make_zip):
             copy(f, dest / '03-Whats-new' / 'changelogs' / name, 'what is new', log)
 
     # ---------------------------------------------------------------- 4. the practice material
-    for src in tracked(BOOK / 'companion'):
-        if not src.exists():
-            continue
-        rel = src.relative_to(BOOK / 'companion')
-        copy(src, dest / '04-Practice' / rel, 'practice', log)
+    # Arranged by tool, not by chapter. The chapter view lives in the repository and the book
+    # refers to it; a learner holding this bundle wants to pick a tool and work down, and the
+    # Arena's WHERE-IS-MY-CHAPTER.md turns any chapter reference back into a folder.
+    import make_practice_arena
+    arena = dest / '04-Practice-Arena'
+    make_practice_arena.build(arena)
+    for f in sorted(arena.rglob('*')):
+        if f.is_file():
+            log.append(('practice', f, f.stat().st_size))
 
     # ---------------------------------------------------------------- 5. the review state
     for name in ['TRACKER.md', 'DECISIONS.md', 'DECISIONS-BRIEFING.md',

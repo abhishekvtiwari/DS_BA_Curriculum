@@ -22,6 +22,13 @@ It holds the four books, the practice material, the topic guide, what changed re
 review state. The read-me says what I would most like you to look at, and what I already know is
 missing.
 
+**The practice material is now arranged by tool, not by chapter.** `04-Practice-Arena/` has ten
+tools — Excel, SQL, Python, statistics, machine learning, data engineering, GenAI, the command
+line, architecture, take-homes — each running from the smallest idea to a finished thing you can
+run. Chapter numbers are gone from the folder names, and `WHERE-IS-MY-CHAPTER.md` turns any
+reference in the book back into a folder. The chapter-by-chapter view still exists in this
+repository, unchanged, because the book refers to it by name.
+
 The same documents are in [review/for-abhishek/](review/for-abhishek/) here, if you would rather
 not leave this folder.
 
