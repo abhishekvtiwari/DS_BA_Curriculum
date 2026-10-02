@@ -83,19 +83,38 @@ rewritten anyway.
 **Book 4, the interview book.** You asked for it to be ground down from very basic to very
 detailed, with output-prediction and trick questions of the `int("25", 4)` kind.
 
-Where it stands today:
+**The measurement that set the task.** Across Part VIII's 619 questions, only 19 were
+output-prediction, and 17 of those sat in a single section — Chapter 72's §72.2. Thirteen of the
+fourteen banks had none at all.
 
-- Chapter 72 (Python and pandas) already has a proper predict-the-output section, §72.2. It is the
-  model the other banks are being brought up to.
-- The 619 questions across Part VIII were measured: only 19 are output-prediction, and 17 of those
-  are in that one section. That is the gap being filled.
-- Chapter 71 (SQL) is being written first, as the template for the remaining thirteen banks. Once
-  you have seen and approved its depth, the same standard is applied across the rest.
+| | |
+|---|---|
+| **Done** | **Chapter 71, SQL** — new section 71.11, "Predict the output: from basic to brain-racking." 16 core questions and 16 rapid-fire rows, warm-up up to a new *Brain-racking* level. The chapter goes from 76 questions to 108. This is the template. |
+| **Next** | The thirteen remaining banks: Chapters 70, 72a, 73–82. Roughly 260 questions at the same standard. |
 
-Every answer is run before it is written down. The SQL answers are verified against
-`companion/riverstone_2025_setup.sql` — the same 24-customer database the chapter already uses — so
-the new questions agree with the numbers the chapter already prints. Where PostgreSQL and MySQL
-genuinely disagree, and neither is installed here, the question says so rather than guessing.
+**Read §71.11 first and tell me whether the depth is right**, because the same standard is about to
+be applied thirteen more times. It is the last section of Chapter 71, just before "Common
+mistakes": [the chapter source](Data%20Science/Analyst-to-Architect/manuscript/ch71-sql-question-bank.md),
+or in the rebuilt PDF once Book 4 is rebuilt. What changed and why is in
+[changelog/ch71.md](changelog/ch71.md).
+
+Every answer was run before it was written down, against `riverstone_2025` — the same 24-customer
+database the chapter already uses — on a bench first checked to reproduce all four figures the
+chapter already prints. **Six drafted questions turned out to be wrong and the runs caught them**,
+including a ranking answer that was 4,4,4 rather than 1,1,1, and three traps aimed at a column that
+has no missing values in that database. Those are listed in the changelog rather than quietly
+corrected.
+
+Two things are honestly outstanding rather than finished:
+
+- **PostgreSQL and MySQL are not installed here**, so the confirming run on PostgreSQL 16 and MySQL
+  8.4 has not happened. The new outputs are labelled "Run (riverstone_2025)" rather than
+  "Verified", and the chapter's own at-a-glance box now carries that exception so the section does
+  not borrow the chapter's engine claim. Four questions where the two engines genuinely disagree
+  are marked **Dialect split** and give each engine's documented behaviour instead of one answer.
+- **Book 4 needs rebuilding.** Chapter 71 grew from 15,935 to 26,430 words, so page numbers from
+  that chapter onward have moved. The PDF in `fixed/Books/` is the 1 October build and predates
+  this.
 
 ---
 
