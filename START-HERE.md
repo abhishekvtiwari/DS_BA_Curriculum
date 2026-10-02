@@ -93,10 +93,17 @@ fourteen banks had none at all.
 | **Next** | The thirteen remaining banks: Chapters 70, 72a, 73–82. Roughly 260 questions at the same standard. |
 
 **Read §71.11 first and tell me whether the depth is right**, because the same standard is about to
-be applied thirteen more times. It is the last section of Chapter 71, just before "Common
-mistakes": [the chapter source](Data%20Science/Analyst-to-Architect/manuscript/ch71-sql-question-bank.md),
-or in the rebuilt PDF once Book 4 is rebuilt. What changed and why is in
-[changelog/ch71.md](changelog/ch71.md).
+be applied thirteen more times. A review copy is ready, so you do not have to wait for the book
+rebuild or read markdown:
+
+- **[Ch71 §71.11 — PDF, 26 pages](review/for-abhishek/Ch71-section-71.11-predict-the-output.pdf)**
+- **[the same as DOCX](review/for-abhishek/Ch71-section-71.11-predict-the-output.docx)**, if you
+  want to write comments into it
+
+What changed and why, including the six questions that were wrong in draft, is in
+[changelog/ch71.md](changelog/ch71.md). The section in the book itself is the last one in
+[the chapter source](Data%20Science/Analyst-to-Architect/manuscript/ch71-sql-question-bank.md),
+just before "Common mistakes".
 
 Every answer was run before it was written down, against `riverstone_2025` — the same 24-customer
 database the chapter already uses — on a bench first checked to reproduce all four figures the
