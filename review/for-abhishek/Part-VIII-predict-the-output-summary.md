@@ -5,15 +5,22 @@
 ## Why this happened
 
 You asked for the interview material to be ground down "from very basic to very detailed," with
-brain-racking questions of the `int("25", 4)` kind. I measured Part VIII before starting: of its
-**619 questions, only 19 were output-prediction**, and **17 of those 19 were in a single section** —
-Chapter 72's §72.2. Thirteen of the fourteen banks had none at all.
+brain-racking questions of the `int("25", 4)` kind.
+
+Measured before starting: Part VIII held **565 coded questions** across its banks, and **thirteen of
+the fourteen banks had no predict-the-output section at all**. The only one was Chapter 72's §72.2,
+which is why it became the template.
+
+*(An earlier note of mine put the total at 619. That figure came from a different counting method
+and I could not reproduce it, so the numbers here are the ones I can show: distinct question codes
+appearing as a question heading or a rapid-fire row, counted from the repository before and after.
+565 before, 767 now.)*
 
 You read §71.11 and approved its depth. This is that standard applied across the rest.
 
 ## What was built
 
-**Ten new sections. 202 new questions. Part VIII goes from 619 to 821.**
+**Ten new sections. 202 new questions. Part VIII goes from 565 coded questions to 767.**
 
 | Ch | Bank | New section | Core | Rapid | Was → Now |
 |---|---|---|---|---|---|
