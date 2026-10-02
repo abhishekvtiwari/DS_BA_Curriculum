@@ -8,7 +8,7 @@
 >
 > **Before you start:** Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 2–3 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap.
+> **Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading.
 >
 > **A scope note.** This chapter is for senior IC and architect-level interviews specifically (an **IC**, individual contributor, is a senior engineer or scientist who leads work without managing people), distinct from the Data Analyst/Data Scientist/Data Engineer focus of most of this part. Readers targeting DA/DS/DE roles can treat this chapter as optional, forward-looking material for a later career stage.
 >
@@ -297,6 +297,306 @@ Roles: ARC and LEAD for every row.
 
 ---
 
+## 80.7 Predict the number: capacity, availability, and the arithmetic of a design
+
+An architecture interview is mostly discussion, and that is where this chapter has been. But at some point the interviewer stops and asks for a number — how much downtime does that SLA allow, how many machines does that throughput need, what does adding a service cost you in availability. The discussion is where you show judgement; these are where you show you have built something.
+
+They are all arithmetic you can do on a whiteboard, and they are the arithmetic that makes a design real. A reliability target with no downtime figure attached is a slogan.
+
+Say each answer out loud, then read on.
+
+**How these were run.** Plain arithmetic, computed and printed on Python 3.12 with the standard library. Nothing here depends on a vendor, a price list or a product, so none of it goes stale.
+
+### Q80-030 · "We need 99.9% uptime." How much downtime is that?
+
+**Level:** Mid · **Roles:** DE, AE, MLE, Architect
+
+**Remember it as:** *Three nines is about 43 minutes a month. Each extra nine divides it by ten.*
+
+**Answer in one line:** **8.76 hours a year**, or about **43 minutes a month** — which is a great deal more than most people picture when they say "three nines", and is why the number should always be stated in minutes before it is agreed.
+
+```python
+year_minutes = 365 * 24 * 60
+for label, p in [('99%', 0.99), ('99.9%', 0.999), ('99.99%', 0.9999), ('99.999%', 0.99999)]:
+    down = year_minutes * (1 - p)
+    print(f"{label:>9}: {down:8.1f} min/yr = {down/60:6.2f} h/yr, {down/12:6.1f} min/month")
+```
+
+```
+      99%:   5256.0 min/yr =  87.60 h/yr,  438.0 min/month
+    99.9%:    525.6 min/yr =   8.76 h/yr,   43.8 min/month
+   99.99%:     52.6 min/yr =   0.88 h/yr,    4.4 min/month
+  99.999%:      5.3 min/yr =   0.09 h/yr,    0.4 min/month
+```
+
+Two nines — which sounds almost like three — allows **three and a half days** a year.
+
+The reason to have this table in your head is that it converts an abstract target into an operational commitment, and the two are usually agreed by different people. Three nines means a single unplanned restart that takes 45 minutes has spent the month's entire budget. Four nines means you cannot deploy during business hours unless the deployment is zero-downtime, because 4.4 minutes a month does not cover a rolling restart that goes wrong.
+
+Four follow-on points that separate a strong answer:
+
+**Each nine costs roughly an order of magnitude** in engineering and infrastructure. The jump from three to four is usually the jump from "one region, good monitoring" to "multi-region with automatic failover", and it is rarely worth it for an internal analytics platform.
+
+**Scheduled maintenance may or may not count**, and that is a contract question, not a technical one. Ask.
+
+**Availability is measured over a window**, and a shorter window is a harder promise. 99.9% monthly is stricter than 99.9% annually, because one bad month cannot be averaged away.
+
+**The number should come from the cost of being down**, not from a round-sounding target. A warehouse that feeds a morning report has a different requirement from a payments API, and an architect who asks "what does an hour of downtime actually cost?" before agreeing a figure is doing the job.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a small amount of downtime" |
+| Strong | + 8.76 hours a year and 43 minutes a month, and that each nine is roughly ten times the cost |
+| Extra points | **[+Business]** derive the target from the cost of downtime rather than accepting a round number · **[+Clarify]** ask whether planned maintenance counts and over what window it is measured · **[+Edge cases]** a monthly window is stricter than an annual one for the same percentage · **[+Validate]** 45 minutes of restart is a whole month of a three-nines budget, which is the sentence that makes it concrete |
+
+**Likely follow-ups:** What is an error budget? How does an SLO differ from an SLA? *(An SLO is the internal target; an SLA is the contractual promise with consequences, and it is usually set looser.)* How would you measure availability — by uptime, or by successful requests?
+**Learn it in:** Chapter 61, section 61.5 (reliability); Chapter 80, Q80-003.
+
+### Q80-031 · A request passes through five services, each 99.9% available. What is the end-to-end availability?
+
+**Level:** Senior · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *Availabilities in series multiply. Five nines-point-nine services give you 99.5%, which is a different world from 99.9%.*
+
+**Answer in one line:** **99.5%** — 0.999⁵, which is 43.7 hours of downtime a year against the 8.76 hours each individual service promises, so the chain is five times worse than any of its parts.
+
+```python
+for n in (1, 2, 3, 5, 10, 20):
+    avail = 0.999 ** n
+    print(f"{n:>2} in series: {avail*100:7.4f}%  ({(1-avail)*365*24*60:8.1f} min/yr down)")
+```
+
+```
+ 1 in series: 99.9000%  (   525.6 min/yr down)
+ 2 in series: 99.8001%  (  1050.7 min/yr down)
+ 3 in series: 99.7003%  (  1575.2 min/yr down)
+ 5 in series: 99.5010%  (  2622.7 min/yr down)
+10 in series: 99.0045%  (  5232.4 min/yr down)
+20 in series: 98.0189%  ( 10412.7 min/yr down)
+```
+
+Twenty services — an ordinary number for a microservice request path — gives **98%**, which is seven days a year.
+
+This is the strongest single argument against decomposition for its own sake, and it is worth being able to make numerically rather than as a preference. Every service you add to a *synchronous* path multiplies its failure in. The architectures that survive this do one of three things:
+
+| Approach | What it does to the arithmetic |
+|---|---|
+| **Redundancy within each service** | Two independent copies turn 99.9% into 99.9999%, so the chain of five becomes 99.9995% |
+| **Remove the service from the critical path** | Make the call asynchronous, or cache its result — an unavailable service that is not on the path contributes nothing |
+| **Degrade gracefully** | If a recommendation service is down and the page renders without recommendations, it was never in series |
+
+The redundancy line is the one worth doing out loud: 1 − (1 − 0.999)² = 0.999999. Two independent copies of a three-nines service give six nines — *provided the failures are independent*, which is the assumption that usually breaks. Two copies in the same rack, on the same deployment, behind the same config change, fail together, and the arithmetic quietly stops applying. That is the real content of Q80-029.
+
+| Tier | What to say |
+|---|---|
+| Passes | "They multiply, so it's lower" |
+| Strong | + 99.5%, converts it to 43.7 hours a year, and names the three ways out: redundancy, removing from the path, graceful degradation |
+| Extra points | **[+Scale]** 20 services in series is 98%, which is a week a year · **[+Edge cases]** redundancy only multiplies if failures are independent, and shared config, shared rack or a shared deploy breaks that · **[+Trade-offs]** the cheapest fix is usually making the call asynchronous rather than making the service more reliable · **[+Business]** this is the number to bring when someone proposes splitting a service for organisational reasons |
+
+**Likely follow-ups:** What makes two copies non-independent? How does a circuit breaker change this? What is the availability of components in parallel?
+**Learn it in:** Chapter 61, section 61.5; Chapter 80, Q80-029.
+
+### Q80-032 · A million events a day. What throughput do you design for?
+
+**Level:** Mid · **Roles:** DE, AE, Architect
+
+**Remember it as:** *The daily average is the wrong number. Traffic is not spread over 86,400 seconds; it arrives in a business day, with a peak inside it.*
+
+**Answer in one line:** The average is **11.6 events a second**, but you size for the peak — and if 80% of the volume arrives in four business hours, the real figure is **55.6 a second**, roughly five times the average.
+
+```python
+daily = 1_000_000
+print(f"average          : {daily/86400:.1f}/sec")
+for peak in (3, 5, 10):
+    print(f"  at {peak}x peak   : {daily/86400*peak:6.1f}/sec")
+print(f"80% in 4 hours   : {daily*0.8/(4*3600):.1f}/sec")
+```
+
+```
+average          : 11.6/sec
+  at  3x peak   :   34.7/sec
+  at  5x peak   :   57.9/sec
+  at 10x peak   :  115.7/sec
+80% in 4 hours  : 55.6/sec
+```
+
+Designing for 11.6 a second gives you a system that falls over every weekday at 11am.
+
+The move that makes this a good answer is doing it from the *shape of the business* rather than applying a generic multiplier. Riverstone's orders arrive during Indian business hours, so the overnight hours contribute almost nothing and the multiplier is around 5. A consumer app has an evening peak. A payroll system has a month-end spike that dwarfs everything — there the peak factor is not 5, it is 50, and the right design may be a queue that absorbs the spike rather than capacity that matches it.
+
+Three further things to say if there is room:
+
+**The peak of the peak.** A busy hour has a busy minute. If the arrival pattern is bursty rather than smooth, a short burst can exceed even the hourly peak rate several times over, which is what the queue depth has to absorb.
+
+**Growth.** Sizing for today's peak means re-architecting next year. A capacity plan carries a horizon.
+
+**Headroom.** Running at 100% of designed capacity leaves nothing for a retry storm (Chapter 78, Q78-031) or a failed node. 70% target utilisation is a common rule.
+
+| Tier | What to say |
+|---|---|
+| Passes | "About 12 a second" |
+| Strong | + that the average is the wrong number, derives a peak from the business day, and lands on roughly 50–60 a second |
+| Extra points | **[+Business]** derive the peak factor from when this business is actually busy, not a generic 3× · **[+Scale]** a queue absorbing a spike is often cheaper than capacity matching it, especially for month-end patterns · **[+Edge cases]** the busy hour has a busy minute, and bursts set the queue depth · **[+Validate]** plan for headroom — 70% utilisation — because retries and failures arrive together |
+
+**Likely follow-ups:** How would you handle a 50× month-end spike? What is backpressure? *(Chapter 77, Q77-022.)* How does this change for a streaming system?
+**Learn it in:** Chapter 48, section 48.2 (scale); Chapter 80, section 80.1.
+
+### Q80-033 · p50 is 100 ms and p99 is 1 second. A page makes 20 service calls. How often is it slow?
+
+**Level:** Brain-racking · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *The tail is not rare once you multiply it. Twenty calls at a 1% tail means one page in five touches the tail.*
+
+**Answer in one line:** About **18% of page loads** hit at least one second-long call — because the chance of *avoiding* the tail on all 20 is 0.99²⁰ = 0.818, so a "1 in 100" latency is a "1 in 5" page.
+
+```python
+p_tail = 0.01
+for n in (1, 5, 10, 20, 50):
+    print(f"{n:>2} calls: P(at least one in the p99 tail) = {(1-(1-p_tail)**n)*100:5.1f}%")
+```
+
+```
+ 1 calls: P(at least one in the p99 tail) =   1.0%
+ 5 calls: P(at least one in the p99 tail) =   4.9%
+10 calls: P(at least one in the p99 tail) =   9.6%
+20 calls: P(at least one in the p99 tail) =  18.2%
+50 calls: P(at least one in the p99 tail) =  39.5%
+```
+
+This is why **the median latency of a service tells you almost nothing about the experience of a page built from it**, and why engineers who optimise p50 are often surprised that users still complain.
+
+The consequences shape real designs:
+
+**Tail latency is the thing to work on.** Reducing p99 from 1s to 300 ms improves the 20-call page far more than halving the median does, because the median was never the problem.
+
+**Parallelise and the arithmetic changes shape.** Twenty *sequential* calls add their latencies, so the page is slow in total. Twenty *parallel* calls take as long as the slowest, which is almost always a tail call — so parallelism fixes the sum and makes you *more* exposed to the tail, not less.
+
+**Hedged requests** exploit exactly this: send a duplicate request if the first has not returned by p95, and take whichever answers first. It costs about 5% extra load and removes most of the tail.
+
+**Fan-out is the hidden cost of decomposition**, and it is the latency counterpart to Q80-031's availability argument. Each service you add is another draw from the tail.
+
+| Tier | What to say |
+|---|---|
+| Passes | "The tail matters more than the median" |
+| Strong | + the calculation, 1 − 0.99²⁰ = 18%, and that parallelising makes the page's latency equal to the slowest call |
+| Extra points | **[+Scale]** optimising p99 beats optimising p50 for any fan-out page · **[+Trade-offs]** hedged requests cut the tail for about 5% more load · **[+Edge cases]** the calculation assumes independence; a shared bottleneck like one overloaded database makes tails correlate and the real figure is worse · **[+Business]** users experience the tail, and averages in a dashboard hide it entirely |
+
+**Likely follow-ups:** What causes tail latency? *(GC pauses, cold caches, queueing, a slow replica.)* What is a hedged request? Why might the independence assumption fail?
+**Learn it in:** Chapter 61, section 61.4 (performance); Chapter 80, section 80.1.
+
+### Q80-034 · 100 TB today, replication factor 3, growing 30% a year. What do you provision for three years?
+
+**Level:** Mid · **Roles:** DE, Architect
+
+**Remember it as:** *Multiply by the replication factor, compound the growth, then divide by your target utilisation. Three steps, each of which people forget one of.*
+
+**Answer in one line:** About **940 TB** — 100 TB compounds to 220 TB logical over three years, replication triples it to 659 TB raw, and provisioning to a 70% utilisation target brings it to roughly 940.
+
+```python
+base, rf, growth, target_util = 100, 3, 0.30, 0.70
+for y in range(4):
+    logical = base * (1 + growth)**y
+    print(f"year {y}: {logical:6.1f} TB logical, {logical*rf:6.1f} TB raw")
+final = base * (1+growth)**3 * rf
+print(f"provisioned at {target_util:.0%} utilisation: {final/target_util:.0f} TB")
+```
+
+```
+year 0:  100.0 TB logical,  300.0 TB raw
+year 1:  130.0 TB logical,  390.0 TB raw
+year 2:  169.0 TB logical,  507.0 TB raw
+year 3:  219.7 TB logical,  659.1 TB raw
+provisioned at 70% utilisation: 942 TB
+```
+
+The answer people give is 300 TB, which is the replication step alone. The answer is more than three times that.
+
+Each step is a decision worth naming rather than a constant:
+
+**Replication factor** is a durability and availability choice. Three is the common default for HDFS and Cassandra; cloud object storage replicates behind the scenes and you pay for one copy. **Erasure coding** gets similar durability at roughly 1.5× instead of 3×, at the cost of more CPU on reads and slower recovery — and it is the lever that matters most at this scale.
+
+**Growth** should come from measurement, not a guess. And compound growth means the last year costs more than the first two combined, which is why a three-year capacity plan is really a plan to revisit the decision in eighteen months.
+
+**Utilisation headroom** exists because a storage system at 95% behaves very badly — compaction, rebalancing and recovery all need free space, and a node failure must be absorbed by the remaining nodes.
+
+The architect's real move is to question the first number. Three years of 30% growth assumes you keep everything forever. A retention policy that drops raw events after 90 days while keeping aggregates can change 940 TB into 200, and that conversation is worth more than any efficiency in the storage layer.
+
+| Tier | What to say |
+|---|---|
+| Passes | "300 TB, for the replication" |
+| Strong | + compounds the growth and adds utilisation headroom, landing near 940 TB, and names all three steps |
+| Extra points | **[+Trade-offs]** erasure coding gives similar durability at about 1.5× rather than 3× · **[+Business]** a retention policy usually beats any storage efficiency — ask what must actually be kept · **[+Scale]** compound growth means year three costs more than years one and two together · **[+Edge cases]** at 95% utilisation compaction and recovery stop working, which is why the headroom is not optional |
+
+**Likely follow-ups:** What is erasure coding? How would you set a retention policy? What is the cost difference between hot and cold storage tiers?
+**Learn it in:** Chapter 48, section 48.3 (storage); Chapter 80, section 80.3.
+
+### Q80-035 · 500 requests a second, 200 ms each. How many connections do you need?
+
+**Level:** Senior · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *Little's Law: concurrency = throughput × latency. It is the only capacity formula you have to remember, and it explains why slow systems fall over rather than just slowing down.*
+
+**Answer in one line:** **100 concurrent requests** — 500 per second × 0.2 seconds — so a connection pool of 100 is exactly saturated, and the important part is what happens when latency moves.
+
+```python
+throughput = 500
+for latency in (0.05, 0.2, 1.0, 2.0):
+    print(f"{latency*1000:>5.0f} ms -> {throughput*latency:6.0f} concurrent")
+print(f"a pool of 100 serves {100/0.2:.0f} req/s at 200 ms")
+print(f"the same pool serves {100/2.0:.0f} req/s if latency degrades to 2 s")
+```
+
+```
+   50 ms ->     25 concurrent
+  200 ms ->    100 concurrent
+ 1000 ms ->    500 concurrent
+ 2000 ms ->   1000 concurrent
+a pool of 100 serves 500 req/s at 200 ms
+the same pool serves  50 req/s if latency degrades to 2 s
+```
+
+The last two lines are the whole point, and they describe how most outages actually unfold.
+
+A pool of 100 connections handles 500 requests a second comfortably at 200 ms. The database gets slower — a missing index after a deploy, a long-running report, a failover — and latency goes to 2 seconds. Capacity does not fall by the 10× that latency rose; it falls to **50 requests a second**, and the other 450 queue. The queue grows, queued requests time out, clients retry (Chapter 78, Q78-030), and the retries consume the capacity that was left.
+
+That is why systems **collapse** rather than degrade. The relationship between latency and capacity is multiplicative, and a queue turns a 10× slowdown into a total outage.
+
+What follows from it:
+
+**Size pools from Little's Law and the *worst* acceptable latency**, not the typical one.
+
+**Timeouts are a capacity control, not just an error-handling nicety.** A request that times out at 1 second frees its connection; one with no timeout holds it forever (Chapter 78, Q78-032).
+
+**Load shedding beats queueing.** Rejecting requests you cannot serve keeps the system responsive for the ones you can. An unbounded queue converts a capacity problem into an availability problem.
+
+The law applies everywhere: threads, connections, Kafka consumers, workers in a pool, even people in a support queue.
+
+| Tier | What to say |
+|---|---|
+| Passes | "100, by Little's Law" |
+| Strong | + what happens when latency rises: capacity falls proportionally, the queue grows, and the system collapses rather than degrading |
+| Extra points | **[+Scale]** size pools from the worst acceptable latency, not the typical one · **[+Trade-offs]** load shedding keeps a system responsive where an unbounded queue turns slow into down · **[+Edge cases]** timeouts are capacity control, because they return the connection · **[+Business]** this is why an incident goes from "a bit slow" to "entirely down" in minutes with no further trigger |
+
+**Likely follow-ups:** How would you pick a timeout? What is load shedding? How does this interact with autoscaling? *(Badly, if the scaler reacts to CPU — a queue-bound system is not CPU-bound, so it never scales.)*
+**Learn it in:** Chapter 61, section 61.4; Chapter 78, Q78-030.
+
+### Rapid-fire, 80.7: numbers an architect should not have to look up
+
+Roles: DE, MLE and Architect for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q80-036 | Two copies of a 99.9% service — what availability? | 99.9999%, *if* the failures are independent. Shared config, shared rack or a shared deploy breaks that, and then it is still 99.9% | **[+Validate]** ask what the two copies share before claiming the number → Q80-029 |
+| Q80-037 | An SLA of 99.9% monthly against 99.9% annually | The monthly one is stricter: a bad month cannot be averaged away across the year | **[+Clarify]** the window is part of the promise → Q80-030 |
+| Q80-038 | A batch job takes 4 hours on 1 TB. How long on 10 TB? | Not 40 hours necessarily — it depends on whether the work is linear, and on whether a sort or a join makes it n log n or worse. Measure at two sizes before extrapolating | **[+Scale]** a shuffle or a cross join changes the shape entirely → Ch 48 §48.2 |
+| Q80-039 | Is adding a cache always a latency win? | No. It adds a failure mode, a consistency question and a cold-start cliff. A cache that is down or empty makes the system slower than having none | **[+Edge cases]** a popular key expiring sends everything to the database at once → Ch 78 Q78-031 |
+| Q80-040 | 1 GB of data over a 100 Mbps link — how long? | About 80 seconds at line rate, and realistically more. Bandwidth is in bits and file sizes in bytes; the factor of 8 is the usual error | **[+Validate]** for very large transfers, shipping disks is still sometimes faster → Ch 48 §48.2 |
+| Q80-041 | A "zero-downtime" deploy with a database migration | Only if the schema change is backward compatible with the running version. Add a column, deploy, backfill, then drop — never all at once | **[+Business]** the migration, not the deploy, is what forces the outage → Ch 28 §28.12 |
+| Q80-042 | Your p99 improved but users complain more. How? | You may have moved traffic into the tail, or the p99 is now measured over a different population, or the complaints are about p99.9. Percentiles do not aggregate — you cannot average them across servers | **[+Edge cases]** averaging percentiles across hosts is a common and silent monitoring error → Ch 61 §61.4 |
+| Q80-043 | Cost of an incident that costs one hour of a 10-person team | Ten hours of salary is the visible part, and usually the smallest. Delayed work, lost trust and the fix's opportunity cost are the rest | **[+Business]** this is the figure that justifies reliability work → Q80-016 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -339,13 +639,15 @@ No software specific to this chapter. A whiteboard or diagramming tool for C4 di
 
 ## Key terms
 
-CAP theorem · CP vs. AP · PACELC · eventual consistency · durability vs. availability · single point of failure · horizontal vs. vertical scaling · partitioning vs. sharding · leader-follower (primary-replica) replication · failover · individual contributor (IC) · build vs. buy · total cost of ownership (TCO) · lambda architecture · kappa architecture · Architecture Decision Record (ADR) · C4 diagram · Responsible AI review · data governance · principle of least privilege · segregation of duties · showback vs. chargeback · ROI/payback period · influencing without authority · first-90-days plan (architect)
+CAP theorem · CP vs. AP · PACELC · eventual consistency · durability vs. availability · single point of failure · horizontal vs. vertical scaling · partitioning vs. sharding · leader-follower (primary-replica) replication · failover · individual contributor (IC) · build vs. buy · total cost of ownership (TCO) · lambda architecture · kappa architecture · Architecture Decision Record (ADR) · C4 diagram · Responsible AI review · data governance · principle of least privilege · segregation of duties · showback vs. chargeback · ROI/payback period · influencing without authority · first-90-days plan (architect) · nines of availability · error budget · SLO against SLA · availability in series · independent failure · peak factor · busy hour · utilisation headroom · tail latency · fan-out · hedged request · replication factor · erasure coding · retention policy · Little's Law · load shedding · queueing collapse
 
 ---
 
 ## Final-week revision list
 
-Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023, Q80-024.
+Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023, Q80-024, Q80-030, Q80-031, Q80-035.
+
+The last three are the arithmetic that makes a design argument concrete: what a reliability target costs in minutes (Q80-030), what a chain of services does to it (Q80-031), and why a slow dependency collapses a system rather than merely slowing it (Q80-035).
 
 ---
 
