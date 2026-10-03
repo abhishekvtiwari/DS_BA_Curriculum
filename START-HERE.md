@@ -14,20 +14,21 @@ Everything below is a real file in this folder. Click it, or open it from Explor
 
 Everything assembled in one place, outside this folder so it can be moved or sent:
 
-**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 794 files, 285 MB, in five numbered
-folders. Open **`00-Read-me-first.pdf`** inside it. There is also a
-**`…-Review-Bundle.zip`** (214 MB) beside it if you want to move it to another machine.
+**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 933 files, 305 MB, arranged in
+**product order**: the interview book first, then the two add-ons. Open **`00-Start-here.pdf`**
+inside it. The **`…-Review-Bundle.zip`** (149 MB) beside it is the same thing for another machine.
 
-It holds the four books, the practice material, the topic guide, what changed recently, and the
-review state. The read-me says what I would most like you to look at, and what I already know is
-missing.
+| Folder | What it is |
+|---|---|
+| `00-Start-here.pdf` | One page: the offer, folder by folder, and what is still open |
+| `01-The-Interview-Book/` | *Be Interview Ready*, the product, with its front, back and Instagram covers |
+| `02-Add-on-The-Volumes/` | Volumes 1–3 (Theory, Practical, Implementation), the practice files arranged by tool, and the topic guide |
+| `03-Add-on-Projects/` | The project catalogue. No project is built yet, and the folder says so |
+| `04-For-review-only/` | What changed, the review state, the selling strategy, the internal overview. Not for buyers |
 
-**The practice material is now arranged by tool, not by chapter.** `04-Practice-Arena/` has ten
-tools — Excel, SQL, Python, statistics, machine learning, data engineering, GenAI, the command
-line, architecture, take-homes — each running from the smallest idea to a finished thing you can
-run. Chapter numbers are gone from the folder names, and `WHERE-IS-MY-CHAPTER.md` turns any
-reference in the book back into a folder. The chapter-by-chapter view still exists in this
-repository, unchanged, because the book refers to it by name.
+The practice files are arranged by tool, not by chapter: ten tools, each running from the
+smallest idea to a finished thing you can run, with `WHERE-IS-MY-CHAPTER.md` turning any reference
+in the volumes back into a folder.
 
 The same documents are in [review/for-abhishek/](review/for-abhishek/) here, if you would rather
 not leave this folder.
@@ -43,10 +44,12 @@ Four things, in this order. Each is a PDF you can open directly.
 | 1 | **The covers** | [front](review/for-abhishek/cover/front-cover.pdf) · [back](review/for-abhishek/cover/back-cover.pdf) · [Instagram](review/for-abhishek/cover/instagram-front.png) | Does it look like something you would buy? Is the back-cover wording right? |
 | 2 | **Chapter 72B**, data cleaning (new, 100 questions) | [PDF](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.pdf) | Start at 72B.4, the dates section |
 | 3 | **Chapter 76B**, Business Analyst (38 → 95) | [PDF](review/for-abhishek/Ch76B-business-analyst-bank.pdf) | Start at 76B.11, the ambiguity drill |
-| 4 | **The whole interview book** | [Book 4, 702 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
+| 4 | **The whole interview book** | [702 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
+| 5 | **The bundle order** | [00-Start-here.pdf](review/for-abhishek/Bundle-start-here.pdf) | Interview book first, volumes and projects as add-ons |
 
-Still open, waiting on you: an ISBN, whether to print a price, and whether Book 4's own PDF
-should open with the new front cover instead of the plain blue one.
+Still open, waiting on you: an ISBN; whether to print a price; the add-on prices; and whether to
+rebuild the four PDFs so their own covers and titles match this order (they still say "Book 1" to
+"Book 4 of 4" inside).
 
 ---
 

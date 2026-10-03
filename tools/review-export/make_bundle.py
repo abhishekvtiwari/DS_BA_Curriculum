@@ -7,7 +7,10 @@ moved to another machine.
 
 What goes in, and what does not:
 
-- **The books.** The five PDFs from `fixed/Books`.
+- **The order.** Product order, not file type: 00 start here, 01 the interview book (the
+  product), 02 the volumes with their practice files (first add-on), 03 projects (second add-on),
+  04 material for review only.
+- **The books.** The four books from `fixed/Books`, renamed to match that order.
 - **The practice material.** Only what git tracks, about 92 MB. The other 317 MB in `companion/`
   is generated data — the large parquet and CSV files the data-engineering chapters build — and
   the chapter scripts rebuild it on demand, which is why the repository ignores it. Shipping it
@@ -56,56 +59,76 @@ def build(dest, make_zip):
     dest.mkdir(parents=True)
     log = []
 
-    # ---------------------------------------------------------------- 1. the books
-    for p in sorted((ROOT / 'fixed' / 'Books').glob('*.pdf')):
-        copy(p, dest / '01-Books' / p.name, 'book', log)
-    readme = ROOT / 'fixed' / 'Books' / 'README.md'
-    if readme.exists():
-        copy(readme, dest / '01-Books' / 'README.md', 'book', log)
+    # The bundle follows the product order (owner decision, 3 Oct 2026): the interview book is
+    # the product; the volumes with their practice files are the first add-on; projects are the
+    # second. Internal material is fenced off in a folder buyers never see.
+    RV = ROOT / 'review' / 'for-abhishek'
+    BOOKS = ROOT / 'fixed' / 'Books'
 
-    # ---------------------------------------------------------------- 2. the guide
-    for name in ['Where-Everything-Is.pdf', 'Where-Everything-Is.docx',
-                 'Where-Everything-Is.xlsx', 'Where-Everything-Is.md']:
-        p = ROOT / 'review' / 'for-abhishek' / name
-        if p.exists():
-            copy(p, dest / '02-Guide' / name, 'guide', log)
+    def opt(src, dst, label):
+        if src.exists():
+            copy(src, dst, label, log)
 
-    # ---------------------------------------------------------------- 3. what is new
-    # The readable summaries first, then the sample section, then the changelogs for every
-    # chapter the Part VIII work touched, so a reviewer can trace any figure back to its reason.
-    for stem in ['Part-VIII-predict-the-output-summary', 'Ch71-section-71.11-predict-the-output']:
-        for ext in ('.pdf', '.docx'):
-            f = ROOT / 'review' / 'for-abhishek' / (stem + ext)
-            if f.exists():
-                copy(f, dest / '03-Whats-new' / f.name, 'what is new', log)
-    for name in ['ch18.md', 'ch15.md', 'ch70.md', 'ch71.md', 'ch72a.md', 'ch73.md', 'ch74.md',
-                 'ch75.md', 'ch77.md', 'ch78.md', 'ch79.md', 'ch80.md']:
-        f = ROOT / 'changelog' / name
-        if f.exists():
-            copy(f, dest / '03-Whats-new' / 'changelogs' / name, 'what is new', log)
+    # ---------------------------------------------------------------- 00. start here
+    for ext in ('.pdf', '.docx'):
+        opt(RV / f'Bundle-start-here{ext}', dest / f'00-Start-here{ext}', 'start here')
 
-    # ---------------------------------------------------------------- 4. the practice material
-    # Arranged by tool, not by chapter. The chapter view lives in the repository and the book
-    # refers to it; a learner holding this bundle wants to pick a tool and work down, and the
-    # Arena's WHERE-IS-MY-CHAPTER.md turns any chapter reference back into a folder.
+    # ---------------------------------------------------------------- 01. the interview book
+    ib = dest / '01-The-Interview-Book'
+    opt(BOOKS / 'Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf',
+        ib / 'Be-Interview-Ready-Data-Science-and-Analytics.pdf', 'interview book')
+    for name in ('front-cover.pdf', 'back-cover.pdf', 'front-cover.png', 'back-cover.png',
+                 'instagram-front.png'):
+        opt(RV / 'cover' / name, ib / 'Covers' / name, 'interview book')
+
+    # ---------------------------------------------------------------- 02. add-on: the volumes
+    vol = dest / '02-Add-on-The-Volumes'
+    for n, stem, nice in [(1, 'Theory', 'Volume-1-Theory'), (2, 'Practical', 'Volume-2-Practical'),
+                          (3, 'Implementation', 'Volume-3-Implementation')]:
+        opt(BOOKS / f'Analyst-to-Architect-Book-{n}-{stem}.pdf', vol / f'{nice}.pdf', 'volumes')
+    for name in ['Where-Everything-Is.pdf', 'Where-Everything-Is.xlsx']:
+        opt(RV / name, vol / 'Topic-guide' / name, 'volumes')
+    # The practice files, arranged by tool, not by chapter. The chapter view lives in the
+    # repository and the volumes refer to it; WHERE-IS-MY-CHAPTER.md maps one onto the other.
     import make_practice_arena
-    arena = dest / '04-Practice-Arena'
+    arena = vol / 'Practice-Files'
     make_practice_arena.build(arena)
     for f in sorted(arena.rglob('*')):
         if f.is_file():
-            log.append(('practice', f, f.stat().st_size))
+            log.append(('practice files', f, f.stat().st_size))
 
-    # ---------------------------------------------------------------- 5. the review state
+    # ---------------------------------------------------------------- 03. add-on: projects
+    pj = dest / '03-Add-on-Projects'
+    for ext in ('.pdf', '.docx'):
+        opt(RV / f'Product-ladder-and-project-catalogue{ext}', pj / f'Project-catalogue{ext}', 'projects')
+    pj.mkdir(parents=True, exist_ok=True)
+    note = pj / 'README.md'
+    note.write_text('\n'.join([
+        '# Projects: an add-on, sold one at a time',
+        '',
+        'Ready-made portfolio projects, each with a realistic brief, messy data, a runnable worked',
+        'solution, the reasoning behind it, and how to talk about it in an interview.',
+        '',
+        '**None is built yet.** `Project-catalogue.pdf` is the design and the list. The first to',
+        'build is P1, the daily report that sends itself.',
+        '']), encoding='utf-8')
+    log.append(('projects', note, note.stat().st_size))
+
+    # ---------------------------------------------------------------- 04. for review only
+    rv = dest / '04-For-review-only'
+    opt(BOOKS / 'Analyst-to-Architect-Book-Overview.pdf', rv / 'Internal-overview-not-for-sale.pdf', 'review only')
+    for stem in ['Ch72B-data-cleaning-and-wrangling-bank', 'Ch76B-business-analyst-bank',
+                 'Part-VIII-predict-the-output-summary', 'Ch71-section-71.11-predict-the-output',
+                 'Selling-the-books-strategy-and-red-team', 'Read-me-first']:
+        for ext in ('.pdf', '.docx'):
+            opt(RV / f'{stem}{ext}', rv / 'Whats-new-and-strategy' / f'{stem}{ext}', 'review only')
     for name in ['TRACKER.md', 'DECISIONS.md', 'DECISIONS-BRIEFING.md',
                  'REVIEW-STATUS.md', 'REVIEW-GAPS.md', 'START-HERE.md']:
-        p = ROOT / name
-        if p.exists():
-            copy(p, dest / '05-Review-state' / name, 'review state', log)
-    reg = ROOT / 'review' / 'Book-Review-Action-Register.xlsx'
-    if reg.exists():
-        copy(reg, dest / '05-Review-state' / reg.name, 'review state', log)
-    for p in sorted((ROOT / 'changelog').glob('*.md')):
-        copy(p, dest / '05-Review-state' / 'changelog' / p.name, 'review state', log)
+        opt(ROOT / name, rv / 'Review-state' / name, 'review only')
+    opt(ROOT / 'review' / 'Book-Review-Action-Register.xlsx',
+        rv / 'Review-state' / 'Book-Review-Action-Register.xlsx', 'review only')
+    for f in sorted((ROOT / 'changelog').glob('*.md')):
+        copy(f, rv / 'Review-state' / 'changelog' / f.name, 'review only', log)
 
     # ---------------------------------------------------------------- the manifest
     groups = {}
