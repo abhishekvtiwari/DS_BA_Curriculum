@@ -17,7 +17,7 @@ Design system (version 2, 3 October 2026)
   Lora, named in tools/pdf/cover.html, are not.
 * **Claims.** Every number is counted from the manuscript or read from the built PDF. "Nothing
   typed by hand" is the book's own standard (front-how-to-use-this-book.md). No salary,
-  placement, endorsement or accreditation claim; the ISBN area is a marked placeholder.
+  placement, endorsement or accreditation claim; no barcode area (owner decision, 4 Oct 2026).
 
 After rendering, the script measures the left and right edge of every element tagged to a
 margin, checks nothing runs past the bottom margin, and exits 1 if anything is off by more than
@@ -35,6 +35,8 @@ OUT = ROOT / 'review' / 'for-abhishek' / 'cover'
 
 BRAND = 'Compounza'          # owner decision, 3 Oct 2026: credited to the brand, not a person
 FIELD = 'Data Science &amp; Analytics'
+PRODUCT = 'The Interview Readiness Book'   # owner's name for the lead product, 4 Oct 2026
+VOLUMES = ('First Principles', 'The Working Analyst', 'Builder to Architect')
 
 NAVY = '#0B1324'
 NAVY2 = '#111C33'
@@ -180,7 +182,7 @@ def front():
     pg = f' &middot; {PAGES} pages' if PAGES else ''
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}{FRONT_CSS}</style></head>
 <body><div class="page"><div class="frame"></div><div class="wrap">
-  {header('The Interview Book')}
+  {header(PRODUCT)}
   <div class="art">{SPIRAL}
     <div class="core"><div class="n">{TOTAL:,}</div><div class="w">Questions</div>
       <div class="label s">Sixteen banks</div></div>
@@ -244,7 +246,7 @@ h2 span {{ color: {GOLD}; }}
                letter-spacing: 0; color: #B9C3D4; }}
 .series > div.on {{ border-color: {GOLD}; background: rgba(217,165,74,.10); color: {IVORY}; }}
 .colophon {{ align-items: end; padding-top: 4mm; }}
-.colophon .l {{ grid-column: 1 / span 8; line-height: 1.9; }}
+.colophon .l {{ grid-column: 1 / span 12; line-height: 1.9; }}
 .colophon .name {{ font-family: Bahnschrift, sans-serif; font-weight: 600; font-size: 10.5pt;
                   letter-spacing: .2em; color: {IVORY}; text-transform: uppercase; }}
 .ph {{ grid-column: 9 / span 4; height: 19mm; border: .25mm dashed rgba(238,231,215,.30);
@@ -270,8 +272,8 @@ def back():
         '<b>Where to learn it</b>, by chapter and section',
     ]
     ladder = [
-        ('Start here', 'The Interview Book', f'{TOTAL:,} questions with worked answers. This book.', True),
-        ('Add-on', 'The Volumes', 'Theory, Practical and Implementation, with practice files for every tool.', False),
+        ('Start here', PRODUCT, f'{TOTAL:,} questions with worked answers. This book.', True),
+        ('Add-on', 'The Three Volumes', f'{VOLUMES[0]}, {VOLUMES[1]} and {VOLUMES[2]}, with practice files for every tool.', False),
         ('Add-on', 'Projects', 'Ready-made portfolio projects with real, messy data. Sold separately.', False),
     ]
     series = ''.join(f'<div class="{"on" if on else ""}"><span class="label gold">{k}</span>'
@@ -280,8 +282,8 @@ def back():
     pg = f' &middot; {PAGES} pages' if PAGES else ''
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}{BACK_CSS}</style></head>
 <body><div class="page"><div class="frame"></div><div class="wrap">
-  {header('The Interview Book')}
-  <div class="label gold" data-l style="margin-top:8mm">The {FIELD} interview book</div>
+  {header(PRODUCT)}
+  <div class="label gold" data-l style="margin-top:8mm">{PRODUCT} &middot; {FIELD}</div>
   <h2 data-l>{TOTAL:,} questions. Worked answers.<br><span>Nothing typed by hand.</span></h2>
   <p class="serif lede" data-l>Most data science interview books give you a question and a paragraph. This one gives you
   the answer at three levels, because the gap between a pass and an offer is rarely knowledge.
@@ -311,8 +313,7 @@ def back():
   <div class="rule thin" style="margin-top:5mm" data-l data-r></div>
   <div class="grid colophon">
     <div class="l label" data-l><span class="name">{BRAND}</span><br>
-      The Interview Book &middot; {FIELD}<br>{TOTAL:,} questions &middot; sixteen banks{pg}</div>
-    <div class="ph" data-r>ISBN / barcode<br>placeholder</div>
+      {PRODUCT} &middot; {FIELD}<br>{TOTAL:,} questions{pg}</div>
   </div>
 </div></div></body></html>"""
 
