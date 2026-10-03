@@ -33,6 +33,8 @@ BOOK = ROOT / 'Data Science' / 'Analyst-to-Architect'
 MAN = BOOK / 'manuscript'
 OUT = ROOT / 'review' / 'for-abhishek' / 'cover'
 
+AUTHOR = 'Abhishek Tiwari'
+
 INK = '#0A0F1C'
 INK2 = '#121A2E'
 AMBER = '#F4A52A'
@@ -132,6 +134,10 @@ h1 .amber {{ color:{AMBER}; }}
 .foot {{ display:flex; justify-content:space-between; align-items:flex-end;
         font-family:Consolas,monospace; font-size:8.4pt; letter-spacing:.13em; color:#8FA4C6; }}
 .foot .r {{ text-align:right; }}
+.author {{ font-family:Bahnschrift,"Segoe UI",sans-serif; font-weight:600; font-size:15pt;
+          color:#fff; letter-spacing:.16em; text-transform:uppercase; line-height:1.2; }}
+.author small {{ display:block; font-family:Consolas,monospace; font-weight:400; font-size:7.6pt;
+          letter-spacing:.2em; color:#8FA4C6; margin-bottom:1.6mm; }}
 .spacer {{ flex:1 1 auto; }}
 """
 
@@ -148,7 +154,7 @@ h2 .amber {{ color:{AMBER}; }}
 .card h3 {{ font-family:Consolas,monospace; font-size:8.2pt; letter-spacing:.22em; color:{AMBER};
           text-transform:uppercase; margin:0 0 4mm; font-weight:400; }}
 table {{ width:100%; border-collapse:collapse; font-family:"Segoe UI",sans-serif; font-size:8.9pt; }}
-td {{ padding:1.18mm 0; color:#CBD6E8; vertical-align:top; }}
+td {{ padding:0.92mm 0; color:#CBD6E8; vertical-align:top; line-height:1.3; }}
 td.n {{ text-align:right; font-family:Bahnschrift,sans-serif; font-weight:700; color:{AMBER};
        width:11mm; padding-left:3mm; }}
 td.c {{ font-family:Consolas,monospace; font-size:7.6pt; color:#7F93B5; width:12mm; }}
@@ -163,8 +169,8 @@ li b {{ color:#fff; font-weight:600; }}
 .note {{ font-family:"Segoe UI",sans-serif; font-size:8.9pt; line-height:1.55; color:#9FB0CA;
         border-left:2px solid {AMBER_DIM}; padding:1mm 0 1mm 5mm; margin-top:1mm; }}
 .note b {{ color:#D7E0EF; font-weight:600; }}
-.series {{ display:flex; gap:3.4mm; margin-top:7mm; }}
-.bk {{ flex:1; border:1px solid rgba(255,255,255,.14); border-radius:3px; padding:3.4mm 4mm;
+.series {{ display:flex; gap:3.4mm; margin-top:5mm; }}
+.bk {{ flex:1; border:1px solid rgba(255,255,255,.14); border-radius:3px; padding:2.6mm 4mm;
       font-family:Consolas,monospace; font-size:7.7pt; letter-spacing:.09em; color:#8FA4C6; }}
 .bk.on {{ border-color:{AMBER}; background:rgba(244,165,42,.11); color:#fff; }}
 .bk span {{ display:block; color:{AMBER}; font-size:7pt; letter-spacing:.2em; margin-bottom:1.3mm; }}
@@ -196,8 +202,8 @@ def front():
   <div class="spacer" style="flex:0.5"></div>
   <div class="skills">{skills}</div>
   <div class="hairline" style="margin:7mm 0 5mm"></div>
-  <div class="foot"><span>Every output was run.<br>Nothing was typed by hand.</span>
-    <span class="r">{pg}</span></div>
+  <div class="foot"><span class="author"><small>WRITTEN BY</small>{AUTHOR}</span>
+    <span class="r">Every output was run.<br>{pg}</span></div>
 </div></div></body></html>"""
 
 
@@ -224,7 +230,7 @@ def back():
     return f"""<!doctype html><html><head><meta charset="utf-8">
 <style>{CSS}{BACK_CSS}</style></head><body>
 <div class="page"><div class="texture">{TEXTURE}</div>
-<div class="inner" style="padding:17mm 18mm 15mm">
+<div class="inner" style="padding:15mm 18mm 14mm">
   <div class="rule"></div>
   <div class="top" style="margin-bottom:7mm"><span>Analyst to Architect &middot; Book Four</span>
     <span>Part 8</span></div>
@@ -258,6 +264,7 @@ def back():
 
   <div class="isbn">
     <div style="font-family:Consolas,monospace; font-size:7.6pt; letter-spacing:.12em; color:#7F93B5; line-height:1.85">
+      <span style="color:#fff; letter-spacing:.16em">{AUTHOR.upper()}</span><br>
       ANALYST TO ARCHITECT &middot; BOOK FOUR OF FOUR<br>
       PART 8 &middot; CHAPTERS 68&ndash;83{f' &middot; {PAGES} PAGES' if PAGES else ''}
     </div>
@@ -345,8 +352,9 @@ def instagram():
   <div class="skills">{skills}</div>
   <div class="hairline" style="margin-top:28px"></div>
   <div class="foot" style="margin-top:22px">
-    <span>Every output was run.<br>Nothing was typed by hand.</span>
-    <span style="text-align:right">PART 8<br>{PAGES} PAGES</span></div>
+    <span style="font-family:Bahnschrift,sans-serif; font-weight:600; font-size:27px; color:#fff;
+                 letter-spacing:4px; text-transform:uppercase">{AUTHOR}</span>
+    <span style="text-align:right">Every output was run.<br>PART 8 &middot; {PAGES} PAGES</span></div>
 </div></body></html>"""
 
 
