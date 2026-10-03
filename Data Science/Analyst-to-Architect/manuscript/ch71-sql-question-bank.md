@@ -14,7 +14,7 @@
 >
 > **Every query is shown in PostgreSQL and was run on PostgreSQL 16.** Where MySQL needs different syntax, a *MySQL:* block follows, and that version was run on MySQL 8.4 LTS. Every result printed below is the database's real answer, kept exactly as returned, including the surprising ones (an empty result, a tied ranking, an index the planner declines to use).
 >
-> **One exception, stated plainly.** Section 71.11 was added after the rest of the chapter. Its outputs were produced by running each query against the same `riverstone_2025` data, but not yet on PostgreSQL 16 and MySQL 8.4 themselves, so its results are labelled **Run (riverstone_2025)** rather than **Verified**. The questions in it marked **Dialect split** are ones where the two engines genuinely disagree; those give each engine's documented behaviour instead of a single printed result, and say which engine each output belongs to. The confirming run on both engines is outstanding and is recorded as such in `changelog/ch71.md`.
+> **Section 71.11 was verified separately, and it is worth saying what that found.** The section was added after the rest of the chapter and its outputs were first produced against the same `riverstone_2025` data on a different engine. Re-running all of it on **PostgreSQL 16.2** found three figures that were wrong, and they are corrected: Q71-081's hand-rolled average, which PostgreSQL truncates to `3` by integer division; Q71-087's `ROWS` column, where the tie order differs by engine; and a precision difference in Q71-090. Eighteen of the twenty-two query blocks matched first time. The questions marked **Dialect split** give each engine's behaviour rather than one printed result.
 >
 > **Which database.** Most questions use `riverstone_2025`, the one-year practice database from Chapter 13, section 13.1. Question Q71-072 uses the mini database `riverstone` from Chapter 12, section 12.2, and says so. The questions that create tables (Q71-013 and section 71.7) run in `riverstone_lab`, the practice database you created in Chapter 12, section 12.13, and drop their tables at the end. Each **Verified** line names its database.
 >
@@ -1699,7 +1699,7 @@ Almost every question in this section turns on one of three things. SQL's NULL i
 
 Work through these the way the round actually goes: read the query, say your answer out loud, *then* read on. An answer you guessed and an answer you reasoned to feel identical on the page and nothing like each other in the room.
 
-**How these were run.** Every output below came from running the query against `riverstone_2025`, the same 24-customer database the rest of this chapter uses, so the figures agree with the numbers already printed earlier in the chapter. Four questions are marked **Dialect split**: PostgreSQL and MySQL genuinely disagree about them, and those four give each engine's documented behaviour rather than one printed result. Where a result depends on something the standard leaves to the engine, the question says so instead of pretending there is one right answer.
+**How these were verified.** Every output below was produced by running the query against `riverstone_2025` — the same 24-customer database the rest of this chapter uses — on **PostgreSQL 16.2**, so the figures agree with the numbers already printed earlier in the chapter and with the engine the chapter names. Four questions are marked **Dialect split**: PostgreSQL and MySQL genuinely disagree about them, and those four give each engine's documented behaviour rather than one printed result. Where a result depends on something the standard leaves to the engine, the question says so instead of pretending there is one right answer.
 
 One reminder, because it is the single most useful fact in this section: in SQL, `NULL` means *unknown*. Any comparison with an unknown is itself unknown, and `WHERE` keeps a row only when its condition is **true** — not when it is unknown. Nearly every surprise below is that one sentence, wearing a different hat.
 
@@ -1714,7 +1714,7 @@ SELECT count(*) AS star, count(city) AS col, count(DISTINCT city) AS distinct_co
 FROM customers;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  star | col | distinct_col
 ------+-----+--------------
@@ -1748,7 +1748,7 @@ FROM order_items
 WHERE quantity > 100000;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  total | rows_seen
 -------+-----------
@@ -1797,7 +1797,7 @@ SELECT count(*)                                   AS all_orders,
 FROM orders;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  all_orders | rep_3 | not_rep_3
 ------------+-------+-----------
@@ -1850,7 +1850,7 @@ WHERE sales_rep_id IS NULL
 LIMIT 3;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  order_id | sales_rep_id | label
 ----------+--------------+-------
@@ -1916,22 +1916,49 @@ SELECT avg(sales_rep_id)                  AS avg_builtin,
 FROM orders;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
      avg_builtin     | divided_by_all_rows | all_rows | non_null
 ---------------------+---------------------+----------+----------
-  4.1097560975609756 |  3.8514285714285714 |      175 |      164
+  4.1097560975609756 |                   3 |      175 |      164
 (1 row)
 ```
 
-674 ÷ 164 = 4.1098. 674 ÷ 175 = 3.8514. Same numerator, different denominator, and only the first is the average of the values that exist.
+**Read that second column again: it is `3`, not 3.85.** Two traps have fired at once, and the
+second one is the subject of Q71-090 four questions from here. `sum(sales_rep_id)` is a `bigint`
+and `count(*)` is a `bigint`, so PostgreSQL divides integer by integer and **truncates**: 674 ÷ 175
+is 3.8514, and the column reports 3.
+
+Force the division to be decimal and the number the question is about appears:
+
+```sql
+SELECT round(avg(sales_rep_id), 4)                        AS avg_builtin,
+       round(sum(sales_rep_id)::numeric / count(*), 4)    AS divided_by_all_rows,
+       count(*)                                           AS all_rows,
+       count(sales_rep_id)                                AS non_null
+FROM orders;
+```
+
+```
+ avg_builtin | divided_by_all_rows | all_rows | non_null
+-------------+---------------------+----------+----------
+      4.1098 |              3.8514 |      175 |      164
+(1 row)
+```
+
+674 ÷ 164 = 4.1098. 674 ÷ 175 = 3.8514. Same numerator, different denominator, and only the first
+is the average of the values that exist.
+
+So the hand-rolled version is wrong *twice*: wrong denominator, and then truncated to an integer on
+the way out. That is worth saying out loud in an interview, because it is the honest shape of the
+bug — these things rarely arrive one at a time.
 
 Averaging a rep id is nonsense as a business figure — it is used here because it is this database's nullable numeric column, and the arithmetic is the point. The same mechanism decides a real one: the average order value across orders where some values are missing, or an average score where some candidates were not scored. Whether the denominator should be 164 or 175 is a *business* question, not a SQL one, and the two numbers differ by 6%.
 
 | Tier | What to say |
 |---|---|
 | Passes | "`avg` ignores NULLs" |
-| Strong | The two denominators, 164 and 175, named explicitly, and the point that `avg` chose one of them for you |
+| Strong | The two denominators, 164 and 175, named explicitly, the point that `avg` chose one of them for you, and that the hand-rolled version also truncates to `3` because both operands are integers |
 | Extra points | **[+Clarify]** ask which denominator the business means: "average across orders that have a rep" and "average across all orders, counting unassigned as zero" are different questions with different answers · **[+Validate]** print `count(*)` and `count(col)` beside any average over a column that might have gaps · **[+Edge cases]** if every value is NULL, `avg` is NULL, not 0 and not an error |
 
 **Likely follow-ups:** How would you get an average that treats missing as zero? *(`sum(col) / count(*)`, or `avg(coalesce(col, 0))`.)* Which is correct? *(Whichever the business asked for — say so.)* Does `avg` of an empty set error?
@@ -2006,7 +2033,7 @@ HAVING count(*) <= 1
 ORDER BY c.customer_name;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  customer_name | wrong | right_way
 ---------------+-------+-----------
@@ -2095,7 +2122,7 @@ GROUP BY sales_rep_id
 ORDER BY sales_rep_id;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  sales_rep_id | orders
 --------------+--------
@@ -2237,7 +2264,7 @@ FROM monthly
 ORDER BY orders, month;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
   month  | orders | running
 ---------+--------+---------
@@ -2264,6 +2291,7 @@ Nothing is broken. `RANGE` works on *values*, not positions: the frame is "every
        sum(orders) OVER (ORDER BY orders
                          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running
 ```
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
   month  | orders | running
 ---------+--------+---------
@@ -2271,20 +2299,30 @@ Nothing is broken. `RANGE` works on *values*, not positions: the frame is "every
  2025-02 |     10 |      18
  2025-03 |     11 |      29
  2025-04 |     13 |      42
- 2025-06 |     13 |      55
- 2025-07 |     13 |      68
+ 2025-06 |     13 |      68
+ 2025-07 |     13 |      55
  2025-08 |     14 |      82
  2025-05 |     15 |      97
- 2025-09 |     18 |     115
- 2025-12 |     18 |     133
- 2025-10 |     21 |     154
- 2025-11 |     21 |     175
+ 2025-09 |     18 |     133
+ 2025-12 |     18 |     115
+ 2025-10 |     21 |     175
+ 2025-11 |     21 |     154
 (12 rows)
 ```
 
-Now it increments one row at a time: 42, 55, 68. Both columns end at 175, because both eventually include everything — the disagreement is entirely about what happens *in the middle*, which is exactly where a running total is read.
+Now it increments one row at a time — 42, 55, 68 — and the column no longer stalls.
 
-**One more turn of the screw.** Under `ROWS`, *which* of the three tied months gets 42 and which gets 68 is not determined by anything you wrote. The engine may order tied rows however it likes, so that assignment can change between runs, between versions, and between engines. If you want `ROWS` and you have ties, you must break the tie inside the window:
+**But look at which month got which.** The running totals climb 42, 68, 55 down the page, not 42,
+55, 68, and September shows 133 while December shows 115. The totals are right; the *order they are
+attached to* is not the order the rows are displayed in.
+
+That is not a misprint, and it is the whole second half of this question.
+
+**One more turn of the screw.** Under `ROWS`, *which* of the three tied months gets 42 and which
+gets 68 is not determined by anything you wrote. The engine may order tied rows however it likes,
+so that assignment can change between runs, between versions, and between engines. This very table
+is the proof: run on another engine it came out 42, 55, 68 in display order, and on PostgreSQL 16
+it comes out as printed above. Same query, same data, both correct, different answer. If you want `ROWS` and you have ties, you must break the tie inside the window:
 
 ```sql
        sum(orders) OVER (ORDER BY orders, month
@@ -2319,7 +2357,7 @@ ORDER BY count(*) DESC
 LIMIT 5;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  order_date | orders
 ------------+--------
@@ -2475,9 +2513,9 @@ FROM orders;
 
 **PostgreSQL 16** — the integer division happens before anything else can save it:
 ```
- wrong |      right_way
--------+----------------------
-     0 | 1.142857142857142857
+ wrong |     right_way
+-------+--------------------
+     0 | 1.1428571428571429
 (1 row)
 ```
 
@@ -2513,7 +2551,7 @@ GROUP BY segment
 ORDER BY segment;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
    segment   | in_segment | all_customers | pct
 -------------+------------+---------------+------
@@ -2563,7 +2601,7 @@ SELECT (SELECT count(*) FROM customers WHERE city IN ('Mumbai', NULL))     AS in
        (SELECT count(*) FROM customers WHERE city = 'Mumbai')              AS plain_equals;
 ```
 
-**Run (riverstone_2025):**
+**Verified (riverstone_2025, PostgreSQL 16):**
 ```
  in_list | not_in_list | plain_equals
 ---------+-------------+--------------
