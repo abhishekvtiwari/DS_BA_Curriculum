@@ -35,3 +35,46 @@ Question IDs after 76A.6: Q76A-012B → Q76A-013; old Q76A-013…026 → Q76A-01
 - V76A.7 · 76A now cites Q76B-xxx; aligned once Ch 76B renumbers (row 76B.9)
 - V76A.2, V76A.8, V76A.10 (style pass) · re-checked in the rebuilt PDF: IDs don't wrap, no stranded lines, tier tables whole
 - V76A.3, V76A.4, V76A.5, V76A.9, V76A.11 · already Verified by the style pass; layout_check clean
+
+---
+
+# 3 October 2026 · Four situational sections
+
+Chapter 76A was the thinnest major bank in Part VIII at 27 questions, and it is the one Abhishek
+named as the focus: data science *and* data analysis, combined. **27 to 75.**
+
+The existing sections (76A.1–76A.6) are about work you have already finished — walking through a
+project, defending a number on your résumé. The four new ones are about **work that has just landed
+on you**, which is where an interviewer finds out whether someone has held the job or studied for
+it.
+
+| | |
+|---|---|
+| **76A.7 The analyst's Tuesday** | Requests as they actually arrive |
+| **76A.8 The data scientist's Tuesday** | The same, with the problems that come from probabilistic work |
+| **76A.9 Working with everyone else** | Engineering, Finance, Product, Legal |
+| **76A.10 What changes as you get senior** | The level questions |
+
+48 questions, Q76A-028 to 075. Nothing renumbered.
+
+## The organising idea
+
+**The request as stated is rarely the request.** Q76A-028 — *"can you just pull me a list of all our
+customers?"* — has four defensible readings giving four different numbers, and the question that
+resolves it is not "which do you mean" but "what will you do with it", because they can answer the
+second.
+
+That runs through the whole set: Q76A-029's revenue gap is a definitional difference rather than an
+error, and the move is to find a cut of the data equal to the difference. Q76A-031's unused
+dashboard is usually answering a question nobody has. Q76A-058's slow query is a symptom of an
+access pattern, and the senior move is asking to be given a statement timeout.
+
+## Deliberate non-overlap
+
+Chapter 75 owns metrics, cases and guesstimates; Chapter 81 owns STAR, HR and offers; Chapter 76B
+owns requirements. None is repeated. Where a question touches their ground it points at them —
+Q76A-062 to Chapter 30's holdout, Q76A-075 to Chapter 81's weakness question.
+
+## Running total
+
+Part VIII: **863 questions to 911.**
