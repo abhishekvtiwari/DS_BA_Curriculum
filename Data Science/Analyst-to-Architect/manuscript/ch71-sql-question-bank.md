@@ -14,7 +14,7 @@
 >
 > **Every query is shown in PostgreSQL and was run on PostgreSQL 16.** Where MySQL needs different syntax, a *MySQL:* block follows, and that version was run on MySQL 8.4 LTS. Every result printed below is the database's real answer, kept exactly as returned, including the surprising ones (an empty result, a tied ranking, an index the planner declines to use).
 >
-> **Section 71.11 was verified separately, and it is worth saying what that found.** The section was added after the rest of the chapter and its outputs were first produced against the same `riverstone_2025` data on a different engine. Re-running all of it on **PostgreSQL 16.2** found three figures that were wrong, and they are corrected: Q71-081's hand-rolled average, which PostgreSQL truncates to `3` by integer division; Q71-087's `ROWS` column, where the tie order differs by engine; and a precision difference in Q71-090. Eighteen of the twenty-two query blocks matched first time. The questions marked **Dialect split** give each engine's behaviour rather than one printed result.
+> **Section 71.11 was verified separately, and it is worth saying what that found.** The section was added after the rest of the chapter and its outputs were first produced against the same `riverstone_2025` data on a different engine. Re-running all of it on **PostgreSQL 16.2** found three figures that were wrong, and they are corrected: Q71-081's hand-rolled average, which PostgreSQL truncates to `3` by integer division; Q71-087's `ROWS` column, where the tie order differs by engine; and a precision difference in Q71-090. Eighteen of the twenty-two query blocks matched first time. The MySQL half of the four **Dialect split** questions was then run on **MySQL 8.0.44** — the chapter's other MySQL examples were run on 8.4 LTS, and every behaviour tested here is identical on both — and all four were already correct. What the run added is detail: the warning MySQL raises on a divide by zero, the `DIV` operator, and what `||` actually does there.
 >
 > **Which database.** Most questions use `riverstone_2025`, the one-year practice database from Chapter 13, section 13.1. Question Q71-072 uses the mini database `riverstone` from Chapter 12, section 12.2, and says so. The questions that create tables (Q71-013 and section 71.7) run in `riverstone_lab`, the practice database you created in Chapter 12, section 12.13, and drop their tables at the end. Each **Verified** line names its database.
 >
@@ -1887,10 +1887,24 @@ Note the cast. `coalesce` needs both arguments to be the same type, and `sales_r
 | | Behaviour with a NULL argument |
 |---|---|
 | PostgreSQL `a \|\| b` | returns NULL |
+| MySQL `a \|\| b` | **not concatenation at all** — see below |
 | MySQL `CONCAT(a, b)` | returns NULL — same as PostgreSQL |
 | MySQL `CONCAT_WS(sep, a, b)` | **skips** the NULL and returns the rest |
 
-So a query ported from MySQL's `CONCAT_WS` to PostgreSQL's `||` changes behaviour silently: labels that used to be partially filled become entirely empty. MySQL does not have `||` as a concatenation operator at all by default — it reads `||` as logical OR unless `PIPES_AS_CONCAT` is set, which is its own portability trap.
+So a query ported from MySQL's `CONCAT_WS` to PostgreSQL's `||` changes behaviour silently: labels that used to be partially filled become entirely empty.
+
+And MySQL does not treat `||` as concatenation at all. It reads it as **logical OR**, which returns an answer rather than an error — the worst kind of difference:
+
+```
+mysql> SELECT 'a' || 'b' AS a_or_b, 1 || 0 AS one_or_zero;
++--------+-------------+
+| a_or_b | one_or_zero |
++--------+-------------+
+|      0 |           1 |
++--------+-------------+
+```
+
+`'a' || 'b'` is **`0`**. Both strings convert to the number 0, and `0 OR 0` is false. So a PostgreSQL query that built a label with `||` does not fail on MySQL — it quietly returns a column of zeros and ones. Setting `PIPES_AS_CONCAT` in `sql_mode` restores the PostgreSQL meaning, which is how a ported application usually ends up working.
 
 | Tier | What to say |
 |---|---|
@@ -2439,7 +2453,19 @@ ERROR:  division by zero
 +-----------+
 |      NULL |
 +-----------+
+
+mysql> SHOW WARNINGS;
++---------+------+---------------+
+| Level   | Code | Message       |
++---------+------+---------------+
+| Warning | 1365 | Division by 0 |
++---------+------+---------------+
 ```
+
+Note the warning. MySQL's default `sql_mode` includes `ERROR_FOR_DIVISION_BY_ZERO`, which makes
+this a real error on an `INSERT` or `UPDATE` while leaving a bare `SELECT` returning NULL with a
+warning. So "MySQL returns NULL" is true for a query and false for a write — the same expression
+behaves differently depending on where you put it.
 
 MySQL's behaviour follows from its default `ERROR_FOR_DIVISION_BY_ZERO` handling in `sql_mode`; with strict mode configured to raise, it errors instead. So "MySQL returns NULL" is a statement about a default, not about the engine forever — worth saying, because it shows you know the behaviour is configurable rather than fundamental.
 
@@ -2492,6 +2518,21 @@ This is the single most common guard in production analytics SQL. A denominator 
 | 3.5000 |
 +--------+
 ```
+
+MySQL does have integer division; it is simply a different operator:
+
+```
+mysql> SELECT 7 DIV 2;
++---------+
+| 7 DIV 2 |
++---------+
+|       3 |
++---------+
+```
+
+So the engines are not disagreeing about arithmetic. They disagree about what `/` means for two
+integers: PostgreSQL makes it integer division and gives you `::numeric` to opt out, MySQL makes it
+decimal and gives you `DIV` to opt in.
 
 PostgreSQL is following the SQL standard here: the result type of `integer / integer` is integer, and 3.5 is not one, so the remainder is discarded. Note that it **truncates rather than rounds**: `7 / 2` is 3, not the 4 you would get by rounding 3.5. The two differ by one whenever there is a remainder of a half or more, so a figure computed this way is not even reliably the nearest whole number.
 

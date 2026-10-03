@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>The product ladder and the project catalogue</title><style>
+@page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+body { font: 10.5pt/1.5 Georgia, 'Times New Roman', serif; color: #1a1a1a; }
+h1 { font-size: 20pt; border-bottom: 2px solid #333; padding-bottom: 6pt; }
+h2 { font-size: 15pt; margin-top: 22pt; page-break-after: avoid; }
+h3 { font-size: 12pt; margin-top: 18pt; background: #f1f1f1; padding: 5pt 7pt;
+     border-left: 3pt solid #555; page-break-after: avoid; }
+p { margin: 7pt 0; }
+code { font: 9pt 'Consolas', 'Courier New', monospace; background: #f4f4f4;
+       padding: 0 2pt; border-radius: 2px; }
+pre { font: 8.8pt/1.35 'Consolas', 'Courier New', monospace; background: #f7f7f7;
+      border: 1px solid #ddd; border-left: 3pt solid #888; padding: 7pt 9pt;
+      white-space: pre-wrap; page-break-inside: avoid; margin: 7pt 0; }
+pre.out { background: #fcfcf6; border-left-color: #b8a355; }
+table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt;
+        page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 4pt 6pt; vertical-align: top; text-align: left; }
+th { background: #ececec; }
+tr td:first-child { width: 14%; font-weight: bold; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 16pt 0; }
+ul { margin: 7pt 0 7pt 16pt; }
+li { margin: 3pt 0; }
+.note { background: #f0f4f8; border-left: 3pt solid #5a7a99; padding: 8pt 10pt; margin: 10pt 0;
+        font-size: 9.5pt; }
+</style></head><body>
+<h1>The product ladder, and the project catalogue</h1>
+<p><em>3 October 2026. Captured from Abhishek's design. Companion to [Selling-the-books-strategy-and-red-team](Selling-the-books-strategy-and-red-team.md), which covers pricing and go-to-market; this one covers what the products actually are.</em></p>
+<h2>The ladder</h2>
+<table><thead><tr><th></th><th>Product</th><th>Price</th><th>What it is</th></tr></thead><tbody>
+<tr><td><strong>1</strong></td><td><strong>The Interview Book</strong></td><td>₹500</td><td>Book 4 alone. 827 questions today, heading for ~1,160. The thing Instagram points at.</td></tr>
+<tr><td><strong>2</strong></td><td><strong>The Interview Package</strong></td><td><em>to set</em></td><td>Everything: all four volumes, the Practice Arena (Excel files, SQL, notebooks, datasets), and the assignments to work through on your own.</td></tr>
+<tr><td><strong>3</strong></td><td><strong>Projects</strong></td><td>~₹150 each</td><td>Standalone, ready-made portfolio projects. Buy one, buy five.</td></tr>
+</tbody></table>
+<p>The shape is right, and the third tier is the interesting one. A ₹500 book is a single transaction from each buyer. <strong>₹150 projects are repeatable revenue from the same person</strong>, they are small to build relative to a book, and they answer the question every Indian job-seeker actually has, which is not "what should I learn" but <strong>"what do I put on my CV?"</strong></p>
+<hr>
+<h2>The thing that makes a ₹150 project worth buying</h2>
+<p>This is the one design decision that decides whether tier 3 works, so it is worth being blunt about.</p>
+<p><strong>GitHub is full of free code.</strong> If what we sell is a script that sends an email, we are competing with a thousand free repositories and we lose. Nobody needs another <code>smtplib</code> example.</p>
+<p>What is genuinely scarce, and what each project must contain:</p>
+<table><thead><tr><th></th><th>Why it is the value</th></tr></thead><tbody>
+<tr><td><strong>A realistic brief</strong></td><td>Written the way a manager would ask, vague in the places managers are vague</td></tr>
+<tr><td><strong>Messy data</strong></td><td>Not a clean CSV. Dates in two formats, a trailing space in a key, a duplicate, a missing region</td></tr>
+<tr><td><strong>The worked solution</strong></td><td>Commented, runnable, with every output produced by running it — the book's standard</td></tr>
+<tr><td><strong>The reasoning</strong></td><td>Why this approach and not the obvious one. This is Chapter 69A applied to a project</td></tr>
+<tr><td><strong>The interview narrative</strong></td><td><strong>The part nobody else sells.</strong> How to describe this project in ninety seconds, what the interviewer will probe, and the honest answer to "what would you do differently"</td></tr>
+</tbody></table>
+<p>That last row is the product. A buyer is not paying ₹150 for code. They are paying for <strong>something true to say in an interview</strong>, and for the confidence of having actually run it.</p>
+<p>Chapter 76A already teaches how to talk about a project and Chapter 82 has the take-home format, so the house style for that section already exists.</p>
+<hr>
+<h2>The catalogue, from Abhishek's list</h2>
+<p>Captured as specified, with what each one would contain and what to watch.</p>
+<h3>P1 · The daily report that sends itself</h3>
+<p><strong>Raw data → processed → Excel report → emailed to a list.</strong></p>
+<p>The flagship, because it is the single most common real request a junior analyst gets, and because it is the Chapter 18 automation payoff as a standalone artifact.</p>
+<table><thead><tr><th>Teaches</th><th>Reading messy raw data, aggregating, writing a formatted <code>.xlsx</code>, sending to a distribution list, scheduling it</th></tr></thead><tbody>
+<tr><td>Already in the book</td><td>Chapter 18 §18.15–18.18 (the report, the entry point, the <code>.bat</code>, Task Scheduler), Chapter 20 (delivery)</td></tr>
+<tr><td>Interview narrative</td><td>"I automated a two-day manual month-end into a twenty-minute run" — the single most reusable line a junior analyst can have</td></tr>
+</tbody></table>
+<p><strong>The risk to design around: Outlook.</strong> Driving Outlook needs Windows <em>and</em> an installed, configured Outlook, which excludes Mac users, Linux users, anyone on Google Workspace, and most students. That is a large share of the buyers, and every one of them becomes a support email.</p>
+<p><strong>Recommendation:</strong> build it <strong>SMTP-first</strong> — which works everywhere, including Gmail with an app password — and ship the Outlook version as a clearly-labelled variant for people in a Microsoft office. Same project, two delivery modules, one extra file. This is worth getting right because P1 is the one you will sell most.</p>
+<h3>P2 · Excel dashboards, ready-made and explained</h3>
+<p><strong>A proper, good-looking dashboard, and how it was built.</strong></p>
+<table><thead><tr><th>Teaches</th><th>Model → pivots → charts → layout → interactivity, in the order you would build it</th></tr></thead><tbody>
+<tr><td>Already in the book</td><td>Chapter 11 (the spreadsheet mastered), Chapter 15 (what to plot), Chapter 70 §70.8 (dashboard critiques)</td></tr>
+<tr><td>The hook</td><td>Most people have never seen a <em>well-built</em> dashboard file opened up. Shipping one that looks professional, with the build explained step by step, is genuinely rare</td></tr>
+</tbody></table>
+<p>Ship the finished workbook <strong>and</strong> a stripped version so the buyer can build it themselves. The value is the gap between the two.</p>
+<h3>P3 · Python dashboards</h3>
+<p>The same, in code — Streamlit or Plotly Dash. A different audience from P2 and a different CV line.</p>
+<h3>P4 · The data-cleaning series</h3>
+<p><strong>Jumbled data in, trustworthy data out.</strong> Abhishek is right that this is "an entirely different saleable project" — and it may be better as a <em>series</em> of three or four small ones than one large one, because each is a separate purchase.</p>
+<table><thead><tr><th>Teaches</th><th>Profiling, duplicates, inconsistent categories, dates and time zones, validation rules that must return zero</th></tr></thead><tbody>
+<tr><td>Already in the book</td><td>Chapter 14 is the whole method, and Chapter 77 §77.8 now has the traps that bite on the way in</td></tr>
+<tr><td>The hook</td><td>Every job ad says "data cleaning". Almost no portfolio shows it, because clean data is boring to publish. A project built on genuinely nasty data stands out</td></tr>
+</tbody></table>
+<p>The Riverstone messy files already exist — <code>month_end_pack_2025_messy.xlsx</code>, <code>sales_export_with_problems.csv</code> — so the raw material is in the repository.</p>
+<h3>P5 · Logistics</h3>
+<p>Abhishek named this; the shape needs deciding. Likely candidates: delivery-route and cost analysis, inventory and stockout analysis, or supplier performance. Riverstone already has orders, products, suppliers and demand data, so it fits the house example without inventing a new company.</p>
+<hr>
+<h2>What else the catalogue should probably include</h2>
+<p>Three gaps that follow from what the book already contains, offered for a decision rather than assumed:</p>
+<ul><li><strong>A SQL-only project.</strong> A reporting layer built as a set of reviewed queries. Cheapest to build and support of anything on this list, because nothing has to run on the buyer's machine.</li><li><strong>An end-to-end pipeline.</strong> Ingest, clean, load, schedule, alert — the data-engineering CV line.</li><li><strong>A first ML project done honestly.</strong> With the baseline, the leakage check and the "would I ship this" verdict, which is what Chapter 74 argues for and what almost no portfolio project does.</li></ul>
+<hr>
+<h2>Three things to settle before building any of them</h2>
+<p><strong>1. The support boundary, written on the sales page.</strong> At ₹150 the net is about ₹131 after platform fees. <strong>One support email per sale wipes out the margin.</strong> The answer is not to refuse support, it is to design it out: pin every version, ship a sample dataset so nothing depends on the buyer's data, test on a clean machine, and state plainly what is and is not covered.</p>
+<p><strong>2. How a project differs from the Practice Arena.</strong> The Package (tier 2) already contains 643 practice files. If a ₹150 project looks like more of the same, a Package buyer will feel double-charged. The line that holds: <strong>the Arena teaches the book; a project is a finished piece of work with a brief, messy data and an interview story.</strong> Different purpose, different format. Say it on the page.</p>
+<p><strong>3. The projects Abhishek already has.</strong> You mentioned having a few of your own. Those are potentially the best items in the catalogue, because they are real work rather than teaching examples — and real beats realistic. <strong>Send them over and I will tell you honestly which stand up as saleable projects and what each would need.</strong></p>
+<hr>
+<h2>Sequence</h2>
+<p>Agreed with the earlier instruction — the book first, then the projects.</p>
+<table><thead><tr><th><strong>Now</strong></th><th>Finish the Interview Book: ~330 more questions to about 1,160, then the cover and back cover</th></tr></thead><tbody>
+<tr><td><strong>Then</strong></td><td>P1, built SMTP-first, as the template for the rest. Get one project completely right and the others follow a pattern</td></tr>
+<tr><td><strong>Then</strong></td><td>P4, the cleaning series, since the messy data already exists</td></tr>
+<tr><td><strong>In parallel</strong></td><td>Decide the Package price, and the support boundary</td></tr>
+</tbody></table>
+</body></html>
