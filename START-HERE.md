@@ -45,11 +45,13 @@ series map sits at the back.
 | 1 · Theory | [Analyst-to-Architect-Book-1-Theory.pdf](fixed/Books/Analyst-to-Architect-Book-1-Theory.pdf) | 218 | 359 |
 | 2 · Practical | [Analyst-to-Architect-Book-2-Practical.pdf](fixed/Books/Analyst-to-Architect-Book-2-Practical.pdf) | 1,401 | 1,616 |
 | 3 · Implementation | [Analyst-to-Architect-Book-3-Implementation.pdf](fixed/Books/Analyst-to-Architect-Book-3-Implementation.pdf) | 1,318 | 1,447 |
-| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 535 | 724 |
+| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 648 | 850 |
 | Overview (internal, not for sale) | [Analyst-to-Architect-Book-Overview.pdf](fixed/Books/Analyst-to-Architect-Book-Overview.pdf) | 71 | 99 |
 
-**Book 4 was rebuilt on 3 October** and now carries ten new predict-the-output sections across
-Part VIII; all 169 of its contents links and 724 bookmarks were checked to land on the right page. The others are the 1 October build.
+**Book 4 was rebuilt on 3 October**, most recently to add **Chapter 72B, the data cleaning and
+wrangling bank** (100 questions). It now carries ten new predict-the-output sections across
+Part VIII plus 72B; all 406 of its internal links resolve, all 850 bookmarks land on the right
+page, and it has no missing glyphs. The others are the 1 October build.
 
 Two reading notes, so the navigation behaves the way you expect:
 
@@ -110,9 +112,29 @@ detailed, with output-prediction and trick questions of the `int("25", 4)` kind.
 **The measurement that set the task.** Thirteen of the fourteen Part VIII banks had no
 predict-the-output section at all. The one that did — Chapter 72's §72.2 — became the template.
 
-**Done: ten new sections, 202 new questions.** Part VIII goes from 565 coded questions to 767.
+**Done: ten new sections, 202 new questions**, then further expansion across the banks and the new Chapter 72B. Part VIII has gone from 565 coded questions to **1,056**.
 Chapters 70, 71, 72A, 73, 74, 75, 77, 78, 79 and 80 each gained a section aimed at what that
 chapter genuinely lacked, rather than a fixed quota.
+
+**New: Chapter 72B, the data cleaning and wrangling bank** — 100 questions, and the one chapter
+in the book that can prove every number it states. It runs on the two messy files already in
+`companion/ch14/` *and* on Chapter 14's `clean_truth_orders_q4_2025.csv`, which is the correct
+answer, so each defect has a verified count and each fix a verifiable result. Review copy:
+[Ch72B-data-cleaning-and-wrangling-bank.pdf](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.pdf)
+(50 pages) and the [.docx](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.docx).
+
+The three findings worth your time: **no single `pd.to_datetime` call parses that date column
+correctly** (the defaults destroy 17,089 of 25,969 dates, and `dayfirst=True` fixes those while
+silently corrupting the ISO ones — both report exactly 49 nulls, so no null check can catch
+either); **the obvious price cleaner turns `Rs. 1,400` into 0.14** and produces a more believable
+wrong total than the lazier bug does; and **a total can be right for the wrong reasons**, which
+Q72B-069 decomposes down to the rupee.
+
+Six errors in my own drafts were caught by running the code rather than trusting it — including
+an invented carton factor of 12 where the truth file says 10, and a status mapping table missing
+`cxl`, which is precisely the failure the chapter's own Q72B-035 teaches. All six are in
+`changelog/ch72b.md` rather than quietly fixed, and two are now part of the questions they belong
+to.
 
 **Three banks were deliberately left alone** — 76A is career positioning with no technical content,
 81's one numeric topic is already covered by its Q81-024, and 82 has no coded questions at all.
@@ -133,7 +155,7 @@ Two things are honestly outstanding rather than finished:
   marked **Dialect split**. **Excel is not installed either**, so §70.9 carries the same kind of
   mark on four questions, reading **Check in Excel**. Both exceptions are stated in the chapters'
   own at-a-glance boxes, not buried in a changelog.
-- **Book 4 has been rebuilt** — 535 pages, up from 400, with the series map regenerated from the
+- **Book 4 has been rebuilt** — 648 pages, up from 400, with the series map regenerated from the
   page numbers printed on the pages. This machine does not reproduce the original build exactly (a
   test rebuild of Book 1 came out 217 pages against the shipped 218, because fonts resolve
   differently here), so only Book 4 was rebuilt and its visual check should be redone. Books 1–3
