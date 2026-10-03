@@ -1,0 +1,485 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Chapter 68A · The Rounds Nobody Prepares For</title><style>
+@page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+body { font: 10.5pt/1.5 Georgia, 'Times New Roman', serif; color: #1a1a1a; }
+h1 { font-size: 20pt; border-bottom: 2px solid #333; padding-bottom: 6pt; }
+h2 { font-size: 15pt; margin-top: 22pt; page-break-after: avoid; }
+h3 { font-size: 12pt; margin-top: 18pt; background: #f1f1f1; padding: 5pt 7pt;
+     border-left: 3pt solid #555; page-break-after: avoid; }
+p { margin: 7pt 0; }
+code { font: 9pt 'Consolas', 'Courier New', monospace; background: #f4f4f4;
+       padding: 0 2pt; border-radius: 2px; }
+pre { font: 8.8pt/1.35 'Consolas', 'Courier New', monospace; background: #f7f7f7;
+      border: 1px solid #ddd; border-left: 3pt solid #888; padding: 7pt 9pt;
+      white-space: pre-wrap; page-break-inside: avoid; margin: 7pt 0; }
+pre.out { background: #fcfcf6; border-left-color: #b8a355; }
+table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt;
+        page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 4pt 6pt; vertical-align: top; text-align: left; }
+th { background: #ececec; }
+tr td:first-child { width: 14%; font-weight: bold; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 16pt 0; }
+ul { margin: 7pt 0 7pt 16pt; }
+li { margin: 3pt 0; }
+.note { background: #f0f4f8; border-left: 3pt solid #5a7a99; padding: 8pt 10pt; margin: 10pt 0;
+        font-size: 9.5pt; }
+</style></head><body>
+<h1>Chapter 68A · The Rounds Nobody Prepares For</h1>
+<div class="note">New chapter, 66 questions. 4 October 2026.</div>
+<h1>Chapter 68A. The Rounds Nobody Prepares For</h1>
+<p><em>Part 8 — Be Interview Ready</em></p>
+<p>&gt; <strong>Chapter at a glance</strong> &gt; &gt; <strong>You will practise:</strong> clearing the timed online test that screens most applicants before any human sees them, including the hidden test cases that fail correct-looking code · getting through a campus drive and a group discussion as a fresher · thinking aloud in a live-coding round, and recovering when you are stuck · running a virtual interview that survives a dropped connection · writing to a recruiter so that you get a reply · following up after an interview, and handling silence and rejection without burning the bridge · reading an offer letter before you sign it, and getting from acceptance to a good first 90 days. &gt; &gt; <strong>Before you start:</strong> Chapter 68 (the hiring process, gate by gate) and Chapter 69 (the three answer tiers and the twelve extra-point moves). The technical rounds themselves are tested in Chapters 70–80 and the HR and offer conversation in Chapter 81; this chapter covers everything around them that the banks do not. &gt; &gt; <strong>Time needed:</strong> 3–4 hours to read and answer every question aloud. Section 68A.2 is worth doing on a laptop with a timer running, because the online test is a skill of pace as much as knowledge. &gt; &gt; <strong>How this chapter is built.</strong> Same format as every question bank in Part 8: a memory hook ("Remember it as…"), a one-line answer, a tier table (<strong>passes</strong>, <strong>strong</strong>, <strong>extra points</strong>, tagged with Chapter 69's moves), then follow-ups, the red flag, and where to learn it. Rapid-fire sections are scan tables. The one code example was run on Python 3.12.0 and its output is real. <strong>Nothing here states a salary, a placement rate, a law or a company's policy as fact</strong>: where those vary, the answer says what to ask and who to ask, because a confident wrong rule is worse than an honest "check this".</p>
+<hr>
+<h2>68A.1 Why these rounds sink prepared candidates</h2>
+<p>Chapters 70 to 81 prepare you for the rounds where someone asks you a question. This chapter is about the rounds where nobody does: the timed test you take alone, the group discussion where twelve people talk at once, the video call that freezes halfway through your best answer, and the week of silence after a final round.</p>
+<p>They have one thing in common. <strong>They are filters, and a filter does not care how much you know.</strong> A strong SQL candidate who runs out of time on an online test never reaches the SQL interview. A fresher who knows every answer but says nothing in a group discussion is cut before the technical round. A candidate who gives an excellent final interview and then sends nothing, hears nothing, and assumes rejection has sometimes simply been forgotten in a busy recruiter's queue.</p>
+<p>These rounds are also the least prepared-for, because they feel like logistics rather than skill. They are skills, they can be practised, and the questions below are the ones that come up.</p>
+<p><strong>Levels and roles.</strong> Each question carries a level — <strong>Fresher</strong>, <strong>Mid</strong> or <strong>Senior</strong> — and the roles that face it: <strong>DA</strong> data analyst · <strong>DS</strong> data scientist · <strong>DE</strong> data engineer · <strong>AE</strong> analytics engineer · <strong>BA</strong> business analyst.</p>
+<hr>
+<h2>68A.2 The online assessment</h2>
+<p>For many companies, and most large ones hiring freshers in India, the first real filter is a timed online test on a platform such as HackerRank, HackerEarth, Codility or Mercer Mettl. It is scored by software. It usually arrives as an emailed link with a deadline, and it often decides whether a human ever reads your CV properly.</p>
+<h3>Q68A-001 · You have a 90-minute online test with three SQL and two Python problems. How do you approach it?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Read everything first, bank the easy points, and never leave a problem blank. The test rewards points, not elegance.</em></p>
+<p><strong>Answer in one line:</strong> Spend the first few minutes reading every problem and the rules, solve the problems you are surest of first, submit something that passes the visible tests for every problem before polishing any of them, and keep a few minutes at the end to resubmit and check — because scoring is per test case, and a partial solution scores where a blank does not.</p>
+<p><strong>The plan, in order:</strong></p>
+<table><thead><tr><th></th><th>What you do</th><th>Why</th></tr></thead><tbody>
+<tr><td><strong>1. Read the rules screen</strong></td><td>Webcam, tab switching, allowed languages, whether you may use your own notes</td><td>Many tests flag tab switches or record the webcam. Breaking a rule you did not read can void the whole attempt</td></tr>
+<tr><td><strong>2. Read every problem</strong></td><td>Before writing any code</td><td>So you can order them by how sure you are, not by the order they were given</td></tr>
+<tr><td><strong>3. Easiest first</strong></td><td>Bank the points you are confident of</td><td>Confidence costs least time; it also settles your nerves</td></tr>
+<tr><td><strong>4. Something for everything</strong></td><td>A working answer that passes the visible tests, for every problem</td><td>Most platforms score each hidden test case separately, so partial credit is real</td></tr>
+<tr><td><strong>5. Then improve</strong></td><td>Edge cases, efficiency</td><td>Q68A-002 is why this matters</td></tr>
+<tr><td><strong>6. Last few minutes</strong></td><td>Resubmit, check nothing is half-typed</td><td>An unsubmitted answer scores zero</td></tr>
+</tbody></table>
+<p><strong>The one sentence an interviewer will want to hear if they ask how you prepared:</strong> that you practised under the same timer, on the same kind of platform, rather than only solving problems untimed. Pace is the skill the online test measures that no other round does.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>"Do the easy ones first and watch the time"</td></tr>
+<tr><td>Strong</td><td>The ordered plan: read the rules, read everything, easiest first, something for everything, then improve, then resubmit — with the reason that scoring is per test case</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Edge cases]</strong> read the rules screen; a broken proctoring rule can cost more than a wrong answer + <strong>[+Validate]</strong> test your own code against the cases the problem does not show you (Q68A-002) + <strong>[+Trade-offs]</strong> a correct brute-force answer submitted beats an optimal answer unfinished, unless the problem states a time limit the brute force will fail</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> How would you practise for one? What would you do if the platform crashed mid-test?</p>
+<p><strong>Red flag:</strong> solving the first problem perfectly and leaving the last two blank.</p>
+<p><strong>Learn it in:</strong> Chapter 68, §68.1 (the gates) and §68.7 (preparing in 30, 60 or 90 days); Chapter 71's and Chapter 72's banks for the problems themselves.</p>
+<h3>Q68A-002 · Your answer passed the sample test but scored 2 out of 10. What happened?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE</p>
+<p><strong>Remember it as:</strong> <em>The sample test is the easy case. The hidden tests are the edge cases you did not think of: ties, one row, no rows.</em></p>
+<p><strong>Answer in one line:</strong> The platform ran your code against hidden test cases — usually ties, duplicates, a single value, an empty input or a very large input — and your code was only right for the normal case it was shown, so the fix is to test those edges yourself before you submit.</p>
+<p><strong>Run, on Python 3.12.0.</strong> A typical online-test problem: return the second-highest amount in a list. The obvious first answer:</p>
+<pre>def second_highest(amounts):
+    """First attempt: sort descending and take position 1."""
+    return sorted(amounts, reverse=True)[1]
+
+
+print('visible test :', second_highest([430, 1400, 620, 115]))
+
+for name, case in [('ties at the top', [1400, 1400, 620]),
+                   ('one value only', [430]),
+                   ('empty input', [])]:
+    try:
+        print(f'{name:&lt;15}:', second_highest(case))
+    except Exception as e:
+        print(f'{name:&lt;15}: {type(e).__name__}: {e}')</pre>
+<pre class="out">visible test : 620
+ties at the top: 1400
+one value only : IndexError: list index out of range
+empty input    : IndexError: list index out of range</pre>
+<p>It passes the visible test and fails all three hidden ones. With a tie at the top it returns 1400 — the highest value again, not the second-highest — and with fewer than two values it crashes. Each failure is a lost test case, which is how a correct-looking answer scores 2 out of 10.</p>
+<p>The fix is to say what "second-highest" means when values repeat, and what to return when there is no answer:</p>
+<pre>def second_highest_fixed(amounts):
+    """Second-highest DISTINCT value, or None when there is no such value."""
+    distinct = sorted(set(amounts), reverse=True)
+    return distinct[1] if len(distinct) &gt; 1 else None
+
+
+print()
+for name, case in [('visible test', [430, 1400, 620, 115]), ('ties at the top', [1400, 1400, 620]),
+                   ('one value only', [430]), ('empty input', [])]:
+    print(f'{name:&lt;15}:', second_highest_fixed(case))</pre>
+<pre class="out">
+visible test   : 620
+ties at the top: 620
+one value only : None
+empty input    : None</pre>
+<p><strong>The habit, which is the actual answer.</strong> Before submitting any online-test problem, run it yourself on four inputs the problem did not give you: a tie, a single value, an empty input, and one very large input. That takes two minutes and is where most of the hidden test cases live. SQL problems have the same traps — duplicate values at a rank boundary, <code>NULL</code>s, a group with no rows — which is why Chapter 71's <code>RANK</code> against <code>DENSE_RANK</code> questions exist.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>"There were hidden test cases I didn't handle"</td></tr>
+<tr><td>Strong</td><td>Names the usual hidden cases — ties, duplicates, one value, empty, very large — and the habit of testing them before submitting</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Clarify]</strong> when the problem is silent on ties or empty input, state your assumption in a comment, because some reviewers read the code later + <strong>[+Edge cases]</strong> the SQL versions: duplicates at a rank boundary, <code>NULL</code> in a comparison, a group with no rows + <strong>[+Validate]</strong> a large input tests speed as well as correctness; an O(n²) answer can time out on the last hidden case</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What would you return for an empty input, and why? How is this the same problem in SQL?</p>
+<p><strong>Red flag:</strong> submitting the moment the sample test passes.</p>
+<p><strong>Learn it in:</strong> Chapter 72A, §72A.1 (why data roles get DSA questions); Chapter 71's ranking questions; Chapter 17, §17.10 (errors and tracebacks).</p>
+<h3>Q68A-003 · An online SQL problem says "return the result ordered by customer, then date". Your query is correct but fails. Why?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>The checker compares output, not intent. Column names, column order, row order and rounding are all part of the answer.</em></p>
+<p><strong>Answer in one line:</strong> Automated checkers compare your output to the expected output exactly, so a correct query with columns in a different order, a different column alias, unrounded decimals or a missing <code>ORDER BY</code> is marked wrong — read the expected output format as carefully as the question.</p>
+<p><strong>The five things that fail correct SQL in an online test:</strong></p>
+<table><thead><tr><th></th><th>Fails because</th><th>Check</th></tr></thead><tbody>
+<tr><td><strong>Row order</strong></td><td>No <code>ORDER BY</code>, or ordered on the wrong column</td><td>Rows from a database have no guaranteed order unless you ask for one</td></tr>
+<tr><td><strong>Column order</strong></td><td><code>name, total</code> where the expected output is <code>total, name</code></td><td>Match the sample output column by column</td></tr>
+<tr><td><strong>Column names</strong></td><td><code>sum(amount)</code> where the expected header is <code>total_amount</code></td><td>Alias every computed column</td></tr>
+<tr><td><strong>Rounding</strong></td><td><code>3.333333</code> against an expected <code>3.33</code></td><td>Use the rounding the problem states</td></tr>
+<tr><td><strong>Dialect</strong></td><td>A MySQL function on a PostgreSQL checker</td><td>Check which database the platform runs; Chapter 71, §71.8 covers the differences</td></tr>
+</tbody></table>
+<p><strong>The deeper point, worth one sentence.</strong> This is not pedantry from the platform. In a real job, a report consumed by another system breaks in exactly the same ways — a renamed column, a reordered extract — which is why Chapter 77 talks about data contracts. The online test is checking the same discipline.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>"Maybe the output format didn't match"</td></tr>
+<tr><td>Strong</td><td>Names row order, column order, aliases, rounding and dialect, and checks each against the sample output</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Edge cases]</strong> rows have no order without <code>ORDER BY</code>, so a query that "worked" in testing can fail on the checker + <strong>[+Business]</strong> the same mismatches break real downstream systems, which is why the discipline matters beyond the test + <strong>[+Clarify]</strong> if the expected output shows a tie-breaking order, it is part of the specification even when the wording does not mention it</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> How would you find which part of your output differs? What does <code>ORDER BY</code> do with <code>NULL</code>s?</p>
+<p><strong>Red flag:</strong> relying on the order rows happened to come back in.</p>
+<p><strong>Learn it in:</strong> Chapter 12, §12.5 (ORDER BY and LIMIT) and §12.16 (the same SQL in MySQL); Chapter 71, §71.8.</p>
+<h3>Rapid-fire, 68A.2</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-004</td><td>How do you practise for an online test?</td><td>On the same kind of platform, under the same timer, in the language you will use — untimed practice builds knowledge but not the pace the test actually measures</td><td><strong>[+Validate]</strong> keep a log of which problem types cost you most time; that is the study plan</td><td>Fresher · 68.7</td></tr>
+<tr><td>Q68A-005</td><td>The test includes an aptitude section. What should you know?</td><td>That it is common in online tests and campus drives, that it is scored separately, and that this book does not teach it — practise it from a dedicated source rather than being surprised on the day</td><td><strong>[+Clarify]</strong> check the test invitation; it usually lists the sections and their timing</td><td>Fresher · 68.1</td></tr>
+<tr><td>Q68A-006</td><td>Can you use Google or ChatGPT during an online test?</td><td>Only if the rules screen says so, and usually it does not; many platforms detect tab switches and paste events, and a flagged attempt can be discarded entirely</td><td><strong>[+Edge cases]</strong> "open book" tests exist, so read the rules rather than assuming either way</td><td>Fresher · 68.1</td></tr>
+<tr><td>Q68A-007</td><td>What if your internet drops mid-test?</td><td>Reconnect at once, take a screenshot or note of the time, and email the recruiter or the address on the invitation the same day with what happened — most platforms save submitted work, so submit often</td><td><strong>[+Business]</strong> a prompt, factual email is often enough to get a retake; silence is not</td><td>Fresher · 68.1</td></tr>
+<tr><td>Q68A-008</td><td>One problem is clearly beyond you. What now?</td><td>Write the simplest version you can — handle the basic case, even with brute force — and submit it for partial credit, then move on rather than sinking the rest of the time</td><td><strong>[+Trade-offs]</strong> ten minutes on a partial answer usually beats forty on a perfect one</td><td>Fresher · 72A.1</td></tr>
+<tr><td>Q68A-009</td><td>Should you add comments in an online test?</td><td>A short one where you made an assumption — ties, empty input, rounding — because some companies have a person read the code after the score</td><td><strong>[+Clarify]</strong> the assumption comment is what turns a "wrong" answer into a defensible one</td><td>Fresher · 69.3</td></tr>
+<tr><td>Q68A-010</td><td>You finished early. What do you do with the time?</td><td>Re-run every solution on the edge cases from Q68A-002, check output formats against Q68A-003, then resubmit; do not leave early with points still on the table</td><td><strong>[+Validate]</strong> the last ten minutes are the cheapest marks in the test</td><td>Fresher · 69.3</td></tr>
+<tr><td>Q68A-011</td><td>A take-home arrives instead of a timed test. How is it different?</td><td>It is judged by a person on quality, clarity and judgement rather than by a checker on output, so the write-up and the reasoning matter as much as the code</td><td><strong>[+Signpost]</strong> Chapter 82 covers take-homes in full, including whether one is fair to accept</td><td>Mid · 82.0</td></tr>
+<tr><td>Q68A-012</td><td>You failed an online test. Can you try again?</td><td>Often after a cooling-off period the company sets; ask the recruiter what it is, and use the gap to fix the specific problem type that cost you</td><td><strong>[+Business]</strong> asking politely signals interest; reapplying immediately to the same test signals nothing changed</td><td>Fresher · 68.8</td></tr>
+</tbody></table>
+<hr>
+<h2>68A.3 Campus drives, fresher hiring and the group discussion</h2>
+<p>Campus hiring in India runs on its own rhythm: a pre-placement talk, an eligibility filter, an online test, often a group discussion, then technical and HR interviews, sometimes all on one day. Placement rules — how many offers a student may take, what happens after the first accepted offer — <strong>vary from college to college</strong>, so the first thing to do is read your own placement cell's policy.</p>
+<h3>Q68A-013 · A company is coming to campus next month. How do you prepare?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Know the company, know the role, know the rounds, and have one project you can talk about for two minutes.</em></p>
+<p><strong>Answer in one line:</strong> Find out the role and the rounds from the placement cell and seniors, read the job description the way Chapter 8 teaches, practise the online test format under a timer, prepare a two-minute account of one real project, and read your college's placement policy before you accept anything.</p>
+<p><strong>The month, in four weeks:</strong></p>
+<table><thead><tr><th>Week</th><th>Focus</th></tr></thead><tbody>
+<tr><td><strong>1</strong></td><td>The role and the rounds. Ask the placement cell and seniors who went through the same company last year; decode the job description (Chapter 8, §8.5)</td></tr>
+<tr><td><strong>2</strong></td><td>The online test format, timed (section 68A.2), plus the question bank for the role's core skill — usually SQL (Chapter 71)</td></tr>
+<tr><td><strong>3</strong></td><td>One project, told in two minutes and in ten (Chapter 27, §27.10); the group discussion (Q68A-014) with friends</td></tr>
+<tr><td><strong>4</strong></td><td>Behavioural and HR basics (Chapter 81, §81.4), questions to ask (§81.5), and the placement policy</td></tr>
+</tbody></table>
+<p><strong>The thing seniors know and the job description does not say:</strong> what the rounds actually were last year. That information is usually one conversation away, and it is the highest-value hour of the month.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Revise the technical topics and practise interview questions</td></tr>
+<tr><td>Strong</td><td>A plan by week covering the rounds, the timed test, one project story, behavioural basics, and the placement policy</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Clarify]</strong> ask seniors what the rounds were last year; it is the cheapest, most accurate preparation available + <strong>[+Business]</strong> read the placement policy before the drive, because accepting one offer can end your placement season at some colleges + <strong>[+Signpost]</strong> one project told well beats five listed, which is Chapter 27's whole argument</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What if you have no project? How would you prepare for two companies on the same day?</p>
+<p><strong>Red flag:</strong> discovering the placement policy after accepting an offer.</p>
+<p><strong>Learn it in:</strong> Chapter 8, §8.5 (decoding a job description) and §8.8 (entry routes); Chapter 27, §27.10; Chapter 68, §68.7.</p>
+<h3>Q68A-014 · How do you do well in a group discussion without dominating it?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Evaluators score what you add to the group, not how long you talk. One structured point, one built on someone else's, and a fair summary beat ten minutes of volume.</em></p>
+<p><strong>Answer in one line:</strong> Make one clear, structured contribution early, build visibly on other people's points, bring in someone who has not spoken, and offer a short balanced summary near the end — because a group discussion is scored on content, listening and how you work with the group, and talking over people loses on two of the three.</p>
+<p><strong>What evaluators usually watch, and what to do about each:</strong></p>
+<table><thead><tr><th>They watch</th><th>What earns it</th><th>What loses it</th></tr></thead><tbody>
+<tr><td><strong>Content</strong></td><td>One specific point with a reason or a number</td><td>Generalities everyone else also said</td></tr>
+<tr><td><strong>Structure</strong></td><td>"There are two sides here: X and Y"</td><td>Jumping between ideas</td></tr>
+<tr><td><strong>Listening</strong></td><td>"Building on what she said about cost…"</td><td>Repeating a point already made</td></tr>
+<tr><td><strong>Working with others</strong></td><td>Inviting a quiet member in; disagreeing politely</td><td>Interrupting, raising your voice</td></tr>
+<tr><td><strong>Summary</strong></td><td>A fair one-minute close that includes views you disagreed with</td><td>Summarising only your own points</td></tr>
+</tbody></table>
+<p><strong>For a data role, the move that stands out.</strong> Bring evidence. In a discussion on, say, whether India should adopt a four-day work week, the candidate who says "the question is what we would measure to know whether it worked — output per hour, attrition, sick days" is doing exactly what the job is. Structuring a vague question is Chapter 5's skill, and in a group discussion it is visible to everyone at once.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Speak early and clearly, and do not interrupt</td></tr>
+<tr><td>Strong</td><td>One structured point, visible listening, bringing others in, and a balanced summary — with the reason that the group, not airtime, is being scored</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> for a data role, frame the topic as "what would we measure", which shows the job's core skill + <strong>[+Edge cases]</strong> if the group turns into a shouting match, a calm "can we hear from the people who haven't spoken" is often the most noticed thing anyone says + <strong>[+Signpost]</strong> structuring the question is Chapter 5, §5.4's issue tree, done out loud</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What if you know nothing about the topic? What if someone keeps interrupting you?</p>
+<p><strong>Red flag:</strong> treating it as a debate to win.</p>
+<p><strong>Learn it in:</strong> Chapter 5, §5.2 (from a vague request to a precise question) and §5.4 (issue trees); Chapter 24, §24.4 (bottom line up front).</p>
+<h3>Q68A-015 · "Tell me about yourself." You are a fresher with no work experience. What do you say?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Present, past, future in ninety seconds: what you are doing now, the one thing that proves you can do this job, and why this role is the next step.</em></p>
+<p><strong>Answer in one line:</strong> In about ninety seconds: who you are now (degree, the data skills you have actually used), the one project or piece of work that shows you can do this job and what it found, and why this role is the logical next step — no life story, and nothing you cannot talk about for five more minutes.</p>
+<p><strong>A worked shape, as a template rather than a script:</strong></p>
+<p>&gt; I'm in my final year of a B.Com, and over the last year I've taught myself SQL and Python for analysis. The piece of work I'm proudest of is an analysis of a public sales dataset where revenue appeared to halve in one month. Only about a tenth of that drop was the month being incomplete; the rest was a real fall in order value, while the number of orders fell much less. I'd like to start as a data analyst because that is exactly the work I've enjoyed most, and this role is in a team that does it for real customers.</p>
+<p>Notice what it does: one concrete finding, with a number-shaped insight, said in plain words. The finding in that example is real — it is Chapter 75's Q75-047, on this book's own data — and any project you have done can be told the same way.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>A clear summary of education and skills</td></tr>
+<tr><td>Strong</td><td>Present, past, future in ninety seconds, with one specific piece of work and what it found</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> the finding, not the tools, is what an interviewer remembers + <strong>[+Signpost]</strong> anything you mention becomes the next question, so mention only what you can expand on + <strong>[+Clarify]</strong> tailor the last sentence to this role and this company, which shows you read the job description</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> Tell me more about that project. Why data and not something else?</p>
+<p><strong>Red flag:</strong> reciting the CV, or starting from school.</p>
+<p><strong>Learn it in:</strong> Chapter 27, §27.10 (telling the story in two minutes and in ten); Chapter 81, §81.4.</p>
+<h3>Rapid-fire, 68A.3</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-016</td><td>What is a pre-placement talk for, from your side?</td><td>Information: what the role is, what the rounds are, and what the team actually does — and one good question asked there gets you remembered</td><td><strong>[+Clarify]</strong> ask what a new joiner works on in the first three months</td><td>Fresher · 8.5</td></tr>
+<tr><td>Q68A-017</td><td>Your CGPA is below a company's cut-off. What can you do?</td><td>Usually nothing for that drive, since campus cut-offs are applied as a filter; apply off-campus or through a referral instead, where a portfolio can carry more weight</td><td><strong>[+Business]</strong> off-campus routes are slower but not filtered the same way</td><td>Fresher · 68.5</td></tr>
+<tr><td>Q68A-018</td><td>What is a pool campus drive?</td><td>One company hiring from several colleges at a single venue or online event, which means more candidates per opening and a stronger filter at the first round</td><td><strong>[+Edge cases]</strong> travel and timing are your problem; confirm the venue and reporting time a day ahead</td><td>Fresher · 68.1</td></tr>
+<tr><td>Q68A-019</td><td>How do you answer "Why should we hire you?" as a fresher?</td><td>Match two or three requirements from the job description to specific evidence — a project, a result, a skill you have used — rather than listing qualities</td><td><strong>[+Business]</strong> evidence beats adjectives; "hard-working" proves nothing</td><td>Fresher · 81.4</td></tr>
+<tr><td>Q68A-020</td><td>How do you answer "What are your weaknesses?" honestly?</td><td>Name a real, job-relevant weakness, say what you are doing about it, and show progress — never a disguised strength like "I work too hard"</td><td><strong>[+Signpost]</strong> Chapter 81 works this in full</td><td>Fresher · 81.4</td></tr>
+<tr><td>Q68A-021</td><td>You have two offers on campus on the same day. What do you check?</td><td>Your placement cell's policy first — some colleges treat the first acceptance as final — then role, team, learning, location and the CTC breakup, not the headline number</td><td><strong>[+Business]</strong> the role you will learn most in is usually worth more than a small difference in CTC</td><td>Fresher · 81.6, 81.9</td></tr>
+<tr><td>Q68A-022</td><td>What is a group-discussion "case" format?</td><td>A business problem given to the group to solve together in the time, rather than an opinion topic — scored on structure and collaboration as much as on the answer</td><td><strong>[+Signpost]</strong> it is a case interview done as a team; Chapter 75's framework applies</td><td>Fresher · 75.1</td></tr>
+<tr><td>Q68A-023</td><td>Should a fresher apply for jobs asking for one to two years' experience?</td><td>Often yes, if you can show the skills through real projects; "years required" is frequently softer than it looks, and the cost of applying is low</td><td><strong>[+Clarify]</strong> read which requirements are must-haves and which are wish-list (Chapter 8, §8.5)</td><td>Fresher · 8.5, 8.8</td></tr>
+<tr><td>Q68A-024</td><td>How do you get a data internship with no experience?</td><td>A portfolio of one or two real projects, applications through referrals and direct messages as well as job portals, and a willingness to start in a narrower role</td><td><strong>[+Signpost]</strong> an internship is the shortest route to "experience" on a fresher's CV</td><td>Fresher · 8.8, 27.11</td></tr>
+</tbody></table>
+<hr>
+<h2>68A.4 Live coding and virtual rounds</h2>
+<h3>Q68A-025 · The interviewer says "think aloud while you solve this". What does that actually mean?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE</p>
+<p><strong>Remember it as:</strong> <em>Narrate decisions, not keystrokes. Say what you are about to do and why, not what you are typing.</em></p>
+<p><strong>Answer in one line:</strong> Restate the problem and your assumptions, say your plan before writing code, narrate each decision as you make it ("I'll group by customer first because…"), and say when you are checking something — because the interviewer is scoring your reasoning, and silence gives them nothing to score.</p>
+<p><strong>The pattern, out loud:</strong></p>
+<table><thead><tr><th>Stage</th><th>What you say</th></tr></thead><tbody>
+<tr><td><strong>Restate</strong></td><td>"So I need each customer's second-highest order — distinct values, or can repeats count?"</td></tr>
+<tr><td><strong>Plan</strong></td><td>"I'll rank orders within each customer, then filter to rank two."</td></tr>
+<tr><td><strong>Build</strong></td><td>"Using <code>DENSE_RANK</code> rather than <code>RANK</code>, so ties don't skip a position."</td></tr>
+<tr><td><strong>Check</strong></td><td>"Let me test a customer with only one order — that should give no row."</td></tr>
+<tr><td><strong>Close</strong></td><td>"This works; for very large data I'd check it uses the index on customer."</td></tr>
+</tbody></table>
+<p><strong>What not to narrate:</strong> "Now I'm typing SELECT. Now FROM." That is noise. The skill is narrating the decisions, which is where your judgement is visible — and it is exactly the shape of Chapter 69's strong answer, done live.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Explain what the code is doing while writing it</td></tr>
+<tr><td>Strong</td><td>Restate, plan, narrate decisions, check, close — with the point that decisions, not keystrokes, are what to say aloud</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Clarify]</strong> the restatement often surfaces an assumption the interviewer then confirms, which is a point scored before writing anything + <strong>[+Validate]</strong> saying "let me test the edge case" out loud shows the habit even if time runs out + <strong>[+Signpost]</strong> this is Chapter 69's answer shape applied to a live round</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What do you do if you go quiet because you are thinking hard? How do you think aloud in a language that is not your first?</p>
+<p><strong>Red flag:</strong> long silence, then a finished answer with no explanation.</p>
+<p><strong>Learn it in:</strong> Chapter 69, §69.2 (the shape of a strong answer) and §69.5 (the same moves under different rounds); Chapter 68, §68.3.</p>
+<h3>Q68A-026 · You are stuck in a live coding round. What do you do?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE</p>
+<p><strong>Remember it as:</strong> <em>Say you are stuck, say where, and offer the simplest working version. Interviewers help candidates who show their thinking.</em></p>
+<p><strong>Answer in one line:</strong> Say plainly where you are stuck, describe the simplest approach that would work even if inefficient, get that working, and ask a specific question if you need a hint — because most interviewers want to see how you recover, and many will help a candidate who is visibly reasoning.</p>
+<p><strong>The recovery sequence:</strong></p>
+<p>1. <strong>Name it.</strong> "I'm not sure how to handle customers with no orders here." 2. <strong>Shrink it.</strong> Solve a smaller version — one customer, three rows — by hand, out loud. 3. <strong>Brute force first.</strong> "The simple way is a loop over every customer; it's slow but correct. Let me get that working and then improve it." 4. <strong>Ask a specific question.</strong> "Is it acceptable to return zero for those customers, or should they be excluded?" A specific question is a clarification. "I don't know what to do" is a request to be rescued.</p>
+<p><strong>Why this works.</strong> A live round is partly a simulation of working with you. A colleague who says "I'm stuck on this part, here's what I've tried" is someone people want on their team; one who goes silent for ten minutes is not, however clever the eventual answer.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Ask the interviewer for a hint</td></tr>
+<tr><td>Strong</td><td>Name where you are stuck, shrink the problem, get a brute-force version working, then ask a specific question</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> recovery is part of what is being assessed, because it predicts how you work on real problems + <strong>[+Trade-offs]</strong> a working slow answer, improved if time allows, beats an elegant unfinished one + <strong>[+Clarify]</strong> a specific question often turns out to be the assumption the problem intended you to ask about</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What if the interviewer gives no hints? Have you ever been stuck in a real project — what did you do?</p>
+<p><strong>Red flag:</strong> going silent, or abandoning the problem.</p>
+<p><strong>Learn it in:</strong> Chapter 69, §69.3 (the twelve moves) and §69.6 (what not to do); Chapter 72A's walk-throughs.</p>
+<h3>Q68A-027 · Your video interview freezes in the middle of your best answer. What do you do — and what should you have done before?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Prepare like the call will fail, so that when it does, recovery takes thirty seconds and costs nothing.</em></p>
+<p><strong>Answer in one line:</strong> Before the call, test the link, camera, microphone and screen sharing, keep a phone hotspot ready and the recruiter's number to hand; when it freezes, rejoin at once, say briefly where you were, and summarise the answer in one sentence rather than restarting it.</p>
+<p><strong>Before, the checklist:</strong></p>
+<table><thead><tr><th><strong>The link</strong></th><th>Open it fifteen minutes early; install whatever it needs</th></tr></thead><tbody>
+<tr><td><strong>Sound and camera</strong></td><td>Test both; use earphones to avoid echo</td></tr>
+<tr><td><strong>Screen sharing</strong></td><td>Practise sharing the right window, not your whole desktop with notifications on</td></tr>
+<tr><td><strong>A shared editor</strong></td><td>If the round uses one, open the practice version beforehand</td></tr>
+<tr><td><strong>Backup</strong></td><td>Phone hotspot ready, phone charged, recruiter's number or email to hand</td></tr>
+<tr><td><strong>The room</strong></td><td>Quiet, lit from the front, nothing on screen you would not want shared</td></tr>
+</tbody></table>
+<p><strong>After a drop:</strong> rejoin immediately; if you cannot within a minute or two, message the recruiter or the interviewer by the contact you were given. On rejoining: "Sorry, I lost the connection. I was explaining why I'd use a left join here — in short, it keeps customers with no orders. Shall I continue from there?" One sentence, then carry on. Dropped connections are routine; how calmly you handle them is what is remembered.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Rejoin quickly and apologise</td></tr>
+<tr><td>Strong</td><td>The before-checklist plus the one-sentence recovery on rejoining</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Edge cases]</strong> share a single window, not the whole screen, so a private notification never appears mid-interview + <strong>[+Business]</strong> a calm recovery is itself evidence of how you handle problems at work + <strong>[+Validate]</strong> a practice call with a friend on the same platform finds most problems before they matter</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What if it happens during a timed coding task? What would you do if you could not rejoin at all?</p>
+<p><strong>Red flag:</strong> restarting the whole answer from the beginning, or vanishing without a message.</p>
+<p><strong>Learn it in:</strong> Chapter 68, §68.3 (what each round tests); Chapter 69, §69.5 (the same moves, under different rounds).</p>
+<h3>Rapid-fire, 68A.4</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-028</td><td>The interviewer is silent and gives no reactions. What does it mean?</td><td>Usually nothing — many interviewers stay neutral on purpose, or are taking notes; keep narrating and checking in occasionally with "does that approach make sense?"</td><td><strong>[+Clarify]</strong> a short check-in invites a hint without asking for one</td><td>Fresher · 69.5</td></tr>
+<tr><td>Q68A-029</td><td>Can you look things up during a live round?</td><td>Ask first; many interviewers allow documentation for syntax, and asking is far better than being seen searching silently</td><td><strong>[+Business]</strong> "I'd normally check the exact syntax — is that okay?" is honest and common</td><td>Fresher · 69.6</td></tr>
+<tr><td>Q68A-030</td><td>You realise your earlier answer was wrong. Do you say so?</td><td>Yes, at once: "I said X earlier — I think that's wrong, it should be Y because…" Correcting yourself is a strong signal, not a weak one</td><td><strong>[+Validate]</strong> self-correction shows the checking habit interviewers want</td><td>Mid · 69.3</td></tr>
+<tr><td>Q68A-031</td><td>How long should an answer in a technical round be?</td><td>Two or three minutes for most questions: the answer first, then the reasoning, then stop and let them ask — long answers lose the interviewer and use up the round</td><td><strong>[+Signpost]</strong> answer-first is the pyramid principle of Chapter 24</td><td>Fresher · 24.4, 69.2</td></tr>
+<tr><td>Q68A-032</td><td>What do you do if you do not understand the question?</td><td>Restate what you think it means and ask if that is right; it costs ten seconds and prevents ten minutes on the wrong problem</td><td><strong>[+Clarify]</strong> this is Chapter 69's first move, and interviewers score it</td><td>Fresher · 69.3</td></tr>
+<tr><td>Q68A-033</td><td>Should you keep your camera on in a virtual interview?</td><td>Yes unless told otherwise; it is expected, and turning it off without explanation reads as disengaged</td><td><strong>[+Edge cases]</strong> if bandwidth forces it off, say so and offer to switch back on</td><td>Fresher · 68.3</td></tr>
+<tr><td>Q68A-034</td><td>How do you handle an interviewer who interrupts constantly?</td><td>Stop, answer the interruption, then briefly return: "To finish the earlier point —" — interruptions are often deliberate, to see how you handle pressure</td><td><strong>[+Signpost]</strong> Chapter 81 §81.7 covers hostile follow-ups</td><td>Mid · 81.7</td></tr>
+<tr><td>Q68A-035</td><td>How do you show nerves are not hurting you?</td><td>Slow down deliberately, pause before answering, and restate the question — calm pacing reads as confidence whatever you feel</td><td><strong>[+Business]</strong> a pause before a good answer is never penalised; a rushed wrong one is</td><td>Fresher · 81.10</td></tr>
+<tr><td>Q68A-036</td><td>The round ends and you had no time for your questions. What do you do?</td><td>Ask one, briefly, if the interviewer offers, otherwise send it to the recruiter afterwards — and keep two ready for every round</td><td><strong>[+Signpost]</strong> Chapter 81 §81.5 lists questions worth asking</td><td>Fresher · 81.5</td></tr>
+</tbody></table>
+<hr>
+<h2>68A.5 Getting found, and the rounds in between</h2>
+<h3>Q68A-037 · Write a message to a recruiter or hiring manager on LinkedIn that gets a reply.</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Short, specific, and easy to say yes to: who you are, why this role, one piece of evidence, one clear ask.</em></p>
+<p><strong>Answer in one line:</strong> Four or five sentences: name the specific role, give one piece of evidence that you fit it, make one small, clear request — usually whether they would consider your application or a short call — and attach or link nothing they did not ask for beyond a portfolio link.</p>
+<p><strong>A worked example:</strong></p>
+<p>&gt; Hi Priya — I saw the Data Analyst opening on your team (job ID 4521). I've been doing exactly this kind of work on my own projects: most recently an analysis of a 25,000-row sales export where I found two-thirds of the dates were being silently lost in parsing. Would you be open to considering my application? My portfolio is here: [link]. Thank you for your time.</p>
+<p><strong>Why it works:</strong> it names the role, so it can be routed; it shows one concrete thing, so it is memorable; and it asks for something small, so saying yes costs little. The evidence in that example is, again, a real finding from this book's own data (Chapter 72B, Q72B-022) — use your own.</p>
+<p><strong>What to avoid:</strong> "Please refer me" to a stranger; a message that is only a CV attachment; asking for "any opening"; and following up more than once or twice.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>A polite message asking about openings</td></tr>
+<tr><td>Strong</td><td>Specific role, one piece of evidence, one small request, a portfolio link, under 100 words</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> a request that is easy to say yes to gets more yeses than one that asks a stranger to vouch for you + <strong>[+Clarify]</strong> quoting the job ID lets them route it in seconds + <strong>[+Signpost]</strong> Chapter 68, §68.5 covers referrals, which are a different, warmer request</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> How many people should you message? When is it acceptable to follow up?</p>
+<p><strong>Red flag:</strong> asking a stranger for a referral in the first message.</p>
+<p><strong>Learn it in:</strong> Chapter 68, §68.4 (LinkedIn hiring) and §68.5 (referrals).</p>
+<h3>Q68A-038 · What is a "values" or "culture" round, and how do you prepare for it?</h3>
+<p><strong>Level:</strong> Mid · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>They are testing whether your past behaviour matches what they say they value. Read their values, then find your stories that show each one.</em></p>
+<p><strong>Answer in one line:</strong> A round, sometimes run by someone from outside the hiring team, that tests whether your past behaviour fits the company's stated values — so read those values, map one true story from your story bank to each, and answer in STAR form with specifics rather than agreeing with the values in general terms.</p>
+<p><strong>How to prepare in an hour:</strong></p>
+<table><thead><tr><th>Step</th><th>Do this</th></tr></thead><tbody>
+<tr><td><strong>1</strong></td><td>Find the company's stated values — careers page, annual report, founder letters</td></tr>
+<tr><td><strong>2</strong></td><td>For each value, pick one true story from your story bank (Chapter 81, §81.2)</td></tr>
+<tr><td><strong>3</strong></td><td>Rehearse each in STAR form, with a specific result</td></tr>
+<tr><td><strong>4</strong></td><td>Prepare one honest story about a time you fell short of a value, and what you changed</td></tr>
+</tbody></table>
+<p><strong>The trap:</strong> answering "do you value ownership?" with "yes, very much". Every candidate says that. The round is scored on evidence: a specific time you owned something, what you did, and what happened.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Research the company's values and show enthusiasm for them</td></tr>
+<tr><td>Strong</td><td>Map a true story to each stated value and tell it in STAR form, including one about falling short</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> a story about falling short and changing is often the most credible answer in the round + <strong>[+Signpost]</strong> this is Chapter 81's story bank used against a specific list + <strong>[+Edge cases]</strong> these rounds can be run by someone outside the team who can block a hire, so treat them as seriously as the technical ones</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> Tell me about a time you disagreed with your manager. Which of our values do you find hardest?</p>
+<p><strong>Red flag:</strong> agreeing with every value without a single example.</p>
+<p><strong>Learn it in:</strong> Chapter 81, §81.1 (STAR) and §81.2 (the story bank).</p>
+<h3>Rapid-fire, 68A.5</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-039</td><td>Do you need a cover letter for data roles in India?</td><td>Rarely required, and often not read; a short, specific note in the application form or message does the job when one is asked for</td><td><strong>[+Business]</strong> time is better spent on the CV and one strong project</td><td>Fresher · 68.2</td></tr>
+<tr><td>Q68A-040</td><td>Which job portals should you use?</td><td>The ones your target companies actually post on — commonly LinkedIn, Naukri and company careers pages — plus referrals, which usually convert better than any portal</td><td><strong>[+Validate]</strong> track where your interview calls actually come from and spend time there</td><td>Fresher · 68.4, 68.5</td></tr>
+<tr><td>Q68A-041</td><td>How many applications should you send a week?</td><td>Fewer, better-targeted ones: a tailored CV for ten roles you fit beats an untouched CV sent to a hundred</td><td><strong>[+Signpost]</strong> Chapter 68 §68.9 shows four CVs matched to their job descriptions</td><td>Fresher · 68.9</td></tr>
+<tr><td>Q68A-042</td><td>A recruiter calls unexpectedly. What do you do?</td><td>If you cannot talk properly, ask to call back at a fixed time; if you can, have your notice period, current and expected CTC as ranges, and why you are looking ready</td><td><strong>[+Signpost]</strong> the recruiter call is Chapter 68's gate 3</td><td>Fresher · 68.1, 81.9</td></tr>
+<tr><td>Q68A-043</td><td>What is a "bar raiser" interviewer?</td><td>At some companies, an interviewer from outside the team whose job is to keep the hiring standard high, often with a strong say in the decision</td><td><strong>[+Clarify]</strong> ask the recruiter who is on the panel and what each round covers</td><td>Mid · 68.3</td></tr>
+<tr><td>Q68A-044</td><td>Should you accept an interview for a role you are not sure about?</td><td>Usually yes: it is practice under real conditions and you learn about the role; just be honest if you decide it is not for you</td><td><strong>[+Business]</strong> practice interviews before your target company are some of the best preparation there is</td><td>Fresher · 68.7</td></tr>
+<tr><td>Q68A-045</td><td>How do you keep track of many applications at once?</td><td>A simple sheet: company, role, date applied, contact, stage, next step and date — the analyst's own pipeline, measured</td><td><strong>[+Validate]</strong> the conversion rate at each stage tells you which part of your process to fix</td><td>Fresher · 68.7</td></tr>
+</tbody></table>
+<hr>
+<h2>68A.6 After the interview</h2>
+<h3>Q68A-046 · The final round ended an hour ago. What do you send, and when?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>A short thank-you the same day, one specific detail from the conversation, and nothing that sounds like pressure.</em></p>
+<p><strong>Answer in one line:</strong> A brief thank-you to the recruiter (or the interviewers, if you have their contact) within a day, mentioning one specific thing from the conversation and, if relevant, a short addition to an answer you wish you had given better — then wait for the timeline they gave.</p>
+<p><strong>An example:</strong></p>
+<p>&gt; Thank you for the time today. I enjoyed the discussion about how the team defines active customers — it's a problem I'd like to work on. On the cohort question, I should have mentioned I'd also check that the definition is applied consistently across months. I look forward to hearing about next steps.</p>
+<p><strong>Why the addition works:</strong> it shows you kept thinking about the problem, which is exactly what an analyst does — and it is the only legitimate way to improve an answer after the round.</p>
+<p><strong>What it cannot do:</strong> change a decision already made. A thank-you is courtesy and a small signal, not a second interview. Keep it short.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Send a thank-you email</td></tr>
+<tr><td>Strong</td><td>Within a day, short, with one specific detail and optionally a brief improvement to one answer</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> the improved answer shows the reflective habit the role needs + <strong>[+Clarify]</strong> note the timeline they gave you, so you know when a follow-up is reasonable + <strong>[+Edge cases]</strong> do not send a long essay; length reads as anxiety</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> Who should you send it to? What if you do not have the interviewers' emails?</p>
+<p><strong>Red flag:</strong> a long message re-arguing the interview.</p>
+<p><strong>Learn it in:</strong> Chapter 81, §81.5 (questions to ask interviewers); Chapter 24, §24.6 (writing short).</p>
+<h3>Q68A-047 · It has been two weeks since your final round and you have heard nothing. What do you do?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>One polite follow-up after the timeline passes, one more a week later, then keep going with your other applications. Silence is not an answer either way.</em></p>
+<p><strong>Answer in one line:</strong> If the timeline they gave has passed, send one short, polite message asking whether there is an update, follow up once more about a week later if nothing comes, and keep every other application moving — because delays are common and usually have nothing to do with you, but waiting on one company is the most expensive mistake a job-seeker makes.</p>
+<p><strong>The follow-up:</strong></p>
+<p>&gt; Hi Rahul — I wanted to check in on the Data Analyst role I interviewed for on the 12th. I'm still very interested and would be glad to hear about any update. Thank you.</p>
+<p><strong>Why delays happen, which is worth knowing so you do not over-read them:</strong> other candidates still being interviewed, a hiring manager on leave, a budget approval, a re-scoped role. None of them means rejection, and none of them is information about you.</p>
+<p><strong>What not to do:</strong> message every day, contact interviewers on personal channels, or put your search on hold. Treat the role as "in progress", and keep the pipeline full until you have a written offer.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Send a follow-up email asking for an update</td></tr>
+<tr><td>Strong</td><td>Follow up after the stated timeline, once more a week later, and keep all other applications moving</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> a full pipeline protects you from the cost of waiting on one decision + <strong>[+Edge cases]</strong> a verbal "we'll make you an offer" is not an offer; keep going until it is written + <strong>[+Clarify]</strong> if they gave no timeline, asking for one at the end of the round avoids this situation entirely</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> When would you stop following up? What if you get another offer while waiting?</p>
+<p><strong>Red flag:</strong> pausing every other application while you wait.</p>
+<p><strong>Learn it in:</strong> Chapter 68, §68.1 (the gates); Chapter 81, §81.6 (handling offers).</p>
+<h3>Q68A-048 · You were rejected after the final round. What do you do next?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Thank them, ask once for one thing to improve, write down what you would change, and keep the door open. A final-round rejection is close to an offer, not far from one.</em></p>
+<p><strong>Answer in one line:</strong> Reply graciously, ask once for one specific thing to work on, write down for yourself what went worst while it is fresh, and stay in touch professionally — because reaching a final round means you were close, and companies often come back to strong runners-up for the next opening.</p>
+<p><strong>The reply:</strong></p>
+<p>&gt; Thank you for letting me know, and for the time your team spent with me. If you're able to share one thing I could improve, I'd value it. I'd be glad to be considered for future roles.</p>
+<p><strong>What you do privately, within a day:</strong> list each round, what went well, what went badly, and the one change that would have helped most. That list is your study plan for the next interview, and it is far more specific than any general preparation.</p>
+<p><strong>Reapplying.</strong> Many companies have a cooling-off period before you can apply to the same role again; ask, or check their careers page. Chapter 68's Example 8 works through reapproaching a company for a different role after a rejection.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Accept it politely and move on</td></tr>
+<tr><td>Strong</td><td>Reply graciously, ask once for one improvement, do a private round-by-round review, and keep the door open</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> runners-up are often contacted for the next opening, so the tone of your reply matters + <strong>[+Validate]</strong> the private review turns a rejection into the most specific study plan you will ever have + <strong>[+Edge cases]</strong> many companies give no feedback as a policy; do not read that as anything personal</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What would you do if the feedback seemed unfair? When would you reapply?</p>
+<p><strong>Red flag:</strong> arguing with the decision, or disappearing without a reply.</p>
+<p><strong>Learn it in:</strong> Chapter 68, §68.8 (Example 8: re-approaching after a rejection); Chapter 81, §81.10 (hard moments).</p>
+<h3>Rapid-fire, 68A.6</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-049</td><td>Should you connect with your interviewers on LinkedIn?</td><td>It is usually fine after the process ends, with a short note; doing it during the process can look like pressure</td><td><strong>[+Business]</strong> a connection after a rejection, made graciously, keeps the door open</td><td>Fresher · 68.4</td></tr>
+<tr><td>Q68A-050</td><td>A recruiter says "you'll hear by Friday" and you don't. Is it a no?</td><td>Not necessarily; timelines slip routinely. Follow up once on Monday, as in Q68A-047</td><td><strong>[+Edge cases]</strong> a no usually arrives as a no; silence is more often delay</td><td>Fresher · 68.1</td></tr>
+<tr><td>Q68A-051</td><td>You think you did badly in one round. Do you mention it in a follow-up?</td><td>Only to add something useful — a better approach to one problem — not to apologise; the thank-you note is the place for one brief improvement, not a confession</td><td><strong>[+Signpost]</strong> Q68A-046 shows the one-line version</td><td>Fresher · 69.6</td></tr>
+<tr><td>Q68A-052</td><td>How do you stay motivated through many rejections?</td><td>Treat the search as a pipeline with conversion rates rather than a series of verdicts: measure each stage, fix the weakest, and expect most applications to end in no</td><td><strong>[+Validate]</strong> if most rejections are at one stage, that stage is the problem to work on</td><td>Fresher · 83.8</td></tr>
+<tr><td>Q68A-053</td><td>Should you ask why you were rejected?</td><td>Once, politely, asking for one thing to improve; some companies will tell you, many have a policy not to, and either is fine</td><td><strong>[+Signpost]</strong> Chapter 81's Q81-078</td><td>Fresher · 81.10</td></tr>
+<tr><td>Q68A-054</td><td>You get an offer from your second choice while waiting on your first. What do you do?</td><td>Tell your first choice, politely, that you have an offer with a deadline and ask whether they can share their timeline — never invent an offer to create pressure</td><td><strong>[+Business]</strong> honest urgency is common and usually respected; a bluff discovered is fatal</td><td>Mid · 81.6</td></tr>
+<tr><td>Q68A-055</td><td>How do you decline an offer without burning the bridge?</td><td>Promptly, by email or a call, with thanks and a brief honest reason, and an expressed wish to stay in touch</td><td><strong>[+Business]</strong> the recruiter you decline today may be hiring for your next role</td><td>Fresher · 81.6</td></tr>
+</tbody></table>
+<hr>
+<h2>68A.7 From offer to joining, and the first 90 days</h2>
+<h3>Q68A-056 · You have a written offer. What do you check before you sign it?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>The headline number is the least informative line in the letter. Read the breakup, the dates, the conditions and anything that costs you money if you leave.</em></p>
+<p><strong>Answer in one line:</strong> Read the role and level, the CTC breakup (what is fixed, what is variable, what is in-hand), the joining date and location, the probation terms and notice period, and any clause that costs you money if you leave early — a bond, a joining-bonus clawback, a training-cost recovery — and ask HR to explain anything unclear before you sign.</p>
+<p><strong>The checklist:</strong></p>
+<table><thead><tr><th>Check</th><th>Why</th></tr></thead><tbody>
+<tr><td><strong>Role, level, reporting manager</strong></td><td>That it matches what you were interviewed for</td></tr>
+<tr><td><strong>CTC breakup</strong></td><td>Fixed against variable, and the monthly in-hand — Chapter 81, §81.9 works the arithmetic</td></tr>
+<tr><td><strong>Variable pay</strong></td><td>What it depends on and how it has actually paid out, which you can ask about</td></tr>
+<tr><td><strong>Joining date and location</strong></td><td>That they match your notice period and your plans</td></tr>
+<tr><td><strong>Probation</strong></td><td>How long, and what the notice period is during it</td></tr>
+<tr><td><strong>Notice period</strong></td><td>After confirmation, and whether it is longer than you expected</td></tr>
+<tr><td><strong>Bonds and clawbacks</strong></td><td>Any service bond, training-cost recovery, or joining-bonus repayment if you leave early</td></tr>
+<tr><td><strong>Background verification</strong></td><td>What documents they will need, so you can gather them now</td></tr>
+</tbody></table>
+<p><strong>Clauses you are unsure about.</strong> If a clause worries you — a long bond, a broad non-compete — ask HR to explain it in writing, and if it matters to you, take advice from someone qualified. Whether a particular clause is enforceable is a legal question, and this book does not answer legal questions.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Check the salary and joining date</td></tr>
+<tr><td>Strong</td><td>The full checklist, with the CTC breakup, probation and notice terms, and money-on-leaving clauses read before signing</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> the money-on-leaving clauses are what most new joiners discover too late + <strong>[+Clarify]</strong> ask how variable pay has actually paid out in past years, which is a fair and common question + <strong>[+Edge cases]</strong> if something verbal is not in the letter, ask for it in writing before you sign</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What would you do if the letter differs from what was agreed on the call? How do you ask for a later joining date?</p>
+<p><strong>Red flag:</strong> signing on the strength of the headline CTC.</p>
+<p><strong>Learn it in:</strong> Chapter 81, §81.6 (handling offers) and §81.9 (the Indian hiring conversation); Chapter 8, §8.6 (how to read salary figures).</p>
+<h3>Q68A-057 · You have accepted the offer and resigned. What happens between now and joining?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, DE, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Serve the notice well, leave cleanly, get your papers, and stay in touch with the new team. How you leave is part of your reputation.</em></p>
+<p><strong>Answer in one line:</strong> Serve your notice professionally and hand over properly, collect your relieving and experience letters, have your background-verification documents ready, stay lightly in touch with your new recruiter or manager, and do not accept a counter-offer you have no intention of keeping — because both companies will remember how this period went.</p>
+<p><strong>The period, in order:</strong></p>
+<table><thead><tr><th><strong>Resign in writing</strong>, after the new offer is signed — never before</th><th>Chapter 81, Q81-031 makes this point</th></tr></thead><tbody>
+<tr><td><strong>Hand over properly</strong></td><td>Document what you own, who takes it over, and where things live</td></tr>
+<tr><td><strong>Collect your papers</strong></td><td>Relieving letter, experience letter, final salary slips</td></tr>
+<tr><td><strong>Background verification</strong></td><td>Respond promptly; delays here can delay your joining</td></tr>
+<tr><td><strong>Stay in touch</strong></td><td>A short message to the new manager or recruiter every couple of weeks; ask if there is anything to read before day one</td></tr>
+<tr><td><strong>A counter-offer</strong></td><td>Decide on the merits, once, and do not use it to renegotiate the new offer you already accepted (Chapter 81, Q81-033)</td></tr>
+</tbody></table>
+<p><strong>Reneging.</strong> Accepting an offer and then backing out is sometimes unavoidable, but it costs the company real effort and is remembered. If you must, tell them as early as possible, honestly. Chapter 81's Q81-032 covers it.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Serve the notice period and join on the date</td></tr>
+<tr><td>Strong</td><td>Resign only after signing, hand over properly, collect the papers, keep verification moving, and stay in touch</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> a clean handover is the last thing your old team remembers about you, and references come from it + <strong>[+Edge cases]</strong> resigning before the new offer is signed is the most expensive mistake in this period + <strong>[+Clarify]</strong> asking the new manager what to read before day one makes the first week easier and is noticed</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What would you do if your current employer refused to release you early? How would you handle a counter-offer?</p>
+<p><strong>Red flag:</strong> resigning on a verbal offer.</p>
+<p><strong>Learn it in:</strong> Chapter 81, §81.9 (notice periods, buy-outs, counter-offers, relieving letters).</p>
+<h3>Q68A-058 · You have joined as a data analyst. What do you do in the first 90 days?</h3>
+<p><strong>Level:</strong> Fresher · <strong>Roles:</strong> DA, DS, AE, BA</p>
+<p><strong>Remember it as:</strong> <em>Learn the data and its definitions first, deliver one small useful thing early, and find one quietly broken thing to fix. Do not redesign anything in the first month.</em></p>
+<p><strong>Answer in one line:</strong> In the first month learn the business, the data and how key numbers are defined; in the second deliver one small, useful piece of work and find one thing that is quietly wrong; in the third take ownership of something recurring — and resist redesigning anything until you understand why it is the way it is.</p>
+<p><strong>The three months:</strong></p>
+<table><thead><tr><th>Month</th><th>Focus</th><th>What it produces</th></tr></thead><tbody>
+<tr><td><strong>1 · Learn</strong></td><td>The business, the main tables, how "revenue" and "active customer" are defined here, who owns what</td><td>A short glossary of definitions — which nearly always reveals that two teams define something differently</td></tr>
+<tr><td><strong>2 · Deliver</strong></td><td>One small, useful piece of work, done fully, plus one data-quality problem found and reported</td><td>Trust, and a reputation for checking</td></tr>
+<tr><td><strong>3 · Own</strong></td><td>A recurring report, a dashboard, or a process that becomes yours</td><td>A reason people come to you</td></tr>
+</tbody></table>
+<p><strong>Why the glossary matters most.</strong> Chapter 76B's ambiguity drill showed that "revenue" on one quarter of data has four defensible values spanning ₹6.25 crore. In a new job, learning which one this company means — and finding where two teams mean different ones — is often the most valuable thing a new analyst does in their first month.</p>
+<table><thead><tr><th>Tier</th><th>What to say</th></tr></thead><tbody>
+<tr><td>Passes</td><td>Learn the tools and the data, and ask questions</td></tr>
+<tr><td>Strong</td><td>Learn, deliver, own — with the definitions glossary in month one and one quietly broken thing found in month two</td></tr>
+<tr><td>Extra points</td><td>+ <strong>[+Business]</strong> finding a definition mismatch early is often worth more than any analysis + <strong>[+Validate]</strong> reconcile one important number to its source in the first month; it teaches the data faster than reading about it + <strong>[+Edge cases]</strong> redesigning a report before understanding its users is the most common way new analysts lose goodwill</td></tr>
+</tbody></table>
+<p><strong>Likely follow-ups:</strong> What if nobody has time to onboard you? How would you know if the 90 days went well?</p>
+<p><strong>Red flag:</strong> a plan that starts with rebuilding the team's dashboards.</p>
+<p><strong>Learn it in:</strong> Chapter 76A, Q76A-070 (the first 90 days); Chapter 76B, §76B.11 (the ambiguity drill); Chapter 23, §23.13 (defining a metric).</p>
+<h3>Rapid-fire, 68A.7</h3>
+<p>Roles: DA, DS, DE, AE and BA for every row.</p>
+<table><thead><tr><th>#</th><th>Question</th><th>One-line answer</th><th>Extra point</th><th>Level · learn it in</th></tr></thead><tbody>
+<tr><td>Q68A-059</td><td>Can you negotiate an offer after it is written?</td><td>Often yes, before you sign: thank them, state what you are asking for and why, and be ready for either answer — negotiation after signing is far harder</td><td><strong>[+Signpost]</strong> Chapter 81, §81.6 covers how</td><td>Fresher · 81.6</td></tr>
+<tr><td>Q68A-060</td><td>Can you ask for a later joining date?</td><td>Yes, with a reason — usually your notice period — and as early as possible; most companies plan around notice periods routinely</td><td><strong>[+Business]</strong> asking early is a request; asking late is a problem</td><td>Fresher · 81.9</td></tr>
+<tr><td>Q68A-061</td><td>What documents does background verification usually need?</td><td>Typically identity, education certificates, past employment proof such as relieving letters and payslips, and sometimes address proof — the exact list comes from the company or its verification agency</td><td><strong>[+Clarify]</strong> gather them during your notice period, not after joining</td><td>Fresher · 81.9</td></tr>
+<tr><td>Q68A-062</td><td>What is probation, and what changes at the end of it?</td><td>A trial period after joining, after which you are confirmed; notice periods, some benefits and sometimes leave rules can differ before and after, as your letter states</td><td><strong>[+Validate]</strong> know your probation goals in writing, so confirmation is not a surprise</td><td>Fresher · 81.9</td></tr>
+<tr><td>Q68A-063</td><td>What should you do in your first week?</td><td>Meet the people you will work with, get access to the data and tools, read existing documentation and past reports, and write down every term you do not understand</td><td><strong>[+Signpost]</strong> the list of unknown terms becomes your month-one glossary (Q68A-058)</td><td>Fresher · 3.2, 25.4</td></tr>
+<tr><td>Q68A-064</td><td>How do you ask questions without seeming to know nothing?</td><td>Batch them, show what you tried first, and write down the answers so you never ask twice — new joiners are expected to ask; repeating questions is what is noticed</td><td><strong>[+Business]</strong> a shared notes page of answers often becomes the team's onboarding document</td><td>Fresher · 83.7</td></tr>
+<tr><td>Q68A-065</td><td>Your first assigned analysis has a vague brief. What do you do?</td><td>Exactly what Chapter 76B's drill teaches: ask the two or three questions that change the answer before building anything</td><td><strong>[+Signpost]</strong> this is where the interview skill becomes the job</td><td>Fresher · 76B.11</td></tr>
+<tr><td>Q68A-066</td><td>When should you start thinking about your next move?</td><td>Not in the first year: learn deeply, build a record of work you can describe, and let the next step come from evidence of what you did here</td><td><strong>[+Signpost]</strong> Chapter 83 is the long game</td><td>Fresher · 83.4</td></tr>
+</tbody></table>
+<hr>
+<h2>Common mistakes</h2>
+<ul><li><strong>Treating the online test as a knowledge test.</strong> It is also a pace test and an edge-case test. Practise under a timer and test the hidden cases yourself.</li><li><strong>Saying nothing in a group discussion, or saying too much.</strong> Both lose. One structured point, visible listening and a fair summary win.</li><li><strong>Narrating keystrokes instead of decisions</strong> in a live round.</li><li><strong>Pausing the whole search</strong> while waiting on one company.</li><li><strong>Resigning on a verbal offer.</strong> Only a signed written offer is an offer.</li><li><strong>Signing on the headline CTC</strong> without reading the breakup, the notice and probation terms, and the clauses that cost money on leaving.</li><li><strong>Redesigning things in the first month</strong> of a new job.</li></ul>
+<h2>Final-week revision list</h2>
+<ul><li>Q68A-001, Q68A-002 and Q68A-003: the online test, the hidden cases and the output format.</li><li>Q68A-014 and Q68A-015: the group discussion and "tell me about yourself".</li><li>Q68A-025, Q68A-026 and Q68A-027: thinking aloud, being stuck, and the virtual round.</li><li>Q68A-046 to Q68A-048: after the interview.</li><li>Q68A-056 and Q68A-058: the offer letter and the first 90 days.</li></ul>
+<h2>Where this leads</h2>
+<p>Chapter 69 is the method for every answer in this part: the three tiers and the twelve extra-point moves. The question banks from Chapter 69A to Chapter 81 then cover each round's content, Chapter 82 runs take-homes and full mock interviews end to end, and Chapter 83 is the long game after you are hired.</p>
+</body></html>

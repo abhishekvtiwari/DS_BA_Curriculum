@@ -74,17 +74,17 @@ def build(dest, make_zip):
         opt(RV / f'Bundle-start-here{ext}', dest / f'00-Start-here{ext}', 'start here')
 
     # ---------------------------------------------------------------- 01. the interview book
-    ib = dest / '01-The-Interview-Book'
+    ib = dest / '01-The-Interview-Readiness-Book'
     opt(BOOKS / 'Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf',
-        ib / 'Be-Interview-Ready-Data-Science-and-Analytics.pdf', 'interview book')
+        ib / 'The-Interview-Readiness-Book.pdf', 'interview book')
     for name in ('front-cover.pdf', 'back-cover.pdf', 'front-cover.png', 'back-cover.png',
                  'instagram-front.png'):
         opt(RV / 'cover' / name, ib / 'Covers' / name, 'interview book')
 
     # ---------------------------------------------------------------- 02. add-on: the volumes
-    vol = dest / '02-Add-on-The-Volumes'
-    for n, stem, nice in [(1, 'Theory', 'Volume-1-Theory'), (2, 'Practical', 'Volume-2-Practical'),
-                          (3, 'Implementation', 'Volume-3-Implementation')]:
+    vol = dest / '02-Add-on-The-Three-Volumes'
+    for n, stem, nice in [(1, 'Theory', 'Volume-1-First-Principles'), (2, 'Practical', 'Volume-2-The-Working-Analyst'),
+                          (3, 'Implementation', 'Volume-3-Builder-to-Architect')]:
         opt(BOOKS / f'Analyst-to-Architect-Book-{n}-{stem}.pdf', vol / f'{nice}.pdf', 'volumes')
     for name in ['Where-Everything-Is.pdf', 'Where-Everything-Is.xlsx']:
         opt(RV / name, vol / 'Topic-guide' / name, 'volumes')
@@ -119,7 +119,7 @@ def build(dest, make_zip):
     opt(BOOKS / 'Analyst-to-Architect-Book-Overview.pdf', rv / 'Internal-overview-not-for-sale.pdf', 'review only')
     for stem in ['Ch72B-data-cleaning-and-wrangling-bank', 'Ch76B-business-analyst-bank',
                  'Part-VIII-predict-the-output-summary', 'Ch71-section-71.11-predict-the-output',
-                 'Selling-the-books-strategy-and-red-team', 'Read-me-first']:
+                 'Ch68A-the-rounds-nobody-prepares-for', 'Selling-the-books-strategy-and-red-team', 'Read-me-first']:
         for ext in ('.pdf', '.docx'):
             opt(RV / f'{stem}{ext}', rv / 'Whats-new-and-strategy' / f'{stem}{ext}', 'review only')
     for name in ['TRACKER.md', 'DECISIONS.md', 'DECISIONS-BRIEFING.md',

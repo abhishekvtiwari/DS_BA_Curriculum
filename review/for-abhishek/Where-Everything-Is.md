@@ -10,7 +10,7 @@ Three ways in, depending on what you are looking for.
 - **"Where is topic X taught?"** — *The topic index* at the end. It is alphabetical, built from every chapter's own Key terms list, and points at the chapter.
 - **"What do I actually do in this chapter?"** — the part-by-part tables. Each chapter names the practice files that ship with it.
 
-The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a worked notebook and **14** ship runnable SQL in both PostgreSQL and MySQL.
+The book is **88 chapters**, about **1,384,926 words**. **49** chapters have a worked notebook and **14** ship runnable SQL in both PostgreSQL and MySQL.
 
 ## The four books
 
@@ -19,7 +19,7 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 | **Book 1 · Theory** | 0, 1 | 9 | The ideas, with no software to install. Read it first. |
 | **Book 2 · Practical** | 2, 3 | 25 | The analyst's tools, hands on: spreadsheets, SQL, cleaning, charts, BI, Python, statistics, then the advanced layer. |
 | **Book 3 · Implementation** | 4, 5, 6, 7, closing | 34 | Building real systems: machine learning, data engineering, production ML and generative AI, architecture and leadership. |
-| **Book 4 · Be Interview Ready** | 8 | 19 | The question banks, the extra-points method, take-homes and mock interviews. |
+| **Book 4 · Be Interview Ready** | 8 | 20 | The question banks, the extra-points method, take-homes and mock interviews. |
 
 ---
 
@@ -1019,11 +1019,12 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 
 ## Part 8 — Be Interview Ready
 
-**Book 4 · Be Interview Ready** · 19 chapters · roughly 110 hours in total
+**Book 4 · Be Interview Ready** · 20 chapters · roughly 113 hours in total
 
 | Ch | Chapter | Time | What you practise with |
 |---|---|---|---|
 | 68 | **How Data Hiring Works** | 5 hours | *reading only* |
+| 68A | **The Rounds Nobody Prepares For** | 3–4 hours | *reading only* |
 | 69 | **The Extra-Points Method** | 4–6 hours | *reading only* |
 | 69A | **Why This, Not That: Tool Choice & Judgement** | 3–4 hours | *reading only* |
 | 70 | **Excel, Google Sheets, VBA & BI Question Bank** | 5–7 hours | Excel workbook, Python script, dataset (csv) |
@@ -1054,6 +1055,17 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 **Sections:** 68.1 The whole process, gate by gate · 68.2 Cracking the resume screen: the software gate, then the human gate · 68.3 What each round actually tests · 68.4 LinkedIn hiring: how recruiter search actually works, and how to be found · 68.5 Referrals, used properly · 68.6 Pay: reading the numbers before the offer gate · 68.7 Preparing in 30, 60, or 90 days · 68.8 Worked examples, in three groups · 68.9 Four resumes, matched to their JDs
 
 
+### Chapter 68A. The Rounds Nobody Prepares For
+
+**You will learn to:** clearing the timed online test that screens most applicants before any human sees them, including the hidden test cases that fail correct-looking code · getting through a campus drive and a group discussion as a fresher · thinking aloud in a live-coding round, and recovering when you are stuck · running a virtual interview that survives a dropped connection · writing to a recruiter so that you get a reply · following up after an interview, and handling silence and rejection without burning the bridge · reading an offer letter before you sign it, and getting from acceptance to a good first 90 days.
+
+**Before you start:** Chapter 68 (the hiring process, gate by gate) and Chapter 69 (the three answer tiers and the twelve extra-point moves). The technical rounds themselves are tested in Chapters 70–80 and the HR and offer conversation in Chapter 81; this chapter covers everything around them that the banks do not.
+
+**Time needed:** 3–4 hours to read and answer every question aloud. Section 68A.2 is worth doing on a laptop with a timer running, because the online test is a skill of pace as much as knowledge.
+
+**Sections:** 68A.1 Why these rounds sink prepared candidates · 68A.2 The online assessment · 68A.3 Campus drives, fresher hiring and the group discussion · 68A.4 Live coding and virtual rounds · 68A.5 Getting found, and the rounds in between · 68A.6 After the interview · 68A.7 From offer to joining, and the first 90 days
+
+
 ### Chapter 69. The Extra-Points Method
 
 **You will learn to:** understand the five dimensions that interview rubrics score, whatever the question · give a "strong" answer instead of a merely correct one, and know the difference · use twelve specific moves that turn a strong answer into an outstanding one, each shown before and after on a short example · carry a question through all three answer tiers yourself, live, under time pressure · recognize the red flags and over-corrections that cost points even when the technical content is right.
@@ -1067,9 +1079,13 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 
 ### Chapter 69A. Why This, Not That: Tool Choice & Judgement
 
+**You will learn to:** answering the questions that open almost every data interview and that no syllabus covers — why Python and not Excel, why PostgreSQL and not MySQL, what the difference between SQL and Postgres even is · giving the honest trade-off instead of the fashionable answer, including the cases where the simple tool is the right one · recognising when a question is really asking "do you have judgement, or did you learn a list?" · defending a choice you did not make, which is most of the choices you will be asked about.
+
 **Before you start:** nothing technical. This chapter is about choosing, not using, so it can be read before the tool chapters rather than after. Where a question names a technique, it says where the book teaches it. Chapter 69 (the three answer tiers and the twelve extra-point tags) is the method every answer here is written against.
 
 **Time needed:** 3–4 hours to read and answer each question aloud; 1 hour for a revision pass. Shorter than the tool banks, and the questions in it are asked more often than any of them.
+
+**Sections:** 69A.1 Why these questions decide the first ten minutes · 69A.2 The vocabulary that trips people up · 69A.3 Excel, or code? · 69A.4 Which database, and why · 69A.5 Which language, and when · 69A.6 When not to use the clever thing · 69A.7 Defending a choice you did not make
 
 
 ### Chapter 70. Excel, Google Sheets, VBA & BI Question Bank
@@ -1113,18 +1129,26 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 
 ### Chapter 72A. Data Structures & Algorithms Question Bank
 
+**You will learn to:** answering the core data structures and algorithms (DSA) questions that come up in data-role interviews, sized for those roles rather than a full software-engineering gauntlet · reasoning about time and space (Big-O) out loud, and backing the claim with a measurement · implementing and explaining the handful of structures and patterns that actually recur: hash maps and sets, two pointers and sliding windows, recursion and memoization, sorting and searching, linked lists, trees, and graphs · predict the output of a short snippet cold, which is how this round usually opens, from the warm-up cases to the brain-racking ones.
+
 **Before you start:** do Chapter 33 first (The Computer Science You Actually Need): it teaches almost every idea in this bank. You also need Chapter 17 (Python from zero), Chapter 29, section 29.5 (writing a class with __init__ and self), and Chapter 69 (the three answer tiers and the twelve extra-point tags). Chapter 72's Python gotchas (mutable defaults, is versus ==) come back here twice.
 
 **Time needed:** 8–10 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Section 72A.10, the predict-the-output round, is worth its own sitting of about 2 hours, answering each snippet out loud before reading on. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.
+
+**Sections:** 72A.1 Why data roles get asked this at all · 72A.2 Big-O: reasoning about time and space · 72A.3 Arrays, strings, and the two-pointer / sliding-window patterns · 72A.4 Hash maps and sets · 72A.5 Recursion and memoization · 72A.6 Sorting and searching · 72A.7 Linked lists · 72A.8 Trees and graphs · 72A.9 A live-coding walk-through: parentheses validation · 72A.10 Predict the output: from basic to brain-racking
 
 **In `companion/ch72a/`** — *notebook:* `ch72a-notebook.ipynb`
 
 
 ### Chapter 72B. Data Cleaning & Wrangling Question Bank
 
+**You will learn to:** answering the cleaning questions that decide most data-role interviews, because cleaning is where the job actually is · profiling an unfamiliar file before you touch a single value · proving a row count rather than trusting one · parsing four date formats in one column without silently destroying two thirds of it · standardising categories with a mapping table instead of a pile of .replace() calls · spotting numbers that are text, discounts that are fractions, and quantities in the wrong unit · repairing a join key and measuring the match rate before you join · writing validation rules that must return zero · reconciling a cleaned table to its source to the rupee, and keeping a log someone else can audit.
+
 **Before you start:** do Chapter 14 first (Cleaning & Wrangling Real Data). This bank is the interview practice for that chapter's method, and it uses the same files. You also need Chapter 17 (Python from zero), Chapter 25 (pandas), and Chapter 69 (the three answer tiers and the twelve extra-point tags). Chapter 72's pandas gotchas come back here three times.
 
 **Time needed:** 7–9 hours to work through with the files open, plus 1 hour for a revision pass. Sections 72B.4 and 72B.7 are the two that most often decide an interview; give each its own sitting.
+
+**Sections:** 72B.1 Why this is the round that matters · 72B.2 Profiling: what to do before you change anything · 72B.3 The row count: duplicates, headers and footers · 72B.4 Dates: the column that breaks quietly · 72B.5 Categories and text: eighteen spellings of four things · 72B.6 Numbers, units and money · 72B.7 Keys, joins and match rates · 72B.8 Missing values, and the checks that must return zero · 72B.9 The full rapid-fire round · 72B.10 Reproduce every number in this chapter
 
 
 ### Chapter 73. Statistics, Probability & Experimentation Bank
@@ -1172,6 +1196,8 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 
 **Time needed:** 4–5 hours to read and drill every question aloud; 3–4 hours for the project (two five-line summaries, one defended metric, and rehearsed walkthroughs). Sections 76A.7 to 76A.10 are the situational half and are best drilled out loud with someone else reading the situation to you.
 
+**Sections:** 76A.1 What the two roles actually do, and how interviewers probe the line between them · 76A.2 Walking through a Data Analyst project, end to end · 76A.3 Walking through a Data Science project, end to end · 76A.4 Stakeholder communication for DA and DS specifically · 76A.5 Portfolio deep-dives and handling scrutiny · 76A.6 Full scenarios, talked through live · 76A.7 The analyst's Tuesday: requests as they actually arrive · 76A.8 The data scientist's Tuesday · 76A.9 Working with everyone else · 76A.10 What changes as you get senior
+
 
 ### Chapter 76B. Business Analyst Question Bank
 
@@ -1180,6 +1206,8 @@ The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a w
 **Before you start:** Chapter 24 (all of it: turning an ask into a question, business rules, stakeholders, and pushback) and Chapter 25 (all of it: the business analyst track), which between them teach every technique this bank tests; Chapter 26, section 26.10 (Agile, Scrum, and the backlog); Chapter 3, section 3.2 (order 5001's journey from enquiry to cash, which the worked examples use); and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
 **Time needed:** 6–7 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row), plus 4–6 hours for the project: two interviews, a swimlane map, a story, and a requirement. Section 76B.11, the ambiguity drill, is worth its own sitting of about an hour, and it is the one to do out loud rather than read.
+
+**Sections:** 76B.1 Basic-but-tricky BA questions · 76B.2 Requirements gathering · 76B.3 User stories and acceptance criteria · 76B.4 Process mapping · 76B.5 SDLC and where a BA fits · 76B.6 Gap analysis and UAT · 76B.7 Stakeholder management and pushback · 76B.8 Full scenarios, talked through live · 76B.9 Prioritisation: deciding what gets built · 76B.10 Agile in practice: what a BA is actually asked · 76B.11 The ambiguity drill · 76B.12 Tools, artifacts and estimation · 76B.13 Domain scenarios
 
 
 ### Chapter 77. Data Engineering & Data System Design Bank

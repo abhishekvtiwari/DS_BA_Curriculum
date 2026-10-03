@@ -113,11 +113,11 @@ def collect():
             closing = next((l for l in lines[1:6] if l.strip().strip('*').lower() == 'closing'), None)
             part = 'closing' if closing else '?'
         sections = [(m.group(1), m.group(2).strip())
-                    for m in re.finditer(r'^## (\d+\.\d+)\s+(.+)$', text, re.M)]
+                    for m in re.finditer(r'^## (\d+[A-Z]?\.\d+)\s+(.+)$', text, re.M)]   # 72B.4 as well as 14.7
         rows.append(dict(
             key=p.name.split('-')[0], file=p.name, number=number, name=name, part=part,
             book=BOOK_OF_PART.get(part, '?'),
-            learn=strip_md(field(text, 'You will learn to:')),
+            learn=strip_md(field(text, 'You will learn to:') or field(text, 'You will practise:')),   # the banks say 'practise'
             before=strip_md(field(text, 'Before you start:')),
             time=strip_md(field(text, 'Time needed:')),
             sections=sections, terms=key_terms(text),

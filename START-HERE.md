@@ -14,16 +14,16 @@ Everything below is a real file in this folder. Click it, or open it from Explor
 
 Everything assembled in one place, outside this folder so it can be moved or sent:
 
-**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 933 files, 305 MB, arranged in
+**`Desktop\Projects\Analyst-to-Architect-Review-Bundle\`** — 935 files, 306 MB, arranged in
 **product order**: the interview book first, then the two add-ons. Open **`00-Start-here.pdf`**
-inside it. The **`…-Review-Bundle.zip`** (149 MB) beside it is the same thing for another machine.
+inside it. The **`…-Review-Bundle.zip`** (150 MB) beside it is the same thing for another machine.
 
 | Folder | What it is |
 |---|---|
 | `00-Start-here.pdf` | One page: the offer, folder by folder, and what is still open |
-| `01-The-Interview-Book/` | *Be Interview Ready*, the product, with its front, back and Instagram covers |
-| `02-Add-on-The-Volumes/` | Volumes 1–3 (Theory, Practical, Implementation), the practice files arranged by tool, and the topic guide |
-| `03-Add-on-Projects/` | The project catalogue. No project is built yet, and the folder says so |
+| `01-The-Interview-Readiness-Book/` | *Be Interview Ready*, the product, with its front, back and Instagram covers |
+| `02-Add-on-The-Three-Volumes/` | *First Principles*, *The Working Analyst* and *Builder to Architect*, the practice files arranged by tool, and the topic guide |
+| `03-Add-on-Projects/` | The catalogue of eleven projects in four tracks. None is built yet, and the folder says so |
 | `04-For-review-only/` | What changed, the review state, the selling strategy, the internal overview. Not for buyers |
 
 The practice files are arranged by tool, not by chapter: ten tools, each running from the
@@ -37,17 +37,19 @@ not leave this folder.
 
 ## What to review now (3 October)
 
-Four things, in this order. Each is a PDF you can open directly.
+Seven things, in this order. Each is a PDF you can open directly.
 
 | | What | Where | What to check |
 |---|---|---|---|
 | 1 | **The covers** | [front](review/for-abhishek/cover/front-cover.pdf) · [back](review/for-abhishek/cover/back-cover.pdf) · [Instagram](review/for-abhishek/cover/instagram-front.png) | Does it look like something you would buy? Is the back-cover wording right? |
-| 2 | **Chapter 72B**, data cleaning (new, 100 questions) | [PDF](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.pdf) | Start at 72B.4, the dates section |
-| 3 | **Chapter 76B**, Business Analyst (38 → 95) | [PDF](review/for-abhishek/Ch76B-business-analyst-bank.pdf) | Start at 76B.11, the ambiguity drill |
-| 4 | **The whole interview book** | [702 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
-| 5 | **The bundle order** | [00-Start-here.pdf](review/for-abhishek/Bundle-start-here.pdf) | Interview book first, volumes and projects as add-ons |
+| 2 | **Chapter 68A**, the rounds nobody prepares for (new, 66 questions) | [PDF](review/for-abhishek/Ch68A-the-rounds-nobody-prepares-for.pdf) | Online test, campus and group discussion, follow-ups, offer letter, first 90 days |
+| 3 | **Chapter 72B**, data cleaning (new, 100 questions) | [PDF](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.pdf) | Start at 72B.4, the dates section |
+| 4 | **Chapter 76B**, Business Analyst (38 → 95) | [PDF](review/for-abhishek/Ch76B-business-analyst-bank.pdf) | Start at 76B.11, the ambiguity drill |
+| 5 | **The whole interview book** | [729 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
+| 6 | **The project catalogue** | [PDF](review/for-abhishek/Product-ladder-and-project-catalogue.pdf) | Eleven projects, the volume names, and the build order |
+| 7 | **The bundle order** | [00-Start-here.pdf](review/for-abhishek/Bundle-start-here.pdf) | Interview book first, volumes and projects as add-ons |
 
-Still open, waiting on you: an ISBN; whether to print a price; the add-on prices; and whether to
+Still open, waiting on you: whether to print a price; the add-on prices; and whether to
 rebuild the four PDFs so their own covers and titles match this order (they still say "Book 1" to
 "Book 4 of 4" inside).
 
@@ -64,14 +66,14 @@ series map sits at the back.
 | 1 · Theory | [Analyst-to-Architect-Book-1-Theory.pdf](fixed/Books/Analyst-to-Architect-Book-1-Theory.pdf) | 218 | 359 |
 | 2 · Practical | [Analyst-to-Architect-Book-2-Practical.pdf](fixed/Books/Analyst-to-Architect-Book-2-Practical.pdf) | 1,401 | 1,616 |
 | 3 · Implementation | [Analyst-to-Architect-Book-3-Implementation.pdf](fixed/Books/Analyst-to-Architect-Book-3-Implementation.pdf) | 1,318 | 1,447 |
-| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 702 | 901 |
+| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 729 | 935 |
 | Overview (internal, not for sale) | [Analyst-to-Architect-Book-Overview.pdf](fixed/Books/Analyst-to-Architect-Book-Overview.pdf) | 71 | 99 |
 
 **Book 4 was rebuilt on 3 October**, most recently to add **Chapter 72B, the data cleaning and
 wrangling bank** (100 questions). It now carries ten new predict-the-output sections across
-Part VIII, the new Chapter 72B, and expansions to 76B, 75 and 80 that bring Part VIII to **1,160
-questions**; all 426 of its internal links resolve, all 901 bookmarks land on the right page, and it
-has no missing glyphs. The others are the 1 October build.
+Part VIII, the new Chapters 68A and 72B, and expansions to 76B, 75 and 80 that bring Part VIII to
+**1,226 questions**; all 444 of its internal links resolve, all 935 bookmarks land on the right
+page, and it has no missing glyphs. The others are the 1 October build.
 
 Two reading notes, so the navigation behaves the way you expect:
 
@@ -132,7 +134,7 @@ detailed, with output-prediction and trick questions of the `int("25", 4)` kind.
 **The measurement that set the task.** Thirteen of the fourteen Part VIII banks had no
 predict-the-output section at all. The one that did — Chapter 72's §72.2 — became the template.
 
-**Done: ten new sections, 202 new questions**, then further expansion across the banks and the new Chapter 72B. Part VIII has gone from 565 coded questions to **1,160**, which is the target.
+**Done: ten new sections, 202 new questions**, then further expansion across the banks and the new Chapter 72B. Part VIII has gone from 565 coded questions to **1,226**: the 1,160 target, plus Chapter 68A's 66 on the rounds around the interviews.
 Chapters 70, 71, 72A, 73, 74, 75, 77, 78, 79 and 80 each gained a section aimed at what that
 chapter genuinely lacked, rather than a fixed quota.
 
@@ -175,7 +177,7 @@ Two things are honestly outstanding rather than finished:
   marked **Dialect split**. **Excel is not installed either**, so §70.9 carries the same kind of
   mark on four questions, reading **Check in Excel**. Both exceptions are stated in the chapters'
   own at-a-glance boxes, not buried in a changelog.
-- **Book 4 has been rebuilt** — 702 pages, up from 400, with the series map regenerated from the
+- **Book 4 has been rebuilt** — 729 pages, up from 400, with the series map regenerated from the
   page numbers printed on the pages. This machine does not reproduce the original build exactly (a
   test rebuild of Book 1 came out 217 pages against the shipped 218, because fonts resolve
   differently here), so only Book 4 was rebuilt and its visual check should be redone. Books 1–3

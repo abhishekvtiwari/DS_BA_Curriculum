@@ -45,6 +45,7 @@ IVORY = '#EEE7D7'
 MIST = '#9AA8C0'
 
 BANKS = [
+    ('68A', 'Rounds Nobody Prepares For'),
     ('69A', 'Why This, Not That'),
     ('70', 'Excel, Sheets, VBA & BI'),
     ('71', 'SQL'),
@@ -90,6 +91,8 @@ CNT = counts()
 SIZES = [CNT.get(n, 0) for n, _ in BANKS]
 TOTAL = sum(SIZES)
 PAGES = book_pages()
+WORDS = {14: 'fourteen', 15: 'fifteen', 16: 'sixteen', 17: 'seventeen', 18: 'eighteen', 19: 'nineteen', 20: 'twenty'}
+NBANKS = WORDS.get(len(BANKS), str(len(BANKS)))   # spelled out, counted, never typed
 
 
 # ------------------------------------------------------------------ the spiral
@@ -185,7 +188,7 @@ def front():
   {header(PRODUCT)}
   <div class="art">{SPIRAL}
     <div class="core"><div class="n">{TOTAL:,}</div><div class="w">Questions</div>
-      <div class="label s">Sixteen banks</div></div>
+      <div class="label s">{NBANKS} banks</div></div>
   </div>
   <div class="label cap">One dot for every question in this book</div>
   <div style="flex:1"></div>
@@ -215,7 +218,7 @@ h2 span {{ color: {GOLD}; }}
 .toc {{ margin-top: 3mm; }}
 .toc .col {{ grid-column: span 6; }}
 .row {{ display: flex; align-items: baseline; font-family: "Segoe UI", sans-serif; font-size: 8.7pt;
-       color: #D3DAE6; padding: 1.05mm 0; }}
+       color: #D3DAE6; padding: 0.82mm 0; }}
 .row .c {{ font-family: Consolas, monospace; font-size: 6.9pt; color: {MIST}; width: 9mm; flex: none; }}
 .row .lead {{ flex: 1; border-bottom: .25mm dotted rgba(238,231,215,.28); margin: 0 2mm;
              transform: translateY(-.8mm); }}
@@ -292,7 +295,7 @@ def back():
   <div class="sec"><span class="label gold" data-l>What is inside</span><div class="rule thin" data-l data-r></div>
     <div class="grid toc"><div class="col" data-l>{col(BANKS[:half])}</div>
       <div class="col" data-r>{col(BANKS[half:])}</div></div>
-    <div class="total" data-l data-r><span class="t">Sixteen banks, fresher to senior</span>
+    <div class="total" data-l data-r><span class="t">{NBANKS.capitalize()} banks, fresher to senior</span>
       <span class="n">{TOTAL:,}</span></div>
   </div>
   <div class="fl"></div>
