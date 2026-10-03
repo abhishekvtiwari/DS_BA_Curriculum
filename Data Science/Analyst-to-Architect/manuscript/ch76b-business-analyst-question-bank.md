@@ -366,7 +366,7 @@ Roles: BA, DA and BI for every row.
 
 Every BA interview reaches "how do you prioritise?", and most candidates answer with a feeling. The frameworks below are what the question is fishing for, and the honest ranking of them matters more than reciting all four.
 
-> **Beyond the book: the named prioritisation frameworks.** Chapter 25, section 25.12 gives this book's own method — rank on frequency, time per occurrence, cost of the errors caused, and effort and risk to automate. That is a sound framework and it is the one to use on real work. But interviewers ask for the named ones by name, so here they are, each in one line, before the questions that use them.
+> **Beyond the book: the named prioritisation frameworks.** Chapter 25, section 25.12 gives this book's own method — rank on frequency, time per occurrence, cost of the errors caused, and effort and risk to automate — and Chapter 25, section 25.9 ranks gaps on hours saved × error weight ÷ build effort. Those are the frameworks to use on real work. **RICE is already introduced in Chapter 75**, in the Beyond-the-book note under Q75-020, for prioritising product features; this section covers it again from the BA side, where the candidates are process changes rather than features, and adds the other three, which the book does not teach. Each gets one line here before the questions that use it.
 >
 > - **MoSCoW** sorts items into Must have, Should have, Could have and Won't have (this time). Its value is the fourth bucket.
 > - **RICE** scores Reach × Impact × Confidence ÷ Effort, giving a number you can sort on.
@@ -463,11 +463,11 @@ A ranks above B, and **the reason it wins is Confidence, not Impact.** Order vol
 |---|---|
 | Passes | Expands RICE correctly and explains each term |
 | Strong | Scores two real items, and identifies Confidence as the term that does the useful work |
-| Extra points | + **[+Validate]** label which inputs are measured and which are assumed, as the table above does, because an unlabelled estimate becomes a fact the moment it is in a spreadsheet + **[+Trade-offs]** false precision is the main risk: use the score for bands, not for close calls + **[+Edge cases]** Effort in the denominator means an optimistic estimate inflates the ranking most, so effort estimates should come from whoever will do the work + **[+Business]** re-score when confidence changes, since a cheap measurement that lifts Confidence from 50% to 90% can reorder the list more than any new feature |
+| Extra points | + **[+Validate]** label which inputs are measured and which are assumed, as the table above does, because an unlabelled estimate becomes a fact the moment it is in a spreadsheet + **[+Trade-offs]** false precision is the main risk: use the score for bands, not for close calls + **[+Edge cases]** Effort in the denominator means an optimistic estimate inflates the ranking most, so effort estimates should come from whoever will do the work + **[+Business]** re-score when confidence changes, since a cheap measurement that lifts Confidence from 50% to 90% can reorder the list more than any new feature + **[+Signpost]** Chapter 75's note under Q75-020 works RICE for product features and shows the arithmetic trap of multiplying by Effort instead of dividing — which inverts the ranking so the most expensive item wins |
 
 **Likely follow-ups:** How would you raise Confidence on item B? What would change if Effort were in weeks rather than months?
 **Red flag:** scoring with no indication of which numbers are measured and which are invented — or quoting an illustrative figure as though it were timed.
-**Learn it in:** Chapter 25, §25.12; Chapter 3, §3.7 (where manual work hides, and the illustrative arithmetic).
+**Learn it in:** Chapter 25, §25.12 and §25.9 (the book's own ranking methods); Chapter 75, Q75-020 (RICE for product features); Chapter 3, §3.7 (where manual work hides, and the illustrative arithmetic).
 
 ### Q76B-042 · What is the Kano model, and when is it actually useful?
 

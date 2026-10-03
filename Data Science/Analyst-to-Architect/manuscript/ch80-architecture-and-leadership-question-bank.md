@@ -4,11 +4,11 @@
 
 > **Chapter at a glance**
 >
-> **You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end.
+> **You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end · run a blameless postmortem whose finding is the detection gap rather than the bug · ask for an RPO and an RTO as numbers before designing any disaster recovery · cut a live system over incrementally, with an automated output comparison doing the real work · and diagnose a bottlenecked platform team as a structure problem rather than a headcount one.
 >
 > **Before you start:** Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading.
+> **Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading. Sections 80.8 to 80.10 add about 90 minutes and are the operational and people half of the role: running a live system, changing it without breaking it, and leading the architecture. Three terms in them come from the site-reliability tradition rather than from this book — RPO, RTO and the error budget — and each is marked **Beyond the book** with a one-line primer, as are feature flags in section 80.9.
 >
 > **A scope note.** This chapter is for senior IC and architect-level interviews specifically (an **IC**, individual contributor, is a senior engineer or scientist who leads work without managing people), distinct from the Data Analyst/Data Scientist/Data Engineer focus of most of this part. Readers targeting DA/DS/DE roles can treat this chapter as optional, forward-looking material for a later career stage.
 >
@@ -597,6 +597,207 @@ Roles: DE, MLE and Architect for every row.
 
 ---
 
+## 80.8 Running it in production
+
+Sections 80.1 to 80.6 are about designing a system. This one is about the half of an architect's job that only exists after something is live, and it is where senior interviews spend more time than candidates expect. A design that cannot be operated is not a good design.
+
+> **Beyond the book: three operational terms this book does not teach.** Chapter 47 covers data incidents, runbooks and alerts, and Chapter 56 covers model monitoring, but these three come from the site-reliability tradition and are worth having one line each before the questions use them.
+>
+> - **RPO** (recovery point objective) is how much data you can afford to lose, measured in time. An RPO of one hour means losing up to an hour of writes is acceptable.
+> - **RTO** (recovery time objective) is how long you can afford to be down. The two are independent: you can have a tight RPO and a loose RTO, and the pair decides the architecture and most of the cost.
+> - An **error budget** is the inverse of an availability target. If the SLO is 99.9% monthly, the budget is the 43 minutes 12 seconds of downtime that target permits (Q80-030 does this arithmetic), and spending it is allowed — that is what a budget is for.
+
+### Q80-044 · Your nightly pipeline failed silently for a week. Run the postmortem.
+
+**Level:** Senior · **Roles:** DE, AE, Architect
+
+**Remember it as:** *A postmortem asks what about the system let this run for a week, not who missed it. The detection gap is the finding, not the bug.*
+
+**Answer in one line:** Blamelessly, in writing, with a timeline, and focused on the two questions that matter — **why did it fail**, and far more importantly **why did it take a week to notice** — ending in dated, owned actions, of which at least one must shorten detection rather than fix this one bug.
+
+**The structure, and the one row candidates leave out:**
+
+| | |
+|---|---|
+| **Timeline** | What happened and when, including when each person learned of it. Facts, no interpretation |
+| **Impact** | Quantified: which reports were wrong, who acted on them, what it cost. "Some dashboards were stale" is not an impact statement |
+| **Why it failed** | The technical cause, traced past the first answer |
+| **Why detection took a week** | **The actual finding.** A one-week gap is a monitoring defect, independent of the bug |
+| **What we are changing** | Dated, owned, and small enough to happen. One of them must address detection |
+| **What we are not changing** | And why — this is what stops a postmortem becoming a wish list |
+
+**Why the detection row dominates.** The bug is one bug. **The gap is every future bug**, including the ones not yet written. An honest postmortem of a week-long silent failure usually concludes that the pipeline had success/failure alerting but no **freshness or volume check** — it alerted on crashes and was silent on a job that completed having written nothing. Chapter 47, §47.5 is that check; Chapter 46, §46.7 is the stronger version, where delivery only happens after the data passes its tests.
+
+**Blameless, and what that actually means.** Not "nobody is responsible" — the opposite. It means the question is which part of the *system* permitted this, because a postmortem that lands on "X should have noticed" produces no change and guarantees the next one is concealed. Chapter 47, §47.8 makes the same point about data incidents.
+
+| Tier | What to say |
+|---|---|
+| Passes | Describes finding the root cause and fixing it, perhaps mentioning a postmortem document |
+| Strong | The full structure, with the detection gap identified as the primary finding and a dated owned action against it |
+| Extra points | + **[+Validate]** the strongest action is a freshness or row-count check, because it catches the whole class rather than this instance + **[+Business]** quantify the impact in decisions taken on wrong numbers, not in hours of downtime, since that is what the business experienced + **[+Edge cases]** a job that completes successfully having written nothing is the hardest failure to detect and the most common cause of a long silent gap + **[+Trade-offs]** include the "not changing" list, or the postmortem generates ten actions and delivers none |
+
+**Likely follow-ups:** What specific check would have caught this on day one? Who should write the postmortem?
+**Red flag:** a postmortem that names a person, or one whose only action is fixing the specific bug.
+**Learn it in:** Chapter 47, §47.8 (handling a data incident) and §47.5 (observability: freshness, volume, unusual values); Chapter 46, §46.7 (delivery only after the data passes its checks); Chapter 67, §67.6.
+
+### Q80-045 · "We need disaster recovery." What do you ask before designing anything?
+
+**Level:** Senior · **Roles:** DE, Architect · **Beyond the book** (RPO and RTO)
+
+**Remember it as:** *Two numbers decide the whole design: how much data you can lose, and how long you can be down. Everything else is consequence.*
+
+**Answer in one line:** Ask for the **RPO** and the **RTO** as numbers per system, then ask what event you are recovering from — because a single-region outage, a corrupted table and a deleted account need different answers, and the cost scales steeply with both numbers.
+
+**The conversation, in order:**
+
+1. **RPO and RTO, per system, as numbers.** Not "we can't lose data" — that is an infinite budget. The useful question is "if we lost the last hour of orders, what would happen?", and the answer is usually survivable for analytics and not for the ledger.
+2. **Recovering from what?** The scenarios have almost nothing in common:
+   - A region failing needs a second region, which is the expensive one
+   - A table corrupted by a bad deploy needs point-in-time restore
+   - A ransomware or deleted-account event needs backups the primary credentials cannot reach
+3. **Has the restore ever been tested?** This is the question that separates a real answer from a plan. An untested backup is a belief.
+4. **What does the business actually need recovered first?** Rarely everything at once. Order intake before historical reporting.
+
+**The honest framing to offer.** Different systems get different numbers, and saying so is the senior move: Riverstone's order ledger might warrant an RPO near zero, while the analytics warehouse can be rebuilt from source and needs no RPO at all — it needs a documented rebuild procedure instead. Buying one tier of protection for everything is how DR budgets get rejected.
+
+| Tier | What to say |
+|---|---|
+| Passes | Talks about backups, replication and a second region |
+| Strong | Asks for RPO and RTO as numbers per system, distinguishes the failure scenarios, and asks whether restore has been tested |
+| Extra points | + **[+Validate]** "when did we last restore from this backup into a working system?" is the question that finds the real state + **[+Business]** differentiate by system: a warehouse rebuildable from source needs a procedure, not a replica, and that distinction is where the budget is saved + **[+Edge cases]** backups reachable with the same credentials as production are not protection against the scenario people most fear + **[+Trade-offs]** a tighter RPO means synchronous replication, which costs write latency in normal operation — a permanent cost for a rare event |
+
+**Likely follow-ups:** What RPO would you argue for on the order ledger, and why? How would you test a region failover without risking production?
+**Red flag:** proposing multi-region before anyone has stated a number, or treating "we have backups" as disaster recovery.
+**Learn it in:** Chapter 60, §60.3 (non-functional requirements: numbers, not adjectives); Chapter 47, §47.8; Chapter 2, §2.9 (keeping data safe).
+
+### Rapid-fire, 80.8
+
+Roles: DE, AE and Architect for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-046 | What is an error budget, and what is it for? | The downtime an availability target permits — 99.9% monthly allows 43 minutes 12 seconds — and its purpose is to make reliability a budget rather than an absolute, so a team with budget remaining can ship faster and one that has spent it stops and fixes things | **[+Business]** it converts "is reliability good enough?" from an argument into a number both sides already agreed to | Senior · 80.7 (Q80-030), 60.3 |
+| Q80-047 | What belongs in a runbook? | What this job does, how to tell whether it is healthy, the three things that usually go wrong with the exact command for each, who to escalate to, and what *not* to do — written for a tired person at 3 a.m. who did not build it | **[+Validate]** the test of a runbook is that someone else followed it successfully without calling you | Mid · 47.8, 46.10 |
+| Q80-048 | Why does alert fatigue make a system less reliable? | Because an alert that fires often and means nothing trains people to ignore the channel, so the one real alert arrives in a stream of noise — a monitoring system with too many alerts is less effective than one with three that always matter | **[+Signpost]** Chapter 47, §47.9 is titled "Alerts people still read", which is the whole design goal | Mid · 47.9 |
+| Q80-049 | Your job succeeded but wrote zero rows. How do you catch it? | A volume check, not a status check: assert the row count is within an expected band for the day, because exit code zero only means the code did not crash and says nothing about whether it did its work | **[+Signpost]** this is the class of failure behind most week-long silent outages (Q80-044) | Mid · 47.5, 46.7 |
+| Q80-050 | What should an architect do during an incident, specifically? | Usually not debug: take the communication and the decisions — keep stakeholders informed on a stated cadence, decide whether to roll back or fix forward, and protect the responders from being interrupted for status | **[+Business]** a stated update cadence ("next update in 30 minutes") stops the responders being asked every five | Senior · 47.8, 67.3 |
+| Q80-051 | Roll back or fix forward? | Roll back by default when a rollback is safe and the cause is unknown, because it restores service while you investigate; fix forward when the change cannot be undone, such as a migration that has already transformed data | **[+Edge cases]** a deploy that has written data in a new shape may have no rollback, which is a design decision made earlier and felt now | Senior · 56.6, 46.4 |
+| Q80-052 | How would you decide whether an incident needs a postmortem? | On impact and on novelty: anything that affected users or produced wrong numbers, plus anything that surprised you — a near-miss nobody noticed is often the cheapest postmortem you will ever get | **[+Business]** writing one for a near-miss is how a team learns without paying for the lesson | Mid · 47.8 |
+
+---
+
+## 80.9 Changing it without breaking it
+
+Every architecture question in an interview is really about change, because a system that never changed would need no architecture. This section is the mechanics of changing a live system, which is the part that separates someone who has operated software from someone who has only designed it.
+
+> **Beyond the book: feature flags.** Chapter 56, §56.6 teaches canary, blue-green and shadow deployment for models. A **feature flag** is the same idea moved into the application: a conditional that turns a code path on or off at runtime, per user or per percentage, so that deploying code and releasing behaviour become two separate events. The cost is that every flag is a branch in the code and an untested combination with every other flag, which is why flags need an owner and a removal date.
+
+### Q80-053 · You are replacing a system that 200 people use daily. How do you cut over?
+
+**Level:** Senior · **Roles:** DE, AE, Architect
+
+**Remember it as:** *Never a big-bang switch. Run both, compare outputs on real traffic, move users in groups, and keep the old one reachable until nobody is using it.*
+
+**Answer in one line:** Incrementally and reversibly — stand the new system up beside the old, run both on the same real inputs and **compare their outputs** until they agree, migrate users in cohorts smallest-risk first, and keep the old path available until usage of it reaches zero.
+
+**The five stages, and the one that does the real work:**
+
+| | Stage | Why |
+|---|---|---|
+| 1 | **Run in parallel** | Both systems, same inputs, nobody switched |
+| 2 | **Compare outputs, automatically** | **This is the stage that finds everything.** Differences are either new bugs or undocumented old behaviour, and both matter |
+| 3 | **Migrate a cohort** | Start with the most tolerant group, not the easiest to migrate |
+| 4 | **Widen, with a rollback path** | Keep the old system warm and the switch reversible per cohort |
+| 5 | **Decommission** | Only after usage is measured at zero, and after the data is retained somewhere |
+
+**Stage 2 is the answer.** An automated output comparison on real traffic is what turns a migration from a hope into a measurement, and it reliably discovers that the old system did something nobody documented — a rounding convention, an exclusion, a special case for one customer. Chapter 14, §14.11's discipline applies directly: reconcile the new to the old and decompose every difference rather than accepting a tolerance.
+
+**The strangler pattern, if asked to name it.** Rather than replacing the whole system at once, put the new system in front, let it handle one slice of functionality, and grow its share until the old system is surrounded and can be removed. Chapter 69A mentions it by name; the point for an interview is that it makes every step individually reversible.
+
+**What to say about the thing everyone forgets.** Decommissioning. A system kept alive "just in case" for two years costs real money, holds the organisation on an old dependency, and quietly becomes a second source of truth that someone will eventually report from. Set the removal date when the migration starts.
+
+| Tier | What to say |
+|---|---|
+| Passes | Suggests a phased rollout with a pilot group and a rollback plan |
+| Strong | The five stages with automated output comparison on real traffic named as the stage that finds the problems, and a decommission date set up front |
+| Extra points | + **[+Validate]** compare outputs automatically and investigate every difference, because the differences are where the undocumented old behaviour lives + **[+Business]** migrate the most tolerant cohort first, which is not the same as the easiest to migrate — the easiest is often the most visible + **[+Edge cases]** data written during parallel running needs a rule about which system owns it, or you get two divergent truths + **[+Signpost]** the strangler pattern is the name for stages 1 to 4 done incrementally |
+
+**Likely follow-ups:** What would you do if the outputs differed by 2% and nobody could explain it? Who decides the cutover date?
+**Red flag:** a date-based cutover with no parallel run and no output comparison.
+**Learn it in:** Chapter 60, §60.6 (evolving a design under real constraints); Chapter 14, §14.11 (reconciling and documenting every decision); Chapter 56, §56.6 (deployment patterns).
+
+### Rapid-fire, 80.9
+
+Roles: DE, MLE and Architect for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-054 | Canary, blue-green and shadow — what is the difference? | Canary sends a small share of real traffic to the new version and watches; blue-green runs two complete environments and switches all traffic at once, so rollback is instant; shadow sends real traffic to the new version but discards its output, so you measure behaviour with no user risk | **[+Trade-offs]** blue-green needs double the capacity, canary needs good per-version metrics, shadow proves nothing about the write path | Mid · 56.6 |
+| Q80-055 | When is shadow deployment the only safe option? | When the new version's output cannot be allowed to reach anyone until it is trusted — a pricing change, a credit decision, a model whose errors are expensive — because shadow is the only pattern that exercises production traffic with zero user exposure | **[+Edge cases]** shadow does not test writes, so it validates the computation and not the full path | Senior · 56.6 |
+| Q80-056 | What is a feature flag, and what is its hidden cost? | A runtime switch that separates deploying code from releasing behaviour; the hidden cost is combinatorial — every flag doubles the number of possible states, few of which are tested — so each one needs an owner and a removal date | **[+Business]** old flags are the most common form of invisible complexity in a mature codebase | Mid · 56.6 |
+| Q80-057 | How do you change a schema that live readers depend on? | In backward-compatible steps: add the new column, write both, migrate readers, then remove the old — never rename or drop in one step, because every deployed reader expecting the old shape breaks at once | **[+Signpost]** Q80-041 is this question as arithmetic: a "zero-downtime" deploy is only zero-downtime if the change is backward compatible | Mid · 28.12, 46.4 |
+| Q80-058 | Your migration has run for 18 months. What went wrong? | Almost always no decommission date and no forcing function: without a date the old system stays, the team maintains both, and the migration becomes permanent — which is more expensive than either system alone | **[+Business]** maintaining two systems is the most expensive steady state available, and it is the default outcome | Senior · 60.6, 67.2 |
+| Q80-059 | How would you make a change reversible when the data cannot be un-transformed? | Keep the input: write the transformed output to a new location rather than in place, so the original remains and a rollback is a pointer change rather than a reverse computation | **[+Signpost]** this is the write–audit–publish pattern, and the reason raw data is never overwritten | Senior · 47.4, 46.4 |
+| Q80-060 | A vendor is deprecating an API you depend on in six months. What do you do? | Treat it as a dated project immediately: find every call site, assess whether the replacement is equivalent, build behind an interface you control so the next deprecation is cheaper, and keep the old path until the new one is proven | **[+Business]** wrapping a third-party dependency behind your own interface is what makes the second migration cheap | Mid · 45.10, 66.5 |
+
+---
+
+## 80.10 Leading the architecture, and the people
+
+The scope note at the top of this chapter applies most to this section: these are the questions asked of a senior IC or architect, and they are mostly about whether you understand that the technical answer is rarely the constraint.
+
+### Q80-061 · The platform team is a bottleneck and every analytics team is waiting on it. What do you do?
+
+**Level:** Senior · **Roles:** Architect, DE, AE
+
+**Remember it as:** *A bottleneck team is usually a structure problem wearing a capacity costume. Adding people to it often makes the queue longer.*
+
+**Answer in one line:** Diagnose what the queue is actually made of before changing anything — if most requests are variations of the same ask, the answer is **self-service** rather than more capacity, and the structural question is which decisions genuinely need to be central and which were centralised by habit.
+
+**The diagnosis, which is the whole answer:**
+
+| What the queue contains | What it means | What fixes it |
+|---|---|---|
+| Many similar small requests | The platform is doing work users could do | Self-service: a template, a paved path, documentation |
+| Few large bespoke projects | Genuine capacity shortage | More people, or fewer concurrent projects |
+| Approvals and reviews | A governance bottleneck, not an engineering one | Clear criteria so most changes need no review |
+| Fixing the platform's own breakages | Reliability debt consuming the team | Stop feature work and fix it; nothing else will work |
+
+**Why adding people usually fails.** A central team that is the only route to production becomes a bottleneck whatever its size, because demand grows with the organisation and coordination cost grows faster than headcount. **Conway's Law is the frame to name here**: the architecture ends up mirroring the communication structure, so if every change must pass through one team, the architecture will have one chokepoint regardless of how the diagram looks. Chapter 62, §62.8 uses the law deliberately as a design tool.
+
+**The structural options, with their honest costs:**
+
+- **Self-service / paved path.** The platform provides a supported default route; teams use it without asking. Best outcome, most work up front, and it fails if the paved path does not cover the real cases.
+- **Embedded engineers.** Platform people sit in analytics teams. Faster locally, and it drifts toward divergent practice unless the central standards are real.
+- **Federated ownership with central standards** — the data-mesh direction. Works only at a maturity level most organisations have not reached, which Chapter 62, §62.6 scores honestly for Riverstone rather than assuming.
+
+**The answer that earns the role:** "I would spend a week classifying the queue, because the four causes above have four different fixes and three of them are not headcount."
+
+| Tier | What to say |
+|---|---|
+| Passes | Suggests more people, or prioritising the queue better |
+| Strong | Classifies the queue first, identifies self-service as the usual answer, and names the structural options with their costs |
+| Extra points | + **[+Signpost]** Conway's Law explains why a single central route produces a single architectural chokepoint whatever the headcount + **[+Business]** quantify the queue — requests per week by type and their wait — because that converts a complaint into a decision + **[+Validate]** a paved path only works if adoption is measured; an unused platform is a worse outcome than a bottleneck + **[+Trade-offs]** federated ownership needs a maturity most organisations lack, so recommending a mesh to a team that cannot staff it is a bad answer |
+
+**Likely follow-ups:** How would you measure whether the paved path is working? What would make you argue *for* centralising something?
+**Red flag:** recommending a data mesh, or more headcount, before looking at what the queue contains.
+**Learn it in:** Chapter 62, §62.8 (Conway's Law, used as a design tool) and §62.6 (the maturity check, scored honestly); Chapter 66, §66.4 (hiring and structuring data teams); Chapter 67, §67.4.
+
+### Rapid-fire, 80.10
+
+Roles: Architect for every row, plus DE or AE where the work is shared.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-062 | How do you get technical debt funded? | Express it in the currency the business uses: delivery time, defect rate, incident frequency or risk — "the next change here takes three weeks instead of three days" gets funded where "we need to refactor" never does | **[+Business]** debt framed as engineering preference loses every prioritisation contest; framed as delivery speed it competes | Senior · 67.2 |
+| Q80-063 | What is Conway's Law, and how would you use it deliberately? | That a system's structure comes to mirror the communication structure of the organisation that builds it; used deliberately, you change the team boundaries to get the architecture you want rather than fighting the org chart with a diagram | **[+Signpost]** Chapter 62, §62.8 treats it as a design tool rather than an observation | Senior · 62.8 |
+| Q80-064 | What is a bus factor, and how do you raise it? | How many people would have to be unavailable before the work stops — often one — and you raise it with written runbooks and decision records, rotated responsibility, and pairing on the parts only one person understands | **[+Validate]** the test is a planned absence, not a hypothetical | Mid · 47.8, 67.4 |
+| Q80-065 | How would you mentor a strong engineer who wants your job? | Deliberately: hand over real decisions rather than tasks, let them present to stakeholders, review their reasoning rather than correcting their output, and be explicit that their progression is the goal | **[+Business]** an architect whose leverage depends on being indispensable has no leverage | Senior · 67.4, 9.6 |
+| Q80-066 | What would you look for when hiring a data engineer? | Evidence of having operated something, not only built it: how they found a failure, what they changed afterwards, and whether they can explain a trade-off they got wrong — plus whatever the team is actually missing rather than a generic bar | **[+Clarify]** define the gap before writing the job description, or you hire a copy of the team you have | Senior · 66.4 |
+| Q80-067 | What is an RFC process, and when is it worth the overhead? | Writing a proposal for a significant change and circulating it for comment before building; worth it when a decision is expensive to reverse or affects several teams, and pure overhead for anything small and local | **[+Signpost]** the durable record of the outcome is an ADR (Q80-009); the RFC is the conversation that precedes it | Mid · 60.4, 67.3 |
+| Q80-068 | How do you say no to a senior stakeholder without damaging the relationship? | Say no to the *approach* while agreeing with the *goal*, give the reason in their terms (cost, risk, time), and offer the alternative you would commit to — refusing without an alternative is where the relationship damage comes from | **[+Signpost]** Q80-017 is this question as a full scenario; Chapter 24, §24.8 is the technique | Senior · 24.8, 67.3 |
+
+---
 ## Common mistakes
 
 | Mistake | Symptom | Fix |

@@ -50,7 +50,7 @@ check("mesh maturity total", 1 + 2 + 2 + 3 + 1, 9)
 # ---- IDs: unique, and every ID in the revision list exists
 ids = re.findall(r"^(?:### |\| )(Q80-\d{3})", CH80, re.M)
 check("IDs unique", len(ids) == len(set(ids)), True)
-check("IDs 001..029 all present", sorted(ids) == [f"Q80-{i:03d}" for i in range(1, 30)], True)
+check("IDs 001..068 all present", sorted(ids) == [f"Q80-{i:03d}" for i in range(1, 69)], True)
 rev = CH80.split("## Final-week revision list")[1].split("##")[0]
 check("revision list IDs exist", all(i in ids for i in re.findall(r"Q80-\d{3}", rev)), True)
 

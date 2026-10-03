@@ -10,7 +10,7 @@ Three ways in, depending on what you are looking for.
 - **"Where is topic X taught?"** — *The topic index* at the end. It is alphabetical, built from every chapter's own Key terms list, and points at the chapter.
 - **"What do I actually do in this chapter?"** — the part-by-part tables. Each chapter names the practice files that ship with it.
 
-The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a worked notebook and **14** ship runnable SQL in both PostgreSQL and MySQL.
+The book is **87 chapters**, about **1,373,727 words**. **49** chapters have a worked notebook and **14** ship runnable SQL in both PostgreSQL and MySQL.
 
 ## The four books
 
@@ -1019,7 +1019,7 @@ The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a w
 
 ## Part 8 — Be Interview Ready
 
-**Book 4 · Be Interview Ready** · 19 chapters · roughly 104 hours in total
+**Book 4 · Be Interview Ready** · 19 chapters · roughly 110 hours in total
 
 | Ch | Chapter | Time | What you practise with |
 |---|---|---|---|
@@ -1033,9 +1033,9 @@ The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a w
 | 72B | **Data Cleaning & Wrangling Question Bank** | 7–9 hours | *reading only* |
 | 73 | **Statistics, Probability & Experimentation Bank** | 9–12 hours | notebook |
 | 74 | **Machine Learning Question Bank** | 8–10 hours | notebook |
-| 75 | **Product Sense, Metrics, Case Studies & Guesstimates** | 5 hours | *reading only* |
+| 75 | **Product Sense, Metrics, Case Studies & Guesstimates** | 5–7 hours | *reading only* |
 | 76A | **Data Analyst & Data Scientist Question Bank** | 4–5 hours | *reading only* |
-| 76B | **Business Analyst Question Bank** | 5–3 hours | *reading only* |
+| 76B | **Business Analyst Question Bank** | 6–7 hours | *reading only* |
 | 77 | **Data Engineering & Data System Design Bank** | 5–6 hours | 2 SQL, notebook |
 | 78 | **Automation & Integration Question Bank** | 5–4 hours | notebook |
 | 79 | **GenAI, LLM & MLOps Question Bank** | 5–6 hours | notebook |
@@ -1155,13 +1155,13 @@ The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a w
 
 ### Chapter 75. Product Sense, Metrics, Case Studies & Guesstimates
 
-**You will learn to:** structure an ambiguous business case the way an interviewer actually wants, instead of jumping straight to an answer · diagnose a metric that moved, systematically, not by guessing at causes · design a KPI dashboard that answers real decisions, not just displays numbers · size a market or estimate a quantity with a defensible structure, not a guessed final number.
+**You will learn to:** structure an ambiguous business case the way an interviewer actually wants, instead of jumping straight to an answer · diagnose a metric that moved, systematically, not by guessing at causes · design a KPI dashboard that answers real decisions, not just displays numbers · size a market or estimate a quantity with a defensible structure, not a guessed final number · settle five metric traps with arithmetic you can do in the room, including two where the measured answer contradicts the cliche · handle the product questions that have no clean answer — cannibalisation, network effects, low adoption, a price rise — by naming the evidence that would decide them.
 
 **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 3 (KPIs, dashboards), 4 (percentage points, estimation), 5 (precise questions, issue trees, MECE), 22 (A/B design, Simpson's paradox), 23 (KPI trees, diagnosing a change, guardrails) and 24 (turning an ask into a question), with a few links to Chapters 15, 16, 25 and 30. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 3½–5 hours to read and drill every question once, out loud; 2–3 hours more for the project. Section 75.7 is arithmetic rather than structure, and rewards being done with a pen rather than read.
+**Time needed:** 5–7 hours to read and drill every question once, out loud; 2–3 hours more for the project. Sections 75.7 and 75.8 are arithmetic rather than structure, and reward being done with a pen rather than read.
 
-**Sections:** 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live · 75.7 Predict the number: metric arithmetic that is not what it looks like
+**Sections:** 75.1 The general case framework · 75.2 Diagnosing a metric that moved · 75.3 Designing metrics and dashboards · 75.4 Product sense and decision cases · 75.5 Guesstimates: structured estimation · 75.6 Full cases, talked through live · 75.7 Predict the number: metric arithmetic that is not what it looks like · 75.8 Metric traps you can measure your way out of · 75.9 Product decisions with no clean answer
 
 
 ### Chapter 76A. Data Analyst & Data Scientist Question Bank
@@ -1175,11 +1175,11 @@ The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a w
 
 ### Chapter 76B. Business Analyst Question Bank
 
-**You will learn to:** answer the requirements-gathering, process-mapping, and documentation questions that come up in BA interviews · tell a BRD, FRD, and SRS apart without hesitating · write a user story with real acceptance criteria, not a vague wish · map a process the way a BA actually would, with decision points and swimlanes · handle "can you just change the number?" and other stakeholder pushback without folding or getting defensive.
+**You will learn to:** answer the requirements-gathering, process-mapping, and documentation questions that come up in BA interviews · tell a BRD, FRD, and SRS apart without hesitating · write a user story with real acceptance criteria, not a vague wish · map a process the way a BA actually would, with decision points and swimlanes · handle "can you just change the number?" and other stakeholder pushback without folding or getting defensive · prioritise a backlog with the named frameworks and say honestly what each one is bad at · hold your own on story points, velocity, refinement and MVP without reciting Agile slogans · take a deliberately vague request and produce the questions that must be answered before anything is built · talk about Jira, wireframes, data dictionaries and estimation in terms of what you produced in them · walk into an unfamiliar domain — logistics, e-commerce, financial services — and find the few things that decide the answer.
 
 **Before you start:** Chapter 24 (all of it: turning an ask into a question, business rules, stakeholders, and pushback) and Chapter 25 (all of it: the business analyst track), which between them teach every technique this bank tests; Chapter 26, section 26.10 (Agile, Scrum, and the backlog); Chapter 3, section 3.2 (order 5001's journey from enquiry to cash, which the worked examples use); and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 2.5–3 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row), plus 4–6 hours for the project: two interviews, a swimlane map, a story, and a requirement.
+**Time needed:** 6–7 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row), plus 4–6 hours for the project: two interviews, a swimlane map, a story, and a requirement. Section 76B.11, the ambiguity drill, is worth its own sitting of about an hour, and it is the one to do out loud rather than read.
 
 
 ### Chapter 77. Data Engineering & Data System Design Bank
@@ -1223,13 +1223,13 @@ The book is **87 chapters**, about **1,349,957 words**. **49** chapters have a w
 
 ### Chapter 80. Architecture & Leadership Question Bank
 
-**You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end.
+**You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end · run a blameless postmortem whose finding is the detection gap rather than the bug · ask for an RPO and an RTO as numbers before designing any disaster recovery · cut a live system over incrementally, with an automated output comparison doing the real work · and diagnose a bottlenecked platform team as a structure problem rather than a headcount one.
 
 **Before you start:** Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its Learn it in line sends you to the section that teaches it.
 
-**Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading.
+**Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading. Sections 80.8 to 80.10 add about 90 minutes and are the operational and people half of the role: running a live system, changing it without breaking it, and leading the architecture. Three terms in them come from the site-reliability tradition rather than from this book — RPO, RTO and the error budget — and each is marked Beyond the book with a one-line primer, as are feature flags in section 80.9.
 
-**Sections:** 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases · 80.7 Predict the number: capacity, availability, and the arithmetic of a design
+**Sections:** 80.1 Distributed systems trade-offs · 80.2 Basic-but-tricky architecture questions · 80.3 Data architecture decisions · 80.4 Security, governance, and cost · 80.5 Leadership scenarios · 80.6 Full architecture design cases · 80.7 Predict the number: capacity, availability, and the arithmetic of a design · 80.8 Running it in production · 80.9 Changing it without breaking it · 80.10 Leading the architecture, and the people
 
 **In `companion/ch80/`** — *notebook:* `ch80-notebook.ipynb`
 

@@ -45,13 +45,14 @@ series map sits at the back.
 | 1 · Theory | [Analyst-to-Architect-Book-1-Theory.pdf](fixed/Books/Analyst-to-Architect-Book-1-Theory.pdf) | 218 | 359 |
 | 2 · Practical | [Analyst-to-Architect-Book-2-Practical.pdf](fixed/Books/Analyst-to-Architect-Book-2-Practical.pdf) | 1,401 | 1,616 |
 | 3 · Implementation | [Analyst-to-Architect-Book-3-Implementation.pdf](fixed/Books/Analyst-to-Architect-Book-3-Implementation.pdf) | 1,318 | 1,447 |
-| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 648 | 850 |
+| 4 · Be Interview Ready | [Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | 702 | 901 |
 | Overview (internal, not for sale) | [Analyst-to-Architect-Book-Overview.pdf](fixed/Books/Analyst-to-Architect-Book-Overview.pdf) | 71 | 99 |
 
 **Book 4 was rebuilt on 3 October**, most recently to add **Chapter 72B, the data cleaning and
 wrangling bank** (100 questions). It now carries ten new predict-the-output sections across
-Part VIII plus 72B; all 406 of its internal links resolve, all 850 bookmarks land on the right
-page, and it has no missing glyphs. The others are the 1 October build.
+Part VIII, the new Chapter 72B, and expansions to 76B, 75 and 80 that bring Part VIII to **1,160
+questions**; all 426 of its internal links resolve, all 901 bookmarks land on the right page, and it
+has no missing glyphs. The others are the 1 October build.
 
 Two reading notes, so the navigation behaves the way you expect:
 
@@ -112,7 +113,7 @@ detailed, with output-prediction and trick questions of the `int("25", 4)` kind.
 **The measurement that set the task.** Thirteen of the fourteen Part VIII banks had no
 predict-the-output section at all. The one that did — Chapter 72's §72.2 — became the template.
 
-**Done: ten new sections, 202 new questions**, then further expansion across the banks and the new Chapter 72B. Part VIII has gone from 565 coded questions to **1,056**.
+**Done: ten new sections, 202 new questions**, then further expansion across the banks and the new Chapter 72B. Part VIII has gone from 565 coded questions to **1,160**, which is the target.
 Chapters 70, 71, 72A, 73, 74, 75, 77, 78, 79 and 80 each gained a section aimed at what that
 chapter genuinely lacked, rather than a fixed quota.
 
@@ -155,7 +156,7 @@ Two things are honestly outstanding rather than finished:
   marked **Dialect split**. **Excel is not installed either**, so §70.9 carries the same kind of
   mark on four questions, reading **Check in Excel**. Both exceptions are stated in the chapters'
   own at-a-glance boxes, not buried in a changelog.
-- **Book 4 has been rebuilt** — 648 pages, up from 400, with the series map regenerated from the
+- **Book 4 has been rebuilt** — 702 pages, up from 400, with the series map regenerated from the
   page numbers printed on the pages. This machine does not reproduce the original build exactly (a
   test rebuild of Book 1 came out 217 pages against the shipped 218, because fonts resolve
   differently here), so only Book 4 was rebuilt and its visual check should be redone. Books 1–3
