@@ -676,7 +676,7 @@ PART_PACKAGES = {   # Parts 4 to 8 read in chapter-number order
     '7': ('part7-architecture-leadership.md', list(range(60, 68)), 'Part-7-Architecture-Governance-and-Leadership',
           'Architecture, Governance<br>&amp; Leadership', 'Architecture, Governance & Leadership',
           'Designing whole systems, distributed systems, data architecture patterns, automation architecture, security and responsible AI, FinOps, data strategy, and the architect as leader.'),
-    '8': ('part8-interview-playbook.md', [68, 69, '69a', 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
+    '8': ('part8-interview-playbook.md', [68, 69, '69a', 70, 71, 72, '72a', '72b', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
           'Part-8-Be-Interview-Ready', 'Be Interview<br>Ready', 'Be Interview Ready',
           'How data hiring works, the extra-points method, choosing between tools and defending the choice, and a question bank for each skill and role, with take-home assignments and mock interviews.'),
 }
