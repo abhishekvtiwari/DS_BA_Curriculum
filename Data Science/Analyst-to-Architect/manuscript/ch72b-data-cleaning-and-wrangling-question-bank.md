@@ -12,7 +12,7 @@
 >
 > **How this chapter is built.** Same format as the other question banks in Part 8: every core question leads with a **"Remember it as…"** hook, then a one-line answer, then a compact tier table (what **passes**, what's **strong**, and the **extra points**, tagged with Chapter 69's moves). Rapid-fire sections are scan tables.
 >
-> **What makes this bank different: every number in it was measured.** The questions run against two real files that ship with the book — `companion/ch14/orders_q4_2025_export.csv` and `companion/ch14/customers_crm_export.csv` — and Chapter 14 also ships `clean_truth_orders_q4_2025.csv`, the correct answer. So when a question says a mistake costs ₹1.95 crore, that figure came from running both versions and subtracting, not from an estimate. **Every output shown is real**, on Python 3.12.0 with pandas 3.0.2 and numpy 2.4.3. Timings are not quoted anywhere in this chapter, because none of its points depend on speed. You can reproduce every single figure; §72B.11 tells you how.
+> **What makes this bank different: every number in it was measured.** The questions run against two real files that ship with the book — `companion/ch14/orders_q4_2025_export.csv` and `companion/ch14/customers_crm_export.csv` — and Chapter 14 also ships `clean_truth_orders_q4_2025.csv`, the correct answer. So when a question says a mistake costs ₹1.95 crore, that figure came from running both versions and subtracting, not from an estimate. **Every output shown is real**, on Python 3.12.0 with pandas 3.0.2 and numpy 2.4.3. Timings are not quoted anywhere in this chapter, because none of its points depend on speed. You can reproduce every single figure; §72B.10 tells you how.
 
 ---
 
@@ -102,7 +102,7 @@ Thirteen columns, 25,976 rows, and one `print` has told you four separate things
 
 **Likely follow-ups:** How would you profile a file too large to fit in memory? What would you do differently if this were a database table instead of a CSV?
 **Red flag:** starting to write cleaning code in the first minute, before describing anything about the data.
-**Learn it in:** Chapter 14, §14.3 (the profiling pass) and §14.2 (the files); Chapter 25, §25.4 (reading with `dtype=str`).
+**Learn it in:** Chapter 14, §14.2 (profiling a new dataset); Chapter 18, §18.2 (reading data from anywhere) and §18.3 (looking at a DataFrame).
 
 ### Q72B-002 · Why load every column as a string first, when pandas can infer types for you?
 
@@ -172,7 +172,7 @@ This is the strongest argument for string loading there is, and it is worth sayi
 
 **Likely follow-ups:** What does `low_memory=False` actually do? Once you have profiled, what does the ideal `read_csv` call look like? Why did `product_id` become a float?
 **Red flag:** not knowing that `read_csv` converts the text `N/A` to `NaN` by default; or assuming inference behaves identically across pandas versions, when the string default changed in pandas 3.0.
-**Learn it in:** Chapter 14, §14.3; Chapter 25, §25.4 and §25.5 (dtypes and the `na_values` family).
+**Learn it in:** Chapter 14, §14.2; Chapter 18, §18.2 (reading data from anywhere) and §18.10 (cleaning in pandas).
 
 ### Q72B-003 · How do you tell whether a column that looks numeric actually is?
 
@@ -211,7 +211,7 @@ Seven real prices, written 22 ways. Note what the count tells you: a price colum
 
 **Likely follow-ups:** Write the expression that cleans `₹1,400.00` and `Rs. 1,400` to `1400.0`. How would you handle a column with both `1,400.00` and `1.400,00` in it?
 **Red flag:** `astype(float)` with no check, which raises on the first currency string and tells you nothing about the other 2,315.
-**Learn it in:** Chapter 14, §14.9 (units and currency text); Chapter 25, §25.7.
+**Learn it in:** Chapter 14, §14.7 (dates, time zones, units, and currency); Chapter 18, §18.10 (cleaning in pandas).
 
 ### Q72B-004 · What does a good profile report contain, and why write it down?
 
@@ -240,7 +240,7 @@ The left column is profiling; the right column is the validation suite in §72B.
 
 **Likely follow-ups:** Would you use a tool like `ydata-profiling` for this? What does it not tell you?
 **Red flag:** treating profiling output as something you glance at and discard.
-**Learn it in:** Chapter 14, §14.3 and §14.14 (the cleaning log).
+**Learn it in:** Chapter 14, §14.2 (profiling) and §14.11 (reconciling and documenting every decision).
 
 ### Q72B-005 · Your file has 25,976 rows. How many orders is that?
 
@@ -278,7 +278,7 @@ lines per order     : 1.80
 
 **Likely follow-ups:** How would you report "average order value" from this file? What is the grain of the customer file?
 **Red flag:** answering "25,976" with no qualification.
-**Learn it in:** Chapter 14, §14.4; Chapter 28, §28.4 (grain in a data model); Chapter 10, §10.3.
+**Learn it in:** Chapter 14, §14.2; Chapter 28, §28.8 (the grain discipline); Chapter 10, §10.3 (what a cell really contains).
 
 ### Rapid-fire, 72B.2
 
@@ -286,11 +286,11 @@ Roles: DA, DS, DE, AE and BA for every row.
 
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
-| Q72B-006 | What is a BOM and how does it break a CSV read? | A byte-order mark is three invisible bytes some tools write at the start of a UTF-8 file; read without `encoding='utf-8-sig'` the first column name silently becomes `﻿column` instead of `column`, so every reference to it raises `KeyError` | **[+Edge cases]** the symptom is a `KeyError` on a column you can plainly see in the header, which is why it wastes so much time | Fresher · 14.3 |
-| Q72B-007 | How do you detect the delimiter of an unfamiliar file? | Read the first few lines as text and look, or let `csv.Sniffer` guess; never assume a comma, because exports from Indian and European systems frequently use semicolons so that commas inside numbers survive | **[+Validate]** the giveaway of a wrong delimiter is a DataFrame with one column whose name contains every header | Fresher · 14.3 |
+| Q72B-006 | What is a BOM and how does it break a CSV read? | A byte-order mark is three invisible bytes some tools write at the start of a UTF-8 file; read without `encoding='utf-8-sig'` the first column name silently becomes `﻿column` instead of `column`, so every reference to it raises `KeyError` | **[+Edge cases]** the symptom is a `KeyError` on a column you can plainly see in the header, which is why it wastes so much time | Fresher · 14.2 |
+| Q72B-007 | How do you detect the delimiter of an unfamiliar file? | Read the first few lines as text and look, or let `csv.Sniffer` guess; never assume a comma, because exports from Indian and European systems frequently use semicolons so that commas inside numbers survive | **[+Validate]** the giveaway of a wrong delimiter is a DataFrame with one column whose name contains every header | Fresher · 14.2 |
 | Q72B-008 | A column has 64 distinct values and should have about 40. What is going on? | Almost certainly category variants — case, whitespace, abbreviations, or old names for the same thing — which is exactly the `city` column in this book's CRM file, where 64 distinct values map down to 39 real cities | **[+Business]** the ratio of distinct values to expected values is the fastest single profiling metric for a categorical column | Fresher · 14.8 |
 | Q72B-009 | Why check `min` and `max` on a date column during profiling? | Because they catch the two most common date disasters in one step: a parse that silently produced dates in 1970 or 2106, and genuine out-of-range data such as the CRM's 5 signup dates in the 2060s | **[+Edge cases]** a max date far in the future usually means a placeholder like `9999-12-31` used as "no end date" | Fresher · 14.7 |
-| Q72B-010 | What does `.describe()` not tell you? | Anything about the columns that matter most: it silently skips every non-numeric column by default, says nothing about nulls as a proportion, and reports a mean and standard deviation for ID columns where both are meaningless | **[+Trade-offs]** `.describe(include='all')` covers more but makes the output wide enough to be unreadable, which is why targeted checks beat one summary call | Fresher · 25.6 |
+| Q72B-010 | What does `.describe()` not tell you? | Anything about the columns that matter most: it silently skips every non-numeric column by default, says nothing about nulls as a proportion, and reports a mean and standard deviation for ID columns where both are meaningless | **[+Trade-offs]** `.describe(include='all')` covers more but makes the output wide enough to be unreadable, which is why targeted checks beat one summary call | Fresher · 18.3  |
 
 ---
 
@@ -338,7 +338,7 @@ print(f'{len(raw):,} -> {len(clean):,}')
 
 **Likely follow-ups:** What if the repeated header had slightly different capitalisation each time? How would you handle this in a SQL staging table?
 **Red flag:** dropping rows by index position.
-**Learn it in:** Chapter 14, §14.4; Chapter 45, §45.8 (schema drift in an automated pipeline).
+**Learn it in:** Chapter 14, §14.1 (a cleaning workflow you can repeat) and §14.2; Chapter 45, §45.8 (when the source changes shape).
 
 ### Q72B-012 · The last row of the file has a blank ID and a total in the quantity column. What is it, and what happens if you miss it?
 
@@ -369,7 +369,7 @@ Blank across the board on this particular export, which is the easy case. The da
 
 **Likely follow-ups:** How would you catch a footer whose ID was not blank but the text `Total`? What if the file had a footer per page?
 **Red flag:** finding the footer only after a total looked wrong.
-**Learn it in:** Chapter 14, §14.4; Chapter 10, §10.5 (why a report and a dataset are different things).
+**Learn it in:** Chapter 14, §14.1 and §14.2; Chapter 10, §10.4 (importing a CSV file without damage).
 
 ### Q72B-013 · How do you find duplicate rows, and what makes a row a duplicate?
 
@@ -408,7 +408,7 @@ That third number is the trap, and it is the reason the answer must start with "
 
 **Likely follow-ups:** The 137 duplicate rows differ in one column. Now what? How would you find *fuzzy* duplicates in the customer names?
 **Red flag:** `drop_duplicates()` with no `subset` and no stated key, as the first action.
-**Learn it in:** Chapter 14, §14.6 (exact and fuzzy duplicates); Chapter 25, §25.9.
+**Learn it in:** Chapter 14, §14.4 (duplicates, exact and fuzzy); Chapter 18, §18.10 (cleaning in pandas).
 
 ### Q72B-014 · Two customer records read "Riverstone Foods Pvt Ltd" and "riverstone foods pvt. ltd.". Are they duplicates, and how would you find all such pairs?
 
@@ -418,7 +418,7 @@ That third number is the trap, and it is the reason the answer must start with "
 
 **Answer in one line:** Yes, under Riverstone's stated rule; find them by **normalising** both strings to a comparison key — trim, collapse internal spaces, lowercase, strip the legal suffix — and grouping on that key, resorting to similarity scoring only for the residue that normalisation cannot reach.
 
-**The rule, from Chapter 14, §14.15.** Two customer records are duplicates if their names match after trimming, collapsing spaces, ignoring case, and removing a trailing "Pvt Ltd" (with or without dots) or "Private Limited". Note that this is a **business rule someone decided**, written down — not something a function infers. That is the point of the question.
+**The rule, from Chapter 14’s CRM clean-up timed challenge.** Two customer records are duplicates if their names match after trimming, collapsing spaces, ignoring case, and removing a trailing "Pvt Ltd" (with or without dots) or "Private Limited". Note that this is a **business rule someone decided**, written down — not something a function infers. That is the point of the question.
 
 ```python
 cust = pd.read_csv('customers_crm_export.csv', dtype=str, keep_default_na=False)
@@ -450,7 +450,7 @@ duplicate records : 48
 
 **Likely follow-ups:** Which record survives a merge, and what happens to the orders pointing at the other one? How would you do this on 50 million records, where comparing every pair is impossible?
 **Red flag:** reaching for `fuzzywuzzy` before trying normalisation, or auto-merging above a score with no human review.
-**Learn it in:** Chapter 14, §14.6 and §14.15; Chapter 29, §29.7 (blocking, for the scale follow-up).
+**Learn it in:** Chapter 14, §14.4 (duplicates, exact and fuzzy), and the CRM clean-up timed challenge at the end of Chapter 14, which states the matching rules.
 
 ### Q72B-015 · Walk me through accounting for all 25,976 rows, so that nothing is unexplained.
 
@@ -501,7 +501,7 @@ print(f'  reconciles          {headers + footers + duplicates + kept == original
 
 **Likely follow-ups:** Where do you store the quarantined rows, and who looks at them? What if a row belongs in two categories at once?
 **Red flag:** a cleaning script whose output row count cannot be explained from its input row count.
-**Learn it in:** Chapter 14, §14.13 (reconciling to source) and §14.14 (the cleaning log).
+**Learn it in:** Chapter 14, §14.11 (reconciling and documenting every decision).
 
 ### Rapid-fire, 72B.3
 
@@ -510,7 +510,7 @@ Roles: DA, DS, DE, AE and BA for every row.
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
 | Q72B-016 | `drop_duplicates()` with no arguments — what is the risk? | It only removes rows identical in *every* column, so it misses the far more common repeated business key, and it silently picks the first occurrence when the rows differ in a column you did not check | **[+Validate]** always pass `subset=` explicitly, so the key is visible in the code and reviewable | Fresher · 14.6 |
-| Q72B-017 | What is the difference between `keep='first'`, `keep='last'` and `keep=False`? | `'first'` and `'last'` keep one occurrence and mark the rest as duplicates; `keep=False` marks **every** copy as duplicated, which is what you want for *inspecting* duplicates rather than removing them | **[+Edge cases]** `keep=False` is the right choice when you want to look at both sides of each duplicate pair before deciding | Fresher · 25.9 |
+| Q72B-017 | What is the difference between `keep='first'`, `keep='last'` and `keep=False`? | `'first'` and `'last'` keep one occurrence and mark the rest as duplicates; `keep=False` marks **every** copy as duplicated, which is what you want for *inspecting* duplicates rather than removing them | **[+Edge cases]** `keep=False` is the right choice when you want to look at both sides of each duplicate pair before deciding | Fresher · 18.10  |
 | Q72B-018 | Why does de-duplicating before parsing dates sometimes change the answer? | Because two rows holding the same date in different formats (`05-11-2025` and `2025-11-05`) are not identical as text but become identical after parsing, so the order of the two steps decides whether they are caught | **[+Trade-offs]** de-duplicate on a stable business key rather than on content, and the ordering stops mattering | Mid · 14.6 |
 | Q72B-019 | A row repeats but one column differs. Duplicate or not? | Not a duplicate — a **conflict**, which needs a resolution rule (most recent wins, source priority, or escalate) rather than a silent drop that keeps whichever copy the export happened to list first | **[+Business]** this is the common case in CRM data, where two sales offices entered the same customer with different cities | Mid · 14.6 |
 | Q72B-020 | How would you de-duplicate a stream, where you cannot see all the rows at once? | Keep a set of seen keys within a bounded window, or make the downstream write idempotent with an upsert on the business key so a duplicate overwrites rather than appends | **[+Signpost]** this is Q77-007's idempotency, which is the general answer to duplicates in any pipeline that can retry | Senior · 45.5, 50.3 |
@@ -560,7 +560,7 @@ Each shape also tells you something about its source. The `dd-mm-yyyy` majority 
 
 **Likely follow-ups:** What is the serial `45933` as a date? What would you do if the shapes did not sum to the row count?
 **Red flag:** parsing first and profiling the failures afterwards, which only ever shows you the values that failed loudly.
-**Learn it in:** Chapter 14, §14.7 (mixed date formats); Chapter 25, §25.8.
+**Learn it in:** Chapter 14, §14.7 (dates, time zones, units, and currency); Chapter 18, §18.9 (dates and time series).
 
 ### Q72B-022 · `pd.to_datetime(col, errors='coerce')` on this column. What happens?
 
@@ -597,7 +597,7 @@ The pattern to notice is that each option improves the NaT count, which is exact
 
 **Likely follow-ups:** So what is the correct way to parse this column? Why did `dayfirst=True` improve it so much?
 **Red flag:** treating `errors='coerce'` as the responsible, defensive choice.
-**Learn it in:** Chapter 14, §14.7; Chapter 25, §25.8.
+**Learn it in:** Chapter 14, §14.7; Chapter 18, §18.9 (dates and time series).
 
 ### Q72B-023 · You add `dayfirst=True` and the null count drops from 17,089 to 5,088. Have you fixed it?
 
@@ -659,7 +659,7 @@ The file contains **only October to December**. The naive parse reports ₹1.47 
 
 **Likely follow-ups:** How would you detect this bug if you had not been told about it? What is the correct parse?
 **Red flag:** believing a lower null count proves a better parse.
-**Learn it in:** Chapter 14, §14.7; Chapter 25, §25.8.
+**Learn it in:** Chapter 14, §14.7; Chapter 18, §18.9 (dates and time series).
 
 ### Q72B-024 · So what is the correct way to parse this column?
 
@@ -714,7 +714,7 @@ Three results, each one a proof:
 
 **Likely follow-ups:** Why 1899-12-30 and not 1900-01-01? What do you do with the nine that are still null?
 **Red flag:** no explicit format anywhere in the answer.
-**Learn it in:** Chapter 14, §14.7 (and §14.13 for the SQL `CASE` version).
+**Learn it in:** Chapter 14, §14.7 (and §14.9 for the same logic in SQL).
 
 ### Q72B-025 · Why is the Excel date epoch 1899-12-30 rather than 1900-01-01?
 
@@ -744,7 +744,7 @@ serial 45933 -> 2025-10-03
 
 **Likely follow-ups:** What does a serial with a decimal part mean? How would you convert these in SQL?
 **Red flag:** `pd.to_datetime(45933, unit='D')`, which uses the Unix epoch and returns a date in 2095.
-**Learn it in:** Chapter 14, §14.7; Chapter 11, §11.4 (how Excel stores dates).
+**Learn it in:** Chapter 14, §14.7; Chapter 10, §10.3 (what a cell really contains, including how a date is stored).
 
 ### Q72B-026 · Nine rows have the date `31-11-2025`. What do you do with them?
 
@@ -800,7 +800,7 @@ That is the strongest possible argument against the obvious shortcut. A cleaner 
 
 **Likely follow-ups:** What if there were no entry timestamp? How would you detect an impossible date in SQL without the parse erroring?
 **Red flag:** rounding `31-11-2025` to `30-11-2025` with no evidence and no flag.
-**Learn it in:** Chapter 14, §14.7; Chapter 12, §12.9 (the month-survives trick in SQL).
+**Learn it in:** Chapter 14, §14.9 (the whole pipeline in SQL, where the month-survives test is shown); Chapter 12, §12.8 (transforming values: CASE, dates, and text).
 
 ### Q72B-027 · The file has `order_date` and `entered_at_utc`. Why does that matter for a daily report?
 
@@ -838,7 +838,7 @@ as a share of the file: 6.2%
 
 **Likely follow-ups:** Would you store UTC or IST in the warehouse? What breaks in a country that observes daylight saving?
 **Red flag:** `.dt.tz_localize('Asia/Kolkata')` on a UTC timestamp, which relabels it without converting and shifts every value by 5.5 hours.
-**Learn it in:** Chapter 14, §14.7; Chapter 12, §12.10 (time zones in SQL).
+**Learn it in:** Chapter 14, §14.7; Chapter 12, §12.8 (transforming values: CASE, dates, and text).
 
 ### Rapid-fire, 72B.4
 
@@ -849,9 +849,9 @@ Roles: DA, DS, DE, AE and BA for every row.
 | Q72B-028 | What is the difference between `tz_localize` and `tz_convert`? | `tz_localize` attaches a time zone to a naive timestamp without changing the clock reading; `tz_convert` changes the clock reading of an already-aware timestamp into another zone — so using the first where you need the second shifts every value by the offset | **[+Edge cases]** `tz_localize` on an already-aware timestamp raises, which is the one helpful error in this area | Mid · 14.7 |
 | Q72B-029 | Why does comparing a tz-aware and a tz-naive timestamp fail? | pandas refuses because the comparison is genuinely undefined — a naive timestamp has no instant in time until you say which zone it is in — so it raises a `TypeError` rather than guessing | **[+Trade-offs]** the strictness is a feature: this is the one place the library refuses to guess, which is why the bug surfaces | Mid · 72.6 |
 | Q72B-030 | A date column parses fine but every value is in 1970. What happened? | A Unix epoch timestamp was read as a date with the wrong unit — seconds read as nanoseconds, or a date arithmetic that defaulted to the 1970 epoch — so the values cluster at or just after 1970-01-01 | **[+Validate]** a min date of 1970-01-01 is the single most recognisable parsing-failure signature | Fresher · 14.7 |
-| Q72B-031 | How do you detect an impossible date in SQL without the query erroring? | Build the first of the month and add the day offset, then check whether the month is still the one written: `31-11-2025` becomes 1 December, so the month no longer matches and the row is flagged without `to_date` ever raising | **[+Signpost]** this is the technique Chapter 14 uses on all 25,832 lines | Mid · 14.13, 12.9 |
+| Q72B-031 | How do you detect an impossible date in SQL without the query erroring? | Build the first of the month and add the day offset, then check whether the month is still the one written: `31-11-2025` becomes 1 December, so the month no longer matches and the row is flagged without `to_date` ever raising | **[+Signpost]** this is the technique Chapter 14 uses on all 25,832 lines | Mid · 14.9, 12.8  |
 | Q72B-032 | Your date column is 37% ambiguous. How do you decide day-first or month-first? | Not by guessing: use the rows that resolve themselves — a value with a first part above 12 can only be day-first — and if a file contains both conventions, find a column that disambiguates, such as an entry timestamp, or ask the source | **[+Validate]** on this file 13,072 rows have a day above 12, which settles the convention for the `dd-mm` block with evidence | Senior · 14.7 |
-| Q72B-033 | Why store dates as `DATE` rather than text in a warehouse? | Because text sorts lexically rather than chronologically (so `02-01-2026` sorts before `31-12-2025`), accepts impossible values such as `31-11-2025`, cannot do date arithmetic, and defeats every partition and range optimisation the database has | **[+Business]** the type is the cheapest validation rule you will ever get, and it is enforced on every future insert | Fresher · 12.4, 14.13 |
+| Q72B-033 | Why store dates as `DATE` rather than text in a warehouse? | Because text sorts lexically rather than chronologically (so `02-01-2026` sorts before `31-12-2025`), accepts impossible values such as `31-11-2025`, cannot do date arithmetic, and defeats every partition and range optimisation the database has | **[+Business]** the type is the cheapest validation rule you will ever get, and it is enforced on every future insert | Fresher · 12.13, 14.7  |
 
 ---
 
@@ -934,7 +934,7 @@ Nothing about `19835` announces that 2,716 delivered lines are sitting further d
 
 **Likely follow-ups:** Where should the mapping table live, and who owns it? What happens when next month's file has a nineteenth spelling?
 **Red flag:** a chain of `.replace()` calls hard-coded in the script, one per spelling found.
-**Learn it in:** Chapter 14, §14.8 (mapping tables); Chapter 25, §25.10.
+**Learn it in:** Chapter 14, §14.5 (inconsistent categories and typos); Chapter 18, §18.10 (cleaning in pandas).
 
 ### Q72B-035 · What should happen when next month's file contains a spelling your mapping table has never seen?
 
@@ -969,7 +969,7 @@ One line, and it turns a silent corruption into a named failure with the offendi
 
 **Likely follow-ups:** Would you fail the whole run or just those rows? How do you stop the mapping table becoming a thousand-row mess?
 **Red flag:** `.replace()` with no check, or `.fillna('Other')`, which buries the signal in a bucket.
-**Learn it in:** Chapter 14, §14.8 and §14.12; Chapter 45, §45.8 (schema drift).
+**Learn it in:** Chapter 14, §14.5 and §14.10 (validation rules); Chapter 45, §45.8 (when the source changes shape).
 
 ### Q72B-036 · `branch` has 17 spellings for 4 branches. Normalisation gets you to 12. What are the other 8, and why is that question harder than it looks?
 
@@ -1020,7 +1020,7 @@ and after the 137 duplicates are removed those become **9,163 / 7,185 / 6,274 / 
 
 **Likely follow-ups:** Where does the mapping table live so the business can own it? How would you handle a genuinely new branch opening mid-quarter?
 **Red flag:** mapping `New Delhi → Delhi` silently, or treating it as obviously a typo.
-**Learn it in:** Chapter 14, §14.8 (and §14.15 for the city rules).
+**Learn it in:** Chapter 14, §14.5 (inconsistent categories and typos); the city rules are stated in Chapter 14’s CRM clean-up timed challenge.
 
 ### Q72B-037 · 880 rows have a trailing space in `sales_rep`, turning 12 reps into 23. Why is whitespace the most dangerous kind of dirt?
 
@@ -1061,7 +1061,7 @@ for c in body.select_dtypes('object').columns:
 
 **Likely follow-ups:** Does `TRIM` in SQL remove a non-breaking space? How would you find a zero-width character?
 **Red flag:** not stripping text columns by default.
-**Learn it in:** Chapter 14, §14.8; Chapter 12, §12.6 (`TRIM` in SQL).
+**Learn it in:** Chapter 14, §14.5; Chapter 12, §12.8 (transforming values: CASE, dates, and text).
 
 ### Q72B-038 · The CRM has 12 spellings of `segment` for 3 segments, and 64 city values for 39 cities. How do you approach a column where you do not know the right answer?
 
@@ -1094,7 +1094,7 @@ Three of those twelve are substantive, and each is a decision:
 - **`Hotel/Restaurant`** likewise.
 - **`Distributor → Wholesale`** is the genuinely debatable one. A distributor and a wholesaler are not always the same commercial relationship, and if they are priced differently or reported separately, merging them destroys a distinction the business cares about.
 
-Chapter 14, §14.15 records the rule Riverstone uses, which is the right outcome: **the decision exists, it is written down, and the cleaning script implements it rather than inventing it.**
+Chapter 14’s CRM clean-up timed challenge records the rule Riverstone uses, which is the right outcome: **the decision exists, it is written down, and the cleaning script implements it rather than inventing it.**
 
 | Tier | What to say |
 |---|---|
@@ -1104,7 +1104,7 @@ Chapter 14, §14.15 records the rule Riverstone uses, which is the right outcome
 
 **Likely follow-ups:** What if the business owner disagrees with your clustering? How would you keep the mapping current as new values appear?
 **Red flag:** merging `Distributor` into `Wholesale` without flagging it as a decision.
-**Learn it in:** Chapter 14, §14.8 and §14.15.
+**Learn it in:** Chapter 14, §14.5, and the CRM clean-up timed challenge at the end of Chapter 14.
 
 ### Rapid-fire, 72B.5
 
@@ -1115,9 +1115,9 @@ Roles: DA, DS, DE, AE and BA for every row.
 | Q72B-039 | `.map()` or `.replace()` for a category mapping? | `.map()`, because it turns unknown values into `NaN` where an assertion can catch them, whereas `.replace()` passes unknown values through silently so a new variant reaches the report looking legitimate | **[+Validate]** `.map()` plus one assert is the whole pattern | Mid · 14.8 |
 | Q72B-040 | Why keep mapping tables in CSV files rather than in code? | Because the business owns the definitions, not the engineer: a CSV can be reviewed, versioned, diffed and edited by the person who knows what `Distributor` means, without a code change or a deploy | **[+Business]** it also makes the mapping auditable, which matters when a number is challenged | Mid · 14.8 |
 | Q72B-041 | When is fuzzy matching the right tool for categories? | Rarely, and only after deterministic normalisation and an explicit map have taken the obvious cases — for the long tail of genuine typos in free-text entry, with every proposed match reviewed by a person before it is applied | **[+Trade-offs]** any threshold trades false merges against missed matches, and which error is worse is a business question | Senior · 14.6 |
-| Q72B-042 | `.str.lower()` versus `.str.casefold()`? | `casefold` is more aggressive and handles non-English cases correctly (German `ß` folds to `ss`), so it is the better default for matching text across languages; for ASCII business categories the two are identical | **[+Edge cases]** Turkish dotless i is the classic case where naive lowercasing breaks a match | Mid · 17.8 |
+| Q72B-042 | `.str.lower()` versus `.str.casefold()`? | `casefold` is more aggressive and handles non-English cases correctly (German `ß` folds to `ss`), so it is the better default for matching text across languages; for ASCII business categories the two are identical | **[+Edge cases]** Turkish dotless i is the classic case where naive lowercasing breaks a match | Mid · 17.3  |
 | Q72B-043 | A category column has `''`, `'N/A'`, `'-'`, `'unknown'` and `'NULL'`. Same thing? | Mechanically they all mean "no value", but they are not the same *finding*: a blank usually means the field was skipped while a typed `N/A` means someone deliberately recorded that it does not apply, and conflating them loses that distinction | **[+Business]** on this book's CRM file 100 city values are missing across these forms, and knowing which were deliberate changes the upstream fix | Mid · 14.5 |
-| Q72B-044 | Why is `category` dtype worth using after cleaning? | Because a cleaned categorical column has few distinct values and many rows, so pandas stores small integer codes plus one copy of each label instead of a full string per row — a large memory saving, and `groupby` gets faster | **[+Edge cases]** a `category` column silently produces `NaN` if you assign a value outside its categories, which is a feature here: it is the same fail-loudly guard as `.map()` | Mid · 25.11 |
+| Q72B-044 | Why is `category` dtype worth using after cleaning? | Because a cleaned categorical column has few distinct values and many rows, so pandas stores small integer codes plus one copy of each label instead of a full string per row — a large memory saving, and `groupby` gets faster | **[+Edge cases]** a `category` column silently produces `NaN` if you assign a value outside its categories, which is a feature here: it is the same fail-loudly guard as `.map()` | Mid · 18.16  |
 
 ---
 ## 72B.6 Numbers, units and money
@@ -1204,7 +1204,7 @@ Twenty-one spellings become **seven prices, zero nulls**. The three totals are w
 
 **Likely follow-ups:** How would you handle a column with both `1,400.00` and `1.400,00`? What if some prices were negative?
 **Red flag:** reaching for `errors='coerce'` on a money column without a null check afterwards.
-**Learn it in:** Chapter 14, §14.9; Chapter 25, §25.7.
+**Learn it in:** Chapter 14, §14.7 (units and currency); Chapter 18, §18.10 (cleaning in pandas).
 
 ### Q72B-046 · `discount_pct` holds both `5` and `0.05`. How do you tell which is which, and what does getting it wrong cost?
 
@@ -1253,7 +1253,7 @@ Nine distinct values, and they pair up exactly: `0.05`/`5`, `0.08`/`8`, `0.10`/`
 
 **Likely follow-ups:** What if a real 0.5% discount existed? How would you store this column to prevent the problem recurring?
 **Red flag:** applying the fraction rule with no stated assumption and no check on the resulting values.
-**Learn it in:** Chapter 14, §14.9; Chapter 10, §10.6 (defining a metric precisely).
+**Learn it in:** Chapter 14, §14.7; Chapter 23, §23.13 (defining a metric so two teams get the same number).
 
 ### Q72B-047 · 141 rows have `qty_unit = 'CTN'` and the rest `'PCS'`. What breaks if you ignore it?
 
@@ -1293,7 +1293,7 @@ That is the answer to the question. The factor comes from the product master or 
 
 **Likely follow-ups:** What if the carton size varied by product? How would you validate your assumed factor?
 **Red flag:** `qty.sum()` across both units, or inventing a conversion factor — twelve, say — without naming it as an assumption and sourcing it.
-**Learn it in:** Chapter 14, §14.9; Chapter 28, §28.6 (units in a fact table).
+**Learn it in:** Chapter 14, §14.7 (units and currency); Chapter 28, §28.9 (dimensional modeling: facts, dimensions, and the star schema).
 
 ### Q72B-048 · Six rows have a quantity of 700 where the median is 35. Error or reality?
 
@@ -1342,7 +1342,7 @@ Every one is the real value with one extra zero, inflating total volume by **2,2
 
 **Likely follow-ups:** What if one of the six turned out to be a genuine bulk order? How would you set the threshold if there were no history?
 **Red flag:** capping at p99, or deleting outliers because they are outliers.
-**Learn it in:** Chapter 14, §14.6 and §14.12; Chapter 36, §36.4 (outliers that are real).
+**Learn it in:** Chapter 14, §14.6 (outliers: error or reality?) and §14.10 (validation rules).
 
 ### Rapid-fire, 72B.6
 
@@ -1350,14 +1350,14 @@ Roles: DA, DS, DE, AE and BA for every row.
 
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
-| Q72B-049 | Why never store money as a float? | Because binary floating point cannot represent most decimal fractions exactly, so repeated addition accumulates error and two mathematically equal totals can compare as unequal; use `DECIMAL`/`NUMERIC` in the database and `Decimal` or integer paise in code | **[+Edge cases]** `0.1 + 0.2 != 0.3` is the one-line demonstration, and it is a reconciliation failure waiting to happen | Mid · 12.4, 17.6 |
+| Q72B-049 | Why never store money as a float? | Because binary floating point cannot represent most decimal fractions exactly, so repeated addition accumulates error and two mathematically equal totals can compare as unequal; use `DECIMAL`/`NUMERIC` in the database and `Decimal` or integer paise in code | **[+Edge cases]** `0.1 + 0.2 != 0.3` is the one-line demonstration, and it is a reconciliation failure waiting to happen | Mid · 12.13, 17.3  |
 | Q72B-050 | What is wrong with `.fillna(0)` on a price column? | It silently converts "we do not know the price" into "the price was zero", which is a different claim entirely and pulls every average down while leaving the row count unchanged, so nothing looks missing | **[+Business]** zero is a value, not an absence; the distinction is the whole point of null | Fresher · 14.5 |
-| Q72B-051 | `.sum()` skips nulls but `.sum()` of an all-null column returns what? | `0.0`, not null — so a column that failed to parse entirely produces a confident zero total rather than an error, which is the most dangerous possible failure mode for a revenue figure | **[+Validate]** check the non-null count alongside every sum | Mid · 25.6 |
+| Q72B-051 | `.sum()` skips nulls but `.sum()` of an all-null column returns what? | `0.0`, not null — so a column that failed to parse entirely produces a confident zero total rather than an error, which is the most dangerous possible failure mode for a revenue figure | **[+Validate]** check the non-null count alongside every sum | Mid · 18.3  |
 | Q72B-052 | How do you handle a column with two currencies in it? | Never convert silently: store the amount and its currency code as separate columns, and convert only at the point of reporting, with the rate's date recorded — because a converted figure without a rate and a date is not reproducible | **[+Business]** the rate date is part of the number; without it the total cannot be recomputed | Mid · 14.9 |
 | Q72B-053 | A percentage column contains `15%` as text. Fix? | Strip the `%` and divide by 100 if you want a fraction, or strip and keep the number if you want percent — and whichever you choose, put the convention in the column name (`discount_pct` vs `discount_frac`) so the next person cannot get it wrong | **[+Signpost]** this is Q72B-046's problem prevented by naming | Fresher · 14.9 |
-| Q72B-054 | Why is `int64` the wrong dtype for a column with blanks? | Because NumPy's `int64` has no null representation, so pandas promotes the column to `float64` and every ID prints as `101.0`; pandas' nullable `Int64` holds integers and `NA` together, which is what an ID column with gaps needs | **[+Edge cases]** this is why `product_id` came back as a float in Q72B-002 | Mid · 25.5 |
-| Q72B-055 | How do you round a half? | State the rule: Python's `round()` uses banker's rounding (`round(0.5)` is `0`, `round(1.5)` is `2`), while most business conventions expect half-up — so a finance total must specify which, and `Decimal` with an explicit `ROUND_HALF_UP` is how you get it | **[+Business]** an unstated rounding rule is a recurring reconciliation dispute | Mid · 17.6 |
-| Q72B-056 | Should you round before or after aggregating? | After: rounding each row first and then summing accumulates the per-row error, so sum at full precision and round the presented figure once | **[+Validate]** rounding before aggregation is a classic cause of a total that does not match its own parts | Mid · 10.6 |
+| Q72B-054 | Why is `int64` the wrong dtype for a column with blanks? | Because NumPy's `int64` has no null representation, so pandas promotes the column to `float64` and every ID prints as `101.0`; pandas' nullable `Int64` holds integers and `NA` together, which is what an ID column with gaps needs | **[+Edge cases]** this is why `product_id` came back as a float in Q72B-002 | Mid · 18.10  |
+| Q72B-055 | How do you round a half? | State the rule: Python's `round()` uses banker's rounding (`round(0.5)` is `0`, `round(1.5)` is `2`), while most business conventions expect half-up — so a finance total must specify which, and `Decimal` with an explicit `ROUND_HALF_UP` is how you get it | **[+Business]** an unstated rounding rule is a recurring reconciliation dispute | Mid · 17.3, 10.7  |
+| Q72B-056 | Should you round before or after aggregating? | After: rounding each row first and then summing accumulates the per-row error, so sum at full precision and round the presented figure once | **[+Validate]** rounding before aggregation is a classic cause of a total that does not match its own parts | Mid · 10.7  |
 
 ---
 
@@ -1408,7 +1408,7 @@ after zfill(4)        : 0 failures
 
 **Likely follow-ups:** How would you verify that `0124` and `124` are genuinely the same customer? What if padding created a collision?
 **Red flag:** casting both sides to integer, which "fixes" the match while destroying the key's actual format and risking collisions.
-**Learn it in:** Chapter 14, §14.10 (repairing join keys); Chapter 13, §13.3 (join types).
+**Learn it in:** Chapter 14, §14.8 (joining messy sources); Chapter 12, §12.10 (JOIN: combining tables).
 
 ### Q72B-058 · How do you measure a match rate before you join, and what do you do with the answer?
 
@@ -1447,7 +1447,7 @@ A candidate who reports both numbers as "match rates" has missed that one side i
 
 **Likely follow-ups:** What match rate would you accept? How would you investigate the unmatched rows?
 **Red flag:** joining first and reporting the resulting row count as if it were the answer.
-**Learn it in:** Chapter 14, §14.10; Chapter 13, §13.6.
+**Learn it in:** Chapter 14, §14.8; Chapter 12, §12.10 (JOIN: combining tables).
 
 ### Q72B-059 · You join orders to customers and get more rows than you started with. What happened?
 
@@ -1488,7 +1488,7 @@ assert len(joined) == len(body), f'join changed row count: {len(body)} -> {len(j
 
 **Likely follow-ups:** What does `validate='1:1'` do differently? How would you find which keys fanned out?
 **Red flag:** accepting a post-join row count without comparing it to the pre-join count.
-**Learn it in:** Chapter 14, §14.10; Chapter 13, §13.3 and §13.6; Chapter 72, §72.7.
+**Learn it in:** Chapter 14, §14.8; Chapter 12, §12.10; Chapter 18, §18.7 (combining tables: merge and concat).
 
 ### Rapid-fire, 72B.7
 
@@ -1496,13 +1496,13 @@ Roles: DA, DS, DE, AE and BA for every row.
 
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
-| Q72B-060 | Why is an inner join dangerous on messy data? | Because it silently discards anything that does not match on both sides, so a broken key produces a smaller, entirely plausible result with no indication that rows were dropped | **[+Validate]** use a left join plus `indicator=True` while cleaning, and switch to inner only once the match rate is proven | Fresher · 13.3, 14.10 |
-| Q72B-061 | What does `indicator=True` give you? | A `_merge` column labelling each row `left_only`, `right_only` or `both`, which turns "did the join work" from a guess into a value you can count and filter on | **[+Business]** `left_only` rows are usually the finding worth reporting | Mid · 13.6 |
+| Q72B-060 | Why is an inner join dangerous on messy data? | Because it silently discards anything that does not match on both sides, so a broken key produces a smaller, entirely plausible result with no indication that rows were dropped | **[+Validate]** use a left join plus `indicator=True` while cleaning, and switch to inner only once the match rate is proven | Fresher · 12.10, 14.8  |
+| Q72B-061 | What does `indicator=True` give you? | A `_merge` column labelling each row `left_only`, `right_only` or `both`, which turns "did the join work" from a guess into a value you can count and filter on | **[+Business]** `left_only` rows are usually the finding worth reporting | Mid · 18.7  |
 | Q72B-062 | Trailing spaces in a join key — what happens? | The join silently fails for those rows, because `'0124 '` and `'0124'` are different strings; this is Q72B-037's invisible whitespace in its most expensive form | **[+Validate]** strip every key column before joining, unconditionally | Fresher · 14.8, 14.10 |
-| Q72B-063 | Can you join on a float? | You should not: floating-point equality is unreliable, so matching on a float key can fail for values that are mathematically equal; cast to a string or integer key first | **[+Edge cases]** this is how a key that was promoted to `float64` by a blank value (Q72B-054) starts failing joins | Mid · 14.10, 17.6 |
+| Q72B-063 | Can you join on a float? | You should not: floating-point equality is unreliable, so matching on a float key can fail for values that are mathematically equal; cast to a string or integer key first | **[+Edge cases]** this is how a key that was promoted to `float64` by a blank value (Q72B-054) starts failing joins | Mid · 14.8, 17.3  |
 | Q72B-064 | What is a composite key and when do you need one? | A key made of more than one column, needed when no single column is unique — a date plus a branch plus a product, say — and every column of it must be cleaned and type-matched on both sides or the join fails for the rows where any one differs | **[+Trade-offs]** a surrogate key avoids the fragility but has to be generated and maintained | Mid · 28.5 |
-| Q72B-065 | Case sensitivity in a join key? | Databases differ — PostgreSQL compares strings case-sensitively while MySQL's default collation does not — so the same join can match in one engine and not the other, which is why keys should be normalised to one case before joining | **[+Edge cases]** this makes a migration between engines silently change results | Senior · 12.6, 14.10 |
-| Q72B-066 | How do you find out *which* rows a join dropped? | Left-join with `indicator=True` and filter to `left_only`, then look at the actual key values — which is how you discover that the problem is leading zeros rather than genuinely missing customers | **[+Signpost]** this is the step that turned Q72B-057 from "537 rows missing" into a one-line fix | Mid · 13.6, 14.10 |
+| Q72B-065 | Case sensitivity in a join key? | Databases differ — PostgreSQL compares strings case-sensitively while MySQL's default collation does not — so the same join can match in one engine and not the other, which is why keys should be normalised to one case before joining | **[+Edge cases]** this makes a migration between engines silently change results | Senior · 12.16, 14.8  |
+| Q72B-066 | How do you find out *which* rows a join dropped? | Left-join with `indicator=True` and filter to `left_only`, then look at the actual key values — which is how you discover that the problem is leading zeros rather than genuinely missing customers | **[+Signpost]** this is the step that turned Q72B-057 from "537 rows missing" into a one-line fix | Mid · 18.7, 14.8  |
 
 ---
 
@@ -1551,7 +1551,7 @@ Each of the seven prices maps to exactly one product, so a blank product with a 
 
 **Likely follow-ups:** What if 2,000 rows had a blank quantity instead of 14? When is imputation acceptable?
 **Red flag:** one blanket `.fillna()` across the whole DataFrame.
-**Learn it in:** Chapter 14, §14.5 (the four actions) and §14.12.
+**Learn it in:** Chapter 14, §14.3 (missing values, and the four actions) and §14.10 (validation rules).
 
 ### Q72B-068 · Write the validation rules for this cleaned table. What must return zero?
 
@@ -1620,7 +1620,7 @@ PASS  null product_id                 0
 
 **Likely follow-ups:** Which of these would you run in SQL instead? How do you stop the suite becoming unmaintainable?
 **Red flag:** validation as a notebook cell someone reads, rather than an assertion that fails the run.
-**Learn it in:** Chapter 14, §14.12 (rules that must return zero); Chapter 46, §46.4.
+**Learn it in:** Chapter 14, §14.10 (validation rules: checks that must return zero); Chapter 46, §46.4 (idempotency, proven with a failure test).
 
 ### Q72B-069 · Your cleaned total is ₹44.38 crore and the truth file says ₹44.26 crore — within 0.28%. Is your pipeline correct?
 
@@ -1668,7 +1668,7 @@ A candidate who says "0.28%, good enough" has made the most expensive mistake in
 
 **Likely follow-ups:** How would you prove each component of that decomposition? What tolerance would you accept, and why?
 **Red flag:** accepting a close match as proof, or comparing two totals without checking they count the same rows under the same definition.
-**Learn it in:** Chapter 14, §14.13 (reconciling to the rupee); Chapter 10, §10.6 (defining a metric).
+**Learn it in:** Chapter 14, §14.11 (reconciling and documenting every decision); Chapter 23, §23.13 (defining a metric so two teams get the same number).
 
 ### Rapid-fire, 72B.8
 
@@ -1676,8 +1676,8 @@ Roles: DA, DS, DE, AE and BA for every row.
 
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
-| Q72B-070 | What belongs in a cleaning log? | Every decision and its reason: the rule applied, the rows affected, the source of any repair, who approved a business rule, and the date — so a number can be defended months later without re-deriving it | **[+Business]** the log is what converts "trust me" into "here is why" | Mid · 14.14 |
-| Q72B-071 | Why flag repaired values rather than just fixing them? | Because an unflagged repair is indistinguishable from observed data, so nobody downstream can exclude inferred values from an analysis that should not use them | **[+Validate]** `date_repaired` and `product_repaired` on this table are the pattern | Mid · 14.7, 14.14 |
+| Q72B-070 | What belongs in a cleaning log? | Every decision and its reason: the rule applied, the rows affected, the source of any repair, who approved a business rule, and the date — so a number can be defended months later without re-deriving it | **[+Business]** the log is what converts "trust me" into "here is why" | Mid · 14.11  |
+| Q72B-071 | Why flag repaired values rather than just fixing them? | Because an unflagged repair is indistinguishable from observed data, so nobody downstream can exclude inferred values from an analysis that should not use them | **[+Validate]** `date_repaired` and `product_repaired` on this table are the pattern | Mid · 14.7, 14.11  |
 | Q72B-072 | Clean in SQL or in pandas? | Wherever the data already is and wherever the result must live: SQL when the source is a database and the cleaning must be repeatable and set-based; pandas for exploratory profiling and file-based inputs — the logic is identical either way, as Chapter 14 shows by doing both | **[+Trade-offs]** SQL wins on volume and auditability, pandas on iteration speed | Mid · 14.13 |
 
 ---
@@ -1689,13 +1689,13 @@ Every row here is a question that has been asked in a real data interview. Roles
 | # | Question | One-line answer | Extra point | Level · learn it in |
 |---|---|---|---|---|
 | Q72B-073 | What is the difference between data cleaning and data wrangling? | Cleaning fixes what is wrong — duplicates, bad types, inconsistent categories; wrangling reshapes what is right into the form an analysis needs, such as pivoting long to wide or joining sources | **[+Clarify]** most job ads use the two interchangeably, so ask what the role actually involves | Fresher · 14.1 |
-| Q72B-074 | What is tidy data? | One row per observation, one column per variable, one table per kind of observation — the shape that makes grouping, joining and plotting straightforward instead of requiring a reshape first | **[+Signpost]** "one row per observation" is the grain question of Q72B-005 | Fresher · 25.12 |
-| Q72B-075 | Long or wide format — which and when? | Long for storage, analysis and anything with a varying number of categories; wide for human reading and for a few fixed categories — convert at the presentation layer, not in the warehouse | **[+Trade-offs]** wide tables break every time a new category appears | Mid · 25.12 |
-| Q72B-076 | `melt` and `pivot` — what do they do? | `melt` turns columns into rows (wide to long) and `pivot` turns rows into columns (long to wide); `pivot_table` is `pivot` with an aggregation, for when the combination is not unique | **[+Edge cases]** plain `pivot` raises on duplicate index/column pairs, which is a useful duplicate detector | Mid · 25.12 |
-| Q72B-077 | What is the first thing you check in a file you have been given? | Whether the row count and grain are what you were told, because everything downstream depends on it and it is the assumption most often wrong | **[+Signpost]** Q72B-005 and Q72B-015 | Fresher · 14.3 |
-| Q72B-078 | How do you handle an encoding error on read? | Identify the real encoding rather than suppressing the error: try `utf-8`, then `utf-8-sig` for a BOM, then `cp1252`/`latin-1` for Windows exports — and never pass `errors='ignore'`, which silently deletes characters including ones inside keys | **[+Edge cases]** `errors='replace'` corrupts a join key into an unmatched value | Mid · 14.3 |
+| Q72B-074 | What is tidy data? | One row per observation, one column per variable, one table per kind of observation — the shape that makes grouping, joining and plotting straightforward instead of requiring a reshape first | **[+Signpost]** "one row per observation" is the grain question of Q72B-005 | Fresher · 18.8  |
+| Q72B-075 | Long or wide format — which and when? | Long for storage, analysis and anything with a varying number of categories; wide for human reading and for a few fixed categories — convert at the presentation layer, not in the warehouse | **[+Trade-offs]** wide tables break every time a new category appears | Mid · 18.8  |
+| Q72B-076 | `melt` and `pivot` — what do they do? | `melt` turns columns into rows (wide to long) and `pivot` turns rows into columns (long to wide); `pivot_table` is `pivot` with an aggregation, for when the combination is not unique | **[+Edge cases]** plain `pivot` raises on duplicate index/column pairs, which is a useful duplicate detector | Mid · 18.8  |
+| Q72B-077 | What is the first thing you check in a file you have been given? | Whether the row count and grain are what you were told, because everything downstream depends on it and it is the assumption most often wrong | **[+Signpost]** Q72B-005 and Q72B-015 | Fresher · 14.2 |
+| Q72B-078 | How do you handle an encoding error on read? | Identify the real encoding rather than suppressing the error: try `utf-8`, then `utf-8-sig` for a BOM, then `cp1252`/`latin-1` for Windows exports — and never pass `errors='ignore'`, which silently deletes characters including ones inside keys | **[+Edge cases]** `errors='replace'` corrupts a join key into an unmatched value | Mid · 14.2 |
 | Q72B-079 | A column is 95% null. Keep it or drop it? | Ask what the 5% means before deciding: a sparse column can be the most valuable one in the table (a churn reason, a complaint code), and 95% null may be correct for a field that only applies in rare cases | **[+Business]** nullness is a property of the process, not a defect to threshold | Mid · 14.5 |
-| Q72B-080 | What is referential integrity and how do you check it without a database? | Every foreign key must exist in its parent table; check it with a set membership test — `~orders.customer_code.isin(set(customers.customer_code))` must be empty | **[+Validate]** this is Q72B-058's 100% requirement as a validation rule | Mid · 12.5, 14.10 |
+| Q72B-080 | What is referential integrity and how do you check it without a database? | Every foreign key must exist in its parent table; check it with a set membership test — `~orders.customer_code.isin(set(customers.customer_code))` must be empty | **[+Validate]** this is Q72B-058's 100% requirement as a validation rule | Mid · 12.13, 14.8  |
 | Q72B-081 | 58 email addresses have no `@`. Reject, fix or keep? | Keep and flag rather than reject, because the record is still a real customer; mark the email unusable so it is excluded from any send, and report the count upstream as a form-validation gap | **[+Business]** deleting the record loses a customer; deleting the email loses the evidence | Fresher · 14.5 |
 | Q72B-082 | Five signup dates are in the 2060s. What do they tell you? | That the entry form has no upper bound, which is a validation gap upstream; the dates themselves are unrecoverable without a second source, so they are quarantined, not guessed | **[+Edge cases]** a two-digit year entry (`60` meaning 1960) is a common cause worth checking before quarantining | Mid · 14.7 |
 | Q72B-083 | Should cleaning be idempotent? | Yes: running it twice on the same input must give the same output, which means never mutating the source in place and never applying a transformation that is not safe to repeat — stripping twice is harmless, multiplying a discount by 100 twice is not | **[+Signpost]** Q72B-046's fraction fix is not idempotent unless the condition is re-checked | Senior · 46.4 |
@@ -1703,15 +1703,15 @@ Every row here is a question that has been asked in a real data interview. Roles
 | Q72B-085 | Why keep the raw file after cleaning? | Because every cleaning decision may turn out wrong, and without the raw input you cannot re-derive the correct answer or prove what the source actually said | **[+Validate]** reconciliation needs the source; without it there is nothing to reconcile to | Fresher · 14.13 |
 | Q72B-086 | What is a data contract and how does it prevent this chapter? | An agreement with the producer on schema, types, formats and cadence, so a date format change or a new status value is a breach to be fixed at source rather than a surprise to be cleaned downstream | **[+Signpost]** every defect in this chapter is a contract that was never written | Senior · 47.7 |
 | Q72B-087 | How would you clean 500 GB that does not fit in memory? | Push the work to where the data is — SQL in the warehouse, or a chunked/lazy engine such as Polars, DuckDB or Spark — and profile on a sample while validating on the whole, because the rules are the same and only the execution changes | **[+Trade-offs]** sampling for profiling is fine; sampling for validation is not | Senior · 49.7, 50.2 |
-| Q72B-088 | How do you make cleaning reproducible? | Scripted, not manual: version-controlled code, pinned library versions, mapping tables as files, no hand edits to data, and a logged run that can be repeated to the same output | **[+Business]** a manual Excel clean cannot be audited or repeated, which is why it fails the moment someone asks how a number was produced | Mid · 14.14, 46.2 |
+| Q72B-088 | How do you make cleaning reproducible? | Scripted, not manual: version-controlled code, pinned library versions, mapping tables as files, no hand edits to data, and a logged run that can be repeated to the same output | **[+Business]** a manual Excel clean cannot be audited or repeated, which is why it fails the moment someone asks how a number was produced | Mid · 14.11, 46.2  |
 | Q72B-089 | Your cleaning drops 3% of rows. Ship it? | Not until the 3% is explained and categorised: 3% of junk rows is fine, 3% of the largest customers is not, so the question is what those rows are and what value they carry, not what the percentage is | **[+Validate]** Q72B-015's reconciliation is how you answer | Mid · 14.13 |
 | Q72B-090 | Who owns data quality? | The producer owns correctness at source and the consumer owns validation on arrival — because a consumer who only cleans is permanently patching, and a producer with no feedback never learns what is broken | **[+Business]** every defect in this chapter should go back upstream as a report, which is the only fix that scales | Senior · 47.7 |
 | Q72B-091 | What would you automate first? | The validation rules, not the fixes: automated checks tell you when something changed, which is the expensive thing to discover late, whereas an automated fix for an unvalidated problem can corrupt data at scale | **[+Trade-offs]** automated cleaning without automated validation increases blast radius | Senior · 14.12, 46.4 |
-| Q72B-092 | A stakeholder says last month's number has changed. How do you answer? | With the cleaning log and the reconciliation: which rule changed, how many rows it affected, and what the before and after totals were — a specific, auditable answer rather than a reassurance | **[+Business]** this single capability is most of what earns an analyst trust | Mid · 14.14, 46.5 |
-| Q72B-093 | What is the most common cleaning mistake you have seen? | Fixing data without measuring the fix — no before-and-after counts, no reconciliation, no log — so the pipeline produces a plausible number nobody can defend and nobody can reproduce | **[+Signpost]** every section of this chapter is one instance of that mistake | Mid · 14.14 |
+| Q72B-092 | A stakeholder says last month's number has changed. How do you answer? | With the cleaning log and the reconciliation: which rule changed, how many rows it affected, and what the before and after totals were — a specific, auditable answer rather than a reassurance | **[+Business]** this single capability is most of what earns an analyst trust | Mid · 14.11, 46.5  |
+| Q72B-093 | What is the most common cleaning mistake you have seen? | Fixing data without measuring the fix — no before-and-after counts, no reconciliation, no log — so the pipeline produces a plausible number nobody can defend and nobody can reproduce | **[+Signpost]** every section of this chapter is one instance of that mistake | Mid · 14.11  |
 | Q72B-094 | When is data too dirty to use? | When the defects reach the measure you need and cannot be repaired from any independent source — then the honest answer is to report what cannot be answered and what it would take to fix the source, not to produce a number with a caveat nobody will read | **[+Business]** saying "this data cannot answer that question" is a senior act, not a failure | Senior · 14.12, 10.7 |
 | Q72B-095 | How long should cleaning take? | Longer than stakeholders expect and the question is usually misframed: a one-off clean is hours, but a repeatable, validated, logged cleaning layer is days and pays for itself the second time the file arrives | **[+Business]** quote the repeatable version, and say why | Mid · 14.1 |
-| Q72B-096 | `apply` with a cleaning function, or vectorised string methods? | Vectorised `.str` methods, which are both much faster and easier to read; `apply` runs a Python function per row and is the slowest option, worth it only for logic that genuinely cannot be vectorised | **[+Trade-offs]** correctness first: a readable `apply` beats an unreadable vectorised chain if the data is small | Mid · 25.7, 72.5 |
+| Q72B-096 | `apply` with a cleaning function, or vectorised string methods? | Vectorised `.str` methods, which are both much faster and easier to read; `apply` runs a Python function per row and is the slowest option, worth it only for logic that genuinely cannot be vectorised | **[+Trade-offs]** correctness first: a readable `apply` beats an unreadable vectorised chain if the data is small | Mid · 18.16, 72.5  |
 | Q72B-097 | How do you clean a free-text field? | Decide first whether you need it as a category or as text: as a category it needs normalisation plus a mapping table plus a human-reviewed long tail; as text it needs only whitespace and encoding fixes — and conflating the two is how a field ends up with 400 categories | **[+Clarify]** ask what question the field is meant to answer | Mid · 14.8 |
 | Q72B-098 | What is schema-on-read, and what does it cost? | Storing raw data and applying structure at query time, which is flexible and cheap to ingest but moves every cleaning decision to every consumer — so the same file gets cleaned five different ways and five different numbers get reported | **[+Business]** a shared cleaned layer exists to prevent exactly that | Senior · 49.5 |
 | Q72B-099 | Would you ever ship a report from data you know is dirty? | Yes, with the defects quantified and stated on the output, when a timely approximate answer beats a late exact one — but never silently, and never without saying which direction the error runs | **[+Business]** "revenue is understated by roughly 2% because 537 lines could not be matched" is a usable, honest number | Senior · 10.7, 14.12 |

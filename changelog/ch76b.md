@@ -39,3 +39,120 @@ Section map (old → new): 76.1 Requirements gathering → **76B.2**; 76.2 Basic
 ## Also
 - Old tags converted to Chapter 69's twelve (`**[+Tag]**`): [Real evidence] → [+Evidence]; the five "[Learn it in]" extra points (Q76B-010, 016, 030, 035, 036) became real tags ([+Assume], [+Signpost], [+Validate], [+Edge cases]) with the pointer moved to the learn-it-in column.
 - New check: `checks/ch76b_check.py` (sections exist, quoted facts in the credited section/figure, IDs 1–38, tag set, at-risk counts from riverstone_2025).
+
+---
+
+# 3 October 2026 · Five new sections, 38 questions to 95
+
+57 questions, Q76B-039 to 095. Nothing renumbered. Book 4 rebuilt: **648 → 680 pages**, 416
+internal links all resolving, 881 bookmarks all landing correctly, no missing glyphs.
+`checks/ch76b_check.py` passes (its expected ID range updated 1..38 → 1..95; all 35 cited sections
+verified to exist). `check_bank.py`: 95 questions, range 001–095, no duplicates or gaps, 0 uneven
+tables.
+
+**Part VIII is now 1,113 questions**, which passes the "more than 1100 questions" claim.
+
+76B was the thinnest bank in Part VIII — 38 questions across 8 sections, 5 or 6 each, and §76B.8 had
+one. It also matters more than its size suggested: the BA audience is who the interview book is
+sold to.
+
+## The gap that set the scope
+
+Measured against the chapter, not estimated. Absent entirely before this: **every** prioritisation
+framework (MoSCoW, RICE, Kano, WSJF), most Agile vocabulary (epic, velocity, burndown, refinement,
+MVP, planning poker, t-shirt sizing, WIP limit), the tools (Jira, Confluence, wireframes,
+prototypes), the analysis frameworks (SWOT, RAID, fishbone, CRUD matrix), estimation, data
+dictionaries, ERDs, certification (BABOK/CBAP), and domain scenarios of any kind.
+
+| | |
+|---|---|
+| 76B.9 Prioritisation | MoSCoW, RICE, Kano, WSJF, value-vs-effort, dependencies, technical debt |
+| 76B.10 Agile in practice | Points, velocity, burndown, refinement, MVP, ceremonies, estimation |
+| **76B.11 The ambiguity drill** | **Produce the questions, not the answer** |
+| 76B.12 Tools, artifacts and estimation | Jira, wireframes, data dictionary, ERD, CRUD, RACI, RAID |
+| 76B.13 Domain scenarios | Logistics, e-commerce, financial services |
+
+## 76B.11 is the section that exists in no other bank
+
+Owner decision, 3 October: include it. Every other bank in Part VIII asks for an answer; this one
+asks for the **questions**, because that is the BA skill and it is what an interviewer tests by
+handing over a vague request and watching.
+
+**The drills run on Riverstone's Q4 2025 order data** — the file Chapter 14 cleans and Chapter 72B
+interrogates — so the cost of not asking is measured rather than asserted:
+
+- **"Send me last month's revenue"** has four defensible answers spanning **₹6.25 crore (16%)**:
+  gross ₹45.89 cr, net all lines ₹44.26 cr, net excluding cancelled ₹42.39 cr, delivered only
+  ₹39.63 cr. The cancelled-orders question alone is worth **₹1.87 crore**.
+- **"How many orders?"** is 25,832 lines or 14,372 orders — **80%**, with no symptom.
+- **"Top five customers"** by revenue and by order count share **zero names**. Not a different
+  order: a different set of customers, both lists correct.
+- **"Average order value"** is ₹17,133 per line or ₹30,794 per order, median ₹26,250.
+- **"Your December doesn't match finance's"** — dating the same lines by UTC rather than IST moves
+  December by **₹1.42 lakh** with no bug anywhere and both figures correctly computed.
+
+Each drill gives the questions, says which move the number most, and ends with the reply to send.
+The rule is stated up front: ask the three questions that change the answer, not the eleven you
+could think of.
+
+## The named frameworks are marked Beyond the book
+
+Chapter 25, §25.12 teaches this book's own ranking method (frequency, time per occurrence, cost of
+errors caused, effort and risk) and not MoSCoW, RICE, Kano or WSJF. Rather than pretend otherwise,
+§76B.9 marks them **Beyond the book** with a one-line primer each, the convention Chapter 72A
+already uses for the DSA topics past Chapter 33. The questions then test them honestly, including
+what each is bad at — MoSCoW has no forcing function so everything becomes a Must; RICE invites
+false precision; Kano produces categories rather than an order.
+
+## Errors caught before they shipped
+
+- **A figure was quoted as measured when the book calls it illustrative.** The RICE example
+  justified its 80% Confidence with "Chapter 3 measured the 6 minutes per order". Chapter 3, §3.7
+  says "round numbers for illustration". Rewritten so Confidence rests on the volume being
+  *countable from the sales inbox*, with a warning added against exactly the error the draft made —
+  which is the subject of Q76B-043.
+- **Six ambiguity drills lacked `Answer in one line:`**, caught by `check_bank.py`. The omission was
+  deliberate (the answer *is* the questions) but the house format requires all five parts, so each
+  now opens with one line naming what the ask is hiding.
+- **Five malformed tier-table cells** (`| Extra points + **[+…]**`, missing the separator).
+- **§63.2 was cited for access control**; it is "Process discovery and prioritization". Corrected to
+  §63.9, "Controls: approvals, segregation of duties, audit trails, change management".
+- **Q76B-038**, the pre-existing "Full scenario, talked through live", still lacks three of the five
+  house parts. A walk-through by design, the same deviation other banks carry; not touched.
+
+## Also in this commit: ch72b's section pointers were wrong, and are fixed
+
+`checks/ch76b_check.py` already validates that every cited section exists — the house tool I should
+have used on ch72b this morning. Running the equivalent check against ch72b found a systematic
+error in the chapter committed earlier today.
+
+**Root cause: Chapter 25 is the Business Analyst track, not pandas. Pandas is Chapter 18.** Eleven
+`Chapter 25, §25.x` pointers meant to send a reader to pandas sent them to BA material.
+
+Also corrected: **§14.14 and §14.15 do not exist** (the cleaning log is §14.11; the CRM matching
+rules are in Chapter 14's timed challenge, not a numbered section). Validation rules are §14.10 not
+§14.12; reconciliation §14.11 not §14.13; duplicates §14.4 not §14.6; categories and mapping tables
+§14.5 not §14.8; joining §14.8 not §14.10; units and currency §14.7 not §14.9. Outside Chapter 14:
+grain is **§28.8** not §28.4; defining a metric is **Chapter 23, §23.13** not §10.6 ("Formulas and
+cell references"); `TRIM` and time zones in SQL are **§12.8**; join types **§12.10** not §13.3; how a
+cell stores a date **§10.3** not §11.4. Two pointers citing material the book does not contain
+(§29.7 for blocking, §36.4 for outliers) were replaced with Chapter 14's own sections.
+
+**62 pointer corrections in ch72b.** Every claim in both chapters now matches the real heading of
+the section it names, checked mechanically.
+
+## New: checks/ch72b_check.py
+
+Chapter 72B argues that a cleaning figure is only trustworthy if something was run to produce it.
+This applies that to the chapter itself: **116 assertions**, all passing, re-deriving every number
+from the three companion files and then confirming the chapter quotes the result. It covers the row
+accounting, the four date shapes and all four NaT counts, the ISO corruption under `dayfirst`, the
+category funnels, the three gross totals and the `Rs. 1,400` → `0.14` trap, the key repair, the
+carton factor of 10, Q72B-069's decomposition, and the four `answer_key.json` differences the
+chapter documents. A future edit, or a pandas change that alters a behaviour, now fails here.
+
+## Not done
+
+- ~47 questions remain to reach ~1,160: ch75 (46) and ch80 (43) next, per the 3 October split.
+- §70.9 is still the only unverified section in Part VIII (needs Excel).
+- Cover and back cover still to design.
