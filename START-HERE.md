@@ -34,6 +34,22 @@ not leave this folder.
 
 ---
 
+## What to review now (3 October)
+
+Four things, in this order. Each is a PDF you can open directly.
+
+| | What | Where | What to check |
+|---|---|---|---|
+| 1 | **The covers** | [front](review/for-abhishek/cover/front-cover.pdf) · [back](review/for-abhishek/cover/back-cover.pdf) · [Instagram](review/for-abhishek/cover/instagram-front.png) | Does it look like something you would buy? Is the back-cover wording right? |
+| 2 | **Chapter 72B**, data cleaning (new, 100 questions) | [PDF](review/for-abhishek/Ch72B-data-cleaning-and-wrangling-bank.pdf) | Start at 72B.4, the dates section |
+| 3 | **Chapter 76B**, Business Analyst (38 → 95) | [PDF](review/for-abhishek/Ch76B-business-analyst-bank.pdf) | Start at 76B.11, the ambiguity drill |
+| 4 | **The whole interview book** | [Book 4, 702 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
+
+Still open, waiting on you: an ISBN, whether to print a price, and whether Book 4's own PDF
+should open with the new front cover instead of the plain blue one.
+
+---
+
 ## 1. Read the books
 
 The five PDFs with the fixed navigation are in **[fixed/Books/](fixed/Books/)**. These are the ones
