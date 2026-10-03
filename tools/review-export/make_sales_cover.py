@@ -33,7 +33,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 MAN = ROOT / 'Data Science' / 'Analyst-to-Architect' / 'manuscript'
 OUT = ROOT / 'review' / 'for-abhishek' / 'cover'
 
-AUTHOR = 'Abhishek Tiwari'
+BRAND = 'Compounza'          # owner decision, 3 Oct 2026: credited to the brand, not a person
+FIELD = 'Data Science &amp; Analytics'
 
 NAVY = '#0B1324'
 NAVY2 = '#111C33'
@@ -143,7 +144,7 @@ body {{ background: {NAVY}; }}
 
 
 def header(right):
-    return (f'<div class="hdr"><span class="label" data-l>Analyst to Architect</span>'
+    return (f'<div class="hdr"><span class="label" data-l>{BRAND}</span>'
             f'<span class="label" data-r>{right}</span></div><div class="rule" data-l data-r></div>')
 
 
@@ -161,6 +162,8 @@ FRONT_CSS = f"""
 h1 {{ font-family: Bahnschrift, sans-serif; font-weight: 700; font-size: 62pt; line-height: .92;
      letter-spacing: -.015em; color: {IVORY}; }}
 h1 span {{ color: {GOLD}; }}
+.over {{ font-family: Bahnschrift, sans-serif; font-weight: 600; font-size: 17pt; color: {GOLD};
+         letter-spacing: .2em; text-transform: uppercase; margin-bottom: 3.5mm; }}
 .tag {{ font-size: 13pt; line-height: 1.4; color: {IVORY}; opacity: .88; margin-top: 4.5mm; }}
 .foot {{ align-items: end; padding-top: 4mm; }}
 .who {{ grid-column: 1 / span 5; }}
@@ -177,19 +180,20 @@ def front():
     pg = f' &middot; {PAGES} pages' if PAGES else ''
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}{FRONT_CSS}</style></head>
 <body><div class="page"><div class="frame"></div><div class="wrap">
-  {header('Book Four &middot; Part 8')}
+  {header('The Interview Book')}
   <div class="art">{SPIRAL}
     <div class="core"><div class="n">{TOTAL:,}</div><div class="w">Questions</div>
       <div class="label s">Sixteen banks</div></div>
   </div>
   <div class="label cap">One dot for every question in this book</div>
   <div style="flex:1"></div>
+  <div class="over" data-l>{FIELD}</div>
   <h1 data-l>Be Interview<br><span>Ready</span></h1>
   <p class="serif tag" data-l>Worked answers at three levels, from the SQL round to the offer conversation.</p>
   <div class="spacer7" style="height:7mm"></div>
   <div class="rule thin" data-l data-r></div>
   <div class="grid foot">
-    <div class="who" data-l><div class="label">Written by</div><div class="name">{AUTHOR}</div></div>
+    <div class="who" data-l><div class="label">By</div><div class="name">{BRAND}</div></div>
     <div class="label topics" data-r><span>SQL &middot; Python &middot; Excel &amp; BI &middot; Statistics &middot; ML</span>
       <span>Data engineering &middot; GenAI &middot; BA &middot; <b>HR &amp; offers</b></span>
       <span>Every output was run{pg}</span></div>
@@ -200,7 +204,7 @@ def front():
 # ------------------------------------------------------------------ back
 BACK_CSS = f"""
 h2 {{ font-family: Bahnschrift, sans-serif; font-weight: 700; font-size: 25pt; line-height: 1.08;
-     color: {IVORY}; letter-spacing: -.01em; margin-top: 8mm; }}
+     color: {IVORY}; letter-spacing: -.01em; margin-top: 3mm; }}
 h2 span {{ color: {GOLD}; }}
 .lede {{ font-size: 11.2pt; line-height: 1.5; color: {IVORY}; opacity: .9; margin-top: 4.5mm; }}
 .sec {{ margin-top: 0; }}
@@ -231,15 +235,19 @@ h2 span {{ color: {GOLD}; }}
                    border-radius: 50%; background: {GOLD}; }}
 .three b {{ color: {IVORY}; font-weight: 600; }}
 .series {{ margin-top: 0; }}
-.series > div {{ grid-column: span 3; border: .25mm solid rgba(238,231,215,.16); padding: 2.6mm 3mm;
+.series > div {{ grid-column: span 4; border: .25mm solid rgba(238,231,215,.16); padding: 2.6mm 3mm;
                 font-family: Consolas, monospace; font-size: 7pt; letter-spacing: .1em; color: {MIST}; }}
 .series > div .label {{ display: block; font-size: 6.3pt; margin-bottom: 1mm; }}
+.series .bn {{ display: block; font-family: Bahnschrift, sans-serif; font-weight: 600; font-size: 10.5pt;
+               letter-spacing: .04em; color: {IVORY}; margin-bottom: 1mm; }}
+.series .bd {{ display: block; font-family: "Segoe UI", sans-serif; font-size: 7.6pt; line-height: 1.45;
+               letter-spacing: 0; color: #B9C3D4; }}
 .series > div.on {{ border-color: {GOLD}; background: rgba(217,165,74,.10); color: {IVORY}; }}
 .colophon {{ align-items: end; padding-top: 4mm; }}
-.colophon .l {{ grid-column: 1 / span 9; line-height: 1.9; }}
+.colophon .l {{ grid-column: 1 / span 8; line-height: 1.9; }}
 .colophon .name {{ font-family: Bahnschrift, sans-serif; font-weight: 600; font-size: 10.5pt;
                   letter-spacing: .2em; color: {IVORY}; text-transform: uppercase; }}
-.ph {{ grid-column: 10 / span 3; height: 19mm; border: .25mm dashed rgba(238,231,215,.30);
+.ph {{ grid-column: 9 / span 4; height: 19mm; border: .25mm dashed rgba(238,231,215,.30);
       display: flex; align-items: center; justify-content: center; text-align: center;
       font-family: Consolas, monospace; font-size: 6.2pt; letter-spacing: .16em; color: {MIST};
       line-height: 1.6; text-transform: uppercase; }}
@@ -261,16 +269,21 @@ def back():
         '<b>Follow-ups and the red flag</b> that loses the room',
         '<b>Where to learn it</b>, by chapter and section',
     ]
-    books = [('Book One', 'Theory'), ('Book Two', 'Practical'),
-             ('Book Three', 'Implementation'), ('Book Four', 'Be Interview Ready')]
-    series = ''.join(f'<div class="{"on" if a == "Book Four" else ""}"><span class="label gold">{a}</span>{b}</div>'
-                     for a, b in books)
+    ladder = [
+        ('Start here', 'The Interview Book', f'{TOTAL:,} questions with worked answers. This book.', True),
+        ('Add-on', 'The Volumes', 'Theory, Practical and Implementation, with practice files for every tool.', False),
+        ('Add-on', 'Projects', 'Ready-made portfolio projects with real, messy data. Sold separately.', False),
+    ]
+    series = ''.join(f'<div class="{"on" if on else ""}"><span class="label gold">{k}</span>'
+                     f'<span class="bn">{name}</span><span class="bd">{desc}</span></div>'
+                     for k, name, desc, on in ladder)
     pg = f' &middot; {PAGES} pages' if PAGES else ''
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}{BACK_CSS}</style></head>
 <body><div class="page"><div class="frame"></div><div class="wrap">
-  {header('Book Four &middot; Part 8')}
+  {header('The Interview Book')}
+  <div class="label gold" data-l style="margin-top:8mm">The {FIELD} interview book</div>
   <h2 data-l>{TOTAL:,} questions. Worked answers.<br><span>Nothing typed by hand.</span></h2>
-  <p class="serif lede" data-l>Most interview books give you a question and a paragraph. This one gives you
+  <p class="serif lede" data-l>Most data science interview books give you a question and a paragraph. This one gives you
   the answer at three levels, because the gap between a pass and an offer is rarely knowledge.
   It is how the answer is built. Every code output in it was produced by running the code.</p>
   <div class="fl"></div>
@@ -285,9 +298,9 @@ def back():
     <div data-l><span class="label gold">Every question gives you</span><div class="rule thin"></div>
       <ul style="margin-top:2.6mm">{''.join(f'<li>{g}</li>' for g in gives)}</ul></div>
     <div><span class="label gold">Who it is for</span><div class="rule thin"></div>
-      <p style="margin-top:2.6mm">Anyone preparing for a data interview in India: analyst, data scientist,
-      data engineer, analytics engineer or business analyst, from a first job to a senior move.
-      With take-home assignments and mock interviews to run end to end.</p></div>
+      <p style="margin-top:2.6mm">Anyone preparing for a data science, analytics or business-analyst
+      interview in India: analyst, data scientist, data engineer, analytics engineer or BA, from a
+      first job to a senior move. With take-home assignments and mock interviews to run end to end.</p></div>
     <div data-r><span class="label gold">What it does not do</span><div class="rule thin"></div>
       <p style="margin-top:2.6mm">It makes no promise about salaries, placements or outcomes, and it names
       no employer. It is a question bank and a method. <b>The work is still yours.</b></p></div>
@@ -297,8 +310,8 @@ def back():
   <div class="grid series" data-l data-r>{series}</div>
   <div class="rule thin" style="margin-top:5mm" data-l data-r></div>
   <div class="grid colophon">
-    <div class="l label" data-l><span class="name">{AUTHOR}</span><br>
-      Analyst to Architect &middot; Book four of four<br>Part 8 &middot; Chapters 68&ndash;83{pg}</div>
+    <div class="l label" data-l><span class="name">{BRAND}</span><br>
+      The Interview Book &middot; {FIELD}<br>{TOTAL:,} questions &middot; sixteen banks{pg}</div>
     <div class="ph" data-r>ISBN / barcode<br>placeholder</div>
   </div>
 </div></div></body></html>"""
@@ -318,6 +331,7 @@ IG_CSS = """
 .core .s { font-size: 13px; margin-top: 8px; }
 .cap { font-size: 13px; margin-top: 14px; }
 h1 { font-size: 118px; }
+.over { font-size: 30px; margin-bottom: 12px; }
 .tag { font-size: 26px; margin-top: 16px; }
 .spacer7 { height: 26px !important; }
 .foot { padding-top: 18px; }
