@@ -167,8 +167,11 @@ pre { font: 8.8pt/1.35 'Consolas', 'Courier New', monospace; background: #f7f7f7
       border: 1px solid #ddd; border-left: 3pt solid #888; padding: 7pt 9pt;
       white-space: pre-wrap; page-break-inside: avoid; margin: 7pt 0; }
 pre.out { background: #fcfcf6; border-left-color: #b8a355; }
-table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt;
-        page-break-inside: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt; }
+/* A row never splits, but a long table may continue on the next page with its header repeated:
+   keeping whole tables together left half-empty pages wherever a big table followed text. */
+tr { page-break-inside: avoid; }
+thead { display: table-header-group; }
 th, td { border: 1px solid #bbb; padding: 4pt 6pt; vertical-align: top; text-align: left; }
 th { background: #ececec; }
 tr td:first-child { width: 14%; font-weight: bold; }

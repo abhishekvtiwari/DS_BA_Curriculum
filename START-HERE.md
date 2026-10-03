@@ -37,7 +37,7 @@ not leave this folder.
 
 ## What to review now (3 October)
 
-Seven things, in this order. Each is a PDF you can open directly.
+Eight things, in this order. Each is a PDF you can open directly.
 
 | | What | Where | What to check |
 |---|---|---|---|
@@ -47,6 +47,7 @@ Seven things, in this order. Each is a PDF you can open directly.
 | 4 | **Chapter 76B**, Business Analyst (38 → 95) | [PDF](review/for-abhishek/Ch76B-business-analyst-bank.pdf) | Start at 76B.11, the ambiguity drill |
 | 5 | **The whole interview book** | [729 pages](fixed/Books/Analyst-to-Architect-Book-4-Be-Interview-Ready.pdf) | Chapters 75 and 80 gained new sections at the end |
 | 6 | **The project catalogue** | [PDF](review/for-abhishek/Product-ladder-and-project-catalogue.pdf) | Eleven projects, the volume names, and the build order |
+| 8 | **Selling it: Instagram, website, numbering** | [PDF, 5 pages](review/for-abhishek/Go-to-market-Instagram-website-and-numbering.pdf) | Five audiences, ad rules, the website path, and the 1–20 renumbering proposal |
 | 7 | **The bundle order** | [00-Start-here.pdf](review/for-abhishek/Bundle-start-here.pdf) | Interview book first, volumes and projects as add-ons |
 
 Still open, waiting on you: whether to print a price; the add-on prices; and whether to
