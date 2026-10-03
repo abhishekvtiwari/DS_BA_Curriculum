@@ -1,6 +1,6 @@
 # Chapter 79. GenAI, LLM & MLOps Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapters 54–57 (Generative AI and LLMs; RAG, agents and evaluation; MLOps; LLMOps), which teach every idea in this bank; Chapter 35, section 35.2 for the dot product and cosine similarity; Chapter 41, section 41.7 for word embeddings; Chapter 74 for the classical-ML side of monitoring; Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 3½–4½ hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Plus 45 minutes for the final-week list.
+> **Time needed:** 5–6 hours for a first pass: about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, 20 minutes for each design case, and about 45 minutes to run the four code demos yourself. Section 79.9 adds about 1¼ hours. Plus 45 minutes for the final-week list.
 >
 > **How this chapter is built.** Same format as the other question banks. Every **core question** gives a memory hook ("Remember it as…"), a one-line answer you can recall under pressure, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, tagged the same way: **[+Clarify]**, **[+Edge cases]**, **[+Validate]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Every **rapid-fire section** is a scan table: question, one-line answer, one extra point, level, and where to learn it (a bare number such as 54.2 means that section). The four **Run it yourself** demos (cosine similarity, chunking, a drift statistic, and a cost estimate) are complete: copy a demo's cells, in order, into a fresh notebook and they print what's shown (Python 3.11, NumPy 2.4.6, SciPy 1.17.1; NumPy is installed in Chapter 18, SciPy in Chapter 21, section 21.5). Prompting technique, agent design, and vendor behaviour can't be "run" the way a retrieval score can, so they are reasoned through, with a pointer to the chapter that measured them. Ideas no earlier chapter teaches are marked **Beyond the book** and carry their own short explanation.
 
@@ -478,6 +478,307 @@ Roles: AIE and MLE for every row.
 
 ---
 
+## 79.9 Predict the number: the arithmetic behind an AI system
+
+Everything so far in this chapter is about how these systems work. This section is about what they cost and how they behave at the sizes they are actually built at — the numbers you need in your head when a stakeholder asks whether something is feasible, and the geometry that makes vector search behave unlike any search you have used before.
+
+They are good interview questions because they cannot be bluffed. "It depends" is a reasonable answer to most design questions in this chapter and a poor one here.
+
+**How these were run.** numpy 2.4.3 on Python 3.12, `rng = np.random.default_rng(79)`. The storage and memory figures are arithmetic you should be able to do on a whiteboard; the geometry figures come from simulation and are printed as they came out.
+
+```python
+import numpy as np
+rng = np.random.default_rng(79)
+```
+
+### Q79-040 · A million document chunks, embedded at 1,536 dimensions. How much storage?
+
+**Level:** Mid · **Roles:** DE, MLE, DS
+
+**Remember it as:** *Dimensions × 4 bytes × rows. At 1,536 dimensions every million vectors is about six gigabytes, before the index.*
+
+**Answer in one line:** **5.72 GB** for the vectors alone in float32 — and an HNSW index typically adds another 1.5 to 2 times that, so a million chunks is realistically 10 to 15 GB of memory, not the few hundred megabytes people expect.
+
+```python
+for dim, dtype, nbytes in [(1536, 'float32', 4), (1536, 'float16', 2),
+                           (768, 'float32', 4), (3072, 'float32', 4)]:
+    gb = 1_000_000 * dim * nbytes / 1024**3
+    print(f"{dim:>4}d {dtype:<8} {gb:6.2f} GB per million vectors")
+```
+
+```
+1536d float32   5.72 GB per million vectors
+1536d float16   2.86 GB per million vectors
+ 768d float32   2.86 GB per million vectors
+3072d float32  11.44 GB per million vectors
+```
+
+A million chunks is not a large corpus. Riverstone's product documentation, support tickets and policies would reach it comfortably; ten million is an ordinary enterprise knowledge base, and that is **57 GB** of raw vectors.
+
+Three levers, and the first two are nearly free:
+
+| Lever | Effect |
+|---|---|
+| **float16 instead of float32** | Halves it, with negligible retrieval quality loss |
+| **A smaller embedding model** (768d rather than 1536d) | Halves it again |
+| **Product quantisation** | 10–50× smaller, with a real and measurable recall cost |
+
+The reason this question gets asked is that vector databases are usually memory-resident for speed. "How much RAM does this need" is the first question an infrastructure team will ask about a RAG proposal, and an answer of "a few hundred megabytes" tells them nobody has done the sum.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It depends on the dimensions" |
+| Strong | + the sum done out loud — 1,536 × 4 bytes × 1M ≈ 5.7 GB — and that the index adds to it |
+| Extra points | **[+Scale]** vector indexes are usually held in memory, so this is a RAM figure, not a disk figure · **[+Trade-offs]** float16 and a smaller model each halve it almost free; quantisation goes much further and costs recall · **[+Business]** the embedding *cost* is a separate one-off, and re-embedding on a model change pays it again (Q79-016) |
+
+**Likely follow-ups:** What does HNSW cost in memory? How would you serve 100 million vectors? *(Shard, or quantise, or move to a disk-based index.)* What is the cost of re-embedding?
+**Learn it in:** Chapter 79, section 79.3 (RAG); Chapter 58, section 58.4.
+
+### Q79-041 · A 100,000-token document, chunked at 1,000 tokens with 200 overlap. How many chunks?
+
+**Level:** Mid · **Roles:** DE, MLE, DS
+
+**Remember it as:** *Overlap means the window steps by less than its width. Step = size − overlap, and the chunk count goes up by the same ratio as the cost.*
+
+**Answer in one line:** **125**, not 100 — the window advances 800 tokens at a time rather than 1,000, so you store and embed 125,000 tokens for a 100,000-token document, a 1.25× overhead.
+
+```python
+total, size, overlap = 100_000, 1000, 200
+step = size - overlap
+chunks = -(-(total - overlap) // step)      # ceiling division
+print(f"step   = {size} - {overlap} = {step}")
+print(f"chunks = {chunks}")
+print(f"stored = {chunks * size:,} tokens for {total:,} original ({chunks*size/total:.2f}x)")
+```
+
+```
+step   = 1000 - 200 = 800
+chunks = 125
+stored = 125,000 tokens for 100,000 original (1.25x)
+```
+
+The overhead is not linear in the overlap — it accelerates:
+
+```
+overlap   0: 100 chunks, 1.00x
+overlap 100: 111 chunks, 1.11x
+overlap 200: 125 chunks, 1.25x
+overlap 500: 199 chunks, 1.99x
+```
+
+A 50% overlap doubles everything: storage, embedding cost, index size, and the number of near-duplicate candidates the retriever has to rank.
+
+That last one is the consequence people miss. With heavy overlap, the top 5 results for a query are often five overlapping windows of the *same* passage, so a `k` of 5 delivers one passage's worth of information into the context window instead of five. Deduplicating by source span, or reranking with diversity, matters more as overlap grows.
+
+Overlap exists for a real reason — a sentence that straddles a boundary is otherwise split, and neither half retrieves well — so the answer is not "use none". It is that 10–20% is the usual range, and that the figure is a cost dial, not a free quality setting.
+
+| Tier | What to say |
+|---|---|
+| Passes | "More than 100, because of the overlap" |
+| Strong | + the step calculation, 125, and the 1.25× cost in storage and embedding |
+| Extra points | **[+Scale]** 50% overlap doubles the cost of everything downstream · **[+Edge cases]** heavy overlap makes the top-k fill with near-duplicate windows of one passage, so effective recall falls while the score looks fine · **[+Trade-offs]** 10–20% is the usual range; semantic or structural chunking often beats a bigger overlap · **[+Business]** re-chunking means re-embedding the whole corpus, so the parameter is expensive to change later |
+
+**Likely follow-ups:** How would you chunk a table, or code? What is semantic chunking? How do you pick `k`? How does chunk size interact with the context window?
+**Learn it in:** Chapter 79, Q79-012 (RAG and chunking).
+
+### Q79-042 · Two random 1,536-dimensional vectors. What is their cosine similarity?
+
+**Level:** Brain-racking · **Roles:** MLE, DS
+
+**Remember it as:** *In high dimensions, everything is at right angles to everything else. Random vectors score zero, and that is what makes a score of 0.3 meaningful.*
+
+**Answer in one line:** **Almost exactly zero** — mean −0.0005 with a standard deviation of 0.0252, so 95% of random pairs fall within ±0.05, and the whole range of "unrelated" collapses to a sliver around zero as dimensions grow.
+
+```python
+for dim in (2, 10, 100, 1536):
+    a = rng.normal(size=(2000, dim))
+    b = rng.normal(size=(2000, dim))
+    cos = (a*b).sum(1) / (np.linalg.norm(a, axis=1) * np.linalg.norm(b, axis=1))
+    print(f"{dim:>5}d: mean {cos.mean():+.4f}  sd {cos.std():.4f}  "
+          f"95% within +/-{1.96*cos.std():.3f}")
+```
+
+```
+    2d: mean +0.0081  sd 0.7079  95% within +/-1.387
+   10d: mean +0.0064  sd 0.3193  95% within +/-0.626
+  100d: mean +0.0001  sd 0.0974  95% within +/-0.191
+ 1536d: mean -0.0005  sd 0.0252  95% within +/-0.049
+```
+
+In two dimensions two random vectors are all over the place — a cosine of 0.7 means nothing. By 1,536 dimensions, unrelated vectors are pinned to zero within a few hundredths.
+
+This is why cosine similarity works at all, and it answers the question people actually have, which is *what counts as a high score?*
+
+- **0.05** is indistinguishable from random.
+- **0.3** is 12 standard deviations away from random. On this scale that is enormous.
+- **0.8** between two independently written documents is near-identity.
+
+So the thresholds that feel low — teams are often surprised that their "good" matches score 0.3 to 0.5 — are not low at all. Judging an embedding score against the intuition that "1.0 is perfect so 0.4 is poor" is simply the wrong frame.
+
+Two caveats worth adding, because they are where this gets used badly. Real embeddings are **not** uniformly distributed on the sphere: most models have an anisotropy that pushes all real text to a positive baseline, often 0.6 to 0.8, so the random-vector figure is the floor for *random* vectors, not the floor you will observe. And the threshold is a property of the model, so it must be calibrated per model, on your own data — which is the honest version of "what cutoff should I use?"
+
+| Tier | What to say |
+|---|---|
+| Passes | "Close to zero" |
+| Strong | + that the spread shrinks with dimension, with the numbers, and what that implies about reading a score of 0.3 as strong |
+| Extra points | **[+Edge cases]** real embeddings are anisotropic, so observed scores sit on a positive baseline and the threshold must be calibrated per model · **[+Validate]** compare a candidate's score against the distribution of scores for known-unrelated pairs, not against 1.0 · **[+Trade-offs]** this is also why cosine is preferred to Euclidean distance here — it ignores magnitude, which carries little meaning in embedding space (Q79-002) |
+
+**Likely follow-ups:** Why cosine and not dot product? *(Dot product is cosine times the magnitudes, and magnitude is mostly noise — unless the vectors are already normalised, when they are the same thing.)* What is anisotropy? How would you pick a retrieval threshold?
+**Learn it in:** Chapter 79, Q79-002 (embeddings); Chapter 36, section 36.4.
+
+### Q79-043 · In 1,536 dimensions, how much closer is the nearest neighbour than the farthest?
+
+**Level:** Brain-racking · **Roles:** MLE, DS
+
+**Remember it as:** *In high dimensions, everything is about the same distance from everything else. "Nearest" stops meaning much — which is why vector search is approximate and reranked.*
+
+**Answer in one line:** **Only about 10% closer** — among 1,000 points in 1,536 dimensions the nearest is 53.3 away and the farthest is 58.4, a ratio of 1.097, where in two dimensions the same comparison gives a ratio of 246.
+
+```python
+for dim in (2, 10, 100, 1536):
+    pts = rng.normal(size=(1000, dim))
+    q = rng.normal(size=dim)
+    d = np.linalg.norm(pts - q, axis=1)
+    print(f"{dim:>5}d: nearest {d.min():8.3f}  farthest {d.max():8.3f}  "
+          f"ratio {d.max()/d.min():6.3f}  spread {(d.max()-d.min())/d.mean()*100:5.1f}% of mean")
+```
+
+```
+    2d: nearest    0.022  farthest    5.363  ratio 245.947  spread 336.8% of mean
+   10d: nearest    1.710  farthest    7.337  ratio   4.290  spread 120.2% of mean
+  100d: nearest   11.010  farthest   18.067  ratio   1.641  spread  48.1% of mean
+ 1536d: nearest   53.274  farthest   58.432  ratio   1.097  spread   9.3% of mean
+```
+
+This is the **curse of dimensionality**, and it is the single most important fact about vector search. All 1,000 points sit in a thin shell at roughly the same distance from the query. The nearest neighbour is barely nearer than the farthest.
+
+Four consequences, and together they explain most of how a production RAG system is built:
+
+**Exact nearest-neighbour search stops being worth its cost.** If the true nearest is 9% closer than the worst, an approximate index that finds something within 1% of optimal has lost essentially nothing — which is why HNSW and IVF are the default rather than a compromise.
+
+**The scores will be close together**, so a confident-looking top result may be barely ahead of the tenth. A system that retrieves `k=1` and trusts it is relying on a margin that is not there.
+
+**Reranking earns its place.** A cross-encoder reads the query and the document *together* rather than comparing two independent summaries, which recovers the discrimination the geometry took away. That is the real reason for Q79-013's answer, stated in numbers.
+
+**Metadata filtering is doing more work than it looks.** Filtering to one product line before the vector search removes far more candidates than reranking can, because it uses information the geometry cannot see.
+
+| Tier | What to say |
+|---|---|
+| Passes | "That's the curse of dimensionality" |
+| Strong | + the measured ratio, 1.097 against 246 in two dimensions, and that this is why approximate search is acceptable |
+| Extra points | **[+Scale]** ANN indexes trade a recall point for orders of magnitude in speed, which is a good trade precisely because the margin is tiny · **[+Business]** retrieving one chunk and trusting it is relying on a margin the geometry does not provide — retrieve more, then rerank · **[+Trade-offs]** metadata filters cut the candidate set using information the vectors do not carry, and usually help more than a better index · **[+Edge cases]** real embeddings have far more structure than random Gaussians, so the effect is less extreme than this — but the direction is the same and the practice follows from it |
+
+**Likely follow-ups:** How does HNSW work, roughly? What is recall@k and how would you measure it? Why does a cross-encoder do better than a bi-encoder? *(It sees both texts at once.)*
+**Learn it in:** Chapter 79, Q79-013 (reranking); Chapter 39, section 39.3.
+
+### Q79-044 · Temperature 0.2, 1.0 and 2.0 on the same logits. What happens to the top token?
+
+**Level:** Mid · **Roles:** MLE, DS, DA
+
+**Remember it as:** *Temperature divides the logits before the softmax. Low temperature sharpens the distribution towards the leader; high temperature flattens it towards uniform.*
+
+**Answer in one line:** The top token's probability moves from **0.9933 at T=0.2** to **0.6308 at T=1.0** to **0.4423 at T=2.0** — temperature does not add randomness, it reshapes the distribution the sampler draws from.
+
+```python
+logits = np.array([3.0, 2.0, 1.0, 0.5])
+
+def softmax(x, T):
+    z = x / T
+    z = z - z.max()
+    e = np.exp(z)
+    return e / e.sum()
+
+for T in (0.2, 0.5, 1.0, 2.0, 5.0):
+    p = softmax(logits, T)
+    print(f"T={T:<4} -> {np.round(p, 4)}   top p={p.max():.4f}")
+```
+
+```
+T=0.2  -> [0.9933 0.0067 0.     0.    ]   top p=0.9933
+T=0.5  -> [0.8618 0.1166 0.0158 0.0058]   top p=0.8618
+T=1.0  -> [0.6308 0.2321 0.0854 0.0518]   top p=0.6308
+T=2.0  -> [0.4423 0.2683 0.1627 0.1267]   top p=0.4423
+T=5.0  -> [0.323  0.2645 0.2165 0.1959]   top p=0.3230
+```
+
+At T=0.2 the model is effectively deterministic — the leader has 99.3% and the third and fourth options have rounded to zero. At T=5 the four options are nearly equally likely, and the model's ranking has almost stopped mattering.
+
+The mechanism is division, which is why the effect is not linear: halving the temperature squares the ratio between any two probabilities.
+
+Two things worth saying that the numbers above make concrete.
+
+**T=0 is not in this table because it is not a temperature.** Dividing by zero is undefined; implementations special-case it to mean "take the argmax". That is greedy decoding, not sampling at a very low temperature, and it is why `temperature=0` is the right setting for extraction and classification tasks where you want the same answer every time.
+
+**Even at T=0 the output is not guaranteed identical** between calls, because batching, GPU non-determinism and model updates on a hosted API can all change the result. That is Q79-011's point, and it is the reason an LLM feature needs regression tests rather than exact-match assertions.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Lower temperature is more deterministic" |
+| Strong | + that it divides the logits before the softmax, with the numbers, and that T=0 is a special case meaning argmax rather than a limit |
+| Extra points | **[+Edge cases]** T=0 still does not guarantee identical output on a hosted API, because of batching and model updates · **[+Trade-offs]** temperature, top-p and top-k interact; setting all three at once makes behaviour hard to reason about, so change one · **[+Business]** extraction and classification want T=0; drafting and ideation want higher, and the two should not share a setting |
+
+**Likely follow-ups:** What does top-p do differently? *(Truncates to the smallest set of tokens whose probability sums to p, then renormalises — it adapts to the shape of the distribution where top-k does not.)* Why would you ever use a high temperature? What is a repetition penalty?
+**Learn it in:** Chapter 79, Q79-004 (temperature); Chapter 53, section 53.5.
+
+### Q79-045 · Serving a 7-billion-parameter model. How much memory for the weights?
+
+**Level:** Mid · **Roles:** MLE, DE
+
+**Remember it as:** *Parameters × bytes per parameter. "7B" is a count, not a size — in float32 it is 26 GB, in bfloat16 13, in int4 about 3.*
+
+**Answer in one line:** **13 GB in bfloat16**, which is the usual serving precision — 26 GB in float32 and about 3.3 GB quantised to int4 — so "7B" fits on one consumer GPU only once it has been quantised.
+
+```python
+for name, bits in [('float32', 32), ('bfloat16', 16), ('int8', 8), ('int4', 4)]:
+    gb = 7e9 * bits / 8 / 1024**3
+    print(f"7B in {name:<9} {gb:6.2f} GB  (weights only)")
+```
+
+```
+7B in float32    26.08 GB  (weights only)
+7B in bfloat16   13.04 GB  (weights only)
+7B in int8        6.52 GB  (weights only)
+7B in int4        3.26 GB  (weights only)
+```
+
+Weights only. Two more things need room, and leaving them out is how a deployment plan goes wrong:
+
+**The KV cache**, which holds the attention keys and values for every token in the context. It grows with context length *and* with batch size, and at long contexts it can rival the weights. A model that fits in 13 GB with a 2,000-token context may not fit with a 128,000-token one.
+
+**Activations**, the working memory of the forward pass, which scale with batch size.
+
+**Training is a different order of magnitude.** Adam keeps two extra optimiser states per parameter plus a master copy of the weights, so mixed-precision training of the same 7B model needs roughly **91 GB** before activations — which is why fine-tuning is done with LoRA or QLoRA, training a small adapter instead of the whole model.
+
+The practical shape of the answer: 7B quantised serves on one 24 GB card. 70B in bfloat16 is 130 GB and needs several. That ratio is why the choice between a hosted API and self-hosting is usually decided by model size rather than by preference.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It depends on the precision" |
+| Strong | + the sum, 7B × 2 bytes ≈ 13 GB in bfloat16, and that weights are not the whole requirement |
+| Extra points | **[+Scale]** the KV cache grows with context and batch size and can rival the weights at long contexts · **[+Edge cases]** training needs roughly 7× the inference footprint, which is why LoRA and QLoRA exist · **[+Business]** this is the calculation that decides hosted API against self-hosting, far more than preference does · **[+Trade-offs]** int4 quantisation costs some quality; measure it on your own evaluation set rather than accepting a benchmark number |
+
+**Likely follow-ups:** How large is the KV cache for a 32k context? What is LoRA? Why is bfloat16 preferred to float16? *(Same exponent range as float32, so it is much less prone to overflow in training.)*
+**Learn it in:** Chapter 79, Q79-033 (cost); Chapter 58, section 58.5 (serving).
+
+### Rapid-fire, 79.9: numbers worth carrying
+
+Roles: MLE, DS and DE for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q79-046 | How many tokens is a 100-word English paragraph? | About 130–150, on the common rule of thumb of roughly 0.75 words per token for English. Code and non-English text are far less efficient, sometimes 2–3× more tokens for the same meaning. Measure your own text with the model's tokenizer rather than trusting the ratio | **[+Business]** budget by tokens, never by words, and measure on your own text → Q79-001 |
+| Q79-047 | A 128k-token context window — should you fill it? | No. Cost and latency scale with input, and accuracy drops for facts in the middle. Retrieve well, do not stuff | **[+Edge cases]** the "lost in the middle" effect is measurable and model-specific → Q79-008 |
+| Q79-048 | Prompt caching cuts the cost of what? | Repeated *prefix* tokens only — a long system prompt reused across calls. The variable part is billed in full | **[+Business]** put the stable instructions first and the variable input last → Q79-033 |
+| Q79-049 | Output tokens against input tokens: same price? | No — output is typically 3–5× the price of input, so a verbose answer costs more than a long question | **[+Trade-offs]** asking for structured, terse output is a cost lever, not just a formatting choice → Q79-033 |
+| Q79-050 | Does `temperature=0` make an LLM feature testable with exact-match assertions? | No. Batching, GPU non-determinism and silent model updates all change output. Test properties and use an evaluation set | **[+Validate]** pin the model version where the API allows it → Q79-011, Q79-026 |
+| Q79-051 | Your RAG retrieves `k=3` and the answer is wrong. Where do you look first? | Retrieval, not the prompt. Check whether the right chunk was in the retrieved set at all — that splits the problem in two | **[+Validate]** log the retrieved chunk ids with every answer, or you cannot debug it → Q79-021 |
+| Q79-052 | Embedding model changed. What has to happen? | Re-embed the entire corpus. Vectors from two models are not comparable, and mixing them silently degrades retrieval | **[+Business]** this is a scheduled, budgeted job, not a config change → Q79-016 |
+| Q79-053 | An LLM scores 92% on your evaluation set. Ship it? | Not on that alone: check what the 8% are. A uniform 8% is very different from 8% concentrated in one customer segment | **[+Business]** aggregate metrics hide the failure that gets you in the news → Q79-025 |
+| Q79-054 | Cost of re-embedding 1M chunks of 1,000 tokens | **1 billion tokens** — that is the number to quote, because embedding prices change faster than any book can track. Multiply it by today's published rate. The expensive part is usually the engineering and the downtime, not the tokens | **[+Validate]** always state the token count and the dated rate separately, so the figure can be rechecked → Q79-033 |
+| Q79-055 | Model drift and data drift: which does an alert catch? | Data drift, because you can measure the inputs without labels. Model drift needs outcomes, which arrive late or not at all | **[+Edge cases]** label delay is why input monitoring is the first line → Q79-028 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -522,13 +823,15 @@ The interviewer's note: *"A citation being real doesn't mean the retrieved conte
 
 ## Key terms
 
-token · context window · temperature · fine-tuning vs. prompting · embedding · cosine similarity · unit-length vector · hallucination · RAG (Retrieval-Augmented Generation) · chunking (fixed-size, sentence, section) · overlap · vector database · reranking · cross-encoder · citation/grounding · refusal · agent · tool use · step limit · multi-agent system · orchestrator · golden set · LLM-as-judge · guardrail · regression test (LLM) · model registry · feature store · training-serving skew · drift detection · population stability index (PSI) · KS statistic (D) · retraining trigger · online vs. batch serving · prompt versioning · tracing (LLM) · prompt injection · caching (LLM cost)
+token · context window · temperature · fine-tuning vs. prompting · embedding · cosine similarity · unit-length vector · hallucination · RAG (Retrieval-Augmented Generation) · chunking (fixed-size, sentence, section) · overlap · vector database · reranking · cross-encoder · citation/grounding · refusal · agent · tool use · step limit · multi-agent system · orchestrator · golden set · LLM-as-judge · guardrail · regression test (LLM) · model registry · feature store · training-serving skew · drift detection · population stability index (PSI) · KS statistic (D) · retraining trigger · online vs. batch serving · prompt versioning · tracing (LLM) · prompt injection · caching (LLM cost) · vector storage arithmetic · chunk overlap · effective step size · near-orthogonality in high dimensions · anisotropy · curse of dimensionality · approximate nearest neighbour (HNSW, IVF) · recall@k · cross-encoder · product quantisation · softmax temperature · greedy decoding · top-p against top-k · bfloat16 · quantisation (int8, int4) · KV cache · LoRA / QLoRA · prompt prefix caching
 
 ---
 
 ## Final-week revision list
 
-Q79-001, Q79-002, Q79-007, Q79-012, Q79-013, Q79-018, Q79-023, Q79-028, Q79-033, Q79-038, Q79-039.
+Q79-001, Q79-002, Q79-007, Q79-012, Q79-013, Q79-018, Q79-023, Q79-028, Q79-033, Q79-038, Q79-039, Q79-040, Q79-043, Q79-045.
+
+The last three are the numbers to have ready before anyone asks whether an idea is feasible: what a million embeddings actually cost in memory (Q79-040), why vector search is approximate and reranked (Q79-043), and what "7B" means in gigabytes (Q79-045).
 
 ---
 

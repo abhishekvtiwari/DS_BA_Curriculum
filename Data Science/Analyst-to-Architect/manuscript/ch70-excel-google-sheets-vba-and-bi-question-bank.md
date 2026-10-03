@@ -1,6 +1,6 @@
 # Chapter 70. Excel, Google Sheets, VBA & BI Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 10, 11, 15, 16 and 19, with a few links to Chapter 12 (joins, `UNION ALL`, `GROUP BY`). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 4–6 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.
+> **Time needed:** 5–7 hours for a first pass (about 5 minutes per core question, 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 70.9 adds about an hour and is best done with a spreadsheet open, since four of its questions ask you to confirm a behaviour in your own copy of Excel.
 >
 > **How this chapter is built.** Every **core question** gives a memory hook ("Remember it as…"), a one-line answer you can recall under pressure, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, one per line, tagged the same way: **[+Clarify]**, **[+Edge cases]**, **[+Validate]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Every **rapid-fire section** is a scan table: question, one-line answer, one extra point, level, and where to learn it. Every formula result comes from the practice table in section 70.0.
 
@@ -803,6 +803,291 @@ Roles: BI for every row; DA for the Mid rows.
 
 ---
 
+## 70.9 Predict the output: what the grid does behind the number
+
+The rest of this chapter is about building things in a spreadsheet: formulas, pivots, Power Query, macros, models. This section is about the handful of behaviours underneath the grid that decide whether the number in the cell is the number you think it is.
+
+They come up in interviews because they are the difference between someone who uses a spreadsheet and someone who can be trusted to reconcile one. Everything here produces a plausible answer with no error, no warning, and no green triangle in the corner.
+
+Read each one, say the answer out loud, then read on.
+
+**How these were verified, and one honest limitation.** The arithmetic below — date serials, significant digits, floating point, rounding — follows rules that are published and exact, and every figure was computed and printed rather than recalled. **Excel itself was not available to run these in**, so anything that depends on Excel's own implementation rather than on arithmetic is marked **Check in Excel**, with the documented behaviour given and the reason it is worth confirming on your own copy. Four questions carry that mark. The rest are arithmetic and do not need it.
+
+The Python snippets below are there to *compute* the arithmetic the spreadsheet is doing, not to replace it; they need only the standard library:
+
+```python
+import decimal
+```
+
+### Q70-072 · `=DATE(1900,2,29)` and serial number 60
+
+**Level:** Mid · **Roles:** DA, BA, FA
+
+**Remember it as:** *Excel believes 1900 was a leap year. It was not. Serial 60 is a day that never existed, and every date after it is shifted by one.*
+
+**Answer in one line:** Excel accepts **29 February 1900** as serial number 60 — a date that does not exist, because 1900 was not a leap year — and the error is deliberately preserved for compatibility with Lotus 1-2-3.
+
+| Serial | Excel says | Reality |
+|---|---|---|
+| 1 | 1 Jan 1900 | 1 Jan 1900 |
+| 59 | 28 Feb 1900 | 28 Feb 1900 |
+| **60** | **29 Feb 1900** | **does not exist** |
+| 61 | 1 Mar 1900 | 1 Mar 1900 |
+
+The leap-year rule is divisible by 4, except centuries, except centuries divisible by 400:
+
+```python
+for y in (1900, 2000, 2024):
+    print(f"{y}: {(y % 4 == 0 and y % 100 != 0) or y % 400 == 0}")
+```
+
+```
+1900: False
+2000: True
+2024: True
+```
+
+So 1900 had 365 days and Excel thinks it had 366.
+
+The practical consequences are narrow but sharp:
+
+**Day-of-week calculations before 1 March 1900 are wrong by one.** Irrelevant for business data, relevant for historical or genealogical work.
+
+**Excel and other systems disagree about the same serial number.** Export a date column as a number from Excel and read it anywhere that uses the real calendar, and dates shift by a day — or by two, depending on which epoch the other tool assumes, because the common alternatives are 1899-12-30 and 1899-12-31. This is the actual bug people hit: a CSV of serial numbers rather than formatted dates, and a one-day offset nobody can explain.
+
+**macOS Excel historically used a 1904 epoch**, so a workbook moved between the two systems could shift by 1,462 days. The setting still exists in workbook options, which means a four-year date error is one checkbox away.
+
+The rule that follows: **never move dates between systems as serial numbers.** Export them as text in ISO format — `yyyy-mm-dd` — and parse them explicitly on the other side.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Excel thinks 1900 was a leap year" |
+| Strong | + why it is kept (Lotus 1-2-3 compatibility), and that the real damage is serial numbers crossing between systems rather than the 1900 dates themselves |
+| Extra points | **[+Edge cases]** the 1904 epoch option exists in workbook settings and shifts everything by 1,462 days · **[+Business]** a one-day offset in an exported date column is the usual symptom and is very hard to trace back to this · **[+Validate]** export dates as ISO text, never as serials |
+
+**Likely follow-ups:** What is the actual leap-year rule? Why would a date column import one day out? What does Google Sheets do? *(Sheets replicates the bug, for Excel compatibility.)*
+**Learn it in:** Chapter 10, section 10.6 (dates in spreadsheets); Chapter 14, section 14.7.
+
+### Q70-073 · A 16-digit order number typed into a cell
+
+**Level:** Mid · **Roles:** DA, BA, FA
+
+**Remember it as:** *A spreadsheet keeps 15 significant digits. The 16th becomes a zero, silently, and two different ids can become one.*
+
+**Answer in one line:** The last digit becomes **0** — `1234567890123456` is stored and displayed as `1234567890123450`, because the number is held to 15 significant digits, and two ids differing only in the 16th digit become identical.
+
+```
+typed                    stored and shown
+1234567890123456   ->    1234567890123450
+1234567890123457   ->    1234567890123450      <- the same
+9007199254740993   ->    9007199254740990
+1234567890123456789 ->   1234567890123450000
+```
+
+Note that this is *not* the same limit as the float64 one in Chapter 77 (2⁵³ ≈ 9.007 × 10¹⁵, about 16 digits). Excel's 15-digit rule is a deliberate display and storage convention applied on top of the double, chosen so that arithmetic looks clean. The effect is the same and arrives sooner.
+
+What makes it dangerous rather than annoying is that the data is not recoverable. Once the cell holds `...450`, the original digit is gone, and no amount of reformatting brings it back. If the file is the only copy, the identifiers are destroyed.
+
+Numbers this long are ordinary: credit-card numbers (16 digits), IMEI numbers (15), Aadhaar (12, safe), GSTIN (15 alphanumeric, safe because it is text), bank account numbers, and any id minted from a timestamp.
+
+The companion behaviour, which is the same class of problem and more common: a long number entered as a plain number displays as **1.23457E+15** in scientific notation, and anything over 11 digits may do so depending on column width. People then widen the column, see the full number return, and conclude nothing was lost — which is true for 15 digits and false for 16.
+
+The fix is to decide at entry: an identifier is **text**. Format the column as Text *before* typing or pasting, or prefix with an apostrophe. Doing it afterwards does not help.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Excel only keeps 15 digits" |
+| Strong | + that the loss is irreversible, that two ids can collapse to one, and that the column must be Text *before* the data arrives |
+| Extra points | **[+Business]** card numbers, IMEIs and timestamp-derived ids are all in range, and a destroyed id cannot be reconciled back · **[+Edge cases]** scientific-notation display is a separate, reversible problem, which is why people wrongly assume this one is too · **[+Validate]** check the length of the longest id before a spreadsheet becomes part of a pipeline · **[+Trade-offs]** CSV holds the full value; it is Excel that truncates on open, so the file may be fine and the view is not |
+
+**Likely follow-ups:** How does this relate to the float64 limit? What happens on CSV import? *(The Text Import wizard, or Power Query, lets you set the column type before it loads — that is the fix.)* Why do leading zeros disappear too?
+**Learn it in:** Chapter 10, section 10.4 (number formats); Chapter 77, Q77-037.
+
+### Q70-074 · `=0.1+0.2=0.3` and `=(0.1+0.2)-0.3`
+
+**Level:** Mid · **Roles:** DA, BA, FA · **Check in Excel**
+
+**Remember it as:** *The spreadsheet uses the same binary floating point as everything else, and then hides it. So the comparison can say TRUE while the subtraction shows a residue.*
+
+**Answer in one line:** The arithmetic is exact for neither: `0.1 + 0.2` really is `0.30000000000000004`, and the subtraction leaves **5.55E-17** — but Excel applies a cosmetic final-result rounding that can make the direct comparison display `TRUE`, which is why the two formulas appear to contradict each other.
+
+```python
+print(f"0.1 + 0.2       = {0.1 + 0.2:.20f}")
+print(f"0.1 + 0.2 - 0.3 = {0.1 + 0.2 - 0.3:.20e}")
+print(f"equal to 0.3?     {0.1 + 0.2 == 0.3}")
+```
+
+```
+0.1 + 0.2       = 0.30000000000000004441
+0.1 + 0.2 - 0.3 = 5.55111512312578270212e-17
+equal to 0.3?     False
+```
+
+Those three lines are IEEE 754 and are true in every language, this book's Python chapters included (Chapter 72, Q72-010).
+
+**Check in Excel:** Excel adds a layer the languages do not — a cosmetic rounding applied to a final result when it is very close to a round number — so `=0.1+0.2=0.3` may display `TRUE` while `=(0.1+0.2)-0.3` displays `5.55E-17`. The exact conditions are version-specific. Type both into a cell and see which you get; the point of the question survives either way, and knowing which your own version does is worth ten seconds.
+
+Where it costs money is reconciliation. A check written as `=IF(total_a=total_b,"OK","MISMATCH")` on two columns that were computed by different routes will report a mismatch on figures that agree to the paisa. The fix is a tolerance:
+
+```
+=IF(ABS(total_a-total_b)<0.005,"OK","MISMATCH")
+```
+
+Or, better for money, work in whole paise as integers and compare exactly.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Floating point is imprecise" |
+| Strong | + the residue value, that it is IEEE 754 rather than an Excel bug, and a tolerance-based reconciliation as the fix |
+| Extra points | **[+Business]** an exact-equality reconciliation check reports false mismatches on correct data, and people learn to ignore it · **[+Edge cases]** Excel's cosmetic rounding makes the two formulas disagree, which is what makes this confusing rather than merely known · **[+Trade-offs]** integer paise is exact and is what a database should store (Chapter 12, section 12.8) |
+
+**Likely follow-ups:** What tolerance would you choose, and why? How would you store money properly? Does this affect SUMIFS? *(It affects any comparison; a criteria match on a computed decimal is the same risk.)*
+**Learn it in:** Chapter 72, Q72-010 (floating point); Chapter 12, section 12.8.
+
+### Q70-075 · Three cells of 1.004, displayed to two decimals, summed
+
+**Level:** Fresher · **Roles:** DA, BA, FA
+
+**Remember it as:** *Formatting changes what you see, not what is stored. The column shows 1.00 + 1.00 + 1.00 = 3.01, and both numbers are right.*
+
+**Answer in one line:** The column displays **1.00, 1.00, 1.00 and a total of 3.01** — because the sum is computed on the stored 1.004 values (3.012) and only then rounded for display, so the visible figures do not add up to the visible total.
+
+```python
+vals = [1.004, 1.004, 1.004]
+print(f"stored sum      : {sum(vals):.3f}  -> displayed as {round(sum(vals), 2):.2f}")
+print(f"sum of displayed: {1.00 * 3:.2f}")
+```
+
+```
+stored sum      : 3.012  -> displayed as 3.01
+sum of displayed: 3.00
+```
+
+This is the single most common "the spreadsheet is wrong" complaint, and the spreadsheet is not wrong. It is the reason a finance review stalls for an hour on a one-paisa discrepancy.
+
+The distinction worth being able to state cleanly:
+
+| | What it does |
+|---|---|
+| **Number formatting** (2 decimal places) | Changes the display only. The cell still holds 1.004 |
+| **`=ROUND(A1,2)`** | Changes the stored value to 1.00. The sum then really is 3.00 |
+| **Precision as displayed** (a workbook option) | Permanently rounds every stored value to its displayed precision — and it is irreversible |
+
+Which you want depends on the document. A report that must foot — where the printed column has to add to the printed total — needs `ROUND` applied to the components, accepting that you have changed the numbers. An analysis should keep full precision and round only at the final presentation.
+
+What you should almost never do is tick "Precision as displayed", because it silently rewrites every value in the workbook and cannot be undone.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a display rounding issue" |
+| Strong | + distinguishes format from `ROUND` from the workbook option, and says which to use for a report that must foot |
+| Extra points | **[+Business]** a report that must foot has to round the components, which means the printed figures are deliberately not the computed ones — say so in a footnote · **[+Edge cases]** "Precision as displayed" is irreversible and rewrites the stored data · **[+Validate]** if a column does not foot, check the stored values before looking for a formula error |
+
+**Likely follow-ups:** How would you make a report foot exactly? What is the largest discrepancy you could get from this? *(It grows with the number of rows.)* Does the same happen in a pivot table? *(Yes — Q70-016.)*
+**Learn it in:** Chapter 10, section 10.4 (number formats); Chapter 10, section 10.9.
+
+### Q70-076 · `=ROUND(2.5, 0)` and `=ROUND(-0.5, 0)`
+
+**Level:** Mid · **Roles:** DA, BA, FA · **Check in Excel**
+
+**Remember it as:** *Excel rounds a half away from zero. Python rounds a half to the nearest even number. The same data gives different totals in the two tools.*
+
+**Answer in one line:** Excel gives **3** and **−1** — it rounds halves away from zero — where Python's `round()` gives **2** and **0**, because Python uses banker's rounding, so the same column reconciled in two tools can differ.
+
+```python
+for v in (0.5, 1.5, 2.5, 3.5, -0.5):
+    half_up = decimal.Decimal(v).quantize(decimal.Decimal('1'),
+                                          rounding=decimal.ROUND_HALF_UP)
+    print(f"{v:>5}: python round() -> {round(v):>3}    half-away-from-zero -> {half_up:>3}")
+```
+
+```
+  0.5: python round() ->   0    half-away-from-zero ->   1
+  1.5: python round() ->   2    half-away-from-zero ->   2
+  2.5: python round() ->   2    half-away-from-zero ->   3
+  3.5: python round() ->   4    half-away-from-zero ->   4
+ -0.5: python round() ->   0    half-away-from-zero ->  -1
+```
+
+They agree on 1.5 and 3.5 and disagree on 0.5 and 2.5, which is exactly why this is hard to spot: the two methods match half the time.
+
+Banker's rounding is not a quirk; it is chosen deliberately because always rounding halves upward introduces a systematic upward bias across many values, and rounding half-to-even cancels it. Over a million rows that bias is real money.
+
+**Check in Excel:** `ROUND(2.675, 2)` is the case worth typing in yourself. The stored double for 2.675 is `2.67499999999999982...`, so a rule applied to the binary value gives 2.67, while Excel's documented decimal-aware behaviour gives 2.68. Most languages give 2.67. The discrepancy is small and the lesson is not: **do not expect two tools to round the same way**, and never reconcile rounded figures across tools without checking.
+
+```python
+print(decimal.Decimal(2.675))
+```
+
+```
+2.67499999999999982236431605997495353221893310546875
+```
+
+If you need a specific rule regardless of tool, state it explicitly — `ROUND_HALF_UP` in Python's `decimal`, or `ROUNDUP`/`ROUNDDOWN` in Excel — rather than relying on either default.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Excel rounds 2.5 up to 3" |
+| Strong | + that Python rounds to even and gives 2, that this is deliberate bias-cancellation, and that the two agree half the time |
+| Extra points | **[+Business]** reconciling a rounded column between Excel and a Python or SQL pipeline produces differences that look like data errors · **[+Edge cases]** `ROUND(2.675, 2)` differs again, because the stored double is below 2.675 · **[+Trade-offs]** state the rounding rule explicitly in anything that must reconcile; neither default is wrong, and relying on either is |
+
+**Likely follow-ups:** Why does banker's rounding exist? What does SQL's `ROUND` do? *(Engine-dependent — another place to check rather than assume.)* How would you force a specific rule in Python? *(`decimal` with an explicit `rounding=`.)*
+**Learn it in:** Chapter 10, section 10.4; Chapter 21, section 21.3.
+
+### Q70-077 · `=VLOOKUP(A2, table, 3)` with the fourth argument left out
+
+**Level:** Fresher · **Roles:** DA, BA, FA · **Check in Excel**
+
+**Remember it as:** *The fourth argument defaults to TRUE, which means approximate match. Leaving it out does not mean "exact"; it means "closest below, and I assume you sorted".*
+
+**Answer in one line:** It performs an **approximate** match, not an exact one — the omitted fourth argument defaults to `TRUE`, which returns the closest value *below* the lookup on data it assumes is sorted ascending, and on unsorted data it returns something arbitrary with no error.
+
+```
+=VLOOKUP(A2, table, 3)          approximate  (range_lookup defaults to TRUE)
+=VLOOKUP(A2, table, 3, TRUE)    approximate  (the same thing, said out loud)
+=VLOOKUP(A2, table, 3, FALSE)   exact        (what people almost always want)
+```
+
+This is the most consequential default in the application, because the failure is silent in both directions:
+
+**On sorted data** it returns the nearest value below. Look up customer code 1050 in a table containing 1000 and 1100 and you get 1000's row — a real customer's data attached to the wrong customer. No `#N/A`, no warning, just the wrong name and the wrong revenue.
+
+**On unsorted data** the behaviour is undefined. It uses a binary search that assumes order, so it can return a match, a wrong match, or `#N/A` for a value that is definitely present — which is the same failure as Chapter 71's Q71-043, where a binary search on unsorted data reports "not found" for a row you can see.
+
+`XLOOKUP` fixed this by defaulting to exact match, which is the strongest argument for preferring it (Q70-002). `INDEX`/`MATCH` has the same trap in `MATCH`'s third argument, which also defaults to approximate.
+
+**Check in Excel:** worth typing out once, because the lesson lands differently when you watch it return a wrong name rather than an error. Build a four-row lookup table, leave the argument off, and look up a value that is not present.
+
+When *is* approximate match right? Band lookups — a commission tier, a tax slab, a shipping-weight band — where "the row at or below this value" is exactly the question. In that case pass `TRUE` explicitly, so the next reader knows it was a decision.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You need FALSE for an exact match" |
+| Strong | + that the default is TRUE, what approximate returns, and that on unsorted data it is undefined rather than merely wrong |
+| Extra points | **[+Business]** it returns another customer's data rather than an error, so the output looks complete and is wrong · **[+Edge cases]** `MATCH` has the same default in its third argument · **[+Trade-offs]** `XLOOKUP` defaults to exact, which is the real reason to prefer it · **[+Validate]** always pass the fourth argument, even when you want TRUE, so the intent is visible |
+
+**Likely follow-ups:** When would you want approximate match? Why can `VLOOKUP` not look left? How does `XLOOKUP` differ? *(Exact by default, searches any direction, and takes a not-found argument — Q70-002.)*
+**Learn it in:** Chapter 10, section 10.7 (lookups); Chapter 70, Q70-002.
+
+### Rapid-fire, 70.9: the grid's quiet behaviours
+
+Roles: DA, BA and FA for every row. Those marked **Check in Excel** depend on Excel's own implementation rather than on arithmetic.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q70-078 | `=COUNTA(A1:A10)` where three cells hold `=""` | Counts them. `COUNTA` counts anything that is not truly empty, and a formula returning an empty string is not empty | **[+Validate]** `COUNTBLANK` counts `""` as blank, so the two disagree — that gap is the test → Q70-006 |
+| Q70-079 | `=SUM(A1:A10)` where the numbers were pasted as text | 0, with no error. `SUM` silently skips text; a column of green-triangled "numbers stored as text" adds to nothing | **[+Business]** a total of zero is noticed; a partial total where only some cells are text is not → Ch 10 §10.4 |
+| Q70-080 | `=AVERAGE(A1:A5)` with two blanks against two zeros | Blanks are excluded, zeros are included — so the same data gives a different mean depending on how "no value" was recorded | **[+Clarify]** ask whether a missing value means zero before averaging → Ch 73 Q73-038 |
+| Q70-081 | Typing `3/4` into a General-formatted cell | Becomes a date (3 April of the current year), not 0.75 or a fraction. Autocorrect is interpreting, not calculating | **[+Business]** the famous gene-name case: `SEPT2` became a date, which is why those genes were renamed → Ch 14 §14.5 |
+| Q70-082 | A pivot grand total that does not equal the sum of the rows | Usually `DISTINCTCOUNT` or an average, which do not add up by design. A distinct count of the whole is not the sum of the parts | **[+Validate]** non-additive measures are the first thing to check → Q70-016 |
+| Q70-083 | `=A1&""` against a reference to a blank cell | A blank referenced with `=A1` returns 0; with `&""` it returns an empty string. Two different "nothings" | **[+Edge cases]** which is why a blank lookup result shows as 0 in a report → Ch 10 §10.4 |
+| Q70-084 | Sorting a range where one column is outside the selection | The sorted columns move and the unselected one does not: every row is now mismatched, with no warning | **[+Business]** this silently corrupts data and is unrecoverable once saved — use a Table (Ctrl+T) → Q70-015 |
+| Q70-085 | Merged cells in a column you need to sort or pivot | Sorting refuses or misbehaves, and a pivot treats the merged area as one value with blanks below | **[+Trade-offs]** "Center Across Selection" looks identical and breaks nothing → Ch 10 §10.9 |
+| Q70-086 | `=IFERROR(VLOOKUP(...), 0)` wrapped around every lookup | Hides genuine `#N/A`s, so unmatched rows silently become zero and the total is understated with no sign anything failed | **[+Validate]** use `IFNA` to catch only "not found", and let real errors surface → Q70-008 |
+| Q70-087 | A CSV of dates opened directly in Excel, `03/04/2025` | Read as 3 April or 4 March depending on the machine's locale, with no prompt. The first twelve days of a month are ambiguous | **[+Business]** the same file read by two colleagues gives two different answers → Ch 77 Q77-036 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -847,13 +1132,15 @@ He fixes the typo, and then adds one more line, unprompted: a message box report
 
 ## Key terms
 
-`SUMIFS`/`COUNTIFS` · `XLOOKUP` · `INDEX`/`MATCH` · absolute vs. relative reference · `SUMPRODUCT` · dynamic array (`FILTER`, `UNIQUE`) · pivot table · calculated field (pivot) · Power Query · Merge vs. Append · `QUERY` (Sheets) · `ARRAYFORMULA` · `IMPORTRANGE` · VBA object model · Personal Macro Workbook · `On Error` · UserForm · Office Scripts · Apps Script execution limit · `getValues()`/`setValues()` batching · installable trigger · calculated column vs. measure (DAX) · `CALCULATE` · filter context · star schema · row-level security (RLS) · Import mode vs. DirectQuery
+`SUMIFS`/`COUNTIFS` · `XLOOKUP` · `INDEX`/`MATCH` · absolute vs. relative reference · `SUMPRODUCT` · dynamic array (`FILTER`, `UNIQUE`) · pivot table · calculated field (pivot) · Power Query · Merge vs. Append · `QUERY` (Sheets) · `ARRAYFORMULA` · `IMPORTRANGE` · VBA object model · Personal Macro Workbook · `On Error` · UserForm · Office Scripts · Apps Script execution limit · `getValues()`/`setValues()` batching · installable trigger · calculated column vs. measure (DAX) · `CALCULATE` · filter context · star schema · row-level security (RLS) · Import mode vs. DirectQuery · date serial number · the 1900 leap-year bug · 1904 epoch · 15 significant digits · scientific-notation display · banker's rounding against half-away-from-zero · display rounding against `ROUND` · precision as displayed · approximate against exact match (`range_lookup`) · numbers stored as text · `IFNA` against `IFERROR` · locale date parsing
 
 ---
 
 ## Final-week revision list
 
-Q70-001, Q70-002, Q70-003, Q70-005, Q70-016, Q70-018, Q70-027, Q70-028, Q70-034, Q70-035, Q70-040, Q70-041, Q70-043, Q70-052, Q70-053, Q70-059, Q70-060, Q70-061, Q70-062, Q70-069.
+Q70-001, Q70-002, Q70-003, Q70-005, Q70-016, Q70-018, Q70-027, Q70-028, Q70-034, Q70-035, Q70-040, Q70-041, Q70-043, Q70-052, Q70-053, Q70-059, Q70-060, Q70-061, Q70-062, Q70-069, Q70-073, Q70-075, Q70-077.
+
+The last three are the ones that put a wrong number in front of a stakeholder with no error anywhere: a 16-digit id losing its last digit (Q70-073), a column that does not foot because formatting is not rounding (Q70-075), and a `VLOOKUP` that returns another customer's row because the fourth argument was left off (Q70-077).
 
 ---
 

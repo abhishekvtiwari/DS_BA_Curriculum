@@ -1,0 +1,122 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Selling the books — strategy and red team</title><style>
+@page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+body { font: 10.5pt/1.5 Georgia, 'Times New Roman', serif; color: #1a1a1a; }
+h1 { font-size: 20pt; border-bottom: 2px solid #333; padding-bottom: 6pt; }
+h2 { font-size: 15pt; margin-top: 22pt; page-break-after: avoid; }
+h3 { font-size: 12pt; margin-top: 18pt; background: #f1f1f1; padding: 5pt 7pt;
+     border-left: 3pt solid #555; page-break-after: avoid; }
+p { margin: 7pt 0; }
+code { font: 9pt 'Consolas', 'Courier New', monospace; background: #f4f4f4;
+       padding: 0 2pt; border-radius: 2px; }
+pre { font: 8.8pt/1.35 'Consolas', 'Courier New', monospace; background: #f7f7f7;
+      border: 1px solid #ddd; border-left: 3pt solid #888; padding: 7pt 9pt;
+      white-space: pre-wrap; page-break-inside: avoid; margin: 7pt 0; }
+pre.out { background: #fcfcf6; border-left-color: #b8a355; }
+table { border-collapse: collapse; width: 100%; margin: 9pt 0; font-size: 9pt;
+        page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 4pt 6pt; vertical-align: top; text-align: left; }
+th { background: #ececec; }
+tr td:first-child { width: 14%; font-weight: bold; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 16pt 0; }
+ul { margin: 7pt 0 7pt 16pt; }
+li { margin: 3pt 0; }
+.note { background: #f0f4f8; border-left: 3pt solid #5a7a99; padding: 8pt 10pt; margin: 10pt 0;
+        font-size: 9.5pt; }
+</style></head><body>
+<h1>Selling the books: a strategy, and a red team</h1>
+<p><em>3 October 2026. Written for Abhishek. Every price quoted is sourced and dated, because prices move.</em></p>
+<p><strong>The plan, as you have now defined it:</strong> ₹500 for <strong>Book 4, Be Interview Ready, alone</strong>. The other three volumes land later and cost extra. The course is deferred.</p>
+<p>My first draft of this document argued hard against ₹500 — but it was arguing against ₹500 <em>for all four books and the Practice Arena</em>, which is a much weaker plan than the one you are running. With the interview book alone at that price, <strong>the main objection falls away.</strong> What is below is the red team for the actual plan.</p>
+<p><strong>The short version.</strong> The structure is right: lead with the interview book, price it to be bought without thinking, make the volumes the revenue. Two things will decide whether it works, and neither is price. One is that <strong>you have no audience</strong>, and sales are audience times conversion. The other is that <strong>the product's one claim over the competition is currently contradicted inside the product itself.</strong> Fix the second, then spend everything on the first.</p>
+<hr>
+<h2>1. What you are selling at ₹500</h2>
+<p>Measured, not estimated:</p>
+<table><thead><tr><th>Book 4, Be Interview Ready</th><th></th></tr></thead><tbody>
+<tr><td>Pages</td><td><strong>535</strong></td></tr>
+<tr><td>Coded questions in Part VIII</td><td><strong>767</strong></td></tr>
+<tr><td>Of those, predict-the-output</td><td><strong>202</strong>, added in the last two days</td></tr>
+<tr><td>Verified contents links / bookmarks</td><td>169 of 169, 724 of 724</td></tr>
+</tbody></table>
+<p>The differentiator is not the question count. It is that <strong>every code answer was produced by running the code.</strong> Not transcribed, not remembered. In the last two days alone a dozen drafted questions turned out to be wrong and were caught only because they were run — a <code>RANK</code> answer that was 4,4,4 rather than 1,1,1, a float-money trap that does not actually fire, a Parquet claim that was backwards.</p>
+<p>That is the moat. Section 3.1 is about how easily it breaks.</p>
+<hr>
+<h2>2. The market you are pricing into</h2>
+<p>Searched 3 October 2026. These are what a buyer compares you against.</p>
+<table><thead><tr><th>Product</th><th>Price</th><th>What it is</th></tr></thead><tbody>
+<tr><td>[Data Analyst Interview Kit 2026](https://topmate.io/svnk/2033006) (Topmate)</td><td>₹149</td><td>A PDF kit</td></tr>
+<tr><td>[Data Analyst Interview Kit 2026](https://topmate.io/aasifcodes/2163653) (Topmate)</td><td>₹199</td><td>A PDF kit</td></tr>
+<tr><td>[400+ Data Analyst Interview Questions](https://topmate.io/analystinterviewprep/2143283)</td><td>₹199</td><td>400+ questions</td></tr>
+<tr><td>[Data Analyst Interview Kit 2026](https://topmate.io/prakash_r10/1429388) (Topmate)</td><td>₹399</td><td>A PDF kit</td></tr>
+<tr><td><strong>[Cracking The Data Analyst Interview](https://www.amazon.in/Cracking-Data-Analyst-Interview-Situational-ebook/dp/B0CL2R478Y)</strong> (Kindle)</td><td><strong>₹449</strong></td><td><strong>210 questions</strong></td></tr>
+<tr><td>[Data Analyst Interview Q&amp;A eBook](https://www.scholarhat.com/books/data-analyst-interview-questions-and-answers-book-pdf) (ScholarHat)</td><td>free</td><td>Listed ₹999, given away</td></tr>
+<tr><td>[Ace the Data Science Interview](https://www.acethedatascienceinterview.com/pdf-download-of-ace-the-data-science-interview-ebook) (Amazon.in)</td><td>₹3,500–5,000</td><td>The premium reference</td></tr>
+</tbody></table>
+<p><strong>At ₹500 for the interview book alone, you have a clean comparison and you win it:</strong></p>
+<p>&gt; <strong>₹449 buys 210 questions. ₹500 buys 767, and every answer was run.</strong></p>
+<p>That is a sales page headline, and it is true. It needed the clarification to become available — at ₹500 for 3,472 pages the same claim reads as implausible, because nobody believes that much verified work costs ₹500. At ₹500 for 535 pages it reads as a good deal, which is what it is.</p>
+<p><strong>The cost of sitting at ₹500.</strong> You are in the commodity band, where buyers do not expect correctness and will not pay a premium for it. Your best asset is partly wasted at this price. That is a real trade and I think it is the right one <em>given no audience</em>: low friction buys you a list faster than high margin buys you revenue. But it means <strong>Book 4 is a lead product that pays for itself, not the business.</strong> The business is the volumes and, later, the course.</p>
+<hr>
+<h2>3. The red team</h2>
+<h3>3.1 The one claim you are selling on is contradicted inside the book — and both instances are in Book 4</h3>
+<p>This is the finding that matters, and the clarification makes it <strong>worse</strong>, not better, because Book 4 is now the entire product.</p>
+<table><thead><tr><th>Where</th><th>What it says</th></tr></thead><tbody>
+<tr><td><strong>§71.11, SQL — 32 questions</strong></td><td>Run against the chapter's own Riverstone data, but <strong>never on real PostgreSQL 16 or MySQL 8.4.</strong> Outputs are labelled <em>Run</em>, not <em>Verified</em>. Four questions marked <em>Dialect split</em>.</td></tr>
+<tr><td><strong>§70.9, Excel — 16 questions</strong></td><td><strong>Never run in Excel</strong>, because Excel is not installed here. Four carry a <em>Check in Excel</em> mark.</td></tr>
+</tbody></table>
+<p>I put those marks there and I stand by the honesty — a reader is told before they rely on it. <strong>But you cannot run a sales page on "every answer was run" while 48 questions in the product say otherwise.</strong> One buyer finds one wrong SQL answer, screenshots it, and the single thing you claimed over the ₹199 kits is gone permanently.</p>
+<p>Also open: <strong>46 review findings</strong>, and Book 4's visual check has not been redone since it grew from 400 to 535 pages.</p>
+<p><strong>This is the gate. It is also about a day's work.</strong> Install PostgreSQL and MySQL, run the 32 SQL questions, run the 16 Excel ones in Excel. Or delete the claim from the marketing. One of the two.</p>
+<h3>3.2 You are deciding price when the constraint is distribution</h3>
+<p>Sales = audience × conversion. No list, no following, no channel, no placement-cell relationships. At ₹500 and at ₹5,000 a cold launch sells roughly the same: very little.</p>
+<p>₹500 is a sensible decision about a variable that is not currently binding. The binding one is that nobody knows the book exists.</p>
+<h3>3.3 The arithmetic says ₹500 cannot be the business</h3>
+<p>Platform economics, searched 3 October 2026: [Topmate](https://peerseek.io/blogs/creator-platform-fees-india-compared) takes about <strong>12.9% all-in</strong> including payment processing. [Gumroad](https://ownstreet.in/blog/gumroad-fees-india-2026-guide) takes 10% + $0.50 direct and <strong>30%</strong> through its marketplace, with PayPal fees on top for Indian payouts. Razorpay on your own site is roughly 2–3%.</p>
+<table><thead><tr><th></th><th>Net per sale</th><th>Sales for ₹1,00,000</th><th>Sales for ₹5,00,000</th></tr></thead><tbody>
+<tr><td>Book 4 at ₹500 (Topmate)</td><td>~₹435</td><td>230</td><td><strong>1,150</strong></td></tr>
+<tr><td>Book 4 at ₹500 (own site, Razorpay)</td><td>~₹487</td><td>205</td><td>1,027</td></tr>
+<tr><td>Volumes at ₹2,499</td><td>~₹2,177</td><td>46</td><td>230</td></tr>
+</tbody></table>
+<p>At a 2% conversion — optimistic cold — 1,150 sales means reaching about <strong>57,000 people</strong>. That is not a launch, that is a year of audience work.</p>
+<p><strong>Which is the argument for the plan, not against it.</strong> ₹500 is not there to make ₹5,00,000. It is there to convert attention into a buyer list cheaply, and the volumes do the revenue. Just be explicit with yourself that that is the design, so you are not disappointed by the first month.</p>
+<h3>3.4 "Volumes cost extra" needs to be on the page before the first sale</h3>
+<p>You have decided this, which is good. Now publish it.</p>
+<p>A buyer who pays ₹500 for the interview book and later discovers the other three cost ₹2,500 will feel the ₹500 was a tease — <strong>unless they were told on the day they bought.</strong> Two things make it land well instead of badly:</p>
+<ul><li><strong>Say it on the sales page</strong>, with the price, even if the volumes do not exist yet.</li><li><strong>Make Book 4 genuinely complete on its own.</strong> It is: 535 pages, 767 questions, standalone. Say that too. The volumes are depth, not the missing half.</li></ul>
+<p>The question you have not answered yet: <strong>does the ₹500 buyer get free updates to Book 4?</strong> It will change — the verification fixes alone will change it. My recommendation is yes, free updates to Book 4 forever, because it costs you nothing and it is the single easiest trust-builder for a first product from an unknown publisher.</p>
+<h3>3.5 A ₹500 PDF sets a ceiling you cannot raise</h3>
+<p>It will be shared. At ₹500 that is survivable and arguably useful early. But <strong>once a free copy is circulating you cannot raise Book 4's price later</strong>, because the ₹500 version is already the reference copy. Launching low is a one-way door — fine if you walk through it deliberately.</p>
+<p>If you want the option open, launch at ₹500 as a <strong>stated launch price with a published rise date</strong>. That is honest, it creates urgency, and it preserves the ceiling.</p>
+<h3>3.6 Support is the hidden cost, and Book 4 is the cheap one</h3>
+<p>Book 4 is mostly reading and drilling, which is why it is the right lead product. But the SQL and Python questions do invite "it does not run on my machine," and at ₹435 net <strong>two support emails wipes out the margin.</strong> The commodity kits have no support cost because nothing in them executes.</p>
+<p>Decide now what support you are offering, and say it on the page. "Email support" with no bound is a liability.</p>
+<h3>3.7 There may already be a ₹499 book bundle in the house</h3>
+<p>My notes record a <strong>Northstar six-role book bundle at ₹499</strong>, encyclopedia-based. If that is live or planned, two ₹500 book products from the same house compete and confuse the channel. <strong>I do not know its current status.</strong> Resolve it before launching.</p>
+<h3>3.8 Deferring the course is right, but it removes the only recurring revenue</h3>
+<p>You are right that a course is 6–8 months and expensive, and right to defer. But the course was the business; book sales are cash flow. <strong>The book should be positioned explicitly as the thing that earns the audience that makes the course viable</strong> — otherwise you have swapped a hard business for no business.</p>
+<hr>
+<h2>4. What I would do</h2>
+<h3>Phase 0 — make it safe to sell (days, before anything is listed)</h3>
+<p>1. <strong>Close the verification gap.</strong> PostgreSQL and MySQL installed, §71.11's 32 questions run, §70.9's 16 run in Excel. Or drop the claim from the marketing and keep it only where true. 2. <strong>Book 4 visual pass</strong>, since it grew by a third. 3. <strong>Close or accept the 46 open findings.</strong> 4. <strong>Publish the ladder and the update policy</strong> on the page: ₹500 now, volumes at ₹X later, free Book 4 updates forever. 5. <strong>The dull layer</strong>: refund policy, licence terms, GST on digital goods, support boundaries.</p>
+<h3>Phase 1 — the free wedge (this is the growth engine, not marketing decoration)</h3>
+<p>Give away <strong>about 40 of the 202 predict-the-output questions</strong> as a free PDF.</p>
+<p>Why these: they are the only part of the product that proves the differentiator <em>in ten minutes</em>. <code>int("25", 4)</code>. A <code>NOT IN</code> that silently returns nothing. A <code>VLOOKUP</code> that returns another customer's row. <strong>A 535-page book cannot go viral. A question that makes a senior engineer get it wrong can.</strong></p>
+<p>Give each one the full treatment — the hook, the real output, the tier table — so the sample demonstrates the standard rather than teasing it.</p>
+<p>Channel, in likely order of return: <strong>LinkedIn</strong> (post one question, answer it next day — this is the highest-leverage habit available to you), <strong>Telegram and WhatsApp placement groups</strong>, <strong>college placement cells</strong>, <strong>YouTube Shorts</strong> if you have the appetite.</p>
+<p>Target before the paid launch: <strong>an email list in the low thousands.</strong> The list is the asset; the book is inventory.</p>
+<h3>Phase 2 — launch Book 4 at ₹500</h3>
+<p>Headline: <strong>767 questions. Every answer was run. ₹500.</strong> Comparison, stated plainly: the nearest Kindle competitor is ₹449 for 210 questions. Framing: <strong>launch price, rising on a stated date.</strong></p>
+<h3>Phase 3 — the ladder, published from day one</h3>
+<table><thead><tr><th></th><th>Product</th><th>Price</th></tr></thead><tbody>
+<tr><td>Entry</td><td><strong>Book 4, Be Interview Ready</strong></td><td><strong>₹500</strong> (launch)</td></tr>
+<tr><td>Core</td><td>Books 1–3 + the Practice Arena</td><td>₹1,999–2,499</td></tr>
+<tr><td>Later</td><td>The course, once the audience exists</td><td>—</td></tr>
+</tbody></table>
+<hr>
+<h2>5. Decisions only you can make</h2>
+<p>1. <strong>Northstar</strong> — is the ₹499 six-role bundle live, shelved, or this product renamed? 2. <strong>Free updates to Book 4 for ₹500 buyers</strong> — I recommend yes; it is your call. 3. <strong>Launch price with a rise date, or ₹500 permanently?</strong> The first keeps the ceiling, the second is simpler. 4. <strong>Runway.</strong> How much do you need and by when? It changes how much Phase 1 you can afford before Phase 2. 5. <strong>Appetite for audience work.</strong> Phase 1 is months of posting, not a weekend. If you will not do it, say so and we design a channel-partner route instead — placement cells, a training institute, an affiliate — lower margin, much faster. 6. <strong>Verify, or drop the claim.</strong> Both are honourable. Selling on a claim the book itself contradicts is not.</p>
+<hr>
+<h2>6. What I can do next</h2>
+<ul><li><strong>Install PostgreSQL and MySQL and close §71.11's verification gap.</strong> Highest-value thing left in the project, roughly a day.</li><li><strong>Build the free sample PDF</strong> — 40 questions across tools, as a standalone piece.</li><li><strong>Write the sales page copy</strong> against the positioning above.</li><li><strong>A 30-day LinkedIn content plan</strong> drawn from questions already written, so Phase 1 is execution rather than invention.</li></ul>
+<p>If you only do one: <strong>close the verification gap.</strong> Everything else here is reversible. A buyer finding a wrong answer in the interview book is not.</p>
+</body></html>

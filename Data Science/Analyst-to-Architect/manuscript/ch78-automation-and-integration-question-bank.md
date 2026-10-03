@@ -1,6 +1,6 @@
 # Chapter 78. Automation & Integration Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapters 19–20 (spreadsheet and report automation), 45 and 51 (APIs, webhooks, reverse ETL), 58 and 63 (intelligent automation, automation architecture), with retries from Chapter 29, section 29.9 and the circuit breaker from Chapter 57, section 57.8. This chapter tests those skills; it doesn't teach them again.
 >
-> **Time needed:** 2–2.5 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list.
+> **Time needed:** 3.5–4 hours for a first pass (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 30 minutes to run the four code demos yourself); 30 minutes for the final-week list. Section 78.7 adds about an hour.
 >
 > **How this chapter is built.** Same format as Chapters 70–77: every core question leads with a **"Remember it as…"** hook, a one-line answer, and a compact tier table whose extra points carry Chapter 69's tags (**[+Edge cases]**, **[+Business]** and so on). Rapid-fire sections are scan tables. **Every Python pattern in this chapter was actually executed**, not described from memory: webhook idempotency, rate limiting, retry-with-backoff, and upsert-based CRM sync are all shown with their real output. The order: choosing a tool first, then the basic-but-tricky questions, then the specific automation types (reports, APIs, sync), then failure handling, then a full design case pulling it together.
 >
@@ -445,6 +445,333 @@ The second run changes nothing and adds nothing: the sync is safe to repeat.
 
 ---
 
+## 78.7 Predict the number: schedules, retries, and defaults
+
+The rest of this chapter is about deciding what to automate and designing it so it survives. This section is about the arithmetic underneath — the schedule that does not mean what it reads, the retry policy whose total is twenty times longer than anyone intended, and the library default that lets a job hang for a week.
+
+These are cheap questions to ask and they separate people who have run automations in production from people who have written them. Read the setup, say the number, then read on.
+
+**How these were run.** Python 3.12 with `requests` installed. The cron and backoff figures are plain arithmetic you can check by hand; the jitter demonstration uses `numpy` with a fixed seed. The setup for this section:
+
+```python
+import inspect, json, socket, urllib.parse
+import numpy as np
+import requests
+```
+
+### Q78-029 · `*/7 * * * *` in cron: does it run every seven minutes?
+
+**Level:** Mid · **Roles:** DE, AE, DA
+
+**Remember it as:** *A cron step restarts at the top of every hour. `*/7` is "minutes divisible by 7", not "every 7 minutes".*
+
+**Answer in one line:** **No** — it fires nine times an hour at minutes 0, 7, 14 … 56, and then waits only **four minutes** until the next hour's zero, so one gap in every nine is short.
+
+```python
+minutes = [m for m in range(60) if m % 7 == 0]
+gaps = [minutes[i+1] - minutes[i] for i in range(len(minutes)-1)] + [60 - minutes[-1]]
+print(f"fires at: {minutes}")
+print(f"gaps    : {gaps}")
+print(f"runs per hour: {len(minutes)}")
+```
+
+```
+fires at: [0, 7, 14, 21, 28, 35, 42, 49, 56]
+gaps    : [7, 7, 7, 7, 7, 7, 7, 7, 4]
+runs per hour: 9
+```
+
+Genuinely every seven minutes would be 8.57 runs an hour, which is not a whole number, which is the clue that cron cannot express it. The `*/n` syntax enumerates the values in the field that are divisible by `n`, and the field resets at the hour.
+
+It only matters when the job's duration is close to its interval. A task that takes five minutes is fine on a seven-minute gap and overlaps itself on the four-minute one — once an hour, which makes it look intermittent and random. The same applies to `*/45` on minutes, which fires at 0 and 45 and then waits fifteen; and to `*/5` on the **day of month** field, which fires on the 1st, 6th, 11th … 26th, 31st and then on the 1st again, one day later.
+
+Where the interval must be exact, do not use cron's step syntax. Enumerate the values (`0,7,14,21,28,35,42,49,56`) if that is what you want and be explicit that the last gap is short, or use a scheduler with real interval semantics — an orchestrator's `timedelta(minutes=7)`, or a systemd timer with `OnUnitActiveSec`.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It runs at minutes divisible by 7" |
+| Strong | + the nine runs, the four-minute wrap-around gap, and that a true 7-minute interval is not expressible in cron |
+| Extra points | **[+Edge cases]** `*/5` on the day-of-month field skips from the 31st to the 1st, giving a one-day gap · **[+Business]** a five-minute job on this schedule overlaps itself once an hour, which presents as an intermittent fault · **[+Trade-offs]** an orchestrator with interval semantics, or `OnUnitActiveSec`, means what people think `*/7` means |
+
+**Likely follow-ups:** What does `@daily` mean exactly? *(Midnight, in the server's timezone — see Q77-042.)* How do you prevent a job overlapping itself? *(A lock file, or the orchestrator's max-active-runs.)* What is the difference between `0 */2 * * *` and every two hours? *(Nothing, because 24 is divisible by 2 — the bug only appears when the step does not divide the field.)*
+**Learn it in:** Chapter 47, section 47.6 (scheduling); Chapter 20, section 20.6.
+
+### Q78-030 · Five retries with exponential backoff from one second. How long before it gives up?
+
+**Level:** Mid · **Roles:** DE, AE
+
+**Remember it as:** *Doubling means the last wait is longer than all the others put together. Five retries is half a minute; eight is four minutes.*
+
+**Answer in one line:** **31 seconds**, not five — the waits are 1, 2, 4, 8 and 16 seconds, and because each is larger than the sum of everything before it, the total is always just under double the final wait.
+
+```python
+for base, n in [(1, 5), (1, 8), (2, 5)]:
+    waits = [base * 2**i for i in range(n)]
+    print(f"base {base}s, {n} retries: {waits}  total {sum(waits)}s")
+
+capped = [min(60, 2**i) for i in range(10)]
+print(f"10 retries capped at 60s: total {sum(capped)}s")
+```
+
+```
+base 1s, 5 retries: [1, 2, 4, 8, 16]  total 31s
+base 1s, 8 retries: [1, 2, 4, 8, 16, 32, 64, 128]  total 255s
+base 2s, 5 retries: [2, 4, 8, 16, 32]  total 62s
+10 retries capped at 60s: total 303s
+```
+
+Eight retries — which sounds modest, and which plenty of HTTP client configurations use — is **four and a quarter minutes** of a worker sitting still holding a connection. Ten uncapped would be seventeen minutes.
+
+Three consequences worth naming:
+
+**It can exceed the job's own timeout.** A task with a five-minute limit and eight retries will be killed mid-backoff, so the final attempts never happen and the logs show a timeout rather than the real error.
+
+**It holds resources.** A thread or a database connection asleep for four minutes is a thread not doing work, and under load that is how a retry policy turns one failing dependency into an exhausted connection pool.
+
+**The cap is the important parameter**, not the count. `min(60, 2**i)` keeps ten retries to five minutes instead of seventeen, and it is the line most often left out.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's 1 + 2 + 4 + 8 + 16" |
+| Strong | + 31 seconds, that the total is always about twice the last wait, and what eight retries costs |
+| Extra points | **[+Scale]** backoff holds a worker or a connection for its whole duration, so a retry storm exhausts a pool · **[+Edge cases]** the total can exceed the task's own timeout, so the last retries never run and the error is reported as a timeout · **[+Trade-offs]** cap the individual wait, and set a total deadline rather than a retry count · **[+Business]** retry only what is safe to repeat; a non-idempotent POST retried five times can create five records (Q78-012) |
+
+**Likely follow-ups:** Which errors should you *not* retry? *(4xx other than 429 — the request is wrong and will stay wrong.)* What is a budget-based retry? How does this interact with a circuit breaker? *(Q78-021 — the breaker stops you retrying a dependency that is already known to be down.)*
+**Learn it in:** Chapter 78, Q78-017 (retry logic); Chapter 47, section 47.7.
+
+### Q78-031 · A thousand clients hit a failing API and all retry after exactly two seconds
+
+**Level:** Brain-racking · **Roles:** DE, AE
+
+**Remember it as:** *A fixed backoff synchronises everyone. The failure becomes a metronome, and the recovering server is hit by the whole crowd at once.*
+
+**Answer in one line:** **All 1,000 arrive in the same instant** — a fixed delay preserves the synchronisation the outage created, where full jitter spreads the same thousand retries so that no quarter-second holds more than 137 of them.
+
+```python
+rng = np.random.default_rng(78)
+n = 1000
+no_jitter   = np.full(n, 2.0)
+full_jitter = rng.uniform(0, 2.0, n)
+
+for name, arr in [("no jitter", no_jitter), ("full jitter", full_jitter)]:
+    hist, _ = np.histogram(arr, bins=np.arange(0, 2.25, 0.25))
+    print(f"{name:<12} busiest 0.25s bucket: {hist.max():4d} of {n}   {hist.tolist()}")
+```
+
+```
+no jitter    busiest 0.25s bucket: 1000 of 1000   [0, 0, 0, 0, 0, 0, 0, 1000]
+full jitter  busiest 0.25s bucket:  137 of 1000   [116, 112, 129, 118, 135, 126, 127, 137]
+```
+
+A **7.3× reduction in peak load** from one line of code, and nothing else changed — same number of retries, same average delay.
+
+The mechanism is worth stating because it is counter-intuitive: the outage itself is what synchronises the clients. They were spread out before, they all failed at the same moment, and a deterministic backoff preserves that alignment forever. Each retry round arrives as a single spike, which is often enough to knock over a server that had just come back, producing the next synchronised failure. That is the **thundering herd**, and it is how a brief outage becomes a long one.
+
+Full jitter — `random.uniform(0, backoff)` rather than `backoff` — is the standard fix, and note what it does to the *average* wait: it halves it. So jitter is not merely politer, it recovers faster on average as well as spreading load.
+
+This is also why "all our retries are exponential" is not on its own a good answer. Exponential backoff without jitter still synchronises; it just synchronises at wider and wider intervals.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should add jitter" |
+| Strong | + names the thundering herd, explains that the outage is what synchronises the clients, and reads off the peak reduction |
+| Extra points | **[+Scale]** full jitter also halves the mean wait, so it recovers faster as well as spreading load · **[+Edge cases]** exponential backoff *without* jitter still synchronises, just at wider intervals · **[+Business]** the spike often re-breaks a server that had recovered, turning a 30-second outage into a 10-minute one · **[+Trade-offs]** decorrelated jitter is slightly better again, at the cost of being harder to explain |
+
+**Likely follow-ups:** What is decorrelated jitter? Where else does the thundering herd appear? *(Cache expiry — a popular key expiring sends every request to the database at once.)* How does a circuit breaker help?
+**Learn it in:** Chapter 78, Q78-017; Chapter 61, section 61.5 (resilience).
+
+### Q78-032 · `requests.get(url)` with no `timeout`. How long can it hang?
+
+**Level:** Mid · **Roles:** DE, AE, DA
+
+**Remember it as:** *There is no default timeout. Not a long one — none. The call waits as long as the network will let it.*
+
+**Answer in one line:** **Forever** — `requests` defaults `timeout` to `None`, and Python's socket default is also `None`, so a request to a server that accepts the connection and then goes quiet will block until the OS gives up, which can be hours.
+
+```python
+import inspect, socket, requests
+
+print(f"requests timeout default: "
+      f"{inspect.signature(requests.Session.request).parameters['timeout'].default!r}")
+print(f"socket.getdefaulttimeout(): {socket.getdefaulttimeout()}")
+```
+
+```
+requests timeout default: None
+socket.getdefaulttimeout(): None
+```
+
+Two `None`s. Nothing in the stack will interrupt the call.
+
+The failure mode is specific and worth describing, because it is not the one people picture. A server that is *down* is harmless: the connection is refused immediately and you get an error in milliseconds. The dangerous server is the one that is **up and wedged** — it completes the TCP handshake and then never sends a byte. Your code is now waiting on a socket that will never deliver, and the scheduler sees a task that is still "running".
+
+That is how a daily job is found three days later still holding the lock, with the next three runs skipped because the orchestrator would not start a second instance.
+
+Always pass a timeout, and pass both halves of it:
+
+```python
+requests.get(url, timeout=(3.05, 27))   # (connect timeout, read timeout)
+```
+
+The connect timeout should be short — a few seconds is generous for establishing a connection. The read timeout is per-chunk, not for the whole response, which is the detail most people get wrong: a server that dribbles out one byte every twenty seconds never trips a 27-second read timeout. For a hard ceiling on total duration you need your own deadline around the call.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should always set a timeout" |
+| Strong | + that the default is `None` and means no limit at all, and that the dangerous case is a server that accepts and then stalls, not one that is down |
+| Extra points | **[+Edge cases]** the read timeout is between bytes, not for the whole response, so a slow trickle never trips it · **[+Business]** a hung job holds its lock and silently skips the next runs, which reads as "the job stopped" rather than "the job is stuck" · **[+Validate]** an alert on run *duration*, not only on failure, catches this; a job that has not finished is not the same as a job that failed (Q78-018) · **[+Scale]** without timeouts, one slow dependency exhausts a connection pool and takes down things that do not depend on it |
+
+**Likely follow-ups:** What is the difference between the connect and read timeouts? How would you enforce a total deadline? What should the orchestrator do about a task that never finishes? *(An execution timeout, which is a separate setting from the retry policy.)*
+**Red flag:** assuming a sensible default exists. It is the most common missing line in integration code.
+**Learn it in:** Chapter 78, Q78-017; Chapter 20, section 20.5 (calling an API).
+
+### Q78-033 · A JSON API returns `"order_id": 9007199254740993`
+
+**Level:** Brain-racking · **Roles:** DE, AE
+
+**Remember it as:** *JSON has one number type and JavaScript reads it as a float64. Past 2⁵³, ids change value in transit — in the browser, not on your server.*
+
+**Answer in one line:** Python reads it **exactly**, but any JavaScript consumer reads it as **9007199254740992** — the id changes by one between your server and the browser, with no error at either end.
+
+```python
+raw = '{"order_id": 9007199254740993, "amount": 1500.10}'
+d = json.loads(raw)
+
+print(f"python  : {d['order_id']}  exact: {d['order_id'] == 9007199254740993}")
+print(f"as JS   : {int(float(d['order_id']))}")
+print(f"re-dumped: {json.dumps(d)}")
+```
+
+```
+python  : 9007199254740993  exact: True
+as JS   : 9007199254740992
+re-dumped: {"order_id": 9007199254740993, "amount": 1500.1}
+```
+
+Python's `int` is arbitrary precision, so the server side is fine and every test you write in Python will pass. JavaScript has a single `number` type, which is a float64, so `JSON.parse` of that same payload gives a different id — the same 2⁵³ limit as Q77-037, arriving through the wire format instead of through a dataframe.
+
+The consequences are the kind that take a long time to diagnose, because the data is correct everywhere you look:
+
+- A dashboard links to order ...992, which either 404s or opens **someone else's order**.
+- A webhook signature computed over the id fails verification, because the two sides serialised different numbers.
+- Two different orders in the same page can collapse to one key in a front-end list.
+
+Notice also the third line: `1500.10` came back as `1500.1`. JSON has no decimal type, so trailing zeros are not preserved and money should not be sent as a JSON number if the exact representation matters.
+
+The fix is boring and universal: **send large ids as strings.**
+
+```json
+{"order_id": "9007199254740993", "amount": "1500.10"}
+```
+
+Twitter did this in 2010 and published an `id_str` field beside `id` for exactly this reason; most large APIs have done the same since.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Big numbers lose precision in JSON" |
+| Strong | + that the loss happens in the *JavaScript consumer* rather than in JSON itself, names 2⁵³, and gives "send ids as strings" as the fix |
+| Extra points | **[+Business]** a link to the wrong order is worse than a broken link, because it is a data-exposure issue, not a 404 · **[+Edge cases]** JSON has no decimal type either, so `1500.10` comes back as `1500.1` and money belongs in a string · **[+Validate]** a signature or checksum over a payload containing a big integer will fail across languages · **[+Scale]** Snowflake-style and timestamp-derived ids are routinely 18 to 19 digits, so this is the normal case now |
+
+**Likely follow-ups:** Why does Twitter's API have `id_str`? What about 64-bit integers in Protobuf? *(The JSON mapping also encodes them as strings, for this reason.)* How would you detect this in testing? *(Test with an id above 2⁵³; a small test id will never reveal it.)*
+**Learn it in:** Chapter 77, Q77-037; Chapter 20, section 20.5 (APIs).
+
+### Q78-034 · `unquote(quote_plus("North America +1"))`
+
+**Level:** Mid · **Roles:** DE, AE
+
+**Remember it as:** *In a query string a space is `+` and a real plus is `%2B`. Encode and decode with the matching pair, or the plus eats the space.*
+
+**Answer in one line:** **`'North+America++1'`** — the encoder turned spaces into `+` and the plus into `%2B`, but `unquote` does not know that `+` means space, so the spaces come back as literal plus signs and the value is corrupted.
+
+```python
+v = "North America +1"
+print(f"quote()      -> {urllib.parse.quote(v)}")
+print(f"quote_plus() -> {urllib.parse.quote_plus(v)}")
+print(f"unquote(quote_plus(v))      -> {urllib.parse.unquote(urllib.parse.quote_plus(v))!r}")
+print(f"unquote_plus(quote_plus(v)) -> {urllib.parse.unquote_plus(urllib.parse.quote_plus(v))!r}")
+```
+
+```
+quote()      -> North%20America%20%2B1
+quote_plus() -> North+America+%2B1
+unquote(quote_plus(v))      -> 'North+America++1'
+unquote_plus(quote_plus(v)) -> 'North America +1'
+```
+
+Two encodings, and they are not interchangeable. `quote` is for a URL **path**, where a space is `%20`. `quote_plus` is for a **query string** value, where a space is `+` by the form-encoding convention. Mix the pairs and you get the result above: a value that is not what was sent, and that still looks like a plausible string, so nothing downstream complains.
+
+Where it reaches production is phone numbers (`+91 98765 43210` is the worst possible case — a plus *and* spaces), email addresses with a `+` tag, and any free-text filter passed to a reporting API.
+
+In practice you should not be calling either function by hand. Let the library build the query string:
+
+```python
+requests.get(url, params={"region": "North America +1"})
+```
+
+`params=` encodes each value correctly, and the server's framework decodes with the matching function. Hand-assembled query strings are the only place this bug lives.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a URL-encoding mismatch" |
+| Strong | + names which function belongs to the path and which to the query string, and that `+` means space only in a query |
+| Extra points | **[+Business]** phone numbers in E.164 format are a plus followed by digits, so this corrupts exactly the field you least want corrupted · **[+Edge cases]** an email with a `+` tag becomes a space, so the address silently stops matching · **[+Validate]** pass `params=` and let the client encode, rather than building the string · **[+Edge cases]** a value containing `&` or `=` splits the query into extra parameters, which is the same bug with a worse ending |
+
+**Likely follow-ups:** What happens if the value contains `&`? Which encoding does a browser form use? *(`application/x-www-form-urlencoded`, the `+` one.)* What about encoding a path segment containing a slash?
+**Learn it in:** Chapter 20, section 20.5 (calling an API); Chapter 64, section 64.2.
+
+### Q78-035 · "100 requests per minute." Can you send 100 in one second?
+
+**Level:** Brain-racking · **Roles:** DE, AE
+
+**Remember it as:** *It depends entirely on how the limit is counted, and the commonest implementation lets you send double the limit across a window boundary.*
+
+**Answer in one line:** **It depends on the algorithm, and under the most common one you can send 200 in two seconds** — a fixed window resets at the minute mark, so 100 requests at 10:00:59 and another 100 at 10:01:00 both pass while neither minute ever exceeds 100.
+
+| Algorithm | 100 in one second? | The burst it permits |
+|---|---|---|
+| **Fixed window** | Yes, if the window has room | 200 across a boundary, in as little as two seconds |
+| **Sliding window / log** | No | Exactly 100 in any 60-second span |
+| **Token bucket** | Up to the bucket size | Bucket size as a burst, then a steady 100/60 per second |
+| **Leaky bucket** | No | Strictly paced output, whatever the input |
+
+The fixed-window boundary burst is the one to be able to describe, because it is the most widely deployed limiter and the behaviour surprises both callers and implementers. Nobody exceeded the stated limit; the server still received twice the rate it was sized for.
+
+What it means on each side of the integration:
+
+**As the caller**, you cannot infer your safe rate from the stated limit. 100 per minute does not license 1.67 per second, and it does not license 100 at once. Pace yourself below the limit, read the `X-RateLimit-Remaining` and `Retry-After` headers when the API sends them, and treat 429 as routine rather than exceptional.
+
+**As the implementer**, a fixed window is simple and cheap and leaves you exposed to twice your intended peak. A token bucket costs one counter and a timestamp per client and gives a defined burst with a defined steady rate, which is usually what you actually meant.
+
+And note how this compounds with Q78-031: a 429 that triggers an un-jittered retry sends the same synchronised crowd back at the same moment.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It depends on how the rate limit works" |
+| Strong | + names fixed window against token bucket, and the boundary burst of 200 in two seconds |
+| Extra points | **[+Business]** the caller cannot derive a safe rate from the headline number; read the headers · **[+Scale]** a fixed window means capacity planning must assume twice the stated limit · **[+Edge cases]** 429 plus un-jittered retry is a thundering herd generator (Q78-031) · **[+Trade-offs]** a token bucket gives an explicit burst allowance, which is usually the intended behaviour |
+
+**Likely follow-ups:** What do `X-RateLimit-*` headers tell you? How would you implement a shared limit across several workers? *(A central counter — Redis, typically — because per-process limits do not compose.)* What is the difference between throttling and backpressure? *(Q77-022.)*
+**Learn it in:** Chapter 78, Q78-015 (rate limits); Chapter 61, section 61.5.
+
+### Rapid-fire, 78.7: automation arithmetic and defaults
+
+Roles: DE, AE and DA for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q78-036 | A job runs at 00:05 for "yesterday", computed from `date.today()`. It runs late at 00:02 the next day. | It asks for the wrong day and skips one entirely. Take the logical date from the orchestrator, never from the clock | **[+Business]** this is why every orchestrator supplies an execution date → Ch 77 Q77-051 |
+| Q78-037 | An HTTP 200 response with `{"status": "error"}` in the body | `raise_for_status()` passes, because the transport succeeded. Check the body as well as the code | **[+Validate]** many older APIs return 200 for everything → Ch 20 §20.5 |
+| Q78-038 | Retrying a POST that creates a record, after a timeout | May create a second record: you do not know whether the first one succeeded. Use an idempotency key | **[+Edge cases]** a timeout is the one failure where you cannot tell what happened → Q78-012 |
+| Q78-039 | An automated email to 200 managers, each with their own 2 MB attachment | 400 MB of attachments in one run, and most mail servers cap a single message at 10–25 MB. Link to a report instead of attaching it | **[+Business]** attachments also leak data when forwarded → Q78-006 |
+| Q78-040 | A CSV attachment opened in Excel before anyone looks at it | Leading zeros gone, long ids in scientific notation, dates re-interpreted by locale. The file was fine; Excel changed it | **[+Edge cases]** `dd/mm` against `mm/dd` silently swaps the first twelve days of a month → Ch 77 Q77-036 |
+| Q78-041 | An API key in the script, committed to a private repository | Still a leak: every clone, every CI log, every future contributor. Rotate it; private is not secret | **[+Business]** git history keeps it even after you delete the line → Ch 26 §26.5 |
+| Q78-042 | A sync that runs every 5 minutes and takes 7 minutes | Overlapping runs competing for the same rows, duplicating work or deadlocking. Take a lock, or cap concurrent runs at one | **[+Validate]** a run duration alert catches this before the data does → Q78-018 |
+| Q78-043 | Does a webhook that returns 500 get redelivered? | Usually yes, with backoff — so your handler must be idempotent, and must return 2xx *after* the work is durable, not before | **[+Edge cases]** returning 200 then crashing loses the event with no retry → Q78-012 |
+| Q78-044 | A daily sync comparing "rows changed since yesterday" using local timestamps across two systems | Clock skew and timezone differences give gaps or overlaps. Normalise to UTC and allow an overlap window | **[+Edge cases]** NTP drift of a few seconds is enough on a per-second watermark → Ch 77 Q77-040 |
+| Q78-045 | An alert that fires on every failed run of a job that retries | Three alerts for one incident, and alert fatigue. Alert on the final failure, or on a duration or freshness breach | **[+Business]** the cost of noise is a real alert ignored → Q78-032 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -456,7 +783,11 @@ The second run changes nothing and adds nothing: the sync is safe to repeat.
 | No monitoring for an automation's own silent failure | A break goes unnoticed for days or weeks | Alert on absence of a successful run, not just on explicit errors |
 | Automating a broken process as-is | The flaw executes faster and more consistently, harder to notice | Fix the process first, then automate the corrected version |
 | One person quietly owning an undocumented "quick win" automation | A single point of failure when that person is unavailable | Document ownership and logic; don't let critical automation live in one person's head |
-
+| Reading `*/n` in cron as 'every n' | One short gap per cycle, so a long job overlaps itself once an hour | Enumerate the values, or use a scheduler with interval semantics (Q78-029) |
+| An uncapped exponential backoff | Eight retries is four minutes of a worker doing nothing, and may outlast the task timeout | Cap the individual wait and set a total deadline (Q78-030) |
+| Retrying on a fixed delay | Every client returns at the same instant and re-breaks the recovering service | Full jitter: `uniform(0, backoff)` (Q78-031) |
+| Calling an HTTP API with no timeout | The default is no limit; a stalled server hangs the job for days while it still looks 'running' | `timeout=(connect, read)` on every call, plus a duration alert (Q78-032) |
+| Sending ids over 2⁵³ as JSON numbers | The id changes value in any JavaScript consumer, linking to the wrong record | Send large ids as strings (Q78-033) |
 ---
 
 ## In the real world: the automation that broke because of a renamed column
@@ -486,13 +817,15 @@ The interviewer's follow-up: what did she change? Her answer: two things, not on
 
 ## Key terms
 
-macro vs. script vs. low-code vs. RPA · report automation · alert fatigue · polling vs. webhook · webhook idempotency · reverse ETL · API rate limit · API key vs. OAuth · exponential backoff · jitter · circuit breaker · silent failure · monitoring (absence of success) · upsert (in an integration context) · single point of failure (undocumented automation)
+macro vs. script vs. low-code vs. RPA · report automation · alert fatigue · polling vs. webhook · webhook idempotency · reverse ETL · API rate limit · API key vs. OAuth · exponential backoff · jitter · circuit breaker · silent failure · monitoring (absence of success) · upsert (in an integration context) · single point of failure (undocumented automation) · cron step syntax (`*/n`) · wrap-around gap · exponential backoff · backoff cap · total deadline · jitter (full, decorrelated) · thundering herd · connect timeout against read timeout · idempotency key · fixed window against token bucket · boundary burst · `429 Too Many Requests` · `Retry-After` · 2⁵³ in JSON · `id_str` · percent-encoding against form-encoding (`quote` / `quote_plus`) · logical (execution) date · overlapping runs
 
 ---
 
 ## Final-week revision list
 
-Q78-001, Q78-006, Q78-011, Q78-012, Q78-013, Q78-017, Q78-018, Q78-023, Q78-028.
+Q78-001, Q78-006, Q78-011, Q78-012, Q78-013, Q78-017, Q78-018, Q78-023, Q78-028, Q78-030, Q78-031, Q78-032.
+
+The last three are the ones that turn a small fault into a long outage: what a retry policy actually costs in wall-clock time (Q78-030), why un-jittered retries re-break a server that had recovered (Q78-031), and the missing timeout that leaves a job hanging for days (Q78-032).
 
 ---
 

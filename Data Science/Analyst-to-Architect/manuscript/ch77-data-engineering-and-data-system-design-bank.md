@@ -1,6 +1,6 @@
 # Chapter 77. Data Engineering & Data System Design Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Part 5 (Chapters 45–52: ingestion, pipelines, data quality, distributed compute, storage, streaming, activation and deployment) and Chapter 28 (query plans, grain, the star schema, slowly changing dimensions). They also link to Chapter 12, section 12.13 (the upsert), Chapter 33 (queues and graphs), Chapter 61 (partitioning and sharding), and the two banks this one leans on, Chapter 71 (SQL) and Chapter 72A (complexity). This chapter tests those skills; it doesn't teach them again, with one exception: Q77-018 builds topological sort step by step, because no earlier chapter does.
 >
-> **Time needed:** 3–4 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list.
+> **Time needed:** 5–6 hours for a first pass (about 10 minutes per core question, including running its code, and 1–2 minutes per rapid-fire row), plus 1 hour for the final-week list. Section 77.8 adds about 1½ hours and is best done with a notebook open.
 >
 > **How this chapter is built.** Same format as the other question banks in Part 8 (Chapters 70 onward): every core question leads with a **"Remember it as…"** hook, then a one-line answer, then a compact tier table (what **passes**, what's **strong**, and the **extra points**, tagged with Chapter 69's moves: **[+Trade-offs]**, **[+Edge cases]**, **[+Validate]** and so on). Rapid-fire sections are scan tables: question, one-line answer, one extra point, level, and where to learn it. **Every SQL result shown was run on PostgreSQL 16** in `riverstone_lab`, the practice database you created in Chapter 12, section 12.13; each demo drops its tables at the end. **Every Python output is real**, from Python 3.11.15 with the standard library only (the book recommends Python 3.14, Chapter 17, section 17.0; nothing here depends on the version). The sections run from pipeline fundamentals to modeling, reliability, orchestration, scale and quality, and end with full system-design walk-throughs.
 >
@@ -701,6 +701,512 @@ Roles: DE and AE for every row.
 
 ---
 
+## 77.8 Predict the output: what happens to rows on the way in
+
+The rest of this chapter is about pipeline design: idempotency, delivery guarantees, modelling, orchestration, scale. This section is about the smaller, meaner thing that breaks pipelines that are designed perfectly well — what the file reader, the type system and the clock do to rows while nobody is looking.
+
+Every question below is a load that completes successfully. No exception, no alert, no failed task. The rows are simply not the rows that were in the source, and the first person to notice is usually a finance analyst three weeks later asking why a total moved.
+
+Read the setup, say what comes out, then read on.
+
+**How these were run.** pandas 3.0.2, numpy 2.4.3, pyarrow for Parquet, on Python 3.12. The setup cell:
+
+```python
+import io, os, time, csv
+import numpy as np
+import pandas as pd
+```
+
+### Q77-036 · A CSV of customer codes with leading zeros, read with `pd.read_csv`
+
+**Level:** Fresher · **Roles:** DE, AE, DA
+
+**Remember it as:** *A reader that guesses types will guess "number" for anything that looks like one, and a number has no leading zeros to keep.*
+
+**Answer in one line:** The codes come back as **123, 456 and 1000** as `int64` — the leading zeros are gone, and any join against the source system's `'00123'` now matches nothing at all.
+
+```python
+csv_text = "customer_code,name\n00123,Sharma\n00456,Patel\n01000,Metro\n"
+
+df = pd.read_csv(io.StringIO(csv_text))
+print(f"default     : {df.customer_code.tolist()}   dtype {df.customer_code.dtype}")
+
+df2 = pd.read_csv(io.StringIO(csv_text), dtype={'customer_code': str})
+print(f"dtype=str   : {df2.customer_code.tolist()}   dtype {df2.customer_code.dtype}")
+
+print(f"overlap     : {set(df.customer_code.astype(str)) & set(df2.customer_code)}")
+```
+
+```
+default     : [123, 456, 1000]   dtype int64
+dtype=str   : ['00123', '00456', '01000']   dtype str
+overlap     : set()
+```
+
+That last line is the one to remember. Convert the inferred integers back to strings and **not a single value matches** the original codes. An inner join drops every row; a left join fills every column with nulls. Nothing errors.
+
+The columns this happens to are exactly the ones you join on: customer codes, product SKUs, postcodes, phone numbers, bank account numbers, GST numbers. They are identifiers that happen to be made of digits, and an identifier is a string even when it looks like a number — you never add two of them together.
+
+The fix is to say so at the boundary, and to say it for the whole file rather than per column once the file is wide:
+
+```python
+pd.read_csv(path, dtype=str)                      # everything as text, cast deliberately after
+pd.read_csv(path, dtype={'customer_code': str})   # or name the identifier columns
+```
+
+| Tier | What to say |
+|---|---|
+| Passes | "The leading zeros get dropped" |
+| Strong | + that the join then silently matches nothing, and names `dtype=` at read time as the fix rather than a repair afterwards |
+| Extra points | **[+Business]** an inner join that returns zero rows is noticed; a left join that returns nulls is often not, and gets reported as missing data · **[+Edge cases]** you cannot repair it afterwards without knowing the original width — `zfill(5)` is a guess · **[+Validate]** compare the distinct-count of a key before and after load; it should not change · **[+Scale]** Parquet carries the type with it, so a Parquet source never has this problem (Q77-041) |
+
+**Likely follow-ups:** How would you detect this in an automated pipeline? What does a schema or data contract do about it? *(Q77-004 — it declares the type so the reader does not have to guess.)* What happens in Spark? *(The same inference, with the same result.)*
+**Red flag:** repairing with `zfill` without knowing the source width.
+**Learn it in:** Chapter 14, section 14.2 (profiling); Chapter 47, section 47.3 (ingestion).
+
+### Q77-037 · An order id of 9,007,199,254,740,993 arrives in a float column
+
+**Level:** Brain-racking · **Roles:** DE, AE, MLE
+
+**Remember it as:** *A float64 has 53 bits for the digits. Above 2⁵³ it cannot count by ones any more, so consecutive ids start sharing a value.*
+
+**Answer in one line:** Two of the three ids become **the same number** — 9007199254740993 is stored as 9007199254740992, so three distinct orders become two, and a `COUNT(DISTINCT)` quietly drops one.
+
+```python
+ids = [9007199254740992, 9007199254740993, 9007199254740994]
+as_float = np.array(ids, dtype='float64')
+
+print(f"originals     : {ids}")
+print(f"as float64    : {[int(x) for x in as_float]}")
+print(f"still distinct: {len(set(int(x) for x in as_float))} of {len(ids)}")
+print(f"2**53         = {2**53:,}")
+```
+
+```
+originals     : [9007199254740992, 9007199254740993, 9007199254740994]
+as float64    : [9007199254740992, 9007199254740992, 9007199254740994]
+still distinct: 2 of 3
+2**53         = 9,007,199,254,740,992
+```
+
+Above 2⁵³ a float64 can represent only every second integer, then every fourth, and so on. The middle id has nowhere to land and is rounded to its neighbour.
+
+The question that matters is **how an integer id ends up in a float column at all**, because nobody writes `float` on purpose for an id. The answer is that one missing value does it:
+
+```python
+csv_text = "order_id,qty\n9007199254740993,5\n9007199254740994,\n"
+d = pd.read_csv(io.StringIO(csv_text))
+print(d.dtypes.to_dict())
+```
+
+```
+{'order_id': dtype('int64'), 'qty': dtype('float64')}
+```
+
+`qty` had one blank, so it is `float64`. `order_id` was complete, so it stayed `int64` and is safe. Blank out one id and it becomes `float64` too — and from that moment the ids are approximate.
+
+This is a very modern problem. Snowflake ids, Twitter-style ids, and anything derived from a nanosecond timestamp are all 18 to 19 digits, comfortably past 2⁵³. Order 9007199254740993 is not a contrived example; it is a plausible id from any system minted after about 2010.
+
+The fix is the nullable integer type, which holds missing values without leaving the integers:
+
+```python
+d2 = pd.read_csv(io.StringIO(csv_text), dtype={'order_id': 'Int64', 'qty': 'Int64'})
+print(d2.order_id.tolist(), d2.qty.tolist())
+```
+
+```
+[9007199254740993, 9007199254740994] [5, <NA>]
+```
+
+Capital-I `Int64` is pandas' nullable integer; lower-case `int64` is NumPy's and cannot hold a null. One letter.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Floats lose precision on big numbers" |
+| Strong | + names 2⁵³ as the boundary, shows two ids collapsing into one, and explains that a single missing value is what turns an integer column into a float one |
+| Extra points | **[+Edge cases]** `Int64` (nullable) against `int64` (NumPy) is one capital letter and is the whole fix · **[+Business]** `COUNT(DISTINCT order_id)` silently falls, so a reconciliation against the source is off by a few rows with no error anywhere · **[+Scale]** ids minted from nanosecond timestamps or Snowflake schemes are routinely past 2⁵³ · **[+Validate]** read ids as strings if you never do arithmetic on them, which is almost always |
+
+**Likely follow-ups:** What is the largest exactly representable integer in a float64? Why does JSON have this problem too? *(JavaScript numbers are float64, so ids past 2⁵³ corrupt in any JS client.)* How would you store these in Postgres? *(`BIGINT`, which is exact to 2⁶³.)*
+**Red flag:** not connecting the float column to the single missing value that caused it.
+**Learn it in:** Chapter 33, section 33.3 (how numbers are stored); Chapter 72, Q72-010.
+
+### Q77-038 · A region column where `NA` means North America
+
+**Level:** Mid · **Roles:** DE, AE, DA
+
+**Remember it as:** *The reader has a list of 19 strings it treats as missing, and `NA` and `NULL` are both on it. A real value that matches the list is destroyed on the way in.*
+
+**Answer in one line:** The `NA` and `NULL` rows become **missing** — pandas recognises 19 strings as null markers by default, so two legitimate region codes vanish and only EMEA and APAC survive as values.
+
+```python
+csv_text = "region,sales\nNA,100\nEMEA,200\nAPAC,300\nNULL,400\n"
+d = pd.read_csv(io.StringIO(csv_text))
+print(d.to_string(index=False))
+print(f"nulls in region: {d.region.isna().sum()} of {len(d)}")
+print(f"regions pandas sees: {d.region.dropna().unique().tolist()}")
+```
+
+```
+region  sales
+   NaN    100
+  EMEA    200
+  APAC    300
+   NaN    400
+nulls in region: 2 of 4
+regions pandas sees: ['EMEA', 'APAC']
+```
+
+The sales figures are intact. The labels are gone. A `groupby('region')` now drops 500 of the 1,000 in revenue into a group that does not exist, and the regional report is missing North America entirely — while still balancing, because the rows are there.
+
+The default marker list is longer than people expect:
+
+```python
+print(len(pd._libs.parsers.STR_NA_VALUES))
+print(sorted(pd._libs.parsers.STR_NA_VALUES)[:12])
+```
+
+```
+19
+['', '#N/A', '#N/A N/A', '#NA', '-1.#IND', '-1.#QNAN', '-NaN', '-nan', '1.#IND', '1.#QNAN', '<NA>', 'N/A']
+```
+
+`NA`, `NULL`, `None`, `NaN`, `nan`, `null` and the Excel error strings are all on it. Any of them can be a real value: `NA` for North America, `NULL` as a product code, `None` as a free-text answer.
+
+Two fixes, and they differ:
+
+```python
+pd.read_csv(path, keep_default_na=False)                 # nothing is missing unless you say so
+pd.read_csv(path, na_values=[''], keep_default_na=False) # only a blank is missing
+```
+
+`keep_default_na=False` is the blunt one and is usually right for a categorical column. Note that it makes *blanks* into empty strings too, so if you want blanks to be null you must say so, which is the second line.
+
+| Tier | What to say |
+|---|---|
+| Passes | "`NA` is being read as null" |
+| Strong | + that there are 19 default markers including `NULL` and `None`, that the numbers survive while the labels do not, and names `keep_default_na=False` |
+| Extra points | **[+Business]** the report still balances, because only the labels were lost, which is why nobody catches it · **[+Validate]** compare the distinct count of a categorical column against the source system's list · **[+Edge cases]** the same list applies to Excel reads; and a two-letter country code column has `NA` for Namibia as well as North America |
+
+**Likely follow-ups:** How would a data contract prevent this? What does `keep_default_na=False` do to genuine blanks? *(They become empty strings.)* Does Spark have the same list? *(A shorter one, and configurable — so a file can read differently in two engines.)*
+**Red flag:** trusting that a successful load means the values are the source's values.
+**Learn it in:** Chapter 14, section 14.3 (missing values); Chapter 77, Q77-004 (data contracts).
+
+### Q77-039 · Splitting a CSV line on commas
+
+**Level:** Fresher · **Roles:** DE, AE
+
+**Remember it as:** *A CSV is not "text with commas". It is a format with quoting and escaping rules, and `split(',')` knows none of them.*
+
+**Answer in one line:** `split(',')` gives **5 fields** where there are really **4**, because it breaks the quoted address in half and leaves stray quote characters on both pieces.
+
+```python
+line = 'ORD-1,"Sharma Hardware, Mumbai",1500,"He said ""ok"""'
+
+print(f"split(',')  -> {len(line.split(','))} fields: {line.split(',')}")
+print(f"csv.reader  -> ", end='')
+parsed = next(csv.reader([line]))
+print(f"{len(parsed)} fields: {parsed}")
+```
+
+```
+split(',')  -> 5 fields: ['ORD-1', '"Sharma Hardware', ' Mumbai"', '1500', '"He said ""ok"""']
+csv.reader  -> 4 fields: ['ORD-1', 'Sharma Hardware, Mumbai', '1500', 'He said "ok"']
+```
+
+The parser does three things the split does not: it keeps the quoted comma inside its field, it removes the surrounding quotes, and it turns the doubled `""` into a single literal quote.
+
+The reason this is worth a question in a data engineering interview is the failure mode. A file of a million rows where **nine** addresses contain a comma does not fail; it produces nine rows with one extra field. Depending on how the loader handles that, those rows are skipped, or truncated, or — worst — shifted, so the value in `amount` is really part of an address and the whole row is silently wrong from that column onward.
+
+The same applies to embedded newlines, which are legal inside a quoted CSV field and which break any pipeline that assumes one line is one record — including `wc -l`, `split`, and most shell-based row counts.
+
+The rule: never hand-parse a CSV. Use `csv.reader`, `pandas.read_csv`, or the engine's own reader, and if you control the format, prefer one that does not need quoting at all (Q77-041).
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should use a proper CSV parser" |
+| Strong | + names the three rules a parser applies — quoted separators, quote stripping, doubled-quote escaping — and describes field-shift as the dangerous failure |
+| Extra points | **[+Edge cases]** a quoted field may contain a newline, so one line is not one record and `wc -l` is not a row count · **[+Business]** a shifted row puts text in a numeric column and is usually caught by a type error several steps downstream, far from the cause · **[+Scale]** Parquet or Avro have no quoting problem at all, because they are not text |
+
+**Likely follow-ups:** What happens with an embedded newline? How would you count rows in a CSV safely? What is the advantage of a tab or pipe delimiter? *(Less likely in the data — but not impossible, so it is a mitigation, not a fix.)*
+**Learn it in:** Chapter 14, section 14.8 (joining messy sources); Chapter 47, section 47.3.
+
+### Q77-040 · An incremental load using `WHERE updated_at >= last_watermark`
+
+**Level:** Brain-racking · **Roles:** DE, AE
+
+**Remember it as:** *`>=` reloads the boundary row every run. `>` skips any row that shares the boundary second. Neither is safe on a timestamp alone.*
+
+**Answer in one line:** `>=` picks up ids **1, 2 and 3** — reloading row 2, which was already loaded — and switching to `>` fixes that but **loses a row entirely** whenever two records share the watermark second.
+
+```python
+ts = pd.to_datetime(['2025-06-01 10:00:00', '2025-06-01 10:00:00', '2025-06-01 11:00:00'])
+tbl = pd.DataFrame({'id': [1, 2, 3], 'updated_at': ts})
+watermark = ts[1]
+
+print(f"with >= : {tbl[tbl.updated_at >= watermark].id.tolist()}")
+print(f"with >  : {tbl[tbl.updated_at >  watermark].id.tolist()}")
+```
+
+```
+with >= : [1, 2, 3]
+with >  : [3]
+```
+
+Now the other half, which is the part people miss. If the last run ended on a second that two rows share:
+
+```python
+ts2 = pd.to_datetime(['2025-06-01 10:00:00', '2025-06-01 10:00:00'])
+t2 = pd.DataFrame({'id': [1, 2], 'updated_at': ts2})
+print(f"'>' from that second: {t2[t2.updated_at > ts2[0]].id.tolist()}")
+```
+
+```
+'>' from that second: []
+```
+
+Row 2 is never loaded. Not reloaded — **lost**, permanently, because the next run's watermark has already moved past it.
+
+So the two options are "duplicate rows sometimes" and "lose rows sometimes", and which you get depends on whether the source writes more than one row per second, which it certainly does.
+
+That is why the real answer is not a choice of operator. It is one of:
+
+| Approach | Why it works |
+|---|---|
+| **`>=` plus an idempotent merge** | Reload the boundary, and let a `MERGE`/upsert on the primary key make the duplicate harmless. This is the usual answer and ties to Q77-007 |
+| **A strictly increasing sequence**, not a timestamp | A monotonic id or a change-log sequence number has no ties, so `>` is exact |
+| **A watermark plus a tiebreaker** | `WHERE (updated_at, id) > (last_ts, last_id)`, which orders the ties |
+| **CDC** (Q77-006) | The source tells you what changed, so no watermark is needed |
+
+Note what all four have in common: none of them makes the extraction exact on its own. Three of them make the *load* tolerant of imprecision instead, which is the data engineering lesson generally — at-least-once delivery plus idempotent writes beats trying to achieve exactly-once in the extract (Q77-008).
+
+| Tier | What to say |
+|---|---|
+| Passes | "`>=` will duplicate the boundary row" |
+| Strong | + that `>` loses rows when timestamps tie, so the operator alone cannot fix it, and names idempotent merge as the real answer |
+| Extra points | **[+Edge cases]** clock skew between source and loader can move the watermark backwards, making it worse than either · **[+Edge cases]** a source `updated_at` that the application forgets to set on some paths is Q77-011's problem, underneath this one · **[+Business]** a lost row is far worse than a duplicated one, because the duplicate is detectable and the loss is not · **[+Scale]** `(updated_at, id)` as a composite watermark is cheap and removes the tie entirely |
+
+**Likely follow-ups:** How does a merge make the duplicate harmless? What if the source's clock is behind yours? How would you detect a lost row after the fact? *(Row counts against the source, per window.)*
+**Learn it in:** Chapter 77, Q77-007 (idempotency); Chapter 47, section 47.5 (incremental loads).
+
+### Q77-041 · The same 300,000-row table as CSV and as Parquet
+
+**Level:** Mid · **Roles:** DE, AE
+
+**Remember it as:** *Parquet is smaller, keeps its types, and reads one column almost free. It is not automatically faster at reading everything.*
+
+**Answer in one line:** Parquet is **3.3× smaller** and reading a single column takes **5 ms against 325 ms** for all four — but reading the whole table was actually *slower* than the CSV here, and the real win is that the CSV loses the date type entirely.
+
+```python
+csv_path, pq_path = 'orders.csv', 'orders.parquet'
+big.to_csv(csv_path, index=False)
+big.to_parquet(pq_path, index=False)
+
+print(f"CSV     {os.path.getsize(csv_path)/1024/1024:6.1f} MB")
+print(f"Parquet {os.path.getsize(pq_path)/1024/1024:6.1f} MB")
+print(f"read all columns  -> csv {rc*1000:.0f} ms, parquet {rp*1000:.0f} ms")
+print(f"read one column   -> parquet {rp1*1000:.0f} ms")
+print(f"dtypes from parquet: {pd.read_parquet(pq_path).order_date.dtype}")
+print(f"dtypes from csv    : {pd.read_csv(csv_path).order_date.dtype}")
+```
+
+```
+CSV       10.1 MB
+Parquet    3.0 MB
+read all columns  -> csv 159 ms, parquet 325 ms
+read one column   -> parquet 5 ms
+dtypes from parquet: datetime64[us]
+dtypes from csv    : str
+```
+
+Three findings, and the honest one is the middle.
+
+**Size: 3.3× smaller.** Parquet stores a column together and compresses it, and a column of four repeated status strings compresses to almost nothing where a CSV repeats the word on every row.
+
+**Reading everything: not faster.** 325 ms against 159 ms on this file. Parquet has to decompress, and at 300,000 rows the CSV parser is quick. The "Parquet is faster" claim comes from queries that read a few columns from a large file, not from reading everything from a small one.
+
+**Reading one column: 5 ms, roughly 65× faster than reading all four.** This is the real advantage, and it is structural rather than incidental: a columnar file lets the reader skip the columns it was not asked for. A table with 80 columns where your query needs 3 is where this becomes the difference between a dashboard that loads and one that does not — and it is also why `SELECT *` costs more on columnar storage than people expect (Q77-026).
+
+**And the types survive.** The CSV round-trip returned `order_date` as a string. Every consumer now has to re-parse it, with its own idea of the date format, which is a class of bug Parquet removes by carrying the schema in the file.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Parquet is columnar, so it's smaller and faster" |
+| Strong | + that it is not faster for a full read of a small file, and that the real wins are column pruning and schema preservation |
+| Extra points | **[+Scale]** the advantage grows with the number of columns you *do not* read, so it is largest on wide tables · **[+Validate]** a CSV round-trip losing the date type is a silent correctness issue, not a performance one · **[+Trade-offs]** CSV is still right when a human must open the file, or when the consumer cannot read Parquet · **[+Edge cases]** Parquet also stores per-column statistics, so a reader can skip whole row groups that cannot match a filter — predicate pushdown |
+
+**Likely follow-ups:** What is predicate pushdown? When would you still choose CSV? How does partitioning interact with it? *(Q77-023 — partition pruning skips files, column pruning skips columns, and you want both.)*
+**Learn it in:** Chapter 48, section 48.3 (file formats); Chapter 77, Q77-027.
+
+### Q77-042 · A daily job scheduled at 01:30, in London, on 30 March
+
+**Level:** Brain-racking · **Roles:** DE, AE
+
+**Remember it as:** *Twice a year, one local hour does not exist and another happens twice. A job scheduled in local time is scheduled into a gap.*
+
+**Answer in one line:** **It never runs** — 01:30 does not exist on 30 March in London, because the clocks jump from 01:00 straight to 02:00, and asking pandas for that timestamp raises `ValueError: nonexistent time`.
+
+```python
+idx = pd.date_range('2025-03-30 00:00', periods=6, freq='h', tz='Europe/London')
+print([t.strftime('%H:%M') for t in idx])
+
+pd.Timestamp('2025-03-30 01:30', tz='Europe/London')
+```
+
+```
+['00:00', '02:00', '03:00', '04:00', '05:00', '06:00']
+
+ValueError: 2025-03-30 01:30:00 is a nonexistent time due to daylight savings time
+```
+
+Look at the hours: midnight, then **02:00**. The 01:00 hour is not there. A cron entry for `30 1 * * *` on a server in local time simply does not fire that day, and a daily pipeline silently has a one-day hole.
+
+Seven months later the opposite happens. On 26 October, 01:30 occurs **twice**, and the timestamp is ambiguous:
+
+```python
+s = pd.Series(pd.to_datetime(['2025-10-26 01:30']))
+for amb in (True, False):
+    out = s.dt.tz_localize('Europe/London', ambiguous=np.array([amb]))
+    print(f"ambiguous={amb} -> {out.iloc[0]}  (UTC {out.dt.tz_convert('UTC').iloc[0]})")
+
+s.dt.tz_localize('Europe/London')
+```
+
+```
+ambiguous=True  -> 2025-10-26 01:30:00+01:00  (UTC 2025-10-26 00:30:00+00:00)
+ambiguous=False -> 2025-10-26 01:30:00+00:00  (UTC 2025-10-26 01:30:00+00:00)
+
+ValueError: Cannot infer dst time from 2025-10-26 01:30:00, try using the 'ambiguous' argument
+```
+
+The same wall-clock time maps to two different UTC instants an hour apart. A job scheduled then runs twice, and if it is not idempotent it double-loads a day (Q77-007).
+
+India is the easy case and worth saying so: **Asia/Kolkata has no daylight saving**, so none of this happens there. That is exactly why an engineer who has only run pipelines in India can be caught by it, and why the question gets asked.
+
+The rules that follow are short:
+
+- **Schedule and store in UTC.** Convert to local only for display.
+- Where a business day genuinely must be local — a daily revenue cut-off — store the timezone with it and be explicit about the two broken days a year.
+- Never do date arithmetic on a naive timestamp that came from somewhere with DST.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Daylight saving causes problems" |
+| Strong | + both failures named — a missing hour in spring and a repeated hour in autumn — with the consequence for a scheduled job, and "run in UTC" as the rule |
+| Extra points | **[+Edge cases]** Asia/Kolkata has no DST, so the bug is invisible to an India-only team until a European source appears · **[+Business]** the autumn case double-loads a day unless the job is idempotent, which links straight to Q77-007 · **[+Edge cases]** timezone rules change by legislation, so a stale `tzdata` package produces wrong conversions for future dates · **[+Validate]** a daily row count with exactly one missing day in late March is the signature |
+
+**Likely follow-ups:** What does `ambiguous='infer'` do? How do you store a future appointment in local time? *(Store the local time and the zone, not the UTC instant — because the rules may change.)* Why does `tzdata` need updating?
+**Learn it in:** Chapter 14, section 14.7 (dates and time zones); Chapter 47, section 47.6 (scheduling).
+
+### Q77-043 · 31 January plus one month, minus one month
+
+**Level:** Mid · **Roles:** DE, AE, DA
+
+**Remember it as:** *Month arithmetic clamps to the end of the shorter month, and clamping does not undo. You cannot get back to where you started.*
+
+**Answer in one line:** **28 January**, not 31 January — adding a month clamps to 28 February, and subtracting one from there goes back to 28 January, so the operation is not reversible and a "same period last month" calculation drifts.
+
+```python
+d0 = pd.Timestamp('2025-01-31')
+print(f"+ DateOffset(months=1) = {(d0 + pd.DateOffset(months=1)).date()}")
+print(f"+ Timedelta(days=30)   = {(d0 + pd.Timedelta(days=30)).date()}")
+
+back = (d0 + pd.DateOffset(months=1)) - pd.DateOffset(months=1)
+print(f"+1 month then -1 month = {back.date()}")
+```
+
+```
++ DateOffset(months=1) = 2025-02-28
++ Timedelta(days=30)   = 2025-03-02
++1 month then -1 month = 2025-01-28
+```
+
+Three different notions of "a month" in three lines. `DateOffset(months=1)` moves the calendar month and clamps the day. `Timedelta(days=30)` adds exactly 30 days and sails past the end of February into March. And the round trip loses three days.
+
+Where it bites is month-on-month comparison. A report that computes "this period last month" by subtracting one month from each end of the window will, on the 29th, 30th and 31st, compare against a window that does not line up — and because February is the only month short enough to clamp hard, the error appears once a year and in one direction, which makes it look like a seasonal effect rather than a bug.
+
+The reliable way to express a month is the half-open range on month boundaries, which is the same discipline as Chapter 71's date filters:
+
+```python
+start = pd.Timestamp('2025-01-01')
+end   = start + pd.offsets.MonthBegin(1)
+print(f"{start.date()} <= order_date < {end.date()}")
+```
+
+```
+2025-01-01 <= order_date < 2025-02-01
+```
+
+No clamping, no ambiguity, and it works identically for every month length including February in a leap year.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Adding a month to 31 January gives 28 February" |
+| Strong | + that the operation does not round-trip, and that `Timedelta(days=30)` is a third, different answer |
+| Extra points | **[+Business]** month-on-month windows drift on the 29th to 31st, and the error looks seasonal because only February clamps hard · **[+Validate]** a half-open range on month boundaries removes the question entirely · **[+Edge cases]** `MonthEnd` against `MonthBegin` against `DateOffset(months=1)` are three different operators, and SQL engines disagree with each other too — `ADD_MONTHS` clamps, naive date addition does not |
+
+**Likely follow-ups:** What does SQL's `ADD_MONTHS` do? *(Clamps, like `DateOffset`.)* How would you define "the same day last month" for the 31st? *(You have to decide, and write it down.)* What about leap years?
+**Learn it in:** Chapter 14, section 14.7 (dates); Chapter 71, Q71-108 (half-open ranges).
+
+### Q77-044 · A column that is integer for 10,000 rows and then has one blank
+
+**Level:** Fresher · **Roles:** DE, AE, DA
+
+**Remember it as:** *NumPy's integer type has no room for a missing value, so one blank converts the whole column to float.*
+
+**Answer in one line:** The column becomes **`float64`**, with the values rendered as `5.0` instead of `5` — because `int64` cannot hold a null, so pandas promotes the entire column to float to make space for one.
+
+```python
+csv_text = "order_id,qty\n9007199254740993,5\n9007199254740994,\n"
+d = pd.read_csv(io.StringIO(csv_text))
+print(d.dtypes.to_dict())
+print(f"qty values: {d.qty.tolist()}")
+
+d2 = pd.read_csv(io.StringIO(csv_text), dtype={'order_id': 'Int64', 'qty': 'Int64'})
+print(f"with Int64: {d2.qty.tolist()}")
+```
+
+```
+{'order_id': dtype('int64'), 'qty': dtype('float64')}
+qty values: [5.0, nan]
+with Int64: [5, <NA>]
+```
+
+On a quantity column the damage is cosmetic — `5.0` in a report instead of `5`, which someone will eventually ask about. On an **id** column it is not cosmetic at all, because that is exactly how a 19-digit id ends up in a float and starts colliding (Q77-037).
+
+It is also a type the next step did not expect. A downstream `CREATE TABLE ... qty INTEGER` load rejects `5.0`, or truncates it, depending on the target; a join between an `int64` key on one side and a `float64` key on the other matches nothing in some engines and silently casts in others.
+
+The pattern is worth generalising, because it is the root of the three questions before this one: **a reader that infers types will infer them from the data it happens to see.** One blank, one `'N/A'`, one leading zero, and the column's type changes for every row. Declaring the schema at the boundary — `dtype=`, a data contract, or a self-describing format like Parquet — is the single habit that removes all of them.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It becomes a float because of the null" |
+| Strong | + that NumPy's `int64` has no null representation, with `Int64` as the nullable alternative, and connects it to the id-precision problem |
+| Extra points | **[+Edge cases]** the same promotion happens on a `groupby` that produces empty groups, and after a left join that does not match · **[+Business]** `5.0` reaching a report is the visible symptom; a corrupted id is the invisible one · **[+Scale]** declaring `dtype` at read time is also faster, because the reader stops guessing |
+
+**Likely follow-ups:** What is the difference between `np.nan` and `pd.NA`? Why does a left join turn integer columns into floats? What does Arrow do differently? *(It has nullable integers natively, which is why pandas is moving that way.)*
+**Learn it in:** Chapter 18, section 18.1 (NumPy and dtypes); Chapter 14, section 14.3.
+
+### Rapid-fire, 77.8: things that silently change your rows
+
+Roles: DE and AE for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q77-045 | `wc -l` on a CSV — is that the row count? | No. A quoted field may contain a newline, so one line is not one record. Use the parser's count | **[+Validate]** disagreeing counts between `wc -l` and the loader is the tell → Q77-039 |
+| Q77-046 | Two sources, one with naive timestamps and one with UTC offsets. Joining on time? | Anything from an exact match to a 5½-hour error for IST. Normalise to UTC at ingestion, always | **[+Edge cases]** a naive timestamp has no meaning without knowing its source zone → Q77-042 |
+| Q77-047 | `df.drop_duplicates()` on a float key | Unreliable: two values that print the same can differ in the last bit. Deduplicate on an exact type | **[+Business]** which is another reason ids should never be floats → Q77-037 |
+| Q77-048 | A left join that matches nothing — what happens to the integer columns? | They become float, filled with NaN. The dtype change is often noticed before the missing match is | **[+Validate]** check row counts and null counts after every join → Q77-044 |
+| Q77-049 | UTF-8 BOM at the start of a CSV from Excel | Depends on the reader: pandas 3.0 strips it, but `csv.DictReader` on `utf-8` makes the first field `'﻿customer_id'` so `row['customer_id']` is a `KeyError`, and `json.loads` raises `Unexpected UTF-8 BOM`. Read with `encoding='utf-8-sig'` | **[+Business]** the same file works in one tool and fails in the next, which is the worst kind of bug to triage → Ch 47 §47.3 |
+| Q77-050 | Does `ORDER BY` in a subquery or CTE survive into the outer query? | Not guaranteed. The optimiser may discard it. Sort in the outermost query only | **[+Scale]** a sort you did not need is also expensive at volume → Ch 28 §28.5 |
+| Q77-051 | A pipeline runs at 00:05 for "yesterday". What happens when it is late? | It still asks for yesterday relative to *now*, so a run at 00:02 the next day skips a whole day. Pass the logical date in, never compute it from the clock | **[+Business]** this is why orchestrators supply an execution date → Ch 47 §47.6 |
+| Q77-052 | Two ids that differ only in case, or by a trailing space | Distinct in most engines, equal in MySQL's default collation and after an Excel round trip. Normalise keys on ingestion | **[+Edge cases]** the same split as Ch 71 Q71-100 → Ch 14 §14.5 |
+| Q77-053 | `float` revenue summed per group, then summed again overall | The two totals can differ in the last decimals, so a reconciliation check with `==` fails on correct data | **[+Validate]** reconcile with a tolerance, or store money as integer paise → Ch 12 §12.8 |
+| Q77-054 | A schema change adds a column in the middle of a CSV | Positional readers shift every column after it; named readers are fine. This is schema drift with no error | **[+Business]** read by name, never by position, and validate the header → Q77-009 |
+| Q77-055 | Compression: does gzip let you read part of a file? | Not usefully — gzip is not splittable, so a big gzipped CSV cannot be read in parallel. Snappy Parquet can | **[+Scale]** one 10 GB gzip file is a single-threaded job whatever the cluster size → Ch 48 §48.3 |
+| Q77-056 | A `MERGE` keyed on a column that has duplicates in the source | Engines differ: some raise, some pick arbitrarily. Deduplicate the source before merging, deliberately | **[+Validate]** assert the key is unique before the merge, as a pipeline test → Q77-007 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -712,7 +1218,11 @@ Roles: DE and AE for every row.
 | Partitioning on a column queries don't actually filter on | No pruning benefit at all, despite the added complexity | Partition on the column your queries actually filter by |
 | Manual, occasional data quality spot-checks | A bad number reaches a dashboard before anyone notices | Automated, scheduled checks that fail the pipeline loudly |
 | A dedup design comparing every record pair with no blocking | Doesn't scale past a small dataset | Block first, compare only within blocks |
-
+| Reading identifier columns without `dtype=str` | Leading zeros vanish and the join silently matches nothing | Declare the type at read time, or use a self-describing format (Q77-036) |
+| Letting one blank turn an id column into a float | Ids past 2⁵³ collide, so `COUNT(DISTINCT)` quietly falls | pandas `Int64`, or read ids as text (Q77-037, Q77-044) |
+| Trusting a reader's default missing-value list | A real `NA` or `NULL` value is destroyed on the way in | `keep_default_na=False`, and validate the distinct set against the source (Q77-038) |
+| An incremental watermark with `>=` or `>` alone | Duplicates the boundary row, or loses a row that ties on the second | `>=` plus an idempotent merge, or a composite `(updated_at, id)` watermark (Q77-040) |
+| Scheduling a job in local time | It never runs on the spring-forward day and runs twice in autumn | Schedule and store in UTC; take the logical date from the orchestrator (Q77-042) |
 ---
 
 ## In the real world: the pipeline that failed silently for three weeks
@@ -742,13 +1252,15 @@ The interviewer's note: *"Didn't just describe the fix, explained the actual bli
 
 ## Key terms
 
-ETL vs. ELT · batch vs. streaming · data warehouse vs. data lake vs. lakehouse · data contract · CDC (Change Data Capture) · idempotency · upsert (`ON CONFLICT`, `EXCLUDED`) · at-least-once / at-most-once / exactly-once delivery · schema drift · backfilling · dead-letter queue · SCD Type 1/2/3 · surrogate key · half-open validity period · fact table grain · junk dimension · DAG (Directed Acyclic Graph) · topological sort · Kahn's algorithm · in-degree · sensor (orchestration) · backpressure · consumer lag · partitioning · partition pruning · sharding · materialized view · columnar storage · data observability · data lineage · heartbeat (dead-man's switch) · alert fatigue · write–audit–publish · watermark · blocking (deduplication)
+ETL vs. ELT · batch vs. streaming · data warehouse vs. data lake vs. lakehouse · data contract · CDC (Change Data Capture) · idempotency · upsert (`ON CONFLICT`, `EXCLUDED`) · at-least-once / at-most-once / exactly-once delivery · schema drift · backfilling · dead-letter queue · SCD Type 1/2/3 · surrogate key · half-open validity period · fact table grain · junk dimension · DAG (Directed Acyclic Graph) · topological sort · Kahn's algorithm · in-degree · sensor (orchestration) · backpressure · consumer lag · partitioning · partition pruning · sharding · materialized view · columnar storage · data observability · data lineage · heartbeat (dead-man's switch) · alert fatigue · write–audit–publish · watermark · blocking (deduplication) · type inference · `dtype=` at read time · nullable integer (`Int64`) · 2⁵³ precision limit · default NA markers · `keep_default_na` · CSV quoting and escaping · field shift · columnar format · column pruning · predicate pushdown · splittable compression · nonexistent and ambiguous local times · UTC-first scheduling · logical (execution) date · month-end clamping · half-open date range · byte-order mark (BOM)
 
 ---
 
 ## Final-week revision list
 
-Q77-001, Q77-002, Q77-007, Q77-008, Q77-013, Q77-018, Q77-023, Q77-028, Q77-033, Q77-034, Q77-035.
+Q77-001, Q77-002, Q77-007, Q77-008, Q77-013, Q77-018, Q77-023, Q77-028, Q77-033, Q77-034, Q77-035, Q77-037, Q77-040, Q77-042.
+
+The last three are the loads that complete successfully and are still wrong: a 19-digit id losing precision in a float column (Q77-037), a watermark that either duplicates or loses the boundary row (Q77-040), and a job scheduled into an hour that does not exist (Q77-042).
 
 ---
 

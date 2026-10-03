@@ -1,16 +1,16 @@
 # Chapter 72A. Data Structures & Algorithms Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
-> **You will practise:** answering the core data structures and algorithms (DSA) questions that come up in data-role interviews, sized for those roles rather than a full software-engineering gauntlet · reasoning about time and space (Big-O) out loud, and backing the claim with a measurement · implementing and explaining the handful of structures and patterns that actually recur: hash maps and sets, two pointers and sliding windows, recursion and memoization, sorting and searching, linked lists, trees, and graphs.
+> **You will practise:** answering the core data structures and algorithms (DSA) questions that come up in data-role interviews, sized for those roles rather than a full software-engineering gauntlet · reasoning about time and space (Big-O) out loud, and backing the claim with a measurement · implementing and explaining the handful of structures and patterns that actually recur: hash maps and sets, two pointers and sliding windows, recursion and memoization, sorting and searching, linked lists, trees, and graphs · predict the output of a short snippet cold, which is how this round usually opens, from the warm-up cases to the brain-racking ones.
 >
 > **Before you start:** **do Chapter 33 first** (The Computer Science You Actually Need): it teaches almost every idea in this bank. You also need Chapter 17 (Python from zero), Chapter 29, section 29.5 (writing a class with `__init__` and `self`), and Chapter 69 (the three answer tiers and the twelve extra-point tags). Chapter 72's Python gotchas (mutable defaults, `is` versus `==`) come back here twice.
 >
-> **Time needed:** 6–8 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.
+> **Time needed:** 8–10 hours to run every snippet and answer each question aloud; 1 hour for a revision pass. Section 72A.10, the predict-the-output round, is worth its own sitting of about 2 hours, answering each snippet out loud before reading on. Add 3–4 hours if the Chapter 33 sections named in the Learn-it-in lines are new to you.
 >
-> **How this chapter is built.** Same format as the other question banks in Part 8: every core question leads with a **"Remember it as…"** hook, then a one-line answer, then a compact tier table (what **passes**, what's **strong**, and the **extra points**, tagged with Chapter 69's moves: **[+Clarify]**, **[+Edge cases]**, **[+Validate]** and so on). Rapid-fire sections are scan tables. **Every snippet was run, and every output shown is real**, on Python 3.11.15 with the standard library only; the book recommends Python 3.14 (Chapter 17, section 17.0), and none of these outputs depend on the version. Timings change on every run and every machine, so the cells that print them say so; run them yourself in a notebook (Chapter 17 set one up) and expect your numbers to differ, not the pattern.
+> **How this chapter is built.** Same format as the other question banks in Part 8: every core question leads with a **"Remember it as…"** hook, then a one-line answer, then a compact tier table (what **passes**, what's **strong**, and the **extra points**, tagged with Chapter 69's moves: **[+Clarify]**, **[+Edge cases]**, **[+Validate]** and so on). Rapid-fire sections are scan tables. **Every snippet was run, and every output shown is real**, on Python 3.11.15 with the standard library only — except section 72A.10, which was added later and run on Python 3.12.0, also standard library only, and which says so again where it matters; the book recommends Python 3.14 (Chapter 17, section 17.0), and none of these outputs depend on the version. Timings change on every run and every machine, so the cells that print them say so; run them yourself in a notebook (Chapter 17 set one up) and expect your numbers to differ, not the pattern.
 >
 > **Learn it in** pointers name the chapter and section that teach each idea. Four topics go beyond Chapter 33: the two-pointer and sliding-window patterns, merge sort, linked lists, and binary search trees. Those questions are marked **Beyond the book** and carry a short primer you can learn from before the question itself.
 
@@ -1157,6 +1157,853 @@ for test in ["({[]})", "({[)]}", "", ")))", ")(", "(("]:
 
 ---
 
+## 72A.10 Predict the output: from basic to brain-racking
+
+A DSA round often opens with a short snippet and one question: **what does this print?** It is a cheap question to ask and an expensive one to get wrong, because the answer is either right or it is not, and the interviewer learns in ten seconds whether you know how Python's containers actually behave or have been getting away with the parts that usually work.
+
+Everything below turns on one of three things, and they are the three things that break real data code:
+
+1. **Equality and hashing are not what you assume.** `True` is `1`. A NaN is not equal to itself. Those two facts eat dictionary keys and corrupt lookups.
+2. **A container you are iterating is not safe to change**, and Python will sometimes tell you and sometimes quietly give you the wrong answer.
+3. **An operation that looks cheap can be O(n)**, and the cost only shows up at production volume.
+
+Read the snippet, say the answer out loud, then read on. The last five are hard on purpose.
+
+**How these were run.** Every snippet below was executed and every output is that run's own, on **Python 3.12.0**, standard library only. The rest of this chapter was run on Python 3.11.15; nothing in this section behaves differently between the two, with one exception that is itself a question — Q72A-042 depends on how the compiler folds constants, and it says so. The four questions that print timings print different numbers on every machine and every run; what does not change is the ratio, and the ratio is the point.
+
+### Q72A-031 · `counts[1]`, `counts[True]` and `counts[1.0]`: how many keys?
+
+**Level:** Fresher · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *A dictionary key is found by hash and equality, not by type. `True == 1 == 1.0`, and all three hash the same, so they are one key wearing three costumes.*
+
+**Answer in one line:** One key, holding the last value written: `True` and `1.0` are equal to `1` and hash to the same number, so each assignment overwrites the previous one rather than adding a new entry.
+
+```python
+counts = {}
+counts[1] = 'one'
+counts[True] = 'true'
+counts[1.0] = 'float one'
+print(counts)
+print(len(counts))
+print(hash(1), hash(True), hash(1.0))
+```
+
+```
+{1: 'float one'}
+1
+1 1 1
+```
+
+Look at what survived: the key printed is `1`, because the first write created it and later writes only replaced its value. The key keeps the *original* object; the value is the last one in.
+
+This is not a curiosity. Counting things is most of what data code does, and a counter keyed on a column that mixes booleans with numbers silently merges the two. A `0`/`1` flag column that pandas or a CSV reader turned into `True`/`False` in one file and `1`/`0` in another will count into the same bucket, and the total will look perfectly reasonable.
+
+| Tier | What to say |
+|---|---|
+| Passes | "They overwrite each other" |
+| Strong | + the mechanism: dictionary keys are matched by hash then equality, `True == 1` is true and `hash(True) == hash(1)`, so all three are the same key. Notes that the surviving key is the first object and the surviving value is the last |
+| Extra points | **[+Edge cases]** `0`, `False` and `0.0` collapse the same way; so does `Decimal(1)` · **[+Validate]** `len()` on the dictionary is the one-line check that keys merged · **[+Business]** a flag column read as bool from one source and int from another merges into one count with no error anywhere |
+
+**Likely follow-ups:** What about `0` and `False`? What does `{1, True}` give? *(A set of one element.)* How would you key a dictionary so booleans and integers stay apart? *(Key on `(type(x).__name__, x)`, or normalise the type on the way in.)*
+**Red flag:** believing a dictionary keys on type as well as value. It is the assumption behind a whole class of silent merge bugs.
+**Learn it in:** Chapter 33, section 33.4 (hash maps); Chapter 17, section 17.3 (types and truthiness).
+
+### Q72A-032 · `result = nums.sort()`: what is in `result`?
+
+**Level:** Fresher · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *The methods that change a list in place return `None`. If you can assign it, you probably wanted the function, not the method.*
+
+**Answer in one line:** `None`: `list.sort()` sorts the list in place and returns nothing, so the name you assigned it to now holds `None` and the sorted data is in the original list.
+
+```python
+nums = [3, 1, 2]
+result = nums.sort()
+print(result)
+print(nums)
+print(sorted([3, 1, 2]))
+```
+
+```
+None
+[1, 2, 3]
+[1, 2, 3]
+```
+
+Python is consistent about this: a method that mutates the object returns `None`. `sort`, `reverse`, `append`, `extend`, `update` — all of them. The functions that return a new object are the ones you assign: `sorted`, `reversed`, `list(...)`.
+
+The bug this causes is nastier than it looks, because `None` does not fail immediately. It fails two lines later, in something that iterates, with a message that points at the wrong place: `TypeError: 'NoneType' object is not iterable`.
+
+| Tier | What to say |
+|---|---|
+| Passes | "`sort` returns `None`" |
+| Strong | + the rule it is an instance of — mutating methods return `None`, functions return new objects — and names `sorted` as the one to assign |
+| Extra points | **[+Edge cases]** the same for `reverse()` against `reversed()`, and `dict.update()` · **[+Validate]** `TypeError: 'NoneType' object is not iterable` a few lines later is the signature of this mistake · **[+Trade-offs]** `sort` is cheaper than `sorted` because it does not copy; use it when you do not need the original order back |
+
+**Likely follow-ups:** How would you sort a list without changing it? Which is faster, and why? What does `sorted` return for a dictionary? *(A list of its keys.)*
+**Red flag:** writing `nums = nums.sort()`, which throws the data away and keeps `None`.
+**Learn it in:** Chapter 17, section 17.4 (lists); Chapter 33, section 33.6 (sorting).
+
+### Q72A-033 · `nums[5:]` and `nums[5]` on a three-item list: which one raises?
+
+**Level:** Fresher · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *Slicing clamps, indexing does not. A slice past the end gives you nothing; an index past the end gives you an error.*
+
+**Answer in one line:** `nums[5:]` returns an empty list without complaint, while `nums[5]` raises `IndexError` — slicing silently clips to the available range, which is convenient and is also how an empty result reaches production unnoticed.
+
+```python
+nums = [1, 2, 3]
+print(nums[5:])
+print(nums[1:99])
+print(nums[5])
+```
+
+```
+[]
+[2, 3]
+Traceback (most recent call last):
+  ...
+IndexError: list index out of range
+```
+
+The first two lines are the whole lesson. `nums[5:]` wanted items from position 5 onward and there are none, so it returns `[]`. `nums[1:99]` wanted up to position 99 and stopped at the end.
+
+Convenient, and dangerous in exactly one situation: paging. Code that slices `rows[page*size : (page+1)*size]` returns an empty list for every page past the last one, rather than telling you the page does not exist. An empty page and a page of nothing look identical.
+
+| Tier | What to say |
+|---|---|
+| Passes | "The slice works, the index errors" |
+| Strong | + why: a slice describes a range and clamps it to what exists, an index names one position and must find it |
+| Extra points | **[+Edge cases]** a negative index also raises, but a negative *slice* bound counts from the end: `nums[-99:]` is the whole list · **[+Business]** paging code that slices past the end returns an empty page silently; check the page number against `len` first · **[+Validate]** if a slice unexpectedly returns `[]`, print `len()` of the thing you sliced before guessing |
+
+**Likely follow-ups:** What does `nums[-99:]` give? What about `nums[::-1]`? *(The list reversed.)* How do you get the last item safely on a list that may be empty?
+**Red flag:** expecting a slice to raise. It is the reason an empty result gets blamed on the data rather than the index arithmetic.
+**Learn it in:** Chapter 17, section 17.4 (lists and slicing).
+
+### Q72A-034 · `a = (1)` and `b = (1,)`: what are their types?
+
+**Level:** Fresher · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *The comma makes the tuple, not the brackets.*
+
+**Answer in one line:** `a` is an `int` and `b` is a `tuple`: brackets around a single value are just arithmetic grouping, and it is the trailing comma that makes a one-item tuple.
+
+```python
+a = (1)
+b = (1,)
+print(type(a).__name__, type(b).__name__)
+print(len(b))
+
+d = {}
+d[(1, 2)] = 'pair'
+print(d)
+```
+
+```
+int tuple
+1
+{(1, 2): 'pair'}
+```
+
+The reason it matters in a DSA round is that tuples are the hashable container. Lists cannot be dictionary keys or set members (Q72A-039); tuples can. So the moment you need to key something on a pair of coordinates, a (row, column) cell, or an edge in a graph, you need a tuple and you need the syntax to be right.
+
+The failure is quiet when the one-item case appears: a function that returns `(value)` returns the value, and a caller that does `x, = result` or `len(result)` gets a surprise.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You need the comma" |
+| Strong | + that the brackets are grouping, the comma is the tuple constructor, and `1,` on its own is also a tuple |
+| Extra points | **[+Edge cases]** `()` *is* the empty tuple, the one case with no comma · **[+Edge cases]** `return x,` accidentally returns a one-tuple, a common source of "why is my value in brackets" · **[+Validate]** `type(...).__name__` in a print is quicker than reasoning about it |
+
+**Likely follow-ups:** Why can a tuple be a dictionary key when a list cannot? What is `()`? Is a tuple always hashable? *(No — `(1, [2])` is not, because it contains a list.)*
+**Learn it in:** Chapter 17, section 17.4 (tuples); Chapter 33, section 33.4 (hashable keys).
+
+### Q72A-035 · Removing items from a list while looping over it
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *The loop walks by position while `remove` shifts everything left. Every time you delete, the next item slides under the cursor and is skipped.*
+
+**Answer in one line:** `['a', 'b', 'drop', 'drop', 'c']` — two of the four `'drop'` items survive, because each removal shifts the remaining items down one position and the loop's internal counter has already moved past the one that slid into the gap.
+
+```python
+items = ['a', 'drop', 'drop', 'b', 'drop', 'drop', 'c']
+for x in items:
+    if x == 'drop':
+        items.remove(x)
+print(items)
+```
+
+```
+['a', 'b', 'drop', 'drop', 'c']
+```
+
+Trace it once and you never write it again. The loop holds an index, not the item. At index 1 it sees `'drop'` and removes it; everything shifts left, so the second `'drop'` is now at index 1 — but the loop goes to index 2, which is `'b'`. The second `'drop'` was never examined.
+
+The pattern in the output is the signature: **every other match survives**. If you ever see a cleaning step that removed roughly half of what it should have, this is almost always why.
+
+Three safe ways, in order of preference:
+
+```python
+items = ['a', 'drop', 'drop', 'b', 'drop', 'drop', 'c']
+kept = [x for x in items if x != 'drop']        # build a new list
+print(kept)
+
+items[:] = [x for x in items if x != 'drop']    # same, but rebinds in place
+print(items)
+```
+
+```
+['a', 'b', 'c']
+['a', 'b', 'c']
+```
+
+The second form matters when other names refer to the same list: `items[:] = ...` changes the list every name can see, where `items = ...` would only move your own name to a new list.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You shouldn't modify a list while iterating it" |
+| Strong | + the actual output, and the mechanism: the loop tracks an index, `remove` shifts items left, so the item after a removed one is skipped |
+| Extra points | **[+Validate]** the tell is that *every other* match survives, so a filter that removed about half of what it should is this bug · **[+Trade-offs]** a comprehension is clearer and usually faster than removing in place; `items[:] = ...` keeps other references pointing at the right list · **[+Edge cases]** iterating backwards also works and is sometimes necessary when you must mutate in place |
+
+**Likely follow-ups:** Why does iterating backwards work? What is the complexity of `list.remove`? *(O(n), so this loop is O(n²) as well as wrong.)* What happens if you do this to a dictionary? *(Q72A-036 — it raises.)*
+**Red flag:** not noticing. The code runs, returns a list, and the list looks plausible.
+**Learn it in:** Chapter 17, section 17.6 (loops); Chapter 33, section 33.2 (arrays and lists).
+
+### Q72A-036 · The same thing, but on a dictionary
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *A list lets you corrupt it quietly. A dictionary refuses and tells you.*
+
+**Answer in one line:** `RuntimeError: dictionary changed size during iteration` — unlike a list, a dictionary detects that its size changed mid-loop and raises immediately, which is the better behaviour of the two.
+
+```python
+d = {'a': 1, 'b': 2, 'c': 3}
+for k in d:
+    if d[k] == 2:
+        del d[k]
+```
+
+```
+Traceback (most recent call last):
+  ...
+RuntimeError: dictionary changed size during iteration
+```
+
+The fix is to iterate over a snapshot of the keys, so the thing you are walking and the thing you are changing are two different objects:
+
+```python
+d = {'a': 1, 'b': 2, 'c': 3}
+for k in list(d):
+    if d[k] == 2:
+        del d[k]
+print(d)
+```
+
+```
+{'a': 1, 'c': 3}
+```
+
+`list(d)` copies the keys out before the loop starts. It costs one pass and one list, and it is correct.
+
+Worth saying out loud in the interview: the dictionary's behaviour is *better* than the list's, and knowing that is the point. The list silently gives a wrong answer; the dictionary stops. Given a choice between a wrong result and a loud failure, every data pipeline wants the loud failure.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It raises an error" |
+| Strong | + names it — `RuntimeError`, "dictionary changed size during iteration" — gives the `list(d)` fix, and contrasts it with the list case that fails silently |
+| Extra points | **[+Edge cases]** changing a *value* is fine; only changing the size raises · **[+Edge cases]** sets behave like dictionaries here · **[+Business]** a loud failure beats a silent wrong answer, which is why this design is right |
+
+**Likely follow-ups:** Does changing a value raise? *(No.)* What about a set? *(The same.)* Why does a list not do this?
+**Learn it in:** Chapter 33, section 33.4 (hash maps); Chapter 17, section 17.7 (dictionaries).
+
+### Q72A-037 · Reading from a `defaultdict` changes it
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *A `defaultdict` creates the key the moment you look at it. Reading is writing.*
+
+**Answer in one line:** The length goes from 1 to 2 and `'b' in seen` is `True`, because looking up a missing key on a `defaultdict` inserts it with the default value — merely *testing* `seen['b'] == 0` created `'b'`.
+
+```python
+from collections import defaultdict
+
+seen = defaultdict(int)
+seen['a'] += 1
+print(len(seen), dict(seen))
+
+if seen['b'] == 0:
+    pass
+
+print(len(seen), dict(seen))
+print('b' in seen)
+```
+
+```
+1 {'a': 1}
+2 {'a': 1, 'b': 0}
+True
+```
+
+Nothing was assigned to `'b'`. The `if` only read it. But `defaultdict.__missing__` runs on a failed lookup, inserts the default, and returns it — so the read had a side effect.
+
+This is how a counter ends up with a long tail of zeros that were never observed, and the bug survives review because the code that caused it reads like a check rather than a write. In a graph problem it is worse: probing `adjacency[node]` for a node with no edges adds that node to the graph, and a later `len(adjacency)` reports more nodes than exist.
+
+Two ways to look without touching:
+
+```python
+from collections import defaultdict
+seen = defaultdict(int)
+seen['a'] += 1
+
+print(seen.get('b', 0))
+print('b' in seen)
+print(len(seen))
+```
+
+```
+0
+False
+1
+```
+
+`.get()` and `in` never insert. Use them whenever you are asking a question rather than accumulating.
+
+| Tier | What to say |
+|---|---|
+| Passes | "`defaultdict` fills in missing keys" |
+| Strong | + that a *read* inserts, so `len` and `in` change as a side effect of looking, with `.get()` or `in` as the non-mutating alternatives |
+| Extra points | **[+Edge cases]** `dict.setdefault` has the same effect on a plain dictionary · **[+Business]** a counter grows a tail of unobserved zeros, and a graph grows nodes that have no edges · **[+Validate]** compare `len()` before and after a read-only pass; if it moved, this is why |
+
+**Likely follow-ups:** How would you count without this happening? *(`Counter`, or `dict.get(k, 0) + 1`.)* Does `Counter` behave the same way? *(Reading a missing key returns 0 without inserting.)* What does `setdefault` do?
+**Red flag:** using a `defaultdict` as a general-purpose dictionary and then trusting `len` or `in`.
+**Learn it in:** Chapter 33, section 33.4 (hash maps); Chapter 17, section 17.7 (dictionaries).
+
+### Q72A-038 · `shallow = grid[:]`, then `shallow[0][0] = 99`
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *A slice copies the outer list and nothing else. The rows are still the same rows.*
+
+**Answer in one line:** `grid` becomes `[[99, 2], [3, 4]]` — `grid[:]` makes a new outer list holding references to the *same* inner lists, so changing an item inside a row changes it for both names.
+
+```python
+grid = [[1, 2], [3, 4]]
+shallow = grid[:]
+shallow[0][0] = 99
+print(grid)
+```
+
+```
+[[99, 2], [3, 4]]
+```
+
+The copy is real but shallow: `shallow` is a different list object from `grid`, and `shallow[0]` is the *same* object as `grid[0]`. Replacing a whole row (`shallow[0] = [9, 9]`) would leave `grid` alone; changing inside a row does not.
+
+For a grid, a matrix, an adjacency list, or any nested structure, use `copy.deepcopy`:
+
+```python
+import copy
+grid = [[1, 2], [3, 4]]
+deep = copy.deepcopy(grid)
+deep[1][0] = 77
+print(grid)
+print(deep)
+```
+
+```
+[[1, 2], [3, 4]]
+[[1, 2], [77, 4]]
+```
+
+Chapter 72, Q72-003 covers shallow against deep copying in general. The reason it reappears here is that DSA problems are mostly nested containers — grids, adjacency lists, memoisation tables — and a backtracking solution that "restores" a grid it never really copied will give a wrong answer that depends on the order the branches ran in.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a shallow copy" |
+| Strong | + precisely what is shared: a new outer list, the same inner objects, so replacing a row is safe and mutating inside a row is not |
+| Extra points | **[+Edge cases]** `list(grid)`, `grid.copy()` and `copy.copy(grid)` are all the same shallow copy · **[+Scale]** `deepcopy` is slow; in a hot loop, rebuild the rows with `[row[:] for row in grid]` instead · **[+Business]** a backtracking search that restores a grid it never copied gives answers that depend on branch order, which is a nightmare to reproduce |
+
+**Likely follow-ups:** How would you copy one level deeper without `deepcopy`? *(`[row[:] for row in grid]`.)* What does `deepcopy` do with a cycle? *(It handles it, by remembering what it has already copied.)*
+**Learn it in:** Chapter 72, Q72-003 (shallow and deep copies); Chapter 33, section 33.2.
+
+### Q72A-039 · `{[1, 2], [3]}`: what happens?
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *Sets and dictionary keys need something that cannot change, because the hash has to stay put. Lists change, so they are out.*
+
+**Answer in one line:** `TypeError: unhashable type: 'list'` — a set stores items by hash, a list's contents can change and so would its hash, so Python refuses to let a list into a set or be used as a dictionary key.
+
+```python
+s = {[1, 2], [3]}
+```
+
+```
+Traceback (most recent call last):
+  ...
+TypeError: unhashable type: 'list'
+```
+
+Tuples are the fix, because they cannot change:
+
+```python
+s = {(1, 2), (3,)}
+print(sorted(s))
+print(hash((1, 2)))
+```
+
+```
+[(1, 2), (3,)]
+-3550055125485641917
+```
+
+The hash is a big arbitrary-looking number and it differs between runs for strings, which is deliberate; for a tuple of integers it is stable within a run. What matters is the rule, not the number: **if an object can change, it cannot be hashed, and if it cannot be hashed it cannot be a key or a set member.**
+
+This decides real design choices. Visited-set problems in graph and grid traversal need a hashable representation of a position, so cells go in as `(row, col)` tuples. A list of lists of edges cannot be deduplicated with a set; a list of tuples can.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Lists aren't hashable" |
+| Strong | + why: a set finds items by hash, and a mutable object's hash could change after it was stored, so it would become unfindable. Tuples are immutable, so they are allowed |
+| Extra points | **[+Edge cases]** a tuple containing a list is *also* unhashable: immutability has to go all the way down · **[+Edge cases]** `frozenset` is the hashable set, for when you need a set of sets · **[+Business]** this is why visited-sets in grid problems use `(row, col)` tuples |
+
+**Likely follow-ups:** Is `(1, [2])` hashable? *(No.)* How do you make a set of sets? *(`frozenset`.)* Can a custom class be a dictionary key? *(Yes, if it defines `__hash__` and `__eq__` consistently.)*
+**Learn it in:** Chapter 33, section 33.4 (hashable keys); Chapter 17, section 17.4.
+
+### Q72A-040 · `print({3, 1, 2})` and `print({'banana', 'apple', 'cherry'})`
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *A set of small integers looks sorted because each one hashes to itself. That is a coincidence of the data, not a promise.*
+
+**Answer in one line:** `{1, 2, 3}` and `{'apple', 'cherry', 'banana'}` — the integers come out in ascending order and the strings do not, because small integers hash to themselves and land in slot order, while strings hash to scattered values.
+
+```python
+print({3, 1, 2})
+print({'banana', 'apple', 'cherry'})
+print({1, 2, 3} == {3, 2, 1})
+```
+
+```
+{1, 2, 3}
+{'apple', 'cherry', 'banana'}
+True
+```
+
+The first line is the trap. Build a set of small integers, print it, see it sorted, and conclude that sets keep order. They do not. Dictionaries have kept insertion order since Python 3.7 and that *is* a guarantee; sets have no ordering guarantee at all, and the integer case only looks ordered because `hash(n) == n` for small integers, so they fall into slots in numeric order.
+
+The third line is the part that is actually guaranteed: **set equality ignores order entirely.** Two sets with the same members are equal however they were built, which is exactly what you want for a "did I visit the same nodes" check.
+
+The practical rule: never rely on the order of a set. If you need order, call `sorted()` on it, and say so in the code.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Sets are unordered" |
+| Strong | + why the integer case looks ordered anyway (small integers hash to themselves), and that dictionaries *do* guarantee insertion order while sets do not |
+| Extra points | **[+Edge cases]** string hashing is randomised per process by default, so a set of strings can print in a different order in a different run · **[+Validate]** any test that asserts on the printed form of a set is fragile; compare sets with `==`, or sort first · **[+Trade-offs]** `dict.fromkeys(xs)` deduplicates while keeping order, when you need both |
+
+**Likely follow-ups:** How would you deduplicate while keeping order? *(`list(dict.fromkeys(xs))`.)* Do dictionaries guarantee order? *(Yes, since 3.7.)* Why would a set of strings print differently between runs?
+**Red flag:** writing a test that asserts the printed form of a set. It passes until it does not.
+**Learn it in:** Chapter 33, section 33.4; Chapter 17, section 17.7.
+
+### Q72A-041 · `nan == nan` is `False`, so what does `nan in [nan]` give?
+
+**Level:** Brain-racking · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *`in` checks identity before equality. The same NaN object is found; an equal-looking new one is not.*
+
+**Answer in one line:** `True` — even though a NaN is not equal to itself, `in` tests `x is item or x == item`, and the NaN in the list is the very same object, so the identity test succeeds before equality is ever tried.
+
+```python
+nan = float('nan')
+print(nan == nan)
+
+values = [1.0, nan, 3.0]
+print(nan in values)
+print(values.index(nan))
+print(float('nan') in values)
+```
+
+```
+False
+True
+1
+False
+```
+
+Read those four lines together, because the pair at the end is the whole question:
+
+- `nan in values` is **`True`**: the object you are searching for *is* the object in the list.
+- `float('nan') in values` is **`False`**: a brand new NaN is a different object, so identity fails, and then equality fails too, because no NaN equals anything.
+
+So membership depends on *which* NaN you ask with. The same value, built twice, gives two different answers.
+
+This is the single most useful thing to know about missing numeric data. A column with NaNs cannot be deduplicated by equality, cannot be grouped by equality, and cannot be reliably searched. Every library that handles it well — pandas among them — handles NaN as a special case rather than relying on `==`, which is why `df.isna()` exists and `df == np.nan` does not work.
+
+The containment short-circuit (`is` before `==`) is a real optimisation in CPython and applies to every container, not just lists. It is almost always invisible, and NaN is where it becomes visible.
+
+| Tier | What to say |
+|---|---|
+| Passes | "NaN isn't equal to itself" (true, and does not answer the question) |
+| Strong | + `in` tries identity first, so the same object is found and an equal-looking new one is not, with both results read off |
+| Extra points | **[+Edge cases]** `values.index(nan)` finds it for the same reason, and raises `ValueError` for a fresh NaN · **[+Business]** NaN cannot be deduplicated or grouped by equality, which is why pandas has `isna()` and why `df == np.nan` never works · **[+Edge cases]** the IEEE 754 rule that NaN compares unequal to everything is deliberate, so that a failed computation cannot silently equal a real result · **[+Validate]** test for it with `math.isnan(x)`, never `x == float('nan')` |
+
+**Likely follow-ups:** How do you test for NaN? *(`math.isnan`, or `x != x`.)* What does `sorted` do with NaNs in a list? *(Something arbitrary — the comparisons are all false, so the result depends on the algorithm.)* What does `{nan, nan}` give? *(One element if it is the same object, two if they are different objects.)*
+**Red flag:** confidently answering `False` because NaN is not equal to itself. It is the reasoning that *sounds* right and gets the answer wrong.
+**Learn it in:** Chapter 33, section 33.3 (how numbers are stored); Chapter 14, section 14.3 (missing values); Chapter 72, Q72-010 (floating point).
+
+### Q72A-042 · `int('257') is int('257')` against `257 is 257`
+
+**Level:** Brain-racking · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *Python caches small integers, and the compiler folds repeated literals. Two different mechanisms, both making `is` lie about numbers.*
+
+**Answer in one line:** `int('256') is int('256')` is `True` and `int('257') is int('257')` is `False`, because CPython keeps one shared object for every integer from −5 to 256 — but `257 is 257` written as literals is `True` anyway, because the compiler collapses the two identical constants into one before the code ever runs.
+
+```python
+a = int('256'); b = int('256')
+print(a is b)
+
+c = int('257'); d = int('257')
+print(c is d)
+print(c == d)
+
+e = 257; f = 257
+print(e is f)
+```
+
+```
+True
+False
+True
+True
+```
+
+Three different things are happening, and naming all three is what makes this a strong answer:
+
+1. **The small-integer cache.** CPython creates the integers −5 to 256 once at startup and hands out the same object every time. So two separately computed 256s are the same object.
+2. **No cache above that.** 257 is built fresh each time, so the two are equal but not identical.
+3. **Constant folding.** When you write the literal `257` twice in the same block of code, the compiler stores one constant and points both names at it — so `e is f` is `True` even though nothing is cached at runtime. Build the same numbers at runtime, as the `int('257')` lines do, and the folding cannot happen.
+
+That third point is why this question has to be written with `int('257')` to show anything at all. Written with plain literals it quietly answers `True` and teaches the opposite of the truth.
+
+**None of this is a rule to rely on.** It is a CPython implementation detail; the boundary at 256 is not in the language specification and another implementation may do something else. The real lesson is the one that applies everywhere: **use `==` for values and `is` only for `None`, `True` and `False`.**
+
+```python
+x = [1, 2]
+y = [1, 2]
+print(x == y, x is y)
+```
+
+```
+True False
+```
+
+Same values, different objects — and for lists there is no caching to confuse it.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Python caches small integers" |
+| Strong | + the two separate mechanisms, cache and constant folding, and why the question needs `int('257')` to demonstrate anything |
+| Extra points | **[+Edge cases]** the range is −5 to 256 in CPython and is not part of the language · **[+Trade-offs]** `is` is only correct for `None`, `True`, `False` and deliberate identity checks; linters flag `is` against a literal for exactly this reason · **[+Scale]** the cache exists because small integers are created constantly, so sharing them saves real allocation work |
+
+**Likely follow-ups:** What is `is` actually comparing? *(Object identity — `id(x) == id(y)`.)* When *should* you use `is`? Does this apply to strings? *(Interning does something similar, and is equally not to be relied on.)*
+**Red flag:** treating the 256 boundary as a language rule rather than one implementation's optimisation.
+**Learn it in:** Chapter 72, Q72-002 (`is` against `==`); Chapter 33, section 33.3.
+
+### Q72A-043 · A correct binary search returns −1 for an item that is in the list
+
+**Level:** Brain-racking · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *Binary search does not search. It navigates a sorted order. Take the order away and it walks confidently to the wrong place.*
+
+**Answer in one line:** `-1`, although `20` really is in the list — binary search assumes the data is sorted, and on unsorted data it discards the half containing the answer on its very first comparison, which is why its precondition is the whole question.
+
+```python
+def binary_search(xs, target):
+    lo, hi = 0, len(xs) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if xs[mid] == target:
+            return mid
+        if xs[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+print(binary_search([10, 20, 30, 40, 50], 20))
+print(binary_search([50, 10, 40, 20, 30], 20))
+print(20 in [50, 10, 40, 20, 30])
+```
+
+```
+1
+-1
+True
+```
+
+The last two lines are the point. The linear `in` says the item is there. The binary search says it is not. The function has no bug.
+
+Walk the second call: `mid` is 2, `xs[2]` is `40`, and `40 > 20`, so it throws away everything from index 2 rightwards — including index 3, where the `20` is. It then searches `[50, 10]`, compares against `50`, throws away the right half again, checks `50` once more and gives up. Every step is correct; the premise was not.
+
+The standard library's `bisect` has the same precondition and fails the same way, without an error:
+
+```python
+import bisect
+ordered = [10, 20, 30, 40, 50]
+jumbled = [50, 10, 40, 20, 30]
+print(bisect.bisect_left(ordered, 30), ordered.index(30))
+print(bisect.bisect_left(jumbled, 30), jumbled.index(30))
+```
+
+```
+2 2
+2 4
+```
+
+On the sorted list `bisect` and `index` agree. On the jumbled one `bisect` says position 2 and the item is really at position 4 — and nothing anywhere raises.
+
+The interview-grade version of the lesson: **if a function has a precondition, the caller owns it.** Sorting costs O(n log n) once, and then every search is O(log n). Searching n times without sorting costs O(n) each. The crossover is why you sort first and search many times, never the reverse.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Binary search needs a sorted list" |
+| Strong | + reads off the contradiction — `in` says yes, binary search says no — and traces the first comparison to show which half was wrongly discarded |
+| Extra points | **[+Edge cases]** `bisect` has the same precondition and returns a wrong position silently rather than raising · **[+Scale]** sorting once at O(n log n) pays for itself after enough searches; for a single lookup a linear scan is better · **[+Validate]** if a search says "not found" for something you can see in the data, check the precondition before the algorithm · **[+Clarify]** asking "is the input guaranteed sorted?" before writing the function is the move the interviewer is waiting for |
+
+**Likely follow-ups:** How would you check the input is sorted, and what does that cost? *(O(n), which is the cost of the linear search you were avoiding.)* What is the complexity of sort-then-search against scanning n times? What does `bisect_left` return for an item that is not present?
+**Red flag:** debugging the implementation. The function is correct, and time spent reading it is time not spent questioning the input.
+**Learn it in:** Chapter 33, section 33.6 (binary search); Q72A-021 in this chapter.
+
+### Q72A-044 · `heapq.heappop` after pushing 5, 1, 9, 3
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *Python's heap is a min-heap. For a max-heap, push the negatives and negate on the way out.*
+
+**Answer in one line:** `1` — `heapq` is a min-heap, so the smallest item is always on top; and the list prints as `[1, 3, 9, 5]`, which is heap order, not sorted order.
+
+```python
+import heapq
+
+h = []
+for x in [5, 1, 9, 3]:
+    heapq.heappush(h, x)
+
+print(h)
+print(heapq.heappop(h))
+```
+
+```
+[1, 3, 9, 5]
+1
+```
+
+Two things to notice. The pop gives the smallest, not the largest — people coming from languages whose default heap is a max-heap get this backwards. And the internal list is **not sorted**: `[1, 3, 9, 5]` only guarantees that each parent is no larger than its children. Printing a heap and expecting sorted output is a separate small trap inside this one.
+
+For a max-heap, negate:
+
+```python
+import heapq
+h = []
+for x in [5, 1, 9, 3]:
+    heapq.heappush(h, -x)
+print(-heapq.heappop(h))
+```
+
+```
+9
+```
+
+This is the "top K" workhorse. For the k largest items out of n, a heap of size k costs O(n log k) and holds only k items in memory, where sorting everything costs O(n log n) and holds all n. On a stream you cannot sort at all, and the heap is the only option.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a min-heap, so 1" |
+| Strong | + that the underlying list is in heap order rather than sorted order, and the negation trick for a max-heap |
+| Extra points | **[+Scale]** top-k with a size-k heap is O(n log k) and O(k) memory, against O(n log n) and O(n) for sorting · **[+Edge cases]** `heapq.nlargest` and `nsmallest` do this for you and are clearer · **[+Edge cases]** negation is wrong for anything that is not a number; push `(-priority, item)` tuples instead |
+
+**Likely follow-ups:** How would you get the 3 largest? Why is `heappush` O(log n)? What does `heapify` cost? *(O(n), better than pushing one at a time.)*
+**Learn it in:** Chapter 33, section 33.7 (heaps and priority queues).
+
+### Q72A-045 · Three operations that look O(1) and are not
+
+**Level:** Brain-racking · **Roles:** DE, AE, MLE, DS
+
+**Remember it as:** *Appending to a string, checking membership in a list, and inserting at the front of a list all copy or scan. Three loops that look linear and are quadratic.*
+
+**Answer in one line:** All three are O(n) per operation and so O(n²) in a loop: building a string with `+=` copies the whole string each time, `x in list` scans every item, and `list.insert(0, x)` shifts every element right — and the measured gaps are large enough that none of it is theoretical.
+
+```python
+import time
+from collections import deque
+
+n = 20_000
+data = list(range(n))
+as_set = set(data)
+
+t0 = time.perf_counter()
+hits = sum(1 for i in range(n) if i in data)
+list_t = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+hits2 = sum(1 for i in range(n) if i in as_set)
+set_t = time.perf_counter() - t0
+
+print(hits, hits2)
+print(f"list {list_t*1000:.0f} ms, set {set_t*1000:.0f} ms, ratio {list_t/set_t:.0f}x")
+```
+
+```
+20000 20000
+list 959 ms, set 1 ms, ratio 867x
+```
+
+Same answer, same data, **867 times** the time. The list has to scan on average half its contents for every one of the 20,000 lookups; the set hashes once.
+
+The other two, measured the same way:
+
+```python
+import time
+from collections import deque
+
+n = 40_000
+t0 = time.perf_counter()
+s = ''
+for _ in range(n):
+    s += 'x'
+concat = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+parts = []
+for _ in range(n):
+    parts.append('x')
+joined = ''.join(parts)
+join_t = time.perf_counter() - t0
+
+print(len(s), len(joined), s == joined)
+print(f"concat {concat*1000:.1f} ms, join {join_t*1000:.1f} ms")
+
+n = 50_000
+t0 = time.perf_counter()
+lst = []
+for i in range(n):
+    lst.insert(0, i)
+ins_t = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+dq = deque()
+for i in range(n):
+    dq.appendleft(i)
+dq_t = time.perf_counter() - t0
+
+print(f"list.insert(0) {ins_t*1000:.0f} ms, deque.appendleft {dq_t*1000:.0f} ms, ratio {ins_t/dq_t:.0f}x")
+```
+
+```
+40000 40000 True
+concat 22.5 ms, join 2.6 ms
+list.insert(0) 288 ms, deque.appendleft 3 ms, ratio 103x
+```
+
+**These timings differ on every machine and every run** — the ratio in the last line came out 103× once and 72× on the next run of the same code. Run it yourself and expect different numbers. What does not change is which side is faster and by roughly how much, and that is what the question is about.
+
+The three fixes are all one-liners: build a `set` for repeated membership tests, collect into a list and `''.join` it, and use `collections.deque` when you add or remove at the front.
+
+The reason this is the brain-racking one rather than a triviality is that all three look innocent in review. `if customer_id in id_list` reads perfectly well. It is O(n), it is inside a loop over n customers, and it is the single most common accidental O(n²) in analysis code.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Sets are faster for lookups" |
+| Strong | + names all three costs with their mechanism — copy, scan, shift — and gives the one-line fix for each |
+| Extra points | **[+Validate]** measures it rather than asserting it, and says the ratio matters while the absolute numbers do not · **[+Scale]** a 20,000-row test that takes a second becomes a 2,000,000-row job that takes hours, because the cost is quadratic · **[+Edge cases]** `list.append` *is* amortised O(1); it is only the front that is expensive · **[+Business]** this is the usual reason a notebook that worked on a sample times out on the real extract |
+
+**Likely follow-ups:** Why is `append` cheap when `insert(0)` is not? What is amortised complexity? What does `deque` give up to make both ends cheap? *(Indexing in the middle is O(n).)*
+**Red flag:** knowing sets are faster but not being able to say what the list is actually doing, or by how much.
+**Learn it in:** Chapter 33, section 33.1 (Big-O); Chapter 33, section 33.4 (hash maps); Q72A-002 in this chapter.
+
+### Q72A-046 · Sorting twice to sort by two keys
+
+**Level:** Mid · **Roles:** DE, AE, MLE, DS, DA
+
+**Remember it as:** *Python's sort is stable, so equal items keep the order they came in. Sort by the minor key first, then the major one, and both hold.*
+
+**Answer in one line:** Both lines print the same thing — sorting by name and then by score gives names in order within each score, because a stable sort never reorders items its key says are equal.
+
+```python
+people = [('Asha', 2), ('Bela', 1), ('Chit', 2), ('Dev', 1)]
+
+print(sorted(people, key=lambda p: p[1]))
+
+by_name = sorted(people, key=lambda p: p[0])
+print(sorted(by_name, key=lambda p: p[1]))
+```
+
+```
+[('Bela', 1), ('Dev', 1), ('Asha', 2), ('Chit', 2)]
+[('Bela', 1), ('Dev', 1), ('Asha', 2), ('Chit', 2)]
+```
+
+They agree here because the input already happened to be alphabetical within each score. The guarantee is what matters: **stability is documented, not accidental**, so sorting by the minor key and then the major key is a correct way to do a multi-key sort, and it is the only way when the two keys sort in opposite directions.
+
+That last case is the one worth knowing, because a single `key=` tuple cannot do it for a non-numeric field:
+
+```python
+people = [('Asha', 2), ('Bela', 1), ('Chit', 2), ('Dev', 1)]
+by_name = sorted(people, key=lambda p: p[0])
+print(sorted(by_name, key=lambda p: p[1], reverse=True))
+```
+
+```
+[('Asha', 2), ('Chit', 2), ('Bela', 1), ('Dev', 1)]
+```
+
+Score descending, name ascending within each score. A single `key=lambda p: (-p[1], p[0])` would also work here because the score is a number that can be negated; if the major key were a string sorted in reverse, two passes would be the only option.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Python's sort is stable" |
+| Strong | + what stability buys: minor key first, major key second, and both survive — plus the mixed-direction case where a single key tuple cannot do it |
+| Extra points | **[+Edge cases]** `sorted(xs, key=lambda p: (-p[1], p[0]))` works for numbers only; negating a string is not possible · **[+Trade-offs]** two passes cost two sorts, so a single key tuple is faster when it is available · **[+Validate]** stability is a documented guarantee of `list.sort` and `sorted`, not an implementation accident |
+
+**Likely follow-ups:** What algorithm does Python use? *(Timsort.)* Is it stable in every language? *(No — C++'s `std::sort` is not; `std::stable_sort` is.)* How would you sort by score descending and name ascending in one pass?
+**Learn it in:** Chapter 33, section 33.6 (sorting); Q72A-020 in this chapter.
+
+### Rapid-fire, 72A.10, part A: predict the output
+
+Roles: DE, AE, MLE and DS for every row. Say the answer before you read it. Everything was run.
+
+| # | Snippet | What it gives, and why | Extra point |
+|---|---|---|---|
+| Q72A-047 | `len({1, True, 1.0})` | `1` — same hash, all equal, one member. The set version of Q72A-031 | **[+Edge cases]** `{0, False}` is also one member → Ch 33 §33.4 |
+| Q72A-048 | `print([1,2,3][::-1])` | `[3, 2, 1]` — a step of −1 reverses. It copies, so the original is unchanged | **[+Trade-offs]** `reversed()` returns a lazy iterator and copies nothing → Ch 17 §17.4 |
+| Q72A-049 | `x = [1,2]; y = x; y.append(3); print(x)` | `[1, 2, 3]` — `y = x` binds a second name to one list, it does not copy | **[+Validate]** `y is x` is `True`; that is the check → Ch 17 §17.4 |
+| Q72A-050 | `d = {}; print(d.get('k'), d.get('k', 0))` | `None 0` — `get` returns `None` by default, and never inserts | **[+Edge cases]** `d['k']` raises `KeyError`; `get` is the non-raising, non-inserting read → Ch 17 §17.7 |
+| Q72A-051 | `print(sum([]), max([], default=0))` | `0` and `0` — `sum` of nothing is 0, but bare `max([])` raises `ValueError`; `default=` is what prevents it | **[+Edge cases]** unlike SQL's `SUM`, which gives NULL over no rows → Ch 71 Q71-078 |
+| Q72A-052 | `print('10' > '9')` | `False` — string comparison is character by character, and `'1' < '9'` | **[+Business]** the classic reason sorted version numbers or IDs come out wrong → Ch 71 Q71-011 |
+| Q72A-053 | `print(list(range(10**9))[:3])` vs `print(range(10**9)[:3])` | The first tries to build a billion-item list and exhausts memory; the second is instant, because `range` computes on demand | **[+Scale]** `range` is O(1) memory whatever its length → Ch 33 §33.2 |
+| Q72A-054 | `print([] == False, bool([]) == False)` | `False` then `True` — an empty list is *falsy* but is not *equal* to `False` | **[+Edge cases]** test emptiness with `if not xs`, never `if xs == False` → Ch 17 §17.3 |
+| Q72A-055 | `s = 'abc'; s[0] = 'z'` | `TypeError: 'str' object does not support item assignment` — strings are immutable | **[+Edge cases]** which is also why strings are hashable and lists are not → Q72A-039 |
+| Q72A-056 | `print(len('café'), len('café'.encode()))` | `4` and `5` — one character, two bytes in UTF-8. Length in characters is not length in bytes | **[+Business]** a `VARCHAR(4)` column will reject that string if the database counts bytes → Ch 12 §12.8 |
+
+### Rapid-fire, 72A.10, part B: complexity you can be caught on
+
+| # | Question | The answer, and the reason | Extra point |
+|---|---|---|---|
+| Q72A-057 | Complexity of `x in my_list` against `x in my_set`? | O(n) against O(1) average. Measured in Q72A-045 at 867× on 20,000 items | **[+Edge cases]** set lookup is O(n) in the worst case, if every key collides → Ch 33 §33.4 |
+| Q72A-058 | `list.append` against `list.insert(0, x)`? | Amortised O(1) against O(n): appending occasionally reallocates, inserting at the front shifts every element every time | **[+Scale]** `deque.appendleft` is O(1); measured at 103× faster → Ch 33 §33.2 |
+| Q72A-059 | Is `dict` lookup really O(1)? | O(1) *average*, O(n) worst case when keys collide. Interviewers listen for the word "average" | **[+Validate]** saying "amortised" when you mean "average" is a different claim → Ch 33 §33.4 |
+| Q72A-060 | Space complexity of naive recursive Fibonacci? | O(n) — not O(1). The call stack holds up to n frames even though no array is allocated | **[+Edge cases]** which is why it hits `RecursionError` at depth 1,000 before it is slow → Q72A-018 |
+| Q72A-061 | Default recursion limit, and what happens at it? | 1,000, then `RecursionError: maximum recursion depth exceeded`. Raising it risks a real stack overflow, which crashes the process rather than raising | **[+Trade-offs]** convert to an explicit stack and a loop instead of raising the limit → Ch 33 §33.5 |
+| Q72A-062 | Complexity of `sorted(xs)` and is it stable? | O(n log n), and yes — Timsort, stable, and the stability is guaranteed in the language | **[+Scale]** near-sorted input runs much closer to O(n), which Timsort is designed for → Q72A-046 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -1170,6 +2017,10 @@ for test in ["({[]})", "({[)]}", "", ")))", ")(", "(("]:
 | A mutable default as a cache (`def f(n, cache={})`) | State leaks between calls; timings and results depend on what ran before | `@lru_cache`, or `cache=None` and create the dictionary inside |
 | Treating Big-O as "how fast it feels" | Confidently wrong complexity claims | Trace what happens as n doubles, on paper, before answering; then measure |
 | Reinventing a sort algorithm in real code | Slower and buggier than the built-in sort | Know how sorting works for interviews; use `sorted()` in practice |
+| Removing items from a list while looping over it | Roughly every other match survives, with no error | Build a new list with a comprehension, or assign back with `xs[:] = ...` (Q72A-035) |
+| Reading a missing key from a `defaultdict` | `len` and `in` change as a side effect of looking | Use `.get(k, default)` or `k in d` when you are asking rather than accumulating (Q72A-037) |
+| Testing for NaN with `==` | Always false, so the row is never caught | `math.isnan(x)`, or `x != x`; and remember `in` finds the *same* NaN object (Q72A-041) |
+| `x in a_list` inside a loop | Accidental O(n²); fine on a sample, hours on the real extract | Build a set once and test against that (Q72A-045) |
 
 ---
 
@@ -1200,13 +2051,15 @@ The follow-up wasn't really about algorithms at all: it was about whether Karan'
 
 ## Key terms
 
-Big-O notation · time complexity · space complexity · O(1)/O(log n)/O(n)/O(n log n)/O(n²)/O(2ⁿ) · amortized complexity · hash map / set · hashable · two-pointer pattern · sliding-window pattern · recursion · base case · `RecursionError` · memoization · `lru_cache` · dynamic programming (top-down / bottom-up) · merge sort · quicksort · bubble sort · binary search · stable sort · heap · linked list · node · head · fast/slow pointers (Floyd's cycle detection) · binary search tree (BST) · BST invariant · tree height · in-order/pre-order/post-order traversal · breadth-first search (BFS) · depth-first search (DFS) · level-order traversal · stack (LIFO) · queue (FIFO)
+Big-O notation · time complexity · space complexity · O(1)/O(log n)/O(n)/O(n log n)/O(n²)/O(2ⁿ) · amortized complexity · hash map / set · hashable · two-pointer pattern · sliding-window pattern · recursion · base case · `RecursionError` · memoization · `lru_cache` · dynamic programming (top-down / bottom-up) · merge sort · quicksort · bubble sort · binary search · stable sort · heap · linked list · node · head · fast/slow pointers (Floyd's cycle detection) · binary search tree (BST) · BST invariant · tree height · in-order/pre-order/post-order traversal · breadth-first search (BFS) · depth-first search (DFS) · level-order traversal · stack (LIFO) · queue (FIFO) · hashable · identity against equality (`is` / `==`) · small-integer cache · constant folding · NaN · IEEE 754 · shallow copy · `deepcopy` · mutation during iteration · `RuntimeError: dictionary changed size` · `defaultdict.__missing__` · `dict.get` · `Counter` · set ordering · insertion order · stable sort · Timsort · min-heap · `heapq` · `deque` · amortised O(1) · average against worst case · `bisect` · precondition · immutability · `frozenset`
 
 ---
 
 ## Final-week revision list
 
-Q72A-001, Q72A-002, Q72A-007, Q72A-008, Q72A-009, Q72A-014, Q72A-018, Q72A-020, Q72A-021, Q72A-025, Q72A-026, Q72A-027, Q72A-028, Q72A-030.
+Q72A-001, Q72A-002, Q72A-007, Q72A-008, Q72A-009, Q72A-014, Q72A-018, Q72A-020, Q72A-021, Q72A-025, Q72A-026, Q72A-027, Q72A-028, Q72A-030, Q72A-035, Q72A-041, Q72A-043, Q72A-045.
+
+The last four are the predict-the-output questions worth most per minute: removing while iterating (Q72A-035), NaN and the identity short-circuit (Q72A-041), binary search on unsorted data (Q72A-043), and the three operations that look O(1) and are not (Q72A-045).
 
 ---
 

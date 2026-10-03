@@ -7,7 +7,7 @@ Usage: python3 checks/ch76b_check.py        (run from the book folder)
    exists as a "## NN.M" heading in the current manuscript.
 2. Every fact Ch 76B takes from another chapter appears inside the section it is credited to
    (requirement numbers, the rule, the lanes, Figure numbers, terms).
-3. Question IDs run Q76B-001 ... Q76B-038 with no gaps or duplicates, and no old "Q76-" / "76.N" labels remain.
+3. Question IDs run Q76B-001 ... Q76B-095 with no gaps or duplicates, and no old "Q76-" / "76.N" labels remain.
 4. The at-risk rule's counts quoted in Q76B-013 (3 flagged, 7 too new of 24 key accounts on 31 Dec 2025)
    are recomputed from riverstone_2025 with Chapter 25's own query (skipped if PostgreSQL is unreachable).
 Exit code 1 on any failure.
@@ -106,7 +106,7 @@ ok(crossings == 5, f"cross-lane transitions {crossings}, expected 5")
 ids = re.findall(r"\bQ76B-(\d{3})\b", ch)
 heads = [int(x) for x in re.findall(r"^### Q76B-(\d{3})", ch, re.M)] + \
         [int(x) for x in re.findall(r"^\| Q76B-(\d{3}) \|", ch, re.M)]
-ok(sorted(heads) == list(range(1, 39)), f"question IDs not 1..38 exactly once: {sorted(heads)}")
+ok(sorted(heads) == list(range(1, 96)), f"question IDs not 1..95 exactly once: {sorted(heads)}")
 ok(not re.search(r"\bQ76-\d", ch), "old Q76- ID left")
 ok(not re.search(r"§ ?76\.\d|section 76\.\d|^## 76\.\d", ch, re.M), "old 76.N section label left")
 for m in re.findall(r"section 76B\.(\d)", ch):

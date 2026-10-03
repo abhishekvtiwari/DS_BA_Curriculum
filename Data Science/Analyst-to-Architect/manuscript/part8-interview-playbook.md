@@ -1,4 +1,4 @@
-# Part 8 — The Interview Playbook
+# Part 8 — Be Interview Ready
 
 How data hiring works, and question banks for each role. Use Part 8 when you apply for a job: read Chapters 68 and 69 first, then the banks for the role you want.
 

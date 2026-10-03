@@ -296,6 +296,7 @@ def outline_pages(pdf_path):
 def render(pw, html_path, pdf_path, footer_text=None, layout=False):
     b = pw.chromium.launch()
     p = b.new_page(viewport={'width': PRINT_W_PX, 'height': 1100})
+    p.set_default_timeout(900_000)     # a whole volume (1,700 pages) takes minutes to lay out
     p.emulate_media(media='print')
     p.goto(f'file://{html_path}')
     p.wait_for_load_state('networkidle')
@@ -337,7 +338,7 @@ def join_cover(cover_pdf, body_pdf, out, title, html_path=None):
     doc.insert_pdf(cov, start_at=0)
     if html_path: clean_bookmarks(doc, pathlib.Path(html_path).read_text())
     doc.set_metadata(dict(doc.metadata, title=title, author='Abhishek Tiwari'))
-    doc.save(str(out), garbage=3, deflate=True)
+    doc.save(str(out), garbage=SAVE_GARBAGE, deflate=True)
     doc.close(); cov.close()
     print(out, len(PdfReader(str(out)).pages), 'pages')
 
@@ -373,6 +374,7 @@ def build(src, name, bodyclass, title, footer, cover, toc_depth):
     join_cover(D/f'{name}-cover.pdf', D/f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
 
 JOBS = {}
+SAVE_GARBAGE = 3     # PyMuPDF clean-up level; books.py lowers it, since 3 takes half an hour on a 1,500-page book
 JOBS['blueprint'] = lambda: build('blueprint.md', 'Analyst-to-Architect-Blueprint', '',
           'Analyst to Architect — Expansion Blueprint', 'Analyst to Architect · Expansion Blueprint v3',
           dict(KICKER='Analyst to Architect', TITLE='Expansion Blueprint',
@@ -480,7 +482,33 @@ JOBS['front'] = lambda: build('front-how-to-use-this-book.md', 'Front-How-to-Use
 
 
 # ---- A package: several sources as one PDF with one page count (D8) ---------------------------
-FOOT_FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+def _foot_font():
+    """DejaVu Sans for the running footers, wherever this machine keeps it.
+
+    The path was hard-coded to the Linux sandbox the build was written in. matplotlib ships the
+    same font file, so the footers render identically on a machine with no system DejaVu.
+    Set BOOK_FOOT_FONT to override.
+    """
+    import os
+    here = pathlib.Path(__file__).resolve().parent
+    tries = [os.environ.get('BOOK_FOOT_FONT'),
+             '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+             here / 'fonts' / 'DejaVuSans.ttf']
+    try:
+        import matplotlib
+        tries.append(pathlib.Path(matplotlib.__file__).parent
+                     / 'mpl-data' / 'fonts' / 'ttf' / 'DejaVuSans.ttf')
+    except ImportError:
+        pass
+    tries += ['C:/Windows/Fonts/DejaVuSans.ttf', 'C:/Windows/Fonts/arial.ttf',
+              'C:/Windows/Fonts/segoeui.ttf']
+    for c in tries:
+        if c and pathlib.Path(c).exists():
+            return str(c)
+    raise SystemExit('no footer font found; set BOOK_FOOT_FONT to a .ttf')
+
+
+FOOT_FONT = _foot_font()
 
 
 def running_head(title):
@@ -491,7 +519,58 @@ def running_head(title):
     return title
 
 
-def stamp_footers(pdf_path, heads, label):
+def relink(doc):
+    """Rewrite named-destination links as direct internal go-tos. Returns how many changed.
+
+    Two things need fixing, and both are easy to get wrong.
+
+    join_cover inserts the cover into the body, and that rewrites the body's own internal links as
+    *named* destinations. A named destination is valid PDF, but many viewers will not follow one,
+    so a reader clicking a contents entry gets nothing at all.
+
+    The stored point is in PDF's native space: origin bottom-left, y growing upward. insert_link
+    takes its point in page space: origin top-left, y growing downward. Copied across unconverted,
+    a destination meaning "top of the page" (y = 842 on A4) becomes "842 points below the top",
+    which is the bottom edge, so the viewer scrolls onto the next page or lands mid-page. Convert
+    against the target page's own height.
+
+    Every link on a page is removed and re-inserted in one go, because deleting and inserting
+    inside a loop over get_links() invalidates the entries after it and silently drops them.
+
+    Run after the last step that inserts pages."""
+    import pymupdf
+    names = doc.resolve_names() or {}
+    heights = [p.rect.height for p in doc]
+    fixed = 0
+    for page in doc:
+        links = page.get_links()
+        if not any(l['kind'] == pymupdf.LINK_NAMED for l in links):
+            continue
+        rebuilt = []
+        for l in links:
+            if l['kind'] != pymupdf.LINK_NAMED:
+                rebuilt.append(l)
+                continue
+            t = names.get(l.get('nameddest'))
+            if not t:
+                continue                      # a name with no destination cannot be linked
+            new = {'kind': pymupdf.LINK_GOTO, 'from': l['from'], 'page': t['page']}
+            if t.get('to'):
+                H = heights[t['page']]
+                new['to'] = pymupdf.Point(t['to'][0], max(0.0, min(H - 1.0, H - t['to'][1])))
+            rebuilt.append(new)
+            fixed += 1
+        while True:                       # link annots are NOT returned by page.annots(), so
+            ls = page.get_links()         # delete the first repeatedly: no handle goes stale and
+            if not ls:                    # nothing is left behind to double up with the new ones
+                break
+            page.delete_link(ls[0])
+        for l in rebuilt:
+            page.insert_link(l)
+    return fixed
+
+
+def stamp_footers(pdf_path, heads, label, book='Analyst to Architect'):
     """Footer on every body page: 'Analyst to Architect · <part or chapter>' left, the page label right.
     heads is [(physical page, H1 title)] in order; pages before the first H1 are the contents."""
     import pymupdf
@@ -503,7 +582,7 @@ def stamp_footers(pdf_path, heads, label):
         page.wrap_contents()      # Chromium leaves its page scale unclosed; isolate it before adding text
         n = i + 1
         cur = next((t for pg, t in reversed(heads) if pg <= n), 'Contents')
-        left = 'Analyst to Architect · ' + running_head(cur)
+        left = book + ' · ' + running_head(cur)
         right = label(n)
         W, H = page.rect.width, page.rect.height
         y = H - 11 * mm
@@ -511,14 +590,18 @@ def stamp_footers(pdf_path, heads, label):
         tw.append((18 * mm, y), left, font=font, fontsize=7.5)
         tw.append((W - 18 * mm - font.text_length(right, 7.5), y), right, font=font, fontsize=7.5)
         tw.write_text(page, color=grey)
+    n = relink(doc)                # contents entries must be clickable in every viewer
+    if n:
+        print(f'  {n} contents links resolved to direct page jumps')
     tmp = str(pdf_path) + '.tmp'
-    doc.save(tmp, garbage=3, deflate=True)
+    doc.save(tmp, garbage=SAVE_GARBAGE, deflate=True)
     doc.close()
     os.replace(tmp, str(pdf_path))
 
 
-def build_package(srcs, name, title, cover):
-    """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …)."""
+def build_package(srcs, name, title, cover, offset=0, book='Analyst to Architect'):
+    """One PDF, one render, one page count: the front matter (i, ii …) then the parts (1, 2 …).
+    offset continues the page count of an earlier volume: its first part page is offset + 1."""
     joined = '\n\n'.join((MS / s).read_text(encoding='utf-8').strip() for s in srcs) + '\n'
     joined = re.sub(r'^\*Part \d+ — [^\n]*\*\n', '', joined, flags=re.M)   # the part opening page says it once
     src = D / f'{name}.src.md'
@@ -542,12 +625,12 @@ def build_package(srcs, name, title, cover):
             new = outline_pages(D / f'{name}-body.pdf')
             ids = heading_pages(base, new)
             P = ids.get(first_part, 1)
-            label = (lambda P: lambda n: roman(n) if n < P else str(n - P + 1))(P)
+            label = (lambda P: lambda n: roman(n) if n < P else str(n - P + 1 + offset))(P)
             if new == pages and attempt: break
             pages = new
         (D / f'{name}-layout.json').write_text(json.dumps(rep, indent=1, ensure_ascii=False))
     heads = [(ids[i], t) for i, t in h1s if i in ids]
-    stamp_footers(D / f'{name}-body.pdf', heads, label)
+    stamp_footers(D / f'{name}-body.pdf', heads, label, book)
     join_cover(D / f'{name}-cover.pdf', D / f'{name}-body.pdf', OUT / f'{name}.pdf', title, body_html)
     return heads, label
 
@@ -593,9 +676,9 @@ PART_PACKAGES = {   # Parts 4 to 8 read in chapter-number order
     '7': ('part7-architecture-leadership.md', list(range(60, 68)), 'Part-7-Architecture-Governance-and-Leadership',
           'Architecture, Governance<br>&amp; Leadership', 'Architecture, Governance & Leadership',
           'Designing whole systems, distributed systems, data architecture patterns, automation architecture, security and responsible AI, FinOps, data strategy, and the architect as leader.'),
-    '8': ('part8-interview-playbook.md', [68, 69, 70, 71, 72, '72a', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
-          'Part-8-The-Interview-Playbook', 'The Interview<br>Playbook', 'The Interview Playbook',
-          'How data hiring works, the extra-points method, and a question bank for each skill and role, with take-home assignments and mock interviews.'),
+    '8': ('part8-interview-playbook.md', [68, 69, '69a', 70, 71, 72, '72a', '72b', 73, 74, 75, '76a', '76b', 77, 78, 79, 80, 81, 82],
+          'Part-8-Be-Interview-Ready', 'Be Interview<br>Ready', 'Be Interview Ready',
+          'How data hiring works, the extra-points method, choosing between tools and defending the choice, and a question bank for each skill and role, with take-home assignments and mock interviews.'),
 }
 for _k, (_intro, _order, _name, _title, _plain, _sub) in PART_PACKAGES.items():
     JOBS['package-' + _k] = (lambda intro, order, name, title, plain, sub, k: lambda: build_package(

@@ -1,6 +1,6 @@
 # Chapter 81. Behavioral, HR & Offer Conversations
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 8, §8.6 (reading salary figures; CTC and in-hand pay) · Chapter 68 (the hiring process gate by gate, and §68.6 on pay before the offer gate) · Chapter 69 (the three answer tiers and the twelve extra-point tags) · Chapter 76A (talking about your own projects). The worked examples reuse your portfolio projects from Chapters 27 and 44.
 >
-> **Time needed:** 2–3 hours to read and say every core answer aloud once; 4–6 hours for the project (building your own story bank, three STAR outlines, and timed practice).
+> **Time needed:** 2–3 hours to read and say every core answer aloud once; 4–6 hours for the project (building your own story bank, three STAR outlines, and timed practice). Sections 81.8 to 81.10 add about 2 hours; 81.9 covers the Indian hiring conversation, which most interview material leaves out entirely.
 >
 > **How this chapter is built.** Same format as Chapters 70–80: every core question leads with a **"Remember it as…"** hook, a one-line answer, and a compact tier table whose extra points carry Chapter 69's tags (**[+Business]**, **[+Limits]** and so on). Rapid-fire sections are scan tables. There is no code in this chapter; every worked example is a full, concrete STAR answer, not a description of what one should contain, and every negotiation script is written out in full. These questions are asked of every role and at every level, so the questions carry no level or role labels; where your level changes the answer (a first job, for example), the answer says so.
 >
@@ -296,6 +296,288 @@ The headline says ₹6 lakh, but the monthly fixed gross is ₹5,10,000 ÷ 12 = 
 
 ---
 
+## 81.8 The questions you will actually be asked
+
+Section 81.3 works two of these in full. This section covers the rest of the standard set — the questions that recur across almost every company — with the trap in each and the shape of an answer that survives the follow-up.
+
+They are not trick questions and they are not testing honesty in the abstract. Each one is probing for a specific risk, and knowing which risk makes the answer obvious.
+
+### Q81-035 · "Tell me about a time you had to work with a difficult colleague."
+
+**Level:** Mid · **Roles:** all
+
+**Remember it as:** *They are not asking about the colleague. They are finding out whether you are the difficult one.*
+
+**Answer in one line:** Tell it as **a difference in approach that you resolved**, not a character study — because the interviewer is assessing how you describe someone who is not in the room, and a story where the other person is simply unreasonable tells them only about you.
+
+The trap is the invitation. The question hands you permission to complain, and taking it is the failure. What a strong answer does differently:
+
+**Describe the difference, not the person.** "He wanted to ship the dashboard before the data was reconciled; I thought a wrong number in front of the board was worse than a week's delay." That is a legitimate disagreement between two reasonable people. "He was careless and didn't care about accuracy" is a verdict, and the interviewer hears how you will describe *them* one day.
+
+**Give them a reason.** The strongest move in the whole answer: explain why the other person's position made sense from where they stood. "He had promised it to the CFO and was being chased weekly." Showing you understood their constraint is the thing that separates a mature answer from a rehearsed one.
+
+**Resolve it with something you did.** Not "eventually they came round." What did *you* change — a conversation, a compromise, a check that let you ship sooner, escalating properly?
+
+**End with the working relationship, not the outcome.** "We agreed I'd reconcile the top ten accounts rather than all of them, which took two days instead of a week, and after that he'd ping me before promising a date." That last clause is the answer to the question actually asked.
+
+If it genuinely did not resolve, say so and say what you would do differently — which is a better answer than a tidy ending that sounds invented.
+
+| Tier | What to say |
+|---|---|
+| Passes | A story where the colleague was wrong and you were patient |
+| Strong | + frames it as a difference in approach, gives their position a legitimate reason, and names what *you* changed |
+| Extra points | **[+Clarify]** describing their constraint sympathetically is the single strongest move available · **[+Business]** ending on the improved working relationship answers what was really asked · **[+Validate]** an honest unresolved ending beats an implausible tidy one · **[+Edge cases]** never name the person, and never make it about personality |
+
+**Likely follow-ups:** What would you do differently? Have you ever been the difficult one? *(Have an answer. "Yes, when I was certain and wrong about X" is a strong one.)* How do you handle it if they outrank you?
+**Red flag:** any hint of contempt, and blaming the organisation for not removing them.
+**Learn it in:** Chapter 81, section 81.1 (STAR); Chapter 24, section 24.7 (pushback).
+
+### Q81-036 · "Tell me about a time you missed a deadline."
+
+**Level:** Mid · **Roles:** all
+
+**Remember it as:** *The question is about what you did when you knew you would miss it, not about the missing.*
+
+**Answer in one line:** Pick a real one, and spend most of the answer on **the moment you realised and what you did next** — because everyone misses deadlines and the interviewer is finding out whether you tell people early or go quiet.
+
+The structure that works:
+
+**Name the deadline and the miss, briefly.** No lengthy setup. "I'd committed to the month-end pack by the 3rd and delivered on the 6th."
+
+**Say when you knew.** This is the hinge of the whole answer. "On the 1st I found the source file had two months of duplicated rows, and I knew then it would slip."
+
+**Say what you did with that knowledge, immediately.** Told whom, offered what. "I told the finance lead that morning, offered the three headline numbers by the 3rd with the detail to follow, and asked which she needed for the board pack."
+
+**Then the outcome and the change.** "She only needed the headlines on the 3rd. Since then I check row counts against last month before I start, which takes two minutes."
+
+**The trap is choosing a deadline you missed for reasons entirely outside your control.** It feels safe and it answers nothing — the interviewer learns you can be unlucky. A miss where you had some part in it, handled well, is a far stronger story and shows you can describe your own contribution to a problem.
+
+**The other trap is the heroic recovery.** "I worked all weekend and delivered on time" is not an answer to this question, and at senior level it reads as poor planning plus an unsustainable habit.
+
+| Tier | What to say |
+|---|---|
+| Passes | A deadline missed for external reasons, recovered |
+| Strong | + the moment of realising, who was told and when, and what was offered instead |
+| Extra points | **[+Business]** early bad news is a service and late bad news is a failure; the answer should demonstrate the first · **[+Validate]** the process change at the end shows it generalised · **[+Clarify]** asking the stakeholder what they needed *most* is better than guessing which part to cut · **[+Edge cases]** avoid the all-weekend recovery; it answers a different and worse question |
+
+**Likely follow-ups:** What would you do differently? How do you estimate now? Have you ever had to tell someone very senior that something would be late?
+**Learn it in:** Chapter 24, section 24.3 (scoping); Chapter 76A, Q76A-035.
+
+### Q81-037 · "Why are you leaving?" when the real reason is your manager
+
+**Level:** Mid · **Roles:** all
+
+**Remember it as:** *True, brief, forward-facing. You do not have to give the whole reason, and you must not give a false one.*
+
+**Answer in one line:** Give a **true reason framed around what you are moving towards**, not away from — you are not obliged to disclose a difficult relationship, and criticising a manager you are still working for is the single fastest way to lose an offer.
+
+The version that works is honest without being complete:
+
+> "I've learned a lot there, but the role has settled into running the same reports each month. I want to work somewhere the analysis changes decisions rather than records them — which is why this role interested me."
+
+Every word of that can be true while a difficult manager is the actual trigger. You are choosing which true thing to say, which is not the same as lying, and it is what the question expects.
+
+**If pressed** — and a good interviewer will press — go one layer deeper without naming anyone: "There's also been a change in how the team is run, and the work I'm best at isn't where the team is going." True, specific enough to satisfy, and it still does not ask them to take sides.
+
+**What to avoid, and why each one costs you:**
+
+| | What they hear |
+|---|---|
+| "My manager is terrible" | Here is how this candidate will describe me |
+| A long, detailed grievance | This will follow them here |
+| "No reason, just looking" | Evasive, or no self-knowledge |
+| An obviously false reason | They will find out — the industry is small |
+
+**The one exception worth naming.** If what you experienced was genuinely improper — harassment, discrimination, being asked to falsify numbers — you may say so plainly and briefly, without detail. "I was asked to change figures in a report and I wasn't willing to" is a complete answer and a good one, and an interviewer who reacts badly to it has told you something useful about them.
+
+| Tier | What to say |
+|---|---|
+| Passes | A neutral reason about growth |
+| Strong | + specific about what the new role offers that the current one does not, so it reads as a real reason rather than a formula |
+| Extra points | **[+Clarify]** a prepared second layer, for when they press · **[+Business]** connecting the reason to *this* role shows you read the job description · **[+Edge cases]** genuine impropriety can be stated plainly and briefly, and should be · **[+Validate]** the test is whether your former manager would recognise the account as fair |
+
+**Likely follow-ups:** What would have made you stay? Have you raised it with them? What are you looking for that you cannot get there?
+**Red flag:** any criticism of a named person, and a story that changes between rounds.
+**Learn it in:** Chapter 81, section 81.4; Chapter 68, section 68.3.
+
+### Rapid-fire, 81.8: the standard set
+
+Roles: all. Each row names what the question is really probing and the shape that answers it.
+
+| # | Question | What it is probing, and the shape that works | Extra point |
+|---|---|---|---|
+| Q81-038 | "Tell me about a mistake you made." | Whether you notice, own and fix. A real one with a real consequence, found by you, with the check you added after | **[+Validate]** a mistake nobody noticed is the best kind to tell → Q81-012 |
+| Q81-039 | "Tell me about a time you persuaded someone." | Influence without authority. Lead with *their* objection, not your argument | **[+Business]** persuasion is understanding their constraint → Ch 80 §80.5 |
+| Q81-040 | "How do you handle criticism?" | Defensiveness. One specific piece of feedback, what you changed, and that you still do it | **[+Edge cases]** "I disagreed and here is how we resolved it" is also valid → Q81-013 |
+| Q81-041 | "Tell me about a time you led without being the manager." | Whether you take responsibility unasked. Pick something small and real | **[+Business]** "I noticed nobody owned X" is the opening line → Ch 80 §80.5 |
+| Q81-042 | "What would your last manager say about you?" | Self-awareness and consistency. Say something they would actually say, including a limitation | **[+Validate]** it must match your referee's account → Q81-037 |
+| Q81-043 | "Tell me about working under pressure." | Whether pressure degrades your judgement. What you cut, not how hard you worked | **[+Trade-offs]** naming what you deprioritised is the whole answer → Q76A-030 |
+| Q81-044 | "Give an example of using data to change a decision." | The core of the job. Decision before, evidence, decision after. If nothing changed, pick another | **[+Business]** if no decision changed, the analysis was reporting → Ch 75 §75.1 |
+| Q81-045 | "Tell me about a time you had to learn something quickly." | Learning approach. Name the thing, the method, the timescale, and how you checked you had it right | **[+Validate]** "I checked by…" is the part most people leave out → Ch 9 §9.3 |
+| Q81-046 | "How do you handle ambiguity?" | Whether you freeze or decide. State the assumption and proceed — the senior sentence | **[+Clarify]** "I assumed X, tell me if that is wrong" → Q76A-067 |
+| Q81-047 | "Tell me about a project that failed." | Whether you can define failure honestly. Name what you would do differently *first* | **[+Business]** a model nobody used is a failure even if it was accurate → Q76A-052 |
+| Q81-048 | "What are you proud of that nobody noticed?" | Values. The unglamorous fix, the documentation, the thing you prevented | **[+Business]** prevented problems are invisible, which is why this is asked → Q76A-038 |
+| Q81-049 | "How do you prioritise?" | Whether you have a method. Decision and deadline, and what you tell the people who lose | **[+Validate]** the communication half is what they are listening for → Q76A-030 |
+| Q81-050 | "Tell me about disagreeing with a decision that went ahead anyway." | Disagree and commit. Disagreed once, clearly, then supported it | **[+Business]** re-litigating is what makes people stop consulting you → Q76A-072 |
+| Q81-051 | "What motivates you?" | Fit, and whether this role provides it. Answer with the kind of work, not with words like challenge | **[+Clarify]** then ask how much of that the role actually contains → Q81-019 |
+| Q81-052 | "Why should we hire you?" | Whether you have connected yourself to *this* job. Two specifics from their description and your evidence for each | **[+Business]** generic strengths answer a generic question → Ch 68 §68.9 |
+
+---
+
+## 81.9 The Indian hiring conversation
+
+These come up in almost every Indian data interview and almost no interview book covers them. None of what follows is legal advice — contracts and company policies differ, and the only reliable source is **your own signed documents**. What this section gives you is **what to say**, and what the question is actually about.
+
+### Q81-053 · "What is your notice period?"
+
+**Level:** Fresher · **Roles:** all
+
+**Remember it as:** *A scheduling question, not a test. Give the number from your contract, then give them a plan.*
+
+**Answer in one line:** State the number in your contract plainly, say whether any of it can be shortened and how, and offer a realistic joining date — because this is a logistics question and the only wrong answers are vagueness and an estimate you cannot keep.
+
+What to say:
+
+> "Ninety days as written. I'd ask to be released earlier and some people have been let go at sixty, but I'd rather commit to ninety and beat it than promise sixty and miss."
+
+That sentence does three useful things: gives the number, flags the possibility, and refuses to over-promise. The third is the one they will remember, because candidates who promise a date and then cannot deliver it create a real problem for a hiring manager who has already planned around them.
+
+**Things worth knowing before you are asked**, all of which come from *your* documents and not from this book:
+
+| | Where to find it |
+|---|---|
+| The notice period as written | Your offer letter or appointment letter |
+| Whether buy-out is permitted, and what it costs | The same documents, or HR |
+| Whether unused leave can offset it | Company policy |
+| Whether a bond or training-cost clause applies | Your signed agreement |
+
+**If the number is long and they need someone sooner**, say what is genuinely possible rather than what they want to hear. A hiring manager would far rather hear "ninety days, and here is why it is worth waiting" than a date that slips twice.
+
+**Do not resign before you have the written offer.** Not the verbal one, not the "we are just finalising" one. The written offer with the start date on it.
+
+| Tier | What to say |
+|---|---|
+| Passes | The number |
+| Strong | + whether it can be shortened, how, and a date you will actually hit |
+| Extra points | **[+Business]** committing to the longer date and beating it is better than the reverse, and hiring managers notice · **[+Clarify]** ask when they need someone, so you know whether this is a real constraint · **[+Validate]** check your own contract rather than relying on what colleagues say · **[+Edge cases]** never resign before the written offer |
+
+**Likely follow-ups:** Can you buy it out? Would you be willing to? When could you realistically start?
+**Learn it in:** Chapter 81, section 81.6 (offers); Chapter 68, section 68.6.
+
+### Q81-054 · "There's a gap in your CV. What were you doing?"
+
+**Level:** Fresher · **Roles:** all
+
+**Remember it as:** *Short, true, and ending in the present. The gap is not the problem; evasiveness about it is.*
+
+**Answer in one line:** Say what it was in one sentence, say what you did with the time if anything, and bring it to the present — because interviewers ask this to check for evasiveness, not to disqualify you, and a straightforward answer usually ends the topic.
+
+The shape, with the common reasons:
+
+> **Study or upskilling:** "I took eight months to move from accounts into analytics — I did the SQL and Python work and built the three projects on my CV. I started applying once I could actually do the work rather than just list the tools."
+
+> **Health, family, caring:** "I took a year out for a family matter. It's resolved and I've been back at it since March." You owe them no detail, and a good interviewer will move on.
+
+> **A layoff or a company closing:** "The team was cut in March. I spent the first two months looking and the rest also doing X." Layoffs are common and carry no stigma; the pause that follows is normal.
+
+> **A role that did not work out:** "I joined and it wasn't what the description said. I left after two months rather than stay somewhere I couldn't do good work." Brief and forward-facing.
+
+**Three things that matter more than the reason.**
+
+**Keep it short.** A long explanation signals that you think it is a bigger problem than they do. Two sentences, then stop.
+
+**Do not apologise.** "I'm sorry about the gap" invites them to treat it as a deficiency.
+
+**End in the present, with momentum.** Whatever the gap was, finish with what you have been doing recently and what you are ready for.
+
+**If you kept your skills current during it, say so with evidence.** "I did the three projects in my portfolio during that time" turns a gap into a period of work, and this book's projects exist partly for that.
+
+| Tier | What to say |
+|---|---|
+| Passes | A brief honest reason |
+| Strong | + what you did with the time, ending in the present with momentum |
+| Extra points | **[+Business]** a gap filled with demonstrable projects stops being a gap · **[+Validate]** keep it to two sentences; length signals anxiety · **[+Edge cases]** you owe no detail on health or family matters, and an interviewer pressing for it has told you something · **[+Clarify]** if the gap is current, say exactly what you are doing now |
+
+**Likely follow-ups:** What did you learn during that time? Would you take a similar break again? Are you up to date with the tools?
+**Red flag:** vagueness, inconsistent dates between your CV and your answer, or apologising repeatedly.
+**Learn it in:** Chapter 81, section 81.4; Chapter 76A, section 76A.5.
+
+### Rapid-fire, 81.9: the Indian hiring conversation
+
+Roles: all. **None of this is legal advice — your signed documents are the authority.**
+
+| # | Question | What to say | Extra point |
+|---|---|---|---|
+| Q81-055 | "What's your current CTC?" | Many candidates now answer with their expectation instead, and the rules on asking differ by state and employer. Decide your line in advance | **[+Business]** anchoring on a low current CTC caps the offer → Q81-030 |
+| Q81-056 | "Why are you switching domains?" | Name what transfers, with evidence, then what attracted you. Transfer first, enthusiasm second | **[+Validate]** a portfolio project in the new domain is the evidence → Ch 27 |
+| Q81-057 | "You've switched jobs every year." | Give the reason pattern, not three separate excuses, and say what you are looking for that would keep you | **[+Business]** naming what would make you stay is what reassures → Q81-037 |
+| Q81-058 | Asked about a service bond or training agreement | Check your own agreement before the conversation and state the facts plainly. Do not guess at enforceability | **[+Edge cases]** get any buy-out arrangement in writing → Q81-053 |
+| Q81-059 | "Are you willing to relocate?" | Answer honestly. A yes you cannot honour costs more than a no | **[+Clarify]** ask about hybrid expectations and how often, specifically → Q81-020 |
+| Q81-060 | Background verification and the relieving letter | Keep your documents in order and your dates accurate everywhere. Most problems here are mismatched dates, not misconduct | **[+Validate]** make your CV, LinkedIn and form answers agree exactly → Ch 68 §68.4 |
+| Q81-061 | Asked for documents before an offer | Normal for some stages, but share only what the stage needs. Full payslips before an offer is worth a polite question | **[+Business]** "happy to share at offer stage" is a complete answer → Q81-028 |
+| Q81-062 | A joining bonus with a clawback | Read the period and the condition. It is a loan until the period ends, and should be weighed as one | **[+Trade-offs]** compare offers on fixed pay, not on the headline → Q81-024 |
+| Q81-063 | Asked a personal question that is not relevant | Answer the professional version. "Marital status" becomes "I'm able to travel as the role needs" | **[+Edge cases]** persistent pressing is information about the employer → Q81-018 |
+| Q81-064 | A verbal offer and weeks of silence | Follow up once a week, politely, and keep interviewing until the written offer arrives | **[+Business]** verbal offers are withdrawn more often than people expect → Q81-032 |
+| Q81-065 | A counter-offer from your current employer | Ask why it took a resignation. The reason you were leaving is usually still there | **[+Validate]** most who accept counter-offers leave within a year anyway → Q81-033 |
+| Q81-066 | Asked to join sooner than your notice allows | Offer what is real: part-time handover, documentation, availability for questions. Not a date you cannot hit | **[+Business]** a clean exit protects a reference you will need → Q81-053 |
+
+---
+
+## 81.10 Hard moments in the room
+
+The questions above assume the interview is going normally. These are the ones where it is not, and how you behave here is remembered longer than the technical answers.
+
+### Q81-067 · You do not know the answer
+
+**Level:** Fresher · **Roles:** all
+
+**Remember it as:** *Say so in one sentence, then show how you would find out. The second half is the answer.*
+
+**Answer in one line:** Say you do not know, briefly and without apology, then **reason out loud towards it** — because an interviewer learns more from watching you approach an unfamiliar problem than from a memorised answer, and bluffing is both obvious and disqualifying.
+
+The sequence that works:
+
+**1. Say it plainly.** "I haven't used that." One sentence. Not three, not an apology.
+
+**2. Say what you do know that is adjacent.** "I haven't used Kafka, but I've built batch pipelines with Airflow, and I understand the difference is that the consumer pulls continuously rather than on a schedule." This is where most of the credit is, and most candidates skip it.
+
+**3. Reason towards it.** "I'd expect the hard parts to be ordering guarantees and what happens when a consumer falls behind — is that roughly right?" Now they are talking with you rather than examining you.
+
+**4. Say how you would find out.** "I'd read the docs and build a toy producer and consumer over a weekend." Concrete, not "I'd learn it."
+
+**Never bluff.** Interviewers ask follow-ups, the follow-up exposes it, and now they are re-evaluating everything you said that *was* true. One honest "I don't know" costs a fraction of one exposed bluff.
+
+**And distinguish the two kinds of not-knowing.** "I've never used that tool" is fine and common. "I don't know what a join is" in a data role is a different problem, and the answer there is honest preparation before the interview, not a technique inside it.
+
+| Tier | What to say |
+|---|---|
+| Passes | "I don't know" |
+| Strong | + the adjacent thing you do know, reasoning towards the answer, and a concrete plan to learn it |
+| Extra points | **[+Clarify]** turning it into a question makes it a conversation rather than an examination · **[+Validate]** "is that roughly right?" invites them to teach you, which most interviewers enjoy · **[+Business]** one honest gap costs far less than one exposed bluff · **[+Edge cases]** if it is core to the role, say you would want to close it before starting |
+
+**Likely follow-ups:** How would you learn it? What is the most recent thing you taught yourself? What would you do if you hit this on day one of the job?
+**Red flag:** confident vagueness. Interviewers recognise it immediately and it is worse than silence.
+**Learn it in:** Chapter 69, section 69.3; Chapter 76A, Q76A-057.
+
+### Rapid-fire, 81.10: when the room is difficult
+
+| # | Situation | What you do | Extra point |
+|---|---|---|---|
+| Q81-068 | You realise mid-answer that you got something wrong earlier | Correct it there and then, briefly. "Earlier I said X — that's wrong, it's Y." It reads as rigour | **[+Validate]** self-correction is a positive signal, not a confession → Ch 69 §69.3 |
+| Q81-069 | The interviewer seems bored or distracted | Shorten your answers and ask whether they want more depth. Often you are over-explaining | **[+Clarify]** "is that the level of detail you wanted?" resets it → Ch 69 §69.2 |
+| Q81-070 | The interviewer is hostile or dismissive | Stay level and answer the content. Some do it deliberately; either way, composure is the test | **[+Business]** it is also data about the workplace → Q81-034 |
+| Q81-071 | You are asked the same question twice by different panellists | Answer it again, the same way, briefly. Consistency is what is being checked | **[+Validate]** panels compare notes afterwards → Ch 68 §68.3 |
+| Q81-072 | A panel where two interviewers disagree with each other | Do not take a side. Acknowledge both positions and name what would decide it | **[+Trade-offs]** this is Chapter 69A's judgement question in the room → Ch 69A Q69A-056 |
+| Q81-073 | Your code does not run in a live-coding round | Narrate the debugging. That is the skill they came to see, and a clean fix beats clean code | **[+Validate]** say what you expect before running, so the gap is informative → Ch 72 §72.7 |
+| Q81-074 | You run out of time mid-problem | State your plan for the rest, concretely. A clear plan gets most of the credit | **[+Clarify]** ask whether to optimise or to finish correct-but-slow → Ch 72A §72A.9 |
+| Q81-075 | The connection drops in a video interview | Rejoin, apologise once, carry on. Have a phone number agreed in advance | **[+Validate]** confirm a fallback contact before the call starts → Ch 68 §68.3 |
+| Q81-076 | Asked to solve something you have memorised | Say you have seen it, then solve it properly. Pretending otherwise risks a follow-up you cannot answer | **[+Business]** honesty here is free and failing to mention it is not → Q81-024 |
+| Q81-077 | They ask nothing technical in a technical round | Ask what they would like to see, or offer to walk through a project. Silence is a wasted slot | **[+Clarify]** "would it help if I showed you how I'd approach X?" → Ch 76A §76A.6 |
+| Q81-078 | You are rejected and want to know why | Ask once, politely, for one thing to work on. Some will tell you; thank them either way | **[+Business]** a gracious rejection reply has produced later offers → Ch 68 §68.7 |
+| Q81-079 | The role turns out to be different from the description | Ask directly what the first six months involve. Better now than after joining | **[+Clarify]** a changed description is worth one honest question → Q81-022 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -340,13 +622,15 @@ No software specific to this chapter. A document listing your five to eight stor
 
 ## Key terms
 
-STAR method (Situation, Task, Action, Result) · story bank · behavioral theme · self-aware weakness · gap explanation · offer negotiation · expected CTC · CTC breakup · fixed vs variable pay · in-hand pay (Chapter 8) · notice period · counter-offer (from your current employer)
+STAR method (Situation, Task, Action, Result) · story bank · behavioral theme · self-aware weakness · gap explanation · offer negotiation · expected CTC · CTC breakup · fixed vs variable pay · in-hand pay (Chapter 8) · notice period · counter-offer (from your current employer) · difference in approach · early bad news · forward-facing reason · notice period · buy-out · service bond · relieving letter · background verification · clawback · counter-offer · written against verbal offer · disagree and commit · adjacent knowledge · reasoning out loud · self-correction · panel consistency
 
 ---
 
 ## Final-week revision list
 
-Q81-001, Q81-006, Q81-011, Q81-012, Q81-013, Q81-019, Q81-024, Q81-025, Q81-034.
+Q81-001, Q81-006, Q81-011, Q81-012, Q81-013, Q81-019, Q81-024, Q81-025, Q81-034, Q81-036, Q81-037, Q81-053, Q81-067.
+
+The last four are the ones that most often decide an outcome: the missed deadline where the answer is when you told people (Q81-036), leaving when the real reason is your manager (Q81-037), the notice-period conversation (Q81-053), and not knowing the answer (Q81-067).
 
 ---
 

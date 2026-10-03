@@ -344,10 +344,10 @@ Not everyone climbs to the top, and you shouldn't read every chapter with the sa
 |---|---|---|---|
 | **Complete beginner, exploring** | Parts 0, 1 | Part 2 (first half) | — |
 | **Data analyst** | Parts 0, 1, 2 (all) | Part 3 (Ch 28, 30) | 68, 69, 70, 71, 72, 73, 75, 78, 81, 82 |
-| **Business analyst** | Parts 0, 1; Ch 10–16, 19–27 | Ch 17–18 | 68, 69, 70, 71, 75, 76, 78, 81 |
+| **Business analyst** | Parts 0, 1; Ch 10–16, 19–27 | Ch 17–18 | 68, 69, 70, 71, 75, 76B, 78, 81 |
 | **BI developer** | Parts 0, 1, 2; Ch 28, 32 | Ch 45–49, 51, 63 | 68, 69, 70, 71, 77, 78, 81 |
 | **Analytics engineer** | Parts 0–3 | Ch 45–49, 51 | 68, 69, 71, 72, 77, 81 |
-| **Automation / integration engineer** | Parts 0, 1; Ch 10–20, 25, 29, 34, 45–47, 51, 58, 63 | Ch 52, 55 | 68, 69, 70, 71, 72, 76, 77, 78, 81, 82 |
+| **Automation / integration engineer** | Parts 0, 1; Ch 10–20, 25, 29, 34, 45–47, 51, 58, 63 | Ch 52, 55 | 68, 69, 70, 71, 72, 76B, 77, 78, 81, 82 |
 | **Data scientist** | Parts 0–4 | Part 5; Ch 53–56, 58 | 68, 69, 71–75, 79, 81, 82 |
 | **Data engineer** | Parts 0–3, 5 | Part 4 (Ch 35–39); Ch 56, 63 | 68, 69, 71, 72, 77, 78, 81, 82 |
 | **ML / AI engineer** | Parts 0–6 | Part 7 | 68, 69, 71, 72, 74, 77, 78, 79, 81, 82 |

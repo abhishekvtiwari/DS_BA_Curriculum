@@ -1,14 +1,14 @@
 # Chapter 80. Architecture & Leadership Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
-> **You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end.
+> **You will learn to:** reason about distributed-systems trade-offs the way a senior interview actually probes them · make and defend a build-vs-buy or architecture decision with real trade-offs stated, not a confident guess · answer governance, security, and cost questions at the level an architect owns them · handle leadership scenarios (influencing without authority, saying no, presenting to a board) live · walk through a full architecture design case end to end · run a blameless postmortem whose finding is the detection gap rather than the bug · ask for an RPO and an RTO as numbers before designing any disaster recovery · cut a live system over incrementally, with an automated output comparison doing the real work · and diagnose a bottlenecked platform team as a structure problem rather than a headcount one.
 >
 > **Before you start:** Part 7 (Chapters 60–67), which teaches almost every idea in this bank; Chapter 20, section 20.14 and Chapter 23, section 23.9 for the time-saving and payback arithmetic in Q80-016; Chapter 24, sections 24.7 and 24.8 for presenting to executives and handling pushback; and Chapter 69 for the three answer tiers and the twelve extra-point tags. This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** 2–3 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap.
+> **Time needed:** 3–4 hours to read and drill once (about 10 minutes per core question answered aloud, 1–2 minutes per rapid-fire row, and 15 minutes to run Q80-016's cells yourself), plus 2–3 hours for the project: an ADR, an ROI, a pushback, and a roadmap. Section 80.7 adds about an hour and is whiteboard arithmetic — do it with a pen, not by reading. Sections 80.8 to 80.10 add about 90 minutes and are the operational and people half of the role: running a live system, changing it without breaking it, and leading the architecture. Three terms in them come from the site-reliability tradition rather than from this book — RPO, RTO and the error budget — and each is marked **Beyond the book** with a one-line primer, as are feature flags in section 80.9.
 >
 > **A scope note.** This chapter is for senior IC and architect-level interviews specifically (an **IC**, individual contributor, is a senior engineer or scientist who leads work without managing people), distinct from the Data Analyst/Data Scientist/Data Engineer focus of most of this part. Readers targeting DA/DS/DE roles can treat this chapter as optional, forward-looking material for a later career stage.
 >
@@ -297,6 +297,507 @@ Roles: ARC and LEAD for every row.
 
 ---
 
+## 80.7 Predict the number: capacity, availability, and the arithmetic of a design
+
+An architecture interview is mostly discussion, and that is where this chapter has been. But at some point the interviewer stops and asks for a number — how much downtime does that SLA allow, how many machines does that throughput need, what does adding a service cost you in availability. The discussion is where you show judgement; these are where you show you have built something.
+
+They are all arithmetic you can do on a whiteboard, and they are the arithmetic that makes a design real. A reliability target with no downtime figure attached is a slogan.
+
+Say each answer out loud, then read on.
+
+**How these were run.** Plain arithmetic, computed and printed on Python 3.12 with the standard library. Nothing here depends on a vendor, a price list or a product, so none of it goes stale.
+
+### Q80-030 · "We need 99.9% uptime." How much downtime is that?
+
+**Level:** Mid · **Roles:** DE, AE, MLE, Architect
+
+**Remember it as:** *Three nines is about 43 minutes a month. Each extra nine divides it by ten.*
+
+**Answer in one line:** **8.76 hours a year**, or about **43 minutes a month** — which is a great deal more than most people picture when they say "three nines", and is why the number should always be stated in minutes before it is agreed.
+
+```python
+year_minutes = 365 * 24 * 60
+for label, p in [('99%', 0.99), ('99.9%', 0.999), ('99.99%', 0.9999), ('99.999%', 0.99999)]:
+    down = year_minutes * (1 - p)
+    print(f"{label:>9}: {down:8.1f} min/yr = {down/60:6.2f} h/yr, {down/12:6.1f} min/month")
+```
+
+```
+      99%:   5256.0 min/yr =  87.60 h/yr,  438.0 min/month
+    99.9%:    525.6 min/yr =   8.76 h/yr,   43.8 min/month
+   99.99%:     52.6 min/yr =   0.88 h/yr,    4.4 min/month
+  99.999%:      5.3 min/yr =   0.09 h/yr,    0.4 min/month
+```
+
+Two nines — which sounds almost like three — allows **three and a half days** a year.
+
+The reason to have this table in your head is that it converts an abstract target into an operational commitment, and the two are usually agreed by different people. Three nines means a single unplanned restart that takes 45 minutes has spent the month's entire budget. Four nines means you cannot deploy during business hours unless the deployment is zero-downtime, because 4.4 minutes a month does not cover a rolling restart that goes wrong.
+
+Four follow-on points that separate a strong answer:
+
+**Each nine costs roughly an order of magnitude** in engineering and infrastructure. The jump from three to four is usually the jump from "one region, good monitoring" to "multi-region with automatic failover", and it is rarely worth it for an internal analytics platform.
+
+**Scheduled maintenance may or may not count**, and that is a contract question, not a technical one. Ask.
+
+**Availability is measured over a window**, and a shorter window is a harder promise. 99.9% monthly is stricter than 99.9% annually, because one bad month cannot be averaged away.
+
+**The number should come from the cost of being down**, not from a round-sounding target. A warehouse that feeds a morning report has a different requirement from a payments API, and an architect who asks "what does an hour of downtime actually cost?" before agreeing a figure is doing the job.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a small amount of downtime" |
+| Strong | + 8.76 hours a year and 43 minutes a month, and that each nine is roughly ten times the cost |
+| Extra points | **[+Business]** derive the target from the cost of downtime rather than accepting a round number · **[+Clarify]** ask whether planned maintenance counts and over what window it is measured · **[+Edge cases]** a monthly window is stricter than an annual one for the same percentage · **[+Validate]** 45 minutes of restart is a whole month of a three-nines budget, which is the sentence that makes it concrete |
+
+**Likely follow-ups:** What is an error budget? How does an SLO differ from an SLA? *(An SLO is the internal target; an SLA is the contractual promise with consequences, and it is usually set looser.)* How would you measure availability — by uptime, or by successful requests?
+**Learn it in:** Chapter 61, section 61.5 (reliability); Chapter 80, Q80-003.
+
+### Q80-031 · A request passes through five services, each 99.9% available. What is the end-to-end availability?
+
+**Level:** Senior · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *Availabilities in series multiply. Five nines-point-nine services give you 99.5%, which is a different world from 99.9%.*
+
+**Answer in one line:** **99.5%** — 0.999⁵, which is 43.7 hours of downtime a year against the 8.76 hours each individual service promises, so the chain is five times worse than any of its parts.
+
+```python
+for n in (1, 2, 3, 5, 10, 20):
+    avail = 0.999 ** n
+    print(f"{n:>2} in series: {avail*100:7.4f}%  ({(1-avail)*365*24*60:8.1f} min/yr down)")
+```
+
+```
+ 1 in series: 99.9000%  (   525.6 min/yr down)
+ 2 in series: 99.8001%  (  1050.7 min/yr down)
+ 3 in series: 99.7003%  (  1575.2 min/yr down)
+ 5 in series: 99.5010%  (  2622.7 min/yr down)
+10 in series: 99.0045%  (  5232.4 min/yr down)
+20 in series: 98.0189%  ( 10412.7 min/yr down)
+```
+
+Twenty services — an ordinary number for a microservice request path — gives **98%**, which is seven days a year.
+
+This is the strongest single argument against decomposition for its own sake, and it is worth being able to make numerically rather than as a preference. Every service you add to a *synchronous* path multiplies its failure in. The architectures that survive this do one of three things:
+
+| Approach | What it does to the arithmetic |
+|---|---|
+| **Redundancy within each service** | Two independent copies turn 99.9% into 99.9999%, so the chain of five becomes 99.9995% |
+| **Remove the service from the critical path** | Make the call asynchronous, or cache its result — an unavailable service that is not on the path contributes nothing |
+| **Degrade gracefully** | If a recommendation service is down and the page renders without recommendations, it was never in series |
+
+The redundancy line is the one worth doing out loud: 1 − (1 − 0.999)² = 0.999999. Two independent copies of a three-nines service give six nines — *provided the failures are independent*, which is the assumption that usually breaks. Two copies in the same rack, on the same deployment, behind the same config change, fail together, and the arithmetic quietly stops applying. That is the real content of Q80-029.
+
+| Tier | What to say |
+|---|---|
+| Passes | "They multiply, so it's lower" |
+| Strong | + 99.5%, converts it to 43.7 hours a year, and names the three ways out: redundancy, removing from the path, graceful degradation |
+| Extra points | **[+Scale]** 20 services in series is 98%, which is a week a year · **[+Edge cases]** redundancy only multiplies if failures are independent, and shared config, shared rack or a shared deploy breaks that · **[+Trade-offs]** the cheapest fix is usually making the call asynchronous rather than making the service more reliable · **[+Business]** this is the number to bring when someone proposes splitting a service for organisational reasons |
+
+**Likely follow-ups:** What makes two copies non-independent? How does a circuit breaker change this? What is the availability of components in parallel?
+**Learn it in:** Chapter 61, section 61.5; Chapter 80, Q80-029.
+
+### Q80-032 · A million events a day. What throughput do you design for?
+
+**Level:** Mid · **Roles:** DE, AE, Architect
+
+**Remember it as:** *The daily average is the wrong number. Traffic is not spread over 86,400 seconds; it arrives in a business day, with a peak inside it.*
+
+**Answer in one line:** The average is **11.6 events a second**, but you size for the peak — and if 80% of the volume arrives in four business hours, the real figure is **55.6 a second**, roughly five times the average.
+
+```python
+daily = 1_000_000
+print(f"average          : {daily/86400:.1f}/sec")
+for peak in (3, 5, 10):
+    print(f"  at {peak}x peak   : {daily/86400*peak:6.1f}/sec")
+print(f"80% in 4 hours   : {daily*0.8/(4*3600):.1f}/sec")
+```
+
+```
+average          : 11.6/sec
+  at  3x peak   :   34.7/sec
+  at  5x peak   :   57.9/sec
+  at 10x peak   :  115.7/sec
+80% in 4 hours  : 55.6/sec
+```
+
+Designing for 11.6 a second gives you a system that falls over every weekday at 11am.
+
+The move that makes this a good answer is doing it from the *shape of the business* rather than applying a generic multiplier. Riverstone's orders arrive during Indian business hours, so the overnight hours contribute almost nothing and the multiplier is around 5. A consumer app has an evening peak. A payroll system has a month-end spike that dwarfs everything — there the peak factor is not 5, it is 50, and the right design may be a queue that absorbs the spike rather than capacity that matches it.
+
+Three further things to say if there is room:
+
+**The peak of the peak.** A busy hour has a busy minute. If the arrival pattern is bursty rather than smooth, a short burst can exceed even the hourly peak rate several times over, which is what the queue depth has to absorb.
+
+**Growth.** Sizing for today's peak means re-architecting next year. A capacity plan carries a horizon.
+
+**Headroom.** Running at 100% of designed capacity leaves nothing for a retry storm (Chapter 78, Q78-031) or a failed node. 70% target utilisation is a common rule.
+
+| Tier | What to say |
+|---|---|
+| Passes | "About 12 a second" |
+| Strong | + that the average is the wrong number, derives a peak from the business day, and lands on roughly 50–60 a second |
+| Extra points | **[+Business]** derive the peak factor from when this business is actually busy, not a generic 3× · **[+Scale]** a queue absorbing a spike is often cheaper than capacity matching it, especially for month-end patterns · **[+Edge cases]** the busy hour has a busy minute, and bursts set the queue depth · **[+Validate]** plan for headroom — 70% utilisation — because retries and failures arrive together |
+
+**Likely follow-ups:** How would you handle a 50× month-end spike? What is backpressure? *(Chapter 77, Q77-022.)* How does this change for a streaming system?
+**Learn it in:** Chapter 48, section 48.2 (scale); Chapter 80, section 80.1.
+
+### Q80-033 · p50 is 100 ms and p99 is 1 second. A page makes 20 service calls. How often is it slow?
+
+**Level:** Brain-racking · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *The tail is not rare once you multiply it. Twenty calls at a 1% tail means one page in five touches the tail.*
+
+**Answer in one line:** About **18% of page loads** hit at least one second-long call — because the chance of *avoiding* the tail on all 20 is 0.99²⁰ = 0.818, so a "1 in 100" latency is a "1 in 5" page.
+
+```python
+p_tail = 0.01
+for n in (1, 5, 10, 20, 50):
+    print(f"{n:>2} calls: P(at least one in the p99 tail) = {(1-(1-p_tail)**n)*100:5.1f}%")
+```
+
+```
+ 1 calls: P(at least one in the p99 tail) =   1.0%
+ 5 calls: P(at least one in the p99 tail) =   4.9%
+10 calls: P(at least one in the p99 tail) =   9.6%
+20 calls: P(at least one in the p99 tail) =  18.2%
+50 calls: P(at least one in the p99 tail) =  39.5%
+```
+
+This is why **the median latency of a service tells you almost nothing about the experience of a page built from it**, and why engineers who optimise p50 are often surprised that users still complain.
+
+The consequences shape real designs:
+
+**Tail latency is the thing to work on.** Reducing p99 from 1s to 300 ms improves the 20-call page far more than halving the median does, because the median was never the problem.
+
+**Parallelise and the arithmetic changes shape.** Twenty *sequential* calls add their latencies, so the page is slow in total. Twenty *parallel* calls take as long as the slowest, which is almost always a tail call — so parallelism fixes the sum and makes you *more* exposed to the tail, not less.
+
+**Hedged requests** exploit exactly this: send a duplicate request if the first has not returned by p95, and take whichever answers first. It costs about 5% extra load and removes most of the tail.
+
+**Fan-out is the hidden cost of decomposition**, and it is the latency counterpart to Q80-031's availability argument. Each service you add is another draw from the tail.
+
+| Tier | What to say |
+|---|---|
+| Passes | "The tail matters more than the median" |
+| Strong | + the calculation, 1 − 0.99²⁰ = 18%, and that parallelising makes the page's latency equal to the slowest call |
+| Extra points | **[+Scale]** optimising p99 beats optimising p50 for any fan-out page · **[+Trade-offs]** hedged requests cut the tail for about 5% more load · **[+Edge cases]** the calculation assumes independence; a shared bottleneck like one overloaded database makes tails correlate and the real figure is worse · **[+Business]** users experience the tail, and averages in a dashboard hide it entirely |
+
+**Likely follow-ups:** What causes tail latency? *(GC pauses, cold caches, queueing, a slow replica.)* What is a hedged request? Why might the independence assumption fail?
+**Learn it in:** Chapter 61, section 61.4 (performance); Chapter 80, section 80.1.
+
+### Q80-034 · 100 TB today, replication factor 3, growing 30% a year. What do you provision for three years?
+
+**Level:** Mid · **Roles:** DE, Architect
+
+**Remember it as:** *Multiply by the replication factor, compound the growth, then divide by your target utilisation. Three steps, each of which people forget one of.*
+
+**Answer in one line:** About **940 TB** — 100 TB compounds to 220 TB logical over three years, replication triples it to 659 TB raw, and provisioning to a 70% utilisation target brings it to roughly 940.
+
+```python
+base, rf, growth, target_util = 100, 3, 0.30, 0.70
+for y in range(4):
+    logical = base * (1 + growth)**y
+    print(f"year {y}: {logical:6.1f} TB logical, {logical*rf:6.1f} TB raw")
+final = base * (1+growth)**3 * rf
+print(f"provisioned at {target_util:.0%} utilisation: {final/target_util:.0f} TB")
+```
+
+```
+year 0:  100.0 TB logical,  300.0 TB raw
+year 1:  130.0 TB logical,  390.0 TB raw
+year 2:  169.0 TB logical,  507.0 TB raw
+year 3:  219.7 TB logical,  659.1 TB raw
+provisioned at 70% utilisation: 942 TB
+```
+
+The answer people give is 300 TB, which is the replication step alone. The answer is more than three times that.
+
+Each step is a decision worth naming rather than a constant:
+
+**Replication factor** is a durability and availability choice. Three is the common default for HDFS and Cassandra; cloud object storage replicates behind the scenes and you pay for one copy. **Erasure coding** gets similar durability at roughly 1.5× instead of 3×, at the cost of more CPU on reads and slower recovery — and it is the lever that matters most at this scale.
+
+**Growth** should come from measurement, not a guess. And compound growth means the last year costs more than the first two combined, which is why a three-year capacity plan is really a plan to revisit the decision in eighteen months.
+
+**Utilisation headroom** exists because a storage system at 95% behaves very badly — compaction, rebalancing and recovery all need free space, and a node failure must be absorbed by the remaining nodes.
+
+The architect's real move is to question the first number. Three years of 30% growth assumes you keep everything forever. A retention policy that drops raw events after 90 days while keeping aggregates can change 940 TB into 200, and that conversation is worth more than any efficiency in the storage layer.
+
+| Tier | What to say |
+|---|---|
+| Passes | "300 TB, for the replication" |
+| Strong | + compounds the growth and adds utilisation headroom, landing near 940 TB, and names all three steps |
+| Extra points | **[+Trade-offs]** erasure coding gives similar durability at about 1.5× rather than 3× · **[+Business]** a retention policy usually beats any storage efficiency — ask what must actually be kept · **[+Scale]** compound growth means year three costs more than years one and two together · **[+Edge cases]** at 95% utilisation compaction and recovery stop working, which is why the headroom is not optional |
+
+**Likely follow-ups:** What is erasure coding? How would you set a retention policy? What is the cost difference between hot and cold storage tiers?
+**Learn it in:** Chapter 48, section 48.3 (storage); Chapter 80, section 80.3.
+
+### Q80-035 · 500 requests a second, 200 ms each. How many connections do you need?
+
+**Level:** Senior · **Roles:** DE, MLE, Architect
+
+**Remember it as:** *Little's Law: concurrency = throughput × latency. It is the only capacity formula you have to remember, and it explains why slow systems fall over rather than just slowing down.*
+
+**Answer in one line:** **100 concurrent requests** — 500 per second × 0.2 seconds — so a connection pool of 100 is exactly saturated, and the important part is what happens when latency moves.
+
+```python
+throughput = 500
+for latency in (0.05, 0.2, 1.0, 2.0):
+    print(f"{latency*1000:>5.0f} ms -> {throughput*latency:6.0f} concurrent")
+print(f"a pool of 100 serves {100/0.2:.0f} req/s at 200 ms")
+print(f"the same pool serves {100/2.0:.0f} req/s if latency degrades to 2 s")
+```
+
+```
+   50 ms ->     25 concurrent
+  200 ms ->    100 concurrent
+ 1000 ms ->    500 concurrent
+ 2000 ms ->   1000 concurrent
+a pool of 100 serves 500 req/s at 200 ms
+the same pool serves  50 req/s if latency degrades to 2 s
+```
+
+The last two lines are the whole point, and they describe how most outages actually unfold.
+
+A pool of 100 connections handles 500 requests a second comfortably at 200 ms. The database gets slower — a missing index after a deploy, a long-running report, a failover — and latency goes to 2 seconds. Capacity does not fall by the 10× that latency rose; it falls to **50 requests a second**, and the other 450 queue. The queue grows, queued requests time out, clients retry (Chapter 78, Q78-030), and the retries consume the capacity that was left.
+
+That is why systems **collapse** rather than degrade. The relationship between latency and capacity is multiplicative, and a queue turns a 10× slowdown into a total outage.
+
+What follows from it:
+
+**Size pools from Little's Law and the *worst* acceptable latency**, not the typical one.
+
+**Timeouts are a capacity control, not just an error-handling nicety.** A request that times out at 1 second frees its connection; one with no timeout holds it forever (Chapter 78, Q78-032).
+
+**Load shedding beats queueing.** Rejecting requests you cannot serve keeps the system responsive for the ones you can. An unbounded queue converts a capacity problem into an availability problem.
+
+The law applies everywhere: threads, connections, Kafka consumers, workers in a pool, even people in a support queue.
+
+| Tier | What to say |
+|---|---|
+| Passes | "100, by Little's Law" |
+| Strong | + what happens when latency rises: capacity falls proportionally, the queue grows, and the system collapses rather than degrading |
+| Extra points | **[+Scale]** size pools from the worst acceptable latency, not the typical one · **[+Trade-offs]** load shedding keeps a system responsive where an unbounded queue turns slow into down · **[+Edge cases]** timeouts are capacity control, because they return the connection · **[+Business]** this is why an incident goes from "a bit slow" to "entirely down" in minutes with no further trigger |
+
+**Likely follow-ups:** How would you pick a timeout? What is load shedding? How does this interact with autoscaling? *(Badly, if the scaler reacts to CPU — a queue-bound system is not CPU-bound, so it never scales.)*
+**Learn it in:** Chapter 61, section 61.4; Chapter 78, Q78-030.
+
+### Rapid-fire, 80.7: numbers an architect should not have to look up
+
+Roles: DE, MLE and Architect for every row.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q80-036 | Two copies of a 99.9% service — what availability? | 99.9999%, *if* the failures are independent. Shared config, shared rack or a shared deploy breaks that, and then it is still 99.9% | **[+Validate]** ask what the two copies share before claiming the number → Q80-029 |
+| Q80-037 | An SLA of 99.9% monthly against 99.9% annually | The monthly one is stricter: a bad month cannot be averaged away across the year | **[+Clarify]** the window is part of the promise → Q80-030 |
+| Q80-038 | A batch job takes 4 hours on 1 TB. How long on 10 TB? | Not 40 hours necessarily — it depends on whether the work is linear, and on whether a sort or a join makes it n log n or worse. Measure at two sizes before extrapolating | **[+Scale]** a shuffle or a cross join changes the shape entirely → Ch 48 §48.2 |
+| Q80-039 | Is adding a cache always a latency win? | No. It adds a failure mode, a consistency question and a cold-start cliff. A cache that is down or empty makes the system slower than having none | **[+Edge cases]** a popular key expiring sends everything to the database at once → Ch 78 Q78-031 |
+| Q80-040 | 1 GB of data over a 100 Mbps link — how long? | About 80 seconds at line rate, and realistically more. Bandwidth is in bits and file sizes in bytes; the factor of 8 is the usual error | **[+Validate]** for very large transfers, shipping disks is still sometimes faster → Ch 48 §48.2 |
+| Q80-041 | A "zero-downtime" deploy with a database migration | Only if the schema change is backward compatible with the running version. Add a column, deploy, backfill, then drop — never all at once | **[+Business]** the migration, not the deploy, is what forces the outage → Ch 28 §28.12 |
+| Q80-042 | Your p99 improved but users complain more. How? | You may have moved traffic into the tail, or the p99 is now measured over a different population, or the complaints are about p99.9. Percentiles do not aggregate — you cannot average them across servers | **[+Edge cases]** averaging percentiles across hosts is a common and silent monitoring error → Ch 61 §61.4 |
+| Q80-043 | Cost of an incident that costs one hour of a 10-person team | Ten hours of salary is the visible part, and usually the smallest. Delayed work, lost trust and the fix's opportunity cost are the rest | **[+Business]** this is the figure that justifies reliability work → Q80-016 |
+
+---
+
+## 80.8 Running it in production
+
+Sections 80.1 to 80.6 are about designing a system. This one is about the half of an architect's job that only exists after something is live, and it is where senior interviews spend more time than candidates expect. A design that cannot be operated is not a good design.
+
+> **Beyond the book: three operational terms this book does not teach.** Chapter 47 covers data incidents, runbooks and alerts, and Chapter 56 covers model monitoring, but these three come from the site-reliability tradition and are worth having one line each before the questions use them.
+>
+> - **RPO** (recovery point objective) is how much data you can afford to lose, measured in time. An RPO of one hour means losing up to an hour of writes is acceptable.
+> - **RTO** (recovery time objective) is how long you can afford to be down. The two are independent: you can have a tight RPO and a loose RTO, and the pair decides the architecture and most of the cost.
+> - An **error budget** is the inverse of an availability target. If the SLO is 99.9% monthly, the budget is the 43 minutes 12 seconds of downtime that target permits (Q80-030 does this arithmetic), and spending it is allowed — that is what a budget is for.
+
+### Q80-044 · Your nightly pipeline failed silently for a week. Run the postmortem.
+
+**Level:** Senior · **Roles:** DE, AE, Architect
+
+**Remember it as:** *A postmortem asks what about the system let this run for a week, not who missed it. The detection gap is the finding, not the bug.*
+
+**Answer in one line:** Blamelessly, in writing, with a timeline, and focused on the two questions that matter — **why did it fail**, and far more importantly **why did it take a week to notice** — ending in dated, owned actions, of which at least one must shorten detection rather than fix this one bug.
+
+**The structure, and the one row candidates leave out:**
+
+| | |
+|---|---|
+| **Timeline** | What happened and when, including when each person learned of it. Facts, no interpretation |
+| **Impact** | Quantified: which reports were wrong, who acted on them, what it cost. "Some dashboards were stale" is not an impact statement |
+| **Why it failed** | The technical cause, traced past the first answer |
+| **Why detection took a week** | **The actual finding.** A one-week gap is a monitoring defect, independent of the bug |
+| **What we are changing** | Dated, owned, and small enough to happen. One of them must address detection |
+| **What we are not changing** | And why — this is what stops a postmortem becoming a wish list |
+
+**Why the detection row dominates.** The bug is one bug. **The gap is every future bug**, including the ones not yet written. An honest postmortem of a week-long silent failure usually concludes that the pipeline had success/failure alerting but no **freshness or volume check** — it alerted on crashes and was silent on a job that completed having written nothing. Chapter 47, §47.5 is that check; Chapter 46, §46.7 is the stronger version, where delivery only happens after the data passes its tests.
+
+**Blameless, and what that actually means.** Not "nobody is responsible" — the opposite. It means the question is which part of the *system* permitted this, because a postmortem that lands on "X should have noticed" produces no change and guarantees the next one is concealed. Chapter 47, §47.8 makes the same point about data incidents.
+
+| Tier | What to say |
+|---|---|
+| Passes | Describes finding the root cause and fixing it, perhaps mentioning a postmortem document |
+| Strong | The full structure, with the detection gap identified as the primary finding and a dated owned action against it |
+| Extra points | + **[+Validate]** the strongest action is a freshness or row-count check, because it catches the whole class rather than this instance + **[+Business]** quantify the impact in decisions taken on wrong numbers, not in hours of downtime, since that is what the business experienced + **[+Edge cases]** a job that completes successfully having written nothing is the hardest failure to detect and the most common cause of a long silent gap + **[+Trade-offs]** include the "not changing" list, or the postmortem generates ten actions and delivers none |
+
+**Likely follow-ups:** What specific check would have caught this on day one? Who should write the postmortem?
+**Red flag:** a postmortem that names a person, or one whose only action is fixing the specific bug.
+**Learn it in:** Chapter 47, §47.8 (handling a data incident) and §47.5 (observability: freshness, volume, unusual values); Chapter 46, §46.7 (delivery only after the data passes its checks); Chapter 67, §67.6.
+
+### Q80-045 · "We need disaster recovery." What do you ask before designing anything?
+
+**Level:** Senior · **Roles:** DE, Architect · **Beyond the book** (RPO and RTO)
+
+**Remember it as:** *Two numbers decide the whole design: how much data you can lose, and how long you can be down. Everything else is consequence.*
+
+**Answer in one line:** Ask for the **RPO** and the **RTO** as numbers per system, then ask what event you are recovering from — because a single-region outage, a corrupted table and a deleted account need different answers, and the cost scales steeply with both numbers.
+
+**The conversation, in order:**
+
+1. **RPO and RTO, per system, as numbers.** Not "we can't lose data" — that is an infinite budget. The useful question is "if we lost the last hour of orders, what would happen?", and the answer is usually survivable for analytics and not for the ledger.
+2. **Recovering from what?** The scenarios have almost nothing in common:
+   - A region failing needs a second region, which is the expensive one
+   - A table corrupted by a bad deploy needs point-in-time restore
+   - A ransomware or deleted-account event needs backups the primary credentials cannot reach
+3. **Has the restore ever been tested?** This is the question that separates a real answer from a plan. An untested backup is a belief.
+4. **What does the business actually need recovered first?** Rarely everything at once. Order intake before historical reporting.
+
+**The honest framing to offer.** Different systems get different numbers, and saying so is the senior move: Riverstone's order ledger might warrant an RPO near zero, while the analytics warehouse can be rebuilt from source and needs no RPO at all — it needs a documented rebuild procedure instead. Buying one tier of protection for everything is how DR budgets get rejected.
+
+| Tier | What to say |
+|---|---|
+| Passes | Talks about backups, replication and a second region |
+| Strong | Asks for RPO and RTO as numbers per system, distinguishes the failure scenarios, and asks whether restore has been tested |
+| Extra points | + **[+Validate]** "when did we last restore from this backup into a working system?" is the question that finds the real state + **[+Business]** differentiate by system: a warehouse rebuildable from source needs a procedure, not a replica, and that distinction is where the budget is saved + **[+Edge cases]** backups reachable with the same credentials as production are not protection against the scenario people most fear + **[+Trade-offs]** a tighter RPO means synchronous replication, which costs write latency in normal operation — a permanent cost for a rare event |
+
+**Likely follow-ups:** What RPO would you argue for on the order ledger, and why? How would you test a region failover without risking production?
+**Red flag:** proposing multi-region before anyone has stated a number, or treating "we have backups" as disaster recovery.
+**Learn it in:** Chapter 60, §60.3 (non-functional requirements: numbers, not adjectives); Chapter 47, §47.8; Chapter 2, §2.9 (keeping data safe).
+
+### Rapid-fire, 80.8
+
+Roles: DE, AE and Architect for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-046 | What is an error budget, and what is it for? | The downtime an availability target permits — 99.9% monthly allows 43 minutes 12 seconds — and its purpose is to make reliability a budget rather than an absolute, so a team with budget remaining can ship faster and one that has spent it stops and fixes things | **[+Business]** it converts "is reliability good enough?" from an argument into a number both sides already agreed to | Senior · 80.7 (Q80-030), 60.3 |
+| Q80-047 | What belongs in a runbook? | What this job does, how to tell whether it is healthy, the three things that usually go wrong with the exact command for each, who to escalate to, and what *not* to do — written for a tired person at 3 a.m. who did not build it | **[+Validate]** the test of a runbook is that someone else followed it successfully without calling you | Mid · 47.8, 46.10 |
+| Q80-048 | Why does alert fatigue make a system less reliable? | Because an alert that fires often and means nothing trains people to ignore the channel, so the one real alert arrives in a stream of noise — a monitoring system with too many alerts is less effective than one with three that always matter | **[+Signpost]** Chapter 47, §47.9 is titled "Alerts people still read", which is the whole design goal | Mid · 47.9 |
+| Q80-049 | Your job succeeded but wrote zero rows. How do you catch it? | A volume check, not a status check: assert the row count is within an expected band for the day, because exit code zero only means the code did not crash and says nothing about whether it did its work | **[+Signpost]** this is the class of failure behind most week-long silent outages (Q80-044) | Mid · 47.5, 46.7 |
+| Q80-050 | What should an architect do during an incident, specifically? | Usually not debug: take the communication and the decisions — keep stakeholders informed on a stated cadence, decide whether to roll back or fix forward, and protect the responders from being interrupted for status | **[+Business]** a stated update cadence ("next update in 30 minutes") stops the responders being asked every five | Senior · 47.8, 67.3 |
+| Q80-051 | Roll back or fix forward? | Roll back by default when a rollback is safe and the cause is unknown, because it restores service while you investigate; fix forward when the change cannot be undone, such as a migration that has already transformed data | **[+Edge cases]** a deploy that has written data in a new shape may have no rollback, which is a design decision made earlier and felt now | Senior · 56.6, 46.4 |
+| Q80-052 | How would you decide whether an incident needs a postmortem? | On impact and on novelty: anything that affected users or produced wrong numbers, plus anything that surprised you — a near-miss nobody noticed is often the cheapest postmortem you will ever get | **[+Business]** writing one for a near-miss is how a team learns without paying for the lesson | Mid · 47.8 |
+
+---
+
+## 80.9 Changing it without breaking it
+
+Every architecture question in an interview is really about change, because a system that never changed would need no architecture. This section is the mechanics of changing a live system, which is the part that separates someone who has operated software from someone who has only designed it.
+
+> **Beyond the book: feature flags.** Chapter 56, §56.6 teaches canary, blue-green and shadow deployment for models. A **feature flag** is the same idea moved into the application: a conditional that turns a code path on or off at runtime, per user or per percentage, so that deploying code and releasing behaviour become two separate events. The cost is that every flag is a branch in the code and an untested combination with every other flag, which is why flags need an owner and a removal date.
+
+### Q80-053 · You are replacing a system that 200 people use daily. How do you cut over?
+
+**Level:** Senior · **Roles:** DE, AE, Architect
+
+**Remember it as:** *Never a big-bang switch. Run both, compare outputs on real traffic, move users in groups, and keep the old one reachable until nobody is using it.*
+
+**Answer in one line:** Incrementally and reversibly — stand the new system up beside the old, run both on the same real inputs and **compare their outputs** until they agree, migrate users in cohorts smallest-risk first, and keep the old path available until usage of it reaches zero.
+
+**The five stages, and the one that does the real work:**
+
+| | Stage | Why |
+|---|---|---|
+| 1 | **Run in parallel** | Both systems, same inputs, nobody switched |
+| 2 | **Compare outputs, automatically** | **This is the stage that finds everything.** Differences are either new bugs or undocumented old behaviour, and both matter |
+| 3 | **Migrate a cohort** | Start with the most tolerant group, not the easiest to migrate |
+| 4 | **Widen, with a rollback path** | Keep the old system warm and the switch reversible per cohort |
+| 5 | **Decommission** | Only after usage is measured at zero, and after the data is retained somewhere |
+
+**Stage 2 is the answer.** An automated output comparison on real traffic is what turns a migration from a hope into a measurement, and it reliably discovers that the old system did something nobody documented — a rounding convention, an exclusion, a special case for one customer. Chapter 14, §14.11's discipline applies directly: reconcile the new to the old and decompose every difference rather than accepting a tolerance.
+
+**The strangler pattern, if asked to name it.** Rather than replacing the whole system at once, put the new system in front, let it handle one slice of functionality, and grow its share until the old system is surrounded and can be removed. Chapter 69A mentions it by name; the point for an interview is that it makes every step individually reversible.
+
+**What to say about the thing everyone forgets.** Decommissioning. A system kept alive "just in case" for two years costs real money, holds the organisation on an old dependency, and quietly becomes a second source of truth that someone will eventually report from. Set the removal date when the migration starts.
+
+| Tier | What to say |
+|---|---|
+| Passes | Suggests a phased rollout with a pilot group and a rollback plan |
+| Strong | The five stages with automated output comparison on real traffic named as the stage that finds the problems, and a decommission date set up front |
+| Extra points | + **[+Validate]** compare outputs automatically and investigate every difference, because the differences are where the undocumented old behaviour lives + **[+Business]** migrate the most tolerant cohort first, which is not the same as the easiest to migrate — the easiest is often the most visible + **[+Edge cases]** data written during parallel running needs a rule about which system owns it, or you get two divergent truths + **[+Signpost]** the strangler pattern is the name for stages 1 to 4 done incrementally |
+
+**Likely follow-ups:** What would you do if the outputs differed by 2% and nobody could explain it? Who decides the cutover date?
+**Red flag:** a date-based cutover with no parallel run and no output comparison.
+**Learn it in:** Chapter 60, §60.6 (evolving a design under real constraints); Chapter 14, §14.11 (reconciling and documenting every decision); Chapter 56, §56.6 (deployment patterns).
+
+### Rapid-fire, 80.9
+
+Roles: DE, MLE and Architect for every row.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-054 | Canary, blue-green and shadow — what is the difference? | Canary sends a small share of real traffic to the new version and watches; blue-green runs two complete environments and switches all traffic at once, so rollback is instant; shadow sends real traffic to the new version but discards its output, so you measure behaviour with no user risk | **[+Trade-offs]** blue-green needs double the capacity, canary needs good per-version metrics, shadow proves nothing about the write path | Mid · 56.6 |
+| Q80-055 | When is shadow deployment the only safe option? | When the new version's output cannot be allowed to reach anyone until it is trusted — a pricing change, a credit decision, a model whose errors are expensive — because shadow is the only pattern that exercises production traffic with zero user exposure | **[+Edge cases]** shadow does not test writes, so it validates the computation and not the full path | Senior · 56.6 |
+| Q80-056 | What is a feature flag, and what is its hidden cost? | A runtime switch that separates deploying code from releasing behaviour; the hidden cost is combinatorial — every flag doubles the number of possible states, few of which are tested — so each one needs an owner and a removal date | **[+Business]** old flags are the most common form of invisible complexity in a mature codebase | Mid · 56.6 |
+| Q80-057 | How do you change a schema that live readers depend on? | In backward-compatible steps: add the new column, write both, migrate readers, then remove the old — never rename or drop in one step, because every deployed reader expecting the old shape breaks at once | **[+Signpost]** Q80-041 is this question as arithmetic: a "zero-downtime" deploy is only zero-downtime if the change is backward compatible | Mid · 28.12, 46.4 |
+| Q80-058 | Your migration has run for 18 months. What went wrong? | Almost always no decommission date and no forcing function: without a date the old system stays, the team maintains both, and the migration becomes permanent — which is more expensive than either system alone | **[+Business]** maintaining two systems is the most expensive steady state available, and it is the default outcome | Senior · 60.6, 67.2 |
+| Q80-059 | How would you make a change reversible when the data cannot be un-transformed? | Keep the input: write the transformed output to a new location rather than in place, so the original remains and a rollback is a pointer change rather than a reverse computation | **[+Signpost]** this is the write–audit–publish pattern, and the reason raw data is never overwritten | Senior · 47.4, 46.4 |
+| Q80-060 | A vendor is deprecating an API you depend on in six months. What do you do? | Treat it as a dated project immediately: find every call site, assess whether the replacement is equivalent, build behind an interface you control so the next deprecation is cheaper, and keep the old path until the new one is proven | **[+Business]** wrapping a third-party dependency behind your own interface is what makes the second migration cheap | Mid · 45.10, 66.5 |
+
+---
+
+## 80.10 Leading the architecture, and the people
+
+The scope note at the top of this chapter applies most to this section: these are the questions asked of a senior IC or architect, and they are mostly about whether you understand that the technical answer is rarely the constraint.
+
+### Q80-061 · The platform team is a bottleneck and every analytics team is waiting on it. What do you do?
+
+**Level:** Senior · **Roles:** Architect, DE, AE
+
+**Remember it as:** *A bottleneck team is usually a structure problem wearing a capacity costume. Adding people to it often makes the queue longer.*
+
+**Answer in one line:** Diagnose what the queue is actually made of before changing anything — if most requests are variations of the same ask, the answer is **self-service** rather than more capacity, and the structural question is which decisions genuinely need to be central and which were centralised by habit.
+
+**The diagnosis, which is the whole answer:**
+
+| What the queue contains | What it means | What fixes it |
+|---|---|---|
+| Many similar small requests | The platform is doing work users could do | Self-service: a template, a paved path, documentation |
+| Few large bespoke projects | Genuine capacity shortage | More people, or fewer concurrent projects |
+| Approvals and reviews | A governance bottleneck, not an engineering one | Clear criteria so most changes need no review |
+| Fixing the platform's own breakages | Reliability debt consuming the team | Stop feature work and fix it; nothing else will work |
+
+**Why adding people usually fails.** A central team that is the only route to production becomes a bottleneck whatever its size, because demand grows with the organisation and coordination cost grows faster than headcount. **Conway's Law is the frame to name here**: the architecture ends up mirroring the communication structure, so if every change must pass through one team, the architecture will have one chokepoint regardless of how the diagram looks. Chapter 62, §62.8 uses the law deliberately as a design tool.
+
+**The structural options, with their honest costs:**
+
+- **Self-service / paved path.** The platform provides a supported default route; teams use it without asking. Best outcome, most work up front, and it fails if the paved path does not cover the real cases.
+- **Embedded engineers.** Platform people sit in analytics teams. Faster locally, and it drifts toward divergent practice unless the central standards are real.
+- **Federated ownership with central standards** — the data-mesh direction. Works only at a maturity level most organisations have not reached, which Chapter 62, §62.6 scores honestly for Riverstone rather than assuming.
+
+**The answer that earns the role:** "I would spend a week classifying the queue, because the four causes above have four different fixes and three of them are not headcount."
+
+| Tier | What to say |
+|---|---|
+| Passes | Suggests more people, or prioritising the queue better |
+| Strong | Classifies the queue first, identifies self-service as the usual answer, and names the structural options with their costs |
+| Extra points | + **[+Signpost]** Conway's Law explains why a single central route produces a single architectural chokepoint whatever the headcount + **[+Business]** quantify the queue — requests per week by type and their wait — because that converts a complaint into a decision + **[+Validate]** a paved path only works if adoption is measured; an unused platform is a worse outcome than a bottleneck + **[+Trade-offs]** federated ownership needs a maturity most organisations lack, so recommending a mesh to a team that cannot staff it is a bad answer |
+
+**Likely follow-ups:** How would you measure whether the paved path is working? What would make you argue *for* centralising something?
+**Red flag:** recommending a data mesh, or more headcount, before looking at what the queue contains.
+**Learn it in:** Chapter 62, §62.8 (Conway's Law, used as a design tool) and §62.6 (the maturity check, scored honestly); Chapter 66, §66.4 (hiring and structuring data teams); Chapter 67, §67.4.
+
+### Rapid-fire, 80.10
+
+Roles: Architect for every row, plus DE or AE where the work is shared.
+
+| # | Question | One-line answer | Extra point | Level · learn it in |
+|---|---|---|---|---|
+| Q80-062 | How do you get technical debt funded? | Express it in the currency the business uses: delivery time, defect rate, incident frequency or risk — "the next change here takes three weeks instead of three days" gets funded where "we need to refactor" never does | **[+Business]** debt framed as engineering preference loses every prioritisation contest; framed as delivery speed it competes | Senior · 67.2 |
+| Q80-063 | What is Conway's Law, and how would you use it deliberately? | That a system's structure comes to mirror the communication structure of the organisation that builds it; used deliberately, you change the team boundaries to get the architecture you want rather than fighting the org chart with a diagram | **[+Signpost]** Chapter 62, §62.8 treats it as a design tool rather than an observation | Senior · 62.8 |
+| Q80-064 | What is a bus factor, and how do you raise it? | How many people would have to be unavailable before the work stops — often one — and you raise it with written runbooks and decision records, rotated responsibility, and pairing on the parts only one person understands | **[+Validate]** the test is a planned absence, not a hypothetical | Mid · 47.8, 67.4 |
+| Q80-065 | How would you mentor a strong engineer who wants your job? | Deliberately: hand over real decisions rather than tasks, let them present to stakeholders, review their reasoning rather than correcting their output, and be explicit that their progression is the goal | **[+Business]** an architect whose leverage depends on being indispensable has no leverage | Senior · 67.4, 9.6 |
+| Q80-066 | What would you look for when hiring a data engineer? | Evidence of having operated something, not only built it: how they found a failure, what they changed afterwards, and whether they can explain a trade-off they got wrong — plus whatever the team is actually missing rather than a generic bar | **[+Clarify]** define the gap before writing the job description, or you hire a copy of the team you have | Senior · 66.4 |
+| Q80-067 | What is an RFC process, and when is it worth the overhead? | Writing a proposal for a significant change and circulating it for comment before building; worth it when a decision is expensive to reverse or affects several teams, and pure overhead for anything small and local | **[+Signpost]** the durable record of the outcome is an ADR (Q80-009); the RFC is the conversation that precedes it | Mid · 60.4, 67.3 |
+| Q80-068 | How do you say no to a senior stakeholder without damaging the relationship? | Say no to the *approach* while agreeing with the *goal*, give the reason in their terms (cost, risk, time), and offer the alternative you would commit to — refusing without an alternative is where the relationship damage comes from | **[+Signpost]** Q80-017 is this question as a full scenario; Chapter 24, §24.8 is the technique | Senior · 24.8, 67.3 |
+
+---
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -339,13 +840,15 @@ No software specific to this chapter. A whiteboard or diagramming tool for C4 di
 
 ## Key terms
 
-CAP theorem · CP vs. AP · PACELC · eventual consistency · durability vs. availability · single point of failure · horizontal vs. vertical scaling · partitioning vs. sharding · leader-follower (primary-replica) replication · failover · individual contributor (IC) · build vs. buy · total cost of ownership (TCO) · lambda architecture · kappa architecture · Architecture Decision Record (ADR) · C4 diagram · Responsible AI review · data governance · principle of least privilege · segregation of duties · showback vs. chargeback · ROI/payback period · influencing without authority · first-90-days plan (architect)
+CAP theorem · CP vs. AP · PACELC · eventual consistency · durability vs. availability · single point of failure · horizontal vs. vertical scaling · partitioning vs. sharding · leader-follower (primary-replica) replication · failover · individual contributor (IC) · build vs. buy · total cost of ownership (TCO) · lambda architecture · kappa architecture · Architecture Decision Record (ADR) · C4 diagram · Responsible AI review · data governance · principle of least privilege · segregation of duties · showback vs. chargeback · ROI/payback period · influencing without authority · first-90-days plan (architect) · nines of availability · error budget · SLO against SLA · availability in series · independent failure · peak factor · busy hour · utilisation headroom · tail latency · fan-out · hedged request · replication factor · erasure coding · retention policy · Little's Law · load shedding · queueing collapse
 
 ---
 
 ## Final-week revision list
 
-Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023, Q80-024.
+Q80-001, Q80-006, Q80-009, Q80-011, Q80-016, Q80-017, Q80-020, Q80-022, Q80-023, Q80-024, Q80-030, Q80-031, Q80-035.
+
+The last three are the arithmetic that makes a design argument concrete: what a reliability target costs in minutes (Q80-030), what a chain of services does to it (Q80-031), and why a slow dependency collapses a system rather than merely slowing it (Q80-035).
 
 ---
 

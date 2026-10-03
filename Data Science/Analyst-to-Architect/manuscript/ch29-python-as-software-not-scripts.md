@@ -839,9 +839,11 @@ The same table as in section 29.2, now from `src/riverstone_report/transform.py`
 
 ## 29.5 Classes, when they help
 
-A **class** bundles data with the functions that work on it. Analysts coming from notebooks either never write one, or suddenly write classes for everything. The useful middle is small, and it starts with knowing what a class is. Chapter 17 met the word only in outputs such as `<class 'str'>`: every value in Python belongs to a class, and this section shows how to write your own.
+A **class** bundles data with the functions that work on it. Analysts coming from notebooks either never write one, or suddenly write classes for everything. The useful middle is small.
 
-### Classes in twenty minutes
+Chapter 18, section 18.17, introduced classes on the monthly report: `__init__` and `self`, data classes for settings, composition, and inheritance for the two writers. This section assumes that and asks the next question: now that the report is a **package** rather than a notebook, where do classes actually earn their place, and where is a plain function still the better answer? The recap below is deliberately quick; if any of it is new, read section 18.17 first.
+
+### Classes in twenty minutes, recapped
 
 Run each cell in your notebook. A **class** is a template; an **instance** is one object made from it:
 

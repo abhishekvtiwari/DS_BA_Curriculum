@@ -1,6 +1,6 @@
 # Chapter 72. Python & pandas Question Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,7 +8,7 @@
 >
 > **Before you start:** Chapter 17 (Python from zero) and Chapter 18 (pandas), which teach almost everything here; Chapter 29 (classes, decorators, generators, keyword-only arguments) and Chapter 33 (generators and memory) for section 72.3; Chapter 69 for the answer tiers and the twelve extra-point tags. Chapter 71's SQL answers are the twins of this chapter's `merge` questions.
 >
-> **Time needed:** about 4–6 hours to run every snippet yourself; 1 hour for a revision pass.
+> **Time needed:** about 4–6 hours to run every snippet yourself; 1 hour for a revision pass. Sections 72.8 to 72.10 add about 2 hours and are best done with a notebook open; they are the NumPy, pandas-depth and code-quality questions that come up once the interviewer has decided you know the basics.
 >
 > **How this chapter is built.** Same format as every question bank in Part 8 (Chapters 70–82): every core question leads with a **"Remember it as…"** hook, a one-line answer, and a compact tier table; rapid-fire sections are scan tables. Each question carries a level, **Warm-up**, **Core**, or **Advanced**, and within each group the questions run from easy to hard. **Every code snippet in this chapter was run**, on Python 3.11.15 with pandas 3.0.6; the book's recommended Python is 3.14 (Chapter 17, section 17.0), and where a version changes an output, the text says so. The order: language fundamentals and their gotchas first, then functions and iteration, then pandas from basic selection through to debugging and live coding.
 >
@@ -1196,6 +1196,601 @@ print(clean["quantity"].astype("Int64").tolist())
 
 ---
 
+## 72.8 NumPy, and why pandas behaves the way it does
+
+Almost every surprise in pandas is a NumPy behaviour showing through. A column is an array; a dtype is a NumPy dtype; the speed comes from NumPy and so do the sharp edges. Candidates who have only learned pandas hit these and call them pandas bugs.
+
+Every output below was run on **NumPy 2.4.3, pandas 3.0.2, Python 3.12**.
+
+```python
+import numpy as np
+import pandas as pd
+```
+
+### Q72-055 · `s = a[1:4]; s[0] = 999`. What is in `a`?
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *A list slice copies. A NumPy slice does not — it is a window onto the same memory. Writing through the window changes the original.*
+
+**Answer in one line:** `a` becomes **`[1, 999, 3, 4, 5]`** — slicing a NumPy array returns a **view**, not a copy, so assigning into the slice writes into the original array; the identical code on a list leaves the original untouched.
+
+```python
+a = np.array([1, 2, 3, 4, 5])
+s = a[1:4]
+s[0] = 999
+print(a, np.shares_memory(a, s))
+
+L = [1, 2, 3, 4, 5]
+S = L[1:4]
+S[0] = 999
+print(L, S)
+```
+
+```
+[  1 999   3   4   5] True
+[1, 2, 3, 4, 5] [999, 3, 4]
+```
+
+Same syntax, opposite behaviour. NumPy returns a view because copying a slice of a large array would be wasteful, and most of the time you want the window.
+
+**Fancy indexing is the exception**, and knowing that is the detail that marks a real answer:
+
+```python
+print(np.shares_memory(a, a[[1, 2, 3]]))
+```
+
+```
+False
+```
+
+Indexing with a **list of positions** or a boolean mask cannot be expressed as a window — the elements may not be contiguous — so NumPy has no choice but to copy. So `a[1:4]` is a view and `a[[1,2,3]]` is a copy, and they look almost the same on the page.
+
+This is also where pandas' `SettingWithCopyWarning` came from (Q72-036): pandas could not always tell whether an operation had given you a view or a copy, so it warned. pandas 3.0's copy-on-write removes the ambiguity by making everything behave like a copy (Q72-069).
+
+Use `.copy()` when you want independence, and mean it.
+
+| Tier | What to say |
+|---|---|
+| Passes | "NumPy slices are views" |
+| Strong | + the contrast with a list, and that fancy or boolean indexing copies because the elements need not be contiguous |
+| Extra points | **[+Scale]** views are why NumPy is fast on large arrays: no copy, no allocation · **[+Validate]** `np.shares_memory` answers the question directly rather than by experiment · **[+Business]** a function that "cleans" an array in place and silently mutates its caller's data is a real and very hard bug to find |
+
+**Likely follow-ups:** How would you force a copy? What does `np.may_share_memory` do differently? *(It is a cheap conservative check.)* Does `reshape` copy? *(Usually not.)*
+**Learn it in:** Chapter 18, section 18.1 (NumPy); Chapter 72, Q72-036.
+
+### Q72-056 · `np.int8(127) + np.int8(1)`
+
+**Level:** Mid · **Roles:** DS, MLE, DE
+
+**Remember it as:** *A NumPy integer has a fixed width. Go past the top and it wraps to the bottom, silently, with the right answer nowhere in sight.*
+
+**Answer in one line:** **−128**, not 128 — an `int8` holds −128 to 127, so adding one to the maximum wraps around to the minimum, and it does so without raising anything.
+
+```python
+print(np.int8(127) + np.int8(1))
+print(np.array([127], dtype='int8') + np.int8(1))
+print(np.iinfo(np.int8).min, np.iinfo(np.int8).max)
+print(pd.Series([127], dtype='int8').add(pd.Series([1], dtype='int8')).tolist())
+```
+
+```
+-128
+[-128]
+-128 127
+[-128]
+```
+
+The last line is the one that matters: **pandas does the same thing**, because a pandas column of `int8` is a NumPy array of `int8`.
+
+Python's own integers do not behave this way — `127 + 1` is 128 and `2**200` is fine, because Python integers grow as needed. NumPy gives that up deliberately in exchange for fixed-width memory and speed. That trade is the whole reason the library is fast, and it is why the sharp edge exists.
+
+Where this bites in real work is **memory optimisation**, which is the irony: you downcast a column to `int8` to save space (Q72-068 measures the saving as 7.6 MB to 1.0 MB), and a later `+` or `sum` overflows. A running total in `int32` passes two billion and goes negative.
+
+Three defences:
+
+- **Downcast deliberately**, and only when you know the range, including what it will become after arithmetic.
+- `np.seterr(over='raise')` turns the silent wrap into an exception.
+- **Accumulate in a wider type**: `arr.sum(dtype='int64')` works even when `arr` is `int8`.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It overflows" |
+| Strong | + −128 with the range named, that it is silent, and that pandas inherits it because a column is a NumPy array |
+| Extra points | **[+Edge cases]** Python's own ints are arbitrary-precision, so the behaviour is NumPy's, not the language's · **[+Business]** downcasting to save memory is exactly what causes this, so the saving and the risk arrive together · **[+Validate]** `np.seterr(over='raise')` makes it loud · **[+Scale]** `sum(dtype='int64')` accumulates safely from a narrow column |
+
+**Likely follow-ups:** What about float overflow? *(It goes to `inf` rather than wrapping.)* How would you choose a dtype safely? What does `errstate` do?
+**Learn it in:** Chapter 33, section 33.3 (how numbers are stored); Chapter 77, Q77-037.
+
+### Q72-057 · `if np.array([1,2,3]) == np.array([1,2,3]):`
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *Comparing arrays gives an array of answers, not one answer. An `if` wants one, so it refuses.*
+
+**Answer in one line:** It raises **`ValueError: The truth value of an array with more than one element is ambiguous`** — the comparison itself works and returns `[True, True, True]`, but `if` needs a single true-or-false and NumPy will not guess which you meant.
+
+```python
+print(np.array([1, 2, 3]) == np.array([1, 2, 3]))
+if np.array([1, 2, 3]) == np.array([1, 2, 3]):
+    print("equal")
+```
+
+```
+[ True  True  True]
+
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+```
+
+The error message contains the fix, which is unusually helpful of it. You have to say which you meant:
+
+| | Meaning |
+|---|---|
+| `(a == b).all()` | every element matches |
+| `(a == b).any()` | at least one matches |
+| `np.array_equal(a, b)` | same shape *and* every element matches — usually the one you want |
+| `np.allclose(a, b)` | equal within a tolerance, for floats (Q72-010) |
+
+The same error appears in pandas whenever a Series lands where a single condition was expected — most often `if df['col'] == 'x':` instead of filtering with it, or a combined condition written with `and` rather than `&`.
+
+That last one is worth saying out loud: **`and` and `or` do not work element-wise.** They call the same truth test and raise. You need `&` and `|`, with brackets, because they bind tighter than the comparison operators:
+
+```python
+df[(df.qty > 5) & (df.status == 'Delivered')]    # correct
+df[df.qty > 5 and df.status == 'Delivered']      # ValueError
+```
+
+| Tier | What to say |
+|---|---|
+| Passes | "You get an error about ambiguous truth value" |
+| Strong | + that the comparison succeeds and returns an array; it is `if` that cannot reduce it, with `.all()`, `.any()` and `array_equal` as the options |
+| Extra points | **[+Edge cases]** the same error is behind `and`/`or` failing in a pandas filter, where you need `&` and `\|` with brackets · **[+Validate]** `np.array_equal` also checks the shape, which `.all()` does not after broadcasting · **[+Trade-offs]** `np.allclose` for floats, because exact equality is the wrong test (Q72-010) |
+
+**Likely follow-ups:** Why do `&` and `|` need brackets? Does an empty array raise too? *(No — `bool(np.array([]))` is False, with a deprecation history.)* What about a one-element array? *(It works, which is how this bug survives testing.)*
+**Learn it in:** Chapter 18, section 18.1 (NumPy); Chapter 18, section 18.4 (filtering).
+
+### Q72-058 · NaN in `np.sort`, `np.max`, and a comparison
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *NaN sorts to the end, poisons `max`, and silently fails every comparison. Three different behaviours from one value.*
+
+**Answer in one line:** `np.sort` puts NaN **last**, `np.max` returns **nan** rather than ignoring it, and `arr > 2` counts only **1** of the two values above 2 — because a comparison with NaN is false, so the NaN row is quietly excluded.
+
+```python
+arr = np.array([3.0, np.nan, 1.0])
+print(np.sort(arr))
+print(np.max(arr), np.nanmax(arr))
+print((arr > 2).sum())
+```
+
+```
+[ 1.  3. nan]
+nan 3.0
+1
+```
+
+Three different behaviours, and only the first is what anyone expects.
+
+**`np.max` returning `nan` is the useful one**, because it is loud. One missing value and your maximum is `nan`, which you notice. The `nan`-prefixed functions — `nanmax`, `nanmin`, `nanmean`, `nansum` — skip them.
+
+**The comparison is the dangerous one.** `arr > 2` is `[True, False, True]` — the NaN compares false, so it is excluded from the count *and* from any filter built on it. A filter for "orders above ₹1,000" silently drops every order whose amount is missing, and the total is quietly short. Nothing warns you.
+
+And pandas differs from NumPy here, which is worth knowing:
+
+| | NumPy | pandas |
+|---|---|---|
+| `max` / `sum` with NaN | `nan` — loud | **skips them** by default — quiet |
+| Sorting | NaN last | NaN last by default, `na_position` to change |
+| Comparison | False | False, the same |
+
+So `df.col.max()` silently ignores missing values while `np.max(df.col.values)` returns `nan`. The same data, two answers, and the pandas one is the one that hides the problem.
+
+| Tier | What to say |
+|---|---|
+| Passes | "NaN propagates" |
+| Strong | + all three behaviours separately, and that the comparison is the dangerous one because it fails silently |
+| Extra points | **[+Business]** a filter on a column with missing values drops those rows without a word, so the total is short and reconciles to nothing · **[+Edge cases]** pandas skips NaN in aggregations where NumPy propagates it — same data, two answers · **[+Validate]** `isna().sum()` before any aggregation or filter on a numeric column |
+
+**Likely follow-ups:** Why is `nan != nan`? *(Chapter 72A, Q72A-041.)* How does this relate to SQL's NULL? *(Same three-valued logic — Chapter 71, Q71-079.)* What is `pd.NA`?
+**Learn it in:** Chapter 14, section 14.3 (missing values); Chapter 72A, Q72A-041.
+
+### Rapid-fire, 72.8: NumPy
+
+| # | Snippet | What it gives, and why | Extra point |
+|---|---|---|---|
+| Q72-059 | `np.ones((3,1)) + np.ones((1,4))` | Shape `(3, 4)` — broadcasting stretches each dimension of size 1. `np.ones(3) + np.ones(4)` raises instead | **[+Edge cases]** broadcasting is why a column minus its mean works with no loop → Ch 18 §18.1 |
+| Q72-060 | `np.arange(0, 1, 0.1).shape` | 10, but floating-point steps are not exact. `np.linspace(0, 1, 11)` is the reliable way to get evenly spaced floats | **[+Validate]** never build a float range with `arange` → Q72-010 |
+| Q72-061 | `a.dtype` after `np.array([1, 2, 3.0])` | `float64` — one float promotes the whole array, because an array has exactly one dtype | **[+Edge cases]** `np.array([1, 'a'])` promotes everything to string → Ch 77 Q77-044 |
+| Q72-062 | `arr.T` — copy or view? | A view. Transposing re-labels the axes without moving data, which is why it is instant on a huge array | **[+Scale]** the data only moves if you then force a copy → Q72-055 |
+| Q72-063 | `np.where(cond, a, b)` against `if` | `np.where` works element-wise over the whole array; `if` needs one answer and raises. `np.select` handles many conditions | **[+Business]** this is the vectorised `CASE WHEN` → Ch 18 §18.5 |
+| Q72-064 | `0.1 + 0.2 == 0.3` in NumPy | `False`, exactly as in plain Python — same IEEE 754. Use `np.isclose` | **[+Validate]** `np.allclose` for whole arrays → Q72-010 |
+| Q72-065 | `np.random.seed(42)` against `default_rng(42)` | Both reproducible; `default_rng` is the modern generator and is what new code should use | **[+Edge cases]** the legacy global seed can be changed by any library you import → Ch 21 §21.5 |
+
+---
+
+## 72.9 pandas at interview depth
+
+Chapter 72's earlier sections cover selection, grouping, merging and missing data. These are the ones that come up when the interviewer has decided you know the basics and wants to find the edge of what you have actually done.
+
+### Q72-066 · A merge where the right-hand table has duplicate keys
+
+**Level:** Mid · **Roles:** DA, DS, DE
+
+**Remember it as:** *A merge can return more rows than it started with. If you did not expect that, you have a bug and no error.*
+
+**Answer in one line:** **Five rows out of three** — the duplicate key on the right multiplies the matching left rows, and the only way to be told about it is to ask, with `validate='m:1'`, which raises instead.
+
+```python
+orders = pd.DataFrame({'order_id': [1, 2, 3], 'customer_id': [10, 10, 20]})
+custs  = pd.DataFrame({'customer_id': [10, 10, 20], 'name': ['A', 'A-dup', 'B']})
+
+print(len(orders.merge(custs, on='customer_id')))
+orders.merge(custs, on='customer_id', validate='m:1')
+```
+
+```
+5
+
+MergeError: Merge keys are not unique in right dataset; not a many-to-one merge
+```
+
+Three orders went in. Five came out. Every revenue total built on that merge is now **inflated**, and nothing anywhere said so — this is the fan-out of Chapter 71's Q71-098, arriving through pandas instead of SQL.
+
+`validate=` is the fix and it costs nothing:
+
+| | Asserts |
+|---|---|
+| `'1:1'` | unique on both sides |
+| `'1:m'` | unique on the left |
+| `'m:1'` | unique on the right — the common case when joining a lookup table |
+| `'m:m'` | nothing; the default behaviour, stated explicitly |
+
+**Put `validate=` on every merge you write.** It documents what you believe about the data and it fails the moment that belief stops being true, which is usually when someone upstream adds a row.
+
+The companion habit is `indicator=True`:
+
+```python
+orders.merge(custs.head(1), on='customer_id', how='left', indicator=True)
+```
+
+```
+ order_id  customer_id    _merge
+        1           10      both
+        2           10      both
+        3           20 left_only
+```
+
+That `_merge` column tells you which rows matched and which did not — the pandas answer to "did my join lose anything", and far better than comparing row counts after the fact.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You get duplicate rows" |
+| Strong | + 3 rows in, 5 out, and names `validate=` with the right option for a lookup join |
+| Extra points | **[+Validate]** assert the row count before and after a merge you expect to be `m:1`, or use `validate` and stop thinking about it · **[+Business]** every sum built on the merged frame is inflated, and the figure still looks plausible · **[+Edge cases]** `indicator=True` answers "what did not match", which is a different and equally common question · **[+Scale]** the duplicate is usually upstream — a slowly changing dimension with no end-date filter is the classic cause (Chapter 77, Q77-013) |
+
+**Likely follow-ups:** How would you find the duplicate keys? *(`custs.customer_id.duplicated().sum()`.)* What is the SQL equivalent of this bug? How would you handle a genuine many-to-many?
+**Learn it in:** Chapter 18, section 18.7 (joining); Chapter 71, Q71-098.
+
+### Q72-067 · `df.groupby('k').size().sum()` on a column with missing keys
+
+**Level:** Mid · **Roles:** DA, DS, DE
+
+**Remember it as:** *`groupby` throws away rows whose key is missing, by default and without a word. The group totals do not add up to the row count.*
+
+**Answer in one line:** **2, from a frame of 4 rows** — `groupby` drops rows with a NaN key by default, so half the data vanishes from the result and the only clue is that the totals do not reconcile.
+
+```python
+d = pd.DataFrame({'k': ['a', None, 'b', None], 'v': [1, 2, 3, 4]})
+print(d.groupby('k').size().sum(), 'of', len(d))
+print(d.groupby('k', dropna=False).size().sum())
+```
+
+```
+2 of 4
+4
+```
+
+Two of four rows are simply not in the answer.
+
+This is the exact opposite of SQL, which is what makes it dangerous for anyone who moves between them. SQL's `GROUP BY` collects the NULLs into **their own group** (Chapter 71, Q71-085); pandas **discards them**. The same logical operation, on the same data, gives different totals in the two tools — and if you rewrite a SQL report in pandas, the number moves and you will blame the join.
+
+`dropna=False` restores the SQL behaviour and should probably be your default when the key can be missing.
+
+The habit that catches all of this: **after any `groupby`, check that the group sizes sum to the row count.** One line, and it finds this, the duplicate-key fan-out of Q72-066, and most filtering mistakes:
+
+```python
+assert d.groupby('k', dropna=False).size().sum() == len(d)
+```
+
+| Tier | What to say |
+|---|---|
+| Passes | "Missing keys get dropped" |
+| Strong | + 2 of 4 with `dropna=False` as the fix, and the contrast with SQL, which groups NULLs together |
+| Extra points | **[+Business]** a revenue-by-region report silently omits every row with no region, and still balances internally · **[+Validate]** group sizes summing to the row count is a one-line check that catches several different bugs · **[+Edge cases]** the same applies to `pivot_table` and to `value_counts`, which also drops NaN unless you ask |
+
+**Likely follow-ups:** What does `value_counts(dropna=False)` show? How does this differ from SQL? *(Chapter 71, Q71-085.)* What about grouping on two columns where one is missing?
+**Learn it in:** Chapter 18, section 18.6 (grouping); Chapter 71, Q71-085.
+
+### Q72-068 · A column of three repeated strings, as `object` and as `category`
+
+**Level:** Mid · **Roles:** DA, DS, DE
+
+**Remember it as:** *A category stores each distinct value once and an integer code per row. On repetitive text that is a fifty-fold saving for one word of code.*
+
+**Answer in one line:** **560 KB against 9.9 KB — about 56 times smaller** — because `object` stores a separate Python string object for every row while `category` stores the three distinct values once plus a small integer code per row.
+
+```python
+s = pd.Series(np.repeat(['Delivered', 'Cancelled', 'Pending'], 3334)[:10000], dtype='object')
+print(f"object   : {s.memory_usage(deep=True)/1024:8.1f} KB")
+print(f"category : {s.astype('category').memory_usage(deep=True)/1024:8.1f} KB")
+```
+
+```
+object   :    560.0 KB
+category :      9.9 KB
+```
+
+Note `deep=True`. Without it pandas reports only the pointer array and you see 80 KB for both, which is how people conclude there is no difference.
+
+The numeric version of the same idea:
+
+```python
+big = pd.Series(rng.integers(0, 200, 1_000_000))
+print(f"int64 : {big.memory_usage(deep=True)/1024**2:6.1f} MB")
+print(f"int16 : {big.astype('int16').memory_usage(deep=True)/1024**2:6.1f} MB")
+print(f"int8  : {big.astype('int8').memory_usage(deep=True)/1024**2:6.1f} MB")
+```
+
+```
+int64 :    7.6 MB
+int16 :    1.9 MB
+int8  :    1.0 MB
+```
+
+Together these are the answer to "this dataset does not fit in memory": before reaching for Dask or Spark, **set the dtypes**. A frame of mostly repeated strings and small integers routinely shrinks by five to ten times, and that is often the whole problem solved.
+
+Two cautions, and naming them is what separates a confident answer from a correct one. Downcasting integers invites the overflow of Q72-056. And `category` is a *loss* on a column where most values are distinct — an id column as a category is larger than the original, because you store the codes *and* every distinct value.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Category uses less memory" |
+| Strong | + the measured ratio, that `deep=True` is needed to see it, and that it only helps when values repeat |
+| Extra points | **[+Scale]** setting dtypes is the first move when data "does not fit", before any distributed tool · **[+Edge cases]** a category on a high-cardinality column is bigger than `object` · **[+Edge cases]** downcasting integers reintroduces overflow (Q72-056) · **[+Business]** `read_csv(dtype=...)` applies it at load, so the large version never exists |
+
+**Likely follow-ups:** When is `category` a bad idea? How do you set dtypes at read time? What is pyarrow-backed string storage? *(The newer default, which narrows the gap considerably.)*
+**Learn it in:** Chapter 18, section 18.16 (performance); Chapter 48, section 48.4.
+
+### Q72-069 · `df['a'][0] = 99` in pandas 3
+
+**Level:** Mid · **Roles:** DA, DS, MLE
+
+**Remember it as:** *Chained assignment never worked reliably. pandas 3 stops pretending and tells you.*
+
+**Answer in one line:** The value is **not changed** — `a[0]` is still 1 — and pandas raises a `ChainedAssignmentError` explaining why: under copy-on-write the intermediate object is always a copy, so you updated something that was thrown away.
+
+```python
+df = pd.DataFrame({'a': [1, 2, 3]})
+df['a'][0] = 99
+print(df.a.iloc[0])
+```
+
+```
+ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained
+assignment. Such chained assignment never works to update the original DataFrame or Series,
+because the intermediate object on which we are setting values always behaves as a copy.
+Try using '.loc[row_indexer, col_indexer] = value' instead.
+
+1
+```
+
+The value printed is `1`. The assignment did nothing.
+
+The fix is in the message, and it is one step rather than two:
+
+```python
+df.loc[0, 'a'] = 99
+print(df.a.iloc[0])
+```
+
+```
+99
+```
+
+Why it was ever ambiguous: `df['a']` returns a Series which may be a view onto the frame or a copy of it, depending on the frame's internal layout — which is Q72-055's view-against-copy question surfacing in pandas. Writing into it therefore worked *sometimes*, which is worse than never, and the old `SettingWithCopyWarning` was pandas admitting it could not tell (Q72-036).
+
+**pandas 3.0's copy-on-write resolves it by deciding**: every intermediate behaves as a copy, always. Chained assignment now reliably does nothing and says so. The rule to state: **one indexing step for any assignment — `.loc` or `.iloc`, never two brackets.**
+
+| Tier | What to say |
+|---|---|
+| Passes | "Use `.loc` instead" |
+| Strong | + that pandas 3 raises where older versions warned or silently worked, and that the cause is view-against-copy ambiguity |
+| Extra points | **[+Edge cases]** code that worked on an older pandas may now silently stop working, which is a real migration risk worth grepping for · **[+Validate]** copy-on-write also means `df2 = df` no longer risks mutating `df` through `df2` · **[+Scale]** it is faster too: pandas can avoid defensive copies it used to make just in case |
+
+**Likely follow-ups:** What is copy-on-write? How would you find chained assignment across a codebase? *(Search for `][` after a dataframe.)* Does `.loc` always avoid it? *(Yes, in one step.)*
+**Learn it in:** Chapter 18, section 18.4 (selection); Chapter 72, Q72-036.
+
+### Rapid-fire, 72.9: pandas edges
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q72-070 | A tz-aware timestamp compared with a naive one | `False` — **not** an error. They are different kinds of thing and pandas says "not equal" rather than refusing | **[+Business]** a filter comparing the two silently returns nothing → Ch 77 Q77-042 |
+| Q72-071 | `df.v.rolling(2).mean()` on rows that are not in date order | The window follows **row order**, not the date. Sort first; pandas will not | **[+Validate]** a rolling average that looks wrong is usually an unsorted index → Ch 18 §18.9 |
+| Q72-072 | `pd.concat` against `merge` | `concat` stacks frames (rows or columns) by position or index; `merge` matches on key values. Confusing them duplicates or misaligns rows | **[+Edge cases]** `concat` aligns on the index, which silently reorders if the indexes differ → Ch 18 §18.7 |
+| Q72-073 | `df.reset_index(drop=True)` — why does it matter after filtering? | Filtering keeps the original index, so a later `concat` or positional operation misaligns. `drop=True` throws the old labels away | **[+Validate]** a mysterious NaN after a `concat` is usually this → Ch 18 §18.4 |
+| Q72-074 | `.apply()` against `.transform()` on a group | `apply` can return any shape; `transform` must return one value per input row, which is what you need to put a group statistic back on every row | **[+Scale]** `transform` is also faster, being more constrained → Q72-046 |
+| Q72-075 | Is `df.sort_values('x')` stable? | **No.** The default `kind='quicksort'` reordered tied rows on 1,000 rows of three repeated keys — though it preserved order on 8 rows, which is why the bug survives testing. Pass `kind='stable'` when ties matter | **[+Edge cases]** the same tie problem as SQL's `LIMIT` → Ch 71 Q71-088 |
+| Q72-076 | `pd.read_csv(..., nrows=1000)` for a quick look | Reads only the first 1,000 rows, so dtypes are inferred from those alone and may be wrong for the full file | **[+Validate]** profile a sample, but set dtypes from the spec → Ch 77 Q77-044 |
+| Q72-077 | `df.query('qty > 5')` against `df[df.qty > 5]` | The same result. `query` is more readable for long conditions and can be slower on small frames | **[+Trade-offs]** `query` takes a string, so a typo is a runtime error → Ch 18 §18.4 |
+
+---
+
+## 72.10 Writing Python someone else can run
+
+A live-coding round is not only about the answer. The interviewer is watching how you write, and most of these are visible in ten lines of code.
+
+### Q72-078 · `assert` as a production data check
+
+**Level:** Senior · **Roles:** DE, DS, MLE
+
+**Remember it as:** *Every `assert` disappears when Python runs with `-O`. A check that can be switched off is not a check.*
+
+**Answer in one line:** **It may not run at all** — Python's `-O` flag removes every `assert` statement from the compiled code, so a validation written as an assert is silently absent in exactly the environments most likely to use `-O`.
+
+```python
+print(__debug__)          # True normally, False under -O
+```
+
+```
+True
+```
+
+Under `python -O script.py`, `__debug__` is `False` and **every `assert` line is stripped at compile time** — not skipped, removed. So this:
+
+```python
+assert df.revenue.notna().all(), "revenue has missing values"
+```
+
+is your data-quality gate in development and nothing whatsoever in production, if anyone ever runs it optimised.
+
+The distinction worth stating:
+
+| | Use for |
+|---|---|
+| `assert` | A statement about your *code* that should never be false — an internal invariant, a sanity check during development, a test |
+| `if ... raise` | A statement about your *data* or your *inputs*, which can be false in the real world |
+
+So a data check belongs in a raise:
+
+```python
+if df.revenue.isna().any():
+    raise ValueError(f"{df.revenue.isna().sum()} rows have missing revenue")
+```
+
+Which is also better because it carries the count. "Assertion failed" tells you nothing; "847 rows have missing revenue" tells you what to do next.
+
+Asserts in a **test suite** are a different matter and entirely correct — nobody runs pytest with `-O`.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Asserts can be disabled" |
+| Strong | + that `-O` removes them at compile time, and the division: asserts for code invariants, raises for data and input validation |
+| Extra points | **[+Business]** a data-quality gate that silently vanishes is worse than none, because the team believes it is protected · **[+Validate]** an error message carrying the failing count is far more useful than a bare assertion · **[+Edge cases]** asserts in tests are fine; the rule is about production code |
+
+**Likely follow-ups:** What exception type would you raise? How does this relate to a data contract? *(Chapter 77, Q77-004.)* Where would Great Expectations or Pandera fit?
+**Learn it in:** Chapter 29, section 29.6 (errors); Chapter 47, section 47.2 (quality checks).
+
+### Q72-079 · `def f(t=datetime.now())` — when is `now()` evaluated?
+
+**Level:** Mid · **Roles:** DA, DS, DE, MLE
+
+**Remember it as:** *A default argument is evaluated once, when the function is defined. Not once per call. Ever.*
+
+**Answer in one line:** **Once, at import time** — two calls over a second apart return the identical timestamp, because the default was evaluated when the `def` statement ran and the result was stored with the function.
+
+```python
+def f(t=datetime.datetime.now()):
+    return t
+
+first = f()
+time.sleep(1.1)
+second = f()
+print(first == second, first.strftime('%H:%M:%S.%f')[:-3])
+```
+
+```
+True 12:48:49.026
+```
+
+Over a second apart and identical. The function returns the moment the **module was imported**, forever.
+
+This is the same mechanism as the mutable-default trap in Q72-001, which is usually taught with `def f(items=[])`. The list version is better known; this version is harder to spot, because a timestamp looks like a value rather than like shared state.
+
+Where it causes real damage is in long-running processes. A scheduled job that imports once and runs for a week will stamp every output with the time it started — so a daily report is dated the day the service was deployed, and the dates look plausible enough that nobody checks.
+
+The fix, as with the list:
+
+```python
+def f(t=None):
+    if t is None:
+        t = datetime.datetime.now()
+    return t
+```
+
+| Tier | What to say |
+|---|---|
+| Passes | "Defaults are evaluated once" |
+| Strong | + at definition time, not first call, with the `None` sentinel as the fix, and connects it to the mutable-default case |
+| Extra points | **[+Business]** a long-running service stamps every record with its start time, and the dates look plausible · **[+Edge cases]** the same applies to any call in a default — reading a config file, opening a connection, generating an id · **[+Validate]** linters flag mutable defaults but often not a function call that returns an immutable value |
+
+**Likely follow-ups:** Why does Python do it this way? *(Defaults are stored on the function object, evaluated once.)* How does this relate to Q72-001? What about a default in a dataclass? *(`field(default_factory=...)` is the dataclass answer.)*
+**Learn it in:** Chapter 17, section 17.5 (functions); Chapter 72, Q72-001.
+
+### Q72-080 · `<(.+)>` against `<(.+?)>` on `<a><b>`
+
+**Level:** Mid · **Roles:** DA, DS, DE
+
+**Remember it as:** *A regex quantifier is greedy: it takes as much as it can and gives back only if it must. Add `?` and it takes as little as possible.*
+
+**Answer in one line:** **`a><b` and `a`** — the greedy `.+` runs to the last `>` in the string and backtracks once, while `.+?` stops at the first `>`; the second is almost always what you meant.
+
+```python
+s = '<a><b>'
+print(re.search(r'<(.+)>',  s).group(1))
+print(re.search(r'<(.+?)>', s).group(1))
+```
+
+```
+a><b
+a
+```
+
+The greedy version has captured both tags and the bracket between them. On a single tag it would have looked correct, which is how the bug reaches production: it works on the test string and fails on real data that has two of something.
+
+Three more regex facts worth having, because they account for most of the mistakes:
+
+**`re.match` anchors at the start; `re.search` does not.**
+
+```python
+print(re.match(r'b', 'abc'), re.search(r'b', 'abc'))
+```
+
+```
+None <re.Match object; span=(1, 2), match='b'>
+```
+
+`re.match` returning `None` for a pattern that is obviously present is one of the most common confusions in the module, and the fix is simply the other function.
+
+**Use raw strings.** `r'\d'` rather than `'\d'`, or the backslash is interpreted twice and the pattern silently stops matching.
+
+**And know when not to use a regex at all.** `'@' in email` is clearer than a pattern, and `str.split` beats a regex for a fixed delimiter. A regex is the right tool for a pattern with structure, and the wrong one for a condition you could state in words.
+
+| Tier | What to say |
+|---|---|
+| Passes | "One is greedy and one is lazy" |
+| Strong | + both captured strings, and that the greedy version looks correct on data with only one match |
+| Extra points | **[+Validate]** test a regex on input containing *two* of the thing before trusting it · **[+Edge cases]** `re.match` against `re.search` is the other half of this confusion · **[+Business]** parsing HTML or CSV with a regex is the classic version of this mistake; use a parser (Chapter 77, Q77-039) · **[+Scale]** compile a pattern used in a loop with `re.compile` |
+
+**Likely follow-ups:** What does a capture group do? What is a non-capturing group? *(`(?:...)`.)* When would you not use a regex? What is catastrophic backtracking?
+**Learn it in:** Chapter 14, section 14.5 (text cleaning); Chapter 34, section 34.4.
+
+### Rapid-fire, 72.10: code someone else has to read
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q72-081 | `except:` with nothing after it | Catches `KeyboardInterrupt` and `SystemExit` too, so Ctrl-C cannot stop your loop. Use `except Exception:` at the very least, and a specific type where you can | **[+Validate]** `KeyboardInterrupt` inherits from `BaseException`, not `Exception` → Ch 29 §29.6 |
+| Q72-082 | `except Exception: pass` | Hides the bug and keeps going, so the failure surfaces somewhere unrelated hours later. Log it or re-raise | **[+Business]** silent failure is the hardest class of bug to trace → Ch 78 Q78-018 |
+| Q72-083 | `sorted([1, 'a', 2])` | `TypeError: '<' not supported between instances of 'str' and 'int'`. Python refuses rather than guessing | **[+Edge cases]** which is a mercy — a mixed column should be caught at load → Ch 77 Q77-044 |
+| Q72-084 | `print()` against `logging` in a scheduled job | `print` goes to stdout with no level, no timestamp and no file. A scheduled job needs a log you can read tomorrow | **[+Validate]** logging also lets you raise the level without editing code → Ch 18 §18.18 |
+| Q72-085 | Type hints — do they do anything at runtime? | No. Python ignores them. They are for readers, editors and `mypy`, and that is enough to justify them | **[+Business]** a hinted signature is the cheapest documentation that cannot go stale silently → Ch 29 §29.3 |
+| Q72-086 | A function with eight parameters | A sign it does more than one thing. Split it, or group the parameters into a small config object | **[+Trade-offs]** a frozen dataclass makes the group explicit and immutable → Ch 18 §18.17 |
+| Q72-087 | Hard-coded file paths and credentials | Paths break on another machine; credentials in code leak through git history forever. Config file and environment variables | **[+Business]** private repositories still leak — rotate, do not just delete the line → Ch 26 §26.5 |
+| Q72-088 | `df = df.something()` repeated ten times | Hard to debug, because any intermediate is gone. Either name the steps or use a chain with `.pipe()` and comments | **[+Trade-offs]** chaining reads well and debugs badly; name the steps that matter → Ch 29 §29.2 |
+| Q72-089 | How would you make an analysis reproducible? | Pin versions, fix every random seed, pin the input data or its hash, and record them with the output | **[+Validate]** "it gave a different number today" is usually an unpinned seed or an unpinned library → Ch 36 §36.8 |
+| Q72-090 | What would you test in an analysis script? | The transformations, on a tiny hand-made frame with the edge cases in it: an empty group, a NaN, a duplicate key, a negative value | **[+Business]** you do not test pandas; you test your own logic → Ch 29 §29.8 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -1209,7 +1804,11 @@ print(clean["quantity"].astype("Int64").tolist())
 | Inner-joining without checking for dropped rows | Missing customers or records go unnoticed | Compare row counts before and after; use `how="left"` with `indicator=True` when rows shouldn't disappear |
 | Filling every missing value with 0 by habit | Real "unknown" values are treated as real zeros in later math | Decide fill vs. drop based on *why* the value is missing |
 | "Fixing" a messy file before diagnosing it | Over-correcting, or missing the real problem | Check shape, dtypes, duplicates, and missing values first, in that order |
-
+| Writing into a NumPy slice | The original array changes too, because a slice is a view | `.copy()` when you want independence (Q72-055) |
+| A merge with no `validate=` | Row count grows silently and every total is inflated | `validate='m:1'` on every lookup join (Q72-066) |
+| `groupby` on a column that can be missing | Those rows vanish from the result and the totals do not reconcile | `dropna=False`, and check the sizes sum to the row count (Q72-067) |
+| A data check written as `assert` | Removed entirely under `python -O` | `if ... raise`, with the failing count in the message (Q72-078) |
+| Downcasting dtypes to save memory | Reintroduces silent integer overflow | Know the range after arithmetic, or accumulate in a wider type (Q72-056) |
 ---
 
 ## In the real world: the report that "randomly" gave different numbers each run
@@ -1240,13 +1839,15 @@ The lesson the hiring manager wrote in her notes afterward: *"Didn't guess. Adde
 
 ## Key terms
 
-mutable default argument · `is` vs. `==` · object identity · shallow copy · deep copy · closure · late binding · `*args` / `**kwargs` · keyword-only arguments (`*`) · list comprehension · generator · `tracemalloc` · decorator · `functools.wraps` · class attribute · walrus operator (`:=`) · pandas Series · pandas DataFrame · `.loc` vs. `.iloc` · Copy-on-Write · chained assignment · `ChainedAssignmentError` · `SettingWithCopyWarning` (legacy) · `groupby().agg()` · named aggregation · `merge` (join types) · `indicator=True` · `pivot_table` · `concat` · `.transform()` vs. `.agg()` · vectorization · `.apply(axis=1)` · `.isna()` / `.fillna()` / `.dropna()` · `.str` accessor · `.dt` accessor · `errors="coerce"` · nullable `Int64` · `chunksize` (large-file reading)
+mutable default argument · `is` vs. `==` · object identity · shallow copy · deep copy · closure · late binding · `*args` / `**kwargs` · keyword-only arguments (`*`) · list comprehension · generator · `tracemalloc` · decorator · `functools.wraps` · class attribute · walrus operator (`:=`) · pandas Series · pandas DataFrame · `.loc` vs. `.iloc` · Copy-on-Write · chained assignment · `ChainedAssignmentError` · `SettingWithCopyWarning` (legacy) · `groupby().agg()` · named aggregation · `merge` (join types) · `indicator=True` · `pivot_table` · `concat` · `.transform()` vs. `.agg()` · vectorization · `.apply(axis=1)` · `.isna()` / `.fillna()` / `.dropna()` · `.str` accessor · `.dt` accessor · `errors="coerce"` · nullable `Int64` · `chunksize` (large-file reading) · view against copy · fancy indexing · fixed-width integer overflow · broadcasting · ambiguous truth value · `.all()` / `.any()` · `np.array_equal` / `np.allclose` · `nanmax` and friends · `validate=` on a merge · `indicator=` · merge fan-out · `dropna=False` on groupby · `category` dtype · dtype downcasting · `memory_usage(deep=True)` · copy-on-write · `ChainedAssignmentError` · tz-aware against naive · sort stability (`kind=`) · `__debug__` and `-O` · assert against raise · default evaluated at definition · greedy against lazy quantifier · `re.match` against `re.search` · raw string · bare `except` · `BaseException` · type hints · reproducibility
 
 ---
 
 ## Final-week revision list
 
-Q72-001, Q72-002, Q72-003, Q72-004, Q72-029, Q72-030, Q72-035, Q72-036, Q72-041, Q72-042, Q72-047, Q72-048, Q72-053, Q72-054.
+Q72-001, Q72-002, Q72-003, Q72-004, Q72-029, Q72-030, Q72-035, Q72-036, Q72-041, Q72-042, Q72-047, Q72-048, Q72-053, Q72-054, Q72-055, Q72-066, Q72-067, Q72-078.
+
+The last four are the ones most likely to be the difference between a correct answer and a trusted one: NumPy slices being views (Q72-055), a merge that returns more rows than it started with (Q72-066), a groupby that silently drops the rows with missing keys (Q72-067), and a data check written as an `assert` that disappears under `-O` (Q72-078).
 
 ---
 

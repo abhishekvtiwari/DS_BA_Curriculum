@@ -120,10 +120,21 @@ The book has nine parts and a closing chapter. Each part assumes the ones before
 - **Part 5 — Data Engineering, Integration & Scale** (Chapters 45–52).
 - **Part 6 — Production ML, Generative AI & MLOps** (Chapters 53–59).
 - **Part 7 — Architecture, Governance & Leadership** (Chapters 60–67).
-- **Part 8 — The Interview Playbook** (Chapters 68–82). How data hiring works, and question banks for each role.
+- **Part 8 — Be Interview Ready** (Chapters 68–82). How data hiring works, and question banks for each role.
 - **Closing** (Chapter 83). The long game: what the whole path costs, and how to keep going.
 
 Parts 3 to 7 are branches, not a ladder you must climb to the top. Which ones you need depends on the job you want, and Chapter 8 shows which parts lead to which roles. Complete beginners should start at Chapter 1 and read in order. If you already work as an analyst, skim Parts 0 to 2 and start fully at Part 3. Chapter 8, section 8.7, has a route for each role.
+
+The parts are published as four books:
+
+| Book | Parts | What it gives you |
+|---|---|---|
+| **1. Theory** | This section, Parts 0 and 1 | The ideas, with no software: what data is, how a business runs on it, how to think about it, and the map of data jobs. |
+| **2. Practical** | Parts 2 and 3 | The analyst's tools, used by hand on Riverstone's data: spreadsheets, SQL, Power BI, Python, statistics, dbt, and experiments. |
+| **3. Implementation** | Parts 4 to 7, and the closing chapter | Building real systems: machine learning, data pipelines, AI applications in production, and architecture. |
+| **4. Be Interview Ready** | Part 8 | How data hiring works, and question banks for each role. Use it when you apply for a job. |
+
+Books 1 to 3 share one page count, so a page number in one book never repeats in another.
 
 ---
 

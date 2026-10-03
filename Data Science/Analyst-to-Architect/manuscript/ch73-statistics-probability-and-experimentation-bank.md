@@ -1,6 +1,6 @@
 # Chapter 73. Statistics, Probability & Experimentation Bank
 
-*Part 8 — The Interview Playbook*
+*Part 8 — Be Interview Ready*
 
 > **Chapter at a glance**
 >
@@ -8,9 +8,9 @@
 >
 > **Before you start:** Chapter 69 (the three answer tiers and the twelve extra-point moves). The questions test Chapter 21 (probability and distributions), Chapter 22 (confidence intervals, tests, A/B basics, confounders, Simpson's paradox, and regression basics in section 22.10), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). This chapter tests those skills; it doesn't teach them again. When you can't answer a question, its **Learn it in** line sends you to the section that teaches it.
 >
-> **Time needed:** about 8–10 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list.
+> **Time needed:** about 9–12 hours for a first pass, running every cell and saying each answer aloud (the simulations take time to run and to understand); 1 hour for the final-week list. Section 73.8 adds about an hour and is best done in one sitting.
 >
-> **How this chapter is built.** Same format as every question bank in Part 8: every core question gives a memory hook ("Remember it as…"), a one-line answer, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, one per line, tagged the same way: **[+Validate]**, **[+Business]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Rapid-fire sections are scan tables. **Every number in this chapter comes from running the code shown** (NumPy, SciPy, statsmodels): simulations, test statistics, p-values, sample sizes. The order: probability warm-ups first, then the famous puzzles (they test the same basics from an angle), then distributions, testing, experiment design and debugging, causal reasoning, and two walk-throughs that put it all together.
+> **How this chapter is built.** Same format as every question bank in Part 8: every core question gives a memory hook ("Remember it as…"), a one-line answer, and a tier table: what **passes**, what's **strong**, and the **extra points** (Chapter 69's moves, one per line, tagged the same way: **[+Validate]**, **[+Business]** and so on). Then come the likely follow-ups, the red flag, and where to learn it. Rapid-fire sections are scan tables. **Every number in this chapter comes from running the code shown** (NumPy, SciPy, statsmodels): simulations, test statistics, p-values, sample sizes. The order: probability warm-ups first, then the famous puzzles (they test the same basics from an angle), then distributions, testing, experiment design and debugging, causal reasoning, and two walk-throughs that put it all together. Section 73.8 closes the chapter with a different kind of question: not whether you understand the statistics, but whether the number you reported is the number you think you computed — the defaults, weightings and measures that change an answer without raising anything.
 >
 > **Learn it in** pointers name the chapter and section that teach each idea: Chapter 21 (probability and distributions), Chapter 22 (tests, A/B basics, confounders, Simpson's paradox), Chapter 30 (inference, power, experiment design, the sample-ratio check) and Chapter 31 (causal inference without experiments). The few ideas marked **Beyond the book** go further than those chapters and carry their own short explanation, so you can learn them here.
 
@@ -762,6 +762,411 @@ expected counts under independence: [[105.0, 95.0], [105.0, 95.0]]
 
 ---
 
+## 73.8 Predict the number: the arithmetic that quietly goes wrong
+
+Everything so far in this chapter has tested whether you understand the *statistics*: base rates, power, peeking, Simpson's paradox. This section tests something narrower and just as costly — whether the number you reported is the number you think you computed.
+
+These are not conceptual traps. Every one of them is an analysis that runs without error, produces a plausible figure, and is wrong. A standard deviation that differs by library. An average conversion rate that is three times too high. A correlation of exactly zero on a perfect relationship. None of them raises anything; all of them end up in a slide.
+
+So the format is: here is the setup, what is the number? Say it out loud, then read on.
+
+What they have in common is that a tool made a choice on your behalf — a default divisor, an unweighted mean, a linear measure of association — and did not mention it. The habit worth building is to ask, of any number you did not compute by hand, *which formula did this use?*
+
+**How these were run.** Every figure below was produced by running the code, using the chapter's setup cell (section 73.0) with `rng = np.random.default_rng(73)` reseeded in each cell, so each one reproduces on its own. Run them yourself and you will get the same numbers.
+
+**What is not here.** The famous probability traps are already in this chapter and are not repeated: Bayes and the rare-disease test is Q73-005, the birthday problem Q73-007, peeking Q73-025, testing twenty metrics Q73-028, Simpson's paradox section 73.6. Two questions below deliberately go deeper into ground a rapid-fire row already touched, and say so.
+
+### Q73-038 · `np.std(x)` and `pd.Series(x).std()` on the same numbers
+
+**Level:** Fresher · **Roles:** DA, DS, PA, BA
+
+**Remember it as:** *NumPy divides by n, pandas divides by n − 1. Same data, different answer, and neither tells you.*
+
+**Answer in one line:** **2.000 and 2.138** — NumPy's default is the population standard deviation (`ddof=0`) and pandas' default is the sample one (`ddof=1`), a 6.5% difference on eight numbers and a silent one.
+
+```python
+x = [2, 4, 4, 4, 5, 5, 7, 9]
+print(f"np.std(x)          = {np.std(x):.6f}")
+print(f"np.std(x, ddof=1)  = {np.std(x, ddof=1):.6f}")
+print(f"pd.Series(x).std() = {pd.Series(x).std():.6f}")
+```
+
+```
+np.std(x)          = 2.000000
+np.std(x, ddof=1)  = 2.138090
+pd.Series(x).std() = 2.138090
+```
+
+The divisor is the whole story. The population formula divides the sum of squared deviations by **n**; the sample formula divides by **n − 1**, because using the sample's own mean uses up one degree of freedom and dividing by n would bias the estimate downward.
+
+Which is right depends on your question, not your library. If those eight numbers are the entire population you care about — the eight regions you operate in — `ddof=0` is correct. If they are a sample you are generalising from, `ddof=1` is.
+
+The trap is that the two libraries disagree **by default**, so the same analysis gives two different numbers depending on whether a column arrived as a NumPy array or a pandas Series. On eight numbers that is 6.5%. On 1,000 it is 0.05% and you will never notice — which is worse, because it means the discrepancy only shows up in small-sample work, where it matters most.
+
+It propagates: a confidence interval, a t-statistic and a z-score all contain this number.
+
+| Tier | What to say |
+|---|---|
+| Passes | "One is the sample standard deviation and one is the population one" |
+| Strong | + both figures, which library defaults to which, and that the choice depends on whether the data is a sample or the whole population |
+| Extra points | **[+Edge cases]** the gap shrinks as n grows, so it hides in exactly the large datasets where it does not matter and bites in the small ones where it does · **[+Validate]** pass `ddof` explicitly in anything shared, so the reader does not have to know the default · **[+Business]** two analysts reporting different volatility for the same series, both "correct", is usually this |
+
+**Likely follow-ups:** Why n − 1? *(Bessel's correction: the sample mean sits closer to the sample than the true mean does, so deviations are understated.)* What does `.var()` default to in each? *(The same split.)* Does `describe()` use ddof=1? *(Yes, in pandas.)*
+**Red flag:** not knowing there is a choice at all.
+**Learn it in:** Chapter 21, section 21.3 (spread); Chapter 18, section 18.1 (NumPy).
+
+### Q73-039 · Three days of conversion data. What is the average conversion rate?
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
+
+**Remember it as:** *The mean of the rates is not the rate. Add the tops and add the bottoms; never average the ratios.*
+
+**Answer in one line:** **10.8%**, not 36.7% — averaging the three daily rates gives each day equal weight regardless of traffic, so two ten-visit days drown out a thousand-visit day.
+
+| Day | Visits | Conversions | Rate |
+|---|---|---|---|
+| 1 | 10 | 5 | 50.0% |
+| 2 | 1,000 | 100 | 10.0% |
+| 3 | 10 | 5 | 50.0% |
+
+```python
+days = pd.DataFrame({'visits': [10, 1000, 10], 'conversions': [5, 100, 5]})
+days['rate'] = days.conversions / days.visits
+print(f"mean of the daily rates  : {days.rate.mean():.4f}")
+print(f"total conv / total visits: {days.conversions.sum() / days.visits.sum():.4f}")
+```
+
+```
+mean of the daily rates  : 0.3667
+total conv / total visits: 0.1078
+```
+
+**36.7% against 10.8%.** The first number is wrong by a factor of three and a half, and it is the one a `groupby(...).mean()` on a rate column produces.
+
+The right calculation sums the numerators and the denominators: 110 conversions out of 1,020 visits. Every row then carries the weight it earned.
+
+This is the single most common arithmetic error in analyst work, because the wrong version is so natural to write — compute a rate per day, then average it. It appears in weighted averages of any kind: average order value across stores, average margin across products, average latency across services. Wherever a per-unit figure is averaged across units of different size, this is waiting.
+
+If you genuinely need the average of the rates — "what does a typical day look like?" — that is a different question and you should say so, because the number answers it and nothing else.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You should weight by visits" |
+| Strong | + both numbers, 36.7% against 10.8%, and the rule: sum the numerators and denominators, do not average the ratios |
+| Extra points | **[+Business]** the same error inflates average order value, margin and latency whenever the units differ in size · **[+Clarify]** "average rate" is ambiguous — the pooled rate and the mean of daily rates answer different questions, so ask which · **[+Validate]** if an average rate sits outside the range you would expect from the totals, this is why · **[+Edge cases]** a weighted mean with the denominator as weights gives the pooled figure back, which is a useful cross-check |
+
+**Likely follow-ups:** When would the mean of rates be the right answer? How does this connect to Simpson's paradox? *(Closely — section 73.6 is the same weighting problem with a reversal in it.)* How would you write the pooled version in SQL?
+**Red flag:** `df.groupby('day')['rate'].mean()` in a report, with no weighting.
+**Learn it in:** Chapter 21, section 21.2 (averages); Chapter 73, section 73.6 (Simpson's paradox); Chapter 23, section 23.6.
+
+### Q73-040 · "95% confidence interval." What is 95% of what?
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
+
+**Remember it as:** *95% of intervals built this way contain the true value. This one either does or it does not.*
+
+**Answer in one line:** (Q73-019 gives the one-line version; this is the proof.) 95% is the long-run success rate **of the procedure**, not the probability that the parameter is inside the particular interval you are looking at — the parameter is a fixed number, so for any given interval the answer is already yes or no.
+
+```python
+rng = np.random.default_rng(73)
+true_mu, trials, covered = 100, 5000, 0
+for _ in range(trials):
+    s = rng.normal(true_mu, 15, 30)
+    lo, hi = stats.t.interval(0.95, len(s)-1, loc=s.mean(), scale=stats.sem(s))
+    covered += lo <= true_mu <= hi
+print(f"{covered/trials*100:.1f}% of {trials:,} intervals contain the true mean")
+```
+
+```
+94.9% of 5,000 intervals contain the true mean
+```
+
+94.9% is what the "95%" refers to. Repeat the whole exercise — draw a sample, build an interval — and about 95 in 100 of those intervals will have captured the true value.
+
+Here is one of them:
+
+```python
+rng = np.random.default_rng(73)
+s = rng.normal(100, 15, 30)
+lo, hi = stats.t.interval(0.95, 29, loc=s.mean(), scale=stats.sem(s))
+print(f"[{lo:.2f}, {hi:.2f}]")
+```
+
+```
+[92.34, 104.03]
+```
+
+For *that* interval the probability of containing 100 is not 95%. It is 1, because 100 is in it. Had the sample come out differently it might have been 0. The randomness lives in the sampling, not in the parameter.
+
+Does the distinction matter in practice? Mostly no — and saying so is part of a good answer, rather than pretending the frequentist reading changes your decisions. Where it does matter is in how you talk to stakeholders. "There is a 95% chance the lift is between 2% and 8%" is the Bayesian credible-interval statement, and if you want to make it, use a Bayesian method and say so. With a frequentist interval the honest version is "our method captures the truth 95% of the time, and this is what it gave us."
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's a range the true value is probably in" |
+| Strong | + 95% is a property of the procedure across repeated samples, this interval either contains the value or does not, with the coverage simulation as evidence |
+| Extra points | **[+Trade-offs]** a Bayesian credible interval *does* support "95% probability it is in here", which is usually what the stakeholder wanted · **[+Business]** the practical difference is small; the communication difference is not · **[+Edge cases]** coverage is only 95% if the assumptions hold — the simulation above draws from a normal, and real data may not |
+
+**Likely follow-ups:** What makes an interval wider? *(More variance, less data, higher confidence.)* What is a credible interval? If I run 20 experiments, how many intervals miss? *(About one.)*
+**Red flag:** "there is a 95% chance the true value is in this interval" stated as the definition. Common, usually harmless, and precisely what the question is checking.
+**Learn it in:** Chapter 22, section 22.3 (confidence intervals); Chapter 30, section 30.6.
+
+### Q73-041 · You halve the effect you want to detect. What happens to the sample size?
+
+**Level:** Senior · **Roles:** DA, DS, PA
+
+**Remember it as:** *Sample size goes as one over the effect squared. Half the effect, four times the data.*
+
+**Answer in one line:** (Q73-020 computes a sample size; this is how that number moves.) It roughly **quadruples** — 14,744 per arm to detect a 10% relative lift becomes 57,756 to detect 5%, because the required n scales with 1/effect².
+
+```python
+power = sms.NormalIndPower()
+for mde in (0.10, 0.05, 0.025):
+    es = sms.proportion_effectsize(0.10 + mde * 0.10, 0.10)
+    n = power.solve_power(effect_size=es, alpha=0.05, power=0.8, ratio=1)
+    print(f"relative MDE {mde*100:>4.1f}%  ->  n per arm = {n:,.0f}")
+```
+
+```
+relative MDE 10.0%  ->  n per arm = 14,744
+relative MDE  5.0%  ->  n per arm = 57,756
+relative MDE  2.5%  ->  n per arm = 228,547
+```
+
+Each halving multiplies by just under four. Going from a 10% lift to a 2.5% lift — all three of which sound like small numbers in a meeting — multiplies the traffic you need by **fifteen and a half**.
+
+This is the single most useful fact to have ready when someone asks for an experiment, because it converts an ambition into a schedule. At 5,000 visitors a day per arm, detecting a 10% lift takes three days, and detecting a 2.5% lift takes forty-six.
+
+The full relationship, worth being able to state:
+
+| Change | Effect on n |
+|---|---|
+| Halve the detectable effect | × 4 |
+| Raise power from 80% to 90% | × 1.34 |
+| Tighten alpha from 0.05 to 0.01 | × 1.49 |
+| Halve the baseline rate | roughly × 2 |
+
+The honest conversation that follows is usually the valuable one: either the effect worth detecting is bigger than people claimed, or the test needs to run for two months, or it should not be run as an A/B test at all.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You need more data" |
+| Strong | + "about four times, because n goes as 1/effect²", with a worked number |
+| Extra points | **[+Business]** converts directly to calendar time, which is the form the decision actually takes · **[+Trade-offs]** you can buy back sample size with variance reduction (CUPED) or a better unit of randomisation, rather than waiting · **[+Clarify]** ask what lift would actually change the decision; teams routinely ask to detect effects far smaller than they would act on · **[+Edge cases]** the four-times rule is for a difference in means or proportions; ratio metrics with their own variance need the delta method |
+
+**Likely follow-ups:** Where does the square come from? What is CUPED? How does the baseline rate affect it? What if the metric is revenue per user rather than a proportion? *(Much higher variance, so a larger n.)*
+**Learn it in:** Chapter 30, section 30.3 (sample size and power); Chapter 22, section 22.4.
+
+### Q73-042 · There is no effect at all. What does the distribution of p-values look like?
+
+**Level:** Senior · **Roles:** DS, PA
+
+**Remember it as:** *Under the null, a p-value is uniform. Every value from 0 to 1 is equally likely — which is exactly why 5% of them land below 0.05.*
+
+**Answer in one line:** **Flat** — p-values are uniformly distributed between 0 and 1 when the null is true, so each 10% band holds about 10% of them, and the 5% false positive rate is not a coincidence but the definition.
+
+```python
+rng = np.random.default_rng(73)
+ps = np.array([stats.ttest_ind(rng.normal(0, 1, 200), rng.normal(0, 1, 200)).pvalue
+               for _ in range(5000)])
+for lo in np.arange(0, 1, 0.1):
+    print(f"p in [{lo:.1f}, {lo+0.1:.1f}): {((ps >= lo) & (ps < lo+0.1)).mean()*100:5.1f}%")
+print(f"p < 0.05: {(ps < 0.05).mean()*100:.1f}%")
+```
+
+```
+p in [0.0, 0.1):   9.7%
+p in [0.1, 0.2):  10.0%
+p in [0.2, 0.3):   8.8%
+p in [0.3, 0.4):  10.4%
+p in [0.4, 0.5):  10.6%
+p in [0.5, 0.6):  10.6%
+p in [0.6, 0.7):  10.3%
+p in [0.7, 0.8):   9.8%
+p in [0.8, 0.9):   9.7%
+p in [0.9, 1.0):  10.1%
+p < 0.05: 5.0%
+```
+
+Ten bands, about 10% each, and exactly 5.0% below 0.05.
+
+Two consequences follow, and they are what the question is really after.
+
+**First, a large p-value is not evidence of no effect.** If p were clustered near 1 when nothing was happening, p = 0.8 would be reassuring. It is not — p = 0.8 is exactly as likely as p = 0.1 under the null. Absence of evidence is not evidence of absence, and the tool for the latter is an equivalence test or a confidence interval narrow enough to exclude anything you would care about.
+
+**Second, this is the foundation under Q73-028 and Q73-025.** Multiple comparisons inflate false positives because each test is an independent draw from a uniform distribution, so more draws means more values below 0.05. Peeking, in Q73-025, works the same way: more looks, more draws, more crossings.
+
+It is also a diagnostic. Plot the p-values from a large family of tests you believe are null — your A/A tests, your pre-experiment checks — and the histogram should be flat. A spike near zero means real effects, or a bug in the randomisation. A histogram that is *not* flat under A/A conditions is one of the best signals that your experimentation platform is broken.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Uniform" |
+| Strong | + why that gives the 5% rate by construction, and that a large p-value is therefore not evidence of no effect |
+| Extra points | **[+Validate]** an A/A p-value histogram that is not flat means the platform is broken, and is a standard health check · **[+Edge cases]** the uniformity needs a continuous test statistic; discrete tests on small counts give a lumpy distribution · **[+Business]** to argue *for* no effect, use an equivalence test, not a big p-value |
+
+**Likely follow-ups:** What does the distribution look like when there *is* an effect? *(Skewed towards zero, more so with more power.)* How would you test for equivalence? What would a spike at 0.04–0.05 across published studies suggest? *(P-hacking.)*
+**Learn it in:** Chapter 22, section 22.4 (p-values); Chapter 30, section 30.5.
+
+### Q73-043 · Four datasets, same mean, same variance, same correlation, same regression line
+
+**Level:** Mid · **Roles:** DA, DS, PA, BA
+
+**Remember it as:** *Summary statistics are a compression, and compression loses things. Plot it.*
+
+**Answer in one line:** They are **completely different** — Anscombe's quartet matches on every summary statistic to two decimal places while containing a straight line, a curve, a line with one outlier, and a vertical stack with one far-off point.
+
+```python
+x_common = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5]
+anscombe = {
+    'I':   (x_common, [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68]),
+    'II':  (x_common, [9.14, 8.14, 8.74, 8.77, 9.26, 8.10, 6.13, 3.10, 9.13, 7.26, 4.74]),
+    'III': (x_common, [7.46, 6.77, 12.74, 7.11, 7.81, 8.84, 6.08, 5.39, 8.15, 6.42, 5.73]),
+    'IV':  ([8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8],
+            [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89]),
+}
+
+print(f"{'set':<5}{'mean x':>8}{'mean y':>8}{'sd y':>7}{'corr':>7}{'slope':>8}")
+for k, (xs, ys) in anscombe.items():
+    xs, ys = np.array(xs), np.array(ys)
+    slope = np.polyfit(xs, ys, 1)[0]
+    print(f"{k:<5}{xs.mean():>8.2f}{ys.mean():>8.2f}{ys.std(ddof=1):>7.3f}"
+          f"{np.corrcoef(xs, ys)[0,1]:>7.3f}{slope:>8.3f}")
+```
+
+```
+set    mean x  mean y   sd y   corr   slope
+I        9.00    7.50  2.032  0.816   0.500
+II       9.00    7.50  2.032  0.816   0.500
+III      9.00    7.50  2.030  0.816   0.500
+IV       9.00    7.50  2.031  0.817   0.500
+```
+
+Identical on every number anyone would put in a summary table. What the numbers do not say:
+
+| Set | What it actually is |
+|---|---|
+| I | A genuine noisy linear relationship — the only one the statistics describe honestly |
+| II | A clean curve. A straight line is the wrong model, and r = 0.816 hides that completely |
+| III | A perfect straight line with one outlier, which drags the fitted slope away from the real one |
+| IV | Every x is 8 except one. The "correlation" is produced entirely by a single point; delete it and the slope is undefined |
+
+Each set needs a different response: trust the model, change the model, investigate the outlier, get more data. The summary statistics cannot distinguish between them, and neither can anyone who only reads the summary.
+
+This is why "plot the data" is the first step in every cleaning and modelling chapter in this book, and why a correlation coefficient quoted without a scatterplot is a claim rather than evidence.
+
+| Tier | What to say |
+|---|---|
+| Passes | "It's Anscombe's quartet — you should plot your data" |
+| Strong | + describes what the four actually are, and what each one implies you should do differently |
+| Extra points | **[+Validate]** the Datasaurus Dozen makes the same point harder: identical statistics, one of them a dinosaur · **[+Business]** set IV is the shape of a metric driven by one big customer, which is common and is a real risk, not a data-quality problem · **[+Edge cases]** set III is why robust regression and Spearman exist |
+
+**Likely follow-ups:** What would Spearman give for each? How would you detect set IV automatically? *(Leverage, or Cook's distance.)* What is the Datasaurus Dozen?
+**Learn it in:** Chapter 15, section 15.1 (why plot first); Chapter 22, section 22.10 (regression).
+
+### Q73-044 · Two groups, SE 0.77 and 0.68. What is the standard error of the difference?
+
+**Level:** Senior · **Roles:** DA, DS, PA
+
+**Remember it as:** *Variances add, standard errors do not. Square, add, square-root.*
+
+**Answer in one line:** **1.03**, not 1.45 — variances add for independent groups, so the standard errors combine as √(0.77² + 0.68²); adding them overstates the uncertainty by 41% and hides real effects.
+
+```python
+rng = np.random.default_rng(73)
+a = rng.normal(100, 15, 400)
+b = rng.normal(103, 15, 400)
+sea, seb = stats.sem(a), stats.sem(b)
+print(f"SE(a) = {sea:.4f}   SE(b) = {seb:.4f}")
+print(f"added:       {sea + seb:.4f}")
+print(f"root sum sq: {np.sqrt(sea**2 + seb**2):.4f}")
+print(f"ratio:       {(sea+seb)/np.sqrt(sea**2+seb**2):.3f}x")
+```
+
+```
+SE(a) = 0.7742   SE(b) = 0.6790
+added:       1.4532
+root sum sq: 1.0298
+ratio:       1.411x
+```
+
+Getting it wrong in this direction is the conservative error — you overstate the uncertainty, your interval is 41% too wide, and you fail to detect effects that are really there. That is better than the opposite, and it is still wrong, and in a test that cost six weeks of traffic it is expensive.
+
+The underlying rule is worth stating as a rule, because it generalises: for independent random variables, **Var(A − B) = Var(A) + Var(B)**. Note the plus: subtracting the means *adds* the uncertainty, which surprises people. You cannot cancel noise by taking a difference.
+
+It stops being true when the groups are not independent. Paired data — the same users before and after — shares variance, and the paired test uses the variance of the per-user *differences*, which is usually much smaller. That is the whole reason paired designs are more powerful, and the reason CUPED works.
+
+| Tier | What to say |
+|---|---|
+| Passes | "You add the variances, not the standard errors" |
+| Strong | + both numbers, that the error is conservative but still wrong, and that it costs you power rather than giving a false positive |
+| Extra points | **[+Edge cases]** only for independent groups; paired data uses the variance of the differences and is usually tighter · **[+Business]** a 41% too-wide interval means a real effect reported as "not significant" after six weeks of traffic · **[+Scale]** this is why CUPED reduces variance rather than increasing n, which is far cheaper |
+
+**Likely follow-ups:** What if the groups are paired? Why does subtracting add the variance? What is the SE of a sum? *(The same — variances add either way.)*
+**Learn it in:** Chapter 22, section 22.3 (standard errors); Chapter 30, section 30.4.
+
+### Q73-045 · `y = x²` over a symmetric range. What is the correlation between x and y?
+
+**Level:** Mid · **Roles:** DA, DS, PA
+
+**Remember it as:** *Pearson measures straight-line association only. A perfect curve with no straight-line trend scores zero.*
+
+**Answer in one line:** **0.000000** — exactly zero, even though y is completely determined by x, because Pearson correlation measures only the linear component and a symmetric parabola has none.
+
+```python
+x = np.linspace(-3, 3, 601)
+y = x**2
+print(f"Pearson  r = {np.corrcoef(x, y)[0,1]:.6f}")
+print(f"Spearman   = {stats.spearmanr(x, y).statistic:.6f}")
+print(f"R^2 of y on x**2 = {np.corrcoef(x**2, y)[0,1]**2:.4f}")
+```
+
+```
+Pearson  r = 0.000000
+Spearman   = 0.000674
+R^2 of y on x**2 = 1.0000
+```
+
+The relationship is perfect — give me x and I will give you y exactly. The correlation is zero.
+
+Spearman does not rescue it either, because Spearman measures *monotonic* association and this relationship is not monotonic: y falls and then rises. Both coefficients are doing their job and both report nothing.
+
+So "r = 0" means **no linear relationship**, and nothing more. It does not mean no relationship, and it certainly does not mean independence. The converse that *is* true: if two variables are independent, their correlation is zero. The implication runs one way only.
+
+The practical move is the one from Q73-043 — plot it. A feature-selection step that drops every feature with low correlation to the target will throw away exactly the U-shaped relationships that matter: the effect of price on volume at the extremes, the effect of time-of-day on traffic, the effect of tenure on churn where both the newest and the longest-tenured customers leave.
+
+| Tier | What to say |
+|---|---|
+| Passes | "Zero, because it's not linear" |
+| Strong | + that Spearman is also near zero because the relationship is not monotonic, and that r = 0 means no *linear* relationship, not independence |
+| Extra points | **[+Business]** correlation-based feature selection silently drops U-shaped drivers, which are common — price, tenure, time of day · **[+Trade-offs]** mutual information or distance correlation catch non-linear dependence; a scatterplot catches it faster · **[+Edge cases]** independence implies zero correlation, but not the reverse |
+
+**Likely follow-ups:** What would catch this relationship? What does Spearman measure? Does a tree model care? *(No — trees split on thresholds and handle this naturally.)*
+**Learn it in:** Chapter 22, section 22.9 (correlation); Chapter 36, section 36.5 (feature selection).
+
+### Rapid-fire, 73.8, part A: predict the number
+
+Roles: DA, DS and PA for every row unless stated.
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q73-046 | A coin lands heads 5 times running. P(heads) next? | 0.5. The coin has no memory; the gambler's fallacy is believing it does | **[+Edge cases]** if you are unsure the coin is fair, 5 heads *is* evidence it is not — a different question → Ch 21 §21.5 |
+| Q73-047 | A test has 80% power. The effect is real. P(you miss it)? | 20%. Power is the chance of detecting a real effect, so 1 − power is the false negative rate | **[+Business]** at 80% power, one real win in five is thrown away → Ch 30 §30.3 |
+| Q73-048 | p = 0.03. What is the probability the null is true? | Unknown. p is P(data this extreme \| null), not P(null \| data). Inverting it needs a prior | **[+Validate]** the inversion is the same error as Q73-038 → Ch 22 §22.4 |
+| Q73-049 | Median of `[1, 2, 3, 4, 100]`, and the mean? | Median 3, mean 22. One outlier moves the mean by a factor of seven and the median not at all | **[+Business]** report the median for salary, latency and order value → Ch 21 §21.2 |
+| Q73-050 | 90th percentile of 10 numbers — which one? | It depends on the interpolation method; numpy has nine, and they disagree on small samples | **[+Edge cases]** quote the method when n is small, or results will not reconcile across tools → Ch 21 §21.3 |
+| Q73-051 | Flip a fair coin 10 times. P(exactly 5 heads)? | 24.6%, not 50% — `stats.binom.pmf(5, 10, 0.5)`. The most likely single outcome is still uncommon | **[+Edge cases]** "most likely" and "likely" are different claims → Ch 21 §21.7 |
+| Q73-052 | Revenue per user is heavily skewed. Is the t-test still valid? | At large n, yes — the CLT applies to the *mean*, not the data. At small n or with extreme outliers, no | **[+Trade-offs]** trim, wins'orise, or bootstrap; or test a capped metric agreed in advance → Ch 22 §22.6 |
+| Q73-053 | Sample size for a proportion at the same relative lift: baseline 10% against 1%? | The 1% baseline needs roughly ten times more, because rare events carry more relative variance | **[+Business]** which is why conversion tests on rare actions rarely finish → Ch 30 §30.3 |
+| Q73-054 | A/B test, p = 0.049 against p = 0.051. How different are the findings? | Essentially identical. The threshold is a convention, not a boundary in nature | **[+Trade-offs]** report the effect size and interval; the decision rarely hinges on the third decimal → Ch 22 §22.4 |
+
+### Rapid-fire, 73.8, part B: experiment arithmetic
+
+| # | Question | The answer, and why | Extra point |
+|---|---|---|---|
+| Q73-055 | Control 10.0%, variant 10.5%. Absolute and relative lift? | +0.5 percentage points, +5% relative. Confusing the two overstates or understates by 20× at this baseline | **[+Business]** always say which; "5% lift" is ambiguous and expensive → Ch 23 §23.6 |
+| Q73-056 | Test wins at 5% lift. What will you see in production? | Less, usually. The winner's curse: conditioning on significance selects for overestimates, worse at low power | **[+Edge cases]** shrink the estimate, or hold out a slice to measure the real effect → Ch 30 §30.7 |
+
+---
+
 ## Common mistakes
 
 | Mistake | Symptom | Fix |
@@ -805,13 +1210,15 @@ The fix took two days: a loading-performance bug, unrelated to pricing entirely.
 
 ## Key terms
 
-Bayes' theorem · base rate · sensitivity · false-positive rate · natural frequencies · conditional probability · Monty Hall problem · birthday problem · independent vs. mutually exclusive events · expected value · Binomial distribution · Poisson distribution · Central Limit Theorem · variance · standard deviation · Normal / log-normal distribution · heavy-tailed distribution · p-value · null hypothesis · Type I error · Type II error · statistical power · t-test vs. z-test · confidence interval · minimum detectable effect (MDE) · Cohen's h · randomization · one-tailed vs. two-tailed test · holdout group · peeking (repeated significance testing) · Sample Ratio Mismatch (SRM) · novelty effect · multiple comparisons · Bonferroni correction · network effect (interference) · Simpson's paradox · confounder · partial correlation · residual · selection bias · natural experiment · Yates' continuity correction · winner's curse
+Bayes' theorem · base rate · sensitivity · false-positive rate · natural frequencies · conditional probability · Monty Hall problem · birthday problem · independent vs. mutually exclusive events · expected value · Binomial distribution · Poisson distribution · Central Limit Theorem · variance · standard deviation · Normal / log-normal distribution · heavy-tailed distribution · p-value · null hypothesis · Type I error · Type II error · statistical power · t-test vs. z-test · confidence interval · minimum detectable effect (MDE) · Cohen's h · randomization · one-tailed vs. two-tailed test · holdout group · peeking (repeated significance testing) · Sample Ratio Mismatch (SRM) · novelty effect · multiple comparisons · Bonferroni correction · network effect (interference) · Simpson's paradox · confounder · partial correlation · residual · selection bias · natural experiment · Yates' continuity correction · winner's curse · `ddof` (degrees of freedom) · Bessel's correction · population against sample standard deviation · pooled rate · mean of ratios against ratio of means · weighted average · coverage · uniform distribution of p-values · equivalence test · Anscombe's quartet · leverage · variance of a difference · paired design · CUPED · Pearson against Spearman · monotonic association · percentile interpolation method
 
 ---
 
 ## Final-week revision list
 
-Q73-005, Q73-006, Q73-007, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037.
+Q73-005, Q73-006, Q73-007, Q73-008, Q73-009, Q73-014, Q73-015, Q73-016, Q73-017, Q73-019, Q73-020, Q73-021, Q73-025, Q73-026, Q73-028, Q73-031, Q73-032, Q73-036, Q73-037, Q73-038, Q73-039, Q73-042.
+
+The last three are the arithmetic that most often reaches a slide uncorrected: the `ddof` split between NumPy and pandas (Q73-038), averaging rates instead of pooling them (Q73-039), and what a flat p-value distribution tells you about your own platform (Q73-042).
 
 ---
 

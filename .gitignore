@@ -1,6 +1,7 @@
 # Build scratch: final PDFs go to fixed/
 build/*
 !build/README.md
+Data Science/Analyst-to-Architect/build/
 
 # Python and notebook artifacts
 __pycache__/
@@ -89,3 +90,14 @@ Data Science/Analyst-to-Architect/companion/ch56/mlflow.db
 Data Science/Analyst-to-Architect/companion/ch56/mlruns/
 Data Science/Analyst-to-Architect/companion/ch56/part.json
 Data Science/Analyst-to-Architect/companion/ch56/uvicorn.log
+
+# Datasets copied beside the chapter that reads them by a bare filename, by
+# tools/notebooks/prepare_data.py. The originals are generated too, and already ignored above.
+Data Science/Analyst-to-Architect/companion/ch36/leads.csv
+Data Science/Analyst-to-Architect/companion/ch36/activities.csv
+Data Science/Analyst-to-Architect/companion/ch36/stage_history.csv
+Data Science/Analyst-to-Architect/companion/ch41/tickets.csv
+# Written by a chapter's own code when the notebook runs
+Data Science/Analyst-to-Architect/companion/ch17/month_summary.csv
+Data Science/Analyst-to-Architect/companion/ch18/reports/
+Data Science/Analyst-to-Architect/companion/ch18/run_report.log
